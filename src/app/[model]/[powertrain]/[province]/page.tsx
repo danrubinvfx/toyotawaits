@@ -8,7 +8,6 @@ import {
   getProvinceByCode,
   isRebateEligibleProvince,
   CANADIAN_VEHICLE_CATALOG,
-  CANADIAN_PROVINCES_LIST,
 } from '@/lib/data/vehicles';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { Button } from '@/components/ui/button';
@@ -16,16 +15,12 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import {
   Clock,
-  MapPin,
   TrendingUp,
-  DollarSign,
   Share2,
   ChevronRight,
   ShieldCheck,
   CheckCircle2,
   Calendar,
-  Layers,
-  Sparkles,
 } from 'lucide-react';
 
 interface RouteProps {

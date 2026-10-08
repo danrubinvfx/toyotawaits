@@ -134,32 +134,32 @@ export default function Rav4SeModsGuidePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <a href="/out/jbl-club-dash-speakers" className="block">
+              <Link href="/out/jbl-club-dash-speakers" target="_blank" rel="sponsored nofollow" className="block">
                 <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     JBL Club 3412T <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">3.5&quot; 2-Way Drop-in (~$95 CAD)</span>
                 </Button>
-              </a>
+              </Link>
 
-              <a href="/out/toyota-speaker-harness" className="block">
+              <Link href="/out/toyota-speaker-harness" target="_blank" rel="sponsored nofollow" className="block">
                 <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     Toyota Harness Pair <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">Plug & Play Adapter (~$18 CAD)</span>
                 </Button>
-              </a>
+              </Link>
 
-              <a href="/out/trim-removal-tools" className="block">
+              <Link href="/out/trim-removal-tools" target="_blank" rel="sponsored nofollow" className="block">
                 <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     Trim Pry Tools <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">Non-Marring Nylon (~$15 CAD)</span>
                 </Button>
-              </a>
+              </Link>
             </div>
           </CardContent>
         </Card>
@@ -187,11 +187,11 @@ export default function Rav4SeModsGuidePage() {
                   Genuine perforated leather insert with PVC vinyl outers. Side-airbag deployment certified. Memory foam backing provides a luxury, OEM-grade feel.
                 </p>
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">~$600–$750 CAD</div>
-                <a href="/out/clazzio-leather-covers" className="inline-block pt-1">
+                <Link href="/out/clazzio-leather-covers" target="_blank" rel="sponsored nofollow" className="inline-block pt-1">
                   <Button size="sm" variant="outline" className="text-xs h-7 gap-1">
                     Check Clazzio Fitments <ExternalLink className="h-3 w-3 text-amber-500" />
                   </Button>
-                </a>
+                </Link>
               </div>
 
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 space-y-2 bg-zinc-50/60 dark:bg-zinc-900/40">
@@ -203,11 +203,11 @@ export default function Rav4SeModsGuidePage() {
                   Heavy-duty waterproof 4-layer faux leather. Custom molded to RAV4 5th-gen seats. Snug fit that wipes clean in winter slush and mud.
                 </p>
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">~$320–$390 CAD</div>
-                <a href="/out/ekr-seat-covers" className="inline-block pt-1">
+                <Link href="/out/ekr-seat-covers" target="_blank" rel="sponsored nofollow" className="inline-block pt-1">
                   <Button size="sm" variant="outline" className="text-xs h-7 gap-1">
                     Check EKR on Amazon <ExternalLink className="h-3 w-3 text-amber-500" />
                   </Button>
-                </a>
+                </Link>
               </div>
             </div>
           </CardContent>
