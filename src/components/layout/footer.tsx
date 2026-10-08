@@ -77,7 +77,22 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/guides/rav4-se-mods" className="hover:text-amber-500 transition-colors">
-                  SE to XSE Mod Playbook
+                  RAV4 SE Mod Playbook
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/sienna-mods" className="hover:text-amber-500 transition-colors">
+                  Sienna Road Dog Mods
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/grand-highlander-mods" className="hover:text-amber-500 transition-colors">
+                  Grand Highlander Utility
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/land-cruiser-mods" className="hover:text-amber-500 transition-colors">
+                  Land Cruiser 250 Mods
                 </Link>
               </li>
               <li>

@@ -208,12 +208,25 @@ Advances an active order through the 5 delivery milestones or updates delivery d
 ## 4. Cloaked Affiliate Redirects (`GET /out/:slug`)
 
 - **Method**: `GET /out/:slug`
-- **Supported SE Mod Slugs**:
-  - `jbl-club-dash-speakers`: JBL Club 3.5" (3412T/322F) dash tweeters.
-  - `toyota-speaker-harness`: Red Wolf / Metra 72-8110 plug-and-play wiring harness.
-  - `trim-removal-tools`: Non-marring automotive dash pry tool kit.
-  - `clazzio-leather-covers`: Clazzio custom-fit PVC/leather seat covers for RAV4 Prime SE.
-  - `ekr-seat-covers`: EKR tailored leatherette seat covers for RAV4 Prime.
+- **Supported Mod & Prep Slugs**:
+  - **RAV4 SE Upgrades**:
+    - `jbl-club-dash-speakers`: JBL Club 3.5" (3412T/322F) dash tweeters.
+    - `toyota-speaker-harness`: Red Wolf / Metra 72-8110 plug-and-play wiring harness.
+    - `trim-removal-tools`: Non-marring automotive dash pry tool kit.
+    - `clazzio-leather-covers`: Clazzio custom-fit PVC/leather seat covers for RAV4 Prime SE.
+    - `ekr-seat-covers`: EKR tailored leatherette seat covers for RAV4 Prime.
+  - **Toyota Sienna Mods**:
+    - `sienna-console-bridge-tray`: Dual-tier center console under-bridge organizer.
+    - `sienna-air-lift-1000`: Air Lift 1000 in-coil air helper spring kit.
+    - `sienna-fitcamx-dashcam`: FitcamX OEM-look integrated rearview mirror 4K dashcam.
+    - `sienna-hatch-led-lights`: Powerty dual rear cargo liftgate LED flood light kit.
+  - **Toyota Grand Highlander Mods**:
+    - `gh-console-organizer-tray`: Center armrest organizer tray & divider.
+    - `gh-rear-cargo-lamps`: OEM-fit dual rear liftgate LED flood lamps (PT944-48260-C0 style).
+    - `gh-wireless-charger-mat`: Anti-slip textured silicone Qi wireless charging pad mat.
+  - **Toyota Land Cruiser 250 Mods**:
+    - `lc250-speaker-upgrade`: LC250 1958 trim 3.5" dash & door speaker upgrade kit.
+    - `lc250-rock-sliders`: Heavy-duty frame-mounted steel rock sliders.
 - **Other Slugs**: `tuxmat-rav4`, `tuxmat-sienna`, `viofo-a229-pro`, `screen-protector-12-3`, `no-drill-mud-flaps-rav4`, `grizzl-e-charger`, `flo-g5`, `michelin-xice`, `bridgestone-blizzak`, `rates-ca-insurance`.
 - **Response**:
   - `307 Temporary Redirect` to configured destination URL.

@@ -67,5 +67,34 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
   });
+
+  it('correctly redirects all 9 Sienna, Grand Highlander, and Land Cruiser mod slugs with 307 status', async () => {
+    const slugs = [
+      'sienna-console-bridge-tray',
+      'sienna-air-lift-1000',
+      'sienna-fitcamx-dashcam',
+      'sienna-hatch-led-lights',
+      'gh-console-organizer-tray',
+      'gh-rear-cargo-lamps',
+      'gh-wireless-charger-mat',
+      'lc250-speaker-upgrade',
+      'lc250-rock-sliders',
+    ];
+
+    for (const slug of slugs) {
+      const request = new NextRequest(`http://localhost:3000/out/${slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location');
+      expect(location).toContain('amazon.ca');
+      expect(location).toContain('/s?k=');
+      expect(location).toContain('tag=toyotawaits-20');
+      expect(response.headers.get('Cache-Control')).toContain('no-store');
+      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+    }
+  });
 });
 

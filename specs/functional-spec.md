@@ -112,6 +112,19 @@ Static resource hub accessible from the header and footer providing practical Ca
    - **Custom Leather Upholstery**: Clazzio / EKR custom-fit tailored leather seat covers (`clazzio-leather-covers`, `ekr-seat-covers`) vs. professional Katzkin re-upholstery, upgrading standard SE cloth to SofTex/leather appearance and feel.
    - **Cost vs. Wait-Time Calculator**: Comparison showing DIY mod cost (~$700 CAD total) vs. the $4,000–$8,000 CAD trim jump and 6–12 months of saved waiting.
    - **Zero-PII Monetization**: All recommended items route exclusively via `/out/[slug]` without third-party tracking pixels.
+5. **`/guides/sienna-mods`** — *The Road Dog Cruiser: Essential Sienna Family & Road-Trip Mods*:
+   - **Center Console Bridge & Under-Bridge Organizers** (`sienna-console-bridge-tray`): Reclaiming cavernous open floor space beneath the shifter bridge with custom dual-tier trays.
+   - **Air Lift 1000 Air Helper Springs** (`sienna-air-lift-1000`): In-coil polyurethane air spring helper kits preventing rear suspension squat/bottoming when hauling cargo boxes, hitch bike racks, or fully loaded passenger cabins on Canadian highways.
+   - **OEM-Look Windshield Dashcam** (`sienna-fitcamx-dashcam`): FitcamX integrated rearview mirror shroud tap providing discrete 4K recording with zero dangling power cables or fuse box taps.
+   - **Powerty Trunk Hatch LED Lighting Swap** (`sienna-hatch-led-lights`): Replacing dim incandescent trunk bulbs with dual rear liftgate LED flood illumination for late-night hockey practice or road-trip luggage unloads.
+6. **`/guides/grand-highlander-mods`** — *Big Rig Comfort: Grand Highlander Utility & Cabin Upgrades*:
+   - **OEM-Style Rear Cargo Hatch Lamps** (`gh-rear-cargo-lamps`): Drop-in hatch illumination upgrade (compatible with OEM PT944-48260-C0 harness) eliminating pitch-black trunk blind spots.
+   - **Anti-Slip Qi Wireless Charging & Console Trays** (`gh-wireless-charger-mat`, `gh-console-organizer-tray`): Textured silicone charging mats and upper armrest divider trays preventing phone sliding, rattling, and console clutter.
+   - **Windshield & Hood Protection Prep**: Stone-chip deflector and high-wear front fascia protective film guidance for winter highway sand, gravel, and salt spray.
+7. **`/guides/land-cruiser-mods`** — *Backroads & Borderlines: LC250 1958 Trim Upgrades*:
+   - **Factory Speaker Drop-In Upgrades** (`lc250-speaker-upgrade`): Replacing the anemic base 6-speaker paper cones on the 1958 trim with high-sensitivity 3.5" dash and 6.5" door components.
+   - **Heavy-Duty Rock Sliders & Underside Armor** (`lc250-rock-sliders`): Frame-mounted steel rock sliders safeguarding side sills and hybrid high-voltage harness conduits during rugged trail excursions.
+   - **Canadian Winter Severe Snow Rubber**: Sizing guides for 18-inch severe-snow rated winter wheel and tire setups (265/70R18) designed for ice ruts, logging roads, and remote mountain routes.
 
 ---
 
