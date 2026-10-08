@@ -1,0 +1,38 @@
+model_id,powertrain_id,trim_name,province,dealer_city,dealer_name,deposit_date,delivery_date,status,pricing_deal,notes,source_reference
+rav4,phev,XSE Technology Package AWD,BC,Richmond,OpenRoad Toyota Richmond,2024-03-15,2025-05-10,delivered,msrp,Pre-ordered before rebate transition,historical_community_archive
+rav4,phev,SE AWD,BC,Vancouver,Jim Pattison Toyota Downtown,2024-05-20,2025-06-15,delivered,msrp,No dealer markup charged,historical_community_archive
+rav4,phev,XSE AWD,BC,Burnaby,Destination Toyota Burnaby,2024-08-10,2025-09-22,delivered,above_msrp,Charged 895 for security package,historical_community_archive
+rav4,phev,XSE Technology Package AWD,QC,Brossard,Toyota Brossard,2024-02-14,2025-04-18,delivered,msrp,Quebec Roulez vert rebate claimed,historical_community_archive
+rav4,phev,SE AWD,QC,Montreal,Alix Toyota,2024-06-01,2025-07-10,delivered,msrp,Delivered as promised,historical_community_archive
+rav4,phev,XSE AWD,QC,Levis,Levis Toyota,2024-04-12,2025-05-28,delivered,msrp,Zero admin fees,historical_community_archive
+rav4,phev,XSE Technology Package AWD,ON,Mississauga,Erin Park Toyota,2024-04-05,2025-04-25,delivered,msrp,Got exactly the color requested,historical_community_archive
+rav4,phev,SE AWD,ON,Toronto,Ken Shaw Toyota,2024-07-15,2025-07-20,delivered,above_msrp,Winter mat package mandatory,historical_community_archive
+rav4,phev,XSE AWD,ON,Ottawa,Kanata Toyota,2024-09-01,2025-09-12,delivered,msrp,Great experience at MSRP,historical_community_archive
+rav4,phev,XSE AWD,AB,Calgary,Stampede Toyota,2024-06-18,2025-05-30,delivered,msrp,Allocation came from canceled order,historical_community_archive
+rav4,phev,XSE Technology Package AWD,AB,Edmonton,Mayfield Toyota,2024-08-05,2025-07-15,delivered,msrp,Smooth transaction,historical_community_archive
+rav4,hev,XLE AWD,ON,Oakville,Oakville Toyota,2025-02-10,2025-07-25,delivered,msrp,Delivered in 5.5 months,historical_community_archive
+rav4,hev,LE AWD,ON,Markham,Don Valley North Toyota,2025-01-15,2025-06-28,delivered,msrp,Standard wait for LE AWD,historical_community_archive
+rav4,hev,Limited AWD,ON,London,Competition Toyota,2024-11-20,2025-05-18,delivered,msrp,Top trim allocated promptly,historical_community_archive
+rav4,hev,Woodland Edition AWD,ON,Kitchener,Heffner Toyota,2025-03-05,2025-09-02,delivered,msrp,Woodland package in Army Green,historical_community_archive
+rav4,hev,XLE AWD,BC,Pitt Meadows,West Coast Toyota,2024-10-10,2025-05-20,delivered,msrp,Delivered within 7 months,historical_community_archive
+rav4,hev,XSE AWD,BC,Victoria,Metro Toyota Duncan,2024-11-15,2025-07-08,delivered,above_msrp,Dealer etched security package,historical_community_archive
+rav4,hev,LE AWD,QC,Montreal,Toyota Gabriel Centre-Ville,2025-01-20,2025-08-10,delivered,msrp,Clean deal no addons,historical_community_archive
+rav4,hev,XLE AWD,QC,Sherbrooke,Sherbrooke Toyota,2024-12-05,2025-07-02,delivered,msrp,Very satisfied with delivery timing,historical_community_archive
+rav4,hev,XLE AWD,AB,Calgary,Canyon Creek Toyota,2025-03-12,2025-08-20,delivered,msrp,Fastest delivery in Alberta,historical_community_archive
+sienna,hev,XLE FWD,ON,Brampton,Attrell Toyota,2023-11-05,2025-05-15,delivered,msrp,Wait was 18 months,historical_community_archive
+sienna,hev,LE AWD,ON,Toronto,Ken Shaw Toyota,2024-01-10,2025-06-20,delivered,msrp,17 months wait for AWD LE,historical_community_archive
+sienna,hev,XSE AWD,ON,Mississauga,Erin Park Toyota,2023-09-18,2025-04-10,delivered,above_msrp,Mandatory rust proofing added,historical_community_archive
+sienna,hev,Limited AWD,ON,Ottawa,Mendes Toyota,2023-08-12,2025-04-20,delivered,msrp,Waited 20 months for Limited,historical_community_archive
+sienna,hev,XSE Technology Package AWD,BC,Richmond,OpenRoad Toyota Richmond,2023-10-15,2025-04-25,delivered,msrp,Worth the long wait,historical_community_archive
+sienna,hev,LE AWD,BC,Vancouver,Regency Toyota,2024-02-01,2025-07-15,delivered,msrp,17 months total wait,historical_community_archive
+sienna,hev,Limited AWD,QC,Brossard,Toyota Brossard,2023-07-20,2025-05-10,delivered,msrp,Almost two years wait in Quebec,historical_community_archive
+sienna,hev,XLE FWD,QC,Montreal,Spinelli Toyota,2023-12-01,2025-05-20,delivered,msrp,Delivered right before summer road trip,historical_community_archive
+grand-highlander,hev,XLE Hybrid AWD,ON,Markham,Don Valley North Toyota,2024-07-10,2025-04-20,delivered,msrp,Delivered in 9 months,historical_community_archive
+grand-highlander,hev,Limited Hybrid AWD,BC,Coquitlam,West Coast Toyota,2024-05-15,2025-03-10,delivered,msrp,Great family cruiser,historical_community_archive
+grand-highlander,hybrid-max,Platinum Hybrid MAX AWD,AB,Calgary,Stampede Toyota,2024-06-01,2025-04-15,delivered,above_msrp,Hybrid MAX was hard to get,historical_community_archive
+grand-highlander,gas,XLE AWD,ON,Whitby,Whitby Toyota,2024-11-05,2025-04-15,delivered,msrp,Gas model arrived much faster,historical_community_archive
+land-cruiser,hev,1958 Grade,ON,Toronto,Ken Shaw Toyota,2024-12-01,2025-03-25,delivered,msrp,Allocated in under 4 months,historical_community_archive
+land-cruiser,hev,Land Cruiser Grade,BC,Vancouver,Jim Pattison Toyota Downtown,2025-01-10,2025-05-12,delivered,msrp,Got unit from showroom allocation,historical_community_archive
+land-cruiser,hev,Land Cruiser Grade with Premium Package,AB,Calgary,Canyon Creek Toyota,2025-02-15,2025-06-18,delivered,msrp,Purchased at MSRP with no markup,historical_community_archive
+rav4,phev,XSE Technology Package AWD,BC,Burnaby,Destination Toyota Burnaby,2025-08-10,,pending,msrp,Deposit confirmed on waitlist,historical_community_archive
+sienna,hev,XSE AWD,ON,Oakville,Oakville Toyota,2025-05-12,,pending,msrp,Estimated ETA winter 2026,historical_community_archive
