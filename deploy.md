@@ -6,17 +6,12 @@ This guide details how to publish the **ToyotaWaits.ca** codebase to GitHub and 
 
 ## 1. Push Code to GitHub
 
-Replace `<YOUR_GITHUB_USERNAME>` with your GitHub username or organization name.
-
 ```bash
-# Add the remote GitHub repository
-git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/toyotawaits.git
-
 # Push the main branch to GitHub
 git push -u origin main
 ```
 
-> **Note**: If you created the repository on GitHub with a README or license, use `git push -u origin main --force-with-lease` or ensure the remote repo was created empty without initializing files.
+> **Note**: If you created the repository on GitHub with a README or license file already present, use `git push -u origin main --force-with-lease` or ensure the repository was created empty without initializing files.
 
 ---
 
