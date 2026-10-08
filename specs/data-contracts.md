@@ -253,11 +253,16 @@ export interface ChecklistProduct {
   models: string[]; // ["rav4", "sienna", "grand-highlander", "land-cruiser"] or ["all"]
   powertrains?: string[]; // ["phev"] or omitted for all powertrains
   category: 'visibility_protection' | 'cabin_organization' | 'roadside_winter';
-  title: string;
-  utilityNote: string; // 1 concise sentence explaining practical benefit
-  priceEstCad: string; // e.g. "~$35 CAD"
+  title: string; // Concise product name
+  priceEst: string; // Approximate CAD price (e.g. "~$110 CAD")
+  priceEstCad?: string; // Backward compatibility
+  whyBuy: string; // 1 punchy sentence explaining practical utility
+  utilityNote?: string; // Backward compatibility
+  image: string; // Public asset path under /images/accessories/{slug}.png or WebP
+  asin: string; // 10-char Amazon Standard Identification Number
   destinationUrl: string;
 }
 ```
+
 
 

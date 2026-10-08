@@ -33,6 +33,19 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(Grand Highlander\)/i)).toBeNull();
   });
 
+  it('renders visual cards with 80x80 thumbnail imagery and price badges', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const dashcamImg = screen.getByAltText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i);
+    expect(dashcamImg).toBeDefined();
+    expect(dashcamImg.getAttribute('src')).toBe('/images/accessories/fitcamx-rav4.png');
+
+    // Price badge check
+    expect(screen.getByText(/~\$210 CAD/i)).toBeDefined();
+    // Punchy utility text
+    expect(screen.getByText(/Replaces the TSS mirror shroud with zero dangling cables/i)).toBeDefined();
+  });
+
   it('displays PHEV-specific accessories only when powertrain is phev', () => {
     // 1. HEV RAV4 -> J1772 lock should NOT be present
     const { unmount } = render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
@@ -42,6 +55,8 @@ describe('DeliveryPrepChecklist Component', () => {
     // 2. PHEV RAV4 -> J1772 lock SHOULD be present
     render(<DeliveryPrepChecklist model="rav4" powertrain="phev" />);
     expect(screen.getByText(/J1772 Public EV Charging Port Combination Lock Ring/i)).toBeDefined();
+    const lockImg = screen.getByAltText(/J1772 Public EV Charging Port Combination Lock Ring/i);
+    expect(lockImg.getAttribute('src')).toBe('/images/accessories/j1772-charger-lock.png');
   });
 
   it('filters accessories when model is Sienna', () => {
@@ -57,6 +72,29 @@ describe('DeliveryPrepChecklist Component', () => {
 
     expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(Land Cruiser 250\)/i)).toBeDefined();
     expect(screen.getByText(/Heavy-Duty Armrest Storage Organizer \(Land Cruiser 250\)/i)).toBeDefined();
+    expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
+  });
+
+  it('filters by category tabs (Visibility & Tech, Interior Protection, Roadside Armor)', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="phev" />);
+
+    // Click "Visibility & Tech"
+    const visTab = screen.getByText('Visibility & Tech');
+    fireEvent.click(visTab);
+    expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeDefined();
+    expect(screen.queryByText(/Drop-In Center Console Divider & Coin Tray \(RAV4\)/i)).toBeNull();
+
+    // Click "Interior Protection"
+    const intTab = screen.getByText('Interior Protection');
+    fireEvent.click(intTab);
+    expect(screen.getByText(/Drop-In Center Console Divider & Coin Tray \(RAV4\)/i)).toBeDefined();
+    expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
+
+    // Click "Roadside Armor"
+    const roadTab = screen.getByText('Roadside Armor');
+    fireEvent.click(roadTab);
+    expect(screen.getByText(/NOCO Boost Plus GB40 1000A/i)).toBeDefined();
+    expect(screen.getByText(/J1772 Public EV Charging Port Combination Lock Ring/i)).toBeDefined();
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
   });
 
@@ -77,6 +115,19 @@ describe('DeliveryPrepChecklist Component', () => {
     // Verify localStorage has entry
     const saved = JSON.parse(localStorage.getItem('toyotawaits_prep_checklist_checks') || '{}');
     expect(Object.values(saved)).toContain(true);
+  });
+
+  it('provides clean outbound redirect links routing strictly through /out/[slug]', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const outboundLinks = screen.getAllByRole('link', { name: /View Item/i });
+    expect(outboundLinks.length).toBeGreaterThan(0);
+    for (const link of outboundLinks) {
+      const href = link.getAttribute('href');
+      expect(href).toMatch(/^\/out\/[a-z0-9-]+$/);
+      expect(link.getAttribute('rel')).toContain('sponsored');
+      expect(link.getAttribute('target')).toBe('_blank');
+    }
   });
 
   it('collapses and expands when toggle button is clicked', () => {

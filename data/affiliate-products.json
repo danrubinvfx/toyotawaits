@@ -5,8 +5,12 @@
     "models": ["rav4"],
     "category": "visibility_protection",
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (RAV4)",
-    "utilityNote": "Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.",
+    "priceEst": "~$210 CAD",
     "priceEstCad": "~$210 CAD",
+    "whyBuy": "Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.",
+    "utilityNote": "Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.",
+    "image": "/images/accessories/fitcamx-rav4.png",
+    "asin": "B09GLVMB76",
     "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+RAV4+dash+cam&tag=toyotawaits-20"
   },
   {
@@ -15,8 +19,12 @@
     "models": ["sienna"],
     "category": "visibility_protection",
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)",
-    "utilityNote": "Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.",
+    "priceEst": "~$210 CAD",
     "priceEstCad": "~$210 CAD",
+    "whyBuy": "Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.",
+    "utilityNote": "Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.",
+    "image": "/images/accessories/fitcamx-sienna.png",
+    "asin": "B09GFNZK3C",
     "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Sienna+dash+cam&tag=toyotawaits-20"
   },
   {
@@ -25,8 +33,12 @@
     "models": ["grand-highlander"],
     "category": "visibility_protection",
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)",
-    "utilityNote": "OEM-factory integrated fitment beneath the digital mirror with 4K recording.",
+    "priceEst": "~$215 CAD",
     "priceEstCad": "~$215 CAD",
+    "whyBuy": "OEM-factory integrated fitment beneath the digital mirror with 4K recording.",
+    "utilityNote": "OEM-factory integrated fitment beneath the digital mirror with 4K recording.",
+    "image": "/images/accessories/fitcamx-grand-highlander.png",
+    "asin": "B0CK5M3N7V",
     "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Grand+Highlander+dash+cam&tag=toyotawaits-20"
   },
   {
@@ -35,8 +47,12 @@
     "models": ["land-cruiser"],
     "category": "visibility_protection",
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)",
-    "utilityNote": "Trail-tested integrated dashcam powered directly by the rearview mirror harness.",
+    "priceEst": "~$220 CAD",
     "priceEstCad": "~$220 CAD",
+    "whyBuy": "Trail-tested integrated dashcam powered directly by the rearview mirror harness.",
+    "utilityNote": "Trail-tested integrated dashcam powered directly by the rearview mirror harness.",
+    "image": "/images/accessories/fitcamx-land-cruiser.png",
+    "asin": "B0D8TY5M67",
     "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Land+Cruiser+250+dash+cam&tag=toyotawaits-20"
   },
   {
@@ -45,8 +61,12 @@
     "models": ["rav4"],
     "category": "visibility_protection",
     "title": "Anti-Glare 9H Tempered Glass Screen Protector (RAV4)",
-    "utilityNote": "9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.",
+    "priceEst": "~$24 CAD",
     "priceEstCad": "~$24 CAD",
+    "whyBuy": "9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.",
+    "utilityNote": "9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.",
+    "image": "/images/accessories/screen-protector-rav4.png",
+    "asin": "B0892TYG6K",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+tempered+glass+screen+protector&tag=toyotawaits-20"
   },
   {
@@ -55,8 +75,12 @@
     "models": ["sienna"],
     "category": "visibility_protection",
     "title": "Matte Anti-Glare Screen Protector (Toyota Sienna)",
-    "utilityNote": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
+    "priceEst": "~$24 CAD",
     "priceEstCad": "~$24 CAD",
+    "whyBuy": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
+    "utilityNote": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
+    "image": "/images/accessories/screen-protector-sienna.png",
+    "asin": "B091B6Y5Y2",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+screen+protector+tempered+glass&tag=toyotawaits-20"
   },
   {
@@ -65,8 +89,12 @@
     "models": ["grand-highlander"],
     "category": "visibility_protection",
     "title": "12.3-inch Anti-Glare Tempered Glass (Grand Highlander)",
-    "utilityNote": "Preserves factory display clarity and stops scratches on the wide infotainment screen.",
+    "priceEst": "~$25 CAD",
     "priceEstCad": "~$25 CAD",
+    "whyBuy": "Preserves factory display clarity and stops scratches on the wide infotainment screen.",
+    "utilityNote": "Preserves factory display clarity and stops scratches on the wide infotainment screen.",
+    "image": "/images/accessories/screen-protector-grand-highlander.png",
+    "asin": "B0CDFXRPL7",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+12.3+screen+protector&tag=toyotawaits-20"
   },
   {
@@ -75,8 +103,12 @@
     "models": ["land-cruiser"],
     "category": "visibility_protection",
     "title": "Armor-Grade Multimedia Screen Shield (Land Cruiser 250)",
-    "utilityNote": "Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.",
+    "priceEst": "~$26 CAD",
     "priceEstCad": "~$26 CAD",
+    "whyBuy": "Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.",
+    "utilityNote": "Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.",
+    "image": "/images/accessories/screen-protector-land-cruiser.png",
+    "asin": "B0D8XQ99P3",
     "destinationUrl": "https://www.amazon.ca/s?k=Land+Cruiser+250+screen+protector+tempered+glass&tag=toyotawaits-20"
   },
   {
@@ -85,8 +117,12 @@
     "models": ["rav4"],
     "category": "cabin_organization",
     "title": "Drop-In Center Console Divider & Coin Tray (RAV4)",
-    "utilityNote": "Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.",
+    "priceEst": "~$22 CAD",
     "priceEstCad": "~$22 CAD",
+    "whyBuy": "Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.",
+    "utilityNote": "Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.",
+    "image": "/images/accessories/console-tray-rav4.png",
+    "asin": "B07WCSG2R8",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+center+console+tray+organizer&tag=toyotawaits-20"
   },
   {
@@ -95,8 +131,12 @@
     "models": ["sienna"],
     "category": "cabin_organization",
     "title": "Dual-Tier Center Console & Bridge Organizer (Sienna)",
-    "utilityNote": "Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.",
+    "priceEst": "~$35 CAD",
     "priceEstCad": "~$35 CAD",
+    "whyBuy": "Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.",
+    "utilityNote": "Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.",
+    "image": "/images/accessories/console-tray-sienna.png",
+    "asin": "B097GZ9X5B",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+center+console+bridge+tray+organizer&tag=toyotawaits-20"
   },
   {
@@ -105,8 +145,12 @@
     "models": ["grand-highlander"],
     "category": "cabin_organization",
     "title": "Precision Armrest Divider & Upper Storage Tray (Grand Highlander)",
-    "utilityNote": "Divides the 10-inch-deep cavernous vault into easily reachable compartments.",
+    "priceEst": "~$28 CAD",
     "priceEstCad": "~$28 CAD",
+    "whyBuy": "Divides the 10-inch-deep cavernous vault into easily reachable compartments.",
+    "utilityNote": "Divides the 10-inch-deep cavernous vault into easily reachable compartments.",
+    "image": "/images/accessories/console-tray-grand-highlander.png",
+    "asin": "B0CC9H5S4W",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+center+console+tray+organizer&tag=toyotawaits-20"
   },
   {
@@ -115,8 +159,12 @@
     "models": ["land-cruiser"],
     "category": "cabin_organization",
     "title": "Heavy-Duty Armrest Storage Organizer (Land Cruiser 250)",
-    "utilityNote": "Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.",
+    "priceEst": "~$26 CAD",
     "priceEstCad": "~$26 CAD",
+    "whyBuy": "Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.",
+    "utilityNote": "Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.",
+    "image": "/images/accessories/console-tray-land-cruiser.png",
+    "asin": "B0D93L8H12",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Land+Cruiser+250+center+console+organizer+tray&tag=toyotawaits-20"
   },
   {
@@ -125,8 +173,12 @@
     "models": ["all"],
     "category": "roadside_winter",
     "title": "NOCO Boost Plus GB40 1000A 12V UltraSafe Lithium Jump Starter",
-    "utilityNote": "Revives a dead 12V auxiliary battery in -30°C Canadian winters without needing another vehicle.",
+    "priceEst": "~$135 CAD",
     "priceEstCad": "~$135 CAD",
+    "whyBuy": "Revives a dead 12V auxiliary battery in -30°C Canadian winters without needing another vehicle.",
+    "utilityNote": "Revives a dead 12V auxiliary battery in -30°C Canadian winters without needing another vehicle.",
+    "image": "/images/accessories/noco-gb40-jump-pack.png",
+    "asin": "B015TKUPIC",
     "destinationUrl": "https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A&tag=toyotawaits-20"
   },
   {
@@ -136,8 +188,12 @@
     "powertrains": ["phev"],
     "category": "roadside_winter",
     "title": "J1772 Public EV Charging Port Combination Lock Ring",
-    "utilityNote": "Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.",
+    "priceEst": "~$18 CAD",
     "priceEstCad": "~$18 CAD",
+    "whyBuy": "Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.",
+    "utilityNote": "Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.",
+    "image": "/images/accessories/j1772-charger-lock.png",
+    "asin": "B09V7NGLHM",
     "destinationUrl": "https://www.amazon.ca/s?k=J1772+charger+lock+ring+Toyota+RAV4+Prime&tag=toyotawaits-20"
   }
 ]

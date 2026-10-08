@@ -127,17 +127,22 @@ Static resource hub accessible from the header and footer providing practical Ca
 ### 3.5 Curated Delivery Day Prep Checklist
 
 A model-specific, utility-first buyer prep checklist designed to guide buyers while they wait out their allocations:
-- **UI Architecture**:
-  - Clean, collapsible card/drawer mounted directly below the regional wait-time estimation card and inside the returning user order tracking dashboard.
-  - High-readability tabbed/accordion interface organized into three clear categories:
-    1. **Visibility & Protection**: OEM-look rearview mirror dashcams (FitcamX with TSS sensor taps) and anti-glare 9H tempered glass screen protectors.
-    2. **Cabin Organization**: Precision laser-measured drop-in center console divider trays and under-bridge storage units.
-    3. **Roadside & Cold Weather**: Ultra-compact 12V lithium starter jump packs (NOCO Boost GB40) and J1772 charge port anti-theft lock rings (exclusive to PHEVs).
+- **UI Architecture & Visual Card Layout**:
+  - Clean, collapsible card mounted directly below the regional wait-time estimation card and inside the active order tracking dashboard.
+  - High-readability vertical stack of visual product cards featuring 80x80px product thumbnails with subtle borders and rounded corners.
+  - Right side card details: concise title, warm amber estimated CAD price badge, 1-sentence practical utility note, and direct `/out/[slug]` CTA button.
+  - Clickable top-corner checkbox toggling persistent strikethrough/checked state stored in `localStorage` (`toyotawaits_prep_checklist_checks`).
+  - Mobile UX: strictly vertical stack avoiding horizontal carousels or scrollbars.
+  - Category navigation tabs:
+    1. **Visibility & Tech**: OEM-look rearview mirror dashcams (FitcamX with TSS sensor taps) and anti-glare 9H tempered glass screen protectors.
+    2. **Interior Protection**: Precision laser-measured drop-in center console divider trays and under-bridge storage units.
+    3. **Roadside Armor**: Ultra-compact 12V lithium starter jump packs (NOCO Boost GB40) and J1772 charge port anti-theft lock rings (exclusive to PHEVs).
 - **Noir Voice & Tone**:
+  - Dark slate/charcoal card background (`bg-zinc-900/60` with `border-zinc-800`) and warm amber accents.
   - Dry, seasoned, Tom Waits aesthetic (*"Glovebox essentials and rainy-day armor while you wait out the clock"*).
   - Explicit utility focus explaining the practical flaw or winter reality each item solves.
 - **User Utility & Offline Persistence**:
-  - Interactive checkboxes with instant persistence to `localStorage` (`toyotawaits_prep_checklist_checks`) so buyers can track purchases across multiple visits.
+  - Interactive top-corner checkboxes with instant persistence to `localStorage` (`toyotawaits_prep_checklist_checks`) so buyers can track purchases across multiple visits.
   - One-click **"Print / Save Checklist"** button generating a clean printable view for the glovebox or dealer delivery day.
 - **Contextual Model Triggers**:
   - Dynamically filters accessories based on current vehicle selection (`RAV4`, `Sienna`, `Grand Highlander`, `Land Cruiser 250`).
