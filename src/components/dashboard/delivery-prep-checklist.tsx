@@ -193,9 +193,10 @@ export function DeliveryPrepChecklist({
 
   return (
     <Card
+      id="accessories"
       data-testid="delivery-prep-checklist"
       className={cn(
-        'border-zinc-800 bg-zinc-900/60 overflow-hidden shadow-sm print:border-none print:shadow-none text-zinc-100',
+        'border-zinc-800 bg-zinc-900/60 overflow-hidden shadow-sm print:border-none print:shadow-none text-zinc-100 scroll-mt-24',
         className
       )}
     >

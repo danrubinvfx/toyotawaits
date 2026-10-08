@@ -464,12 +464,14 @@ export function WaitTimeEstimator({
             )}
 
             {/* Delivery Day Prep Checklist */}
-            <DeliveryPrepChecklist
-              model={modelSlug}
-              powertrain={powertrainSlug}
-              className="mt-4"
-              defaultExpanded={true}
-            />
+            <div id="delivery-prep" className="scroll-mt-24">
+              <DeliveryPrepChecklist
+                model={modelSlug}
+                powertrain={powertrainSlug}
+                className="mt-4"
+                defaultExpanded={true}
+              />
+            </div>
           </div>
         )}
 

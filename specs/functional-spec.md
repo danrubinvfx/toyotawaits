@@ -154,6 +154,42 @@ A model-specific, utility-first buyer prep checklist designed to guide buyers wh
 
 ---
 
+### 3.6 Mobile Menu & Desktop Navigation Hub
+
+The mobile menu drawer (accessed via the top-right hamburger toggle) and desktop header navigation provide direct access to both the DIY mod guides and curated product links:
+
+1. **Wait-Time Tracking Tools**:
+   - Wait-Time Estimator (`/#estimator`) with smooth scroll and sticky header offset.
+   - Provincial Analytics (`/#analytics`).
+   - Community Delivery Log (`/#community-log`).
+
+2. **DIY Mod Guides ("Mods Section")**:
+   - Direct links with concise descriptions:
+     - **RAV4 Prime**: SE to XSE Conversion Playbook (`/guides/rav4-se-mods`)
+     - **Toyota Sienna**: Road-Trip & Family Cruiser Mods (`/guides/sienna-mods`)
+     - **Grand Highlander**: Big Rig Cabin & Utility Upgrades (`/guides/grand-highlander-mods`)
+     - **Land Cruiser 250**: 1958 Trim Overhaul (`/guides/land-cruiser-mods`)
+     - **All Mod & Prep Guides**: Comprehensive guides index (`/guides`)
+
+3. **Recommended Gear & Product Links ("Product Links")**:
+   - **Delivery Day Prep Checklist**: Direct in-page link (`/#delivery-prep` or `/#accessories`) jumping straight to the interactive visual cards.
+   - **Direct Curated Gear Links**: Privacy-safe first-party redirects (`/out/[slug]`) opening directly to vetted items:
+     - FitcamX 4K Integrated Dashcam (`/out/fitcamx-rav4`)
+     - NOCO Boost Plus GB40 Jump Starter (`/out/noco-gb40-jump-pack`)
+     - Matte 9H Tempered Glass Screen Protector (`/out/screen-protector-rav4`)
+     - Center Console Organizer Tray (`/out/console-tray-rav4`)
+     - J1772 Charger Port Lock Ring (`/out/j1772-charger-lock`)
+
+4. **Community Tools & Submission**:
+   - Anonymous Wait Time Submission (`/submit`).
+   - Open Community Data Export (`/api/export`).
+
+5. **Mobile Viewport UX**:
+   - Drawer container constrained to `max-h-[calc(100vh-4rem)] overflow-y-auto` to support smooth vertical scrolling on all mobile screens.
+   - High-contrast card groupings, warm amber accents, and clean chevron indicators matching the Tom Waits noir aesthetic.
+
+---
+
 ## 4. Strict Privacy & Zero-PII Guarantees
 
 `ToyotaWaits.ca` maintains an uncompromising zero-PII architecture:
@@ -170,3 +206,4 @@ A model-specific, utility-first buyer prep checklist designed to guide buyers wh
    - Clean 307 temporary redirects with `no-store` headers and strict cross-origin referrer policy.
 2. **Disclosures**:
    - Compliant with Canadian Competition Act, FTC, and PIPEDA disclosures across all guide and accessory links.
+

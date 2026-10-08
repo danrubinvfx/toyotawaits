@@ -57,22 +57,17 @@ export function Footer() {
           {/* Prep Hub & Guides */}
           <div>
             <h4 className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">
-              Buyer Prep Hub
+              Buyer Prep &amp; Mods Hub
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/guides/ev-charging" className="hover:text-amber-500 transition-colors">
-                  Level 2 EV Charging
+                <Link href="/guides" className="text-amber-500 font-semibold hover:underline">
+                  All Mod Guides &amp; Almanac →
                 </Link>
               </li>
               <li>
-                <Link href="/guides/winter-tires" className="hover:text-amber-500 transition-colors">
-                  Winter Tire Mandates
-                </Link>
-              </li>
-              <li>
-                <Link href="/guides/insurance" className="hover:text-amber-500 transition-colors">
-                  Auto Insurance Guide
+                <Link href="/#delivery-prep" className="hover:text-amber-500 transition-colors">
+                  Delivery Prep Checklist
                 </Link>
               </li>
               <li>
@@ -93,6 +88,11 @@ export function Footer() {
               <li>
                 <Link href="/guides/land-cruiser-mods" className="hover:text-amber-500 transition-colors">
                   Land Cruiser 250 Mods
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides/ev-charging" className="hover:text-amber-500 transition-colors">
+                  Level 2 EV Charging
                 </Link>
               </li>
               <li>

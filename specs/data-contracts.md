@@ -264,5 +264,25 @@ export interface ChecklistProduct {
 }
 ```
 
+---
+
+## 6. Site Navigation & Anchor Contracts
+
+- **Anchor Targets**:
+  - `#estimator`: Wait-Time Estimator card (`scroll-mt-24`).
+  - `#delivery-prep`: Delivery Day Prep Checklist card (`scroll-mt-24`).
+  - `#accessories`: Alias for Delivery Day Prep Checklist (`scroll-mt-24`).
+  - `#analytics`: Canada-wide provincial analytics dashboard (`scroll-mt-24`).
+  - `#community-log`: Community submissions and delivery log table (`scroll-mt-24`).
+- **Guide Hub Route**:
+  - `GET /guides`: Central index page showcasing model-specific DIY mod playbooks and delivery prep gear.
+- **Top Outbound Product Slugs Featured in Navigation**:
+  - `/out/fitcamx-rav4` (FitcamX Dashcam)
+  - `/out/noco-gb40-jump-pack` (NOCO GB40 12V Lithium Jump Starter)
+  - `/out/screen-protector-rav4` (Anti-Glare Tempered Glass Screen Protector)
+  - `/out/console-tray-rav4` (Center Console Organizer Tray)
+  - `/out/j1772-charger-lock` (PHEV J1772 Charger Handle Lock Ring)
+
+
 
 
