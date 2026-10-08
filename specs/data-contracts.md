@@ -202,3 +202,22 @@ Advances an active order through the 5 delivery milestones or updates delivery d
   ```markdown
   > **2026 RAV4 Prime XSE** | BC | Ordered: Mar 2025 | Current Status: Freight Transit | Est. Delivery: Aug 2026 (~17 mos) — via [ToyotaWaits.ca](https://toyotawaits.ca)
   ```
+
+---
+
+## 4. Cloaked Affiliate Redirects (`GET /out/:slug`)
+
+- **Method**: `GET /out/:slug`
+- **Supported SE Mod Slugs**:
+  - `jbl-club-dash-speakers`: JBL Club 3.5" (3412T/322F) dash tweeters.
+  - `toyota-speaker-harness`: Red Wolf / Metra 72-8110 plug-and-play wiring harness.
+  - `trim-removal-tools`: Non-marring automotive dash pry tool kit.
+  - `clazzio-leather-covers`: Clazzio custom-fit PVC/leather seat covers for RAV4 Prime SE.
+  - `ekr-seat-covers`: EKR tailored leatherette seat covers for RAV4 Prime.
+- **Other Slugs**: `tuxmat-rav4`, `tuxmat-sienna`, `viofo-a229-pro`, `screen-protector-12-3`, `no-drill-mud-flaps-rav4`, `grizzl-e-charger`, `flo-g5`, `michelin-xice`, `bridgestone-blizzak`, `rates-ca-insurance`.
+- **Response**:
+  - `307 Temporary Redirect` to configured destination URL.
+  - Headers: `Cache-Control: no-store, no-cache, must-revalidate`, `Referrer-Policy: strict-origin-when-cross-origin`.
+- **Fallback**:
+  - If a slug is unknown or unconfigured: 302 redirect to `/` (home page).
+

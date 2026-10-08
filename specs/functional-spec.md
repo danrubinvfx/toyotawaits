@@ -106,6 +106,12 @@ Static resource hub accessible from the header and footer providing practical Ca
    - Recommended studless packages (Michelin X-Ice Snow, Bridgestone Blizzak WS90).
 3. **`/guides/insurance`** — *Canadian Auto Insurance Quote Comparison*:
    - How hybrid battery replacement riders and anti-theft tags (TAG system in Ontario/Quebec) affect comprehensive premiums.
+4. **`/guides/rav4-se-mods`** — *Skipping the Wait: Turn Your RAV4 Prime SE into an XSE*:
+   - **The Wait-Time Trade-off**: SE trims deliver significantly faster (median 180–240 days) compared to XSE / Technology Package queues (410–540+ days).
+   - **The 20-Minute Dash Speaker Swap**: JBL Club 3.5" (3412T/322F) drop-in dash tweeters with plug-and-play wiring harnesses (`toyota-speaker-harness`) and non-marring trim pry tools (`trim-removal-tools`), delivering near-JBL premium audio clarity without cutting factory wires.
+   - **Custom Leather Upholstery**: Clazzio / EKR custom-fit tailored leather seat covers (`clazzio-leather-covers`, `ekr-seat-covers`) vs. professional Katzkin re-upholstery, upgrading standard SE cloth to SofTex/leather appearance and feel.
+   - **Cost vs. Wait-Time Calculator**: Comparison showing DIY mod cost (~$700 CAD total) vs. the $4,000–$8,000 CAD trim jump and 6–12 months of saved waiting.
+   - **Zero-PII Monetization**: All recommended items route exclusively via `/out/[slug]` without third-party tracking pixels.
 
 ---
 

@@ -76,6 +76,11 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/guides/rav4-se-mods" className="hover:text-amber-500 transition-colors">
+                  SE to XSE Mod Playbook
+                </Link>
+              </li>
+              <li>
                 <Link href="/privacy" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors pt-1">
                   <Shield className="h-3.5 w-3.5 text-zinc-400" />
                   Zero-PII Privacy Charter

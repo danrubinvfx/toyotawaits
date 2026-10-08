@@ -14,8 +14,9 @@ import { Select } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -251,6 +252,24 @@ export function WaitTimeEstimator({
 
         {/* Dynamic Rebate Intelligence for PHEVs */}
         <RebateNotice powertrainSlug={powertrainSlug} provinceCode={province} />
+
+        {/* SE to XSE DIY Mod Teaser Callout */}
+        {modelSlug === 'rav4' && powertrainSlug === 'phev' && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+              <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
+              <span>
+                <strong>Tired of waiting for an XSE?</strong> See how owners build an SE for less without the 12-month wait.
+              </span>
+            </div>
+            <Link
+              href="/guides/rav4-se-mods"
+              className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
+            >
+              Read SE Mod Guide <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        )}
 
         {/* Results Panel */}
         {isLoading ? (

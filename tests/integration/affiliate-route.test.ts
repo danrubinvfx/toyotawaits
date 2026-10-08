@@ -39,4 +39,28 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     expect(json.success).toBe(false);
     expect(json.error.code).toBe('INVALID_SLUG');
   });
+
+  it('correctly redirects all 5 SE-to-XSE mod affiliate slugs with 307 status', async () => {
+    const slugs = [
+      { slug: 'jbl-club-dash-speakers', targetDomain: 'amazon.ca' },
+      { slug: 'toyota-speaker-harness', targetDomain: 'amazon.ca' },
+      { slug: 'trim-removal-tools', targetDomain: 'amazon.ca' },
+      { slug: 'clazzio-leather-covers', targetDomain: 'clazzio.com' },
+      { slug: 'ekr-seat-covers', targetDomain: 'amazon.ca' },
+    ];
+
+    for (const item of slugs) {
+      const request = new NextRequest(`http://localhost:3000/out/${item.slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: item.slug }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location');
+      expect(location).toContain(item.targetDomain);
+      expect(response.headers.get('Cache-Control')).toContain('no-store');
+      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+    }
+  });
 });
+
