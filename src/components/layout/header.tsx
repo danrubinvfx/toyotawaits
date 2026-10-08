@@ -51,12 +51,12 @@ export function Header() {
 
         {/* Action Button */}
         <div className="hidden sm:flex items-center space-x-3">
-          <Link href="/submit">
-            <Button size="sm" className="gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40">
+          <Button asChild size="sm" className="gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40">
+            <Link href="/submit">
               <PlusCircle className="h-4 w-4 text-zinc-950" />
               Submit Wait Time
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -101,12 +101,12 @@ export function Header() {
               Export Community Data (CSV)
             </Link>
             <div className="pt-2">
-              <Link href="/submit" onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full gap-2 font-semibold">
+              <Button asChild className="w-full gap-2 font-semibold">
+                <Link href="/submit" onClick={() => setMobileMenuOpen(false)}>
                   <PlusCircle className="h-4 w-4" />
                   Submit Wait Time (Anonymous)
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </div>
           </nav>
         </div>

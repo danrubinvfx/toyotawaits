@@ -89,12 +89,12 @@ export default async function ModelPowertrainPage({ params }: RouteProps) {
               </p>
             </div>
 
-            <Link href="/submit">
-              <Button className="font-semibold gap-1.5 shadow-sm">
+            <Button asChild className="font-semibold gap-1.5 shadow-sm">
+              <Link href="/submit">
                 <PlusCircle className="h-4 w-4" />
                 Submit Wait Time
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

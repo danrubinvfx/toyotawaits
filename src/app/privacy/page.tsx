@@ -172,12 +172,12 @@ export default function PrivacyPage() {
       </div>
 
       <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex justify-center sm:justify-start">
-        <Link href="/">
-          <Button size="lg" className="font-semibold gap-2">
+        <Button asChild size="lg" className="font-semibold gap-2">
+          <Link href="/">
             <ArrowLeft className="h-4 w-4" />
             Return to Tracker Dashboard
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
     </div>
   );

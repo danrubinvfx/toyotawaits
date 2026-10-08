@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
+import { HeroEstimateButton } from '@/components/calculator/hero-estimate-button';
 import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
@@ -8,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
-  Clock,
   PlusCircle,
   FileSpreadsheet,
   CheckCircle2,
@@ -47,18 +47,13 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Link href="/submit" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-lg font-bold text-base h-12 px-6">
+            <Button asChild size="lg" className="w-full sm:w-auto gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-lg font-bold text-base h-12 px-6">
+              <Link href="/submit">
                 <PlusCircle className="h-5 w-5" />
                 Submit Your Wait Time (60s)
-              </Button>
-            </Link>
-            <Link href="#estimator" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto gap-2 border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-100 font-semibold text-base h-12 px-6">
-                <Clock className="h-5 w-5 text-amber-400" />
-                Estimate My Arrival Date
-              </Button>
-            </Link>
+              </Link>
+            </Button>
+            <HeroEstimateButton />
           </div>
 
           {/* Quick Metrics Ticker */}
@@ -89,7 +84,7 @@ export default function HomePage() {
       </section>
 
       {/* Main Interactive Estimator Widget */}
-      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+      <section id="estimator" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
         <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
           <WaitTimeEstimator />
         </React.Suspense>
@@ -185,12 +180,12 @@ export default function HomePage() {
               the entire community.
             </p>
           </div>
-          <Link href="/submit" className="shrink-0">
-            <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white font-bold h-12 px-8 text-base">
+          <Button asChild size="lg" className="bg-red-600 hover:bg-red-700 text-white font-bold h-12 px-8 text-base shrink-0">
+            <Link href="/submit">
               Submit My Timeline
               <ChevronRight className="h-5 w-5 ml-1" />
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       </section>
     </div>

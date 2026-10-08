@@ -67,12 +67,12 @@ export default async function ModelPage({ params }: RouteProps) {
               </p>
             </div>
 
-            <Link href="/submit">
-              <Button className="font-semibold gap-1.5 shadow-sm">
+            <Button asChild className="font-semibold gap-1.5 shadow-sm">
+              <Link href="/submit">
                 <PlusCircle className="h-4 w-4" />
                 Submit Wait Time
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
@@ -110,12 +110,12 @@ export default async function ModelPage({ params }: RouteProps) {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <Link href={`/${model.slug}/${pt.slug}`}>
-                    <Button variant="outline" className="w-full gap-1.5 text-xs font-semibold">
+                  <Button asChild variant="outline" className="w-full gap-1.5 text-xs font-semibold">
+                    <Link href={`/${model.slug}/${pt.slug}`}>
                       Explore Timelines
                       <ArrowRight className="h-3.5 w-3.5" />
-                    </Button>
-                  </Link>
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
             );
@@ -124,7 +124,7 @@ export default async function ModelPage({ params }: RouteProps) {
       </section>
 
       {/* Estimator Pre-configured */}
-      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+      <section id="estimator" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
         <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
           <WaitTimeEstimator initialModel={model.slug} />
         </React.Suspense>
