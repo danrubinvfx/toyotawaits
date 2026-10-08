@@ -19,6 +19,7 @@ import {
 import { SubmissionStage } from '@/lib/types/contracts';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
+import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 
 const STAGES: Array<{
   key: SubmissionStage;
@@ -305,6 +306,13 @@ export function ActiveOrderStepper() {
           </div>
         </CardContent>
       </Card>
+
+      <DeliveryPrepChecklist
+        model={localOrder.modelName}
+        powertrain={localOrder.powertrainName}
+        className="mt-4"
+        defaultExpanded={false}
+      />
 
       <RedditShareModal
         isOpen={isShareModalOpen}

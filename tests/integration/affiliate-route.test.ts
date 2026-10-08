@@ -96,5 +96,38 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
   });
+
+  it('correctly redirects all 14 Delivery Day Prep Checklist slugs with 307 status and Amazon tags', async () => {
+    const checklistSlugs = [
+      'fitcamx-rav4',
+      'fitcamx-sienna',
+      'fitcamx-grand-highlander',
+      'fitcamx-land-cruiser',
+      'screen-protector-rav4',
+      'screen-protector-sienna',
+      'screen-protector-grand-highlander',
+      'screen-protector-land-cruiser',
+      'console-tray-rav4',
+      'console-tray-sienna',
+      'console-tray-grand-highlander',
+      'console-tray-land-cruiser',
+      'noco-gb40-jump-pack',
+      'j1772-charger-lock',
+    ];
+
+    for (const slug of checklistSlugs) {
+      const request = new NextRequest(`http://localhost:3000/out/${slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location');
+      expect(location).toContain('amazon.ca');
+      expect(location).toContain('tag=toyotawaits-20');
+      expect(response.headers.get('Cache-Control')).toContain('no-store');
+      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+    }
+  });
 });
 

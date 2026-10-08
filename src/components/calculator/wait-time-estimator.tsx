@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
+import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 
 export interface WaitTimeEstimatorProps {
   initialModel?: string;
@@ -464,6 +465,14 @@ export function WaitTimeEstimator({
                 </div>
               </div>
             )}
+
+            {/* Delivery Day Prep Checklist */}
+            <DeliveryPrepChecklist
+              model={modelSlug}
+              powertrain={powertrainSlug}
+              className="mt-4"
+              defaultExpanded={true}
+            />
           </div>
         )}
       </CardContent>

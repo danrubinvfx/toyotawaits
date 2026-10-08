@@ -227,10 +227,37 @@ Advances an active order through the 5 delivery milestones or updates delivery d
   - **Toyota Land Cruiser 250 Mods**:
     - `lc250-speaker-upgrade`: LC250 1958 trim 3.5" dash & door speaker upgrade kit.
     - `lc250-rock-sliders`: Heavy-duty frame-mounted steel rock sliders.
+  - **Delivery Day Checklist Accessories**:
+    - `fitcamx-rav4`, `fitcamx-sienna`, `fitcamx-grand-highlander`, `fitcamx-land-cruiser`: OEM rearview mirror tap 4K dashcams.
+    - `console-tray-rav4`, `console-tray-sienna`, `console-tray-grand-highlander`, `console-tray-land-cruiser`: Custom molded center console divider trays.
+    - `screen-protector-rav4`, `screen-protector-sienna`, `screen-protector-grand-highlander`, `screen-protector-land-cruiser`: 9H tempered glass anti-glare screen protectors.
+    - `noco-gb40-jump-pack`: NOCO Boost Plus GB40 1000A 12V lithium starter jump pack.
+    - `j1772-charger-lock`: Combination ring lock securing public J1772 charging handles to the vehicle socket (PHEVs).
 - **Other Slugs**: `tuxmat-rav4`, `tuxmat-sienna`, `viofo-a229-pro`, `screen-protector-12-3`, `no-drill-mud-flaps-rav4`, `grizzl-e-charger`, `flo-g5`, `michelin-xice`, `bridgestone-blizzak`, `rates-ca-insurance`.
 - **Response**:
   - `307 Temporary Redirect` to configured destination URL.
   - Headers: `Cache-Control: no-store, no-cache, must-revalidate`, `Referrer-Policy: strict-origin-when-cross-origin`.
 - **Fallback**:
   - If a slug is unknown or unconfigured: 302 redirect to `/` (home page).
+
+---
+
+## 5. Curated Delivery Day Catalog Contract (`data/affiliate-products.json`)
+
+The accessory catalog is stored as a structured JSON collection conforming to:
+
+```typescript
+export interface ChecklistProduct {
+  id: string;
+  slug: string; // Resolves to /out/[slug]
+  models: string[]; // ["rav4", "sienna", "grand-highlander", "land-cruiser"] or ["all"]
+  powertrains?: string[]; // ["phev"] or omitted for all powertrains
+  category: 'visibility_protection' | 'cabin_organization' | 'roadside_winter';
+  title: string;
+  utilityNote: string; // 1 concise sentence explaining practical benefit
+  priceEstCad: string; // e.g. "~$35 CAD"
+  destinationUrl: string;
+}
+```
+
 

@@ -124,7 +124,28 @@ Static resource hub accessible from the header and footer providing practical Ca
 7. **`/guides/land-cruiser-mods`** — *Backroads & Borderlines: LC250 1958 Trim Upgrades*:
    - **Factory Speaker Drop-In Upgrades** (`lc250-speaker-upgrade`): Replacing the anemic base 6-speaker paper cones on the 1958 trim with high-sensitivity 3.5" dash and 6.5" door components.
    - **Heavy-Duty Rock Sliders & Underside Armor** (`lc250-rock-sliders`): Frame-mounted steel rock sliders safeguarding side sills and hybrid high-voltage harness conduits during rugged trail excursions.
-   - **Canadian Winter Severe Snow Rubber**: Sizing guides for 18-inch severe-snow rated winter wheel and tire setups (265/70R18) designed for ice ruts, logging roads, and remote mountain routes.
+### 3.5 Curated Delivery Day Prep Checklist
+
+A model-specific, utility-first buyer prep checklist designed to guide buyers while they wait out their allocations:
+- **UI Architecture**:
+  - Clean, collapsible card/drawer mounted directly below the regional wait-time estimation card and inside the returning user order tracking dashboard.
+  - High-readability tabbed/accordion interface organized into three clear categories:
+    1. **Visibility & Protection**: OEM-look rearview mirror dashcams (FitcamX with TSS sensor taps) and anti-glare 9H tempered glass screen protectors.
+    2. **Cabin Organization**: Precision laser-measured drop-in center console divider trays and under-bridge storage units.
+    3. **Roadside & Cold Weather**: Ultra-compact 12V lithium starter jump packs (NOCO Boost GB40) and J1772 charge port anti-theft lock rings (exclusive to PHEVs).
+- **Noir Voice & Tone**:
+  - Dry, seasoned, Tom Waits aesthetic (*"Glovebox essentials and rainy-day armor while you wait out the clock"*).
+  - Explicit utility focus explaining the practical flaw or winter reality each item solves.
+- **User Utility & Offline Persistence**:
+  - Interactive checkboxes with instant persistence to `localStorage` (`toyotawaits_prep_checklist_checks`) so buyers can track purchases across multiple visits.
+  - One-click **"Print / Save Checklist"** button generating a clean printable view for the glovebox or dealer delivery day.
+- **Contextual Model Triggers**:
+  - Dynamically filters accessories based on current vehicle selection (`RAV4`, `Sienna`, `Grand Highlander`, `Land Cruiser 250`).
+  - PHEV-specific items (e.g., J1772 lock ring) render conditionally only when `powertrain === 'phev'`.
+- **Zero-PII Privacy & Affiliate Routing**:
+  - Strict absence of popup ads, modal overlays, tracking pixels, or sticky banners.
+  - All outbound links route exclusively through the serverless first-party redirect engine (`/out/[slug]`).
+  - Microcopy disclosure: *"Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data."*
 
 ---
 
