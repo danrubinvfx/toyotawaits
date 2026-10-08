@@ -251,79 +251,7 @@ export function WaitTimeEstimator({
           </div>
         </div>
 
-        {/* Dynamic Rebate Intelligence for PHEVs */}
-        <RebateNotice powertrainSlug={powertrainSlug} provinceCode={province} />
-
-        {/* Contextual Model DIY Mod & Prep Teaser Callouts */}
-        {modelSlug === 'rav4' && powertrainSlug === 'phev' && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-              <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
-              <span>
-                <strong>Tired of waiting for an XSE?</strong> See how owners build an SE for less without the 12-month wait.
-              </span>
-            </div>
-            <Link
-              href="/guides/rav4-se-mods"
-              className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
-            >
-              Read SE Mod Guide <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        )}
-
-        {modelSlug === 'sienna' && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-              <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
-              <span>
-                <strong>Waiting 12+ months?</strong> Check out the top community mods and road-trip prep gear for your Sienna.
-              </span>
-            </div>
-            <Link
-              href="/guides/sienna-mods"
-              className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
-            >
-              Read Sienna Playbook <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        )}
-
-        {modelSlug === 'grand-highlander' && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-              <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
-              <span>
-                <strong>Big rig, long wait.</strong> See essential utility mods, cargo lighting, and console upgrades for the Grand Highlander.
-              </span>
-            </div>
-            <Link
-              href="/guides/grand-highlander-mods"
-              className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
-            >
-              Read Grand Highlander Guide <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        )}
-
-        {modelSlug === 'land-cruiser' && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-              <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
-              <span>
-                <strong>Got a 1958 trim coming?</strong> Explore drop-in speaker swaps, underside armor, and severe winter setups for the LC250.
-              </span>
-            </div>
-            <Link
-              href="/guides/land-cruiser-mods"
-              className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
-            >
-              Read LC250 Mod Guide <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-        )}
-
-        {/* Results Panel */}
+        {/* Results Panel - ESTIMATOR VALUES BROUGHT TO TOP */}
         {isLoading ? (
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-4">
             <Skeleton className="h-8 w-1/3" />
@@ -466,6 +394,75 @@ export function WaitTimeEstimator({
               </div>
             )}
 
+            {/* Contextual Model DIY Mod & Prep Teaser Callouts */}
+            {modelSlug === 'rav4' && powertrainSlug === 'phev' && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+                  <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span>
+                    <strong>Tired of waiting for an XSE?</strong> See how owners build an SE for less without the 12-month wait.
+                  </span>
+                </div>
+                <Link
+                  href="/guides/rav4-se-mods"
+                  className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
+                >
+                  Read SE Mod Guide <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
+
+            {modelSlug === 'sienna' && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+                  <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span>
+                    <strong>Waiting 12+ months?</strong> Check out the top community mods and road-trip prep gear for your Sienna.
+                  </span>
+                </div>
+                <Link
+                  href="/guides/sienna-mods"
+                  className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
+                >
+                  Read Sienna Playbook <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
+
+            {modelSlug === 'grand-highlander' && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+                  <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span>
+                    <strong>Big rig, long wait.</strong> See essential utility mods, cargo lighting, and console upgrades for the Grand Highlander.
+                  </span>
+                </div>
+                <Link
+                  href="/guides/grand-highlander-mods"
+                  className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
+                >
+                  Read Grand Highlander Guide <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
+
+            {modelSlug === 'land-cruiser' && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-950/20 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+                  <Wrench className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span>
+                    <strong>Got a 1958 trim coming?</strong> Explore drop-in speaker swaps, underside armor, and severe winter setups for the LC250.
+                  </span>
+                </div>
+                <Link
+                  href="/guides/land-cruiser-mods"
+                  className="inline-flex items-center gap-1 font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-500 shrink-0 underline sm:no-underline"
+                >
+                  Read LC250 Mod Guide <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            )}
+
             {/* Delivery Day Prep Checklist */}
             <DeliveryPrepChecklist
               model={modelSlug}
@@ -475,6 +472,13 @@ export function WaitTimeEstimator({
             />
           </div>
         )}
+
+        {/* Dynamic Rebate Intelligence for PHEVs (Moved below estimator results) */}
+        <RebateNotice
+          powertrainSlug={powertrainSlug}
+          provinceCode={province}
+          defaultExpanded={false}
+        />
       </CardContent>
 
       <RedditShareModal

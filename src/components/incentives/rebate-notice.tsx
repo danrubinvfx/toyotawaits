@@ -1,17 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Info, DollarSign, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Zap, ChevronDown, ChevronUp } from 'lucide-react';
 import { isRebateEligibleProvince } from '@/lib/data/vehicles';
 
 interface RebateNoticeProps {
   powertrainSlug: string;
   provinceCode: string;
+  defaultExpanded?: boolean;
 }
 
-export function RebateNotice({ powertrainSlug, provinceCode }: RebateNoticeProps) {
+export function RebateNotice({
+  powertrainSlug,
+  provinceCode,
+  defaultExpanded = true,
+}: RebateNoticeProps) {
+  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
   // Only render for Plug-in Hybrid (PHEV) vehicles
   if (powertrainSlug !== 'phev') {
     return null;
@@ -58,55 +66,76 @@ export function RebateNotice({ powertrainSlug, provinceCode }: RebateNoticeProps
             <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-400">
               <Zap className="h-4 w-4" />
             </div>
-            <span className="font-bold text-sm sm:text-base text-zinc-100">
-              Canadian ZEV Rebate Intelligence
-            </span>
-          </div>
-          <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400">
-            PHEV Incentive Eligible
-          </Badge>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          {/* Federal iZEV */}
-          <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-semibold text-zinc-300">🇨🇦 Federal iZEV Incentive</span>
-              <span className="font-black text-amber-400 font-mono">$5,000 CAD</span>
-            </div>
-            <p className="text-[11px] text-zinc-400 leading-snug">
-              Point-of-sale deduction off the total vehicle purchase price for qualifying PHEVs with $\ge$ 50 km electric range.
-            </p>
-          </div>
-
-          {/* Provincial Incentive */}
-          {hasProvincial ? (
-            <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-zinc-300">🍁 {prov} {provincialName}</span>
-                <span className="font-black text-amber-400 font-mono">{provincialAmount}</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-snug">
-                {provincialNotes}
+            <div>
+              <span className="font-bold text-sm sm:text-base text-zinc-100">
+                Canadian ZEV Rebate Intelligence
+              </span>
+              <p className="text-[11px] text-zinc-400 hidden sm:block">
+                Federal iZEV ($5,000) {hasProvincial ? `+ ${prov} (${provincialAmount}) point-of-sale rebates` : 'point-of-sale rebate'}
               </p>
             </div>
-          ) : (
-            <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-zinc-300">🍁 Provincial Rebate ({prov})</span>
-                <span className="text-zinc-500 font-medium">None Active</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-snug">
-                No provincial top-up currently in {prov}. Buyers qualify exclusively for the $5,000 Federal iZEV grant.
-              </p>
-            </div>
-          )}
+          </div>
+          <div className="flex items-center gap-2">
+            <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs hover:bg-amber-400">
+              PHEV Incentive Eligible
+            </Badge>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="text-xs h-7 w-7 p-0 text-zinc-400 hover:text-zinc-100"
+              aria-label={isExpanded ? 'Collapse Rebates' : 'Expand Rebates'}
+            >
+              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </Button>
+          </div>
         </div>
 
-        <div className="text-[11px] text-zinc-500 flex items-center justify-between pt-1 border-t border-zinc-800/80">
-          <span>Rebates apply at delivery invoice after taxes and destination fees.</span>
-          <span className="text-amber-500 font-mono text-[10px]">Zero PII Stored</span>
-        </div>
+        {isExpanded && (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {/* Federal iZEV */}
+              <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-zinc-300">🇨🇦 Federal iZEV Incentive</span>
+                  <span className="font-black text-amber-400 font-mono">$5,000 CAD</span>
+                </div>
+                <p className="text-[11px] text-zinc-400 leading-snug">
+                  Point-of-sale deduction off the total vehicle purchase price for qualifying PHEVs with ≥ 50 km electric range.
+                </p>
+              </div>
+
+              {/* Provincial Incentive */}
+              {hasProvincial ? (
+                <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-zinc-300">🍁 {prov} {provincialName}</span>
+                    <span className="font-black text-amber-400 font-mono">{provincialAmount}</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-snug">
+                    {provincialNotes}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-zinc-300">🍁 Provincial Rebate ({prov})</span>
+                    <span className="text-zinc-500 font-medium">None Active</span>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-snug">
+                    No provincial top-up currently in {prov}. Buyers qualify exclusively for the $5,000 Federal iZEV grant.
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="text-[11px] text-zinc-500 flex items-center justify-between pt-1 border-t border-zinc-800/80">
+              <span>Rebates apply at delivery invoice after taxes and destination fees.</span>
+              <span className="text-amber-500 font-mono text-[10px]">Zero PII Stored</span>
+            </div>
+          </>
+        )}
       </CardContent>
     </Card>
   );
