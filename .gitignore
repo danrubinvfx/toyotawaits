@@ -15,12 +15,9 @@ node_modules/
 /coverage
 
 # next.js & production builds
-.next/
 /.next/
-out/
 /out/
-build/
-/build
+/build/
 
 # misc & OS
 .DS_Store
