@@ -96,12 +96,12 @@ export default function WinterTiresGuidePage() {
                   Long tread life guaranteed up to 60,000 km
                 </li>
               </ul>
-              <a href="/out/michelin-xice" target="_blank" rel="sponsored nofollow">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs">
+              <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
+                <a href="/out/michelin-xice" target="_blank" rel="noopener noreferrer sponsored">
                   Check Canadian Availability
                   <ExternalLink className="h-3.5 w-3.5" />
-                </Button>
-              </a>
+                </a>
+              </Button>
             </CardContent>
           </Card>
 
@@ -125,12 +125,12 @@ export default function WinterTiresGuidePage() {
                   Popular fitments for Land Cruiser and Grand Highlander
                 </li>
               </ul>
-              <a href="/out/bridgestone-blizzak" target="_blank" rel="sponsored nofollow">
-                <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs">
+              <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
+                <a href="/out/bridgestone-blizzak" target="_blank" rel="noopener noreferrer sponsored">
                   Check Canadian Availability
                   <ExternalLink className="h-3.5 w-3.5" />
-                </Button>
-              </a>
+                </a>
+              </Button>
             </CardContent>
           </Card>
         </div>

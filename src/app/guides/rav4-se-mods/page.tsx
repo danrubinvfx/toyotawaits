@@ -134,32 +134,56 @@ export default function Rav4SeModsGuidePage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <Link href="/out/jbl-club-dash-speakers" target="_blank" rel="sponsored nofollow" className="block">
-                <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700 cursor-pointer"
+              >
+                <a
+                  href="/out/jbl-club-dash-speakers"
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                >
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     JBL Club 3412T <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">3.5&quot; 2-Way Drop-in (~$95 CAD)</span>
-                </Button>
-              </Link>
+                </a>
+              </Button>
 
-              <Link href="/out/toyota-speaker-harness" target="_blank" rel="sponsored nofollow" className="block">
-                <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700 cursor-pointer"
+              >
+                <a
+                  href="/out/toyota-speaker-harness"
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                >
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     Toyota Harness Pair <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">Plug & Play Adapter (~$18 CAD)</span>
-                </Button>
-              </Link>
+                </a>
+              </Button>
 
-              <Link href="/out/trim-removal-tools" target="_blank" rel="sponsored nofollow" className="block">
-                <Button variant="outline" className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full text-xs h-auto py-2.5 flex flex-col items-start text-left border-zinc-300 dark:border-zinc-700 cursor-pointer"
+              >
+                <a
+                  href="/out/trim-removal-tools"
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                >
                   <span className="font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1">
                     Trim Pry Tools <ExternalLink className="h-3 w-3 text-amber-500" />
                   </span>
                   <span className="text-[11px] text-zinc-500">Non-Marring Nylon (~$15 CAD)</span>
-                </Button>
-              </Link>
+                </a>
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -187,11 +211,15 @@ export default function Rav4SeModsGuidePage() {
                   Genuine perforated leather insert with PVC vinyl outers. Side-airbag deployment certified. Memory foam backing provides a luxury, OEM-grade feel.
                 </p>
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">~$600–$750 CAD</div>
-                <Link href="/out/clazzio-leather-covers" target="_blank" rel="sponsored nofollow" className="inline-block pt-1">
-                  <Button size="sm" variant="outline" className="text-xs h-7 gap-1">
+                <Button asChild size="sm" variant="outline" className="text-xs h-7 gap-1 cursor-pointer">
+                  <a
+                    href="/out/clazzio-leather-covers"
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                  >
                     Check Clazzio Fitments <ExternalLink className="h-3 w-3 text-amber-500" />
-                  </Button>
-                </Link>
+                  </a>
+                </Button>
               </div>
 
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 space-y-2 bg-zinc-50/60 dark:bg-zinc-900/40">
@@ -203,11 +231,15 @@ export default function Rav4SeModsGuidePage() {
                   Heavy-duty waterproof 4-layer faux leather. Custom molded to RAV4 5th-gen seats. Snug fit that wipes clean in winter slush and mud.
                 </p>
                 <div className="text-xs font-semibold text-amber-600 dark:text-amber-400">~$320–$390 CAD</div>
-                <Link href="/out/ekr-seat-covers" target="_blank" rel="sponsored nofollow" className="inline-block pt-1">
-                  <Button size="sm" variant="outline" className="text-xs h-7 gap-1">
+                <Button asChild size="sm" variant="outline" className="text-xs h-7 gap-1 cursor-pointer">
+                  <a
+                    href="/out/ekr-seat-covers"
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                  >
                     Check EKR on Amazon <ExternalLink className="h-3 w-3 text-amber-500" />
-                  </Button>
-                </Link>
+                  </a>
+                </Button>
               </div>
             </div>
           </CardContent>
@@ -275,12 +307,12 @@ export default function Rav4SeModsGuidePage() {
 
       {/* Back to Estimator CTA */}
       <div className="pt-4 flex items-center justify-between">
-        <Link href="/#estimator">
-          <Button className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold gap-2">
+        <Button asChild className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold gap-2 cursor-pointer">
+          <Link href="/#estimator">
             <Clock className="h-4 w-4" />
             Check Live SE vs XSE Wait Times
-          </Button>
-        </Link>
+          </Link>
+        </Button>
         <Link href="/" className="text-xs text-zinc-500 hover:text-zinc-300">
           Back to Dashboard
         </Link>

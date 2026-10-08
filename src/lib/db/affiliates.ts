@@ -10,12 +10,12 @@ export interface AffiliateRecord {
   isActive: boolean;
 }
 
-// Fallback registry matching 004_seed_canadian_data.sql
+// Fallback registry matching 004_seed_canadian_data.sql and 006_se_mods_affiliates.sql
 const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'tuxmat-rav4': {
     id: 'f1111111-1111-4111-8111-111111111111',
     slug: 'tuxmat-rav4',
-    destinationUrl: 'https://www.amazon.ca/dp/B08XYZ1234?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4&tag=toyotawaits-20',
     title: 'TuxMat Custom Floor Liners (RAV4)',
     category: 'accessories',
     clickCount: 0,
@@ -24,7 +24,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'tuxmat-sienna': {
     id: 'f2222222-2222-4222-8222-222222222222',
     slug: 'tuxmat-sienna',
-    destinationUrl: 'https://www.amazon.ca/dp/B09ABC5678?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+Toyota+Sienna&tag=toyotawaits-20',
     title: 'TuxMat Custom Floor Liners (Sienna 7/8 Passenger)',
     category: 'accessories',
     clickCount: 0,
@@ -33,7 +33,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'viofo-a229-pro': {
     id: 'f3333333-3333-4333-8333-333333333333',
     slug: 'viofo-a229-pro',
-    destinationUrl: 'https://www.amazon.ca/dp/B0CK123456?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=VIOFO+A229+Pro+4K&tag=toyotawaits-20',
     title: 'VIOFO A229 Pro 4K HDR Dual Dash Cam',
     category: 'electronics',
     clickCount: 0,
@@ -42,7 +42,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'screen-protector-12-3': {
     id: 'f4444444-4444-4444-8444-444444444444',
     slug: 'screen-protector-12-3',
-    destinationUrl: 'https://www.amazon.ca/dp/B0BYZ98765?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+12.3+screen+protector&tag=toyotawaits-20',
     title: '12.3-inch Infotainment Tempered Glass Screen Protector',
     category: 'accessories',
     clickCount: 0,
@@ -51,7 +51,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'no-drill-mud-flaps-rav4': {
     id: 'f5555555-5555-4555-8555-555555555555',
     slug: 'no-drill-mud-flaps-rav4',
-    destinationUrl: 'https://www.amazon.ca/dp/B07XYZ9999?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=A-Premium+mud+flaps+Toyota+RAV4&tag=toyotawaits-20',
     title: 'A-Premium No-Drill Mud Flaps Set for Toyota RAV4',
     category: 'exterior',
     clickCount: 0,
@@ -60,7 +60,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'grizzl-e-charger': {
     id: 'f6666666-6666-4666-8666-666666666666',
     slug: 'grizzl-e-charger',
-    destinationUrl: 'https://www.amazon.ca/dp/B082LMVSLY?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Grizzl-E+Level+2+EV+Charger&tag=toyotawaits-20',
     title: 'Grizzl-E Classic Level 2 EV Charger (40A, Canadian Winter Rated)',
     category: 'ev-charging',
     clickCount: 0,
@@ -69,7 +69,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'flo-g5': {
     id: 'f7777777-7777-4777-8777-777777777777',
     slug: 'flo-g5',
-    destinationUrl: 'https://www.amazon.ca/dp/B09XYZG5G5?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=FLO+Home+EV+Charger&tag=toyotawaits-20',
     title: 'FLO Home G5 Level 2 30A EVSE Charging Station',
     category: 'ev-charging',
     clickCount: 0,
@@ -105,8 +105,8 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'jbl-club-dash-speakers': {
     id: 'fbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
     slug: 'jbl-club-dash-speakers',
-    destinationUrl: 'https://www.amazon.ca/dp/B08XJBL34T?tag=toyotawaits-20',
-    title: 'JBL Club 3412T 3.5" Dash Tweeters / Midrange Speakers',
+    destinationUrl: 'https://www.amazon.ca/s?k=JBL+Club+3.5+speakers&tag=toyotawaits-20',
+    title: 'JBL Club 3.5" Dash Tweeters / Midrange Speakers',
     category: 'audio',
     clickCount: 0,
     isActive: true,
@@ -114,7 +114,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'toyota-speaker-harness': {
     id: 'fccccccc-cccc-4ccc-8ccc-cccccccccccc',
     slug: 'toyota-speaker-harness',
-    destinationUrl: 'https://www.amazon.ca/dp/B07TOYSPKR?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=RED+WOLF+Toyota+dash+speaker+wiring+harness&tag=toyotawaits-20',
     title: 'Red Wolf / Metra Toyota Dash Speaker Plug-and-Play Wiring Harness (Pair)',
     category: 'audio',
     clickCount: 0,
@@ -123,7 +123,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'trim-removal-tools': {
     id: 'fddddddd-dddd-4ddd-8ddd-dddddddddddd',
     slug: 'trim-removal-tools',
-    destinationUrl: 'https://www.amazon.ca/dp/B08TRIMKIT?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=auto+trim+removal+tool+kit&tag=toyotawaits-20',
     title: 'Non-Marring Automotive Dash Pry & Trim Removal Tool Kit',
     category: 'tools',
     clickCount: 0,
@@ -132,7 +132,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'clazzio-leather-covers': {
     id: 'feeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
     slug: 'clazzio-leather-covers',
-    destinationUrl: 'https://www.clazzio.com/toyota-rav4-prime?ref=toyotawaits',
+    destinationUrl: 'https://www.clazzio.com/',
     title: 'Clazzio Custom-Fit Leather / PVC Seat Covers (RAV4 Prime)',
     category: 'interior',
     clickCount: 0,
@@ -141,13 +141,30 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'ekr-seat-covers': {
     id: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
     slug: 'ekr-seat-covers',
-    destinationUrl: 'https://www.amazon.ca/dp/B09EKRLEAT?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=EKR+custom+fit+car+seat+covers+Toyota+RAV4&tag=toyotawaits-20',
     title: 'EKR Custom Tailored Full Leatherette Seat Covers (RAV4 Prime)',
     category: 'interior',
     clickCount: 0,
     isActive: true,
   },
 };
+
+function isLegacyPlaceholderUrl(url: string): boolean {
+  return (
+    url.includes('B08XYZ1234') ||
+    url.includes('B08XJBL34T') ||
+    url.includes('B07TOYSPKR') ||
+    url.includes('B08TRIMKIT') ||
+    url.includes('B09EKRLEAT') ||
+    url.includes('B09ABC5678') ||
+    url.includes('B0CK123456') ||
+    url.includes('B0BYZ98765') ||
+    url.includes('B07XYZ9999') ||
+    url.includes('B09XYZG5G5') ||
+    url.includes('404-page-not-found') ||
+    url.includes('clazzio.com/toyota-rav4-prime')
+  );
+}
 
 export async function getAffiliateRedirect(slug: string): Promise<string | null> {
   // If Supabase is connected in production
@@ -172,6 +189,12 @@ export async function getAffiliateRedirect(slug: string): Promise<string | null>
           .update({ click_count: (data.click_count || 0) + 1 })
           .eq('slug', slug)
           .then();
+
+        // If the database URL is an old placeholder/broken URL, transparently return active URL
+        if (isLegacyPlaceholderUrl(data.destination_url)) {
+          const fallback = FALLBACK_AFFILIATES[slug];
+          return fallback ? fallback.destinationUrl : data.destination_url;
+        }
 
         return data.destination_url;
       }

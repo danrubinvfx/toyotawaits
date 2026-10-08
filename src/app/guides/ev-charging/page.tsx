@@ -91,12 +91,12 @@ export default function EVChargingGuidePage() {
               </li>
             </ul>
 
-            <a href="/out/grizzl-e-charger" target="_blank" rel="sponsored nofollow">
-              <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs">
+            <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
+              <a href="/out/grizzl-e-charger" target="_blank" rel="noopener noreferrer sponsored">
                 Check Canadian Price
                 <ExternalLink className="h-3.5 w-3.5" />
-              </Button>
-            </a>
+              </a>
+            </Button>
           </CardContent>
         </Card>
 
@@ -128,12 +128,12 @@ export default function EVChargingGuidePage() {
               </li>
             </ul>
 
-            <a href="/out/flo-g5" target="_blank" rel="sponsored nofollow">
-              <Button className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs">
+            <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
+              <a href="/out/flo-g5" target="_blank" rel="noopener noreferrer sponsored">
                 View FLO Station Specs
                 <ExternalLink className="h-3.5 w-3.5" />
-              </Button>
-            </a>
+              </a>
+            </Button>
           </CardContent>
         </Card>
       </div>

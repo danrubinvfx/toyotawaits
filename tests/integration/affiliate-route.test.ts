@@ -58,6 +58,11 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.status).toBe(307);
       const location = response.headers.get('Location');
       expect(location).toContain(item.targetDomain);
+      if (item.targetDomain === 'amazon.ca') {
+        expect(location).toContain('/s?k=');
+        expect(location).toContain('tag=toyotawaits-20');
+        expect(location).not.toContain('B08XJBL34T');
+      }
       expect(response.headers.get('Cache-Control')).toContain('no-store');
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
