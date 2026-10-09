@@ -116,6 +116,7 @@ export function Footer() {
           <p className="leading-relaxed">
             <strong>Monetization & Affiliate Disclosure:</strong> ToyotaWaits.ca is community-supported. When you purchase
             accessories through curated links on this site, we may earn an affiliate commission at no additional cost to you.
+            As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
             We do not accept paid dealer promotions or sponsored wait-time modifications.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-400">

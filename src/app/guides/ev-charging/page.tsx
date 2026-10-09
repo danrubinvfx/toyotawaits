@@ -140,7 +140,7 @@ export default function EVChargingGuidePage() {
 
       {/* Disclosure */}
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
-        <strong>Affiliate Transparency:</strong> Links on this guide use first-party cloaked redirects that earn a referral fee supporting ToyotaWaits.ca hosting and open data infrastructure. We do not use third-party tracking cookies.
+        <strong>Affiliate Transparency:</strong> Links on this guide use first-party cloaked redirects that earn a referral fee supporting ToyotaWaits.ca hosting and open data infrastructure. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you. We do not use third-party tracking cookies.
       </p>
     </div>
   );

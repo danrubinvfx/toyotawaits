@@ -49,6 +49,14 @@ export default function LandCruiserModsGuidePage() {
         description="The Land Cruiser 250 brings real off-road hardware back to Canadian Toyota showrooms. But buyers opting for the classic '1958' retro-round headlight trim face a few budget compromises: an anemic base audio system, unprotected rocker panels, and massive 20-inch street wheels on higher trims. Here is how Canadian owners outfit the 1958 for wilderness durability."
       />
 
+      {/* Compliant Affiliate Transparency Notice */}
+      <div className="inline-flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 border-l-2 border-amber-500/60 pl-3 py-1">
+        <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+        <span>
+          Curated enthusiast guide. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
+        </span>
+      </div>
+
       {/* Pre-Flight Checklist */}
       <ToolChecklist
         timeEst="2.5 Hours Total"
@@ -72,6 +80,11 @@ export default function LandCruiserModsGuidePage() {
           categoryBadge="Sound & Acoustics"
           icon={Volume2}
           priceEst="~$185 CAD"
+          installEffort="25-min Install"
+          integration="Direct Harness Tap"
+          fitmentBadge="Verified 2024–2026 Land Cruiser 250"
+          whyThisPick="High-sensitivity 3.5-inch 2-way drivers tap into factory harnesses with zero wire cutting, completely eliminating the muddy transistor-radio tone over tire and wind noise while preserving factory head unit efficiency."
+          proTip="Use an angled 10mm ratcheting wrench to access the speaker bolts near the steep angle of the front windshield without scuffing the glass."
           factoryIssue="The base 1958 trim comes with an elementary 6-speaker sound system equipped with tiny, lightweight paper-cone dash tweeters. Over highway tire rumble and wind noise, dialogue and music sound muffled, flat, and strained."
           solution="High-sensitivity (89–91 dB) 3.5-inch 2-way coaxial dash speakers and matched front door drivers connected via plug-and-play Toyota wiring harnesses. Delivers crystal-clear acoustics without requiring an external amplifier or cutting factory harnesses."
           steps={[
@@ -81,7 +94,7 @@ export default function LandCruiserModsGuidePage() {
             'Fasten the new 3.5-inch speakers in place, snap the grilles back flush, and enjoy concert-grade highs.',
           ]}
           affiliateSlug="lc250-speaker-upgrade"
-          affiliateLabel="Check LC250 Speaker Upgrades"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Plug & Play Dash / Door Kit (~$185 CAD)"
         />
 
@@ -92,6 +105,11 @@ export default function LandCruiserModsGuidePage() {
           categoryBadge="Armor & Protection"
           icon={Shield}
           priceEst="~$850 CAD"
+          installEffort="2-hr Install"
+          integration="Direct Frame Bolt-On"
+          fitmentBadge="Verified 2024–2026 Land Cruiser 250"
+          whyThisPick="Direct bolt-on 1.75-inch DOM tubular steel sliders protect vulnerable hybrid battery cooling lines and body sills from trail boulders and serve as rated hi-lift jack recovery points."
+          proTip="Support the slider on a floor jack with a wood block to align bolt holes without straining. Apply anti-seize to all Grade 8 chassis bolts to prevent road-salt galvanic corrosion."
           factoryIssue="Unlike legacy 70-series or 80-series Cruisers, the LC250 features hybrid electrical conduits and battery cooling passages routed beneath the body. Standard factory side steps are thin sheet metal that will crumple directly into the vehicle sills on rock obstacles."
           solution="Heavy-duty 1.75-inch DOM tubular steel rock sliders that bolt directly to existing chassis frame holes. They provide 100% kick-out protection against boulders, shield hybrid wiring conduits, and function as certified high-lift jack points."
           steps={[
@@ -101,7 +119,7 @@ export default function LandCruiserModsGuidePage() {
             'Apply touch-up black enamel to prevent winter road brine corrosion around frame seams.',
           ]}
           affiliateSlug="lc250-rock-sliders"
-          affiliateLabel="View Land Cruiser Rock Sliders"
+          ctaLabel="View Exact Part Listing ↗"
           affiliateSublabel="Heavy-Duty Frame-Mounted Armor (~$850 CAD)"
         />
 
@@ -161,6 +179,9 @@ export default function LandCruiserModsGuidePage() {
         </div>
         <p>
           ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. We route all outbound clicks through our zero-PII serverless proxy to prevent advertising pixels from tracking your browsing activity.
+        </p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
+          As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
 

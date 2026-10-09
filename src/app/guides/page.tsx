@@ -254,9 +254,9 @@ export default function GuidesIndexPage() {
                 <h3 className="text-sm font-bold text-zinc-100 leading-tight">{item.title}</h3>
                 <p className="text-xs text-zinc-400 leading-relaxed">{item.tagline}</p>
               </div>
-              <Button asChild size="sm" variant="outline" className="w-full text-xs font-semibold border-zinc-700 hover:border-amber-500 hover:text-amber-400 gap-1.5">
-                <a href={`/out/${item.slug}`} target="_blank" rel="noopener noreferrer">
-                  View Product <ExternalLink className="h-3 w-3" />
+              <Button asChild size="sm" variant="outline" className="w-full text-xs font-semibold border-zinc-700 hover:border-amber-500 hover:text-amber-400 gap-1.5 cursor-pointer">
+                <a href={`/out/${item.slug}`} target="_blank" rel="noopener noreferrer sponsored">
+                  Check on Amazon.ca <ExternalLink className="h-3 w-3" />
                 </a>
               </Button>
             </Card>
@@ -298,6 +298,17 @@ export default function GuidesIndexPage() {
           })}
         </div>
       </section>
+
+      {/* Compliance / Affiliate Disclaimer */}
+      <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 text-xs text-zinc-500 space-y-1.5 bg-zinc-50 dark:bg-zinc-900/40">
+        <div className="flex items-center gap-1.5 font-semibold text-zinc-700 dark:text-zinc-300">
+          <ShieldCheck className="h-4 w-4 text-amber-500" />
+          Affiliate Transparency Notice
+        </div>
+        <p>
+          ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
+        </p>
+      </div>
     </div>
   );
 }

@@ -49,6 +49,14 @@ export default function SiennaModsGuidePage() {
         description="The 4th-generation Toyota Sienna hybrid is Canada's definitive road-trip machine, but Toyota left a few glaring gaps: a rear suspension that squats under heavy cargo, a cavernous center console bridge that swallows phones, and a single dim cargo bulb. Here is how Canadian owners dial it in before the cross-country trek."
       />
 
+      {/* Compliant Affiliate Transparency Notice */}
+      <div className="inline-flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 border-l-2 border-amber-500/60 pl-3 py-1">
+        <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+        <span>
+          Curated enthusiast guide. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
+        </span>
+      </div>
+
       {/* Pre-Flight Checklist */}
       <ToolChecklist
         timeEst="1.5 Hours Total"
@@ -73,6 +81,11 @@ export default function SiennaModsGuidePage() {
           categoryBadge="Interior Utility"
           icon={Layers}
           priceEst="~$35 CAD"
+          installEffort="5-min Install"
+          integration="OEM Factory Look"
+          fitmentBadge="Verified 2021–2026 Sienna"
+          whyThisPick="Toyota's 'flying bridge' console leaves a massive open carpeted hollow. This laser-formed ABS tray friction-locks cleanly into the floor contours with zero tape or screws, keeping water bottles, charging cables, and sunglasses from rolling under the pedals during hard braking."
+          proTip="Slide both front captain's chairs back completely before inserting the lower bridge tray. The textured rubber mats pop out in seconds for easy soap-and-water washing when kids spill snacks."
           factoryIssue="Toyota's 'bridge console' design creates a huge open floor cavity beneath the shifter. Without dividers, backpacks, drink bottles, and charging cords slide around and wedge themselves behind the gas pedal."
           solution="Dual-tier molded ABS organizer trays with textured anti-slip rubber inserts. The top tray holds phones and sunglasses directly under the shifter, while the lower tray compartmentalizes wipes, tablets, and road snacks."
           steps={[
@@ -82,7 +95,7 @@ export default function SiennaModsGuidePage() {
             'Wipe clean in seconds whenever juice boxes spill.',
           ]}
           affiliateSlug="sienna-console-bridge-tray"
-          affiliateLabel="Check Sienna Bridge Trays"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Custom 4th-Gen Fitment (~$35 CAD)"
         />
 
@@ -93,6 +106,11 @@ export default function SiennaModsGuidePage() {
           categoryBadge="Suspension & Towing"
           icon={Sliders}
           priceEst="~$165 CAD"
+          installEffort="1-hr Install"
+          integration="In-Coil Direct Insert"
+          fitmentBadge="Verified 2021–2026 Sienna"
+          whyThisPick="Eliminates the dangerous rear sag and headlight misalignment that happens when loading 7 passengers, hitch bike racks, and cargo carriers. Polyurethane air cylinders support up to 1,000 lbs of leveling capacity without altering unloaded ride comfort."
+          proTip="Soak the red polyurethane cylinders in hot water for 5 minutes prior to installation to make them pliable. Flatten and zip-tie them tight in hot dog style so they slide easily between the rear spring coils."
           factoryIssue="The Sienna's soft multi-link rear suspension rides like a cloud empty, but squats severely when loaded with 7 passengers, hitch-mounted 4-bike racks, and rooftop cargo boxes. This causes bottoming out over Canadian frost heaves and misaligns LED headlight aim into oncoming traffic."
           solution="Durable polyurethane air cylinders that slip directly inside the factory rear coil springs. Inflated between 5–35 PSI via standard Schrader valves, they level the vehicle, eliminate sag, and stabilize heavy crosswinds."
           steps={[
@@ -102,7 +120,7 @@ export default function SiennaModsGuidePage() {
             'Install Schrader valves and inflate to 15–20 PSI for heavy road-trip loads (5 PSI when driving unloaded).',
           ]}
           affiliateSlug="sienna-air-lift-1000"
-          affiliateLabel="View Air Lift 1000 Kit"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Sienna In-Coil Helper Kit (~$165 CAD)"
         />
 
@@ -113,6 +131,11 @@ export default function SiennaModsGuidePage() {
           categoryBadge="Safety & Electronics"
           icon={Video}
           priceEst="~$210 CAD"
+          installEffort="15-min Install"
+          integration="OEM Mirror Shroud Tap"
+          fitmentBadge="Verified 2021–2026 Sienna"
+          whyThisPick="Replaces the factory TSS rearview mirror shell with a discrete 4K Sony-sensor camera. It taps into the mirror harness with a plug-and-play Y-splitter, meaning zero dangling cords down the windshield and zero fuse-box cables blocking the A-pillar side curtain airbags."
+          proTip="Gently squeeze the sides of the factory mirror shroud with a nylon trim tool rather than pulling downward to prevent snapping the factory plastic retaining clips."
           factoryIssue="Standard suction-cup dashcams clutter the massive Sienna windshield and require running long wires down the A-pillar, potentially interfering with side curtain airbag deployment."
           solution="Custom ABS plastic housing that completely replaces the factory TSS (Toyota Safety Sense) rearview mirror cover. It draws power from an included plug-and-play pass-through Y-harness tapped directly behind the auto-dimming mirror."
           steps={[
@@ -122,7 +145,7 @@ export default function SiennaModsGuidePage() {
             'Snap the FitcamX camera housing into the factory mirror base clips and insert the high-endurance MicroSD card.',
           ]}
           affiliateSlug="sienna-fitcamx-dashcam"
-          affiliateLabel="Check FitcamX 4K on Amazon"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Plug & Play Mirror Tap (~$210 CAD)"
         />
 
@@ -133,6 +156,11 @@ export default function SiennaModsGuidePage() {
           categoryBadge="Lighting Upgrade"
           icon={Lightbulb}
           priceEst="~$48 CAD"
+          installEffort="25-min Install"
+          integration="Direct Trunk Tap"
+          fitmentBadge="Verified 2021–2026 Sienna"
+          whyThisPick="The factory trunk light is a single dim incandescent bulb low on the left panel that gets blocked as soon as you load one stroller. These dual LED modules pop into the factory tailgate knockout panels and connect inline with zero wire splicing."
+          proTip="Use a rigid zip-tie as a fish tape to pull the thin jumper harness through the factory rubber wire loom boot between the liftgate and rear ceiling."
           factoryIssue="The factory trunk light is a single, dim incandescent bulb mounted low on the left trim panel. The second you load one hockey bag or stroller, the light is blocked, leaving the entire cargo floor in pitch darkness."
           solution="Dual ultra-bright LED strip lenses that replace the plastic access knockouts on the inside of the rear hatch. When the power liftgate opens, the lamps shine downward from above, flooding the trunk and ground with bright daylight white LED light."
           steps={[
@@ -142,7 +170,7 @@ export default function SiennaModsGuidePage() {
             'Snap the LED light pods flush into the tailgate access holes and test with the hatch button.',
           ]}
           affiliateSlug="sienna-hatch-led-lights"
-          affiliateLabel="Check Sienna Hatch LEDs"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Dual Liftgate Light Pods (~$48 CAD)"
         />
       </section>
@@ -155,6 +183,9 @@ export default function SiennaModsGuidePage() {
         </div>
         <p>
           ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. We route all outbound clicks through our zero-PII serverless proxy to prevent advertising pixels from tracking your browsing activity.
+        </p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
+          As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
 

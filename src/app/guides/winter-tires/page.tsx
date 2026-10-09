@@ -137,7 +137,7 @@ export default function WinterTiresGuidePage() {
       </div>
 
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
-        <strong>Affiliate Transparency:</strong> Product links redirect through clean first-party redirects earning referral fees that maintain ToyotaWaits.ca. Zero third-party trackers.
+        <strong>Affiliate Transparency:</strong> Product links redirect through clean first-party redirects earning referral fees that maintain ToyotaWaits.ca. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you. Zero third-party trackers.
       </p>
     </div>
   );

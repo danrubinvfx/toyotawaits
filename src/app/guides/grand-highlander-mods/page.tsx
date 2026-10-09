@@ -50,6 +50,14 @@ export default function GrandHighlanderModsGuidePage() {
         description="The Toyota Grand Highlander delivers limousine-grade cabin space, but Canadian owners quickly run into small ergonomic oversights: smartphones sliding off the slick Qi charging pad, a pitch-black trunk at night, and a center console deep enough to lose a hockey puck. Here are the top community-proven fixes."
       />
 
+      {/* Compliant Affiliate Transparency Notice */}
+      <div className="inline-flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400 border-l-2 border-amber-500/60 pl-3 py-1">
+        <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+        <span>
+          Curated enthusiast guide. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
+        </span>
+      </div>
+
       {/* Pre-Flight Checklist */}
       <ToolChecklist
         timeEst="45 Minutes Total"
@@ -72,6 +80,11 @@ export default function GrandHighlanderModsGuidePage() {
           categoryBadge="Lighting Upgrade"
           icon={Lightbulb}
           priceEst="~$60 CAD"
+          installEffort="20-min Install"
+          integration="Direct Trunk Harness"
+          fitmentBadge="Verified 2024–2026 Grand Highlander"
+          whyThisPick="LED hatch lights plug directly into the factory trunk harness service cutouts, replacing the single dim side courtesy lamp with twin overhead floodlights that brightly illuminate hockey bags, groceries, and tailgate gear."
+          proTip="Use nylon pry tools along the outer service cover perimeter. When tapping the factory connector, test both the left and right touch-switch lenses before snapping the light pods flush."
           factoryIssue="Despite being a 3-row flagship hauler, the Grand Highlander trunk has only a single weak side courtesy light. When hockey bags, coolers, or camping gear are loaded, the trunk is pitch-black at night."
           solution="Dual high-output LED light assemblies (compatible with OEM PT944-48260-C0 style harnesses) that snap directly into the rear liftgate inner service trim. They flood the entire cargo bed and ground from overhead."
           steps={[
@@ -81,7 +94,7 @@ export default function GrandHighlanderModsGuidePage() {
             'Snap the flush-mounted LED light housings into place and toggle the touch-sensitive integrated lens switches.',
           ]}
           affiliateSlug="gh-rear-cargo-lamps"
-          affiliateLabel="Check Grand Highlander Cargo Lamps"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Dual Liftgate LED Kit (~$60 CAD)"
         />
 
@@ -92,6 +105,11 @@ export default function GrandHighlanderModsGuidePage() {
           categoryBadge="Interior Storage"
           icon={Layers}
           priceEst="~$28 CAD"
+          installEffort="Plug & Play"
+          integration="OEM Factory Look"
+          fitmentBadge="Verified 2024–2026 Grand Highlander"
+          whyThisPick="Laser-scanned ABS tray turns the 10-inch deep console chasm into an organized two-tier command center with cable routing notches, so small essentials don't sink out of reach while driving."
+          proTip="The rubber mat inserts are removable for quick cleaning when dust or coin grit collects. The integrated side notch allows lightning or USB-C cables to route into the armrest without pinching."
           factoryIssue="The Grand Highlander's center console storage bin is cavernous—over 10 inches deep. Small essentials like sunglasses, parking passes, wallets, and pens sink to the bottom and become impossible to find while driving."
           solution="Precision laser-scanned ABS dual-tier organizer tray with textured rubber liners and integrated USB cord pass-through notches. Divides the bin into quick-access top storage while keeping bulky items underneath."
           steps={[
@@ -101,7 +119,7 @@ export default function GrandHighlanderModsGuidePage() {
             'Lift the tray out effortlessly whenever you need access to the lower deep storage vault.',
           ]}
           affiliateSlug="gh-console-organizer-tray"
-          affiliateLabel="View Console Organizer Tray"
+          ctaLabel="View Exact Part Listing ↗"
           affiliateSublabel="Grand Highlander Custom Fit (~$28 CAD)"
         />
 
@@ -112,6 +130,11 @@ export default function GrandHighlanderModsGuidePage() {
           categoryBadge="Cabin Ergonomics"
           icon={Zap}
           priceEst="~$22 CAD"
+          installEffort="Plug & Play"
+          integration="OEM Factory Look"
+          fitmentBadge="Verified 2024–2026 Grand Highlander"
+          whyThisPick="Cuts out annoying smartphone sliding over the hard factory plastic during sharp turns, maintaining uninterrupted induction charging coils contact without decreasing power delivery."
+          proTip="Clean the factory tray with an isopropyl alcohol wipe before dropping the mat in to remove residual manufacturing oils and ensure the silicone edges lay completely flat."
           factoryIssue="The factory Qi wireless charging tray has a slick, hard plastic finish. Under normal Canadian winter cornering or acceleration, smartphones slide across the shelf, immediately disconnecting the wireless charging cycle and vibrating loudly."
           solution="Heavy-duty textured silicone rubber pad custom-cut to the exact contours of the Grand Highlander charging shelf. Provides high-friction grip without dampening induction coil charging speeds."
           steps={[
@@ -120,7 +143,7 @@ export default function GrandHighlanderModsGuidePage() {
             'Place your iPhone or Android phone onto the mat—it stays firmly anchored over the charging coils through tight turns.',
           ]}
           affiliateSlug="gh-wireless-charger-mat"
-          affiliateLabel="Check Wireless Charger Mat"
+          ctaLabel="Check Fitment on Amazon.ca ↗"
           affiliateSublabel="Non-Slip Silicone Mat (~$22 CAD)"
         />
 
@@ -162,6 +185,9 @@ export default function GrandHighlanderModsGuidePage() {
         </div>
         <p>
           ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. We route all outbound clicks through our zero-PII serverless proxy to prevent advertising pixels from tracking your browsing activity.
+        </p>
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
+          As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
 
