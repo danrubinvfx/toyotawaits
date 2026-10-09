@@ -129,6 +129,14 @@ export function Header() {
                   <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Land Cruiser 250 (1958)</p>
                   <p className="text-[11px] text-zinc-500">Audio overhaul &amp; rock sliders</p>
                 </Link>
+                <Link
+                  href="/guides/prius-mods"
+                  onClick={() => setDesktopModsOpen(false)}
+                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                >
+                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Toyota Prius &amp; Prime</p>
+                  <p className="text-[11px] text-zinc-500">OEM mirror dashcam, mud flaps &amp; floor liners</p>
+                </Link>
                 <div className="pt-1 mt-1 border-t border-zinc-100 dark:border-zinc-800">
                   <Link
                     href="/guides"
@@ -405,6 +413,26 @@ export function Header() {
                     </div>
                     <p className="text-[11px] text-zinc-500">
                       Speaker upgrades, rock sliders &amp; winter armor
+                    </p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all shrink-0" />
+                </Link>
+
+                <Link
+                  href="/guides/prius-mods"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
+                >
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-amber-500 dark:text-amber-400">Toyota Prius &amp; Prime</span>
+                      <span className="text-xs text-zinc-400">•</span>
+                      <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Gen 5 Essentials
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-zinc-500">
+                      OEM mirror dashcam, mud flaps &amp; winter floor liners
                     </p>
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all shrink-0" />

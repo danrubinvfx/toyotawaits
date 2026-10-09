@@ -312,4 +312,42 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.getAllByText(/510 Days/i).length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  it('displays contextual mod guide banner for selected vehicle model', async () => {
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        province: 'BC',
+        sampleCounts: { total: 10, delivered: 8, pending: 2 },
+        waitStats: { p25: 300, median: 400, p75: 500, mean: 400, min: 200, max: 600 },
+        pricingInsights: { atMsrpPercent: 85, aboveMsrpPercent: 15, avgAddonsCad: 350 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator />);
+
+    await waitFor(() => {
+      const rav4Link = screen.getByRole('link', { name: /RAV4 Prime & Hybrid Essential Mods/i });
+      expect(rav4Link).toHaveAttribute('href', '/guides/rav4-se-mods');
+    });
+
+    // Select Prius
+    const modelSelect = screen.getByLabelText(/Vehicle Model/i);
+    fireEvent.change(modelSelect, { target: { value: 'prius' } });
+
+    await waitFor(() => {
+      const priusLink = screen.getByRole('link', { name: /2023-2026 Prius & Prius Prime Essential Mods/i });
+      expect(priusLink).toHaveAttribute('href', '/guides/prius-mods');
+    });
+  });
 });

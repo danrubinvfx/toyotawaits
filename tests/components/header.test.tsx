@@ -60,6 +60,8 @@ describe('Header Component', () => {
     expect(screen.getByText(/Road-Trip & Family Mods/i)).toBeInTheDocument();
     expect(screen.getByText(/Cabin & Utility Mods/i)).toBeInTheDocument();
     expect(screen.getByText(/1958 Trim Overhaul/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gen 5 Essentials/i)).toBeInTheDocument();
+    expect(screen.getByText(/OEM mirror dashcam, mud flaps & winter floor liners/i)).toBeInTheDocument();
     expect(screen.getByText(/View All Guides →/i)).toBeInTheDocument();
   });
 
