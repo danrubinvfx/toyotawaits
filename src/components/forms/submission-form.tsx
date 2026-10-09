@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useId } from 'react';
+import React, { useState, useId, useRef } from 'react';
 import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
@@ -48,9 +48,11 @@ export function SubmissionForm() {
   const [notes, setNotes] = useState<string>('');
   const [honeypot, setHoneypot] = useState<string>('');
 
-  // UI States
+  // UI States & Double-Submit Protection
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const isSubmittingRef = useRef<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successBanner, setSuccessBanner] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [successModalData, setSuccessModalData] = useState<{
     id: string;
@@ -59,6 +61,24 @@ export function SubmissionForm() {
     waitDays?: number | null;
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
+
+  // Reset form inputs after successful submission
+  const resetFormFields = () => {
+    setSelectedModelSlug('rav4');
+    setSelectedPowertrainSlug('hev');
+    setSelectedTrimId('30000000-0000-4000-8000-000000000002');
+    setProvince('ON');
+    setDealershipCity('');
+    setModelYear(2025);
+    setOrderDate('2024-11-01');
+    setStatus('pending');
+    setDeliveryDate('');
+    setPricing('at_msrp');
+    setMandatoryAddonsCad('0');
+    setNotes('');
+    setHoneypot('');
+    setFieldErrors({});
+  };
 
   // Derive catalog objects
   const currentModel: CatalogModel =
@@ -97,9 +117,14 @@ export function SubmissionForm() {
   // Submission Handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMsg(null);
-    setFieldErrors({});
+    if (isSubmitting || isSubmittingRef.current) {
+      return;
+    }
+    isSubmittingRef.current = true;
     setIsSubmitting(true);
+    setErrorMsg(null);
+    setSuccessBanner(null);
+    setFieldErrors({});
 
     try {
       const currentTrim = currentTrims.find((t) => t.id === selectedTrimId) || currentTrims[0];
@@ -135,7 +160,6 @@ export function SubmissionForm() {
           setFieldErrors(result.error.details);
         }
         setErrorMsg(result.error?.message || 'Failed to record your submission. Please check the inputs.');
-        setIsSubmitting(false);
         return;
       }
 
@@ -152,10 +176,15 @@ export function SubmissionForm() {
       });
 
       setSuccessModalData(result.data);
-      setIsSubmitting(false);
+      setSuccessBanner(
+        'Wait time recorded successfully! Your timeline has been added to our Canadian database. The form has been reset for new entries.'
+      );
+      resetFormFields();
     } catch (err: any) {
       console.error('Submission request error:', err);
       setErrorMsg('A network error occurred. Please check your connection and try again.');
+    } finally {
+      isSubmittingRef.current = false;
       setIsSubmitting(false);
     }
   };
@@ -187,6 +216,30 @@ export function SubmissionForm() {
         </CardHeader>
 
         <CardContent className="pt-6">
+          {successBanner && (
+            <div
+              data-testid="success-banner"
+              className="mb-6 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-100 animate-in fade-in slide-in-from-top-1"
+            >
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                <div>
+                  <p className="font-semibold">Wait Time Recorded Successfully!</p>
+                  <p className="text-xs mt-0.5 text-emerald-700 dark:text-emerald-300">
+                    {successBanner}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSuccessBanner(null)}
+                className="text-xs text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-100 hover:underline shrink-0"
+              >
+                Dismiss
+              </button>
+            </div>
+          )}
+
           {errorMsg && (
             <div className="mb-6 flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200">
               <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
@@ -430,6 +483,7 @@ export function SubmissionForm() {
             <Button
               type="submit"
               disabled={isSubmitting}
+              aria-busy={isSubmitting}
               className="w-full h-11 text-base font-semibold shadow-md gap-2"
             >
               {isSubmitting ? (

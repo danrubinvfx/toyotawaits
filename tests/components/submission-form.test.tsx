@@ -106,4 +106,129 @@ describe('SubmissionForm Component', () => {
       expect(screen.getByText('Validation failed for submission.')).toBeInTheDocument();
     });
   });
+
+  it('disables submit button and shows loading state while request is in-flight', async () => {
+    let resolvePromise: (value: any) => void;
+    const pendingPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+
+    global.fetch = vi.fn().mockReturnValue(pendingPromise);
+
+    render(<SubmissionForm />);
+
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+    fireEvent.click(submitBtn);
+
+    // Button should be disabled and showing loading spinner
+    expect(submitBtn).toBeDisabled();
+    expect(screen.getByText(/Recording Secure Submission.../i)).toBeInTheDocument();
+
+    // Resolve the promise
+    resolvePromise!({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          id: 'sub-done',
+          status: 'pending',
+          editKey: 'edit-key-done',
+        },
+      }),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    });
+  });
+
+  it('debounces rapid double submissions to prevent duplicate entries', async () => {
+    let resolvePromise: (value: any) => void;
+    const pendingPromise = new Promise((resolve) => {
+      resolvePromise = resolve;
+    });
+
+    global.fetch = vi.fn().mockReturnValue(pendingPromise);
+
+    render(<SubmissionForm />);
+
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+
+    // Fire multiple rapid clicks
+    fireEvent.click(submitBtn);
+    fireEvent.click(submitBtn);
+    fireEvent.click(submitBtn);
+
+    // Exactly 1 fetch request should be dispatched
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+
+    // Clean up promise
+    resolvePromise!({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          id: 'sub-single',
+          status: 'pending',
+          editKey: 'key-single',
+        },
+      }),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    });
+  });
+
+  it('resets form fields and displays a clear success banner upon successful insert', async () => {
+    const mockResponse = {
+      success: true,
+      data: {
+        id: 'sub-reset-test',
+        status: 'pending',
+        editKey: 'reset-edit-key',
+      },
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockResponse,
+    } as any);
+
+    render(<SubmissionForm />);
+
+    // Populate custom field values
+    const cityInput = screen.getByLabelText(/City \(Optional\)/i);
+    fireEvent.change(cityInput, { target: { value: 'Calgary' } });
+    expect(cityInput).toHaveValue('Calgary');
+
+    const notesInput = screen.getByLabelText(/Notes \/ Experience/i);
+    fireEvent.change(notesInput, { target: { value: 'Seamless MSRP delivery' } });
+    expect(notesInput).toHaveValue('Seamless MSRP delivery');
+
+    const addonsInput = screen.getByLabelText(/Mandatory Add-ons/i);
+    fireEvent.change(addonsInput, { target: { value: '450' } });
+    expect(addonsInput).toHaveValue(450);
+
+    // Submit form
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    });
+
+    // Close success modal to return to the form
+    const doneBtn = screen.getByRole('button', { name: /Done & View Estimates/i });
+    fireEvent.click(doneBtn);
+
+    // Check success banner is rendered on the page
+    expect(screen.getByTestId('success-banner')).toBeInTheDocument();
+    expect(screen.getByText(/Your timeline has been added to our Canadian database/i)).toBeInTheDocument();
+
+    // Check fields are reset
+    expect(cityInput).toHaveValue('');
+    expect(notesInput).toHaveValue('');
+    expect(addonsInput).toHaveValue(0);
+  });
 });
