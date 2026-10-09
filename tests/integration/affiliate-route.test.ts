@@ -129,5 +129,32 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
   });
+
+  it('correctly redirects all 7 Gen 5 Prius and Prius Prime mod slugs with 307 status and danrubin03-20 tag', async () => {
+    const priusSlugs = [
+      'fitcamx-prius',
+      'prius-mud-flaps',
+      'prius-bumper-protector',
+      'prius-all-weather-liners',
+      'prius-console-organizer',
+      'prius-screen-protector',
+      'prius-prime-portable-charger',
+    ];
+
+    for (const slug of priusSlugs) {
+      const request = new NextRequest(`http://localhost:3000/out/${slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location');
+      expect(location).toContain('amazon.ca');
+      expect(location).toContain('/s?k=');
+      expect(location).toContain('tag=danrubin03-20');
+      expect(response.headers.get('Cache-Control')).toContain('no-store');
+      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+    }
+  });
 });
 

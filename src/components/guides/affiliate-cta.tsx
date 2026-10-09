@@ -44,7 +44,7 @@ export function AffiliateCTA({
       )}
     >
       <a
-        href={`/out/${slug}`}
+        href={slug.startsWith('http') ? slug : `/out/${slug}`}
         target="_blank"
         rel="noopener noreferrer sponsored"
       >

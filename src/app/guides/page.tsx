@@ -74,6 +74,19 @@ const MOD_GUIDES = [
     highlights: ['Drop-in 3.5" & 6.5" speaker upgrade', 'Frame-mounted rock sliders & underside armor', 'Severe snow tire & wheel packages'],
     href: '/guides/land-cruiser-mods',
   },
+  {
+    slug: 'prius-mods',
+    title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods',
+    tagline: 'The essential exterior armor, interior protection, and tech upgrades for Canadian Gen 5 Prius owners.',
+    badge: 'Gen 5 Essential Armor',
+    model: 'Prius & Prius Prime',
+    highlights: [
+      'FitcamX OEM-Integrated 4K Dashcam',
+      'Molded Splash Guards & Mud Flap Kit',
+      '3D All-Weather TPE Floor & Cargo Liners',
+    ],
+    href: '/guides/prius-mods',
+  },
 ];
 
 const PREP_GUIDES = [

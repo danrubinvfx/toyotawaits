@@ -27,6 +27,14 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(guideEntry).toBeDefined();
     expect(guideEntry?.priority).toBe(0.8);
     expect(guideEntry?.changeFrequency).toBe('monthly');
+
+    // Prius Mods Guide: https://toyotawaits.ca/guides/prius-mods (priority 0.8, weekly)
+    const priusGuideEntry = sitemapEntries.find(
+      (e) => e.url === 'https://toyotawaits.ca/guides/prius-mods'
+    );
+    expect(priusGuideEntry).toBeDefined();
+    expect(priusGuideEntry?.priority).toBe(0.8);
+    expect(priusGuideEntry?.changeFrequency).toBe('weekly');
   });
 
   it('generates a valid robots.txt disallowing /out/ redirects and pointing to sitemap.xml', () => {
