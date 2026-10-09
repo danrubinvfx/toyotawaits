@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useId } from 'react';
+import React, { useState, useEffect, useMemo, useId } from 'react';
 import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
@@ -44,7 +44,7 @@ export function WaitTimeEstimator({
   const [powertrainSlug, setPowertrainSlug] = useState<string>(initialPowertrain);
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
   const [province, setProvince] = useState<string>(initialProvince);
-  const [depositDate, setDepositDate] = useState<string>('2025-01-15');
+  const [depositDate, setDepositDate] = useState<string>('2026-01-15');
 
   // Dynamic Benchmarks State
   const [benchmarks, setBenchmarks] = useState<Record<string, ModelWaitBenchmark>>(BASELINE_MODEL_BENCHMARKS);
@@ -132,11 +132,25 @@ export function WaitTimeEstimator({
     };
   }, [modelSlug, powertrainSlug, province, trimSlug]);
 
-  // Projected Date Calculations
+  // Normalized current date for clean target arrival projections
+  const [todayDate] = useState<Date>(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  });
+
+  // Calculate days already elapsed since deposit date
+  const daysAlreadyWaited = useMemo(() => {
+    if (!depositDate) return 0;
+    const base = new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00'));
+    if (isNaN(base.getTime())) return 0;
+    return Math.max(0, Math.floor((todayDate.getTime() - base.getTime()) / (1000 * 60 * 60 * 24)));
+  }, [depositDate, todayDate]);
+
+  // Projected Date Calculations: cleanly adds (estimated_days - days_already_waited) to today's date
   const calculateProjectedDate = (daysOffset: number): string => {
-    const base = new Date(depositDate);
-    if (isNaN(base.getTime())) return 'TBD';
-    const target = new Date(base.getTime() + daysOffset * 24 * 60 * 60 * 1000);
+    const remainingDays = Math.max(0, daysOffset - daysAlreadyWaited);
+    const target = new Date(todayDate.getTime() + remainingDays * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',
@@ -144,11 +158,42 @@ export function WaitTimeEstimator({
   };
 
   const currentBenchmark = benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
-  const medianDays = stats?.waitStats?.median ?? currentBenchmark?.median_days ?? 412;
-  const p25Days = stats?.waitStats?.p25 ?? currentBenchmark?.p25_days ?? 310;
-  const p75Days = stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 540;
-  const verifiedSampleSize =
-    stats?.sampleCounts?.delivered || currentBenchmark?.sample_size || stats?.sampleCounts?.total || 140;
+
+  // Small sample size handling (< 5):
+  // If sample size for specific model/trim/province is small (< 5), ground strictly in overall model median
+  const regionalSampleCount =
+    stats?.sampleCounts?.delivered ?? stats?.sampleCounts?.total ?? 0;
+  const isLimitedRegionalData = Boolean(stats && regionalSampleCount < 5);
+
+  const rawMedian = isLimitedRegionalData
+    ? currentBenchmark?.median_days ?? 375
+    : stats?.waitStats?.median ?? currentBenchmark?.median_days ?? 375;
+
+  const rawP25 = isLimitedRegionalData
+    ? currentBenchmark?.p25_days ?? 185
+    : stats?.waitStats?.p25 ?? currentBenchmark?.p25_days ?? 185;
+
+  const rawP75 = isLimitedRegionalData
+    ? currentBenchmark?.p75_days ?? 450
+    : stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450;
+
+  // Clamping Upper Bounds:
+  // Do NOT allow additive modifiers (trim, province, powertrain) to produce predictions
+  // greater than empirical maximum delivered wait time (max_days) or 75th percentile + conservative buffer
+  const benchmarkMax = currentBenchmark?.max_days ?? 510;
+  const empiricalMax = stats?.waitStats?.max ?? benchmarkMax;
+  const p75Buffer = Math.round((stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450) * 1.15);
+  const maxAllowedCap = isLimitedRegionalData
+    ? benchmarkMax
+    : Math.min(empiricalMax, Math.max(benchmarkMax, p75Buffer));
+
+  const medianDays = isLimitedRegionalData ? rawMedian : Math.min(rawMedian, maxAllowedCap);
+  const p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, maxAllowedCap);
+  const p25Days = isLimitedRegionalData ? rawP25 : Math.min(rawP25, medianDays);
+
+  const verifiedSampleSize = isLimitedRegionalData
+    ? currentBenchmark?.sample_size ?? 10
+    : stats?.sampleCounts?.delivered || currentBenchmark?.sample_size || stats?.sampleCounts?.total || 140;
 
   const optimisticDate = calculateProjectedDate(p25Days);
   const conservativeDate = calculateProjectedDate(p75Days);
@@ -180,8 +225,8 @@ export function WaitTimeEstimator({
   const currentTier = getWaitTier(medianDays);
 
   const handleDownloadCalendar = () => {
-    const baseDate = new Date(depositDate);
-    const targetDate = new Date(baseDate.getTime() + medianDays * 24 * 60 * 60 * 1000);
+    const remainingMedian = Math.max(0, medianDays - daysAlreadyWaited);
+    const targetDate = new Date(todayDate.getTime() + remainingMedian * 24 * 60 * 60 * 1000);
 
     const ics = generateCalendarReminder({
       title: `Toyota Arrival Window: ${currentModel.name} ${currentPowertrain.name}`,
@@ -322,10 +367,23 @@ export function WaitTimeEstimator({
                 </div>
                 <p className="text-xs text-zinc-500 flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-amber-500" />
-                  Based on 25th – 75th percentile wait durations for orders placed on{' '}
-                  {new Date(depositDate).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  Based on 25th – 75th percentile wait durations
+                  {daysAlreadyWaited > 0 ? ` (${daysAlreadyWaited} days waited so far)` : ''} for orders placed on{' '}
+                  {new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')).toLocaleDateString('en-CA', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </p>
-                {stats?.trimNote && (
+                {isLimitedRegionalData ? (
+                  <div
+                    data-testid="limited-data-fallback-note"
+                    className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2.5 py-1.5 rounded-md font-medium"
+                  >
+                    <Info className="h-3.5 w-3.5 shrink-0" />
+                    <span>Based on overall model median (limited regional data)</span>
+                  </div>
+                ) : stats?.trimNote ? (
                   <div
                     data-testid="trim-fallback-note"
                     className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2.5 py-1.5 rounded-md font-medium"
@@ -333,7 +391,7 @@ export function WaitTimeEstimator({
                     <Info className="h-3.5 w-3.5 shrink-0" />
                     <span>{stats.trimNote}</span>
                   </div>
-                )}
+                ) : null}
                 <p className="text-[11px] text-zinc-400 italic">
                   &ldquo;{currentTier.sub}&rdquo;
                 </p>

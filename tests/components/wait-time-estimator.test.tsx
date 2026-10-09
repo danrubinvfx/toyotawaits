@@ -239,4 +239,77 @@ describe('WaitTimeEstimator Component', () => {
     expect(screen.getByRole('option', { name: 'XSE' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'XSE Premium' })).toBeInTheDocument();
   });
+
+  it('grounds prediction strictly in overall model median and displays limited regional data indicator when sample size is < 5', async () => {
+    const mockSmallSampleData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        powertrainName: 'Plug-in Hybrid (PHEV)',
+        trimSlug: 'all',
+        province: 'PE',
+        sampleCounts: { total: 3, delivered: 2, pending: 1 },
+        waitStats: { p25: 120, median: 150, p75: 190, mean: 153, min: 100, max: 200 },
+        pricingInsights: { atMsrpPercent: 100, aboveMsrpPercent: 0, avgAddonsCad: 0 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/api/stats')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ success: true, data: {} }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockSmallSampleData,
+      });
+    });
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator />);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Based on overall model median (limited regional data)')
+      ).toBeInTheDocument();
+      // Grounded in RAV4 baseline median (375 Days) instead of regional 150 Days
+      expect(screen.getAllByText(/375 Days/i).length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('clamps predictions to not exceed empirical maximum delivered wait time', async () => {
+    const mockExcessiveData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        powertrainName: 'Plug-in Hybrid (PHEV)',
+        province: 'BC',
+        sampleCounts: { total: 10, delivered: 8, pending: 2 },
+        // Outlandish wait stats exceeding empirical max 510
+        waitStats: { p25: 480, median: 580, p75: 650, mean: 570, min: 400, max: 510 },
+        pricingInsights: { atMsrpPercent: 80, aboveMsrpPercent: 20, avgAddonsCad: 500 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockExcessiveData,
+    } as any);
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator />);
+
+    await waitFor(() => {
+      // Clamped to empirical max (510 Days)
+      expect(screen.getAllByText(/510 Days/i).length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });

@@ -5,6 +5,7 @@ import { verifyTurnstileToken } from '@/lib/security/turnstile';
 import { checkRateLimit } from '@/lib/security/ratelimit';
 import { detectSubmissionOutlier } from '@/lib/security/outlier-detection';
 import { insertSubmission } from '@/lib/db/submissions';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 
 export async function POST(request: NextRequest) {
@@ -142,6 +143,17 @@ export async function POST(request: NextRequest) {
       editKeyHash,
       isFlagged: outlierResult.isFlagged,
     });
+
+    // 8. Immediate Cache Revalidation for Public Feed and Statistics
+    try {
+      revalidatePath('/');
+      revalidatePath('/submit');
+      revalidateTag('wait_stats', 'max');
+    } catch (revalidateErr) {
+      if (process.env.NODE_ENV !== 'test') {
+        console.warn('Cache revalidation notice in POST /api/submissions:', revalidateErr);
+      }
+    }
 
     return NextResponse.json<ApiResponse<any>>(
       {

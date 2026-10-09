@@ -32,9 +32,27 @@ describe('CommunityDataTable Component', () => {
     const statusSelect = screen.getAllByRole('combobox')[2];
     fireEvent.change(statusSelect, { target: { value: 'pending' } });
 
-    // Should show "Pacing the Floor" badges and no "Delivered" badges in status column
-    expect(screen.getAllByText('Pacing the Floor').length).toBeGreaterThan(0);
+    // Should show "Still Waiting" badges and days so far in status column
+    expect(screen.getAllByText('Still Waiting').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\d+ days so far/).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Delivered 2024/)).not.toBeInTheDocument();
+  });
+
+  it('filters records using status tab toggle buttons', () => {
+    render(<CommunityDataTable />);
+
+    const deliveredTab = screen.getByRole('button', { name: /Delivered/i });
+    fireEvent.click(deliveredTab);
+
+    expect(screen.getAllByText(/Delivered/i).length).toBeGreaterThan(0);
+    expect(screen.queryByText('Still Waiting')).not.toBeInTheDocument();
+
+    const pendingTab = screen.getByRole('button', { name: /Still Waiting/i });
+    fireEvent.click(pendingTab);
+
+    expect(screen.getAllByText('Still Waiting').length).toBeGreaterThan(0);
+    // In table body, no rows should show Days wait (only pending days so far)
+    expect(screen.queryByText('410 Days')).not.toBeInTheDocument();
   });
 
   it('updates the CSV download URL when filters change', () => {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { submissionUpdateSchema } from '@/lib/validations/schemas';
 import { updateSubmission } from '@/lib/db/submissions';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 
 export async function PATCH(
@@ -97,6 +98,16 @@ export async function PATCH(
         },
         { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
+    }
+
+    try {
+      revalidatePath('/');
+      revalidatePath('/submit');
+      revalidateTag('wait_stats', 'max');
+    } catch (revalidateErr) {
+      if (process.env.NODE_ENV !== 'test') {
+        console.warn('Cache revalidation notice in PATCH /api/submissions/[id]:', revalidateErr);
+      }
     }
 
     return NextResponse.json<ApiResponse<any>>(
