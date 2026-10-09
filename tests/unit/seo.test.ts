@@ -66,7 +66,9 @@ describe('Technical SEO & Discovery Configuration', () => {
     );
     expect(layoutMetadata.openGraph?.siteName).toBe('ToyotaWaits');
     expect((layoutMetadata.openGraph as { type?: string })?.type).toBe('website');
-    expect(layoutMetadata.verification?.google).toBe('google6974c15c62d45d4d');
+    expect(layoutMetadata.verification?.google).toBe(
+      '3gM-Rt6pfp2XODYUowsn5BNJt0CIfuxUoY-9ugCPK_E'
+    );
   });
 
   it('exports home page metadata consistent with root metadata', () => {
