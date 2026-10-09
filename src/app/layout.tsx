@@ -47,6 +47,9 @@ export const metadata: Metadata = {
     description:
       'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
   },
+  verification: {
+    google: 'google6974c15c62d45d4d',
+  },
 };
 
 export const jsonLd = {
