@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getModelBySlug, CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
+import { getModelBenchmark } from '@/lib/db/stats';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { ChevronRight, PlusCircle, Car, ArrowRight } from 'lucide-react';
+import { ChevronRight, PlusCircle, Car, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
 
 interface RouteProps {
   params: Promise<{
@@ -41,6 +42,8 @@ export default async function ModelPage({ params }: RouteProps) {
     notFound();
   }
 
+  const benchmark = await getModelBenchmark(model.slug);
+
   return (
     <div className="space-y-10 pb-16">
       {/* Header & Breadcrumbs */}
@@ -65,6 +68,18 @@ export default async function ModelPage({ params }: RouteProps) {
               <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
                 Explore crowdsourced wait times across all available {model.name} powertrain configurations.
               </p>
+
+              <div className="flex flex-wrap items-center gap-3 pt-2 text-xs">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xs font-semibold">
+                  <Clock className="h-3.5 w-3.5 text-amber-500" />
+                  <span>National Median: <strong>{benchmark.median_days} Days</strong></span>
+                  <span className="text-zinc-400">({benchmark.p25_days}d – {benchmark.p75_days}d P25–P75)</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-medium">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                  <span>Based on {benchmark.sample_size} verified deliveries</span>
+                </div>
+              </div>
             </div>
 
             <Button asChild className="font-semibold gap-1.5 shadow-sm">

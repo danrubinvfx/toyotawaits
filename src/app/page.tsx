@@ -6,6 +6,8 @@ import { HeroEstimateButton } from '@/components/calculator/hero-estimate-button
 import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
+import { ModelSummaryCards } from '@/components/dashboard/model-summary-cards';
+import { getModelWaitBenchmarks } from '@/lib/db/stats';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -54,7 +56,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const benchmarks = await getModelWaitBenchmarks();
+  const rav4Median = benchmarks.rav4?.median_days ?? 410;
+  const siennaMedian = benchmarks.sienna?.median_days ?? 510;
+
   return (
     <div className="space-y-12 pb-16">
       {/* Hero Section */}
@@ -93,11 +99,15 @@ export default function HomePage() {
           {/* Quick Metrics Ticker */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8 border-t border-zinc-800/80">
             <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-amber-400">410 Days</span>
+              <span className="text-xl sm:text-2xl font-black text-amber-400">
+                {rav4Median} Days
+              </span>
               <p className="text-xs text-zinc-400">Median 2026 RAV4 PHEV Wait</p>
             </div>
             <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-amber-400">510 Days</span>
+              <span className="text-xl sm:text-2xl font-black text-amber-400">
+                {siennaMedian} Days
+              </span>
               <p className="text-xs text-zinc-400">Median 2026 Sienna Wait</p>
             </div>
             <div className="space-y-0.5">
@@ -110,6 +120,11 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Model Benchmark Summary Cards */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <ModelSummaryCards initialBenchmarks={benchmarks} />
       </section>
 
       {/* Active Order Stepper (for returning users with edit keys) */}

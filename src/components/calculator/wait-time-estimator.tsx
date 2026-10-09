@@ -22,6 +22,7 @@ import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
+import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 
 export interface WaitTimeEstimatorProps {
   initialModel?: string;
@@ -45,10 +46,33 @@ export function WaitTimeEstimator({
   const [province, setProvince] = useState<string>(initialProvince);
   const [depositDate, setDepositDate] = useState<string>('2025-01-15');
 
+  // Dynamic Benchmarks State
+  const [benchmarks, setBenchmarks] = useState<Record<string, ModelWaitBenchmark>>(BASELINE_MODEL_BENCHMARKS);
+
   // Async Data State
   const [stats, setStats] = useState<RegionalWaitSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+
+  // Load dynamic model percentile benchmarks from Supabase via /api/stats
+  useEffect(() => {
+    let isCancelled = false;
+
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((res) => {
+        if (!isCancelled && res.success && res.data) {
+          setBenchmarks((prev) => ({ ...prev, ...res.data }));
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not load dynamic model wait benchmarks:', err);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   // Sync client-side date after mount
   useEffect(() => {
@@ -119,9 +143,12 @@ export function WaitTimeEstimator({
     });
   };
 
-  const medianDays = stats?.waitStats?.median ?? 412;
-  const p25Days = stats?.waitStats?.p25 ?? 310;
-  const p75Days = stats?.waitStats?.p75 ?? 540;
+  const currentBenchmark = benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
+  const medianDays = stats?.waitStats?.median ?? currentBenchmark?.median_days ?? 412;
+  const p25Days = stats?.waitStats?.p25 ?? currentBenchmark?.p25_days ?? 310;
+  const p75Days = stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 540;
+  const verifiedSampleSize =
+    stats?.sampleCounts?.delivered || currentBenchmark?.sample_size || stats?.sampleCounts?.total || 140;
 
   const optimisticDate = calculateProjectedDate(p25Days);
   const conservativeDate = calculateProjectedDate(p75Days);
@@ -324,7 +351,7 @@ export function WaitTimeEstimator({
                 </div>
                 <div className="text-[11px] text-zinc-500 flex items-center gap-1">
                   <CheckCircle className="h-3 w-3 text-emerald-600" />
-                  {stats?.sampleCounts?.total || 140}+ verified Canadian submissions
+                  Based on {verifiedSampleSize} verified deliveries
                 </div>
 
                 {/* Action Buttons: Calendar + Reddit Share */}
