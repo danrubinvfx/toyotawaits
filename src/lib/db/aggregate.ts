@@ -34,6 +34,16 @@ const BASELINE_WAIT_DATA: Record<string, number[]> = {
   'sienna-hev-ab': [400, 440, 480, 510, 530, 560, 620],
   'grand-highlander-hev-on': [240, 270, 300, 325, 350, 380, 410],
   'land-cruiser-hev-bc': [60, 85, 110, 125, 145, 170],
+  // Prius & Prius Prime
+  'prius-prime-phev-on': [140, 165, 181, 205, 230],
+  'prius-phev-on': [140, 165, 181, 205, 230],
+  'prius-prime-phev-bc': [28, 35, 45, 65, 80],
+  'prius-phev-bc': [28, 35, 45, 65, 80],
+  'prius-prime-phev-ab': [310, 330, 341, 365, 390],
+  'prius-phev-ab': [310, 330, 341, 365, 390],
+  'prius-hev-on': [85, 95, 104, 120, 135],
+  'prius-prime-phev-qc': [180, 210, 240, 270],
+  'prius-phev-qc': [180, 210, 240, 270],
 };
 
 // Trim-level baseline submissions for Canadian trims
@@ -67,6 +77,35 @@ const TRIM_BASELINE_WAIT_DATA: Record<string, number[]> = {
   'land-cruiser-hev-bc-1958': [50, 75, 95, 120], // 4 submissions (>= 3)
   'land-cruiser-hev-bc-land-cruiser': [90, 120, 145], // 3 submissions (>= 3)
   'land-cruiser-hev-bc-first-edition': [170], // 1 submission (< 3) -> fallback note
+
+  // Prius Prime / Prius PHEV ON
+  'prius-prime-phev-on-xse': [165, 181, 200], // 3 submissions (>= 3)
+  'prius-phev-on-xse': [165, 181, 200],
+  'prius-prime-phev-on-se': [120, 140], // 2 submissions (< 3)
+  'prius-phev-on-se': [120, 140],
+  'prius-prime-phev-on-xse-premium': [210, 230], // 2 submissions (< 3)
+  'prius-phev-on-xse-premium': [210, 230],
+
+  // Prius Prime / Prius PHEV BC
+  'prius-prime-phev-bc-se': [28, 35, 45], // 3 submissions (>= 3)
+  'prius-phev-bc-se': [28, 35, 45],
+  'prius-prime-phev-bc-xse': [55, 70], // 2 submissions (< 3)
+  'prius-phev-bc-xse': [55, 70],
+
+  // Prius Prime / Prius PHEV AB
+  'prius-prime-phev-ab-xse-premium': [325, 341, 360], // 3 submissions (>= 3)
+  'prius-phev-ab-xse-premium': [325, 341, 360],
+  'prius-prime-phev-ab-se': [260, 280], // 2 submissions (< 3)
+  'prius-phev-ab-se': [260, 280],
+
+  // Prius HEV ON
+  'prius-hev-on-xle-awd': [92, 104, 118], // 3 submissions (>= 3)
+  'prius-hev-on-le-awd': [80, 95], // 2 submissions (< 3)
+  'prius-hev-on-limited-awd': [125, 140], // 2 submissions (< 3)
+
+  // Prius Prime / Prius PHEV QC
+  'prius-prime-phev-qc-xse': [240], // 1 submission (< 3) -> fallback note
+  'prius-phev-qc-xse': [240],
 };
 
 export async function getAggregateStats(

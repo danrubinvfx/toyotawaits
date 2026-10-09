@@ -199,4 +199,44 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.getAllByText(/250 Days/i).length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  it('updates trims dynamically when Prius or Prius Prime is selected', async () => {
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'prius-prime',
+        modelName: 'Prius Prime',
+        powertrainSlug: 'phev',
+        province: 'ON',
+        sampleCounts: { total: 5, delivered: 4, pending: 1 },
+        waitStats: { p25: 140, median: 181, p75: 220, mean: 180, min: 35, max: 341 },
+        pricingInsights: { atMsrpPercent: 100, aboveMsrpPercent: 0, avgAddonsCad: 0 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator />);
+
+    // Select Prius
+    const modelSelect = screen.getByLabelText(/Vehicle Model/i);
+    fireEvent.change(modelSelect, { target: { value: 'prius' } });
+
+    // In HEV mode, should show LE AWD, XLE AWD, Limited AWD
+    const trimSelect = screen.getByLabelText(/Trim Level/i);
+    expect(screen.getByRole('option', { name: 'LE AWD' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'XLE AWD' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'Limited AWD' })).toBeInTheDocument();
+
+    // Select Prius Prime
+    fireEvent.change(modelSelect, { target: { value: 'prius-prime' } });
+    expect(screen.getByRole('option', { name: 'SE' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'XSE' })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: 'XSE Premium' })).toBeInTheDocument();
+  });
 });

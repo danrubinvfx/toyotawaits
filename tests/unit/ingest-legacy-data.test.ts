@@ -71,6 +71,20 @@ sienna,hev,"XSE AWD (7-Passenger)",ON,"Toronto, East",Ken Shaw Toyota,2024-01-10
       const gh = resolveVehicleIdentifiers('grand-highlander', 'hybrid-max', 'Platinum Hybrid MAX AWD');
       expect(gh).not.toBeNull();
       expect(gh?.trim.slug).toBe('platinum-max-awd');
+
+      // Resolve Prius Prime PHEV XSE
+      const pp = resolveVehicleIdentifiers('prius-prime', 'phev', 'XSE');
+      expect(pp).not.toBeNull();
+      expect(pp?.model.slug).toBe('prius-prime');
+      expect(pp?.powertrain.slug).toBe('phev');
+      expect(pp?.trim.slug).toBe('xse');
+
+      // Resolve Prius HEV XLE AWD
+      const p = resolveVehicleIdentifiers('prius', 'hev', 'XLE AWD');
+      expect(p).not.toBeNull();
+      expect(p?.model.slug).toBe('prius');
+      expect(p?.powertrain.slug).toBe('hev');
+      expect(p?.trim.slug).toBe('xle-awd');
     });
 
     it('gracefully falls back to first trim of powertrain when ambiguous and triggers warning', () => {

@@ -36,3 +36,8 @@ land-cruiser,hev,Land Cruiser Grade,BC,Vancouver,Jim Pattison Toyota Downtown,20
 land-cruiser,hev,Land Cruiser Grade with Premium Package,AB,Calgary,Canyon Creek Toyota,2025-02-15,2025-06-18,delivered,msrp,Purchased at MSRP with no markup,historical_community_archive
 rav4,phev,XSE Technology Package AWD,BC,Burnaby,Destination Toyota Burnaby,2025-08-10,,pending,msrp,Deposit confirmed on waitlist,historical_community_archive
 sienna,hev,XSE AWD,ON,Oakville,Oakville Toyota,2025-05-12,,pending,msrp,Estimated ETA winter 2026,historical_community_archive
+prius-prime,phev,XSE,ON,Toronto,Ken Shaw Toyota,2025-08-15,2026-02-12,delivered,msrp,Delivered at exact MSRP in Toronto,historical_community_archive
+prius-prime,phev,SE,BC,Langley,Langley Toyota,2026-04-10,2026-05-15,delivered,msrp,Quick delivery from dealer allocation batch in Langley,historical_community_archive
+prius-prime,phev,XSE Premium,AB,Calgary,Stampede Toyota,2025-05-12,2026-04-18,delivered,msrp,Waited 11 months for XSE Premium at Calgary dealer,historical_community_archive
+prius,hev,XLE AWD,ON,Ottawa,Mendes Toyota,2026-05-02,2026-08-14,delivered,msrp,Clean deal at MSRP in Ottawa under 3.5 months wait,historical_community_archive
+prius-prime,phev,XSE,QC,Montreal,Alix Toyota,2026-03-01,,pending,msrp,Deposit confirmed in Montreal awaiting allocation,historical_community_archive

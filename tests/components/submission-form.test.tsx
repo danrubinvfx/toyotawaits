@@ -34,6 +34,34 @@ describe('SubmissionForm Component', () => {
     expect(trimSelect.textContent).toContain('LE FWD (8-Passenger)');
   });
 
+  it('dynamically populates trims for Prius (HEV & PHEV) and Prius Prime', async () => {
+    render(<SubmissionForm />);
+
+    const modelSelect = screen.getByLabelText(/Vehicle Model/i);
+    fireEvent.change(modelSelect, { target: { value: 'prius' } });
+
+    // Prius HEV trims
+    const powertrainSelect = screen.getByLabelText(/Powertrain/i);
+    expect(powertrainSelect).toHaveValue('hev');
+    const trimSelect = screen.getByLabelText(/Trim Level/i);
+    expect(trimSelect.textContent).toContain('LE AWD');
+    expect(trimSelect.textContent).toContain('XLE AWD');
+    expect(trimSelect.textContent).toContain('Limited AWD');
+
+    // Switch Prius to PHEV
+    fireEvent.change(powertrainSelect, { target: { value: 'phev' } });
+    expect(trimSelect.textContent).toContain('SE');
+    expect(trimSelect.textContent).toContain('XSE');
+    expect(trimSelect.textContent).toContain('XSE Premium');
+
+    // Switch Model to Prius Prime
+    fireEvent.change(modelSelect, { target: { value: 'prius-prime' } });
+    expect(powertrainSelect).toHaveValue('phev');
+    expect(trimSelect.textContent).toContain('SE');
+    expect(trimSelect.textContent).toContain('XSE');
+    expect(trimSelect.textContent).toContain('XSE Premium');
+  });
+
   it('toggles delivery status and reveals delivery date picker', () => {
     render(<SubmissionForm />);
 

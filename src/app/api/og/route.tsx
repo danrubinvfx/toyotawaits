@@ -35,6 +35,8 @@ export async function GET(request: NextRequest) {
       medianDays = 280;
     } else if (modelSlug === 'land-cruiser') {
       medianDays = 120;
+    } else if (modelSlug === 'prius' || modelSlug === 'prius-prime') {
+      medianDays = powertrainSlug === 'phev' ? 181 : 104;
     }
 
     const months = (medianDays / 30.4).toFixed(1);

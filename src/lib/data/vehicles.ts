@@ -144,6 +144,52 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
       },
     ],
   },
+  {
+    id: '10000000-0000-4000-8000-000000000005',
+    slug: 'prius',
+    name: 'Prius',
+    generationStartYear: 2023,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000060',
+        slug: 'hev',
+        name: 'Hybrid (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000061', slug: 'le-awd', name: 'LE AWD', msrpCad: 37150 },
+          { id: '30000000-0000-4000-8000-000000000062', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 40650 },
+          { id: '30000000-0000-4000-8000-000000000063', slug: 'limited-awd', name: 'Limited AWD', msrpCad: 44250 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000061',
+        slug: 'phev',
+        name: 'Plug-in Hybrid (PHEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000071', slug: 'se', name: 'SE', msrpCad: 39050 },
+          { id: '30000000-0000-4000-8000-000000000072', slug: 'xse', name: 'XSE', msrpCad: 43750 },
+          { id: '30000000-0000-4000-8000-000000000073', slug: 'xse-premium', name: 'XSE Premium', msrpCad: 47550 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000006',
+    slug: 'prius-prime',
+    name: 'Prius Prime',
+    generationStartYear: 2023,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000062',
+        slug: 'phev',
+        name: 'Plug-in Hybrid (PHEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000081', slug: 'se', name: 'SE', msrpCad: 39050 },
+          { id: '30000000-0000-4000-8000-000000000082', slug: 'xse', name: 'XSE', msrpCad: 43750 },
+          { id: '30000000-0000-4000-8000-000000000083', slug: 'xse-premium', name: 'XSE Premium', msrpCad: 47550 },
+        ],
+      },
+    ],
+  },
 ];
 
 export const CANADIAN_PROVINCES_LIST = [

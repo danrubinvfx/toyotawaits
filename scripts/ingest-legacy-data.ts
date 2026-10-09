@@ -180,6 +180,8 @@ export function resolveVehicleIdentifiers(
     else if (normModel.includes('sienna')) model = getModelBySlug('sienna');
     else if (normModel.includes('grand')) model = getModelBySlug('grand-highlander');
     else if (normModel.includes('cruiser')) model = getModelBySlug('land-cruiser');
+    else if (normModel.includes('prius-prime') || normModel.includes('prius prime')) model = getModelBySlug('prius-prime') || getModelBySlug('prius');
+    else if (normModel.includes('prius')) model = getModelBySlug('prius');
   }
 
   if (!model) {
