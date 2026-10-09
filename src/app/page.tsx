@@ -1,4 +1,5 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { HeroEstimateButton } from '@/components/calculator/hero-estimate-button';
@@ -19,6 +20,39 @@ import {
   BarChart3,
   Flame,
 } from 'lucide-react';
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://toyotawaits.ca'),
+  title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+  description:
+    'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+  keywords: [
+    'toyota waits',
+    'toyota wait tracker',
+    'toyota wait times canada',
+    'canadian toyota tracker',
+    'toyota allocation canada',
+    'rav4 prime wait time',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+    description:
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+    url: 'https://toyotawaits.ca',
+    siteName: 'ToyotaWaits',
+    locale: 'en_CA',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+    description:
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+  },
+};
 
 export default function HomePage() {
   return (

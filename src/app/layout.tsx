@@ -18,9 +18,57 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'ToyotaWaits.ca | Real-Time Canadian Toyota Delivery Wait Times',
+  title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
   description:
-    'Anonymous, crowdsourced community wait-time tracker and estimator for Canadian Toyota deliveries (RAV4 Hybrid & Plug-in Hybrid, Sienna, Grand Highlander, Land Cruiser).',
+    'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+  keywords: [
+    'toyota waits',
+    'toyota wait tracker',
+    'toyota wait times canada',
+    'canadian toyota tracker',
+    'toyota allocation canada',
+    'rav4 prime wait time',
+  ],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+    description:
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+    url: 'https://toyotawaits.ca',
+    siteName: 'ToyotaWaits',
+    locale: 'en_CA',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+    description:
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+  },
+};
+
+export const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebApplication',
+      '@id': 'https://toyotawaits.ca/#webapp',
+      name: 'ToyotaWaits',
+      url: 'https://toyotawaits.ca',
+      applicationCategory: 'AutomotiveApplication',
+      operatingSystem: 'All',
+      description: 'Community wait time tracker for Canadian Toyota allocations.',
+    },
+    {
+      '@type': 'Organization',
+      '@id': 'https://toyotawaits.ca/#organization',
+      name: 'ToyotaWaits',
+      url: 'https://toyotawaits.ca',
+      description: 'Community wait time tracker for Canadian Toyota allocations.',
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -34,6 +82,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-sans">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <Header />
         <main className="flex-1">
           {children}
