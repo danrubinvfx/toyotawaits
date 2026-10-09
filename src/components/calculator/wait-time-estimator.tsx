@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -33,7 +33,7 @@ export interface WaitTimeEstimatorProps {
 export function WaitTimeEstimator({
   initialModel = 'rav4',
   initialPowertrain = 'phev',
-  initialTrim = 'xse-technology-awd',
+  initialTrim = 'all',
   initialProvince = 'BC',
 }: WaitTimeEstimatorProps = {}) {
   const compId = useId();
@@ -69,18 +69,13 @@ export function WaitTimeEstimator({
     const m = CANADIAN_VEHICLE_CATALOG.find((x) => x.slug === slug);
     if (m && m.powertrains.length > 0) {
       setPowertrainSlug(m.powertrains[0].slug);
-      if (m.powertrains[0].trims.length > 0) {
-        setTrimSlug(m.powertrains[0].trims[0].slug);
-      }
+      setTrimSlug('all');
     }
   };
 
   const handlePowertrainChange = (slug: string) => {
     setPowertrainSlug(slug);
-    const p = currentModel.powertrains.find((x) => x.slug === slug);
-    if (p && p.trims.length > 0) {
-      setTrimSlug(p.trims[0].slug);
-    }
+    setTrimSlug('all');
   };
 
   // Fetch aggregate data whenever filters change
@@ -192,7 +187,7 @@ export function WaitTimeEstimator({
 
       <CardContent className="p-6 space-y-6">
         {/* Selector Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
           <div className="space-y-1.5">
             <Label htmlFor={`${compId}-model`}>Vehicle Model</Label>
             <Select
@@ -220,6 +215,23 @@ export function WaitTimeEstimator({
               {currentPowertrains.map((p) => (
                 <option key={p.slug} value={p.slug}>
                   {p.name}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor={`${compId}-trim`}>Trim Level</Label>
+            <Select
+              id={`${compId}-trim`}
+              value={trimSlug}
+              onChange={(e) => setTrimSlug(e.target.value)}
+              className="font-medium"
+            >
+              <option value="all">All Trims</option>
+              {currentTrims.map((t) => (
+                <option key={t.slug} value={t.slug}>
+                  {t.name}
                 </option>
               ))}
             </Select>
@@ -286,6 +298,15 @@ export function WaitTimeEstimator({
                   Based on 25th – 75th percentile wait durations for orders placed on{' '}
                   {new Date(depositDate).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' })}
                 </p>
+                {stats?.trimNote && (
+                  <div
+                    data-testid="trim-fallback-note"
+                    className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2.5 py-1.5 rounded-md font-medium"
+                  >
+                    <Info className="h-3.5 w-3.5 shrink-0" />
+                    <span>{stats.trimNote}</span>
+                  </div>
+                )}
                 <p className="text-[11px] text-zinc-400 italic">
                   &ldquo;{currentTier.sub}&rdquo;
                 </p>

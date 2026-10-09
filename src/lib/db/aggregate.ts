@@ -36,12 +36,54 @@ const BASELINE_WAIT_DATA: Record<string, number[]> = {
   'land-cruiser-hev-bc': [60, 85, 110, 125, 145, 170],
 };
 
+// Trim-level baseline submissions for Canadian trims
+const TRIM_BASELINE_WAIT_DATA: Record<string, number[]> = {
+  // RAV4 PHEV BC
+  'rav4-phev-bc-se-awd': [210, 230, 250, 275, 290], // 5 submissions (>= 3) -> SE delivers faster
+  'rav4-phev-bc-xse-awd': [360, 385, 410, 430], // 4 submissions (>= 3)
+  'rav4-phev-bc-xse-technology-awd': [440, 480, 510, 540, 570], // 5 submissions (>= 3)
+  'rav4-phev-bc-gr-sport-awd': [520], // 1 submission (< 3) -> fallback note
+
+  // RAV4 HEV ON
+  'rav4-hev-on-le-awd': [90, 105, 120, 140], // 4 submissions (>= 3)
+  'rav4-hev-on-xle-awd': [120, 140, 160, 175, 190], // 5 submissions (>= 3)
+  'rav4-hev-on-woodland-awd': [160, 180], // 2 submissions (< 3) -> fallback note
+  'rav4-hev-on-se-awd': [150, 170, 190, 210], // 4 submissions (>= 3)
+  'rav4-hev-on-xse-awd': [180, 205, 225, 240], // 4 submissions (>= 3)
+  'rav4-hev-on-limited-awd': [210, 235, 260], // 3 submissions (>= 3)
+
+  // Sienna HEV AB
+  'sienna-hev-ab-le-fwd-8-passenger': [360, 390, 420], // 3 submissions (>= 3)
+  'sienna-hev-ab-xle-awd': [420, 460, 500, 530], // 4 submissions (>= 3)
+  'sienna-hev-ab-xse-awd': [480, 520, 550, 600], // 4 submissions (>= 3)
+  'sienna-hev-ab-limited-awd': [560, 620], // 2 submissions (< 3) -> fallback note
+
+  // Grand Highlander HEV ON
+  'grand-highlander-hev-on-xle-awd': [220, 250, 280, 310], // 4 submissions (>= 3)
+  'grand-highlander-hev-on-limited-awd': [290, 330, 360, 390], // 4 submissions (>= 3)
+  'grand-highlander-hev-on-hybrid-max-platinum-awd': [380, 420], // 2 submissions (< 3) -> fallback note
+
+  // Land Cruiser HEV BC
+  'land-cruiser-hev-bc-1958': [50, 75, 95, 120], // 4 submissions (>= 3)
+  'land-cruiser-hev-bc-land-cruiser': [90, 120, 145], // 3 submissions (>= 3)
+  'land-cruiser-hev-bc-first-edition': [170], // 1 submission (< 3) -> fallback note
+};
+
 export async function getAggregateStats(
   params: AggregateQueryParams
 ): Promise<RegionalWaitSummary> {
   const modelSlug = params.model.toLowerCase();
   const powertrainSlug = params.powertrain ? params.powertrain.toLowerCase() : 'hev';
   const province = params.province || 'ALL';
+  const isTrimSelected = Boolean(params.trim && params.trim.toLowerCase() !== 'all');
+  const trimSlug = isTrimSelected ? params.trim!.toLowerCase() : null;
+
+  const powertrainDisplayName =
+    powertrainSlug === 'phev'
+      ? 'Plug-in Hybrid (PHEV)'
+      : powertrainSlug === 'hev'
+      ? 'Hybrid (HEV)'
+      : 'Gasoline';
 
   // If live Supabase connection is active
   if (
@@ -51,24 +93,51 @@ export async function getAggregateStats(
   ) {
     try {
       const supabase = createServerClient();
-      let query = supabase
-        .from('mv_model_wait_summary')
-        .select('*')
-        .eq('model_slug', modelSlug);
+      let row = null;
+      let isTrimFallback = false;
+      let trimNote: string | null = null;
 
-      if (params.powertrain) {
-        query = query.eq('powertrain_slug', powertrainSlug);
-      }
-      if (params.province) {
-        query = query.eq('province', params.province);
-      }
-      if (params.trim) {
-        query = query.eq('trim_slug', params.trim.toLowerCase());
+      if (isTrimSelected && trimSlug) {
+        let trimQuery = supabase
+          .from('mv_model_wait_summary')
+          .select('*')
+          .eq('model_slug', modelSlug)
+          .eq('powertrain_slug', powertrainSlug)
+          .eq('trim_slug', trimSlug);
+
+        if (params.province) {
+          trimQuery = trimQuery.eq('province', params.province);
+        }
+
+        const { data: trimData } = await trimQuery;
+        if (trimData && trimData.length > 0 && Number(trimData[0].total_samples || 0) >= 3) {
+          row = trimData[0];
+          isTrimFallback = false;
+          trimNote = null;
+        } else {
+          isTrimFallback = true;
+          trimNote = `Displaying overall ${powertrainDisplayName} baseline due to limited trim-specific data.`;
+        }
       }
 
-      const { data, error } = await query;
-      if (!error && data && data.length > 0) {
-        const row = data[0];
+      if (!row) {
+        let query = supabase
+          .from('mv_model_wait_summary')
+          .select('*')
+          .eq('model_slug', modelSlug)
+          .eq('powertrain_slug', powertrainSlug);
+
+        if (params.province) {
+          query = query.eq('province', params.province);
+        }
+
+        const { data, error } = await query;
+        if (!error && data && data.length > 0) {
+          row = data[0];
+        }
+      }
+
+      if (row) {
         const waitStats: PercentileStats = {
           p25: Number(row.p25_wait_days) || 0,
           median: Number(row.median_wait_days) || 0,
@@ -90,9 +159,9 @@ export async function getAggregateStats(
           modelSlug,
           modelName: row.model_name || modelSlug.toUpperCase(),
           powertrainSlug,
-          powertrainName: row.powertrain_name || powertrainSlug.toUpperCase(),
-          trimSlug: params.trim || null,
-          trimName: row.trim_name || null,
+          powertrainName: row.powertrain_name || powertrainDisplayName,
+          trimSlug,
+          trimName: row.trim_name || (trimSlug ? trimSlug.toUpperCase() : null),
           province,
           sampleCounts: { total, delivered, pending },
           waitStats,
@@ -103,6 +172,8 @@ export async function getAggregateStats(
           },
           confidenceRating: delivered >= 30 ? 'high' : delivered >= 10 ? 'medium' : 'low',
           latestSubmissionAt: row.latest_submission_at,
+          isTrimFallback,
+          trimNote,
         };
       }
     } catch (err) {
@@ -112,7 +183,27 @@ export async function getAggregateStats(
 
   // Fallback calculation using baseline and synthetic sample sets
   const lookupKey = `${modelSlug}-${powertrainSlug}-${province.toLowerCase()}`;
-  const dataset = BASELINE_WAIT_DATA[lookupKey] || [150, 180, 220, 260, 310, 380, 420];
+  let dataset: number[];
+  let isTrimFallback = false;
+  let trimNote: string | null = null;
+
+  if (isTrimSelected && trimSlug) {
+    const trimLookupKey = `${modelSlug}-${powertrainSlug}-${province.toLowerCase()}-${trimSlug}`;
+    const trimData = TRIM_BASELINE_WAIT_DATA[trimLookupKey];
+    if (trimData && trimData.length >= 3) {
+      dataset = trimData;
+      isTrimFallback = false;
+      trimNote = null;
+    } else {
+      // Fewer than 3 submissions exist for this specific trim
+      dataset = BASELINE_WAIT_DATA[lookupKey] || [150, 180, 220, 260, 310, 380, 420];
+      isTrimFallback = true;
+      trimNote = `Displaying overall ${powertrainDisplayName} baseline due to limited trim-specific data.`;
+    }
+  } else {
+    dataset = BASELINE_WAIT_DATA[lookupKey] || [150, 180, 220, 260, 310, 380, 420];
+  }
+
   const sorted = [...dataset].sort((a, b) => a - b);
   const waitStats = calculatePercentiles(sorted);
 
@@ -124,14 +215,9 @@ export async function getAggregateStats(
     modelSlug,
     modelName: modelSlug.replace('-', ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
     powertrainSlug,
-    powertrainName:
-      powertrainSlug === 'phev'
-        ? 'Prime / Plug-in Hybrid (PHEV)'
-        : powertrainSlug === 'hev'
-        ? 'Hybrid (HEV)'
-        : 'Gasoline',
-    trimSlug: params.trim || null,
-    trimName: params.trim ? params.trim.toUpperCase() : null,
+    powertrainName: powertrainDisplayName,
+    trimSlug,
+    trimName: trimSlug ? trimSlug.toUpperCase() : null,
     province,
     sampleCounts: {
       total,
@@ -146,5 +232,7 @@ export async function getAggregateStats(
     },
     confidenceRating: delivered >= 20 ? 'high' : delivered >= 8 ? 'medium' : 'low',
     latestSubmissionAt: new Date().toISOString(),
+    isTrimFallback,
+    trimNote,
   };
 }

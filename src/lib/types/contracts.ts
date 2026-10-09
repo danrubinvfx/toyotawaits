@@ -130,6 +130,8 @@ export interface RegionalWaitSummary {
   };
   confidenceRating: 'high' | 'medium' | 'low' | 'insufficient_data';
   latestSubmissionAt?: string | null;
+  isTrimFallback?: boolean;
+  trimNote?: string | null;
 }
 
 // ----------------------------------------------------------------------------

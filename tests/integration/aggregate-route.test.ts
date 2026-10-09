@@ -49,4 +49,35 @@ describe('GET /api/aggregate', () => {
     expect(json.success).toBe(false);
     expect(json.error.code).toBe('INVALID_QUERY_PARAMS');
   });
+
+  it('returns trim-specific percentiles without fallback note when trim has >= 3 submissions', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/aggregate?model=rav4&powertrain=phev&province=BC&trim=se-awd'
+    );
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.data.trimSlug).toBe('se-awd');
+    expect(json.data.isTrimFallback).toBe(false);
+    expect(json.data.trimNote).toBeNull();
+    expect(json.data.waitStats.median).toBe(250);
+  });
+
+  it('returns powertrain baseline with explanatory fallback note when trim has < 3 submissions', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/aggregate?model=rav4&powertrain=phev&province=BC&trim=gr-sport-awd'
+    );
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.data.trimSlug).toBe('gr-sport-awd');
+    expect(json.data.isTrimFallback).toBe(true);
+    expect(json.data.trimNote).toBe(
+      'Displaying overall Plug-in Hybrid (PHEV) baseline due to limited trim-specific data.'
+    );
+  });
 });
