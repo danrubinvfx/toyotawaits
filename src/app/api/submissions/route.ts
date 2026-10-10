@@ -9,6 +9,8 @@ import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 import { CommunityRecord } from '@/lib/data/community-records';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const submissions = await getCommunitySubmissions();

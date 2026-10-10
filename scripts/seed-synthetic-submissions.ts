@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { createServerClient } from '../src/lib/supabase/server';
 import { CANADIAN_VEHICLE_CATALOG } from '../src/lib/data/vehicles';
 import { CanadianProvince } from '../src/lib/types/contracts';

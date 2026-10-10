@@ -3,6 +3,8 @@ import { getModelWaitBenchmarks } from '@/lib/db/stats';
 import { ApiResponse } from '@/lib/types/contracts';
 import { ModelWaitBenchmark } from '@/lib/db/stats';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const benchmarks = await getModelWaitBenchmarks();

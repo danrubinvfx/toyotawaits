@@ -11,6 +11,8 @@ function escapeCsvCell(val: string | number | null | undefined): string {
   return str;
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

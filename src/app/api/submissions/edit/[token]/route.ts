@@ -5,6 +5,8 @@ import { ApiResponse, SubmissionStatus, SubmissionStage } from '@/lib/types/cont
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ token: string }> }

@@ -5,6 +5,8 @@ import { updateSubmission } from '@/lib/db/submissions';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

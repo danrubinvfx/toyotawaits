@@ -3,6 +3,8 @@ import { aggregateQuerySchema } from '@/lib/validations/schemas';
 import { getAggregateStats } from '@/lib/db/aggregate';
 import { ApiResponse, RegionalWaitSummary } from '@/lib/types/contracts';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;

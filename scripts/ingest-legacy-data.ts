@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { parse } from 'csv-parse/sync';
 import {
   CANADIAN_VEHICLE_CATALOG,
@@ -616,7 +616,8 @@ export async function ingestLegacyData(options: IngestOptions = {}): Promise<Ing
 
     if (!validation.isValid) {
       summary.validationSkipped++;
-      summary.errors.push(`Row ${i + 1}: ${validation.reason}`);
+      const failureReason = 'reason' in validation ? validation.reason : 'Validation failed';
+      summary.errors.push(`Row ${i + 1}: ${failureReason}`);
       continue;
     }
 
