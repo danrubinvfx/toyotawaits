@@ -50,7 +50,7 @@ export interface SyntheticSeedRecord {
   status: 'delivered' | 'pending';
   pricing: 'at_msrp' | 'above_msrp';
   addonsCad: number;
-  notes: string;
+  notes?: string | null;
   daysAgoSubmitted: number;
 }
 
@@ -1035,6 +1035,7 @@ export const SYNTHETIC_40_RECORDS: SyntheticSeedRecord[] = [
     status: 'pending',
     pricing: 'at_msrp',
     addonsCad: 0,
+    notes: null,
     daysAgoSubmitted: 3,
   },
 ];
@@ -1134,7 +1135,7 @@ export async function runSyntheticSeed(recordsToSeed: SyntheticSeedRecord[] = AL
           pricing: record.pricing,
           mandatory_addons_cad: record.addonsCad,
           trade_in_required: false,
-          notes: record.notes,
+          notes: record.notes ?? null,
           edit_key_hash: editKeyHash,
           is_flagged: false,
           created_at: submittedDate,
