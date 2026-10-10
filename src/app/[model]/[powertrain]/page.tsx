@@ -22,6 +22,8 @@ interface RouteProps {
   }>;
 }
 
+export const revalidate = 1800;
+
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string }> = [];
   for (const model of CANADIAN_VEHICLE_CATALOG) {

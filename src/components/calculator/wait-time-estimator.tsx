@@ -179,7 +179,7 @@ export function WaitTimeEstimator({
 
   // Projected Date Calculations: cleanly adds (estimated_days - days_already_waited) to today's date
   const calculateProjectedDate = (daysOffset: number): string => {
-    const clampedOffset = modelSlug === 'rav4' ? Math.min(daysOffset, 410) : daysOffset;
+    const clampedOffset = Math.min(daysOffset, 420);
     const remainingDays = Math.max(0, clampedOffset - daysAlreadyWaited);
     const target = new Date(todayDate.getTime() + remainingDays * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
@@ -209,11 +209,11 @@ export function WaitTimeEstimator({
     : stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450;
 
   // Clamping Upper Bounds:
-  // Hard-clamp the upper bound (P75 or conservative estimate) so it CANNOT exceed 400-420 days
-  // under any multiplier combination (hard cap 410 days for RAV4 / RAV4 Prime).
-  // Ensures predicted arrival date calculated from today's date (Oct 2026) lands in mid/late 2027, never 2028.
-  const hardCapLimit = modelSlug === 'rav4' ? 410 : (currentBenchmark?.max_days ?? 560);
-  const benchmarkMax = Math.min(currentBenchmark?.max_days ?? 410, hardCapLimit);
+  // Hard-clamp the upper bound (P75 or conservative estimate) so it CANNOT exceed 420 days
+  // under any multiplier combination (universal ceiling 420 days).
+  // Ensures predicted arrival date calculated from today's date lands in mid/late 2027, never 2028.
+  const hardCapLimit = Math.min(currentBenchmark?.max_days ?? 420, 420);
+  const benchmarkMax = Math.min(currentBenchmark?.max_days ?? 420, hardCapLimit);
   const empiricalMax = Math.min(stats?.waitStats?.max ?? benchmarkMax, hardCapLimit);
 
   const p75Days = Math.min(

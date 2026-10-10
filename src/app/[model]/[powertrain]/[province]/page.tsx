@@ -31,6 +31,8 @@ interface RouteProps {
   }>;
 }
 
+export const revalidate = 1800;
+
 // Generate static params for common deep-link target paths (Reddit top targets)
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string; province: string }> = [];

@@ -71,35 +71,23 @@ describe('CommunityDataTable Component', () => {
     );
   });
 
-  it('triggers unpaginated client CSV export on click without truncating to page size', () => {
-    const createObjectURLMock = vi.fn().mockReturnValue('blob:mock-url');
-    const revokeObjectURLMock = vi.fn();
-    window.URL.createObjectURL = createObjectURLMock;
-    window.URL.revokeObjectURL = revokeObjectURLMock;
-
+  it('routes CSV download directly to /api/export with active filters', () => {
     render(<CommunityDataTable />);
 
     const downloadLink = screen.getByText('Download Filtered CSV').closest('a');
     expect(downloadLink).toBeInTheDocument();
+    expect(downloadLink).toHaveAttribute('href', '/api/export?format=csv');
+    expect(downloadLink).toHaveAttribute('download');
 
-    fireEvent.click(downloadLink!);
+    // Filter by model and province
+    const modelSelect = screen.getAllByRole('combobox')[0];
+    fireEvent.change(modelSelect, { target: { value: 'rav4' } });
 
-    expect(createObjectURLMock).toHaveBeenCalledTimes(1);
-    const blobArg = createObjectURLMock.mock.calls[0][0] as Blob;
-    expect(blobArg).toBeInstanceOf(Blob);
+    const provSelect = screen.getAllByRole('combobox')[1];
+    fireEvent.change(provSelect, { target: { value: 'ON' } });
 
-    // Verify it exports all 57 records, not just page size 8
-    const reader = new FileReader();
-    const readPromise = new Promise<string>((resolve) => {
-      reader.onload = () => resolve(reader.result as string);
-      reader.readAsText(blobArg);
-    });
-
-    return readPromise.then((csvText) => {
-      const dataLines = csvText.trim().split('\r\n').filter((l) => l.trim().length > 0);
-      // 1 header row + 57 data rows = 58 total lines
-      expect(dataLines.length).toBe(58);
-    });
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('model=rav4'));
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('province=ON'));
   });
 
   it('renders custom initialRecords passed as prop including pending submissions', () => {

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { affiliateSlugSchema } from '@/lib/validations/schemas';
 import { getAffiliateRedirect } from '@/lib/db/affiliates';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ slug: string }> }

@@ -172,7 +172,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const totalPages = Math.ceil(filteredRecords.length / pageSize) || 1;
   const paginatedRecords = filteredRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  // Dynamic CSV download link with query params
+  // Dynamic CSV download link with query params directly routing to /api/export
   const csvDownloadUrl = useMemo(() => {
     const params = new URLSearchParams({ format: 'csv' });
     if (modelFilter !== 'all') params.append('model', modelFilter);
@@ -180,74 +180,6 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     if (statusFilter !== 'all') params.append('status', statusFilter);
     return `/api/export?${params.toString()}`;
   }, [modelFilter, provinceFilter, statusFilter]);
-
-  // Complete unpaginated submissions (allSubmissions):
-  // When filters are default/all, exports all records.
-  // If filters are active, exports all matching submissions without pagination slicing.
-  const allSubmissions = useMemo(() => {
-    return filteredRecords.length > 0 ? filteredRecords : records;
-  }, [filteredRecords, records]);
-
-  // Full dataset CSV export handler (exports allSubmissions without pageSize limit or truncation)
-  const handleExportCsv = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (typeof window !== 'undefined' && window.URL && window.Blob) {
-      e.preventDefault();
-      const headers = [
-        'model',
-        'powertrain',
-        'trim',
-        'model_year',
-        'province',
-        'dealership_city',
-        'order_date',
-        'delivery_date',
-        'wait_days',
-        'status',
-        'pricing',
-        'addons_cad',
-      ];
-      const escapeCell = (val: string | number | null | undefined): string => {
-        if (val == null) return '';
-        const str = String(val);
-        if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
-          return `"${str.replace(/"/g, '""')}"`;
-        }
-        return str;
-      };
-
-      const lines = [headers.join(',')];
-      // Exports all matching submissions (allSubmissions) without pagination slicing (pageSize: 8)
-      for (const r of allSubmissions) {
-        lines.push(
-          [
-            escapeCell(r.model),
-            escapeCell(r.powertrain),
-            escapeCell(r.trim),
-            escapeCell(r.modelYear),
-            escapeCell(r.province),
-            escapeCell(r.city),
-            escapeCell(r.orderDate),
-            escapeCell(r.deliveryDate),
-            escapeCell(r.waitDays),
-            escapeCell(r.status),
-            escapeCell(r.pricing),
-            escapeCell(Number(r.addonsCad || 0).toFixed(2)),
-          ].join(',')
-        );
-      }
-
-      const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const tempLink = document.createElement('a');
-      tempLink.href = url;
-      const today = new Date().toISOString().split('T')[0];
-      tempLink.setAttribute('download', `toyotawait-ca-export-${today}.csv`);
-      document.body.appendChild(tempLink);
-      tempLink.click();
-      document.body.removeChild(tempLink);
-      URL.revokeObjectURL(url);
-    }
-  };
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-sm">
@@ -262,7 +194,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             </CardDescription>
           </div>
 
-          <a href={csvDownloadUrl} download onClick={handleExportCsv}>
+          <a href={csvDownloadUrl} download>
             <Button size="sm" variant="outline" className="gap-1.5 text-xs font-semibold shadow-sm w-full sm:w-auto">
               <Download className="h-3.5 w-3.5" />
               Download Filtered CSV
