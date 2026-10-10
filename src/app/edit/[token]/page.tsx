@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,11 +17,9 @@ import {
   MapPin,
   Car,
   ChevronLeft,
-  ArrowRight,
   ShieldCheck,
   AlertCircle,
   Loader2,
-  Sparkles,
 } from 'lucide-react';
 
 interface EditPageProps {
@@ -39,7 +36,6 @@ export function getTodayLocalDate(): string {
 
 export default function EditSubmissionPage({ params }: EditPageProps) {
   const { token } = use(params);
-  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -96,6 +92,10 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
     if (token) {
       loadSubmission();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [token]);
 
   const handleSave = async (e: React.FormEvent) => {
