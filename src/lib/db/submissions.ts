@@ -460,6 +460,36 @@ function seedInitialData() {
   for (const s of samples) {
     inMemorySubmissions.set(s.id, s);
   }
+
+  // Also seed the 40 synthetic records (rec-18 to rec-57) into inMemorySubmissions
+  const syntheticRecords = INITIAL_COMMUNITY_RECORDS.slice(17);
+  for (let i = 0; i < syntheticRecords.length; i++) {
+    const r = syntheticRecords[i];
+    const uuidId = `b1000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`;
+    inMemorySubmissions.set(uuidId, {
+      id: uuidId,
+      model_slug: r.modelSlug,
+      model_name: r.model,
+      powertrain_slug: r.powertrainSlug,
+      powertrain_name: r.powertrain,
+      trim_slug: r.trim.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      trim_name: r.trim,
+      province: r.province,
+      dealership_city: r.city,
+      model_year: r.modelYear,
+      order_date: r.orderDate,
+      delivery_date: r.deliveryDate,
+      wait_days: r.waitDays,
+      status: r.status,
+      pricing: r.pricing,
+      mandatory_addons_cad: r.addonsCad,
+      trade_in_required: false,
+      notes: `${r.model} ${r.trim} crowdsourced Canadian submission`,
+      edit_key_hash: crypto.createHash('sha256').update(`seed-key-${uuidId}`).digest('hex'),
+      is_flagged: false,
+      created_at: r.orderDate ? `${r.orderDate}T12:00:00Z` : new Date().toISOString(),
+    });
+  }
 }
 
 seedInitialData();

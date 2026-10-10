@@ -88,7 +88,7 @@ describe('CommunityDataTable Component', () => {
     const blobArg = createObjectURLMock.mock.calls[0][0] as Blob;
     expect(blobArg).toBeInstanceOf(Blob);
 
-    // Verify it exports all 17 records, not just page size 8
+    // Verify it exports all 57 records, not just page size 8
     const reader = new FileReader();
     const readPromise = new Promise<string>((resolve) => {
       reader.onload = () => resolve(reader.result as string);
@@ -97,8 +97,8 @@ describe('CommunityDataTable Component', () => {
 
     return readPromise.then((csvText) => {
       const dataLines = csvText.trim().split('\r\n').filter((l) => l.trim().length > 0);
-      // 1 header row + 17 data rows = 18 total lines
-      expect(dataLines.length).toBe(18);
+      // 1 header row + 57 data rows = 58 total lines
+      expect(dataLines.length).toBe(58);
     });
   });
 

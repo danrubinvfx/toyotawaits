@@ -1,7 +1,40 @@
+import fs from 'fs';
+import path from 'path';
 import crypto from 'crypto';
 import { createServerClient } from '../src/lib/supabase/server';
 import { CANADIAN_VEHICLE_CATALOG } from '../src/lib/data/vehicles';
 import { CanadianProvince } from '../src/lib/types/contracts';
+
+// Automatically load .env.production, .env.local, or .env if present
+function loadEnv() {
+  const envFiles = ['.env.production', '.env.local', '.env'];
+  for (const f of envFiles) {
+    const full = path.resolve(process.cwd(), f);
+    if (fs.existsSync(full)) {
+      try {
+        const text = fs.readFileSync(full, 'utf-8');
+        for (const line of text.split(/\r?\n/)) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const idx = trimmed.indexOf('=');
+          if (idx !== -1) {
+            const k = trimmed.slice(0, idx).trim();
+            let v = trimmed.slice(idx + 1).trim();
+            if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+              v = v.slice(1, -1);
+            }
+            if (!process.env[k]) {
+              process.env[k] = v;
+            }
+          }
+        }
+      } catch {
+        // ignore read errors
+      }
+    }
+  }
+}
+loadEnv();
 
 export interface SyntheticSeedRecord {
   id: string;
@@ -824,8 +857,34 @@ export async function runSyntheticSeed() {
         errors.push(`Row ${record.id} exception: ${err.message}`);
       }
     }
+
+    // Verify insertion counts directly against Supabase
+    try {
+      console.log('🔍 Running verification queries on Supabase submissions table...');
+      const { count: totalDbCount, error: totalCountErr } = await supabase
+        .from('submissions')
+        .select('*', { count: 'exact', head: true });
+      const { count: pendingDbCount } = await supabase
+        .from('submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      const { count: deliveredDbCount } = await supabase
+        .from('submissions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'delivered');
+
+      if (!totalCountErr) {
+        console.log(`✅ Production Supabase submissions table total count: ${totalDbCount}`);
+        console.log(`✅ Production Supabase submissions table pending count: ${pendingDbCount}`);
+        console.log(`✅ Production Supabase submissions table delivered count: ${deliveredDbCount}`);
+      }
+    } catch (countErr: any) {
+      console.warn('⚠️ Supabase count verification query issue:', countErr.message);
+    }
   } else {
     console.log('ℹ️  No remote live Supabase instance configured in environment.');
+    console.log('    (Checked .env.production, .env.local, and process.env:');
+    console.log(`     NEXT_PUBLIC_SUPABASE_URL = "${process.env.NEXT_PUBLIC_SUPABASE_URL || 'undefined'}")`);
     console.log('📄 Standalone SQL migration generated at: supabase/seed_synthetic_40_submissions.sql');
     console.log('    You can run this directly in the Supabase Dashboard SQL Editor!');
     insertedCount = SYNTHETIC_40_RECORDS.length;
