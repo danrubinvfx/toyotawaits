@@ -20,7 +20,9 @@ import {
   ShieldCheck,
   AlertCircle,
   Loader2,
+  Truck,
 } from 'lucide-react';
+import { OrderStageIndicator } from '@/components/dashboard/order-stage-indicator';
 
 interface EditPageProps {
   params: Promise<{ token: string }>;
@@ -42,6 +44,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
   const [submission, setSubmission] = useState<any | null>(null);
 
   // Form states
+  const [stage, setStage] = useState<'deposit_placed' | 'allocation_confirmed' | 'in_transit' | 'delivered' | 'cancelled'>('deposit_placed');
   const [status, setStatus] = useState<'pending' | 'delivered' | 'cancelled'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>(getTodayLocalDate());
   const [notes, setNotes] = useState<string>('');
@@ -71,7 +74,9 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
         const data = json.data;
         setSubmission(data);
-        setStatus(data.status || 'pending');
+        const resolvedStage = data.stage || data.currentStage || (data.status === 'delivered' ? 'delivered' : data.status === 'cancelled' ? 'cancelled' : 'deposit_placed');
+        setStage(resolvedStage);
+        setStatus(data.status || (resolvedStage === 'delivered' ? 'delivered' : resolvedStage === 'cancelled' ? 'cancelled' : 'pending'));
         if (data.deliveryDate) {
           setDeliveryDate(data.deliveryDate.split('T')[0]);
         }
@@ -108,11 +113,12 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
     try {
       const payload: Record<string, any> = {
+        stage,
         status,
         notes: notes.trim() || null,
       };
 
-      if (status === 'delivered') {
+      if (stage === 'delivered' || status === 'delivered') {
         payload.deliveryDate = deliveryDate;
       }
 
@@ -132,8 +138,9 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       // Update submission state in UI
       setSubmission((prev: any) => ({
         ...prev,
+        stage,
         status,
-        deliveryDate: status === 'delivered' ? deliveryDate : prev?.deliveryDate,
+        deliveryDate: stage === 'delivered' || status === 'delivered' ? deliveryDate : null,
         notes: notes.trim() || prev?.notes,
         waitDays: json.data?.waitDays ?? prev?.waitDays,
       }));
@@ -272,6 +279,14 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
             </span>
           </div>
         </CardContent>
+
+        <div className="px-6 pb-4 pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
+          <OrderStageIndicator
+            stage={submission?.stage || stage}
+            status={submission?.status || status}
+            compact={false}
+          />
+        </div>
       </Card>
 
       {/* Save Success Banner */}
@@ -303,80 +318,146 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
           </CardHeader>
 
           <CardContent className="pt-6 space-y-6">
-            {/* Status Option Pills */}
+            {/* Milestone Selection Pills */}
             <div className="space-y-2">
-              <Label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Current Status</Label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <button
-                  type="button"
-                  onClick={() => setStatus('delivered')}
-                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    status === 'delivered'
-                      ? 'border-emerald-500 bg-emerald-50/60 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-100 shadow-xs ring-1 ring-emerald-500'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <CheckCircle2
-                      className={`h-5 w-5 ${
-                        status === 'delivered' ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-400'
-                      }`}
-                    />
-                    <div>
-                      <p className="text-xs font-bold">Delivered</p>
-                      <p className="text-[11px] text-zinc-500">I received the vehicle</p>
-                    </div>
-                  </div>
-                </button>
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  Current Milestone / Stage
+                </Label>
+                <span className="text-[11px] text-zinc-500">Advance order progress</span>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setStatus('pending')}
-                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    status === 'pending'
-                      ? 'border-amber-500 bg-amber-50/60 dark:bg-amber-950/30 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
+                  onClick={() => {
+                    setStage('deposit_placed');
+                    setStatus('pending');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    stage === 'deposit_placed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
                       : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Clock
-                      className={`h-5 w-5 ${
-                        status === 'pending' ? 'text-amber-500' : 'text-zinc-400'
+                      className={`h-4 w-4 shrink-0 ${
+                        stage === 'deposit_placed' ? 'text-amber-500' : 'text-zinc-400'
                       }`}
                     />
                     <div>
-                      <p className="text-xs font-bold">Still Waiting</p>
-                      <p className="text-[11px] text-zinc-500">Deposit still active</p>
+                      <p className="text-xs font-bold">1. Deposit Placed</p>
+                      <p className="text-[11px] text-zinc-500">Deposit on file with dealer</p>
                     </div>
                   </div>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setStatus('cancelled')}
-                  className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    status === 'cancelled'
-                      ? 'border-zinc-500 bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-100 shadow-xs ring-1 ring-zinc-500'
+                  onClick={() => {
+                    setStage('allocation_confirmed');
+                    setStatus('pending');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    stage === 'allocation_confirmed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
                       : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
-                    <XCircle
-                      className={`h-5 w-5 ${
-                        status === 'cancelled' ? 'text-zinc-700 dark:text-zinc-300' : 'text-zinc-400'
+                    <CheckCircle2
+                      className={`h-4 w-4 shrink-0 ${
+                        stage === 'allocation_confirmed' ? 'text-amber-500' : 'text-zinc-400'
                       }`}
                     />
                     <div>
-                      <p className="text-xs font-bold">Cancelled</p>
-                      <p className="text-[11px] text-zinc-500">Refunded / moved on</p>
+                      <p className="text-xs font-bold">2. Allocation Assigned</p>
+                      <p className="text-[11px] text-zinc-500">Build date / temp VIN confirmed</p>
                     </div>
                   </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStage('in_transit');
+                    setStatus('pending');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    stage === 'in_transit'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Truck
+                      className={`h-4 w-4 shrink-0 ${
+                        stage === 'in_transit' ? 'text-amber-500' : 'text-zinc-400'
+                      }`}
+                    />
+                    <div>
+                      <p className="text-xs font-bold">3. In Transit / Freight</p>
+                      <p className="text-[11px] text-zinc-500">Shipped by rail or carrier</p>
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStage('delivered');
+                    setStatus('delivered');
+                  }}
+                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    stage === 'delivered'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/50 dark:text-emerald-100 shadow-xs ring-1 ring-emerald-600'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <CheckCircle2
+                      className={`h-4 w-4 shrink-0 ${
+                        stage === 'delivered' ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-400'
+                      }`}
+                    />
+                    <div>
+                      <p className="text-xs font-bold">4. Delivered at Dealership</p>
+                      <p className="text-[11px] text-zinc-500">Took delivery &amp; received keys</p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Secondary Cancelled Action Option */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStage('cancelled');
+                    setStatus('cancelled');
+                  }}
+                  className={`w-full p-2.5 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
+                    stage === 'cancelled'
+                      ? 'border-zinc-500 bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-100 shadow-xs ring-1 ring-zinc-500'
+                      : 'border-zinc-200 dark:border-zinc-800/80 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <XCircle
+                      className={`h-4 w-4 shrink-0 ${
+                        stage === 'cancelled' ? 'text-zinc-700 dark:text-zinc-300' : 'text-zinc-400'
+                      }`}
+                    />
+                    <span className="text-xs font-semibold">Order Cancelled / Deposit Refunded</span>
+                  </div>
+                  <span className="text-[11px] text-zinc-500">Moved on / refunded</span>
                 </button>
               </div>
             </div>
 
             {/* Delivery Date Picker (shown when Delivered) */}
-            {status === 'delivered' && (
+            {(stage === 'delivered' || status === 'delivered') && (
               <div className="space-y-1.5 p-4 rounded-xl border border-emerald-500/30 bg-emerald-50/30 dark:bg-emerald-950/20">
                 <Label htmlFor="delivery-date-input" className="text-xs font-semibold text-emerald-950 dark:text-emerald-100 flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-emerald-600" />

@@ -14,9 +14,11 @@ export interface RedditShareParams {
 export const STAGE_DISPLAY_NAMES: Record<SubmissionStage, string> = {
   deposit_placed: 'Deposit Placed',
   allocation_confirmed: 'Allocation Confirmed',
+  in_transit: 'In Transit / Freight',
   freight_transit: 'Freight Transit',
   arrived_at_dealer: 'Arrived at Dealer',
   delivered: 'Delivered',
+  cancelled: 'Cancelled',
 };
 
 export function formatMonthYear(dateString: string): string {

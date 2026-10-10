@@ -19,12 +19,21 @@ export type CanadianProvince =
 
 export type SubmissionStatus = 'pending' | 'delivered' | 'cancelled';
 
+export type OrderStage =
+  | 'deposit_placed'
+  | 'allocation_confirmed'
+  | 'in_transit'
+  | 'delivered'
+  | 'cancelled';
+
 export type SubmissionStage =
   | 'deposit_placed'
   | 'allocation_confirmed'
+  | 'in_transit'
   | 'freight_transit'
   | 'arrived_at_dealer'
-  | 'delivered';
+  | 'delivered'
+  | 'cancelled';
 
 export type PricingType = 'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed';
 
@@ -75,15 +84,29 @@ export interface Submission {
   orderDate: string; // YYYY-MM-DD
   deliveryDate?: string | null; // YYYY-MM-DD
   status: SubmissionStatus;
+  stage?: OrderStage;
   currentStage?: SubmissionStage;
+  stageUpdatedAt?: string;
   waitDays?: number | null; // Database-generated calendar days
   pricing: PricingType;
   mandatoryAddonsCad: number;
   tradeInRequired: boolean;
   notes?: string | null;
   isFlagged: boolean;
+  editToken?: string;
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
+}
+
+export interface NotificationRequest {
+  id: string;
+  email: string;
+  model: string;
+  trim?: string | null;
+  province: CanadianProvince;
+  createdAt: string;
+  isActive: boolean;
+  unsubscribeToken: string;
 }
 
 export interface AffiliateLink {

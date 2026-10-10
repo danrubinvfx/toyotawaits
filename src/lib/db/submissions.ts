@@ -529,6 +529,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           delivery_date: data.deliveryDate,
           status: data.status,
           current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+          stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+          stage_updated_at: new Date().toISOString(),
           pricing: data.pricing,
           mandatory_addons_cad: data.mandatoryAddonsCad,
           trade_in_required: data.tradeInRequired,
@@ -537,7 +539,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           edit_token: editToken,
           is_flagged: data.isFlagged,
         })
-        .select('id, status, current_stage, wait_days, is_flagged, edit_token')
+        .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
         .maybeSingle();
 
       // 1. If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
@@ -621,6 +623,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                 delivery_date: data.deliveryDate,
                 status: data.status,
                 current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+                stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+                stage_updated_at: new Date().toISOString(),
                 pricing: data.pricing,
                 mandatory_addons_cad: data.mandatoryAddonsCad,
                 trade_in_required: data.tradeInRequired,
@@ -629,7 +633,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                 edit_token: editToken,
                 is_flagged: data.isFlagged,
               })
-              .select('id, status, current_stage, wait_days, is_flagged, edit_token')
+              .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
               .maybeSingle();
 
             if (!retryRes.error) {
@@ -660,6 +664,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             delivery_date: data.deliveryDate,
             status: data.status,
             current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
             mandatory_addons_cad: data.mandatoryAddonsCad,
             trade_in_required: data.tradeInRequired,
@@ -668,7 +674,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             edit_token: editToken,
             is_flagged: false,
           })
-          .select('id, status, current_stage, wait_days, is_flagged, edit_token')
+          .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
           .maybeSingle();
 
         if (!rlsRetry.error) {
@@ -688,7 +694,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         return {
           id: inserted?.id || id,
           status: inserted?.status || data.status,
-          currentStage: inserted?.current_stage || data.currentStage || 'deposit_placed',
+          currentStage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
+          stage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
           waitDays: inserted?.wait_days ?? waitDays,
           isFlagged: inserted?.is_flagged ?? data.isFlagged,
           editToken: inserted?.edit_token || editToken,
@@ -733,6 +740,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     wait_days: waitDays,
     status: data.status,
     current_stage: currentStage,
+    stage: currentStage,
+    stage_updated_at: new Date().toISOString(),
     pricing: data.pricing,
     mandatory_addons_cad: data.mandatoryAddonsCad,
     trade_in_required: data.tradeInRequired,
@@ -749,6 +758,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     id,
     status: data.status,
     currentStage,
+    stage: currentStage,
     waitDays,
     isFlagged: data.isFlagged,
     editToken,
@@ -953,6 +963,7 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           wait_days,
           status,
           current_stage,
+          stage,
           pricing,
           mandatory_addons_cad,
           created_at,
@@ -981,7 +992,7 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           deliveryDate: item.delivery_date || null,
           waitDays: item.wait_days != null ? Number(item.wait_days) : null,
           status: item.status as 'pending' | 'delivered',
-          stage: item.current_stage || undefined,
+          stage: item.stage || item.current_stage || undefined,
           pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
             ? item.pricing
             : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
@@ -1021,6 +1032,8 @@ export interface EditableSubmission {
   waitDays?: number | null;
   status: SubmissionStatus;
   currentStage?: SubmissionStage;
+  stage?: string;
+  stageUpdatedAt?: string | null;
   pricing: PricingType;
   mandatoryAddonsCad: number;
   notes?: string | null;
@@ -1050,6 +1063,8 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           wait_days,
           status,
           current_stage,
+          stage,
+          stage_updated_at,
           pricing,
           mandatory_addons_cad,
           notes,
@@ -1081,7 +1096,9 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           deliveryDate: data.delivery_date || null,
           waitDays: data.wait_days != null ? Number(data.wait_days) : null,
           status: data.status as SubmissionStatus,
-          currentStage: data.current_stage || undefined,
+          currentStage: (data as any).stage || data.current_stage || undefined,
+          stage: (data as any).stage || data.current_stage || 'deposit_placed',
+          stageUpdatedAt: (data as any).stage_updated_at || data.updated_at,
           pricing: data.pricing as PricingType,
           mandatoryAddonsCad: Number(data.mandatory_addons_cad || 0),
           notes: data.notes || '',
@@ -1115,7 +1132,9 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
         deliveryDate: item.delivery_date || null,
         waitDays: item.wait_days != null ? Number(item.wait_days) : null,
         status: item.status,
-        currentStage: item.current_stage,
+        currentStage: item.stage || item.current_stage,
+        stage: item.stage || item.current_stage || 'deposit_placed',
+        stageUpdatedAt: item.stage_updated_at || item.updated_at,
         pricing: item.pricing,
         mandatoryAddonsCad: item.mandatory_addons_cad || 0,
         notes: item.notes || '',
@@ -1135,18 +1154,20 @@ export async function updateSubmissionByEditToken(
     deliveryDate?: string | null;
     notes?: string | null;
     currentStage?: SubmissionStage;
+    stage?: string;
   }
 ): Promise<{
   id: string;
   status: SubmissionStatus;
   currentStage?: SubmissionStage;
+  stage?: string;
   deliveryDate?: string | null;
   waitDays?: number | null;
   notes?: string | null;
   updatedAt: string;
 } | null> {
-  const finalStatus = updates.status || (updates.currentStage === 'delivered' ? 'delivered' : undefined);
-  const finalStage = updates.currentStage || (updates.status === 'delivered' ? 'delivered' : undefined);
+  const finalStage = updates.stage || updates.currentStage || (updates.status === 'delivered' ? 'delivered' : undefined);
+  const finalStatus = updates.status || (finalStage === 'delivered' ? 'delivered' : finalStage === 'cancelled' ? 'cancelled' : undefined);
 
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -1175,7 +1196,11 @@ export async function updateSubmissionByEditToken(
           updated_at: new Date().toISOString(),
         };
         if (finalStatus) updatePayload.status = finalStatus;
-        if (finalStage) updatePayload.current_stage = finalStage;
+        if (finalStage) {
+          updatePayload.current_stage = finalStage;
+          updatePayload.stage = finalStage;
+          updatePayload.stage_updated_at = new Date().toISOString();
+        }
         if (finalStatus === 'pending' || finalStatus === 'cancelled') {
           updatePayload.delivery_date = null;
           updatePayload.wait_days = null;
@@ -1189,7 +1214,7 @@ export async function updateSubmissionByEditToken(
           .from('submissions')
           .update(updatePayload)
           .eq('edit_token', editToken)
-          .select('id, status, current_stage, delivery_date, wait_days, notes, updated_at')
+          .select('id, status, current_stage, stage, delivery_date, wait_days, notes, updated_at')
           .single();
 
         if (!error && updated) {
@@ -1203,7 +1228,8 @@ export async function updateSubmissionByEditToken(
           return {
             id: updated.id,
             status: updated.status,
-            currentStage: updated.current_stage,
+            currentStage: updated.stage || updated.current_stage,
+            stage: updated.stage || updated.current_stage,
             deliveryDate: updated.delivery_date,
             waitDays: updated.wait_days,
             notes: updated.notes,
@@ -1220,7 +1246,11 @@ export async function updateSubmissionByEditToken(
   for (const item of inMemorySubmissions.values()) {
     if (item.edit_token === editToken || item.id === editToken) {
       if (finalStatus) item.status = finalStatus;
-      if (finalStage) item.current_stage = finalStage;
+      if (finalStage) {
+        item.current_stage = finalStage;
+        item.stage = finalStage;
+        item.stage_updated_at = new Date().toISOString();
+      }
       if (finalStatus === 'pending' || finalStatus === 'cancelled') {
         item.delivery_date = null;
         item.wait_days = null;
@@ -1240,7 +1270,8 @@ export async function updateSubmissionByEditToken(
       return {
         id: item.id,
         status: item.status,
-        currentStage: item.current_stage,
+        currentStage: item.stage || item.current_stage,
+        stage: item.stage || item.current_stage,
         deliveryDate: item.delivery_date,
         waitDays: item.wait_days,
         notes: item.notes,

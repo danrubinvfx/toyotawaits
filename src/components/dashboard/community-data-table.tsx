@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
+import { OrderStageIndicator } from '@/components/dashboard/order-stage-indicator';
 
 export type { CommunityRecord };
 export const INITIAL_RECORDS: CommunityRecord[] = INITIAL_COMMUNITY_RECORDS;
@@ -501,26 +502,36 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
                     </td>
 
                     {/* Status & Wait */}
-                    <td className="py-3 px-3 sm:px-4 whitespace-nowrap">
+                    <td className="py-3 px-3 sm:px-4">
                       {r.status === 'delivered' || r.stage === 'delivered' ? (
-                        <div className="space-y-0.5">
-                          <span className="inline-flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400">
-                            <CheckCircle2 className="h-3 w-3" />
-                            {r.waitDays ?? 0} Days
-                          </span>
-                          <span className="text-[10px] text-zinc-500 block">
-                            Delivered {r.deliveryDate ? `(${r.deliveryDate})` : ''}
-                          </span>
+                        <div className="space-y-1.5 min-w-[130px]">
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400">
+                            <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                            <span>{r.waitDays ?? 0} Days</span>
+                            <span className="text-[10px] text-zinc-500 font-normal">Delivered</span>
+                          </div>
+                          <OrderStageIndicator
+                            stage={r.stage || 'delivered'}
+                            status={r.status}
+                            compact={true}
+                          />
                         </div>
                       ) : (
-                        <div className="space-y-0.5">
-                          <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-500/20">
-                            <Clock className="h-3 w-3" />
-                            Still Waiting
-                          </span>
-                          <span className="text-[10px] font-semibold text-zinc-500 block">
-                            {calculateDaysWaitedSoFar(r.orderDate)} days so far
-                          </span>
+                        <div className="space-y-1.5 min-w-[130px]">
+                          <div className="space-y-0.5">
+                            <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                              <Clock className="h-3 w-3" />
+                              Still Waiting
+                            </span>
+                            <span className="text-[10px] font-semibold text-zinc-500 block">
+                              {calculateDaysWaitedSoFar(r.orderDate)} days so far
+                            </span>
+                          </div>
+                          <OrderStageIndicator
+                            stage={r.stage || 'deposit_placed'}
+                            status={r.status}
+                            compact={true}
+                          />
                         </div>
                       )}
                     </td>

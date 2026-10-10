@@ -105,10 +105,21 @@ export async function PATCH(
       );
     }
 
-    const { status, deliveryDate, notes, currentStage } = body;
+    const { status, deliveryDate, notes, currentStage, stage } = body;
+    const resolvedStage = stage || currentStage;
+
+    const finalStatus =
+      status ||
+      (resolvedStage === 'delivered'
+        ? 'delivered'
+        : resolvedStage === 'cancelled'
+        ? 'cancelled'
+        : resolvedStage
+        ? 'pending'
+        : undefined);
 
     // Validate status if provided
-    if (status && !['pending', 'delivered', 'cancelled'].includes(status)) {
+    if (finalStatus && !['pending', 'delivered', 'cancelled'].includes(finalStatus)) {
       return NextResponse.json<ApiResponse<null>>(
         {
           success: false,
@@ -122,7 +133,7 @@ export async function PATCH(
     }
 
     // Validate delivery date if status is delivered
-    if (status === 'delivered') {
+    if (finalStatus === 'delivered') {
       if (!deliveryDate) {
         return NextResponse.json<ApiResponse<null>>(
           {
@@ -151,10 +162,11 @@ export async function PATCH(
     }
 
     const updated = await updateSubmissionByEditToken(token, {
-      status: status as SubmissionStatus | undefined,
+      status: finalStatus as SubmissionStatus | undefined,
       deliveryDate: deliveryDate !== undefined ? deliveryDate : undefined,
       notes: typeof notes === 'string' ? notes.trim() : undefined,
-      currentStage: currentStage as SubmissionStage | undefined,
+      currentStage: resolvedStage as SubmissionStage | undefined,
+      stage: resolvedStage,
     });
 
     if (!updated) {

@@ -55,6 +55,7 @@ export function SubmissionForm() {
     d.setDate(d.getDate() + 1);
     return d.toISOString().split('T')[0];
   });
+  const [stage, setStage] = useState<'deposit_placed' | 'allocation_confirmed' | 'in_transit' | 'delivered'>('deposit_placed');
   const [status, setStatus] = useState<'pending' | 'delivered'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('at_msrp');
@@ -104,6 +105,7 @@ export function SubmissionForm() {
     setDealershipCity('');
     setModelYear(2026);
     setOrderDate(getTodayLocalDate());
+    setStage('deposit_placed');
     setStatus('pending');
     setDeliveryDate('');
     setPricing('at_msrp');
@@ -170,8 +172,9 @@ export function SubmissionForm() {
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),
         orderDate,
-        deliveryDate: status === 'delivered' ? deliveryDate : undefined,
-        status,
+        deliveryDate: stage === 'delivered' ? deliveryDate : undefined,
+        status: stage === 'delivered' ? 'delivered' : 'pending',
+        stage,
         pricing,
         mandatoryAddonsCad: Number(mandatoryAddonsCad) || 0,
         tradeInRequired: false,
@@ -212,7 +215,7 @@ export function SubmissionForm() {
         createdAt: new Date().toISOString(),
       });
 
-      if (status === 'pending') {
+      if (stage !== 'delivered') {
         try {
           localStorage.setItem(
             'toyotawait_pending_submission',
@@ -225,8 +228,8 @@ export function SubmissionForm() {
               trimName: currentTrim.name,
               province,
               orderDate,
-              currentStage: 'deposit_placed',
-              status,
+              currentStage: stage,
+              status: 'pending',
             })
           );
         } catch {
@@ -528,34 +531,83 @@ export function SubmissionForm() {
               </div>
             </div>
 
-            {/* 3. Delivery Timeline Status */}
+            {/* 3. Granular Order Milestones */}
             <div className="space-y-2 pt-1">
-              <Label>Delivery Status</Label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center justify-between">
+                <Label>Order Lifecycle Milestone</Label>
+                <span className="text-xs text-zinc-500">Milestone 1–4</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                 <button
                   type="button"
-                  onClick={() => setStatus('pending')}
-                  className={`flex flex-col items-center justify-center p-3.5 rounded-lg border text-sm font-semibold transition-all cursor-pointer ${
-                    status === 'pending'
-                      ? 'border-red-600 bg-red-50 text-red-900 dark:bg-red-950/40 dark:text-red-200 dark:border-red-700'
+                  onClick={() => {
+                    setStage('deposit_placed');
+                    setStatus('pending');
+                  }}
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    stage === 'deposit_placed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
                   }`}
                 >
-                  ⏳ Still Waiting
-                  <span className="text-[11px] font-normal text-zinc-500 mt-0.5">Order deposit placed</span>
+                  <span className="text-xs font-bold">1. Deposit Placed</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
+                    Deposit queue initiated
+                  </span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setStatus('delivered')}
-                  className={`flex flex-col items-center justify-center p-3.5 rounded-lg border text-sm font-semibold transition-all cursor-pointer ${
-                    status === 'delivered'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-900 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-700'
+                  onClick={() => {
+                    setStage('allocation_confirmed');
+                    setStatus('pending');
+                  }}
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    stage === 'allocation_confirmed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
                   }`}
                 >
-                  🎉 Vehicle Received
-                  <span className="text-[11px] font-normal text-zinc-500 mt-0.5">Took delivery</span>
+                  <span className="text-xs font-bold">2. Allocation Assigned</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
+                    Build slot / VIN confirmed
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStage('in_transit');
+                    setStatus('pending');
+                  }}
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    stage === 'in_transit'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
+                  }`}
+                >
+                  <span className="text-xs font-bold">3. In Transit / Freight</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
+                    Rail or carrier in transit
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStage('delivered');
+                    setStatus('delivered');
+                  }}
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                    stage === 'delivered'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/50 dark:text-emerald-100 ring-1 ring-emerald-600 shadow-xs'
+                      : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
+                  }`}
+                >
+                  <span className="text-xs font-bold">4. Delivered</span>
+                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
+                    Vehicle received at dealer
+                  </span>
                 </button>
               </div>
             </div>
@@ -577,7 +629,7 @@ export function SubmissionForm() {
                 )}
               </div>
 
-              {status === 'delivered' && (
+              {stage === 'delivered' && (
                 <div className="space-y-1.5 animate-in fade-in-50">
                   <Label htmlFor={`${formId}-delivery-date`}>Delivery Date</Label>
                   <Input

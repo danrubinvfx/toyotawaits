@@ -13,12 +13,23 @@ export const canadianProvinceSchema = z.enum(CANADIAN_PROVINCES);
 export const SUBMISSION_STATUSES = ['pending', 'delivered', 'cancelled'] as const;
 export const submissionStatusSchema = z.enum(SUBMISSION_STATUSES);
 
+export const ORDER_STAGES = [
+  'deposit_placed',
+  'allocation_confirmed',
+  'in_transit',
+  'delivered',
+  'cancelled',
+] as const;
+export const orderStageSchema = z.enum(ORDER_STAGES);
+
 export const SUBMISSION_STAGES = [
   'deposit_placed',
   'allocation_confirmed',
+  'in_transit',
   'freight_transit',
   'arrived_at_dealer',
   'delivered',
+  'cancelled',
 ] as const;
 export const submissionStageSchema = z.enum(SUBMISSION_STAGES);
 
@@ -187,3 +198,15 @@ export const affiliateSlugSchema = z.object({
 });
 
 export type AffiliateSlugParams = z.infer<typeof affiliateSlugSchema>;
+
+// ----------------------------------------------------------------------------
+// 6. NOTIFICATION SUBSCRIPTION SCHEMA (POST /api/notifications/subscribe)
+// ----------------------------------------------------------------------------
+export const notificationSubscribeSchema = z.object({
+  email: z.string().trim().email('Valid email address is required'),
+  model: z.string().trim().min(1, 'Vehicle model is required'),
+  trim: z.string().trim().max(100).optional().nullable(),
+  province: canadianProvinceSchema,
+});
+
+export type NotificationSubscribeInput = z.infer<typeof notificationSubscribeSchema>;

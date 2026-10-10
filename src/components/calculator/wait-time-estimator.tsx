@@ -16,10 +16,11 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
+import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
@@ -59,6 +60,7 @@ export function WaitTimeEstimator({
   const [stats, setStats] = useState<RegionalWaitSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [isNotifyModalOpen, setIsNotifyModalOpen] = useState<boolean>(false);
 
   // Handle post-submission deep-link, parameter sync, and confirmation banner
   useEffect(() => {
@@ -540,7 +542,7 @@ export function WaitTimeEstimator({
                   Based on {verifiedSampleSize} verified deliveries
                 </div>
 
-                {/* Action Buttons: Calendar + Reddit Share */}
+                {/* Action Buttons: Calendar + Reddit Share + Notify Me */}
                 <div className="flex items-center gap-2 pt-1">
                   <Button
                     variant="outline"
@@ -559,6 +561,15 @@ export function WaitTimeEstimator({
                   >
                     <Share2 className="h-3 w-3 text-amber-500" />
                     Share to Reddit
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsNotifyModalOpen(true)}
+                    className="h-7 text-xs border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1 px-2.5 font-semibold"
+                  >
+                    <Bell className="h-3 w-3 text-amber-500" />
+                    Notify Me
                   </Button>
                 </div>
               </div>
@@ -621,6 +632,30 @@ export function WaitTimeEstimator({
               >
                 Planning your build? Browse popular community accessories &amp; mods &rarr;
               </Link>
+            </div>
+
+            {/* Minimalist Notify Me Trigger Banner */}
+            <div
+              data-testid="notify-me-trigger-card"
+              className="rounded-lg border border-amber-500/30 bg-amber-500/5 dark:border-amber-500/20 dark:bg-amber-950/20 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs"
+            >
+              <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
+                <div className="h-7 w-7 rounded-md bg-amber-500/20 dark:bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
+                  <Bell className="h-3.5 w-3.5 text-amber-500" />
+                </div>
+                <span className="text-zinc-800 dark:text-zinc-200 font-medium">
+                  Get notified when matching deliveries occur or regional wait times adjust.
+                </span>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setIsNotifyModalOpen(true)}
+                className="h-7 text-xs border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 font-bold px-3 shrink-0 self-end sm:self-auto"
+              >
+                Notify Me
+              </Button>
             </div>
 
             {/* Pricing Transparency Summary */}
@@ -814,6 +849,14 @@ export function WaitTimeEstimator({
           orderDate: depositDate,
           estDelivery: `${optimisticDate} – ${conservativeDate} (~${medianMonths} mos)`,
         }}
+      />
+
+      <NotificationSubscriptionModal
+        isOpen={isNotifyModalOpen}
+        onClose={() => setIsNotifyModalOpen(false)}
+        defaultModel={modelSlug}
+        defaultProvince={province as import('@/lib/types/contracts').CanadianProvince}
+        defaultTrim={trimSlug === 'all' ? undefined : trimSlug}
       />
     </Card>
   );
