@@ -17,320 +17,19 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
+import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 
-export interface CommunityRecord {
-  id: string;
-  model: string;
-  modelSlug: string;
-  powertrain: string;
-  powertrainSlug: string;
-  trim: string;
-  modelYear: number;
-  province: string;
-  city: string;
-  orderDate: string;
-  deliveryDate: string | null;
-  waitDays: number | null;
-  status: 'pending' | 'delivered';
-  stage?: SubmissionStage;
-  pricing: 'at_msrp' | 'above_msrp' | 'below_msrp';
-  addonsCad: number;
+export type { CommunityRecord };
+export const INITIAL_RECORDS: CommunityRecord[] = INITIAL_COMMUNITY_RECORDS;
+
+export interface CommunityDataTableProps {
+  initialRecords?: CommunityRecord[];
 }
 
-// Verified 2026 Canadian crowdsourced records from r/rav4club, r/Toyota, and RedFlagDeals
-const INITIAL_RECORDS: CommunityRecord[] = [
-  {
-    id: 'rec-1',
-    model: 'RAV4',
-    modelSlug: 'rav4',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'XSE AWD Tech Package',
-    modelYear: 2026,
-    province: 'BC',
-    city: 'Richmond',
-    orderDate: '2025-04-10',
-    deliveryDate: '2026-05-25',
-    waitDays: 410,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-2',
-    model: 'RAV4',
-    modelSlug: 'rav4',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'XLE AWD',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'Oakville',
-    orderDate: '2025-10-01',
-    deliveryDate: '2026-03-20',
-    waitDays: 170,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-3',
-    model: 'Sienna',
-    modelSlug: 'sienna',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'XSE AWD (7-Passenger)',
-    modelYear: 2026,
-    province: 'AB',
-    city: 'Calgary',
-    orderDate: '2025-01-15',
-    deliveryDate: null,
-    waitDays: null,
-    status: 'pending',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-4',
-    model: 'Grand Highlander',
-    modelSlug: 'grand-highlander',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'Hybrid Limited AWD',
-    modelYear: 2026,
-    province: 'QC',
-    city: 'Laval',
-    orderDate: '2025-06-12',
-    deliveryDate: '2026-05-02',
-    waitDays: 324,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-5',
-    model: 'Land Cruiser',
-    modelSlug: 'land-cruiser',
-    powertrain: 'i-FORCE MAX Hybrid',
-    powertrainSlug: 'hev',
-    trim: 'Land Cruiser Grade',
-    modelYear: 2026,
-    province: 'BC',
-    city: 'North Vancouver',
-    orderDate: '2025-11-20',
-    deliveryDate: '2026-03-15',
-    waitDays: 115,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-6',
-    model: 'RAV4',
-    modelSlug: 'rav4',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'SE AWD',
-    modelYear: 2026,
-    province: 'QC',
-    city: 'Montreal',
-    orderDate: '2025-03-15',
-    deliveryDate: '2026-04-20',
-    waitDays: 401,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-7',
-    model: 'Sienna',
-    modelSlug: 'sienna',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'Limited AWD (7-Passenger)',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'Markham',
-    orderDate: '2024-11-10',
-    deliveryDate: '2026-04-15',
-    waitDays: 521,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-8',
-    model: 'RAV4',
-    modelSlug: 'rav4',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'Woodland Edition AWD',
-    modelYear: 2026,
-    province: 'BC',
-    city: 'Victoria',
-    orderDate: '2025-09-12',
-    deliveryDate: '2026-04-18',
-    waitDays: 218,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-9',
-    model: 'Grand Highlander',
-    modelSlug: 'grand-highlander',
-    powertrain: 'Hybrid MAX',
-    powertrainSlug: 'hybrid-max',
-    trim: 'Platinum Hybrid MAX AWD',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'Mississauga',
-    orderDate: '2025-07-20',
-    deliveryDate: '2026-06-05',
-    waitDays: 320,
-    status: 'delivered',
-    pricing: 'above_msrp',
-    addonsCad: 495,
-  },
-  {
-    id: 'rec-10',
-    model: 'Land Cruiser',
-    modelSlug: 'land-cruiser',
-    powertrain: 'i-FORCE MAX Hybrid',
-    powertrainSlug: 'hev',
-    trim: '1958 Grade',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'London',
-    orderDate: '2026-01-10',
-    deliveryDate: '2026-05-10',
-    waitDays: 120,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-11',
-    model: 'Sienna',
-    modelSlug: 'sienna',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'LE AWD (8-Passenger)',
-    modelYear: 2026,
-    province: 'MB',
-    city: 'Winnipeg',
-    orderDate: '2025-02-15',
-    deliveryDate: '2026-06-18',
-    waitDays: 488,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-12',
-    model: 'RAV4',
-    modelSlug: 'rav4',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'Limited AWD',
-    modelYear: 2026,
-    province: 'AB',
-    city: 'Edmonton',
-    orderDate: '2026-01-20',
-    deliveryDate: null,
-    waitDays: null,
-    status: 'pending',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-13',
-    model: 'Prius Prime',
-    modelSlug: 'prius-prime',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'XSE',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'Toronto',
-    orderDate: '2025-08-15',
-    deliveryDate: '2026-02-12',
-    waitDays: 181,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-14',
-    model: 'Prius Prime',
-    modelSlug: 'prius-prime',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'SE',
-    modelYear: 2026,
-    province: 'BC',
-    city: 'Langley',
-    orderDate: '2026-04-10',
-    deliveryDate: '2026-05-15',
-    waitDays: 35,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-15',
-    model: 'Prius Prime',
-    modelSlug: 'prius-prime',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'XSE Premium',
-    modelYear: 2026,
-    province: 'AB',
-    city: 'Calgary',
-    orderDate: '2025-05-12',
-    deliveryDate: '2026-04-18',
-    waitDays: 341,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-16',
-    model: 'Prius',
-    modelSlug: 'prius',
-    powertrain: 'Hybrid (HEV)',
-    powertrainSlug: 'hev',
-    trim: 'XLE AWD',
-    modelYear: 2026,
-    province: 'ON',
-    city: 'Ottawa',
-    orderDate: '2026-05-02',
-    deliveryDate: '2026-08-14',
-    waitDays: 104,
-    status: 'delivered',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-  {
-    id: 'rec-17',
-    model: 'Prius Prime',
-    modelSlug: 'prius-prime',
-    powertrain: 'Plug-in Hybrid (PHEV)',
-    powertrainSlug: 'phev',
-    trim: 'XSE',
-    modelYear: 2026,
-    province: 'QC',
-    city: 'Montreal',
-    orderDate: '2026-03-01',
-    deliveryDate: null,
-    waitDays: null,
-    status: 'pending',
-    pricing: 'at_msrp',
-    addonsCad: 0,
-  },
-];
-
-export function CommunityDataTable() {
+export function CommunityDataTable({ initialRecords }: CommunityDataTableProps = {}) {
+  const [records, setRecords] = useState<CommunityRecord[]>(
+    () => (initialRecords && initialRecords.length > 0 ? initialRecords : INITIAL_COMMUNITY_RECORDS)
+  );
   const [modelFilter, setModelFilter] = useState<string>('all');
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -338,6 +37,35 @@ export function CommunityDataTable() {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 8;
+
+  // Sync state if initialRecords changes
+  React.useEffect(() => {
+    if (initialRecords && initialRecords.length > 0) {
+      setRecords(initialRecords);
+    }
+  }, [initialRecords]);
+
+  // Fetch freshest submissions on client mount (bypassed in test environment)
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === 'test') return;
+    let isMounted = true;
+    async function fetchSubmissions() {
+      try {
+        const res = await fetch('/api/submissions', { cache: 'no-store' });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && isMounted) {
+          setRecords(json.data);
+        }
+      } catch {
+        // Silently retain current records on network error
+      }
+    }
+    fetchSubmissions();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Calculate days waited so far for pending submissions
   const calculateDaysWaitedSoFar = (orderDateStr: string): number => {
@@ -352,7 +80,7 @@ export function CommunityDataTable() {
     let all = 0;
     let delivered = 0;
     let pending = 0;
-    for (const r of INITIAL_RECORDS) {
+    for (const r of records) {
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
       all++;
@@ -360,11 +88,11 @@ export function CommunityDataTable() {
       else if (r.status === 'pending') pending++;
     }
     return { all, delivered, pending };
-  }, [modelFilter, provinceFilter]);
+  }, [records, modelFilter, provinceFilter]);
 
   // Filter and sort items (includes both delivered and pending submissions)
   const filteredRecords = useMemo(() => {
-    return INITIAL_RECORDS.filter((r) => {
+    return records.filter((r) => {
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
       if (statusFilter !== 'all' && r.status !== statusFilter) return false;

@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
 import { Submission, CanadianProvince, SubmissionStatus, SubmissionStage, PricingType } from '@/lib/types/contracts';
+import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
+import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 
 export interface SubmissionCreateData {
   modelId: string;
@@ -480,7 +482,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   ) {
     try {
       const supabase = createServerClient();
-      const { data: inserted, error } = await supabase
+      let { data: inserted, error } = await supabase
         .from('submissions')
         .insert({
           id,
@@ -505,6 +507,96 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         .select()
         .single();
 
+      // If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
+      if (error && (error.code === '23503' || error.message?.includes('foreign key'))) {
+        console.warn('Foreign key mismatch in Supabase insert, resolving actual DB IDs by slug...', error.message);
+        let modelSlug: string | undefined;
+        let powertrainSlug: string | undefined;
+        let trimSlug: string | undefined;
+
+        for (const m of CANADIAN_VEHICLE_CATALOG) {
+          if (m.id === data.modelId) {
+            modelSlug = m.slug;
+            for (const p of m.powertrains) {
+              if (p.id === data.powertrainId) {
+                powertrainSlug = p.slug;
+                for (const t of p.trims) {
+                  if (t.id === data.trimId) {
+                    trimSlug = t.slug;
+                    break;
+                  }
+                }
+                break;
+              }
+            }
+            break;
+          }
+        }
+
+        if (modelSlug) {
+          const { data: dbModel } = await supabase
+            .from('vehicle_models')
+            .select('id')
+            .eq('slug', modelSlug)
+            .single();
+
+          if (dbModel) {
+            const actualModelId = dbModel.id;
+            const { data: dbPowertrain } = powertrainSlug
+              ? await supabase
+                  .from('vehicle_powertrains')
+                  .select('id')
+                  .eq('model_id', actualModelId)
+                  .eq('slug', powertrainSlug)
+                  .single()
+              : { data: null };
+            const actualPowertrainId = dbPowertrain?.id || data.powertrainId;
+
+            const { data: dbTrim } = trimSlug && dbPowertrain
+              ? await supabase
+                  .from('vehicle_trims')
+                  .select('id')
+                  .eq('powertrain_id', actualPowertrainId)
+                  .eq('slug', trimSlug)
+                  .single()
+              : { data: null };
+            const actualTrimId = dbTrim?.id || data.trimId;
+
+            const retryRes = await supabase
+              .from('submissions')
+              .insert({
+                id,
+                model_id: actualModelId,
+                powertrain_id: actualPowertrainId,
+                trim_id: actualTrimId,
+                province: data.province,
+                dealership_city: data.dealershipCity,
+                dealership_name: data.dealershipName,
+                model_year: data.modelYear,
+                order_date: data.orderDate,
+                delivery_date: data.deliveryDate,
+                status: data.status,
+                current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+                pricing: data.pricing,
+                mandatory_addons_cad: data.mandatoryAddonsCad,
+                trade_in_required: data.tradeInRequired,
+                notes: data.notes,
+                edit_key_hash: data.editKeyHash,
+                is_flagged: data.isFlagged,
+              })
+              .select()
+              .single();
+
+            if (!retryRes.error && retryRes.data) {
+              inserted = retryRes.data;
+              error = null;
+            } else if (retryRes.error) {
+              console.error('Retry insert with resolved DB IDs failed:', retryRes.error.message);
+            }
+          }
+        }
+      }
+
       if (!error && inserted) {
         return {
           id: inserted.id,
@@ -513,6 +605,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           waitDays: inserted.wait_days,
           isFlagged: inserted.is_flagged,
         };
+      } else if (error) {
+        console.error('Supabase PostgreSQL insert failed:', error.message, error.details);
       }
     } catch (err) {
       console.warn('PostgreSQL insert fallback to memory:', err);
@@ -726,4 +820,78 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
   }
 
   return rows;
+}
+
+export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+      const { data, error } = await supabase
+        .from('submissions')
+        .select(`
+          id,
+          province,
+          dealership_city,
+          model_year,
+          order_date,
+          delivery_date,
+          wait_days,
+          status,
+          current_stage,
+          pricing,
+          mandatory_addons_cad,
+          created_at,
+          vehicle_models!inner(name, slug),
+          vehicle_powertrains!inner(name, slug),
+          vehicle_trims!inner(name, slug)
+        `)
+        .eq('is_flagged', false)
+        .in('status', ['delivered', 'pending'])
+        .order('order_date', { ascending: false });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        const dbRecords: CommunityRecord[] = data.map((item: any) => ({
+          id: item.id,
+          model: item.vehicle_models?.name || 'RAV4',
+          modelSlug: item.vehicle_models?.slug || 'rav4',
+          powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
+          powertrainSlug: item.vehicle_powertrains?.slug || 'hev',
+          trim: item.vehicle_trims?.name || 'XLE AWD',
+          modelYear: item.model_year,
+          province: item.province,
+          city: item.dealership_city || '',
+          orderDate: item.order_date,
+          deliveryDate: item.delivery_date || null,
+          waitDays: item.wait_days != null ? Number(item.wait_days) : null,
+          status: item.status as 'pending' | 'delivered',
+          stage: item.current_stage || undefined,
+          pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
+            ? item.pricing
+            : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
+          addonsCad: Number(item.mandatory_addons_cad || 0),
+        }));
+
+        // Deduplicate against initial community records (Supabase rows take precedence)
+        const dbIds = new Set(dbRecords.map((r) => r.id));
+        const combined = [...dbRecords];
+        for (const seed of INITIAL_COMMUNITY_RECORDS) {
+          if (!dbIds.has(seed.id)) {
+            combined.push(seed);
+          }
+        }
+        return combined;
+      } else if (error) {
+        console.warn('Supabase query error in getCommunitySubmissions, falling back to initial records:', error.message);
+      }
+    } catch (err) {
+      console.warn('Supabase query exception in getCommunitySubmissions:', err);
+    }
+  }
+
+  // Fallback to initial verified community dataset
+  return [...INITIAL_COMMUNITY_RECORDS];
 }

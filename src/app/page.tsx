@@ -8,6 +8,7 @@ import { CommunityDataTable } from '@/components/dashboard/community-data-table'
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 import { ModelSummaryCards } from '@/components/dashboard/model-summary-cards';
 import { getModelWaitBenchmarks } from '@/lib/db/stats';
+import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -57,7 +58,10 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const benchmarks = await getModelWaitBenchmarks();
+  const [benchmarks, submissions] = await Promise.all([
+    getModelWaitBenchmarks(),
+    getCommunitySubmissions(),
+  ]);
   const rav4Median = benchmarks.rav4?.median_days ?? 410;
   const siennaMedian = benchmarks.sienna?.median_days ?? 510;
 
@@ -160,7 +164,7 @@ export default async function HomePage() {
       {/* Community Submissions & Delivery Log Table */}
       <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4">
         <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <CommunityDataTable />
+          <CommunityDataTable initialRecords={submissions} />
         </React.Suspense>
       </section>
 

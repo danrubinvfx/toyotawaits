@@ -4,9 +4,40 @@ import { submissionCreateSchema } from '@/lib/validations/schemas';
 import { verifyTurnstileToken } from '@/lib/security/turnstile';
 import { checkRateLimit } from '@/lib/security/ratelimit';
 import { detectSubmissionOutlier } from '@/lib/security/outlier-detection';
-import { insertSubmission } from '@/lib/db/submissions';
+import { insertSubmission, getCommunitySubmissions } from '@/lib/db/submissions';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
+import { CommunityRecord } from '@/lib/data/community-records';
+
+export async function GET() {
+  try {
+    const submissions = await getCommunitySubmissions();
+    return NextResponse.json<ApiResponse<CommunityRecord[]>>(
+      {
+        success: true,
+        data: submissions,
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+        },
+      }
+    );
+  } catch (error: any) {
+    console.error('Unhandled error in GET /api/submissions:', error);
+    return NextResponse.json<ApiResponse<null>>(
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to retrieve community submissions.',
+        },
+      },
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

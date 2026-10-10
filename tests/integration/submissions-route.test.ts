@@ -367,3 +367,24 @@ describe('PATCH /api/submissions/[id]', () => {
     expect(transitData.data.currentStage).toBe('freight_transit');
   });
 });
+
+describe('GET /api/submissions', () => {
+  it('returns community submissions including pending submissions with null delivery dates', async () => {
+    const { GET } = await import('@/app/api/submissions/route');
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('Cache-Control')).toContain('no-store');
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(Array.isArray(json.data)).toBe(true);
+    expect(json.data.length).toBeGreaterThan(0);
+
+    // Ensure pending records exist in response with deliveryDate: null
+    const pendingRecords = json.data.filter((r: any) => r.status === 'pending');
+    expect(pendingRecords.length).toBeGreaterThan(0);
+    expect(pendingRecords[0].deliveryDate).toBeNull();
+    expect(pendingRecords[0].waitDays).toBeNull();
+  });
+});

@@ -88,4 +88,32 @@ describe('CommunityDataTable Component', () => {
     const blobArg = createObjectURLMock.mock.calls[0][0];
     expect(blobArg).toBeInstanceOf(Blob);
   });
+
+  it('renders custom initialRecords passed as prop including pending submissions', () => {
+    const customRecords = [
+      {
+        id: 'custom-pending-1',
+        model: 'RAV4',
+        modelSlug: 'rav4',
+        powertrain: 'Plug-in Hybrid (PHEV)',
+        powertrainSlug: 'phev',
+        trim: 'XSE AWD Tech Package',
+        modelYear: 2026,
+        province: 'BC',
+        city: 'Richmond',
+        orderDate: '2026-07-25',
+        deliveryDate: null,
+        waitDays: null,
+        status: 'pending' as const,
+        pricing: 'at_msrp' as const,
+        addonsCad: 0,
+      },
+    ];
+
+    render(<CommunityDataTable initialRecords={customRecords} />);
+
+    expect(screen.getByText('Still Waiting')).toBeInTheDocument();
+    expect(screen.getByText(/Richmond/)).toBeInTheDocument();
+  });
 });
+
