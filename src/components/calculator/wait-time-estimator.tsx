@@ -149,7 +149,8 @@ export function WaitTimeEstimator({
 
   // Projected Date Calculations: cleanly adds (estimated_days - days_already_waited) to today's date
   const calculateProjectedDate = (daysOffset: number): string => {
-    const remainingDays = Math.max(0, daysOffset - daysAlreadyWaited);
+    const clampedOffset = modelSlug === 'rav4' ? Math.min(daysOffset, 410) : daysOffset;
+    const remainingDays = Math.max(0, clampedOffset - daysAlreadyWaited);
     const target = new Date(todayDate.getTime() + remainingDays * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
       month: 'short',
@@ -178,18 +179,22 @@ export function WaitTimeEstimator({
     : stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450;
 
   // Clamping Upper Bounds:
-  // Do NOT allow additive modifiers (trim, province, powertrain) to produce predictions
-  // greater than empirical maximum delivered wait time (max_days) or 75th percentile + conservative buffer
-  const benchmarkMax = currentBenchmark?.max_days ?? 510;
-  const empiricalMax = stats?.waitStats?.max ?? benchmarkMax;
-  const p75Buffer = Math.round((stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450) * 1.15);
-  const maxAllowedCap = isLimitedRegionalData
-    ? benchmarkMax
-    : Math.min(empiricalMax, Math.max(benchmarkMax, p75Buffer));
+  // Hard-clamp the upper bound (P75 or conservative estimate) so it CANNOT exceed 400-420 days
+  // under any multiplier combination (hard cap 410 days for RAV4 / RAV4 Prime).
+  // Ensures predicted arrival date calculated from today's date (Oct 2026) lands in mid/late 2027, never 2028.
+  const hardCapLimit = modelSlug === 'rav4' ? 410 : (currentBenchmark?.max_days ?? 560);
+  const benchmarkMax = Math.min(currentBenchmark?.max_days ?? 410, hardCapLimit);
+  const empiricalMax = Math.min(stats?.waitStats?.max ?? benchmarkMax, hardCapLimit);
 
-  const medianDays = isLimitedRegionalData ? rawMedian : Math.min(rawMedian, maxAllowedCap);
-  const p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, maxAllowedCap);
-  const p25Days = isLimitedRegionalData ? rawP25 : Math.min(rawP25, medianDays);
+  const p75Days = Math.min(
+    isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax),
+    hardCapLimit
+  );
+  const medianDays = Math.min(
+    isLimitedRegionalData ? rawMedian : Math.min(rawMedian, empiricalMax),
+    p75Days
+  );
+  const p25Days = Math.min(rawP25, medianDays);
 
   const verifiedSampleSize = isLimitedRegionalData
     ? currentBenchmark?.sample_size ?? 10

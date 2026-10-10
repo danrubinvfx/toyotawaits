@@ -748,11 +748,11 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
           pricing,
           mandatory_addons_cad,
           created_at,
-          vehicle_models!inner(name, slug),
-          vehicle_powertrains!inner(name, slug),
-          vehicle_trims!inner(name, slug)
+          vehicle_models(name, slug),
+          vehicle_powertrains(name, slug),
+          vehicle_trims(name, slug)
         `)
-        .eq('is_flagged', false);
+        .or('is_flagged.eq.false,is_flagged.is.null');
 
       if (filters.model) {
         query = query.eq('vehicle_models.slug', filters.model.toLowerCase());
@@ -765,6 +765,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       }
       if (filters.status) {
         query = query.eq('status', filters.status);
+      } else {
+        query = query.in('status', ['delivered', 'pending']);
       }
 
       const { data, error } = await query.order('order_date', { ascending: false });
@@ -845,11 +847,11 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           pricing,
           mandatory_addons_cad,
           created_at,
-          vehicle_models!inner(name, slug),
-          vehicle_powertrains!inner(name, slug),
-          vehicle_trims!inner(name, slug)
+          vehicle_models(name, slug),
+          vehicle_powertrains(name, slug),
+          vehicle_trims(name, slug)
         `)
-        .eq('is_flagged', false)
+        .or('is_flagged.eq.false,is_flagged.is.null')
         .in('status', ['delivered', 'pending'])
         .order('order_date', { ascending: false });
 

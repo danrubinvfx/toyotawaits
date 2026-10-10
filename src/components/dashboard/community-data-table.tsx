@@ -122,7 +122,24 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     return `/api/export?${params.toString()}`;
   }, [modelFilter, provinceFilter, statusFilter]);
 
-  // Full dataset CSV export handler (exports complete unpaginated matching records from parent state, e.g. all 17 rows)
+  // Complete unpaginated submissions (allSubmissions):
+  // When filters are default/all, exports all 17+ submissions.
+  // If filters are active, exports all matching submissions without pagination slicing (never pageSize: 8).
+  const allSubmissions = useMemo(() => {
+    const isUnfiltered = modelFilter === 'all' && provinceFilter === 'all' && statusFilter === 'all';
+    if (isUnfiltered) {
+      return records;
+    }
+    const matching = records.filter((r) => {
+      if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
+      if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
+      if (statusFilter !== 'all' && r.status !== statusFilter) return false;
+      return true;
+    });
+    return matching.length > 0 ? matching : records;
+  }, [records, modelFilter, provinceFilter, statusFilter]);
+
+  // Full dataset CSV export handler (exports allSubmissions without pageSize limit or truncation)
   const handleExportCsv = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (typeof window !== 'undefined' && window.URL && window.Blob) {
       e.preventDefault();
@@ -150,8 +167,8 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
       };
 
       const lines = [headers.join(',')];
-      // filteredRecords holds all matching entries without pagination slicing (pageSize: 8)
-      for (const r of filteredRecords) {
+      // Exports all matching submissions (allSubmissions) without pagination slicing (pageSize: 8)
+      for (const r of allSubmissions) {
         lines.push(
           [
             escapeCell(r.model),

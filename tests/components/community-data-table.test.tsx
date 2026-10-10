@@ -85,8 +85,21 @@ describe('CommunityDataTable Component', () => {
     fireEvent.click(downloadLink!);
 
     expect(createObjectURLMock).toHaveBeenCalledTimes(1);
-    const blobArg = createObjectURLMock.mock.calls[0][0];
+    const blobArg = createObjectURLMock.mock.calls[0][0] as Blob;
     expect(blobArg).toBeInstanceOf(Blob);
+
+    // Verify it exports all 17 records, not just page size 8
+    const reader = new FileReader();
+    const readPromise = new Promise<string>((resolve) => {
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsText(blobArg);
+    });
+
+    return readPromise.then((csvText) => {
+      const dataLines = csvText.trim().split('\r\n').filter((l) => l.trim().length > 0);
+      // 1 header row + 17 data rows = 18 total lines
+      expect(dataLines.length).toBe(18);
+    });
   });
 
   it('renders custom initialRecords passed as prop including pending submissions', () => {

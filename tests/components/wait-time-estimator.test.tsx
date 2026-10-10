@@ -19,12 +19,12 @@ describe('WaitTimeEstimator Component', () => {
         province: 'BC',
         sampleCounts: { total: 142, delivered: 118, pending: 24 },
         waitStats: {
-          p25: 310,
-          median: 412,
-          p75: 540,
-          mean: 425.4,
+          p25: 290,
+          median: 330,
+          p75: 360,
+          mean: 330.4,
           min: 180,
-          max: 730,
+          max: 410,
         },
         pricingInsights: {
           atMsrpPercent: 85,
@@ -47,9 +47,9 @@ describe('WaitTimeEstimator Component', () => {
     expect(screen.getByText('Interactive Delivery Wait-Time Estimator')).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getAllByText(/412 Days/i).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/310 Days/i)).toBeInTheDocument();
-      expect(screen.getByText(/540 Days/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/330 Days/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText(/290 Days/i)).toBeInTheDocument();
+      expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
       expect(screen.getByText(/85%/i)).toBeInTheDocument();
     });
   });
@@ -292,8 +292,8 @@ describe('WaitTimeEstimator Component', () => {
         powertrainName: 'Plug-in Hybrid (PHEV)',
         province: 'BC',
         sampleCounts: { total: 10, delivered: 8, pending: 2 },
-        // Outlandish wait stats exceeding empirical max 510
-        waitStats: { p25: 480, median: 580, p75: 650, mean: 570, min: 400, max: 510 },
+        // Outlandish wait stats exceeding empirical max 410
+        waitStats: { p25: 480, median: 580, p75: 650, mean: 570, min: 400, max: 410 },
         pricingInsights: { atMsrpPercent: 80, aboveMsrpPercent: 20, avgAddonsCad: 500 },
       },
     };
@@ -308,8 +308,8 @@ describe('WaitTimeEstimator Component', () => {
     render(<WaitTimeEstimator />);
 
     await waitFor(() => {
-      // Clamped to empirical max (510 Days)
-      expect(screen.getAllByText(/510 Days/i).length).toBeGreaterThanOrEqual(1);
+      // Clamped to conservative upper bound (410 Days)
+      expect(screen.getAllByText(/410 Days/i).length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -348,6 +348,58 @@ describe('WaitTimeEstimator Component', () => {
     await waitFor(() => {
       const priusLink = screen.getByRole('link', { name: /2023-2026 Prius & Prius Prime Essential Mods/i });
       expect(priusLink).toHaveAttribute('href', '/guides/prius-mods');
+    });
+  });
+
+  it('calculates a realistic 2027 estimate (under 420 days, never 2028) for RAV4 Prime XSE Tech in BC', async () => {
+    const mockRav4PrimeBcData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        powertrainName: 'Plug-in Hybrid (PHEV)',
+        trimSlug: 'xse-technology-awd',
+        province: 'BC',
+        sampleCounts: { total: 15, delivered: 12, pending: 3 },
+        waitStats: { p25: 315, median: 335, p75: 360, mean: 340, min: 290, max: 395 },
+        pricingInsights: { atMsrpPercent: 90, aboveMsrpPercent: 10, avgAddonsCad: 0 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/api/stats')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ success: true, data: {} }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockRav4PrimeBcData,
+      });
+    });
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(
+      <WaitTimeEstimator
+        initialModel="rav4"
+        initialPowertrain="phev"
+        initialTrim="xse-technology-awd"
+        initialProvince="BC"
+      />
+    );
+
+    await waitFor(() => {
+      // Must display median 335 Days (well under 420 days)
+      expect(screen.getAllByText(/335 Days/i).length).toBeGreaterThanOrEqual(1);
+      // P25 and P75 bounds under 420 days
+      expect(screen.getByText(/315 Days/i)).toBeInTheDocument();
+      expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
+      // Arrival date must be in 2027 and never 2028
+      expect(screen.getAllByText(/2027/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.queryByText(/2028/i)).not.toBeInTheDocument();
     });
   });
 });

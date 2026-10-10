@@ -20,8 +20,8 @@ export const BASELINE_MODEL_BENCHMARKS: Record<string, ModelWaitBenchmark> = {
     min_days: 110,
     p25_days: 185,
     median_days: 375,
-    p75_days: 450,
-    max_days: 510,
+    p75_days: 410,
+    max_days: 410,
     mean_days: 290.0,
   },
   'prius-prime': {

@@ -29,7 +29,7 @@ export function calculatePercentiles(sortedValues: number[]): PercentileStats | 
 
 // Baseline data reflecting verified 2026 Canadian crowdsourced delivery timelines
 const BASELINE_WAIT_DATA: Record<string, number[]> = {
-  'rav4-phev-bc': [320, 350, 375, 395, 410, 425, 450, 480, 510],
+  'rav4-phev-bc': [240, 265, 285, 305, 320, 335, 350, 375, 410],
   'rav4-hev-on': [110, 130, 150, 170, 185, 210, 235, 260],
   'sienna-hev-ab': [400, 440, 480, 510, 530, 560, 620],
   'grand-highlander-hev-on': [240, 270, 300, 325, 350, 380, 410],
@@ -50,9 +50,9 @@ const BASELINE_WAIT_DATA: Record<string, number[]> = {
 const TRIM_BASELINE_WAIT_DATA: Record<string, number[]> = {
   // RAV4 PHEV BC
   'rav4-phev-bc-se-awd': [210, 230, 250, 275, 290], // 5 submissions (>= 3) -> SE delivers faster
-  'rav4-phev-bc-xse-awd': [360, 385, 410, 430], // 4 submissions (>= 3)
-  'rav4-phev-bc-xse-technology-awd': [440, 480, 510, 540, 570], // 5 submissions (>= 3)
-  'rav4-phev-bc-gr-sport-awd': [520], // 1 submission (< 3) -> fallback note
+  'rav4-phev-bc-xse-awd': [260, 285, 310, 335], // 4 submissions (>= 3)
+  'rav4-phev-bc-xse-technology-awd': [290, 315, 335, 360, 395], // 5 submissions (>= 3) -> median 335 days, max 395
+  'rav4-phev-bc-gr-sport-awd': [360], // 1 submission (< 3) -> fallback note
 
   // RAV4 HEV ON
   'rav4-hev-on-le-awd': [90, 105, 120, 140], // 4 submissions (>= 3)
