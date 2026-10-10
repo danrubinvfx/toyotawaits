@@ -458,4 +458,45 @@ describe('WaitTimeEstimator Component', () => {
     fireEvent.click(dismissBtn);
     expect(screen.queryByTestId('submitted-confirmation-banner')).not.toBeInTheDocument();
   });
+
+  it('renders subtle high-contrast mod link under delivery estimate card and updates dynamically on model change', async () => {
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        province: 'BC',
+        sampleCounts: { total: 40, delivered: 35, pending: 5 },
+        waitStats: { p25: 280, median: 320, p75: 350, mean: 322, min: 190, max: 400 },
+        pricingInsights: { atMsrpPercent: 88, aboveMsrpPercent: 12, avgAddonsCad: 250 },
+      },
+    };
+
+    window.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+
+    render(<WaitTimeEstimator initialModel="rav4" />);
+
+    // Check link under primary estimate cards for default rav4
+    await waitFor(() => {
+      const modLink = screen.getByTestId('delivery-estimate-mods-link');
+      expect(modLink).toBeInTheDocument();
+      expect(modLink).toHaveTextContent('Planning your pickup? View recommended community accessories & mods ->');
+      expect(modLink).toHaveAttribute('href', '/mods/rav4');
+      expect(modLink.className).toContain('text-xs');
+      expect(modLink.className).toContain('text-zinc-500');
+    });
+
+    // Change model to Sienna
+    const modelSelect = screen.getByLabelText(/Vehicle Model/i);
+    fireEvent.change(modelSelect, { target: { value: 'sienna' } });
+
+    await waitFor(() => {
+      const modLink = screen.getByTestId('delivery-estimate-mods-link');
+      expect(modLink).toHaveAttribute('href', '/mods/sienna');
+    });
+  });
 });
