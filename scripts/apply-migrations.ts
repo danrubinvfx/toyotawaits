@@ -64,12 +64,39 @@ export async function applyAllMigrations(dbUrl?: string): Promise<{ success: boo
       .filter((f) => f.endsWith('.sql'))
       .sort();
 
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS _schema_migrations (
+        version TEXT PRIMARY KEY,
+        applied_at TIMESTAMPTZ DEFAULT NOW()
+      );
+    `);
+
+    const { rows: existingRows } = await client.query('SELECT version FROM _schema_migrations;');
+    const appliedVersions = new Set(existingRows.map((r: any) => r.version));
+
     for (const file of files) {
+      if (appliedVersions.has(file)) {
+        console.log(`   ⏭️  ${file} already applied, skipping.`);
+        applied.push(file);
+        continue;
+      }
+
       console.log(`⚡ Applying: ${file}...`);
       const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
-      await client.query(sql);
-      applied.push(file);
-      console.log(`   ✓ ${file} applied successfully.`);
+      try {
+        await client.query(sql);
+        await client.query('INSERT INTO _schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING;', [file]);
+        applied.push(file);
+        console.log(`   ✓ ${file} applied successfully.`);
+      } catch (err: any) {
+        if (err.message.includes('already exists') || err.message.includes('duplicate')) {
+          console.log(`   ℹ️  ${file} objects already exist, marked as applied.`);
+          await client.query('INSERT INTO _schema_migrations (version) VALUES ($1) ON CONFLICT DO NOTHING;', [file]);
+          applied.push(file);
+        } else {
+          throw err;
+        }
+      }
     }
 
     console.log('='.repeat(70));
