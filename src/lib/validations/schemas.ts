@@ -36,6 +36,9 @@ export const submissionStageSchema = z.enum(SUBMISSION_STAGES);
 export const PRICING_TYPES = ['at_msrp', 'above_msrp', 'below_msrp', 'undisclosed'] as const;
 export const pricingTypeSchema = z.enum(PRICING_TYPES);
 
+export const NUDGE_ACTIONS = ['still_waiting', 'delivered', 'cancelled'] as const;
+export const nudgeActionSchema = z.enum(NUDGE_ACTIONS);
+
 // ----------------------------------------------------------------------------
 // REGEX SCRUBBERS FOR PII PREVENTION (ZERO-PII POLICY)
 // ----------------------------------------------------------------------------

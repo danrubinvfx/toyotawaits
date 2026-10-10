@@ -519,10 +519,20 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
                       ) : (
                         <div className="space-y-1.5 min-w-[130px]">
                           <div className="space-y-0.5">
-                            <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-500/20">
-                              <Clock className="h-3 w-3" />
-                              Still Waiting
-                            </span>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="inline-flex items-center gap-1 rounded bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-400 border border-amber-500/20">
+                                <Clock className="h-3 w-3" />
+                                Still Waiting
+                              </span>
+                              {r.isStale && (
+                                <span
+                                  title="No status update in >120 days while exceeding 1.5x median wait"
+                                  className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[10px] text-zinc-400 border border-zinc-700"
+                                >
+                                  Unconfirmed
+                                </span>
+                              )}
+                            </div>
                             <span className="text-[10px] font-semibold text-zinc-500 block">
                               {calculateDaysWaitedSoFar(r.orderDate)} days so far
                             </span>

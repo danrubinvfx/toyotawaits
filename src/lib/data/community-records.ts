@@ -19,6 +19,7 @@ export interface CommunityRecord {
   stage?: SubmissionStage;
   pricing: 'at_msrp' | 'above_msrp' | 'below_msrp';
   addonsCad: number;
+  isStale?: boolean;
 }
 
 // Verified Canadian crowdsourced records from r/rav4club, r/Toyota, and RedFlagDeals

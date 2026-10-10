@@ -91,11 +91,36 @@ export interface Submission {
   pricing: PricingType;
   mandatoryAddonsCad: number;
   tradeInRequired: boolean;
-  notes?: string | null;
   isFlagged: boolean;
   editToken?: string;
+  email?: string | null;
+  lastNudgedAt?: string | null;
+  cancelledAt?: string | null;
+  isStale?: boolean;
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
+}
+
+export type NudgeAction = 'still_waiting' | 'delivered' | 'cancelled';
+
+export interface NudgeActionResult {
+  success: boolean;
+  action: NudgeAction;
+  submission?: {
+    id: string;
+    model: string;
+    modelYear?: number;
+    trim?: string | null;
+    province: string;
+    orderDate: string;
+    deliveryDate?: string | null;
+    stage: string;
+    status: string;
+    waitDays?: number | null;
+    editToken: string;
+    stageUpdatedAt?: string;
+  };
+  error?: string;
 }
 
 export interface NotificationRequest {
@@ -144,6 +169,7 @@ export interface RegionalWaitSummary {
     total: number;
     delivered: number;
     pending: number;
+    stalePending?: number;
   };
   waitStats: PercentileStats | null;
   pricingInsights: {

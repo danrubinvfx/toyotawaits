@@ -1,8 +1,9 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
-import { Submission, CanadianProvince, SubmissionStatus, SubmissionStage, PricingType } from '@/lib/types/contracts';
+import { Submission, CanadianProvince, SubmissionStatus, SubmissionStage, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
+import { isSubmissionStale } from '@/lib/utils/confidence-decay';
 
 export interface SubmissionCreateData {
   modelId: string;
@@ -16,6 +17,10 @@ export interface SubmissionCreateData {
   deliveryDate?: string | null;
   status: SubmissionStatus;
   currentStage?: SubmissionStage;
+  stage?: OrderStage | SubmissionStage;
+  email?: string | null;
+  lastNudgedAt?: string | null;
+  cancelledAt?: string | null;
   pricing: PricingType;
   mandatoryAddonsCad: number;
   tradeInRequired: boolean;
@@ -964,6 +969,8 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           status,
           current_stage,
           stage,
+          stage_updated_at,
+          updated_at,
           pricing,
           mandatory_addons_cad,
           created_at,
@@ -976,28 +983,44 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
         .order('order_date', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        const dbRecords: CommunityRecord[] = data.map((item: any) => ({
-          id: item.id,
-          model: item.vehicle_models?.name || 'RAV4',
-          modelSlug: item.vehicle_models?.slug || 'rav4',
-          powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
-          powertrainSlug: item.vehicle_powertrains?.slug || 'hev',
-          trim: item.vehicle_trims?.name || 'XLE AWD',
-          modelYear: item.model_year,
-          province: item.province,
-          city: item.dealership_city || '',
-          dealerName: item.dealership_name || item.dealership_city || '',
-          dealershipName: item.dealership_name || '',
-          orderDate: item.order_date,
-          deliveryDate: item.delivery_date || null,
-          waitDays: item.wait_days != null ? Number(item.wait_days) : null,
-          status: item.status as 'pending' | 'delivered',
-          stage: item.stage || item.current_stage || undefined,
-          pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
-            ? item.pricing
-            : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
-          addonsCad: Number(item.mandatory_addons_cad || 0),
-        }));
+        const dbRecords: CommunityRecord[] = data.map((item: any) => {
+          const modelSlug = item.vehicle_models?.slug || 'rav4';
+          const modelMedian = modelSlug === 'sienna' ? 510 : modelSlug === 'rav4' ? 375 : 300;
+          const isStale = isSubmissionStale(
+            {
+              orderDate: item.order_date,
+              stageUpdatedAt: item.stage_updated_at,
+              updatedAt: item.updated_at,
+              stage: item.stage || item.current_stage,
+              status: item.status,
+            },
+            modelMedian
+          );
+
+          return {
+            id: item.id,
+            model: item.vehicle_models?.name || 'RAV4',
+            modelSlug: item.vehicle_models?.slug || 'rav4',
+            powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
+            powertrainSlug: item.vehicle_powertrains?.slug || 'hev',
+            trim: item.vehicle_trims?.name || 'XLE AWD',
+            modelYear: item.model_year,
+            province: item.province,
+            city: item.dealership_city || '',
+            dealerName: item.dealership_name || item.dealership_city || '',
+            dealershipName: item.dealership_name || '',
+            orderDate: item.order_date,
+            deliveryDate: item.delivery_date || null,
+            waitDays: item.wait_days != null ? Number(item.wait_days) : null,
+            status: item.status as 'pending' | 'delivered',
+            stage: item.stage || item.current_stage || undefined,
+            pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
+              ? item.pricing
+              : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
+            addonsCad: Number(item.mandatory_addons_cad || 0),
+            isStale,
+          };
+        });
 
         // When database records exist, return them directly without duplicating against in-memory fallback
         return dbRecords;
@@ -1281,4 +1304,201 @@ export async function updateSubmissionByEditToken(
   }
 
   return null;
+}
+
+export async function handleNudgeAction(
+  token: string,
+  action: NudgeAction
+): Promise<NudgeActionResult> {
+  if (!token) {
+    return {
+      success: false,
+      action,
+      error: 'Missing order token.',
+    };
+  }
+
+  const normalizedToken = token.trim();
+  const nowIso = new Date().toISOString();
+  const todayYmd = nowIso.split('T')[0];
+
+  // 1. Supabase PostgreSQL live connection
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+
+      // Look up by edit_token or id
+      const { data: existing } = await supabase
+        .from('submissions')
+        .select(`
+          id,
+          model_year,
+          order_date,
+          delivery_date,
+          status,
+          current_stage,
+          stage,
+          wait_days,
+          edit_token,
+          province,
+          vehicle_models(name),
+          vehicle_trims(name)
+        `)
+        .or(`edit_token.eq.${normalizedToken},id.eq.${normalizedToken}`)
+        .maybeSingle();
+
+      if (existing) {
+        let updatePayload: Record<string, any> = {
+          updated_at: nowIso,
+          stage_updated_at: nowIso,
+        };
+        let finalWaitDays = existing.wait_days;
+        let finalDeliveryDate = existing.delivery_date;
+        let finalStage = existing.stage || existing.current_stage || 'deposit_placed';
+        let finalStatus = existing.status;
+
+        if (action === 'still_waiting') {
+          finalStatus = 'pending';
+          updatePayload = {
+            ...updatePayload,
+            status: 'pending',
+          };
+        } else if (action === 'delivered') {
+          finalStatus = 'delivered';
+          finalStage = 'delivered';
+          finalDeliveryDate = todayYmd;
+          const start = new Date(existing.order_date).getTime();
+          const end = new Date(todayYmd).getTime();
+          finalWaitDays = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+          updatePayload = {
+            ...updatePayload,
+            status: 'delivered',
+            stage: 'delivered',
+            current_stage: 'delivered',
+            delivery_date: todayYmd,
+            wait_days: finalWaitDays,
+          };
+        } else if (action === 'cancelled') {
+          finalStatus = 'cancelled';
+          finalStage = 'cancelled';
+          finalDeliveryDate = null;
+          finalWaitDays = null;
+          updatePayload = {
+            ...updatePayload,
+            status: 'cancelled',
+            stage: 'cancelled',
+            current_stage: 'cancelled',
+            cancelled_at: nowIso,
+            delivery_date: null,
+            wait_days: null,
+          };
+        }
+
+        const { error: updateErr } = await supabase
+          .from('submissions')
+          .update(updatePayload)
+          .eq('id', existing.id);
+
+        if (!updateErr) {
+          if (action === 'delivered' || action === 'cancelled') {
+            Promise.resolve(supabase.rpc('refresh_wait_summary_mv')).catch(() => {});
+          }
+
+          const modelName = (existing.vehicle_models as any)?.name || 'Toyota';
+          const trimName = (existing.vehicle_trims as any)?.name || null;
+
+          return {
+            success: true,
+            action,
+            submission: {
+              id: existing.id,
+              model: modelName,
+              modelYear: existing.model_year,
+              trim: trimName,
+              province: existing.province,
+              orderDate: existing.order_date,
+              deliveryDate: finalDeliveryDate,
+              stage: finalStage,
+              status: finalStatus,
+              waitDays: finalWaitDays,
+              editToken: existing.edit_token || normalizedToken,
+              stageUpdatedAt: nowIso,
+            },
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('Supabase exception in handleNudgeAction, falling back to memory:', err);
+    }
+  }
+
+  // 2. In-memory fallback
+  for (const item of inMemorySubmissions.values()) {
+    if (item.edit_token === normalizedToken || item.id === normalizedToken) {
+      let finalWaitDays = item.wait_days;
+      let finalDeliveryDate = item.delivery_date;
+      let finalStage = item.stage || item.current_stage || 'deposit_placed';
+      let finalStatus = item.status;
+
+      item.updated_at = nowIso;
+      item.stage_updated_at = nowIso;
+
+      if (action === 'still_waiting') {
+        item.status = 'pending';
+        finalStatus = 'pending';
+      } else if (action === 'delivered') {
+        item.status = 'delivered';
+        item.stage = 'delivered';
+        item.current_stage = 'delivered';
+        item.delivery_date = todayYmd;
+        const start = new Date(item.order_date).getTime();
+        const end = new Date(todayYmd).getTime();
+        finalWaitDays = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+        item.wait_days = finalWaitDays;
+        finalStatus = 'delivered';
+        finalStage = 'delivered';
+        finalDeliveryDate = todayYmd;
+      } else if (action === 'cancelled') {
+        item.status = 'cancelled';
+        item.stage = 'cancelled';
+        item.current_stage = 'cancelled';
+        item.cancelled_at = nowIso;
+        item.delivery_date = null;
+        item.wait_days = null;
+        finalStatus = 'cancelled';
+        finalStage = 'cancelled';
+        finalDeliveryDate = null;
+        finalWaitDays = null;
+      }
+
+      return {
+        success: true,
+        action,
+        submission: {
+          id: item.id,
+          model: item.model || 'Toyota',
+          modelYear: item.model_year,
+          trim: item.trim || null,
+          province: item.province,
+          orderDate: item.order_date,
+          deliveryDate: finalDeliveryDate,
+          stage: finalStage,
+          status: finalStatus,
+          waitDays: finalWaitDays,
+          editToken: item.edit_token || normalizedToken,
+          stageUpdatedAt: nowIso,
+        },
+      };
+    }
+  }
+
+  return {
+    success: false,
+    action,
+    error: 'Submission not found or invalid token.',
+  };
 }

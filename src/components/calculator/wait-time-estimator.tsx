@@ -548,9 +548,16 @@ export function WaitTimeEstimator({
                     (~{medianMonths} mos)
                   </span>
                 </div>
-                <div className="text-[11px] text-zinc-500 flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3 text-emerald-600" />
-                  Based on {verifiedSampleSize} verified deliveries
+                <div className="text-[11px] text-zinc-500 flex flex-col sm:items-end gap-0.5">
+                  <div className="flex items-center gap-1">
+                    <CheckCircle className="h-3 w-3 text-emerald-600" />
+                    <span>Based on {verifiedSampleSize} verified deliveries</span>
+                  </div>
+                  {stats?.sampleCounts?.pending ? (
+                    <div className="text-[10px] text-zinc-400">
+                      Active Queue: {stats.sampleCounts.pending} waiting orders (volume context)
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Action Buttons: Calendar + Reddit Share + Notify Me */}
