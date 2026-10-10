@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog';
 import { saveStoredSubmission } from '@/lib/storage/submission-storage';
 import { useRouter } from 'next/navigation';
-import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert } from 'lucide-react';
+import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
 
 export function getTodayLocalDate(): string {
   const now = new Date();
@@ -71,12 +71,15 @@ export function SubmissionForm() {
   const [successModalData, setSuccessModalData] = useState<{
     id: string;
     editKey: string;
+    editToken?: string;
+    editUrl?: string;
     status: string;
     waitDays?: number | null;
     modelSlug?: string;
     province?: string;
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
+  const [copiedLink, setCopiedLink] = useState<boolean>(false);
   const [countdown, setCountdown] = useState<number>(5);
   const redirectTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -185,6 +188,7 @@ export function SubmissionForm() {
       saveStoredSubmission({
         id: result.data.id,
         editKey: result.data.editKey,
+        editToken: result.data.editToken || result.data.id,
         modelName: currentModel.name,
         trimName: currentTrim.name,
         province,
@@ -270,6 +274,18 @@ export function SubmissionForm() {
       navigator.clipboard.writeText(successModalData.editKey);
       setCopiedKey(true);
       setTimeout(() => setCopiedKey(false), 2500);
+    }
+  };
+
+  const copyEditLinkToClipboard = () => {
+    const token = successModalData?.editToken || successModalData?.id;
+    if (token) {
+      const url = typeof window !== 'undefined'
+        ? `${window.location.origin}/edit/${token}`
+        : `https://toyotawaits.ca/edit/${token}`;
+      navigator.clipboard.writeText(url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
     }
   };
 
@@ -597,6 +613,37 @@ export function SubmissionForm() {
             </DialogHeader>
 
             <div className="space-y-3 py-2">
+              {/* Bookmark Link Block */}
+              <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900 p-3.5 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
+                <div className="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+                  <span className="flex items-center gap-1.5">
+                    <Bookmark className="h-4 w-4 text-amber-500" />
+                    Bookmark to Update Your Status
+                  </span>
+                  <span className="text-[11px] text-zinc-400 font-normal">Frictionless Edit Link</span>
+                </div>
+                <div className="flex items-center justify-between gap-2 bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200 dark:border-zinc-800">
+                  <code className="text-xs font-mono select-all text-zinc-800 dark:text-zinc-200 truncate">
+                    {typeof window !== 'undefined'
+                      ? `${window.location.origin}/edit/${successModalData.editToken || successModalData.id}`
+                      : `https://toyotawaits.ca/edit/${successModalData.editToken || successModalData.id}`}
+                  </code>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={copyEditLinkToClipboard}
+                    className="h-7 px-2.5 gap-1 shrink-0 text-xs"
+                  >
+                    <Copy className="h-3.5 w-3.5" />
+                    {copiedLink ? 'Copied!' : 'Copy Link'}
+                  </Button>
+                </div>
+                <p className="text-[11px] text-zinc-500 leading-relaxed">
+                  Bookmark or save this private link to easily update your delivery date or toggle status to Delivered without logging in.
+                </p>
+              </div>
+
+              {/* Secret Edit Key Block */}
               <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900 p-3.5 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
                 <div className="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="flex items-center gap-1.5">

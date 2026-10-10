@@ -128,5 +128,39 @@ describe('CommunityDataTable Component', () => {
     expect(screen.getByText('Still Waiting')).toBeInTheDocument();
     expect(screen.getByText(/Richmond/)).toBeInTheDocument();
   });
+
+  it('filters records live when typing in the debounced search input', async () => {
+    vi.useFakeTimers();
+    render(<CommunityDataTable />);
+
+    const searchInput = screen.getByPlaceholderText(/Search by dealer name, city, model, trim, or province/i);
+    fireEvent.change(searchInput, { target: { value: 'Oakville' } });
+
+    // Advance debounce timer within act
+    React.act(() => {
+      vi.advanceTimersByTime(300);
+    });
+
+    // Oakville should be present, other cities hidden
+    expect(screen.getAllByText(/Oakville/).length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Richmond/)).not.toBeInTheDocument();
+
+    vi.useRealTimers();
+  });
+
+  it('filters records when clicking Hybrid or PHEV pill buttons', () => {
+    render(<CommunityDataTable />);
+
+    const phevPill = screen.getByRole('button', { name: /PHEV/i });
+    fireEvent.click(phevPill);
+
+    // PHEV records should be visible
+    expect(screen.getAllByText(/PHEV/i).length).toBeGreaterThan(0);
+
+    const hybridPill = screen.getByRole('button', { name: /Hybrid/i });
+    fireEvent.click(hybridPill);
+
+    expect(screen.getAllByText(/Hybrid/i).length).toBeGreaterThan(0);
+  });
 });
 

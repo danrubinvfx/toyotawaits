@@ -21,6 +21,7 @@ export interface SubmissionCreateData {
   tradeInRequired: boolean;
   notes?: string | null;
   editKeyHash: string;
+  editToken?: string;
   isFlagged: boolean;
 }
 
@@ -497,6 +498,7 @@ seedInitialData();
 export async function insertSubmission(data: SubmissionCreateData): Promise<any> {
   const id = crypto.randomUUID();
   let waitDays: number | null = null;
+  const editToken = data.editToken || crypto.randomUUID();
 
   if (data.status === 'delivered' && data.deliveryDate) {
     const start = new Date(data.orderDate).getTime();
@@ -532,9 +534,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           trade_in_required: data.tradeInRequired,
           notes: data.notes,
           edit_key_hash: data.editKeyHash,
+          edit_token: editToken,
           is_flagged: data.isFlagged,
         })
-        .select('id, status, current_stage, wait_days, is_flagged')
+        .select('id, status, current_stage, wait_days, is_flagged, edit_token')
         .maybeSingle();
 
       // 1. If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
@@ -623,9 +626,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                 trade_in_required: data.tradeInRequired,
                 notes: data.notes,
                 edit_key_hash: data.editKeyHash,
+                edit_token: editToken,
                 is_flagged: data.isFlagged,
               })
-              .select('id, status, current_stage, wait_days, is_flagged')
+              .select('id, status, current_stage, wait_days, is_flagged, edit_token')
               .maybeSingle();
 
             if (!retryRes.error) {
@@ -661,9 +665,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             trade_in_required: data.tradeInRequired,
             notes: data.notes,
             edit_key_hash: data.editKeyHash,
+            edit_token: editToken,
             is_flagged: false,
           })
-          .select('id, status, current_stage, wait_days, is_flagged')
+          .select('id, status, current_stage, wait_days, is_flagged, edit_token')
           .maybeSingle();
 
         if (!rlsRetry.error) {
@@ -686,6 +691,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           currentStage: inserted?.current_stage || data.currentStage || 'deposit_placed',
           waitDays: inserted?.wait_days ?? waitDays,
           isFlagged: inserted?.is_flagged ?? data.isFlagged,
+          editToken: inserted?.edit_token || editToken,
         };
       } else {
         console.error('[DATABASE ERROR] Supabase submissions table insert failed:', {
@@ -732,6 +738,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     trade_in_required: data.tradeInRequired,
     notes: data.notes || '',
     edit_key_hash: data.editKeyHash,
+    edit_token: editToken,
     is_flagged: data.isFlagged,
     created_at: new Date().toISOString(),
   };
@@ -744,6 +751,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     currentStage,
     waitDays,
     isFlagged: data.isFlagged,
+    editToken,
   };
 }
 
@@ -938,6 +946,7 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           id,
           province,
           dealership_city,
+          dealership_name,
           model_year,
           order_date,
           delivery_date,
@@ -966,6 +975,8 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           modelYear: item.model_year,
           province: item.province,
           city: item.dealership_city || '',
+          dealerName: item.dealership_name || item.dealership_city || '',
+          dealershipName: item.dealership_name || '',
           orderDate: item.order_date,
           deliveryDate: item.delivery_date || null,
           waitDays: item.wait_days != null ? Number(item.wait_days) : null,
@@ -989,4 +1000,244 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
 
   // Fallback to initial verified community dataset
   return [...INITIAL_COMMUNITY_RECORDS];
+}
+
+export interface EditableSubmission {
+  id: string;
+  editToken: string;
+  model: string;
+  modelSlug: string;
+  powertrain: string;
+  powertrainSlug: string;
+  trim: string;
+  trimSlug?: string;
+  modelYear: number;
+  province: CanadianProvince;
+  city: string;
+  dealerName?: string;
+  dealershipName?: string;
+  orderDate: string;
+  deliveryDate?: string | null;
+  waitDays?: number | null;
+  status: SubmissionStatus;
+  currentStage?: SubmissionStage;
+  pricing: PricingType;
+  mandatoryAddonsCad: number;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt?: string | null;
+}
+
+export async function getSubmissionByEditToken(editToken: string): Promise<EditableSubmission | null> {
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+      const { data, error } = await supabase
+        .from('submissions')
+        .select(`
+          id,
+          edit_token,
+          province,
+          dealership_city,
+          dealership_name,
+          model_year,
+          order_date,
+          delivery_date,
+          wait_days,
+          status,
+          current_stage,
+          pricing,
+          mandatory_addons_cad,
+          notes,
+          created_at,
+          updated_at,
+          vehicle_models(name, slug),
+          vehicle_powertrains(name, slug),
+          vehicle_trims(name, slug)
+        `)
+        .eq('edit_token', editToken)
+        .maybeSingle();
+
+      if (!error && data) {
+        return {
+          id: data.id,
+          editToken: data.edit_token || editToken,
+          model: (data as any).vehicle_models?.name || 'RAV4',
+          modelSlug: (data as any).vehicle_models?.slug || 'rav4',
+          powertrain: (data as any).vehicle_powertrains?.name || 'Hybrid (HEV)',
+          powertrainSlug: (data as any).vehicle_powertrains?.slug || 'hev',
+          trim: (data as any).vehicle_trims?.name || 'XLE AWD',
+          trimSlug: (data as any).vehicle_trims?.slug || 'xle-awd',
+          modelYear: data.model_year,
+          province: data.province as CanadianProvince,
+          city: data.dealership_city || '',
+          dealerName: data.dealership_name || data.dealership_city || '',
+          dealershipName: data.dealership_name || '',
+          orderDate: data.order_date,
+          deliveryDate: data.delivery_date || null,
+          waitDays: data.wait_days != null ? Number(data.wait_days) : null,
+          status: data.status as SubmissionStatus,
+          currentStage: data.current_stage || undefined,
+          pricing: data.pricing as PricingType,
+          mandatoryAddonsCad: Number(data.mandatory_addons_cad || 0),
+          notes: data.notes || '',
+          createdAt: data.created_at,
+          updatedAt: data.updated_at,
+        };
+      }
+    } catch (err) {
+      console.warn('Supabase query exception in getSubmissionByEditToken:', err);
+    }
+  }
+
+  // In-memory fallback
+  for (const item of inMemorySubmissions.values()) {
+    if (item.edit_token === editToken || item.id === editToken) {
+      return {
+        id: item.id,
+        editToken: item.edit_token || editToken,
+        model: item.model_name || 'RAV4',
+        modelSlug: item.model_slug || 'rav4',
+        powertrain: item.powertrain_name || 'Hybrid (HEV)',
+        powertrainSlug: item.powertrain_slug || 'hev',
+        trim: item.trim_name || 'XLE AWD',
+        trimSlug: item.trim_slug || 'xle-awd',
+        modelYear: item.model_year,
+        province: item.province,
+        city: item.dealership_city || '',
+        dealerName: item.dealership_name || item.dealership_city || '',
+        dealershipName: item.dealership_name || '',
+        orderDate: item.order_date,
+        deliveryDate: item.delivery_date || null,
+        waitDays: item.wait_days != null ? Number(item.wait_days) : null,
+        status: item.status,
+        currentStage: item.current_stage,
+        pricing: item.pricing,
+        mandatoryAddonsCad: item.mandatory_addons_cad || 0,
+        notes: item.notes || '',
+        createdAt: item.created_at,
+        updatedAt: item.updated_at,
+      };
+    }
+  }
+
+  return null;
+}
+
+export async function updateSubmissionByEditToken(
+  editToken: string,
+  updates: {
+    status?: SubmissionStatus;
+    deliveryDate?: string | null;
+    notes?: string | null;
+    currentStage?: SubmissionStage;
+  }
+): Promise<{
+  id: string;
+  status: SubmissionStatus;
+  currentStage?: SubmissionStage;
+  deliveryDate?: string | null;
+  waitDays?: number | null;
+  notes?: string | null;
+  updatedAt: string;
+} | null> {
+  const finalStatus = updates.status || (updates.currentStage === 'delivered' ? 'delivered' : undefined);
+  const finalStage = updates.currentStage || (updates.status === 'delivered' ? 'delivered' : undefined);
+
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+
+      // Fetch existing record to calculate wait_days if transitioning to delivered
+      const { data: existing } = await supabase
+        .from('submissions')
+        .select('id, order_date, wait_days')
+        .eq('edit_token', editToken)
+        .maybeSingle();
+
+      if (existing) {
+        let waitDays: number | null = existing.wait_days;
+        if (finalStatus === 'delivered' && updates.deliveryDate) {
+          const start = new Date(existing.order_date).getTime();
+          const end = new Date(updates.deliveryDate).getTime();
+          waitDays = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+        }
+
+        const updatePayload: Record<string, any> = {
+          updated_at: new Date().toISOString(),
+        };
+        if (finalStatus) updatePayload.status = finalStatus;
+        if (finalStage) updatePayload.current_stage = finalStage;
+        if (updates.deliveryDate !== undefined) updatePayload.delivery_date = updates.deliveryDate;
+        if (waitDays !== null && finalStatus === 'delivered') updatePayload.wait_days = waitDays;
+        if (updates.notes !== undefined) updatePayload.notes = updates.notes;
+
+        const { data: updated, error } = await supabase
+          .from('submissions')
+          .update(updatePayload)
+          .eq('edit_token', editToken)
+          .select('id, status, current_stage, delivery_date, wait_days, notes, updated_at')
+          .single();
+
+        if (!error && updated) {
+          // Asynchronously refresh the materialized view
+          Promise.resolve(supabase.rpc('refresh_wait_summary_mv'))
+            .then(() => {})
+            .catch((rpcErr: unknown) => {
+              console.warn('Notice: Background refresh of mv_model_wait_summary encountered:', rpcErr);
+            });
+
+          return {
+            id: updated.id,
+            status: updated.status,
+            currentStage: updated.current_stage,
+            deliveryDate: updated.delivery_date,
+            waitDays: updated.wait_days,
+            notes: updated.notes,
+            updatedAt: updated.updated_at,
+          };
+        }
+      }
+    } catch (err) {
+      console.warn('PostgreSQL update by edit_token fallback to memory:', err);
+    }
+  }
+
+  // In-memory fallback
+  for (const item of inMemorySubmissions.values()) {
+    if (item.edit_token === editToken || item.id === editToken) {
+      if (finalStatus) item.status = finalStatus;
+      if (finalStage) item.current_stage = finalStage;
+      if (updates.deliveryDate !== undefined) {
+        item.delivery_date = updates.deliveryDate;
+        if (finalStatus === 'delivered' && updates.deliveryDate) {
+          const start = new Date(item.order_date).getTime();
+          const end = new Date(updates.deliveryDate).getTime();
+          item.wait_days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+        }
+      }
+      if (updates.notes !== undefined) item.notes = updates.notes;
+      item.updated_at = new Date().toISOString();
+
+      return {
+        id: item.id,
+        status: item.status,
+        currentStage: item.current_stage,
+        deliveryDate: item.delivery_date,
+        waitDays: item.wait_days,
+        notes: item.notes,
+        updatedAt: item.updated_at,
+      };
+    }
+  }
+
+  return null;
 }

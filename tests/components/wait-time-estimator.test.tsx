@@ -49,10 +49,15 @@ describe('WaitTimeEstimator Component', () => {
 
     await waitFor(() => {
       expect(screen.getAllByText(/330 Days/i).length).toBeGreaterThanOrEqual(1);
-      expect(screen.getByText(/290 Days/i)).toBeInTheDocument();
-      expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
-      expect(screen.getByText(/85%/i)).toBeInTheDocument();
     });
+
+    expect(screen.getByText(/290 Days/i)).toBeInTheDocument();
+    expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
+    expect(screen.getByText(/85%/i)).toBeInTheDocument();
+    expect(screen.getByText(/Powertrain Wait-Time Comparison/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Gasoline \(Gas\)/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Hybrid \(HEV\)/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Plug-in Hybrid \(PHEV\)/i).length).toBeGreaterThanOrEqual(1);
   });
 
   it('re-fetches when Province is changed', async () => {

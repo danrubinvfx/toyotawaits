@@ -150,9 +150,10 @@ export async function POST(request: NextRequest) {
       mandatoryAddonsCad: validData.mandatoryAddonsCad,
     });
 
-    // 6. Generate One-Time Cryptographic Secret Edit Key (128-bit)
+    // 6. Generate One-Time Cryptographic Secret Edit Key (128-bit) and Edit Token UUID
     const editKey = crypto.randomUUID();
     const editKeyHash = crypto.createHash('sha256').update(editKey).digest('hex');
+    const editToken = crypto.randomUUID();
 
     // 7. Persist Submission
     const record = await insertSubmission({
@@ -172,8 +173,11 @@ export async function POST(request: NextRequest) {
       tradeInRequired: validData.tradeInRequired,
       notes: validData.notes,
       editKeyHash,
+      editToken,
       isFlagged: outlierResult.isFlagged,
     });
+
+    const finalEditToken = record.editToken || editToken;
 
     // 8. Immediate Cache Revalidation for Public Feed and Statistics
     try {
@@ -200,9 +204,11 @@ export async function POST(request: NextRequest) {
           currentStage: record.currentStage || validData.stage || 'deposit_placed',
           waitDays: record.waitDays,
           editKey,
+          editToken: finalEditToken,
+          editUrl: `/edit/${finalEditToken}`,
           isFlagged: record.isFlagged,
           message:
-            'Submission recorded anonymously. Save your secret edit key if you need to update this entry later.',
+            'Submission recorded anonymously. Save your secret edit link to update your status later.',
         },
       },
       {

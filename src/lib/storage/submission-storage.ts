@@ -7,6 +7,7 @@
 export interface StoredSubmission {
   id: string;
   editKey: string;
+  editToken?: string;
   modelName: string;
   trimName: string;
   province: string;
@@ -27,11 +28,17 @@ export function getStoredSubmissions(): StoredSubmission[] {
   }
 }
 
+export function getStoredSubmissionByToken(token: string): StoredSubmission | undefined {
+  if (typeof window === 'undefined' || !token) return undefined;
+  const list = getStoredSubmissions();
+  return list.find((s) => s.editToken === token || s.editKey === token || s.id === token);
+}
+
 export function saveStoredSubmission(item: StoredSubmission): void {
   if (typeof window === 'undefined') return;
   try {
     const existing = getStoredSubmissions();
-    const filtered = existing.filter((s) => s.id !== item.id);
+    const filtered = existing.filter((s) => s.id !== item.id && s.editToken !== item.editToken);
     filtered.unshift(item);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
   } catch (err) {
@@ -52,6 +59,24 @@ export function updateStoredSubmissionStatus(
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
   } catch (err) {
     console.error('Failed to update submission in localStorage:', err);
+  }
+}
+
+export function updateStoredSubmissionByToken(
+  token: string,
+  updates: Partial<StoredSubmission>
+): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const existing = getStoredSubmissions();
+    const updated = existing.map((s) =>
+      s.editToken === token || s.editKey === token || s.id === token
+        ? { ...s, ...updates }
+        : s
+    );
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch (err) {
+    console.error('Failed to update submission in localStorage by token:', err);
   }
 }
 

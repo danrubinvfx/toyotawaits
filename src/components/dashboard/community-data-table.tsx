@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 import { CANADIAN_VEHICLE_CATALOG, CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
 import {
   FileSpreadsheet,
@@ -15,6 +16,9 @@ import {
   Download,
   ChevronLeft,
   ChevronRight,
+  Search,
+  X,
+  Zap,
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
@@ -33,10 +37,21 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const [modelFilter, setModelFilter] = useState<string>('all');
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [pillFilter, setPillFilter] = useState<'all' | 'hybrid' | 'phev' | 'pending' | 'delivered'>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [sortBy, setSortBy] = useState<'orderDate' | 'waitDays'>('orderDate');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 8;
+
+  // Debounce search query by 250ms
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Sync state if initialRecords changes
   React.useEffect(() => {
@@ -75,40 +90,83 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     return Math.max(0, Math.floor((today.getTime() - order.getTime()) / (1000 * 60 * 60 * 24)));
   };
 
+  const isPhev = (r: CommunityRecord) =>
+    r.powertrainSlug === 'phev' ||
+    r.powertrain?.toLowerCase().includes('phev') ||
+    r.powertrain?.toLowerCase().includes('plug-in') ||
+    r.modelSlug === 'prius-prime';
+
+  const isHybrid = (r: CommunityRecord) =>
+    !isPhev(r) &&
+    (r.powertrainSlug === 'hev' ||
+      r.powertrainSlug === 'hybrid-max' ||
+      r.powertrain?.toLowerCase().includes('hybrid') ||
+      r.powertrain?.toLowerCase().includes('hev'));
+
   // Status counts reflecting current model and province filters
   const statusCounts = useMemo(() => {
     let all = 0;
+    let hybrid = 0;
+    let phev = 0;
     let delivered = 0;
     let pending = 0;
     for (const r of records) {
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
       all++;
+      if (isHybrid(r)) hybrid++;
+      if (isPhev(r)) phev++;
       if (r.status === 'delivered') delivered++;
       else if (r.status === 'pending') pending++;
     }
-    return { all, delivered, pending };
+    return { all, hybrid, phev, delivered, pending };
   }, [records, modelFilter, provinceFilter]);
 
   // Filter and sort items (includes both delivered and pending submissions)
   const filteredRecords = useMemo(() => {
-    return records.filter((r) => {
-      if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
-      if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
-      if (statusFilter !== 'all' && r.status !== statusFilter) return false;
-      return true;
-    }).sort((a, b) => {
-      if (sortBy === 'orderDate') {
-        const dateA = new Date(a.orderDate).getTime();
-        const dateB = new Date(b.orderDate).getTime();
-        return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
-      } else {
-        const daysA = a.waitDays ?? calculateDaysWaitedSoFar(a.orderDate);
-        const daysB = b.waitDays ?? calculateDaysWaitedSoFar(b.orderDate);
-        return sortOrder === 'desc' ? daysB - daysA : daysA - daysB;
-      }
-    });
-  }, [modelFilter, provinceFilter, statusFilter, sortBy, sortOrder]);
+    return records
+      .filter((r) => {
+        if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
+        if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
+        if (statusFilter !== 'all' && r.status !== statusFilter) return false;
+
+        if (pillFilter === 'hybrid' && !isHybrid(r)) return false;
+        if (pillFilter === 'phev' && !isPhev(r)) return false;
+        if (pillFilter === 'pending' && r.status !== 'pending') return false;
+        if (pillFilter === 'delivered' && r.status !== 'delivered') return false;
+
+        if (debouncedSearch.trim()) {
+          const q = debouncedSearch.trim().toLowerCase();
+          const dealer = (r.dealerName || r.dealershipName || '').toLowerCase();
+          const city = (r.city || '').toLowerCase();
+          const model = (r.model || '').toLowerCase();
+          const trim = (r.trim || '').toLowerCase();
+          const prov = (r.province || '').toLowerCase();
+
+          const matches =
+            dealer.includes(q) ||
+            city.includes(q) ||
+            model.includes(q) ||
+            trim.includes(q) ||
+            prov.includes(q);
+
+          if (!matches) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'orderDate') {
+          const dateA = new Date(a.orderDate).getTime();
+          const dateB = new Date(b.orderDate).getTime();
+          return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+        } else {
+          const daysA = a.waitDays ?? calculateDaysWaitedSoFar(a.orderDate);
+          const daysB = b.waitDays ?? calculateDaysWaitedSoFar(b.orderDate);
+          return sortOrder === 'desc' ? daysB - daysA : daysA - daysB;
+        }
+      });
+  }, [records, modelFilter, provinceFilter, statusFilter, pillFilter, debouncedSearch, sortBy, sortOrder]);
 
   const totalPages = Math.ceil(filteredRecords.length / pageSize) || 1;
   const paginatedRecords = filteredRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -123,21 +181,11 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   }, [modelFilter, provinceFilter, statusFilter]);
 
   // Complete unpaginated submissions (allSubmissions):
-  // When filters are default/all, exports all 17+ submissions.
-  // If filters are active, exports all matching submissions without pagination slicing (never pageSize: 8).
+  // When filters are default/all, exports all records.
+  // If filters are active, exports all matching submissions without pagination slicing.
   const allSubmissions = useMemo(() => {
-    const isUnfiltered = modelFilter === 'all' && provinceFilter === 'all' && statusFilter === 'all';
-    if (isUnfiltered) {
-      return records;
-    }
-    const matching = records.filter((r) => {
-      if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
-      if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
-      if (statusFilter !== 'all' && r.status !== statusFilter) return false;
-      return true;
-    });
-    return matching.length > 0 ? matching : records;
-  }, [records, modelFilter, provinceFilter, statusFilter]);
+    return filteredRecords.length > 0 ? filteredRecords : records;
+  }, [filteredRecords, records]);
 
   // Full dataset CSV export handler (exports allSubmissions without pageSize limit or truncation)
   const handleExportCsv = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -221,17 +269,19 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </a>
         </div>
 
-        {/* Status Toggle / Tab Filter: All | Delivered | Still Waiting */}
+        {/* Minimalist Pill Toggles: [All] [Hybrid] [PHEV] [Waiting] [Delivered] */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <div className="flex items-center gap-1 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg text-xs font-semibold">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg text-xs font-semibold">
             <button
               type="button"
+              aria-label="All"
               onClick={() => {
+                setPillFilter('all');
                 setStatusFilter('all');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
-                statusFilter === 'all'
+                pillFilter === 'all' && statusFilter === 'all'
                   ? 'bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50 shadow-2xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
               }`}
@@ -240,27 +290,48 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             </button>
             <button
               type="button"
+              aria-label="Hybrid"
               onClick={() => {
-                setStatusFilter('delivered');
+                setPillFilter('hybrid');
+                setStatusFilter('all');
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
-                statusFilter === 'delivered'
-                  ? 'bg-white dark:bg-zinc-950 text-emerald-700 dark:text-emerald-400 shadow-2xs font-bold'
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
+                pillFilter === 'hybrid'
+                  ? 'bg-white dark:bg-zinc-950 text-amber-600 dark:text-amber-400 shadow-2xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
               }`}
             >
-              <CheckCircle2 className="h-3 w-3" />
-              Delivered ({statusCounts.delivered})
+              <Zap className="h-3 w-3" />
+              Hybrid ({statusCounts.hybrid})
             </button>
             <button
               type="button"
+              aria-label="PHEV"
               onClick={() => {
+                setPillFilter('phev');
+                setStatusFilter('all');
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
+                pillFilter === 'phev'
+                  ? 'bg-white dark:bg-zinc-950 text-blue-600 dark:text-blue-400 shadow-2xs font-bold'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
+              }`}
+            >
+              <Zap className="h-3 w-3" />
+              PHEV ({statusCounts.phev})
+            </button>
+            <button
+              type="button"
+              aria-label="Still Waiting"
+              onClick={() => {
+                setPillFilter('pending');
                 setStatusFilter('pending');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
-                statusFilter === 'pending'
+                pillFilter === 'pending' || statusFilter === 'pending'
                   ? 'bg-white dark:bg-zinc-950 text-amber-600 dark:text-amber-400 shadow-2xs font-bold'
                   : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
               }`}
@@ -268,11 +339,56 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               <Clock className="h-3 w-3" />
               Still Waiting ({statusCounts.pending})
             </button>
+            <button
+              type="button"
+              aria-label="Delivered"
+              onClick={() => {
+                setPillFilter('delivered');
+                setStatusFilter('delivered');
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+                pillFilter === 'delivered' || statusFilter === 'delivered'
+                  ? 'bg-white dark:bg-zinc-950 text-emerald-700 dark:text-emerald-400 shadow-2xs font-bold'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
+              }`}
+            >
+              <CheckCircle2 className="h-3 w-3" />
+              Delivered ({statusCounts.delivered})
+            </button>
           </div>
 
           <span className="text-xs text-zinc-500 font-medium">
             Showing verified deliveries &amp; active queue wait times
           </span>
+        </div>
+
+        {/* Instant Live Search Input */}
+        <div className="relative pt-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400 pointer-events-none mt-0.5" />
+          <Input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search by dealer name, city, model, trim, or province (e.g. Richmond, XSE, Ontario)..."
+            className="pl-8 pr-8 h-9 text-xs bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 placeholder:text-zinc-400 focus-visible:ring-amber-500"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setCurrentPage(1);
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 mt-0.5"
+              aria-label="Clear search"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Filter Controls Bar */}

@@ -10,6 +10,8 @@ export interface CommunityRecord {
   modelYear: number;
   province: string;
   city: string;
+  dealerName?: string;
+  dealershipName?: string;
   orderDate: string;
   deliveryDate: string | null;
   waitDays: number | null;
