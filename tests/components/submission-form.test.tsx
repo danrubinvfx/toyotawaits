@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { SubmissionForm } from '@/components/forms/submission-form';
+import { SubmissionForm, getTodayLocalDate } from '@/components/forms/submission-form';
 import { getStoredSubmissions } from '@/lib/storage/submission-storage';
 
 describe('SubmissionForm Component', () => {
@@ -10,13 +10,15 @@ describe('SubmissionForm Component', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders the form with default vehicle model and province', () => {
+  it('renders the form with default vehicle model, province, 2026 model year, and today order date', () => {
     render(<SubmissionForm />);
 
     expect(screen.getByText('Submit Your Delivery Timeline')).toBeInTheDocument();
     expect(screen.getByLabelText(/Vehicle Model/i)).toHaveValue('rav4');
     expect(screen.getByLabelText(/Powertrain/i)).toHaveValue('hev');
     expect(screen.getByLabelText(/Province/i)).toHaveValue('ON');
+    expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2026');
+    expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue(getTodayLocalDate());
   });
 
   it('updates powertrains and trims when Model changes to Sienna', async () => {
@@ -258,5 +260,7 @@ describe('SubmissionForm Component', () => {
     expect(cityInput).toHaveValue('');
     expect(notesInput).toHaveValue('');
     expect(addonsInput).toHaveValue(0);
+    expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2026');
+    expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue(getTodayLocalDate());
   });
 });

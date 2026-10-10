@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
+import * as navigation from 'next/navigation';
 
 describe('WaitTimeEstimator Component', () => {
   beforeEach(() => {
@@ -401,5 +402,55 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.getAllByText(/2027/i).length).toBeGreaterThanOrEqual(1);
       expect(screen.queryByText(/2028/i)).not.toBeInTheDocument();
     });
+  });
+
+  it('displays post-submission confirmation banner when submitted=true search param is present', async () => {
+    vi.spyOn(navigation, 'useSearchParams').mockReturnValue(
+      new URLSearchParams('submitted=true&model=rav4&province=ON') as any
+    );
+
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'hev',
+        powertrainName: 'Hybrid (HEV)',
+        province: 'ON',
+        sampleCounts: { total: 40, delivered: 35, pending: 5 },
+        waitStats: {
+          p25: 140,
+          median: 185,
+          p75: 235,
+          mean: 188.5,
+          min: 110,
+          max: 260,
+        },
+        pricingInsights: {
+          atMsrpPercent: 90,
+          aboveMsrpPercent: 10,
+          avgAddonsCad: 200,
+        },
+        confidenceRating: 'high',
+      },
+    };
+
+    window.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+
+    render(<WaitTimeEstimator />);
+
+    // Confirmation banner should be displayed
+    expect(screen.getByTestId('submitted-confirmation-banner')).toBeInTheDocument();
+    expect(
+      screen.getByText('Submission received! Here are the updated wait-time estimates.')
+    ).toBeInTheDocument();
+
+    // Clicking dismiss should remove the banner
+    const dismissBtn = screen.getByRole('button', { name: /Dismiss banner/i });
+    fireEvent.click(dismissBtn);
+    expect(screen.queryByTestId('submitted-confirmation-banner')).not.toBeInTheDocument();
   });
 });

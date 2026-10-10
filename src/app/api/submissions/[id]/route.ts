@@ -103,7 +103,12 @@ export async function PATCH(
     try {
       revalidatePath('/');
       revalidatePath('/submit');
+      revalidatePath('/api/stats');
+      revalidatePath('/api/aggregate');
+      revalidatePath('/api/submissions');
       revalidateTag('wait_stats', 'max');
+      revalidateTag('submissions', 'max');
+      revalidateTag('stats', 'max');
     } catch (revalidateErr) {
       if (process.env.NODE_ENV !== 'test') {
         console.warn('Cache revalidation notice in PATCH /api/submissions/[id]:', revalidateErr);

@@ -26,6 +26,14 @@ import { saveStoredSubmission } from '@/lib/storage/submission-storage';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert } from 'lucide-react';
 
+export function getTodayLocalDate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 export function SubmissionForm() {
   const formId = useId();
   const router = useRouter();
@@ -40,8 +48,8 @@ export function SubmissionForm() {
   // Form Fields State
   const [province, setProvince] = useState<string>('ON');
   const [dealershipCity, setDealershipCity] = useState<string>('');
-  const [modelYear, setModelYear] = useState<number>(2025);
-  const [orderDate, setOrderDate] = useState<string>('2024-11-01');
+  const [modelYear, setModelYear] = useState<number>(2026);
+  const [orderDate, setOrderDate] = useState<string>(getTodayLocalDate);
   const [maxDate] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -65,8 +73,12 @@ export function SubmissionForm() {
     editKey: string;
     status: string;
     waitDays?: number | null;
+    modelSlug?: string;
+    province?: string;
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
+  const [countdown, setCountdown] = useState<number>(5);
+  const redirectTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset form inputs after successful submission
   const resetFormFields = () => {
@@ -75,8 +87,8 @@ export function SubmissionForm() {
     setSelectedTrimId('30000000-0000-4000-8000-000000000002');
     setProvince('ON');
     setDealershipCity('');
-    setModelYear(2025);
-    setOrderDate('2024-11-01');
+    setModelYear(2026);
+    setOrderDate(getTodayLocalDate());
     setStatus('pending');
     setDeliveryDate('');
     setPricing('at_msrp');
@@ -181,9 +193,16 @@ export function SubmissionForm() {
         createdAt: new Date().toISOString(),
       });
 
-      setSuccessModalData(result.data);
+      const submittedModelSlug = currentModel.slug;
+      const submittedProvince = province;
+
+      setSuccessModalData({
+        ...result.data,
+        modelSlug: submittedModelSlug,
+        province: submittedProvince,
+      });
       setSuccessBanner(
-        'Wait time recorded successfully! Your timeline has been added to our Canadian database. The form has been reset for new entries.'
+        'Submission received! Your timeline has been added to our Canadian database. Here are the updated wait-time estimates.'
       );
       resetFormFields();
       try {
@@ -199,6 +218,52 @@ export function SubmissionForm() {
       setIsSubmitting(false);
     }
   };
+
+  const handleDoneAndViewEstimates = () => {
+    if (redirectTimerRef.current) {
+      clearInterval(redirectTimerRef.current);
+      redirectTimerRef.current = null;
+    }
+    const targetModel = successModalData?.modelSlug || selectedModelSlug;
+    const targetProvince = successModalData?.province || province;
+    setSuccessModalData(null);
+    router.push(`/#estimator?submitted=true&model=${encodeURIComponent(targetModel)}&province=${encodeURIComponent(targetProvince)}`);
+  };
+
+  React.useEffect(() => {
+    if (!successModalData) {
+      if (redirectTimerRef.current) {
+        clearInterval(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
+      return;
+    }
+
+    setCountdown(5);
+    redirectTimerRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          if (redirectTimerRef.current) {
+            clearInterval(redirectTimerRef.current);
+            redirectTimerRef.current = null;
+          }
+          const targetModel = successModalData.modelSlug || selectedModelSlug;
+          const targetProvince = successModalData.province || province;
+          setSuccessModalData(null);
+          router.push(`/#estimator?submitted=true&model=${encodeURIComponent(targetModel)}&province=${encodeURIComponent(targetProvince)}`);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (redirectTimerRef.current) {
+        clearInterval(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
+    };
+  }, [successModalData, router, selectedModelSlug, province]);
 
   const copyEditKeyToClipboard = () => {
     if (successModalData?.editKey) {
@@ -512,7 +577,7 @@ export function SubmissionForm() {
 
       {/* Success Modal with Secret Edit Key */}
       {successModalData && (
-        <Dialog open={true} onOpenChange={() => setSuccessModalData(null)}>
+        <Dialog open={true} onOpenChange={(open) => { if (!open) handleDoneAndViewEstimates(); }}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-2">
@@ -561,8 +626,11 @@ export function SubmissionForm() {
               </div>
             </div>
 
-            <DialogFooter className="sm:justify-center">
-              <Button onClick={() => setSuccessModalData(null)} className="w-full sm:w-auto px-8">
+            <DialogFooter className="sm:justify-center flex-col sm:flex-row gap-2">
+              <p className="text-xs text-zinc-500 text-center w-full sm:w-auto self-center">
+                Redirecting to estimates in {countdown}s...
+              </p>
+              <Button onClick={handleDoneAndViewEstimates} className="w-full sm:w-auto px-8">
                 Done & View Estimates
               </Button>
             </DialogFooter>

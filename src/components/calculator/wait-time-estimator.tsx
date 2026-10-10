@@ -23,6 +23,7 @@ import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
+import { useSearchParams } from 'next/navigation';
 
 export interface WaitTimeEstimatorProps {
   initialModel?: string;
@@ -38,6 +39,10 @@ export function WaitTimeEstimator({
   initialProvince = 'BC',
 }: WaitTimeEstimatorProps = {}) {
   const compId = useId();
+  const searchParams = useSearchParams();
+  const isSubmittedParam = searchParams ? searchParams.get('submitted') === 'true' : false;
+  const paramModel = searchParams ? searchParams.get('model') : null;
+  const paramProvince = searchParams ? searchParams.get('province') : null;
 
   // Inputs
   const [modelSlug, setModelSlug] = useState<string>(initialModel);
@@ -45,6 +50,7 @@ export function WaitTimeEstimator({
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
   const [province, setProvince] = useState<string>(initialProvince);
   const [depositDate, setDepositDate] = useState<string>('2026-01-15');
+  const [showSubmittedBanner, setShowSubmittedBanner] = useState<boolean>(false);
 
   // Dynamic Benchmarks State
   const [benchmarks, setBenchmarks] = useState<Record<string, ModelWaitBenchmark>>(BASELINE_MODEL_BENCHMARKS);
@@ -53,6 +59,28 @@ export function WaitTimeEstimator({
   const [stats, setStats] = useState<RegionalWaitSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+
+  // Handle post-submission deep-link, parameter sync, and confirmation banner
+  useEffect(() => {
+    if (isSubmittedParam) {
+      setShowSubmittedBanner(true);
+      if (paramModel && CANADIAN_VEHICLE_CATALOG.some((m) => m.slug === paramModel)) {
+        setModelSlug(paramModel);
+        const m = CANADIAN_VEHICLE_CATALOG.find((x) => x.slug === paramModel);
+        if (m && m.powertrains.length > 0) {
+          setPowertrainSlug(m.powertrains[0].slug);
+          setTrimSlug('all');
+        }
+      }
+      if (paramProvince && CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince)) {
+        setProvince(paramProvince);
+      }
+      const el = document.getElementById('estimator');
+      if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [isSubmittedParam, paramModel, paramProvince]);
 
   // Load dynamic model percentile benchmarks from Supabase via /api/stats
   useEffect(() => {
@@ -263,6 +291,34 @@ export function WaitTimeEstimator({
       </CardHeader>
 
       <CardContent className="p-6 space-y-6">
+        {/* Post-Submission Confirmation Feedback Banner */}
+        {showSubmittedBanner && (
+          <div
+            data-testid="submitted-confirmation-banner"
+            className="flex items-start justify-between gap-3 rounded-lg border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-100 shadow-sm animate-in fade-in slide-in-from-top-2"
+          >
+            <div className="flex items-start gap-3">
+              <CheckCircle className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+              <div>
+                <p className="font-bold text-base text-emerald-950 dark:text-emerald-50">
+                  Submission received! Here are the updated wait-time estimates.
+                </p>
+                <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
+                  Your delivery timeline has been incorporated into our crowdsourced Canadian database.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowSubmittedBanner(false)}
+              className="text-xs text-emerald-700 hover:text-emerald-950 dark:text-emerald-300 dark:hover:text-emerald-100 font-semibold shrink-0 hover:underline"
+              aria-label="Dismiss banner"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
         {/* Selector Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
           <div className="space-y-1.5">

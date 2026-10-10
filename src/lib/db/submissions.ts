@@ -673,6 +673,13 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
       }
 
       if (!error) {
+        // Asynchronously refresh the materialized view so regional aggregations recalculate immediately
+        Promise.resolve(supabase.rpc('refresh_wait_summary_mv'))
+          .then(() => {})
+          .catch((rpcErr: unknown) => {
+            console.warn('Notice: Background refresh of mv_model_wait_summary encountered:', rpcErr);
+          });
+
         return {
           id: inserted?.id || id,
           status: inserted?.status || data.status,
@@ -769,6 +776,13 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
         .single();
 
       if (!error && updated) {
+        // Asynchronously refresh the materialized view so regional aggregations recalculate immediately
+        Promise.resolve(supabase.rpc('refresh_wait_summary_mv'))
+          .then(() => {})
+          .catch((rpcErr: unknown) => {
+            console.warn('Notice: Background refresh of mv_model_wait_summary encountered:', rpcErr);
+          });
+
         return {
           id: updated.id,
           status: updated.status,
