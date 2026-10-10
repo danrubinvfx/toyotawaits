@@ -484,10 +484,10 @@ describe('WaitTimeEstimator Component', () => {
     await waitFor(() => {
       const modLink = screen.getByTestId('delivery-estimate-mods-link');
       expect(modLink).toBeInTheDocument();
-      expect(modLink).toHaveTextContent('Planning your pickup? View recommended community accessories & mods ->');
+      expect(modLink).toHaveTextContent(/Planning your build\? Browse popular community accessories & mods/i);
       expect(modLink).toHaveAttribute('href', '/mods/rav4');
       expect(modLink.className).toContain('text-xs');
-      expect(modLink.className).toContain('text-zinc-500');
+      expect(modLink.className).toContain('text-slate-500');
     });
 
     // Change model to Sienna

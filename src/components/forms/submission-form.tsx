@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { saveStoredSubmission } from '@/lib/storage/submission-storage';
+import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
 
@@ -80,8 +80,20 @@ export function SubmissionForm() {
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [persistentEditToken, setPersistentEditToken] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number>(5);
   const redirectTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    try {
+      const stored = getStoredSubmissions();
+      if (stored.length > 0 && (stored[0].editToken || stored[0].id)) {
+        setPersistentEditToken(stored[0].editToken || stored[0].id);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   // Reset form inputs after successful submission
   const resetFormFields = () => {
@@ -184,11 +196,14 @@ export function SubmissionForm() {
         return;
       }
 
+      const finalEditToken = result.data.editToken || result.data.id;
+      setPersistentEditToken(finalEditToken);
+
       // Save secret key locally for zero-account management
       saveStoredSubmission({
         id: result.data.id,
         editKey: result.data.editKey,
-        editToken: result.data.editToken || result.data.id,
+        editToken: finalEditToken,
         modelName: currentModel.name,
         trimName: currentTrim.name,
         province,
@@ -196,6 +211,28 @@ export function SubmissionForm() {
         status,
         createdAt: new Date().toISOString(),
       });
+
+      if (status === 'pending') {
+        try {
+          localStorage.setItem(
+            'toyotawait_pending_submission',
+            JSON.stringify({
+              id: result.data.id,
+              editKey: result.data.editKey,
+              editToken: finalEditToken,
+              modelName: currentModel.name,
+              powertrainName: currentPowertrain.name,
+              trimName: currentTrim.name,
+              province,
+              orderDate,
+              currentStage: 'deposit_placed',
+              status,
+            })
+          );
+        } catch {
+          // localStorage disabled fallback
+        }
+      }
 
       const submittedModelSlug = currentModel.slug;
       const submittedProvince = province;
@@ -329,6 +366,48 @@ export function SubmissionForm() {
               >
                 Dismiss
               </button>
+            </div>
+          )}
+
+          {persistentEditToken && (
+            <div
+              data-testid="persistent-edit-link-banner"
+              className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 space-y-2.5 dark:border-amber-500/30 dark:bg-amber-950/20 animate-in fade-in"
+            >
+              <div className="flex items-center justify-between text-xs font-semibold text-amber-900 dark:text-amber-300">
+                <span className="flex items-center gap-1.5">
+                  <Bookmark className="h-4 w-4 text-amber-500 shrink-0" />
+                  Save your private link to update this order later
+                </span>
+                <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-normal">Private Link</span>
+              </div>
+              <div className="flex items-center justify-between gap-2 bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200 dark:border-zinc-800">
+                <code className="text-xs font-mono select-all text-zinc-800 dark:text-zinc-200 truncate">
+                  {typeof window !== 'undefined'
+                    ? `${window.location.origin}/edit/${persistentEditToken}`
+                    : `https://toyotawaits.ca/edit/${persistentEditToken}`}
+                </code>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    const url = typeof window !== 'undefined'
+                      ? `${window.location.origin}/edit/${persistentEditToken}`
+                      : `https://toyotawaits.ca/edit/${persistentEditToken}`;
+                    navigator.clipboard.writeText(url);
+                    setCopiedLink(true);
+                    setTimeout(() => setCopiedLink(false), 2500);
+                  }}
+                  className="h-7 px-2.5 gap-1 shrink-0 text-xs"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {copiedLink ? 'Copied!' : 'Copy Link'}
+                </Button>
+              </div>
+              <p className="text-[11px] text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                Bookmark or save this private link to easily update your delivery date or toggle status to Delivered without logging in.
+              </p>
             </div>
           )}
 
@@ -618,7 +697,7 @@ export function SubmissionForm() {
                 <div className="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                   <span className="flex items-center gap-1.5">
                     <Bookmark className="h-4 w-4 text-amber-500" />
-                    Bookmark to Update Your Status
+                    Save your private link to update this order later
                   </span>
                   <span className="text-[11px] text-zinc-400 font-normal">Frictionless Edit Link</span>
                 </div>

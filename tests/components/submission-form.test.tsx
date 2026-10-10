@@ -78,7 +78,7 @@ describe('SubmissionForm Component', () => {
     expect(screen.getByLabelText(/Delivery Date/i)).toBeInTheDocument();
   });
 
-  it('submits valid form, stores edit key in localStorage, and opens success dialog', async () => {
+  it('submits valid form, stores edit key and edit token in localStorage, and opens success dialog', async () => {
     const mockResponse = {
       success: true,
       data: {
@@ -86,6 +86,7 @@ describe('SubmissionForm Component', () => {
         status: 'pending',
         waitDays: null,
         editKey: 'mock-secret-key-uuid-1234567890',
+        editToken: 'mock-edit-token-12345',
         message: 'Submission recorded anonymously.',
       },
     };
@@ -103,6 +104,7 @@ describe('SubmissionForm Component', () => {
     await waitFor(() => {
       expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
       expect(screen.getByText('mock-secret-key-uuid-1234567890')).toBeInTheDocument();
+      expect(screen.getAllByText('Save your private link to update this order later').length).toBeGreaterThan(0);
     });
 
     // Check localStorage persistence
@@ -110,6 +112,10 @@ describe('SubmissionForm Component', () => {
     expect(stored).toHaveLength(1);
     expect(stored[0].id).toBe('mock-sub-12345');
     expect(stored[0].editKey).toBe('mock-secret-key-uuid-1234567890');
+    expect(stored[0].editToken).toBe('mock-edit-token-12345');
+
+    const pending = JSON.parse(localStorage.getItem('toyotawait_pending_submission') || '{}');
+    expect(pending.editToken).toBe('mock-edit-token-12345');
   });
 
   it('displays error banner if API returns error response', async () => {

@@ -1176,8 +1176,13 @@ export async function updateSubmissionByEditToken(
         };
         if (finalStatus) updatePayload.status = finalStatus;
         if (finalStage) updatePayload.current_stage = finalStage;
-        if (updates.deliveryDate !== undefined) updatePayload.delivery_date = updates.deliveryDate;
-        if (waitDays !== null && finalStatus === 'delivered') updatePayload.wait_days = waitDays;
+        if (finalStatus === 'pending' || finalStatus === 'cancelled') {
+          updatePayload.delivery_date = null;
+          updatePayload.wait_days = null;
+        } else {
+          if (updates.deliveryDate !== undefined) updatePayload.delivery_date = updates.deliveryDate;
+          if (waitDays !== null && finalStatus === 'delivered') updatePayload.wait_days = waitDays;
+        }
         if (updates.notes !== undefined) updatePayload.notes = updates.notes;
 
         const { data: updated, error } = await supabase
@@ -1216,12 +1221,17 @@ export async function updateSubmissionByEditToken(
     if (item.edit_token === editToken || item.id === editToken) {
       if (finalStatus) item.status = finalStatus;
       if (finalStage) item.current_stage = finalStage;
-      if (updates.deliveryDate !== undefined) {
-        item.delivery_date = updates.deliveryDate;
-        if (finalStatus === 'delivered' && updates.deliveryDate) {
-          const start = new Date(item.order_date).getTime();
-          const end = new Date(updates.deliveryDate).getTime();
-          item.wait_days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+      if (finalStatus === 'pending' || finalStatus === 'cancelled') {
+        item.delivery_date = null;
+        item.wait_days = null;
+      } else {
+        if (updates.deliveryDate !== undefined) {
+          item.delivery_date = updates.deliveryDate;
+          if (finalStatus === 'delivered' && updates.deliveryDate) {
+            const start = new Date(item.order_date).getTime();
+            const end = new Date(updates.deliveryDate).getTime();
+            item.wait_days = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+          }
         }
       }
       if (updates.notes !== undefined) item.notes = updates.notes;

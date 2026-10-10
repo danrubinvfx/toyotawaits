@@ -613,13 +613,13 @@ export function WaitTimeEstimator({
             </div>
 
             {/* Subtle High-Contrast Mod Guide Link */}
-            <div className="flex items-center justify-end -mt-1 pt-0.5">
+            <div className="flex items-center justify-end pt-1 pb-0.5">
               <Link
                 href={`/mods/${modelSlug}`}
                 data-testid="delivery-estimate-mods-link"
-                className="group inline-flex items-center gap-1 text-xs text-zinc-500 hover:text-amber-600 dark:text-zinc-400 dark:hover:text-amber-400 font-medium transition-colors"
+                className="group inline-flex items-center gap-1 text-xs text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 font-medium transition-colors"
               >
-                Planning your pickup? View recommended community accessories &amp; mods -&gt;
+                Planning your build? Browse popular community accessories &amp; mods &rarr;
               </Link>
             </div>
 

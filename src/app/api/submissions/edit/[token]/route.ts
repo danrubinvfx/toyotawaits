@@ -19,11 +19,11 @@ export async function GET(
         {
           success: false,
           error: {
-            code: 'INVALID_TOKEN',
-            message: 'Invalid edit token format.',
+            code: 'NOT_FOUND',
+            message: 'Submission not found or invalid edit token.',
           },
         },
-        { status: 400, headers: { 'Cache-Control': 'no-store' } }
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
@@ -81,11 +81,11 @@ export async function PATCH(
         {
           success: false,
           error: {
-            code: 'INVALID_TOKEN',
-            message: 'Invalid edit token format.',
+            code: 'NOT_FOUND',
+            message: 'Submission not found or invalid edit token.',
           },
         },
-        { status: 400, headers: { 'Cache-Control': 'no-store' } }
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
       );
     }
 
@@ -216,3 +216,5 @@ export async function PATCH(
     );
   }
 }
+
+export const PUT = PATCH;
