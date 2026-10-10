@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "db:seed:legacy": "tsx scripts/ingest-legacy-data.ts"
+    "db:seed:legacy": "tsx scripts/ingest-legacy-data.ts",
+    "db:seed:synthetic": "tsx scripts/seed-synthetic-submissions.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.2.0",
