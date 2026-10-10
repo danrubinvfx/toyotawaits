@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   RotateCcw,
   Play,
+  Luggage,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +28,7 @@ export interface ChecklistProduct {
   slug: string;
   models: string[];
   powertrains?: string[];
-  category: 'visibility_protection' | 'cabin_organization' | 'roadside_winter';
+  category: 'visibility_protection' | 'cabin_organization' | 'cargo_utility' | 'roadside_winter';
   title: string;
   name?: string;
   priceEst: string;
@@ -38,7 +39,7 @@ export interface ChecklistProduct {
   asin?: string;
   destinationUrl: string;
   affiliateUrl?: string;
-  badge?: 'Essential' | 'Recommended' | 'Pro Tip';
+  badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | string;
   compatibility?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
@@ -55,6 +56,7 @@ const CATEGORIES = [
   { id: 'all', label: 'All Essentials', icon: ClipboardCheck },
   { id: 'visibility_protection', label: 'Visibility & Tech', icon: Eye },
   { id: 'cabin_organization', label: 'Interior Protection', icon: Layers },
+  { id: 'cargo_utility', label: 'Cargo & Utility', icon: Luggage },
   { id: 'roadside_winter', label: 'Roadside Armor', icon: ShieldAlert },
 ] as const;
 
@@ -76,6 +78,7 @@ export function DeliveryPrepChecklist({
     if (m.includes('sienna')) return 'sienna';
     if (m.includes('grand') || m.includes('highlander')) return 'grand-highlander';
     if (m.includes('land') || m.includes('cruiser') || m.includes('lc250') || m.includes('1958')) return 'land-cruiser';
+    if (m.includes('corolla') || m.includes('cross')) return 'corolla-cross';
     if (m.includes('rav4') || m.includes('prime')) return 'rav4';
     return m || 'all';
   }, [model]);
@@ -191,6 +194,8 @@ export function DeliveryPrepChecklist({
         return 'Grand Highlander';
       case 'land-cruiser':
         return 'Land Cruiser 250';
+      case 'corolla-cross':
+        return 'Corolla Cross';
       case 'rav4':
         return normalizedPowertrain === 'phev' ? 'RAV4 Prime (PHEV)' : 'RAV4';
       default:
@@ -383,7 +388,7 @@ export function DeliveryPrepChecklist({
                                     'text-[10px] sm:text-xs font-semibold px-2 py-0.5 border',
                                     item.badge === 'Essential'
                                       ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
-                                      : item.badge === 'Recommended'
+                                      : item.badge === 'Recommended' || item.badge === 'Recommended Upgrade'
                                       ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
                                       : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
                                   )}
@@ -435,7 +440,7 @@ export function DeliveryPrepChecklist({
                           <a
                             href={item.affiliateUrl || `/out/${item.slug}`}
                             target="_blank"
-                            rel="noopener noreferrer sponsored"
+                            rel="noopener noreferrer"
                           >
                             <span>View on Amazon</span>
                             <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />

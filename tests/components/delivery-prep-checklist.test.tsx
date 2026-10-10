@@ -195,4 +195,40 @@ describe('DeliveryPrepChecklist Component', () => {
     const allIframes = document.querySelectorAll('iframe');
     expect(allIframes.length).toBe(2);
   });
+
+  it('filters by Cargo & Utility category and renders roof rack crossbars', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const cargoTab = screen.getByText('Cargo & Utility');
+    fireEvent.click(cargoTab);
+
+    // Crossbars should be visible
+    expect(screen.getByText(/OEM-Style Lockable Aluminum Roof Rack Cross Bars \(RAV4\)/i)).toBeDefined();
+    expect(screen.getByText('Recommended Upgrade')).toBeDefined();
+    expect(screen.getByText(/RAV4 \(LE, XLE, XSE, Limited - excludes Adventure\/TRD flush rails\)/i)).toBeDefined();
+
+    // Visibility and interior protection items should be hidden
+    expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
+    expect(screen.queryByText(/Drop-In Center Console Divider & Coin Tray \(RAV4\)/i)).toBeNull();
+  });
+
+  it('renders 3-row all-weather floor liners for Grand Highlander and Sienna', () => {
+    // Grand Highlander
+    const { unmount } = render(<DeliveryPrepChecklist model="grand-highlander" powertrain="hev" />);
+    expect(screen.getByText(/3-Row Heavy Duty All-Weather Floor Liners/i)).toBeDefined();
+    expect(screen.getByText(/Heavy-Duty Roof Crossbar System/i)).toBeDefined();
+    unmount();
+
+    // Sienna
+    render(<DeliveryPrepChecklist model="sienna" powertrain="hev" />);
+    expect(screen.getByText(/3-Row Heavy Duty All-Weather Floor Liners/i)).toBeDefined();
+  });
+
+  it('renders low-profile crossbars for Corolla Cross model', () => {
+    render(<DeliveryPrepChecklist model="corolla-cross" />);
+
+    expect(screen.getByText('Corolla Cross')).toBeDefined();
+    expect(screen.getByText(/Low-Profile Cargo Roof Rack Bars \(Corolla Cross\)/i)).toBeDefined();
+    expect(screen.getByText(/Corolla Cross \(All trims with factory rails\)/i)).toBeDefined();
+  });
 });

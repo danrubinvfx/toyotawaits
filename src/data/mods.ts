@@ -10,7 +10,7 @@ export interface ModItem {
   title: string;
   models: string[];
   powertrains?: string[];
-  category: 'visibility_protection' | 'cabin_organization' | 'roadside_winter';
+  category: 'visibility_protection' | 'cabin_organization' | 'cargo_utility' | 'roadside_winter';
   priceEst: string;
   priceEstCad?: string;
   whyBuy: string;
@@ -19,7 +19,7 @@ export interface ModItem {
   asin?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
-  badge?: 'Essential' | 'Recommended' | 'Pro Tip';
+  badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | string;
   compatibility?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
@@ -246,21 +246,89 @@ export const MODS_CONFIG: ModItem[] = [
   },
   {
     id: 'prod-mats-rav4',
-    slug: 'all-weather-mats-rav4',
+    slug: 'high-wall-floor-liners-rav4',
     models: ['rav4'],
     category: 'cabin_organization',
-    title: 'Laser-Measured All-Weather Floor Mats & Cargo Liner (RAV4)',
-    name: 'Laser-Fit All-Weather Floor Liners',
-    priceEst: '~$145 CAD',
-    priceEstCad: '~$145 CAD',
-    whyBuy: 'High-walled TPE protection against slush, winter salt, and muddy boots.',
-    utilityNote: 'High-walled TPE protection against slush, winter salt, and muddy boots.',
+    title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 Hybrid & Prime)',
+    name: 'High-Wall All-Weather Floor Liners & Cargo Mat',
+    priceEst: '~$165 CAD',
+    priceEstCad: '~$165 CAD',
+    whyBuy: 'Edge-to-edge laser measured floor protection. Maximum salt and slush barrier that does not block hybrid battery ventilation vents.',
+    utilityNote: 'Edge-to-edge laser measured floor protection. Maximum salt and slush barrier that does not block hybrid battery ventilation vents.',
     image: '/images/accessories/floor-mats-rav4.png',
     asin: 'B089K8P3Q2',
-    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+all+weather+floor+mats+custom+fit&tag=toyotawaits-20',
-    affiliateUrl: '/out/all-weather-mats-rav4',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+hybrid+all+weather+floor+mats+cargo+liner+tuxmat&tag=toyotawaits-20',
+    affiliateUrl: '/out/high-wall-floor-liners-rav4',
     badge: 'Essential',
-    compatibility: 'Laser-Measured TPE Weather Liners',
+    compatibility: 'RAV4 Hybrid & Prime (Row 1, 2, and Trunk)',
+  },
+  {
+    id: 'prod-mats-3row',
+    slug: '3-row-all-weather-liners',
+    models: ['grand-highlander', 'sienna'],
+    category: 'cabin_organization',
+    title: '3-Row Heavy Duty All-Weather Floor Liners (Grand Highlander & Sienna)',
+    name: '3-Row Heavy Duty All-Weather Floor Liners',
+    priceEst: '~$210 CAD',
+    priceEstCad: '~$210 CAD',
+    whyBuy: 'Complete floor coverage across all three rows and cargo area with raised lip protection against mud and melted snow.',
+    utilityNote: 'Complete floor coverage across all three rows and cargo area with raised lip protection against mud and melted snow.',
+    image: '/images/accessories/floor-mats-3row.png',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Grand+Highlander+Sienna+all+weather+floor+mats+3+row&tag=toyotawaits-20',
+    affiliateUrl: '/out/3-row-all-weather-liners',
+    badge: 'Essential',
+    compatibility: 'Grand Highlander / Sienna',
+  },
+  {
+    id: 'prod-crossbars-rav4',
+    slug: 'roof-rack-crossbars-rav4',
+    models: ['rav4'],
+    category: 'cargo_utility',
+    title: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4)',
+    name: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars',
+    priceEst: '~$145 CAD',
+    priceEstCad: '~$145 CAD',
+    whyBuy: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
+    utilityNote: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
+    image: '/images/accessories/crossbars-rav4.png',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+roof+rack+cross+bars+OEM+style&tag=toyotawaits-20',
+    affiliateUrl: '/out/roof-rack-crossbars-rav4',
+    badge: 'Recommended Upgrade',
+    compatibility: 'RAV4 (LE, XLE, XSE, Limited - excludes Adventure/TRD flush rails)',
+  },
+  {
+    id: 'prod-crossbars-grand-highlander',
+    slug: 'roof-rack-crossbars-grand-highlander',
+    models: ['grand-highlander'],
+    category: 'cargo_utility',
+    title: 'Heavy-Duty Roof Crossbar System (Highlander & Grand Highlander)',
+    name: 'Heavy-Duty Roof Crossbar System',
+    priceEst: '~$165 CAD',
+    priceEstCad: '~$165 CAD',
+    whyBuy: 'Direct bolt-on crossbars rated for rooftop cargo boxes, bikes, and skis. Saves $300+ compared to dealer port installation.',
+    utilityNote: 'Direct bolt-on crossbars rated for rooftop cargo boxes, bikes, and skis. Saves $300+ compared to dealer port installation.',
+    image: '/images/accessories/crossbars-grand-highlander.png',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Grand+Highlander+roof+rack+crossbars&tag=toyotawaits-20',
+    affiliateUrl: '/out/roof-rack-crossbars-grand-highlander',
+    badge: 'Recommended Upgrade',
+    compatibility: 'Highlander & Grand Highlander',
+  },
+  {
+    id: 'prod-crossbars-corolla-cross',
+    slug: 'roof-rack-crossbars-corolla-cross',
+    models: ['corolla-cross'],
+    category: 'cargo_utility',
+    title: 'Low-Profile Cargo Roof Rack Bars (Corolla Cross)',
+    name: 'Low-Profile Cargo Roof Rack Bars',
+    priceEst: '~$140 CAD',
+    priceEstCad: '~$140 CAD',
+    whyBuy: 'Sturdy aluminum bars that bolt into factory roof rails for roof boxes and sports gear.',
+    utilityNote: 'Sturdy aluminum bars that bolt into factory roof rails for roof boxes and sports gear.',
+    image: '/images/accessories/crossbars-corolla-cross.png',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+roof+rack+crossbars&tag=toyotawaits-20',
+    affiliateUrl: '/out/roof-rack-crossbars-corolla-cross',
+    badge: 'Recommended Upgrade',
+    compatibility: 'Corolla Cross (All trims with factory rails)',
   },
   {
     id: 'prod-noco-gb40',
