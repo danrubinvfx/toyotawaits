@@ -24,6 +24,8 @@ import {
   Flame,
 } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
   title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
@@ -56,8 +58,6 @@ export const metadata: Metadata = {
       'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
   },
 };
-
-export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   const [benchmarks, submissions] = await Promise.all([
@@ -130,12 +130,16 @@ export default async function HomePage() {
 
       {/* Model Benchmark Summary Cards */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <ModelSummaryCards initialBenchmarks={benchmarks} />
+        <React.Suspense fallback={<div className="h-48 rounded-xl bg-zinc-100 animate-pulse" />}>
+          <ModelSummaryCards initialBenchmarks={benchmarks} />
+        </React.Suspense>
       </section>
 
       {/* Active Order Stepper (for returning users with edit keys) */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <ActiveOrderStepper />
+        <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 animate-pulse" />}>
+          <ActiveOrderStepper />
+        </React.Suspense>
       </section>
 
       {/* Main Interactive Estimator Widget */}
