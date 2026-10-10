@@ -63,6 +63,7 @@ export function DeliveryPrepChecklist({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [isNocoVideoOpen, setIsNocoVideoOpen] = useState<boolean>(true);
 
   // Normalize model and powertrain slugs
   const normalizedModel = useMemo(() => {
@@ -310,7 +311,7 @@ export function DeliveryPrepChecklist({
                     key={item.slug}
                     data-testid={`checklist-item-${item.slug}`}
                     className={cn(
-                      'relative rounded-xl border p-3.5 sm:p-4 transition-all duration-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4',
+                      'relative rounded-xl border p-3.5 sm:p-4 transition-all duration-200 flex flex-col justify-between gap-4',
                       isChecked
                         ? 'border-amber-500/40 bg-zinc-900/90 shadow-inner'
                         : 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700/80 hover:bg-zinc-900/80'
@@ -335,91 +336,153 @@ export function DeliveryPrepChecklist({
                       </button>
                     </div>
 
-                    {/* Left & Middle content container */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 flex-1 pr-8 sm:pr-2">
-                      {/* Left: 80x80px Product Thumbnail */}
-                      <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 flex items-center justify-center shadow-xs">
-                        <Image
-                          src={item.image || `/images/accessories/${item.slug}.png`}
-                          alt={item.title}
-                          width={80}
-                          height={80}
-                          unoptimized
-                          className={cn(
-                            'w-full h-full object-cover transition-transform duration-300',
-                            isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
-                          )}
-                        />
-                      </div>
-
-                      {/* Middle: Details */}
-                      <div className="space-y-1.5 flex-1 min-w-0">
-                        <div className="flex flex-wrap items-baseline gap-2">
-                          <h4
+                    {/* Main Row: Thumbnail + Details + Outbound Action */}
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+                      {/* Left & Middle content container */}
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 flex-1 pr-8 sm:pr-2">
+                        {/* Left: 80x80px Product Thumbnail */}
+                        <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 flex items-center justify-center shadow-xs">
+                          <Image
+                            src={item.image || `/images/accessories/${item.slug}.png`}
+                            alt={item.title}
+                            width={80}
+                            height={80}
+                            unoptimized
                             className={cn(
-                              'text-sm font-semibold tracking-tight transition-colors',
-                              isChecked
-                                ? 'line-through text-zinc-500'
-                                : 'text-zinc-100'
+                              'w-full h-full object-cover transition-transform duration-300',
+                              isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
                             )}
-                          >
-                            {item.title}
-                          </h4>
-                          {price && (
-                            <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                              {price}
-                            </span>
+                          />
+                        </div>
+
+                        {/* Middle: Details */}
+                        <div className="space-y-1.5 flex-1 min-w-0">
+                          <div className="flex flex-wrap items-baseline gap-2">
+                            <h4
+                              className={cn(
+                                'text-sm font-semibold tracking-tight transition-colors',
+                                isChecked
+                                  ? 'line-through text-zinc-500'
+                                  : 'text-zinc-100'
+                              )}
+                            >
+                              {item.title}
+                            </h4>
+                            {price && (
+                              <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                                {price}
+                              </span>
+                            )}
+                          </div>
+                          {note && (
+                            <p className="text-xs text-zinc-400 leading-relaxed font-sans">
+                              {note}
+                            </p>
                           )}
                         </div>
-                        {note && (
-                          <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                            {note}
-                          </p>
-                        )}
+                      </div>
 
-                        {/* NOCO Jump Pack Video Comparison Callout */}
-                        {item.slug === 'noco-gb40-jump-pack' && (
-                          <div className="pt-1.5">
+                      {/* Right: Outbound Action Button */}
+                      <div className="sm:self-center shrink-0 w-full sm:w-auto pt-1 sm:pt-0 print:hidden">
+                        <Button
+                          asChild
+                          size="sm"
+                          variant="outline"
+                          className="w-full sm:w-auto text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
+                        >
+                          <a
+                            href={`/out/${item.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer sponsored"
+                          >
+                            <span>View Item</span>
+                            <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Inline, Lazy-Loaded 12V Jump Starter Video Comparison Embed Section */}
+                    {item.slug === 'noco-gb40-jump-pack' && (
+                      <div
+                        data-testid="noco-video-comparison-section"
+                        className="mt-1 pt-3.5 border-t border-zinc-800/80 w-full space-y-3 print:hidden"
+                      >
+                        {/* Header bar with toggle */}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
+                            <h5 className="text-xs sm:text-sm font-bold text-zinc-200 tracking-tight">
+                              Comparison: GB40 vs. GBX45 (Charging &amp; Ports)
+                            </h5>
+                          </div>
+                          <div className="flex items-center gap-3">
                             <a
                               href="https://www.youtube.com/watch?v=gNDH1z4Is48"
                               target="_blank"
                               rel="noopener noreferrer"
                               data-testid="jump-pack-video-comparison"
-                              className="group inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/80 px-2.5 py-1.5 text-[11px] text-zinc-300 hover:border-amber-500/50 hover:bg-zinc-900/90 hover:text-amber-300 transition-all shadow-2xs"
+                              className="text-[11px] text-zinc-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1"
                             >
-                              <Play className="h-3 w-3 text-red-500 fill-red-500 shrink-0 group-hover:scale-110 transition-transform" />
-                              <span className="leading-snug">
-                                <span className="text-zinc-400 group-hover:text-zinc-300">
-                                  Comparing the GB40 vs GBX45? Watch the side-by-side breakdown (ports, recharge speeds, and form factor):
-                                </span>{' '}
-                                <span className="font-semibold text-amber-400 underline decoration-amber-500/40 underline-offset-2">
-                                  Watch video &rarr;
-                                </span>
-                              </span>
+                              <span>Open in YouTube</span>
+                              <ExternalLink className="h-3 w-3" />
                             </a>
+                            <button
+                              type="button"
+                              onClick={() => setIsNocoVideoOpen(!isNocoVideoOpen)}
+                              aria-expanded={isNocoVideoOpen}
+                              aria-label={isNocoVideoOpen ? 'Collapse Video' : 'Expand Video'}
+                              className="text-[11px] font-semibold text-zinc-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1 cursor-pointer"
+                            >
+                              <span>{isNocoVideoOpen ? 'Collapse Video' : 'Expand Video'}</span>
+                              {isNocoVideoOpen ? (
+                                <ChevronUp className="h-3.5 w-3.5" />
+                              ) : (
+                                <ChevronDown className="h-3.5 w-3.5" />
+                              )}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Collapsible/Inline Video Embed Container */}
+                        {isNocoVideoOpen && (
+                          <div className="space-y-3">
+                            {/* Responsive 16:9 Video Embed */}
+                            <div className="aspect-video w-full rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 shadow-md">
+                              <iframe
+                                src="https://www.youtube-nocookie.com/embed/gNDH1z4Is48"
+                                title="NOCO Boost Jump Starter COMPARISON: GBX45 vs GB40"
+                                loading="lazy"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full border-0"
+                              />
+                            </div>
+
+                            {/* Direct affiliate link positioned clearly below the video */}
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg border border-zinc-800/80 bg-zinc-950/60">
+                              <p className="text-xs text-zinc-400 leading-relaxed">
+                                Comparing the GB40 vs GBX45? Watch the side-by-side breakdown (ports, recharge speeds, and form factor):
+                              </p>
+                              <Button
+                                asChild
+                                size="sm"
+                                className="w-full sm:w-auto text-xs h-8 gap-1.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                              >
+                                <a
+                                  href={`/out/${item.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer sponsored"
+                                >
+                                  <span>View Item on Amazon.ca</span>
+                                  <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                                </a>
+                              </Button>
+                            </div>
                           </div>
                         )}
                       </div>
-                    </div>
-
-                    {/* Right: Outbound Action Button */}
-                    <div className="sm:self-center shrink-0 w-full sm:w-auto pt-1 sm:pt-0 print:hidden">
-                      <Button
-                        asChild
-                        size="sm"
-                        variant="outline"
-                        className="w-full sm:w-auto text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
-                      >
-                        <a
-                          href={`/out/${item.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer sponsored"
-                        >
-                          <span>View Item</span>
-                          <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
-                        </a>
-                      </Button>
-                    </div>
+                    )}
                   </div>
                 );
               })
