@@ -358,6 +358,15 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
     clickCount: 0,
     isActive: true,
   },
+  'all-weather-mats-rav4': {
+    id: 'f1000015-0015-4015-8015-000000000015',
+    slug: 'all-weather-mats-rav4',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+all+weather+floor+mats+custom+fit&tag=toyotawaits-20',
+    title: 'Laser-Measured All-Weather Floor Mats & Cargo Liner (RAV4)',
+    category: 'cabin_organization',
+    clickCount: 0,
+    isActive: true,
+  },
   // Gen 5 Prius & Prius Prime Mods
   'fitcamx-prius': {
     id: 'f2000001-0001-4001-8001-000000000001',

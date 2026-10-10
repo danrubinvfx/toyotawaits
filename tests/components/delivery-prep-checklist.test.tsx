@@ -117,15 +117,45 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(Object.values(saved)).toContain(true);
   });
 
+  it('renders prominent Community Transparency affiliate disclosure banner', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    expect(
+      screen.getByText(/Community Transparency:/i)
+    ).toBeDefined();
+    expect(
+      screen.getByText(
+        /Some links on this page are affiliate links\. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free\./i
+      )
+    ).toBeDefined();
+  });
+
+  it('renders badges (Essential, Recommended, Pro Tip) and compatibility tags on product cards', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    // Essential badge for NOCO jump starter / floor mats
+    expect(screen.getAllByText('Essential').length).toBeGreaterThan(0);
+    // Recommended badge for Fitcamx / screen protector
+    expect(screen.getAllByText('Recommended').length).toBeGreaterThan(0);
+    // Pro Tip badge for Console tray
+    expect(screen.getAllByText('Pro Tip').length).toBeGreaterThan(0);
+
+    // Compatibility tags
+    expect(screen.getByText('Hybrid & PHEV Critical')).toBeDefined();
+    expect(screen.getByText('TSS Mirror Plug & Play')).toBeDefined();
+    expect(screen.getByText('Dual-Tier Armrest Mold')).toBeDefined();
+  });
+
   it('provides clean outbound redirect links routing strictly through /out/[slug]', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    const outboundLinks = screen.getAllByRole('link', { name: /View Item/i });
+    const outboundLinks = screen.getAllByRole('link', { name: /View (on Amazon|Item)/i });
     expect(outboundLinks.length).toBeGreaterThan(0);
     for (const link of outboundLinks) {
       const href = link.getAttribute('href');
       expect(href).toMatch(/^\/out\/[a-z0-9-]+$/);
-      expect(link.getAttribute('rel')).toContain('sponsored');
+      expect(link.getAttribute('rel')).toContain('noopener');
+      expect(link.getAttribute('rel')).toContain('noreferrer');
       expect(link.getAttribute('target')).toBe('_blank');
     }
   });

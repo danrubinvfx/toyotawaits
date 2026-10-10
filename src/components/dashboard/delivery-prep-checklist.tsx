@@ -37,6 +37,9 @@ export interface ChecklistProduct {
   image: string;
   asin?: string;
   destinationUrl: string;
+  affiliateUrl?: string;
+  badge?: 'Essential' | 'Recommended' | 'Pro Tip';
+  compatibility?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
 }
@@ -272,6 +275,17 @@ export function DeliveryPrepChecklist({
       {/* Expandable Body */}
       {isExpanded && (
         <>
+          {/* Community Transparency Disclosure Banner */}
+          <div
+            data-testid="affiliate-disclosure-banner"
+            className="mx-4 sm:mx-5 mt-4 p-3.5 sm:p-4 rounded-lg border border-amber-500/20 bg-amber-500/5 text-xs text-zinc-300 flex items-start gap-2.5 print:hidden"
+          >
+            <ShieldAlert className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              <strong className="text-amber-400 font-semibold">Community Transparency:</strong> Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free.
+            </p>
+          </div>
+
           {/* Category Navigation Tabs */}
           <div className="p-3 sm:p-4 border-b border-zinc-800/60 bg-zinc-950/40 flex flex-wrap gap-1.5 print:hidden">
             {CATEGORIES.map((cat) => {
@@ -359,6 +373,32 @@ export function DeliveryPrepChecklist({
 
                         {/* Middle: Details */}
                         <div className="space-y-1.5 flex-1 min-w-0">
+                          {/* Badges & Compatibility Tag */}
+                          {(item.badge || item.compatibility) && (
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              {item.badge && (
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    'text-[10px] sm:text-xs font-semibold px-2 py-0.5 border',
+                                    item.badge === 'Essential'
+                                      ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
+                                      : item.badge === 'Recommended'
+                                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                                      : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
+                                  )}
+                                >
+                                  {item.badge}
+                                </Badge>
+                              )}
+                              {item.compatibility && (
+                                <span className="text-[10px] sm:text-[11px] text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 rounded font-mono">
+                                  {item.compatibility}
+                                </span>
+                              )}
+                            </div>
+                          )}
+
                           <div className="flex flex-wrap items-baseline gap-2">
                             <h4
                               className={cn(
@@ -393,11 +433,11 @@ export function DeliveryPrepChecklist({
                           className="w-full sm:w-auto text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
                         >
                           <a
-                            href={`/out/${item.slug}`}
+                            href={item.affiliateUrl || `/out/${item.slug}`}
                             target="_blank"
                             rel="noopener noreferrer sponsored"
                           >
-                            <span>View Item</span>
+                            <span>View on Amazon</span>
                             <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
                           </a>
                         </Button>

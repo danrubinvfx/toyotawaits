@@ -12,6 +12,9 @@
     "image": "/images/accessories/fitcamx-rav4.png",
     "asin": "B09GLVMB76",
     "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+RAV4+dash+cam&tag=toyotawaits-20",
+    "affiliateUrl": "/out/fitcamx-rav4",
+    "badge": "Recommended",
+    "compatibility": "TSS Mirror Plug & Play",
     "youtubeVideoId": "HrrClvzZpnI",
     "videoTitle": "Fitcamx Plug & Play Installation & Clarity"
   },
@@ -27,7 +30,10 @@
     "utilityNote": "Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.",
     "image": "/images/accessories/fitcamx-sienna.png",
     "asin": "B09GFNZK3C",
-    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Sienna+dash+cam&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Sienna+dash+cam&tag=toyotawaits-20",
+    "affiliateUrl": "/out/fitcamx-sienna",
+    "badge": "Recommended",
+    "compatibility": "TSS Mirror Plug & Play"
   },
   {
     "id": "prod-fitcamx-grand-highlander",
@@ -41,7 +47,10 @@
     "utilityNote": "OEM-factory integrated fitment beneath the digital mirror with 4K recording.",
     "image": "/images/accessories/fitcamx-grand-highlander.png",
     "asin": "B0CK5M3N7V",
-    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Grand+Highlander+dash+cam&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Grand+Highlander+dash+cam&tag=toyotawaits-20",
+    "affiliateUrl": "/out/fitcamx-grand-highlander",
+    "badge": "Recommended",
+    "compatibility": "TSS Mirror Plug & Play"
   },
   {
     "id": "prod-fitcamx-land-cruiser",
@@ -55,7 +64,10 @@
     "utilityNote": "Trail-tested integrated dashcam powered directly by the rearview mirror harness.",
     "image": "/images/accessories/fitcamx-land-cruiser.png",
     "asin": "B0D8TY5M67",
-    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Land+Cruiser+250+dash+cam&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Fitcamx+Toyota+Land+Cruiser+250+dash+cam&tag=toyotawaits-20",
+    "affiliateUrl": "/out/fitcamx-land-cruiser",
+    "badge": "Recommended",
+    "compatibility": "TSS Mirror Plug & Play"
   },
   {
     "id": "prod-screen-rav4",
@@ -69,7 +81,10 @@
     "utilityNote": "9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.",
     "image": "/images/accessories/screen-protector-rav4.png",
     "asin": "B0892TYG6K",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+tempered+glass+screen+protector&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+tempered+glass+screen+protector&tag=toyotawaits-20",
+    "affiliateUrl": "/out/screen-protector-rav4",
+    "badge": "Recommended",
+    "compatibility": "9H Tempered Glass Anti-Glare"
   },
   {
     "id": "prod-screen-sienna",
@@ -83,7 +98,10 @@
     "utilityNote": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
     "image": "/images/accessories/screen-protector-sienna.png",
     "asin": "B091B6Y5Y2",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+screen+protector+tempered+glass&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+screen+protector+tempered+glass&tag=toyotawaits-20",
+    "affiliateUrl": "/out/screen-protector-sienna",
+    "badge": "Recommended",
+    "compatibility": "Matte Anti-Glare Finish"
   },
   {
     "id": "prod-screen-grand-highlander",
@@ -97,7 +115,10 @@
     "utilityNote": "Preserves factory display clarity and stops scratches on the wide infotainment screen.",
     "image": "/images/accessories/screen-protector-grand-highlander.png",
     "asin": "B0CDFXRPL7",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+12.3+screen+protector&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+12.3+screen+protector&tag=toyotawaits-20",
+    "affiliateUrl": "/out/screen-protector-grand-highlander",
+    "badge": "Recommended",
+    "compatibility": "12.3\" High-Definition Tempered"
   },
   {
     "id": "prod-screen-land-cruiser",
@@ -111,7 +132,10 @@
     "utilityNote": "Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.",
     "image": "/images/accessories/screen-protector-land-cruiser.png",
     "asin": "B0D8XQ99P3",
-    "destinationUrl": "https://www.amazon.ca/s?k=Land+Cruiser+250+screen+protector+tempered+glass&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Land+Cruiser+250+screen+protector+tempered+glass&tag=toyotawaits-20",
+    "affiliateUrl": "/out/screen-protector-land-cruiser",
+    "badge": "Recommended",
+    "compatibility": "Armor-Grade 12.3\" Display Shield"
   },
   {
     "id": "prod-tray-rav4",
@@ -125,7 +149,10 @@
     "utilityNote": "Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.",
     "image": "/images/accessories/console-tray-rav4.png",
     "asin": "B07WCSG2R8",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+center+console+tray+organizer&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+center+console+tray+organizer&tag=toyotawaits-20",
+    "affiliateUrl": "/out/console-tray-rav4",
+    "badge": "Pro Tip",
+    "compatibility": "Dual-Tier Armrest Mold"
   },
   {
     "id": "prod-tray-sienna",
@@ -139,7 +166,10 @@
     "utilityNote": "Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.",
     "image": "/images/accessories/console-tray-sienna.png",
     "asin": "B097GZ9X5B",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+center+console+bridge+tray+organizer&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+center+console+bridge+tray+organizer&tag=toyotawaits-20",
+    "affiliateUrl": "/out/console-tray-sienna",
+    "badge": "Pro Tip",
+    "compatibility": "Bridge Shifter Lower Cubby"
   },
   {
     "id": "prod-tray-grand-highlander",
@@ -153,7 +183,10 @@
     "utilityNote": "Divides the 10-inch-deep cavernous vault into easily reachable compartments.",
     "image": "/images/accessories/console-tray-grand-highlander.png",
     "asin": "B0CC9H5S4W",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+center+console+tray+organizer&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+center+console+tray+organizer&tag=toyotawaits-20",
+    "affiliateUrl": "/out/console-tray-grand-highlander",
+    "badge": "Pro Tip",
+    "compatibility": "Precision Armrest Divider"
   },
   {
     "id": "prod-tray-land-cruiser",
@@ -167,7 +200,27 @@
     "utilityNote": "Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.",
     "image": "/images/accessories/console-tray-land-cruiser.png",
     "asin": "B0D93L8H12",
-    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Land+Cruiser+250+center+console+organizer+tray&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Land+Cruiser+250+center+console+organizer+tray&tag=toyotawaits-20",
+    "affiliateUrl": "/out/console-tray-land-cruiser",
+    "badge": "Pro Tip",
+    "compatibility": "Heavy-Duty Armrest Storage"
+  },
+  {
+    "id": "prod-mats-rav4",
+    "slug": "all-weather-mats-rav4",
+    "models": ["rav4"],
+    "category": "cabin_organization",
+    "title": "Laser-Measured All-Weather Floor Mats & Cargo Liner (RAV4)",
+    "priceEst": "~$145 CAD",
+    "priceEstCad": "~$145 CAD",
+    "whyBuy": "High-walled TPE protection against slush, winter salt, and muddy boots.",
+    "utilityNote": "High-walled TPE protection against slush, winter salt, and muddy boots.",
+    "image": "/images/accessories/floor-mats-rav4.png",
+    "asin": "B089K8P3Q2",
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+all+weather+floor+mats+custom+fit&tag=toyotawaits-20",
+    "affiliateUrl": "/out/all-weather-mats-rav4",
+    "badge": "Essential",
+    "compatibility": "Laser-Measured TPE Weather Liners"
   },
   {
     "id": "prod-noco-gb40",
@@ -182,8 +235,11 @@
     "image": "/images/accessories/noco-gb40-jump-pack.png",
     "asin": "B015TKUPIC",
     "destinationUrl": "https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A&tag=toyotawaits-20",
+    "affiliateUrl": "/out/noco-gb40-jump-pack",
+    "badge": "Essential",
+    "compatibility": "Hybrid & PHEV Critical",
     "youtubeVideoId": "gNDH1z4Is48",
-    "videoTitle": "GB40 vs GBX45 Comparison"
+    "videoTitle": "NOCO GB40 vs GBX45 Comparison"
   },
   {
     "id": "prod-j1772-lock",
@@ -198,6 +254,9 @@
     "utilityNote": "Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.",
     "image": "/images/accessories/j1772-charger-lock.png",
     "asin": "B09V7NGLHM",
-    "destinationUrl": "https://www.amazon.ca/s?k=J1772+charger+lock+ring+Toyota+RAV4+Prime&tag=toyotawaits-20"
+    "destinationUrl": "https://www.amazon.ca/s?k=J1772+charger+lock+ring+Toyota+RAV4+Prime&tag=toyotawaits-20",
+    "affiliateUrl": "/out/j1772-charger-lock",
+    "badge": "Recommended",
+    "compatibility": "PHEV J1772 Public Charging"
   }
 ]
