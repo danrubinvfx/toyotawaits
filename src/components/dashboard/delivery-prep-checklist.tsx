@@ -29,6 +29,7 @@ export interface ChecklistProduct {
   powertrains?: string[];
   category: 'visibility_protection' | 'cabin_organization' | 'roadside_winter';
   title: string;
+  name?: string;
   priceEst: string;
   priceEstCad?: string;
   whyBuy: string;
@@ -36,6 +37,8 @@ export interface ChecklistProduct {
   image: string;
   asin?: string;
   destinationUrl: string;
+  youtubeVideoId?: string;
+  videoTitle?: string;
 }
 
 export interface DeliveryPrepChecklistProps {
@@ -63,7 +66,6 @@ export function DeliveryPrepChecklist({
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
-  const [isNocoVideoOpen, setIsNocoVideoOpen] = useState<boolean>(true);
 
   // Normalize model and powertrain slugs
   const normalizedModel = useMemo(() => {
@@ -402,85 +404,39 @@ export function DeliveryPrepChecklist({
                       </div>
                     </div>
 
-                    {/* Inline, Lazy-Loaded 12V Jump Starter Video Comparison Embed Section */}
-                    {item.slug === 'noco-gb40-jump-pack' && (
-                      <div
-                        data-testid="noco-video-comparison-section"
-                        className="mt-1 pt-3.5 border-t border-zinc-800/80 w-full space-y-3 print:hidden"
-                      >
-                        {/* Header bar with toggle */}
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
-                            <h5 className="text-xs sm:text-sm font-bold text-zinc-200 tracking-tight">
-                              Comparison: GB40 vs. GBX45 (Charging &amp; Ports)
-                            </h5>
-                          </div>
-                          <div className="flex items-center gap-3">
+                    {/* Dynamic Inline Video Embed (Rendered ONLY if item.youtubeVideoId is defined) */}
+                    {item.youtubeVideoId && (
+                      <div className="mt-3 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950 print:hidden w-full">
+                        {item.videoTitle && (
+                          <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-800 bg-neutral-900/60">
+                            <div className="flex items-center gap-2">
+                              <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
+                              <span className="text-xs font-semibold text-neutral-200">
+                                {item.videoTitle}
+                              </span>
+                            </div>
                             <a
-                              href="https://www.youtube.com/watch?v=gNDH1z4Is48"
+                              href={`https://www.youtube.com/watch?v=${item.youtubeVideoId}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              data-testid="jump-pack-video-comparison"
-                              className="text-[11px] text-zinc-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1"
+                              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-link-${item.slug}`}
+                              className="text-[11px] text-neutral-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1"
                             >
                               <span>Open in YouTube</span>
                               <ExternalLink className="h-3 w-3" />
                             </a>
-                            <button
-                              type="button"
-                              onClick={() => setIsNocoVideoOpen(!isNocoVideoOpen)}
-                              aria-expanded={isNocoVideoOpen}
-                              aria-label={isNocoVideoOpen ? 'Collapse Video' : 'Expand Video'}
-                              className="text-[11px] font-semibold text-zinc-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1 cursor-pointer"
-                            >
-                              <span>{isNocoVideoOpen ? 'Collapse Video' : 'Expand Video'}</span>
-                              {isNocoVideoOpen ? (
-                                <ChevronUp className="h-3.5 w-3.5" />
-                              ) : (
-                                <ChevronDown className="h-3.5 w-3.5" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Collapsible/Inline Video Embed Container */}
-                        {isNocoVideoOpen && (
-                          <div className="space-y-3">
-                            {/* Responsive 16:9 Video Embed */}
-                            <div className="aspect-video w-full rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 shadow-md">
-                              <iframe
-                                src="https://www.youtube-nocookie.com/embed/gNDH1z4Is48"
-                                title="NOCO Boost Jump Starter COMPARISON: GBX45 vs GB40"
-                                loading="lazy"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                className="w-full h-full border-0"
-                              />
-                            </div>
-
-                            {/* Direct affiliate link positioned clearly below the video */}
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 rounded-lg border border-zinc-800/80 bg-zinc-950/60">
-                              <p className="text-xs text-zinc-400 leading-relaxed">
-                                Comparing the GB40 vs GBX45? Watch the side-by-side breakdown (ports, recharge speeds, and form factor):
-                              </p>
-                              <Button
-                                asChild
-                                size="sm"
-                                className="w-full sm:w-auto text-xs h-8 gap-1.5 bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold transition-all shadow-xs shrink-0 cursor-pointer"
-                              >
-                                <a
-                                  href={`/out/${item.slug}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer sponsored"
-                                >
-                                  <span>View Item on Amazon.ca</span>
-                                  <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-                                </a>
-                              </Button>
-                            </div>
                           </div>
                         )}
+                        <div className="aspect-video w-full">
+                          <iframe
+                            src={`https://www.youtube-nocookie.com/embed/${item.youtubeVideoId}`}
+                            title={item.videoTitle || item.name || item.title}
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="h-full w-full border-0"
+                          />
+                        </div>
                       </div>
                     )}
                   </div>

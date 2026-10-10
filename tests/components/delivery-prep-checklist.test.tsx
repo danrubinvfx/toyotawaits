@@ -144,45 +144,25 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
   });
 
-  it('renders the 12V jump pack video breakdown callout link with correct attributes', () => {
+  it('renders dynamic inline video embeds for items with youtubeVideoId and omits for items without', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    const videoCallout = screen.getByTestId('jump-pack-video-comparison');
-    expect(videoCallout).toBeDefined();
-    expect(videoCallout.getAttribute('href')).toBe('https://www.youtube.com/watch?v=gNDH1z4Is48');
-    expect(videoCallout.getAttribute('target')).toBe('_blank');
-    expect(videoCallout.getAttribute('rel')).toContain('noopener');
-    expect(videoCallout.getAttribute('rel')).toContain('noreferrer');
+    // 1. NOCO GB40 embed
+    const nocoIframe = screen.getByTitle(/GB40 vs GBX45 Comparison/i);
+    expect(nocoIframe).toBeDefined();
+    expect(nocoIframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/gNDH1z4Is48');
+    expect(nocoIframe.getAttribute('loading')).toBe('lazy');
+    expect(nocoIframe.getAttribute('allow')).toContain('accelerometer');
+    expect(nocoIframe.getAttribute('allow')).toContain('encrypted-media');
 
-    expect(
-      screen.getByText(/Comparing the GB40 vs GBX45\? Watch the side-by-side breakdown/i)
-    ).toBeDefined();
-  });
+    // 2. Fitcamx Dashcam embed
+    const fitcamxIframe = screen.getByTitle(/Fitcamx Plug & Play Installation & Clarity/i);
+    expect(fitcamxIframe).toBeDefined();
+    expect(fitcamxIframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/HrrClvzZpnI');
+    expect(fitcamxIframe.getAttribute('loading')).toBe('lazy');
 
-  it('renders the inline lazy-loaded video comparison iframe for NOCO jump pack with privacy domain', () => {
-    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
-
-    // Header check
-    expect(screen.getByText(/Comparison: GB40 vs\. GBX45 \(Charging & Ports\)/i)).toBeDefined();
-
-    // Iframe embed check
-    const iframe = screen.getByTitle('NOCO Boost Jump Starter COMPARISON: GBX45 vs GB40');
-    expect(iframe).toBeDefined();
-    expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/gNDH1z4Is48');
-    expect(iframe.getAttribute('loading')).toBe('lazy');
-    expect(iframe.getAttribute('allow')).toContain('accelerometer');
-    expect(iframe.getAttribute('allow')).toContain('encrypted-media');
-
-    // Outbound link below video
-    expect(screen.getByText('View Item on Amazon.ca')).toBeDefined();
-
-    // Toggle collapse and expand
-    const toggleBtn = screen.getByRole('button', { name: /Collapse Video/i });
-    fireEvent.click(toggleBtn);
-    expect(screen.queryByTitle('NOCO Boost Jump Starter COMPARISON: GBX45 vs GB40')).toBeNull();
-
-    const expandBtn = screen.getByRole('button', { name: /Expand Video/i });
-    fireEvent.click(expandBtn);
-    expect(screen.getByTitle('NOCO Boost Jump Starter COMPARISON: GBX45 vs GB40')).toBeDefined();
+    // 3. Exactly 2 iframes present on RAV4 HEV page (NOCO + Fitcamx), none for screen protectors or floor mats
+    const allIframes = document.querySelectorAll('iframe');
+    expect(allIframes.length).toBe(2);
   });
 });
