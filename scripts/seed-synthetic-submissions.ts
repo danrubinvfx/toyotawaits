@@ -1104,6 +1104,13 @@ export async function runSyntheticSeed(recordsToSeed: SyntheticSeedRecord[] = AL
           created_at: submittedDate,
         };
 
+        // Ensure idempotent upsert by checking existing ID
+        const { data: existing } = await supabase
+          .from('submissions')
+          .select('id')
+          .eq('id', record.id)
+          .maybeSingle();
+
         const { error } = await supabase
           .from('submissions')
           .upsert(insertPayload, { onConflict: 'id' });

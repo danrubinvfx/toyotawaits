@@ -963,15 +963,8 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           addonsCad: Number(item.mandatory_addons_cad || 0),
         }));
 
-        // Deduplicate against initial community records (Supabase rows take precedence)
-        const dbIds = new Set(dbRecords.map((r) => r.id));
-        const combined = [...dbRecords];
-        for (const seed of INITIAL_COMMUNITY_RECORDS) {
-          if (!dbIds.has(seed.id)) {
-            combined.push(seed);
-          }
-        }
-        return combined;
+        // When database records exist, return them directly without duplicating against in-memory fallback
+        return dbRecords;
       } else if (error) {
         console.warn('Supabase query error in getCommunitySubmissions, falling back to initial records:', error.message);
       }

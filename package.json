@@ -10,7 +10,8 @@
     "test": "vitest run",
     "db:seed:legacy": "tsx scripts/ingest-legacy-data.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
-    "db:seed:synthetic": "tsx scripts/seed-synthetic-submissions.ts"
+    "db:seed:synthetic": "tsx scripts/seed-synthetic-submissions.ts",
+    "db:cleanup": "tsx scripts/cleanup-duplicates.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.2.0",
