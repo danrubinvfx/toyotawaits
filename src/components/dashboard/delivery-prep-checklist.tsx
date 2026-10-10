@@ -18,6 +18,7 @@ import {
   Check,
   ShieldCheck,
   RotateCcw,
+  Play,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -374,6 +375,29 @@ export function DeliveryPrepChecklist({
                           <p className="text-xs text-zinc-400 leading-relaxed font-sans">
                             {note}
                           </p>
+                        )}
+
+                        {/* NOCO Jump Pack Video Comparison Callout */}
+                        {item.slug === 'noco-gb40-jump-pack' && (
+                          <div className="pt-1.5">
+                            <a
+                              href="https://www.youtube.com/watch?v=gNDH1z4Is48"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              data-testid="jump-pack-video-comparison"
+                              className="group inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950/80 px-2.5 py-1.5 text-[11px] text-zinc-300 hover:border-amber-500/50 hover:bg-zinc-900/90 hover:text-amber-300 transition-all shadow-2xs"
+                            >
+                              <Play className="h-3 w-3 text-red-500 fill-red-500 shrink-0 group-hover:scale-110 transition-transform" />
+                              <span className="leading-snug">
+                                <span className="text-zinc-400 group-hover:text-zinc-300">
+                                  Comparing the GB40 vs GBX45? Watch the side-by-side breakdown (ports, recharge speeds, and form factor):
+                                </span>{' '}
+                                <span className="font-semibold text-amber-400 underline decoration-amber-500/40 underline-offset-2">
+                                  Watch video &rarr;
+                                </span>
+                              </span>
+                            </a>
+                          </div>
                         )}
                       </div>
                     </div>

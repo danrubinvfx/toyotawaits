@@ -143,4 +143,19 @@ describe('DeliveryPrepChecklist Component', () => {
     // Items should now be hidden
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
   });
+
+  it('renders the 12V jump pack video breakdown callout link with correct attributes', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const videoCallout = screen.getByTestId('jump-pack-video-comparison');
+    expect(videoCallout).toBeDefined();
+    expect(videoCallout.getAttribute('href')).toBe('https://www.youtube.com/watch?v=gNDH1z4Is48');
+    expect(videoCallout.getAttribute('target')).toBe('_blank');
+    expect(videoCallout.getAttribute('rel')).toContain('noopener');
+    expect(videoCallout.getAttribute('rel')).toContain('noreferrer');
+
+    expect(
+      screen.getByText(/Comparing the GB40 vs GBX45\? Watch the side-by-side breakdown/i)
+    ).toBeDefined();
+  });
 });
