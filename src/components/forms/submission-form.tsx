@@ -802,6 +802,18 @@ export function SubmissionForm() {
                   password needed!
                 </p>
               </div>
+
+              {/* Discrete Ko-fi Support Note */}
+              <div className="pt-2 text-center border-t border-zinc-100 dark:border-zinc-800/80">
+                <a
+                  href="https://ko-fi.com/toyotawaits"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 transition-colors inline-block leading-relaxed"
+                >
+                  Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider supporting server costs on Ko-fi →
+                </a>
+              </div>
             </div>
 
             <DialogFooter className="sm:justify-center flex-col sm:flex-row gap-2">

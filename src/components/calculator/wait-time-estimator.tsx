@@ -375,6 +375,17 @@ export function WaitTimeEstimator({
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
                   Your delivery timeline has been incorporated into our crowdsourced Canadian database.
                 </p>
+                <p className="text-xs text-emerald-800 dark:text-emerald-200 mt-2">
+                  Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider{' '}
+                  <a
+                    href="https://ko-fi.com/toyotawaits"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline font-semibold hover:text-emerald-950 dark:hover:text-white"
+                  >
+                    supporting server costs on Ko-fi →
+                  </a>
+                </p>
               </div>
             </div>
             <button

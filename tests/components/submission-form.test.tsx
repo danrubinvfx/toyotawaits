@@ -105,6 +105,9 @@ describe('SubmissionForm Component', () => {
       expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
       expect(screen.getByText('mock-secret-key-uuid-1234567890')).toBeInTheDocument();
       expect(screen.getAllByText('Save your private link to update this order later').length).toBeGreaterThan(0);
+      expect(
+        screen.getByText(/Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider supporting server costs on Ko-fi →/i)
+      ).toBeInTheDocument();
     });
 
     // Check localStorage persistence

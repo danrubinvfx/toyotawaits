@@ -78,6 +78,8 @@ Explore popular community-recommended protection and accessories for your ${mode
 ${modsUrl}
 
 --------------------------------------------------
+ToyotaWaits is an independent community project. If this tracker helped you, support hosting costs at https://ko-fi.com/toyotawaits
+
 Manage your alerts or unsubscribe instantly:
 ${unsubscribeUrl}
 `.trim();
@@ -315,10 +317,13 @@ ${unsubscribeUrl}
 
     <!-- Footer with compliant List-Unsubscribe -->
     <div class="footer">
-      <p>
+      <p style="margin: 0 0 10px 0;">
         You received this email because you subscribed to wait-time alerts for the ${modelTitle} in ${provinceUpper} on ToyotaWaits.ca.
       </p>
-      <p>
+      <p style="margin: 0 0 10px 0;">
+        ToyotaWaits is an independent community project. If this tracker helped you, support hosting costs at <a href="https://ko-fi.com/toyotawaits" target="_blank" rel="noopener noreferrer">https://ko-fi.com/toyotawaits</a>
+      </p>
+      <p style="margin: 0;">
         <a href="${unsubscribeUrl}">One-Click Unsubscribe</a> &bull; Unsubscribe with one click &bull; 
         <a href="https://toyotawaits.ca/privacy">Privacy Policy</a> &bull; 
         Zero-PII Canadian Automotive Analytics

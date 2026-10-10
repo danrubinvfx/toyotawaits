@@ -452,6 +452,9 @@ describe('WaitTimeEstimator Component', () => {
     expect(
       screen.getByText('Submission received! Here are the updated wait-time estimates.')
     ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider/i)
+    ).toBeInTheDocument();
 
     // Clicking dismiss should remove the banner
     const dismissBtn = screen.getByRole('button', { name: /Dismiss banner/i });

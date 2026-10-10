@@ -77,4 +77,16 @@ describe('Notification Email Engine & Template Generator', () => {
     expect(email.html).toContain('Unsubscribe with one click');
     expect(email.text).toContain(unsubUrl);
   });
+
+  it('renders Ko-fi community project support link above unsubscribe link in footer', () => {
+    const email = generateNotificationEmail(samplePayload);
+
+    const kofiUrl = 'https://ko-fi.com/toyotawaits';
+    const supportText = 'ToyotaWaits is an independent community project. If this tracker helped you, support hosting costs at';
+
+    expect(email.html).toContain(kofiUrl);
+    expect(email.html).toContain(supportText);
+    expect(email.text).toContain(kofiUrl);
+    expect(email.text).toContain(supportText);
+  });
 });

@@ -23,6 +23,16 @@ export function Footer() {
               <Lock className="h-3.5 w-3.5 text-emerald-600" />
               <span>Strict Zero-PII Policy: Zero names, emails, VINs, or IPs stored.</span>
             </div>
+            <div className="pt-1">
+              <a
+                href="https://ko-fi.com/toyotawaits"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+              >
+                ☕ Support this tracker
+              </a>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -119,11 +129,21 @@ export function Footer() {
             As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
             We do not accept paid dealer promotions or sponsored wait-time modifications.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-400">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-400 gap-3">
             <span>© 2026 ToyotaWaits.ca. Canadian Community Data Initiative.</span>
-            <span className="flex items-center gap-1 mt-2 sm:mt-0">
-              Built with <Heart className="h-3 w-3 text-red-600 fill-current" /> for Canadian automotive buyers
-            </span>
+            <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-0">
+              <a
+                href="https://ko-fi.com/toyotawaits"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+              >
+                ☕ Support this tracker
+              </a>
+              <span className="flex items-center gap-1">
+                Built with <Heart className="h-3 w-3 text-red-600 fill-current" /> for Canadian automotive buyers
+              </span>
+            </div>
           </div>
         </div>
       </div>

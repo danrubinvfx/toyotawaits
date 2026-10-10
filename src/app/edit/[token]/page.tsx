@@ -299,6 +299,16 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
               <p className="text-xs text-emerald-700 dark:text-emerald-300">
                 Thank you for keeping the Canadian community delivery log accurate!
               </p>
+              <p className="text-xs text-emerald-800 dark:text-emerald-200 pt-1">
+                <a
+                  href="https://ko-fi.com/toyotawaits"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider supporting server costs on Ko-fi →
+                </a>
+              </p>
             </div>
           </div>
           <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs shrink-0">
