@@ -394,6 +394,67 @@ export function CommunityDataTable() {
     return `/api/export?${params.toString()}`;
   }, [modelFilter, provinceFilter, statusFilter]);
 
+  // Full dataset CSV export handler (exports complete unpaginated matching records from parent state, e.g. all 17 rows)
+  const handleExportCsv = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (typeof window !== 'undefined' && window.URL && window.Blob) {
+      e.preventDefault();
+      const headers = [
+        'model',
+        'powertrain',
+        'trim',
+        'model_year',
+        'province',
+        'dealership_city',
+        'order_date',
+        'delivery_date',
+        'wait_days',
+        'status',
+        'pricing',
+        'addons_cad',
+      ];
+      const escapeCell = (val: string | number | null | undefined): string => {
+        if (val == null) return '';
+        const str = String(val);
+        if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+          return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+      };
+
+      const lines = [headers.join(',')];
+      // filteredRecords holds all matching entries without pagination slicing (pageSize: 8)
+      for (const r of filteredRecords) {
+        lines.push(
+          [
+            escapeCell(r.model),
+            escapeCell(r.powertrain),
+            escapeCell(r.trim),
+            escapeCell(r.modelYear),
+            escapeCell(r.province),
+            escapeCell(r.city),
+            escapeCell(r.orderDate),
+            escapeCell(r.deliveryDate),
+            escapeCell(r.waitDays),
+            escapeCell(r.status),
+            escapeCell(r.pricing),
+            escapeCell(Number(r.addonsCad || 0).toFixed(2)),
+          ].join(',')
+        );
+      }
+
+      const blob = new Blob(['\uFEFF' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const tempLink = document.createElement('a');
+      tempLink.href = url;
+      const today = new Date().toISOString().split('T')[0];
+      tempLink.setAttribute('download', `toyotawait-ca-export-${today}.csv`);
+      document.body.appendChild(tempLink);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+      URL.revokeObjectURL(url);
+    }
+  };
+
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-sm">
       <CardHeader className="space-y-2 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
@@ -407,7 +468,7 @@ export function CommunityDataTable() {
             </CardDescription>
           </div>
 
-          <a href={csvDownloadUrl} download>
+          <a href={csvDownloadUrl} download onClick={handleExportCsv}>
             <Button size="sm" variant="outline" className="gap-1.5 text-xs font-semibold shadow-sm w-full sm:w-auto">
               <Download className="h-3.5 w-3.5" />
               Download Filtered CSV

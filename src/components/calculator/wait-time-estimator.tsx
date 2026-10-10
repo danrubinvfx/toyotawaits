@@ -58,7 +58,7 @@ export function WaitTimeEstimator({
   useEffect(() => {
     let isCancelled = false;
 
-    fetch('/api/stats')
+    fetch('/api/stats', { cache: 'no-store' })
       .then((res) => res.json())
       .then((res) => {
         if (!isCancelled && res.success && res.data) {

@@ -67,9 +67,9 @@ function seedInitialData() {
       model_slug: 'rav4',
       model_name: 'RAV4',
       powertrain_slug: 'phev',
-      powertrain_name: 'Prime / Plug-in Hybrid (PHEV)',
+      powertrain_name: 'Plug-in Hybrid (PHEV)',
       trim_slug: 'xse-technology-awd',
-      trim_name: 'XSE AWD Technology Package',
+      trim_name: 'XSE AWD Tech Package',
       province: 'BC',
       dealership_city: 'Richmond',
       model_year: 2026,
@@ -132,7 +132,214 @@ function seedInitialData() {
       created_at: '2026-01-15T12:00:00Z',
     },
     {
+      id: 'a1000000-0000-4000-8000-000000000004',
+      model_slug: 'grand-highlander',
+      model_name: 'Grand Highlander',
+      powertrain_slug: 'hev',
+      powertrain_name: 'Hybrid (HEV)',
+      trim_slug: 'hybrid-limited-awd',
+      trim_name: 'Hybrid Limited AWD',
+      province: 'QC',
+      dealership_city: 'Laval',
+      model_year: 2026,
+      order_date: '2025-06-12',
+      delivery_date: '2026-05-02',
+      wait_days: 324,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Smooth delivery in Laval.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-4').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-05-03T10:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000005',
+      model_slug: 'land-cruiser',
+      model_name: 'Land Cruiser',
+      powertrain_slug: 'hev',
+      powertrain_name: 'i-FORCE MAX Hybrid',
+      trim_slug: 'land-cruiser-grade',
+      trim_name: 'Land Cruiser Grade',
+      province: 'BC',
+      dealership_city: 'North Vancouver',
+      model_year: 2026,
+      order_date: '2025-11-20',
+      delivery_date: '2026-03-15',
+      wait_days: 115,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Delivered at MSRP in North Vancouver.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-5').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-03-16T11:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000006',
+      model_slug: 'rav4',
+      model_name: 'RAV4',
+      powertrain_slug: 'phev',
+      powertrain_name: 'Plug-in Hybrid (PHEV)',
+      trim_slug: 'se-awd',
+      trim_name: 'SE AWD',
+      province: 'QC',
+      dealership_city: 'Montreal',
+      model_year: 2026,
+      order_date: '2025-03-15',
+      delivery_date: '2026-04-20',
+      wait_days: 401,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Arrived after 13 months wait in Montreal.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-6').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-04-21T09:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000007',
+      model_slug: 'sienna',
+      model_name: 'Sienna',
+      powertrain_slug: 'hev',
+      powertrain_name: 'Hybrid (HEV)',
+      trim_slug: 'limited-awd',
+      trim_name: 'Limited AWD (7-Passenger)',
+      province: 'ON',
+      dealership_city: 'Markham',
+      model_year: 2026,
+      order_date: '2024-11-10',
+      delivery_date: '2026-04-15',
+      wait_days: 521,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Long wait for Limited AWD in Markham but straight MSRP deal.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-7').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-04-16T14:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000008',
+      model_slug: 'rav4',
+      model_name: 'RAV4',
+      powertrain_slug: 'hev',
+      powertrain_name: 'Hybrid (HEV)',
+      trim_slug: 'woodland-edition-awd',
+      trim_name: 'Woodland Edition AWD',
+      province: 'BC',
+      dealership_city: 'Victoria',
+      model_year: 2026,
+      order_date: '2025-09-12',
+      delivery_date: '2026-04-18',
+      wait_days: 218,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Victoria delivery, ~7 months wait.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-8').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-04-19T10:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000009',
+      model_slug: 'grand-highlander',
+      model_name: 'Grand Highlander',
+      powertrain_slug: 'hybrid-max',
+      powertrain_name: 'Hybrid MAX',
+      trim_slug: 'platinum-hybrid-max-awd',
+      trim_name: 'Platinum Hybrid MAX AWD',
+      province: 'ON',
+      dealership_city: 'Mississauga',
+      model_year: 2026,
+      order_date: '2025-07-20',
+      delivery_date: '2026-06-05',
+      wait_days: 320,
+      status: 'delivered',
+      pricing: 'above_msrp',
+      mandatory_addons_cad: 495,
+      trade_in_required: false,
+      notes: 'Dealer required protection package.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-9').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-06-06T12:00:00Z',
+    },
+    {
       id: 'a1000000-0000-4000-8000-000000000010',
+      model_slug: 'land-cruiser',
+      model_name: 'Land Cruiser',
+      powertrain_slug: 'hev',
+      powertrain_name: 'i-FORCE MAX Hybrid',
+      trim_slug: '1958-grade',
+      trim_name: '1958 Grade',
+      province: 'ON',
+      dealership_city: 'London',
+      model_year: 2026,
+      order_date: '2026-01-10',
+      delivery_date: '2026-05-10',
+      wait_days: 120,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Delivered at exact MSRP in London.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-10').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-05-11T16:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000011',
+      model_slug: 'sienna',
+      model_name: 'Sienna',
+      powertrain_slug: 'hev',
+      powertrain_name: 'Hybrid (HEV)',
+      trim_slug: 'le-awd',
+      trim_name: 'LE AWD (8-Passenger)',
+      province: 'MB',
+      dealership_city: 'Winnipeg',
+      model_year: 2026,
+      order_date: '2025-02-15',
+      delivery_date: '2026-06-18',
+      wait_days: 488,
+      status: 'delivered',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: '16 months wait in Winnipeg.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-11').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-06-19T09:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000012',
+      model_slug: 'rav4',
+      model_name: 'RAV4',
+      powertrain_slug: 'hev',
+      powertrain_name: 'Hybrid (HEV)',
+      trim_slug: 'limited-awd',
+      trim_name: 'Limited AWD',
+      province: 'AB',
+      dealership_city: 'Edmonton',
+      model_year: 2026,
+      order_date: '2026-01-20',
+      delivery_date: null,
+      wait_days: null,
+      status: 'pending',
+      pricing: 'at_msrp',
+      mandatory_addons_cad: 0,
+      trade_in_required: false,
+      notes: 'Waiting on Limited AWD allocation in Edmonton.',
+      edit_key_hash: crypto.createHash('sha256').update('seed-key-12').digest('hex'),
+      is_flagged: false,
+      created_at: '2026-01-20T14:00:00Z',
+    },
+    {
+      id: 'a1000000-0000-4000-8000-000000000013',
       model_slug: 'prius-prime',
       model_name: 'Prius Prime',
       powertrain_slug: 'phev',
@@ -155,7 +362,7 @@ function seedInitialData() {
       created_at: '2026-02-13T10:00:00Z',
     },
     {
-      id: 'a1000000-0000-4000-8000-000000000011',
+      id: 'a1000000-0000-4000-8000-000000000014',
       model_slug: 'prius-prime',
       model_name: 'Prius Prime',
       powertrain_slug: 'phev',
@@ -178,7 +385,7 @@ function seedInitialData() {
       created_at: '2026-05-16T14:30:00Z',
     },
     {
-      id: 'a1000000-0000-4000-8000-000000000012',
+      id: 'a1000000-0000-4000-8000-000000000015',
       model_slug: 'prius-prime',
       model_name: 'Prius Prime',
       powertrain_slug: 'phev',
@@ -201,7 +408,7 @@ function seedInitialData() {
       created_at: '2026-04-19T09:15:00Z',
     },
     {
-      id: 'a1000000-0000-4000-8000-000000000013',
+      id: 'a1000000-0000-4000-8000-000000000016',
       model_slug: 'prius',
       model_name: 'Prius',
       powertrain_slug: 'hev',
@@ -224,7 +431,7 @@ function seedInitialData() {
       created_at: '2026-08-15T16:00:00Z',
     },
     {
-      id: 'a1000000-0000-4000-8000-000000000014',
+      id: 'a1000000-0000-4000-8000-000000000017',
       model_slug: 'prius-prime',
       model_name: 'Prius Prime',
       powertrain_slug: 'phev',
@@ -426,6 +633,71 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
 }
 
 export async function getSubmissionsForExport(filters: ExportFilterParams): Promise<ExportRow[]> {
+  // If Supabase PostgreSQL is live, query the complete unpaginated dataset from Supabase
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+      let query = supabase
+        .from('submissions')
+        .select(`
+          province,
+          dealership_city,
+          model_year,
+          order_date,
+          delivery_date,
+          wait_days,
+          status,
+          pricing,
+          mandatory_addons_cad,
+          created_at,
+          vehicle_models!inner(name, slug),
+          vehicle_powertrains!inner(name, slug),
+          vehicle_trims!inner(name, slug)
+        `)
+        .eq('is_flagged', false);
+
+      if (filters.model) {
+        query = query.eq('vehicle_models.slug', filters.model.toLowerCase());
+      }
+      if (filters.powertrain) {
+        query = query.eq('vehicle_powertrains.slug', filters.powertrain.toLowerCase());
+      }
+      if (filters.province) {
+        query = query.eq('province', filters.province);
+      }
+      if (filters.status) {
+        query = query.eq('status', filters.status);
+      }
+
+      const { data, error } = await query.order('order_date', { ascending: false });
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        return data.map((item: any) => ({
+          model: item.vehicle_models?.name || 'RAV4',
+          powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
+          trim: item.vehicle_trims?.name || 'XLE AWD',
+          model_year: item.model_year,
+          province: item.province,
+          dealership_city: item.dealership_city || '',
+          order_date: item.order_date,
+          delivery_date: item.delivery_date || '',
+          wait_days: item.wait_days != null ? String(item.wait_days) : '',
+          status: item.status,
+          pricing: item.pricing || 'undisclosed',
+          addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
+          submitted_at: item.created_at,
+        }));
+      }
+    } catch (err) {
+      console.warn('Supabase export query fallback to in-memory store:', err);
+    }
+  }
+
+  // In-memory fallback: returns all matching unpaginated submissions (e.g. all 17 rows when unfiltered)
   const rows: ExportRow[] = [];
 
   for (const item of inMemorySubmissions.values()) {

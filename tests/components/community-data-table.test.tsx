@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
@@ -69,5 +69,23 @@ describe('CommunityDataTable Component', () => {
       'href',
       expect.stringContaining('province=BC')
     );
+  });
+
+  it('triggers unpaginated client CSV export on click without truncating to page size', () => {
+    const createObjectURLMock = vi.fn().mockReturnValue('blob:mock-url');
+    const revokeObjectURLMock = vi.fn();
+    window.URL.createObjectURL = createObjectURLMock;
+    window.URL.revokeObjectURL = revokeObjectURLMock;
+
+    render(<CommunityDataTable />);
+
+    const downloadLink = screen.getByText('Download Filtered CSV').closest('a');
+    expect(downloadLink).toBeInTheDocument();
+
+    fireEvent.click(downloadLink!);
+
+    expect(createObjectURLMock).toHaveBeenCalledTimes(1);
+    const blobArg = createObjectURLMock.mock.calls[0][0];
+    expect(blobArg).toBeInstanceOf(Blob);
   });
 });

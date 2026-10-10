@@ -23,10 +23,12 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { saveStoredSubmission } from '@/lib/storage/submission-storage';
+import { useRouter } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert } from 'lucide-react';
 
 export function SubmissionForm() {
   const formId = useId();
+  const router = useRouter();
 
   // Cascading Selection State
   const [selectedModelSlug, setSelectedModelSlug] = useState<string>('rav4');
@@ -180,6 +182,11 @@ export function SubmissionForm() {
         'Wait time recorded successfully! Your timeline has been added to our Canadian database. The form has been reset for new entries.'
       );
       resetFormFields();
+      try {
+        router?.refresh?.();
+      } catch {
+        // Router unmounted fallback
+      }
     } catch (err: any) {
       console.error('Submission request error:', err);
       setErrorMsg('A network error occurred. Please check your connection and try again.');

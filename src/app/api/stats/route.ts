@@ -3,8 +3,6 @@ import { getModelWaitBenchmarks } from '@/lib/db/stats';
 import { ApiResponse } from '@/lib/types/contracts';
 import { ModelWaitBenchmark } from '@/lib/db/stats';
 
-// Caching handled via unstable_cache (revalidate: 3600, tags: ['wait_stats']) and Cache-Control headers
-
 export async function GET() {
   try {
     const benchmarks = await getModelWaitBenchmarks();

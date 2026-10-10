@@ -39,6 +39,17 @@ describe('GET /api/export', () => {
     expect(csvText).toContain('Sienna');
   });
 
+  it('exports the complete unpaginated dataset with all 17 community entries', async () => {
+    const request = new NextRequest('http://localhost:3000/api/export?format=csv');
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    const csvText = await response.text();
+    const lines = csvText.trim().split(/\r?\n/).filter((l) => l.trim().length > 0);
+    // Header line + 17 data rows = 18 total lines
+    expect(lines.length).toBe(18);
+  });
+
   it('returns 400 Bad Request for unsupported export format', async () => {
     const request = new NextRequest('http://localhost:3000/api/export?format=json');
     const response = await GET(request);
