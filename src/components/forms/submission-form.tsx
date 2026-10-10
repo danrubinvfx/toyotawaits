@@ -42,7 +42,11 @@ export function SubmissionForm() {
   const [dealershipCity, setDealershipCity] = useState<string>('');
   const [modelYear, setModelYear] = useState<number>(2025);
   const [orderDate, setOrderDate] = useState<string>('2024-11-01');
-  const [maxDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
+  const [maxDate] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split('T')[0];
+  });
   const [status, setStatus] = useState<'pending' | 'delivered'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('at_msrp');

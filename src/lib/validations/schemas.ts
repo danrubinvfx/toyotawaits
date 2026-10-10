@@ -70,13 +70,13 @@ export const submissionCreateSchema = z
     orderDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Order date must be in YYYY-MM-DD format')
-      .refine((date) => new Date(date) <= new Date(), {
+      .refine((date) => new Date(date).getTime() <= Date.now() + 86400000, {
         message: 'Order date cannot be in the future'
       }),
     deliveryDate: z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Delivery date must be in YYYY-MM-DD format')
-      .refine((date) => new Date(date) <= new Date(), {
+      .refine((date) => new Date(date).getTime() <= Date.now() + 86400000, {
         message: 'Delivery date cannot be in the future'
       })
       .optional()

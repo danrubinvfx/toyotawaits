@@ -208,16 +208,31 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: any) {
-    console.error('Unhandled error in POST /api/submissions:', error);
+    console.error('Unhandled error in POST /api/submissions:', {
+      message: error?.message,
+      code: error?.code,
+      details: error?.details,
+      hint: error?.hint,
+      stack: error?.stack,
+    });
+
+    const isRls = error?.code === '42501' || error?.message?.includes('violates row-level security');
+    const isConstraint = error?.code === '23503' || error?.code === '23514';
+
     return NextResponse.json<ApiResponse<null>>(
       {
         success: false,
         error: {
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected server error occurred while recording your submission.',
+          code: isRls
+            ? 'RLS_PERMISSION_DENIED'
+            : isConstraint
+            ? 'DATABASE_CONSTRAINT_ERROR'
+            : 'INTERNAL_SERVER_ERROR',
+          message: error?.message || 'An unexpected server error occurred while recording your submission.',
+          details: error?.details || undefined,
         },
       },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: isRls ? 403 : isConstraint ? 400 : 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

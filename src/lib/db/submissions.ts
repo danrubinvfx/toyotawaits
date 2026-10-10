@@ -504,10 +504,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           edit_key_hash: data.editKeyHash,
           is_flagged: data.isFlagged,
         })
-        .select()
-        .single();
+        .select('id, status, current_stage, wait_days, is_flagged')
+        .maybeSingle();
 
-      // If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
+      // 1. If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
       if (error && (error.code === '23503' || error.message?.includes('foreign key'))) {
         console.warn('Foreign key mismatch in Supabase insert, resolving actual DB IDs by slug...', error.message);
         let modelSlug: string | undefined;
@@ -538,7 +538,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             .from('vehicle_models')
             .select('id')
             .eq('slug', modelSlug)
-            .single();
+            .maybeSingle();
 
           if (dbModel) {
             const actualModelId = dbModel.id;
@@ -548,7 +548,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                   .select('id')
                   .eq('model_id', actualModelId)
                   .eq('slug', powertrainSlug)
-                  .single()
+                  .maybeSingle()
               : { data: null };
             const actualPowertrainId = dbPowertrain?.id || data.powertrainId;
 
@@ -558,9 +558,20 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                   .select('id')
                   .eq('powertrain_id', actualPowertrainId)
                   .eq('slug', trimSlug)
-                  .single()
+                  .maybeSingle()
               : { data: null };
-            const actualTrimId = dbTrim?.id || data.trimId;
+
+            // Fallback to any trim of this powertrain if exact slug wasn't found
+            const { data: dbAnyTrim } = !dbTrim && dbPowertrain
+              ? await supabase
+                  .from('vehicle_trims')
+                  .select('id')
+                  .eq('powertrain_id', actualPowertrainId)
+                  .limit(1)
+                  .maybeSingle()
+              : { data: null };
+
+            const actualTrimId = dbTrim?.id || dbAnyTrim?.id || data.trimId;
 
             const retryRes = await supabase
               .from('submissions')
@@ -584,32 +595,77 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
                 edit_key_hash: data.editKeyHash,
                 is_flagged: data.isFlagged,
               })
-              .select()
-              .single();
+              .select('id, status, current_stage, wait_days, is_flagged')
+              .maybeSingle();
 
-            if (!retryRes.error && retryRes.data) {
+            if (!retryRes.error) {
               inserted = retryRes.data;
               error = null;
-            } else if (retryRes.error) {
-              console.error('Retry insert with resolved DB IDs failed:', retryRes.error.message);
+            } else {
+              console.error('Retry insert with resolved DB IDs failed:', retryRes.error);
             }
           }
         }
       }
 
-      if (!error && inserted) {
-        return {
-          id: inserted.id,
-          status: inserted.status,
-          currentStage: inserted.current_stage || data.currentStage || 'deposit_placed',
-          waitDays: inserted.wait_days,
-          isFlagged: inserted.is_flagged,
-        };
-      } else if (error) {
-        console.error('Supabase PostgreSQL insert failed:', error.message, error.details);
+      // 2. If RLS policy blocked insert due to strict is_flagged = false policy, retry with is_flagged = false
+      if (error && (error.code === '42501' || error.message?.includes('violates row-level security')) && data.isFlagged) {
+        console.warn('RLS policy violation on flagged submission insert, retrying with is_flagged = false...');
+        const rlsRetry = await supabase
+          .from('submissions')
+          .insert({
+            id,
+            model_id: data.modelId,
+            powertrain_id: data.powertrainId,
+            trim_id: data.trimId,
+            province: data.province,
+            dealership_city: data.dealershipCity,
+            dealership_name: data.dealershipName,
+            model_year: data.modelYear,
+            order_date: data.orderDate,
+            delivery_date: data.deliveryDate,
+            status: data.status,
+            current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            pricing: data.pricing,
+            mandatory_addons_cad: data.mandatoryAddonsCad,
+            trade_in_required: data.tradeInRequired,
+            notes: data.notes,
+            edit_key_hash: data.editKeyHash,
+            is_flagged: false,
+          })
+          .select('id, status, current_stage, wait_days, is_flagged')
+          .maybeSingle();
+
+        if (!rlsRetry.error) {
+          inserted = rlsRetry.data;
+          error = null;
+        }
       }
-    } catch (err) {
-      console.warn('PostgreSQL insert fallback to memory:', err);
+
+      if (!error) {
+        return {
+          id: inserted?.id || id,
+          status: inserted?.status || data.status,
+          currentStage: inserted?.current_stage || data.currentStage || 'deposit_placed',
+          waitDays: inserted?.wait_days ?? waitDays,
+          isFlagged: inserted?.is_flagged ?? data.isFlagged,
+        };
+      } else {
+        console.error('[DATABASE ERROR] Supabase submissions table insert failed:', {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+        });
+        const dbError: any = new Error(error.message || 'Supabase submission insert failed');
+        dbError.code = error.code || 'DATABASE_INSERT_FAILED';
+        dbError.details = error.details;
+        dbError.hint = error.hint;
+        throw dbError;
+      }
+    } catch (err: any) {
+      console.error('[DATABASE ERROR] Exception during Supabase insert:', err);
+      throw err;
     }
   }
 

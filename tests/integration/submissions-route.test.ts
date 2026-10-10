@@ -1,8 +1,9 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/submissions/route';
 import { PATCH } from '@/app/api/submissions/[id]/route';
 import { _resetRateLimiter } from '@/lib/security/ratelimit';
+import * as dbSubmissions from '@/lib/db/submissions';
 
 describe('POST /api/submissions', () => {
   const validUuid1 = '11111111-1111-4111-8111-111111111111';
@@ -220,6 +221,77 @@ describe('POST /api/submissions', () => {
     const data = await response.json();
     expect(data.success).toBe(true);
     expect(data.data.message).toBe('Submission received.');
+  });
+
+  it('returns 403 RLS_PERMISSION_DENIED when database rejects insert due to RLS security policy', async () => {
+    const rlsError: any = new Error('new row violates row-level security policy for table "submissions"');
+    rlsError.code = '42501';
+    const spy = vi.spyOn(dbSubmissions, 'insertSubmission').mockRejectedValueOnce(rlsError);
+
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'BC',
+      dealershipCity: 'Vancouver',
+      modelYear: 2024,
+      orderDate: '2024-01-15',
+      status: 'pending',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.16',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(403);
+
+    const data = await response.json();
+    expect(data.success).toBe(false);
+    expect(data.error.code).toBe('RLS_PERMISSION_DENIED');
+    spy.mockRestore();
+  });
+
+  it('returns 500 INTERNAL_SERVER_ERROR when database insert throws an unexpected error', async () => {
+    const dbError: any = new Error('Connection refused to database pool');
+    dbError.code = 'CONNECTION_FAILURE';
+    const spy = vi.spyOn(dbSubmissions, 'insertSubmission').mockRejectedValueOnce(dbError);
+
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'BC',
+      dealershipCity: 'Vancouver',
+      modelYear: 2024,
+      orderDate: '2024-01-15',
+      status: 'pending',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.17',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(500);
+
+    const data = await response.json();
+    expect(data.success).toBe(false);
+    expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
+    expect(data.error.message).toContain('Connection refused');
+    spy.mockRestore();
   });
 });
 
