@@ -23,7 +23,7 @@ function loadEnv() {
             if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
               v = v.slice(1, -1);
             }
-            if (!process.env[k]) {
+            if (f === '.env.production' || !process.env[k] || process.env[k]?.includes('mock-')) {
               process.env[k] = v;
             }
           }
@@ -1063,59 +1063,22 @@ export async function runSyntheticSeed(recordsToSeed: SyntheticSeedRecord[] = AL
     console.log(`📡 Connecting to Supabase at: ${process.env.NEXT_PUBLIC_SUPABASE_URL}`);
     const supabase = createServerClient();
 
-    // Map catalog IDs by slug
+    // Fetch live catalog IDs directly from database to ensure foreign keys match
+    const { data: dbModels } = await supabase.from('vehicle_models').select('id, slug');
+    const { data: dbPowertrains } = await supabase.from('vehicle_powertrains').select('id, model_id, slug');
+    const { data: dbTrims } = await supabase.from('vehicle_trims').select('id, powertrain_id, slug');
+
     for (const record of recordsToSeed) {
       try {
-        let modelId = '';
-        let powertrainId = '';
-        let trimId = '';
+        const model = dbModels?.find((m) => m.slug === record.modelSlug);
+        const modelId = model?.id || '';
 
-        // Find matching catalog entry
-        const model = CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === record.modelSlug);
-        if (model) {
-          modelId = model.id;
-          const pt = model.powertrains.find((p) => p.slug === record.powertrainSlug);
-          if (pt) {
-            powertrainId = pt.id;
-            const tr = pt.trims.find((t) => t.slug === record.trimSlug || t.slug.startsWith(record.trimSlug));
-            if (tr) {
-              trimId = tr.id;
-            } else if (pt.trims.length > 0) {
-              trimId = pt.trims[0].id;
-            }
-          }
-        }
+        const pt = dbPowertrains?.find((p) => p.model_id === modelId && p.slug === record.powertrainSlug);
+        const powertrainId = pt?.id || '';
 
-        // If UUIDs weren't resolved from catalog, query Supabase directly
-        if (!modelId || !powertrainId || !trimId) {
-          const { data: dbModel } = await supabase
-            .from('vehicle_models')
-            .select('id')
-            .eq('slug', record.modelSlug)
-            .maybeSingle();
-
-          if (dbModel) {
-            modelId = dbModel.id;
-            const { data: dbPt } = await supabase
-              .from('vehicle_powertrains')
-              .select('id')
-              .eq('model_id', modelId)
-              .eq('slug', record.powertrainSlug)
-              .maybeSingle();
-
-            if (dbPt) {
-              powertrainId = dbPt.id;
-              const { data: dbTr } = await supabase
-                .from('vehicle_trims')
-                .select('id')
-                .eq('powertrain_id', powertrainId)
-                .ilike('slug', `%${record.trimSlug}%`)
-                .maybeSingle();
-
-              trimId = dbTr?.id || '';
-            }
-          }
-        }
+        const matchingTrims = dbTrims?.filter((t) => t.powertrain_id === powertrainId) || [];
+        const tr = matchingTrims.find((t) => t.slug === record.trimSlug || t.slug.startsWith(record.trimSlug) || record.trimSlug.startsWith(t.slug));
+        const trimId = tr?.id || matchingTrims[0]?.id || '';
 
         const editKeyHash = crypto.createHash('sha256').update(`seed-key-${record.id}`).digest('hex');
         const submittedDate = new Date(Date.now() - record.daysAgoSubmitted * 24 * 60 * 60 * 1000).toISOString();
