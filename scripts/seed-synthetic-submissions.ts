@@ -54,6 +54,298 @@ export interface SyntheticSeedRecord {
   daysAgoSubmitted: number;
 }
 
+export const INITIAL_17_RECORDS: SyntheticSeedRecord[] = [
+  {
+    id: 'a1000000-0000-4000-8000-000000000001',
+    modelSlug: 'rav4',
+    powertrainSlug: 'phev',
+    trimSlug: 'xse-technology-awd',
+    province: 'BC',
+    city: 'Richmond',
+    dealerName: 'Richmond Toyota',
+    modelYear: 2026,
+    orderDate: '2025-04-10',
+    deliveryDate: '2026-05-25',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Delivered at exact MSRP at Richmond Toyota.',
+    daysAgoSubmitted: 30,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000002',
+    modelSlug: 'rav4',
+    powertrainSlug: 'hev',
+    trimSlug: 'xle-awd',
+    province: 'ON',
+    city: 'Oakville',
+    dealerName: 'Oakville Toyota',
+    modelYear: 2026,
+    orderDate: '2025-10-01',
+    deliveryDate: '2026-03-20',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'No markup, smooth pickup in Oakville.',
+    daysAgoSubmitted: 29,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000003',
+    modelSlug: 'sienna',
+    powertrainSlug: 'hev',
+    trimSlug: 'xse-awd',
+    province: 'AB',
+    city: 'Calgary',
+    dealerName: 'Calgary Toyota',
+    modelYear: 2026,
+    orderDate: '2025-01-15',
+    deliveryDate: null,
+    status: 'pending',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Waiting on 2026 allocation from Calgary dealer.',
+    daysAgoSubmitted: 28,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000004',
+    modelSlug: 'grand-highlander',
+    powertrainSlug: 'hev',
+    trimSlug: 'hybrid-limited-awd',
+    province: 'QC',
+    city: 'Laval',
+    dealerName: 'Laval Toyota',
+    modelYear: 2026,
+    orderDate: '2025-06-12',
+    deliveryDate: '2026-05-02',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Smooth delivery in Laval.',
+    daysAgoSubmitted: 27,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000005',
+    modelSlug: 'land-cruiser',
+    powertrainSlug: 'hev',
+    trimSlug: 'land-cruiser-grade',
+    province: 'BC',
+    city: 'North Vancouver',
+    dealerName: 'Jim Pattison Northshore',
+    modelYear: 2026,
+    orderDate: '2025-11-20',
+    deliveryDate: '2026-03-15',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Delivered at MSRP in North Vancouver.',
+    daysAgoSubmitted: 26,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000006',
+    modelSlug: 'rav4',
+    powertrainSlug: 'phev',
+    trimSlug: 'se-awd',
+    province: 'QC',
+    city: 'Montreal',
+    dealerName: 'Montreal Toyota',
+    modelYear: 2026,
+    orderDate: '2025-03-15',
+    deliveryDate: '2026-04-20',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Arrived after 13 months wait in Montreal.',
+    daysAgoSubmitted: 25,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000007',
+    modelSlug: 'sienna',
+    powertrainSlug: 'hev',
+    trimSlug: 'limited-awd',
+    province: 'ON',
+    city: 'Markham',
+    dealerName: 'Markville Toyota',
+    modelYear: 2026,
+    orderDate: '2024-11-10',
+    deliveryDate: '2026-04-15',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Long wait for Limited AWD in Markham but straight MSRP deal.',
+    daysAgoSubmitted: 24,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000008',
+    modelSlug: 'rav4',
+    powertrainSlug: 'hev',
+    trimSlug: 'woodland-edition-awd',
+    province: 'BC',
+    city: 'Victoria',
+    dealerName: 'Victoria Toyota',
+    modelYear: 2026,
+    orderDate: '2025-09-12',
+    deliveryDate: '2026-04-18',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Victoria delivery, ~7 months wait.',
+    daysAgoSubmitted: 23,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000009',
+    modelSlug: 'grand-highlander',
+    powertrainSlug: 'hybrid-max',
+    trimSlug: 'platinum-hybrid-max-awd',
+    province: 'ON',
+    city: 'Mississauga',
+    dealerName: 'Mississauga Toyota',
+    modelYear: 2026,
+    orderDate: '2025-07-20',
+    deliveryDate: '2026-06-05',
+    status: 'delivered',
+    pricing: 'above_msrp',
+    addonsCad: 495,
+    notes: 'Dealer required protection package.',
+    daysAgoSubmitted: 22,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000010',
+    modelSlug: 'land-cruiser',
+    powertrainSlug: 'hev',
+    trimSlug: '1958-grade',
+    province: 'ON',
+    city: 'London',
+    dealerName: 'London Toyota',
+    modelYear: 2026,
+    orderDate: '2026-01-10',
+    deliveryDate: '2026-05-10',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Delivered at exact MSRP in London.',
+    daysAgoSubmitted: 21,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000011',
+    modelSlug: 'sienna',
+    powertrainSlug: 'hev',
+    trimSlug: 'le-awd',
+    province: 'MB',
+    city: 'Winnipeg',
+    dealerName: 'Winnipeg Toyota',
+    modelYear: 2026,
+    orderDate: '2025-02-15',
+    deliveryDate: '2026-06-18',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: '16 months wait in Winnipeg.',
+    daysAgoSubmitted: 20,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000012',
+    modelSlug: 'rav4',
+    powertrainSlug: 'hev',
+    trimSlug: 'limited-awd',
+    province: 'AB',
+    city: 'Edmonton',
+    dealerName: 'Edmonton Toyota',
+    modelYear: 2026,
+    orderDate: '2026-01-20',
+    deliveryDate: null,
+    status: 'pending',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Waiting on Limited AWD allocation in Edmonton.',
+    daysAgoSubmitted: 19,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000013',
+    modelSlug: 'prius-prime',
+    powertrainSlug: 'phev',
+    trimSlug: 'xse',
+    province: 'ON',
+    city: 'Toronto',
+    dealerName: 'Ken Shaw Toyota',
+    modelYear: 2026,
+    orderDate: '2025-08-15',
+    deliveryDate: '2026-02-12',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Delivered at exact MSRP in Toronto.',
+    daysAgoSubmitted: 18,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000014',
+    modelSlug: 'prius-prime',
+    powertrainSlug: 'phev',
+    trimSlug: 'se',
+    province: 'BC',
+    city: 'Langley',
+    dealerName: 'Langley Toyota',
+    modelYear: 2026,
+    orderDate: '2026-04-10',
+    deliveryDate: '2026-05-15',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Quick delivery from dealer allocation batch in Langley.',
+    daysAgoSubmitted: 17,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000015',
+    modelSlug: 'prius-prime',
+    powertrainSlug: 'phev',
+    trimSlug: 'xse-premium',
+    province: 'AB',
+    city: 'Calgary',
+    dealerName: 'Stampede Toyota',
+    modelYear: 2026,
+    orderDate: '2025-05-12',
+    deliveryDate: '2026-04-18',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Waited 11 months for XSE Premium at Calgary dealer.',
+    daysAgoSubmitted: 16,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000016',
+    modelSlug: 'prius',
+    powertrainSlug: 'hev',
+    trimSlug: 'xle-awd',
+    province: 'ON',
+    city: 'Ottawa',
+    dealerName: 'Mendes Toyota',
+    modelYear: 2026,
+    orderDate: '2026-05-02',
+    deliveryDate: '2026-08-14',
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Clean deal at MSRP in Ottawa, under 3.5 months wait.',
+    daysAgoSubmitted: 15,
+  },
+  {
+    id: 'a1000000-0000-4000-8000-000000000017',
+    modelSlug: 'prius-prime',
+    powertrainSlug: 'phev',
+    trimSlug: 'xse',
+    province: 'QC',
+    city: 'Montreal',
+    dealerName: 'Alix Toyota',
+    modelYear: 2026,
+    orderDate: '2026-03-01',
+    deliveryDate: null,
+    status: 'pending',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    notes: 'Deposit confirmed in Montreal, awaiting allocation.',
+    daysAgoSubmitted: 14,
+  },
+];
+
 export const SYNTHETIC_40_RECORDS: SyntheticSeedRecord[] = [
   // RAV4 Group (10 rows: 7 delivered, 3 pending)
   {
@@ -743,16 +1035,20 @@ export const SYNTHETIC_40_RECORDS: SyntheticSeedRecord[] = [
     status: 'pending',
     pricing: 'at_msrp',
     addonsCad: 0,
-    notes: 'Pending delivery for autumn 2026.',
     daysAgoSubmitted: 3,
   },
 ];
 
-export async function runSyntheticSeed() {
+export const ALL_57_RECORDS: SyntheticSeedRecord[] = [
+  ...INITIAL_17_RECORDS,
+  ...SYNTHETIC_40_RECORDS,
+];
+
+export async function runSyntheticSeed(recordsToSeed: SyntheticSeedRecord[] = ALL_57_RECORDS) {
   console.log('='.repeat(70));
   console.log('🌱 Starting Synthetic Canadian Toyota Submissions Seed');
   console.log('='.repeat(70));
-  console.log(`Preparing ${SYNTHETIC_40_RECORDS.length} synthetic Canadian Toyota submissions...`);
+  console.log(`Preparing ${recordsToSeed.length} Canadian Toyota submissions...`);
 
   const isLiveSupabase =
     Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL) &&
@@ -767,7 +1063,7 @@ export async function runSyntheticSeed() {
     const supabase = createServerClient();
 
     // Map catalog IDs by slug
-    for (const record of SYNTHETIC_40_RECORDS) {
+    for (const record of recordsToSeed) {
       try {
         let modelId = '';
         let powertrainId = '';
@@ -887,15 +1183,18 @@ export async function runSyntheticSeed() {
     console.log(`     NEXT_PUBLIC_SUPABASE_URL = "${process.env.NEXT_PUBLIC_SUPABASE_URL || 'undefined'}")`);
     console.log('📄 Standalone SQL migration generated at: supabase/seed_synthetic_40_submissions.sql');
     console.log('    You can run this directly in the Supabase Dashboard SQL Editor!');
-    insertedCount = SYNTHETIC_40_RECORDS.length;
+    insertedCount = recordsToSeed.length;
   }
+
+  const deliveredTotal = recordsToSeed.filter((r) => r.status === 'delivered').length;
+  const pendingTotal = recordsToSeed.filter((r) => r.status === 'pending').length;
 
   console.log('='.repeat(70));
   console.log(`📊 SEED SUMMARY:`);
-  console.log(`   Total Prepared:     ${SYNTHETIC_40_RECORDS.length} records`);
+  console.log(`   Total Prepared:     ${recordsToSeed.length} records`);
   console.log(`   Successfully Seeded: ${insertedCount} records`);
-  console.log(`   Delivered Records:  28 (70%)`);
-  console.log(`   Pending Records:    12 (30%)`);
+  console.log(`   Delivered Records:  ${deliveredTotal} (${Math.round((deliveredTotal / recordsToSeed.length) * 100)}%)`);
+  console.log(`   Pending Records:    ${pendingTotal} (${Math.round((pendingTotal / recordsToSeed.length) * 100)}%)`);
   console.log(`   Provinces Seeded:   BC, ON, AB, QC, MB, SK, NS`);
   if (errors.length > 0) {
     console.log(`   Errors / Warnings:  ${errors.length}`);
@@ -903,7 +1202,7 @@ export async function runSyntheticSeed() {
   }
   console.log('='.repeat(70));
 
-  return { total: SYNTHETIC_40_RECORDS.length, inserted: insertedCount, errors };
+  return { total: recordsToSeed.length, inserted: insertedCount, errors };
 }
 
 if (process.argv[1]?.includes('seed-synthetic-submissions')) {
