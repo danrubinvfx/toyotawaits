@@ -20,6 +20,11 @@ describe('Header Component', () => {
     expect(screen.getByText(/ToyotaWaits/i)).toBeInTheDocument();
     expect(screen.getByText(/🇨🇦 Canada/i)).toBeInTheDocument();
 
+    // Winter Prep desktop nav link
+    const winterPrepDesktop = screen.getByRole('link', { name: /Winter Prep ❄️/i });
+    expect(winterPrepDesktop).toBeInTheDocument();
+    expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
+
     // Toggle button should exist
     const toggleButton = screen.getByTestId('mobile-menu-toggle');
     expect(toggleButton).toBeInTheDocument();
@@ -37,6 +42,11 @@ describe('Header Component', () => {
 
     // Drawer is now open
     expect(screen.getByTestId('mobile-menu-drawer')).toBeInTheDocument();
+
+    // Contains Winter Prep link in mobile drawer
+    const winterDrawerLink = screen.getByRole('link', { name: /Winter Prep Guide ❄️/i });
+    expect(winterDrawerLink).toBeInTheDocument();
+    expect(winterDrawerLink).toHaveAttribute('href', '/winter-prep');
 
     // Click again to close
     fireEvent.click(toggleButton);

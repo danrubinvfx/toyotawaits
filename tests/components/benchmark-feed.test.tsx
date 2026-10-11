@@ -93,20 +93,13 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.getByText(/NOCO Boost Plus GB40 1000A/i)).toBeInTheDocument();
   });
 
-  it('renders the Canadian Winter Prep Guide bound to the active vehicle and updates on switch', async () => {
+  it('renders the compact seasonal winter prep banner linking to /winter-prep', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    expect(screen.getByTestId('winter-prep-guide')).toBeInTheDocument();
-    expect(screen.getByText(/Canadian Winter Prep & Survival Guide:/i)).toBeInTheDocument();
-    expect(screen.getByText(/RAV4 \(Hybrid \/ Prime \/ Gas\)/i)).toBeInTheDocument();
-
-    // Switch to Sienna
-    const siennaBtn = screen.getByRole('button', { name: 'Sienna' });
-    fireEvent.click(siennaBtn);
-
-    expect(screen.getByText(/Sienna \(Hybrid AWD\)/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Powered sliding doors can ice up along the lower rail channel/i)
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('winter-prep-seasonal-banner')).toBeInTheDocument();
+    expect(screen.getByText(/Prepping for sub-zero deliveries\?/i)).toBeInTheDocument();
+    const guideLink = screen.getByRole('link', { name: /View our Canadian Winter Guide →/i });
+    expect(guideLink).toBeInTheDocument();
+    expect(guideLink).toHaveAttribute('href', '/winter-prep');
   });
 });

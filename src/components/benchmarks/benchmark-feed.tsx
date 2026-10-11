@@ -6,9 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
-import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car } from 'lucide-react';
+import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car, Snowflake } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
-import { WinterGuide } from '@/components/winter-prep/winter-guide';
 import { cn } from '@/lib/utils';
 
 export interface VehicleOption {
@@ -317,8 +316,36 @@ export function BenchmarkFeed({
         />
       </div>
 
-      {/* 5. Canadian Winter Prep & Survival Guide Bound to Selected Vehicle */}
-      <WinterGuide modelKey={activeVehicle.id} />
+      {/* 5. Compact Seasonal Winter Prep Banner */}
+      <div
+        data-testid="winter-prep-seasonal-banner"
+        className="rounded-xl border border-cyan-500/30 bg-cyan-950/20 p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs"
+      >
+        <div className="flex items-center gap-2.5 text-zinc-300">
+          <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">
+            <Snowflake className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="font-semibold text-zinc-100">
+              Prepping for sub-zero deliveries?
+            </p>
+            <p className="text-zinc-400 text-[11px]">
+              Model-by-model 12V hybrid jump procedures, TuxMat vent clearance, and freezing rain gear.
+            </p>
+          </div>
+        </div>
+
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs h-8 gap-1.5 shrink-0 self-end sm:self-center"
+        >
+          <Link href="/winter-prep">
+            <span>View our Canadian Winter Guide →</span>
+          </Link>
+        </Button>
+      </div>
     </div>
   );
 }

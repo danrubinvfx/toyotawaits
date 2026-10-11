@@ -17,8 +17,10 @@ import {
   ChevronRight,
   ExternalLink,
   ClipboardCheck,
+  Snowflake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -79,6 +81,20 @@ export function Header() {
           >
             <BarChart3 className="h-4 w-4 text-zinc-400" />
             Analytics
+          </Link>
+
+          {/* Winter Prep Desktop Link */}
+          <Link
+            href="/winter-prep"
+            className={cn(
+              'hover:text-cyan-400 transition-colors flex items-center gap-1.5 py-1',
+              pathname === '/winter-prep'
+                ? 'text-cyan-400 font-bold'
+                : 'text-zinc-600 dark:text-zinc-300'
+            )}
+          >
+            <Snowflake className="h-4 w-4 text-cyan-400" />
+            <span>Winter Prep ❄️</span>
           </Link>
 
           {/* Desktop Mod Guides Dropdown */}
@@ -317,6 +333,33 @@ export function Header() {
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Winter Prep Guide */}
+                <Link
+                  href="/winter-prep"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/winter-prep'
+                      ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-cyan-100 dark:bg-cyan-950/60 flex items-center justify-center text-cyan-600 dark:text-cyan-400">
+                      <Snowflake className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-cyan-400 transition-colors">
+                        Winter Prep Guide ❄️
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Sub-zero 12V jumps, salt liners &amp; frost shields
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
                 </Link>
               </div>
             </div>
