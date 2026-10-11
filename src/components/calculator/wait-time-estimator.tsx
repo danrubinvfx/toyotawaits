@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -24,6 +24,7 @@ import { NotificationSubscriptionModal } from '@/components/modals/notification-
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { useSearchParams } from 'next/navigation';
+import { cn } from '@/lib/utils';
 
 export interface WaitTimeEstimatorProps {
   initialModel?: string;
@@ -232,6 +233,8 @@ export function WaitTimeEstimator({
   const optimisticDate = calculateProjectedDate(p25Days);
   const conservativeDate = calculateProjectedDate(p75Days);
   const medianMonths = (medianDays / 30.4).toFixed(1);
+  const minWaitMonths = Math.max(1, Math.round(p25Days / 30.4));
+  const maxWaitMonths = Math.max(2, Math.round(p75Days / 30.4));
 
   // Tom Waits Themed Wait Tier
   const getWaitTier = (days: number) => {
@@ -340,15 +343,23 @@ export function WaitTimeEstimator({
   }, [province, powertrainSlug, stats, isRebateEligible]);
 
   return (
-    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-lg border-zinc-200 dark:border-zinc-800">
+    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 scroll-mt-20">
       <CardHeader className="space-y-1 bg-gradient-to-r from-amber-500/10 via-zinc-50 to-transparent dark:from-amber-950/20 dark:via-zinc-900 border-b border-zinc-200 dark:border-zinc-800 rounded-t-xl">
-        <div className="flex items-center space-x-2">
-          <Badge className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1 px-2.5">
-            <Sparkles className="h-3 w-3" /> Live Community Predictor
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center space-x-2">
+            <Badge className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1 px-2.5">
+              <Sparkles className="h-3 w-3" /> Live Community Predictor
+            </Badge>
+            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+              Canadian Regional Model
+            </span>
+          </div>
+          <Badge
+            data-testid="estimator-range-badge"
+            className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs sm:text-sm px-3 py-1 shadow-xs shrink-0"
+          >
+            Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
           </Badge>
-          <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-            Canadian Regional Model
-          </span>
         </div>
         <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
           Interactive Delivery Wait-Time Estimator
@@ -476,7 +487,7 @@ export function WaitTimeEstimator({
         </div>
 
         {/* Results Panel - ESTIMATOR VALUES BROUGHT TO TOP */}
-        {isLoading ? (
+        {isLoading && !stats ? (
           <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-6 space-y-4">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-20 w-full" />
@@ -487,7 +498,12 @@ export function WaitTimeEstimator({
             </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 p-5 sm:p-6 shadow-sm space-y-6">
+          <div
+            className={cn(
+              'rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 p-5 sm:p-6 shadow-sm space-y-6 transition-opacity duration-200',
+              isLoading && 'opacity-70 pointer-events-none'
+            )}
+          >
             {/* Primary KPI Banner */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
               <div className="space-y-2">
@@ -497,6 +513,9 @@ export function WaitTimeEstimator({
                   </span>
                   <Badge variant="outline" className={`text-[11px] font-bold ${currentTier.className}`}>
                     Tier: {currentTier.label}
+                  </Badge>
+                  <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold">
+                    Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                   </Badge>
                 </div>
 

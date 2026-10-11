@@ -2,27 +2,24 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
-import { HeroEstimateButton } from '@/components/calculator/hero-estimate-button';
 import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 import { BenchmarkFeed } from '@/components/benchmarks/benchmark-feed';
-import { ModelSummaryCards } from '@/components/dashboard/model-summary-cards';
 import { getModelWaitBenchmarks } from '@/lib/db/stats';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
-  PlusCircle,
   FileSpreadsheet,
-  CheckCircle2,
-  TrendingUp,
   MapPin,
   ShieldCheck,
   ChevronRight,
   BarChart3,
   Flame,
+  Snowflake,
+  Disc3,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -65,117 +62,147 @@ export default async function HomePage() {
     getModelWaitBenchmarks(),
     getCommunitySubmissions(),
   ]);
-  const rav4Median = benchmarks.rav4?.median_days ?? 410;
-  const siennaMedian = benchmarks.sienna?.median_days ?? 510;
 
   return (
     <div className="space-y-12 pb-16">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-12 sm:py-20 dark:border-zinc-800 text-white">
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 text-center space-y-6">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-semibold text-amber-400">
-            <Flame className="h-3.5 w-3.5 text-amber-400" />
-            <span>ToyotaWaits.ca</span>
-            <span className="text-zinc-600">•</span>
-            <span>Canadian Community Tracker</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight">
-            The piano has been drinking, and your Toyota is still on a boat.
-          </h1>
-
-          <p className="text-base sm:text-lg text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-            Real-time, crowdsourced delivery wait times for{' '}
-            <strong className="text-amber-400">RAV4 HEV/PHEV</strong>,{' '}
-            <strong className="text-amber-400">Sienna</strong>,{' '}
-            <strong className="text-amber-400">Grand Highlander</strong>, and{' '}
-            <strong className="text-amber-400">Land Cruiser</strong> across all Canadian provinces.
-            Empirical data from real Canadian buyers.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Button asChild size="lg" className="w-full sm:w-auto gap-2 bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-lg font-bold text-base h-12 px-6">
-              <Link href="/submit">
-                <PlusCircle className="h-5 w-5" />
-                Submit Your Wait Time (60s)
-              </Link>
-            </Button>
-            <HeroEstimateButton />
-          </div>
-
-          {/* Quick Metrics Ticker */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto pt-8 border-t border-zinc-800/80">
-            <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-amber-400">
-                {rav4Median} Days
-              </span>
-              <p className="text-xs text-zinc-400">Median 2026 RAV4 PHEV Wait</p>
+      {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
+      <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-8 pb-12 sm:pt-12 sm:pb-16 dark:border-zinc-800 text-white">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+          {/* Tight Header */}
+          <div className="text-center space-y-2.5 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
+              <Flame className="h-3.5 w-3.5 text-amber-400" />
+              <span>ToyotaWaits.ca</span>
+              <span className="text-zinc-600">•</span>
+              <span>Canadian Community Tracker</span>
             </div>
-            <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-amber-400">
-                {siennaMedian} Days
-              </span>
-              <p className="text-xs text-zinc-400">Median 2026 Sienna Wait</p>
-            </div>
-            <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-emerald-400">88%</span>
-              <p className="text-xs text-zinc-400">Delivered at True MSRP</p>
-            </div>
-            <div className="space-y-0.5">
-              <span className="text-xl sm:text-2xl font-black text-zinc-200">100%</span>
-              <p className="text-xs text-zinc-400">Anonymous & Zero-PII</p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Model Benchmark Feed & Vehicle-Specific Delivery Prep */}
-      <section id="benchmarks" className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-          <BenchmarkFeed initialBenchmarks={benchmarks} />
-        </React.Suspense>
-      </section>
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              Canadian Toyota Wait Time Tracker
+            </h1>
 
-      {/* Active Order Stepper (for returning users with edit keys) */}
-      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <ActiveOrderStepper />
-        </React.Suspense>
-      </section>
-
-      {/* Main Interactive Estimator Widget */}
-      <section id="estimator" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
-        <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <WaitTimeEstimator />
-        </React.Suspense>
-      </section>
-
-      {/* Provincial Comparison & Aggregate Insights Dashboard */}
-      <section id="analytics" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-              <BarChart3 className="h-6 w-6 text-red-600" />
-              Canada-Wide Wait Time Analytics
-            </h2>
-            <p className="text-sm text-zinc-500">
-              Aggregated delivery metrics comparing rebate and non-rebate provincial allocation trends.
+            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+              Crowdsourced delivery timelines across Canada. Select your model to estimate your wait.
             </p>
           </div>
+
+          {/* Estimator Container immediately below header */}
+          <div id="estimator" className="scroll-mt-20">
+            <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
+              <WaitTimeEstimator />
+            </React.Suspense>
+          </div>
         </div>
-        <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <ProvincialComparison />
-        </React.Suspense>
       </section>
 
-      {/* Community Submissions & Delivery Log Table */}
-      <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4">
-        <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <CommunityDataTable initialRecords={submissions} />
+      {/* 2. Secondary Content: Live Delivery Logs & Community Submissions Feed */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
+        {/* Active Order Stepper (for returning users with edit keys) */}
+        <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+          <ActiveOrderStepper />
         </React.Suspense>
+
+        {/* Community Submissions & Delivery Log Table */}
+        <div id="community-log" className="space-y-4 scroll-mt-20">
+          <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+            <CommunityDataTable initialRecords={submissions} />
+          </React.Suspense>
+        </div>
+
+        {/* Provincial Comparison & Aggregate Insights Dashboard */}
+        <div id="analytics" className="space-y-4 scroll-mt-20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-red-600" />
+                Canada-Wide Wait Time Analytics
+              </h2>
+              <p className="text-sm text-zinc-500">
+                Aggregated delivery metrics comparing rebate and non-rebate provincial allocation trends.
+              </p>
+            </div>
+          </div>
+          <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+            <ProvincialComparison />
+          </React.Suspense>
+        </div>
       </section>
 
-      {/* Feature & Community Insights Grid */}
+      {/* 3. Secondary Content: Winter Prep & Tire Fitment Guide Callout */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Card 1: Canadian Winter Guide */}
+          <Card className="border-cyan-500/30 bg-gradient-to-br from-cyan-950/20 via-zinc-900/40 to-zinc-950 dark:border-cyan-500/20 p-6 flex flex-col justify-between shadow-md hover:border-cyan-500/50 transition-all group">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="h-10 w-10 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center">
+                  <Snowflake className="h-5 w-5" />
+                </div>
+                <Badge variant="outline" className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-xs font-semibold">
+                  Sub-Zero Delivery Readiness
+                </Badge>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 group-hover:text-cyan-400 transition-colors">
+                  Canadian Winter Prep &amp; Survival Guide
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
+                  Protect your hybrid 12V battery from extreme cold drain, prevent frozen washer fluid nozzles, and fit high-wall TuxMat floor liners without blocking hybrid battery cooling vents.
+                </p>
+              </div>
+            </div>
+            <div className="pt-5 border-t border-zinc-200/50 dark:border-zinc-800/80 mt-4">
+              <Button asChild variant="outline" className="w-full justify-between border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 font-bold">
+                <Link href="/winter-prep">
+                  <span>Explore Canadian Winter Guide</span>
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
+            </div>
+          </Card>
+
+          {/* Card 2: Tire Fitment Guide */}
+          <Card className="border-amber-500/30 bg-gradient-to-br from-amber-950/20 via-zinc-900/40 to-zinc-950 dark:border-amber-500/20 p-6 flex flex-col justify-between shadow-md hover:border-amber-500/50 transition-all group">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center">
+                  <Disc3 className="h-5 w-5" />
+                </div>
+                <Badge variant="outline" className="border-amber-500/30 text-amber-500 bg-amber-500/10 text-xs font-semibold">
+                  OEM Sizes &amp; 3PMSF Ratings
+                </Badge>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 group-hover:text-amber-500 transition-colors">
+                  Canadian Toyota Tire Fitment Guide
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
+                  Factory tire size specifications, severe snow service (3PMSF) winter tire shootouts, and all-weather compound tests for RAV4, Sienna, Grand Highlander, and Prius.
+                </p>
+              </div>
+            </div>
+            <div className="pt-5 border-t border-zinc-200/50 dark:border-zinc-800/80 mt-4">
+              <Button asChild variant="outline" className="w-full justify-between border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold">
+                <Link href="/tires">
+                  <span>Explore Tire Recommendations</span>
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Link>
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* 4. Secondary Content: Popular Mods & Accessories Hub */}
+      <section id="benchmarks" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-20">
+        <div id="delivery-prep" className="scroll-mt-20">
+          <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+            <BenchmarkFeed initialBenchmarks={benchmarks} />
+          </React.Suspense>
+        </div>
+      </section>
+
+      {/* 5. Secondary Content: FAQ / Crowdsourcing Disclaimer */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
         <div className="text-center space-y-2 max-w-xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -195,8 +222,8 @@ export default async function HomePage() {
               <CardTitle className="text-lg">Provincial Accuracy</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Vehicle allocations vary dramatically between provinces with ZEV incentives (BC & QC) and non-rebate
-              provinces (ON & AB). Our model segments data geographically.
+              Vehicle allocations vary dramatically between provinces with ZEV incentives (BC &amp; QC) and non-rebate
+              provinces (ON &amp; AB). Our model segments data geographically.
             </CardContent>
           </Card>
 

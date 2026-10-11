@@ -502,4 +502,36 @@ describe('WaitTimeEstimator Component', () => {
       expect(modLink).toHaveAttribute('href', '/mods/sienna');
     });
   });
+
+  it('renders prominent output badge displaying crowdsourced wait range and has scroll-mt-20', async () => {
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        province: 'BC',
+        sampleCounts: { total: 40, delivered: 35, pending: 5 },
+        waitStats: { p25: 120, median: 180, p75: 240, mean: 180, min: 90, max: 300 },
+        pricingInsights: { atMsrpPercent: 88, aboveMsrpPercent: 12, avgAddonsCad: 250 },
+      },
+    };
+
+    window.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+
+    const { container } = render(<WaitTimeEstimator />);
+
+    // Header badge
+    const badge = screen.getByTestId('estimator-range-badge');
+    expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent(/Estimated Wait: \d+ – \d+ Months/i);
+
+    // Card scroll-mt-20
+    const card = container.querySelector('#estimator');
+    expect(card).toBeInTheDocument();
+    expect(card?.className).toContain('scroll-mt-20');
+  });
 });
