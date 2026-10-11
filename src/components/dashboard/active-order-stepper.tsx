@@ -15,11 +15,12 @@ import {
   Sparkles,
   ChevronRight,
   AlertCircle,
+  ClipboardCheck,
 } from 'lucide-react';
+import Link from 'next/link';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
-import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 
 const STAGES: Array<{
   key: SubmissionStage;
@@ -307,12 +308,19 @@ export function ActiveOrderStepper() {
         </CardContent>
       </Card>
 
-      <DeliveryPrepChecklist
-        model={localOrder.modelName}
-        powertrain={localOrder.powertrainName}
-        className="mt-4"
-        defaultExpanded={false}
-      />
+      <div className="mt-4 flex justify-end">
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="text-xs border-amber-500/30 bg-amber-500/5 text-amber-400 hover:bg-amber-500/10 gap-1.5"
+        >
+          <Link href="#delivery-prep">
+            <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
+            <span>Delivery Day Prep &amp; Essential Gear</span>
+          </Link>
+        </Button>
+      </div>
 
       <RedditShareModal
         isOpen={isShareModalOpen}

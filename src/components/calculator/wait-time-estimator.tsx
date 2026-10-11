@@ -16,13 +16,12 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell } from 'lucide-react';
+import { Clock, Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
-import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { useSearchParams } from 'next/navigation';
 
@@ -837,14 +836,18 @@ export function WaitTimeEstimator({
               );
             })()}
 
-            {/* Delivery Day Prep Checklist */}
-            <div id="delivery-prep" className="scroll-mt-24">
-              <DeliveryPrepChecklist
-                model={modelSlug}
-                powertrain={powertrainSlug}
-                className="mt-4"
-                defaultExpanded={true}
-              />
+            {/* Delivery Day Prep & Gear Quick Anchor Link */}
+            <div className="pt-2">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 text-amber-400 hover:text-amber-300 font-semibold text-xs h-10 gap-2 cursor-pointer transition-all"
+              >
+                <Link href="#delivery-prep">
+                  <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
+                  <span>View Delivery Day Prep &amp; Essential Gear for {currentModel.name} →</span>
+                </Link>
+              </Button>
             </div>
           </div>
         )}

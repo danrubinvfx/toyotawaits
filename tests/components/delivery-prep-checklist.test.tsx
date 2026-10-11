@@ -240,4 +240,38 @@ describe('DeliveryPrepChecklist Component', () => {
     const disclaimers = screen.getAllByText(/As an Amazon Associate I earn from qualifying purchases\./i);
     expect(disclaimers.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('renders dealership pickup inspection checklist items above gear cards', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    // Inspection section header
+    expect(screen.getByText(/Dealership Pickup Day Inspection Steps/i)).toBeInTheDocument();
+    expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
+
+    // Specific critical inspection checkpoints
+    expect(screen.getByText(/Bill of Sale & Pricing Verification/i)).toBeInTheDocument();
+    expect(screen.getByText(/Physical Key Fobs & Deliverables Handover/i)).toBeInTheDocument();
+    expect(screen.getByText(/Exterior Paint & PDI Transport Spacer Removal/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hybrid Battery Vent & Electronics Verification/i)).toBeInTheDocument();
+
+    // Verify gear cards follow immediately below
+    expect(screen.getByText(/Essential Day-One Gear & Drop-In Upgrades/i)).toBeInTheDocument();
+  });
+
+  it('allows checking off inspection items and resets them', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    // Click Bill of Sale check item
+    const billOfSaleTitle = screen.getByText(/Bill of Sale & Pricing Verification/i);
+    fireEvent.click(billOfSaleTitle);
+
+    expect(screen.getByText(/1 of 4 Verified/i)).toBeInTheDocument();
+
+    // Reset button should now be available
+    const resetBtn = screen.getByRole('button', { name: /Reset Checks/i });
+    expect(resetBtn).toBeInTheDocument();
+    fireEvent.click(resetBtn);
+
+    expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
+  });
 });

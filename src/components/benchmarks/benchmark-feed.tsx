@@ -282,7 +282,7 @@ export function BenchmarkFeed({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-1">
           <div>
             <h3 className="text-base sm:text-lg font-bold text-zinc-100 flex items-center gap-2">
-              <span>Delivery Prep &amp; Priority Gear:</span>
+              <span>Delivery Day Prep &amp; Essential Gear:</span>
               <span className="text-amber-400">{activeVehicle.label}</span>
             </h3>
             <p className="text-xs text-zinc-400">
