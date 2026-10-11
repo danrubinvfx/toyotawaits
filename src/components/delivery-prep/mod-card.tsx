@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +9,6 @@ import {
   Play,
   ShieldCheck,
   Layers,
-  Car,
   Zap,
   Luggage,
   Package,
@@ -119,8 +117,6 @@ export function ModCard({
   const [imgError, setImgError] = useState(false);
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
-  const ThemedIcon = getThemedCategoryIcon(item.category, item.title);
-
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
 
@@ -182,7 +178,9 @@ export function ModCard({
               className="relative w-20 h-20 shrink-0 rounded-lg border border-zinc-800 bg-zinc-950/90 flex items-center justify-center text-amber-500/80 shadow-xs"
               title={item.title}
             >
-              <ThemedIcon className="h-8 w-8 stroke-[1.5]" />
+              {React.createElement(getThemedCategoryIcon(item.category, item.title), {
+                className: 'h-8 w-8 stroke-[1.5]',
+              })}
             </div>
           )}
 
