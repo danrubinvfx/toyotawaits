@@ -30,4 +30,16 @@ describe('Footer Component', () => {
     render(<Footer />);
     expect(screen.getByText(/As an Amazon Associate I earn from qualifying purchases\./i)).toBeInTheDocument();
   });
+
+  it('renders secondary Ko-fi community callout card with verified link', () => {
+    render(<Footer />);
+
+    expect(screen.getByTestId('kofi-footer-callout')).toBeInTheDocument();
+    expect(screen.getByText(/ToyotaWaits is an independent, ad-free community project/i)).toBeInTheDocument();
+
+    const buyCoffeeBtn = screen.getByTestId('kofi-footer-button');
+    expect(buyCoffeeBtn).toHaveAttribute('href', 'https://ko-fi.com/toyotawaits');
+    expect(buyCoffeeBtn).toHaveAttribute('target', '_blank');
+    expect(buyCoffeeBtn).toHaveAttribute('rel', 'noopener noreferrer');
+  });
 });

@@ -15,6 +15,7 @@ import {
   BatteryCharging,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { VideoModal } from './video-modal';
 
 export interface ModCardItem {
   id: string;
@@ -115,6 +116,7 @@ export function ModCard({
   className,
 }: ModCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
   const price = item.priceEst || item.priceEstCad;
@@ -257,36 +259,36 @@ export function ModCard({
         </div>
       </div>
 
-      {/* External Video Guide / Walkthrough Button (replaces broken iframe) */}
+      {/* On-Site Video Guide Modal CTA */}
       {item.youtubeVideoId && (
-        <div className="mt-2 pt-2.5 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden w-full">
-          <div className="flex items-center gap-2 min-w-0">
-            <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
-            <span className="text-xs font-semibold text-zinc-300 truncate">
-              {item.videoTitle || 'Video Guide'}
-            </span>
-          </div>
-          <Button
-            asChild
-            size="sm"
-            variant="ghost"
-            className="h-7 px-2.5 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 shrink-0 transition-all cursor-pointer self-start sm:self-auto"
-          >
-            <a
-              href={`https://www.youtube.com/watch?v=${item.youtubeVideoId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-link-${item.slug}`}
-              className="inline-flex items-center gap-1.5"
-            >
-              <span>
-                {(item.title || '').toLowerCase().includes('dashcam') || (item.title || '').toLowerCase().includes('harness')
-                  ? 'Watch Install Walkthrough ↗'
-                  : 'Watch Video Guide ↗'}
+        <>
+          <div className="mt-2 pt-2.5 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden w-full">
+            <div className="flex items-center gap-2 min-w-0">
+              <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
+              <span className="text-xs font-semibold text-zinc-300 truncate">
+                {item.videoTitle || 'Video Guide'}
               </span>
-            </a>
-          </Button>
-        </div>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => setIsVideoModalOpen(true)}
+              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-modal-btn-${item.slug}`}
+              className="h-7 px-2.5 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 shrink-0 transition-all cursor-pointer self-start sm:self-auto gap-1.5"
+            >
+              <Play className="h-3 w-3 fill-red-500 text-red-500 shrink-0" />
+              <span>Watch Video Guide</span>
+            </Button>
+          </div>
+
+          <VideoModal
+            isOpen={isVideoModalOpen}
+            onClose={() => setIsVideoModalOpen(false)}
+            videoId={item.youtubeVideoId}
+            title={item.videoTitle || item.name || item.title}
+          />
+        </>
       )}
     </div>
   );

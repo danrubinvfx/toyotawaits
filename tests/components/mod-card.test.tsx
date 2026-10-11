@@ -82,20 +82,24 @@ describe('ModCard Component', () => {
     expect(onToggleMock).toHaveBeenCalledWith('sample-dashcam');
   });
 
-  it('renders external video walkthrough link button when youtubeVideoId is present', () => {
+  it('opens on-site video modal when Watch Video Guide button is clicked', () => {
     render(<ModCard item={sampleItem} />);
 
-    const videoLink = screen.getByText(/Watch Install Walkthrough ↗/i);
-    expect(videoLink).toBeDefined();
+    const openBtn = screen.getByRole('button', { name: /Watch Video Guide/i });
+    expect(openBtn).toBeInTheDocument();
 
-    const linkAnchor = videoLink.closest('a');
-    expect(linkAnchor).toBeInTheDocument();
-    expect(linkAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=sampleVid123');
-    expect(linkAnchor?.getAttribute('target')).toBe('_blank');
-    expect(linkAnchor?.getAttribute('rel')).toContain('noopener');
+    // Click button to open video modal
+    fireEvent.click(openBtn);
 
-    // Confirm no iframe element is present
-    expect(document.querySelector('iframe')).toBeNull();
+    // YouTube embed iframe inside modal is now present with autoplay and rel=0
+    const iframe = screen.getByTitle('Dashcam Installation Guide');
+    expect(iframe).toBeInTheDocument();
+    expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/sampleVid123?autoplay=1&rel=0');
+
+    // Close button dismisses modal
+    const closeBtn = screen.getByTestId('video-modal-close');
+    fireEvent.click(closeBtn);
+    expect(screen.queryByTitle('Dashcam Installation Guide')).toBeNull();
   });
 
   it('getThemedCategoryIcon correctly assigns contextual Lucide icons', () => {

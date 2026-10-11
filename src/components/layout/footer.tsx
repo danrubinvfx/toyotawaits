@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Shield, Lock, FileSpreadsheet, Heart } from 'lucide-react';
+import { Shield, Lock, Heart } from 'lucide-react';
+import { KofiCalloutCard } from '@/components/common/kofi-button';
 
 export function Footer() {
   return (
@@ -113,6 +114,11 @@ export function Footer() {
               </li>
             </ul>
           </div>
+        </div>
+
+        {/* Ko-fi Community Callout Card */}
+        <div className="mb-8">
+          <KofiCalloutCard />
         </div>
 
         {/* Disclaimer & Disclosure Section */}

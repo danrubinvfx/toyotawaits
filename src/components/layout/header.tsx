@@ -20,6 +20,7 @@ import {
   Snowflake,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
 
 export function Header() {
@@ -280,8 +281,9 @@ export function Header() {
           </Link>
         </nav>
 
-        {/* Action Button */}
-        <div className="hidden sm:flex items-center space-x-3">
+        {/* Action Button & Ko-fi Support */}
+        <div className="hidden sm:flex items-center space-x-2.5">
+          <KofiHeaderPill />
           <Button asChild size="sm" className="gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40">
             <Link href="/submit">
               <PlusCircle className="h-4 w-4 text-zinc-950" />

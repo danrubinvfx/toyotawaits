@@ -176,28 +176,29 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
   });
 
-  it('renders dynamic inline video embeds for items with youtubeVideoId and omits for items without', () => {
+  it('renders on-site video modal trigger buttons for items with youtubeVideoId and omits for items without', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    // 1. NOCO GB40 external video guide button
-    const nocoLink = screen.getByText(/Watch Video Guide ↗/i);
-    expect(nocoLink).toBeDefined();
-    const nocoAnchor = nocoLink.closest('a');
-    expect(nocoAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=gNDH1z4Is48');
-    expect(nocoAnchor?.getAttribute('target')).toBe('_blank');
-    expect(nocoAnchor?.getAttribute('rel')).toContain('noopener');
+    // 1. Initial state: 0 iframes present on page (no broken embedded iframes)
+    const initialIframes = document.querySelectorAll('iframe');
+    expect(initialIframes.length).toBe(0);
 
-    // 2. Fitcamx Dashcam external install walkthrough button
-    const fitcamxLink = screen.getByText(/Watch Install Walkthrough ↗/i);
-    expect(fitcamxLink).toBeDefined();
-    const fitcamxAnchor = fitcamxLink.closest('a');
-    expect(fitcamxAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=HrrClvzZpnI');
-    expect(fitcamxAnchor?.getAttribute('target')).toBe('_blank');
-    expect(fitcamxAnchor?.getAttribute('rel')).toContain('noopener');
+    // 2. Video guide trigger buttons are present
+    const videoGuideButtons = screen.getAllByRole('button', { name: /Watch Video Guide/i });
+    expect(videoGuideButtons.length).toBe(2);
 
-    // 3. Exactly 0 iframes present on page (no broken iframes)
-    const allIframes = document.querySelectorAll('iframe');
-    expect(allIframes.length).toBe(0);
+    // 3. Clicking trigger opens on-site modal player
+    fireEvent.click(videoGuideButtons[0]);
+    const modalContent = screen.getByTestId('video-modal-content');
+    expect(modalContent).toBeInTheDocument();
+
+    const activeIframe = modalContent.querySelector('iframe');
+    expect(activeIframe).toBeInTheDocument();
+    expect(activeIframe?.getAttribute('src')).toContain('https://www.youtube-nocookie.com/embed/');
+
+    // 4. Close modal
+    const closeBtn = screen.getByTestId('video-modal-close');
+    fireEvent.click(closeBtn);
   });
 
   it('filters by Cargo & Utility category and renders roof rack crossbars', () => {
