@@ -76,6 +76,12 @@ describe('WinterPrepView Page Component', () => {
     const modsLink = screen.getByRole('link', { name: /Complete Mods & Gear Catalog/i });
     expect(modsLink).toBeInTheDocument();
     expect(modsLink).toHaveAttribute('href', '/mods');
+
+    // Tire Guide cross-link banner
+    expect(screen.getByTestId('winter-prep-tire-callout')).toBeInTheDocument();
+    const tireGuideLink = screen.getByRole('link', { name: /View Canadian Tire Guide 🛞 →/i });
+    expect(tireGuideLink).toBeInTheDocument();
+    expect(tireGuideLink).toHaveAttribute('href', '/tires');
   });
 
   it('includes the mandatory Amazon Associates statutory disclaimer', () => {

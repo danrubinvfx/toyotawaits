@@ -77,6 +77,16 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/tires" className="hover:text-amber-500 transition-colors">
+                  Canadian Tire Guide 🛞
+                </Link>
+              </li>
+              <li>
+                <Link href="/winter-prep" className="hover:text-amber-500 transition-colors">
+                  Winter Prep &amp; Survival ❄️
+                </Link>
+              </li>
+              <li>
                 <Link href="/#delivery-prep" className="hover:text-amber-500 transition-colors">
                   Delivery Prep Checklist
                 </Link>

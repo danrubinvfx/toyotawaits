@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
-import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car, Snowflake } from 'lucide-react';
+import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car, Snowflake, Disc3 } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { cn } from '@/lib/utils';
 
@@ -335,16 +335,30 @@ export function BenchmarkFeed({
           </div>
         </div>
 
-        <Button
-          asChild
-          size="sm"
-          variant="outline"
-          className="border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs h-8 gap-1.5 shrink-0 self-end sm:self-center"
-        >
-          <Link href="/winter-prep">
-            <span>View our Canadian Winter Guide →</span>
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2 self-end sm:self-center shrink-0">
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs h-8 gap-1.5"
+          >
+            <Link href="/tires">
+              <Disc3 className="h-3.5 w-3.5" />
+              <span>Tire Guide 🛞</span>
+            </Link>
+          </Button>
+
+          <Button
+            asChild
+            size="sm"
+            variant="outline"
+            className="border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs h-8 gap-1.5"
+          >
+            <Link href="/winter-prep">
+              <span>View our Canadian Winter Guide →</span>
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );

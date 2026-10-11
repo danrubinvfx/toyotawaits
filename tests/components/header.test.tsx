@@ -25,6 +25,11 @@ describe('Header Component', () => {
     expect(winterPrepDesktop).toBeInTheDocument();
     expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
 
+    // Tires desktop nav link
+    const tiresDesktop = screen.getByRole('link', { name: /Tires 🛞/i });
+    expect(tiresDesktop).toBeInTheDocument();
+    expect(tiresDesktop).toHaveAttribute('href', '/tires');
+
     // Pickup Checklist desktop nav link
     const pickupDesktop = screen.getByRole('link', { name: /Pickup Checklist/i });
     expect(pickupDesktop).toBeInTheDocument();
@@ -58,6 +63,11 @@ describe('Header Component', () => {
     const winterDrawerLink = screen.getByRole('link', { name: /Winter Prep Guide ❄️/i });
     expect(winterDrawerLink).toBeInTheDocument();
     expect(winterDrawerLink).toHaveAttribute('href', '/winter-prep');
+
+    // Contains Tire Guide link in mobile drawer
+    const tiresDrawerLink = screen.getByRole('link', { name: /Tire Guide & Reviews 🛞/i });
+    expect(tiresDrawerLink).toBeInTheDocument();
+    expect(tiresDrawerLink).toHaveAttribute('href', '/tires');
 
     // Click again to close
     fireEvent.click(toggleButton);

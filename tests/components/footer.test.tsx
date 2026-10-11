@@ -42,4 +42,16 @@ describe('Footer Component', () => {
     expect(buyCoffeeBtn).toHaveAttribute('target', '_blank');
     expect(buyCoffeeBtn).toHaveAttribute('rel', 'noopener noreferrer');
   });
+
+  it('renders Buyer Prep & Mods Hub links including Canadian Tire Guide', () => {
+    render(<Footer />);
+
+    const tireLink = screen.getByRole('link', { name: /Canadian Tire Guide 🛞/i });
+    expect(tireLink).toBeInTheDocument();
+    expect(tireLink).toHaveAttribute('href', '/tires');
+
+    const winterPrepLink = screen.getByRole('link', { name: /Winter Prep & Survival ❄️/i });
+    expect(winterPrepLink).toBeInTheDocument();
+    expect(winterPrepLink).toHaveAttribute('href', '/winter-prep');
+  });
 });

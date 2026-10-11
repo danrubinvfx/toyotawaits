@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Snowflake,
@@ -15,7 +14,7 @@ import {
   Wrench,
   ArrowRight,
   Flame,
-  CheckCircle2,
+  Disc3,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { WinterGuide } from '@/components/winter-prep/winter-guide';
@@ -131,7 +130,39 @@ export function WinterPrepView() {
         </div>
       </section>
 
-      {/* 2. Interactive Vehicle Selector (Sticky / Top-Level) */}
+      {/* 2. Canadian Tire Guide Cross-Link Callout Banner */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <div
+          data-testid="winter-prep-tire-callout"
+          className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs"
+        >
+          <div className="flex items-center gap-2.5 text-zinc-200">
+            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
+              <Disc3 className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="font-bold text-zinc-100 text-xs sm:text-sm">
+                Need certified 3PMSF winter tires or year-round all-weather rubber?
+              </p>
+              <p className="text-zinc-400 text-[11px] sm:text-xs">
+                Check model-specific OEM tire sizes, wheel downsizing advice, and Amazon.ca reviews.
+              </p>
+            </div>
+          </div>
+
+          <Button
+            asChild
+            size="sm"
+            className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs h-8 gap-1.5 shrink-0 self-end sm:self-center cursor-pointer shadow-xs"
+          >
+            <Link href="/tires">
+              <span>View Canadian Tire Guide 🛞 →</span>
+            </Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* 3. Interactive Vehicle Selector (Sticky / Top-Level) */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
         <div className="sticky top-16 z-30 bg-zinc-950/95 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-3 border-y sm:border sm:rounded-xl border-zinc-800 shadow-md">
           <div className="flex items-center gap-2">
