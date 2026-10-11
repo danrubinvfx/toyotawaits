@@ -241,25 +241,32 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(disclaimers.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders dealership pickup inspection checklist items above gear cards', () => {
+  it('renders dealership pickup inspection checklist items in collapsible accordion above gear cards', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    // Inspection section header
-    expect(screen.getByText(/Dealership Pickup Day Inspection Steps/i)).toBeInTheDocument();
+    // Compact collapsed accordion header
+    expect(screen.getByText(/Dealership Pickup Day Checklist/i)).toBeInTheDocument();
     expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
+    expect(screen.getByText(/View 4 Inspection Checks/i)).toBeInTheDocument();
 
-    // Specific critical inspection checkpoints
+    // Verify gear cards follow immediately below in viewport
+    expect(screen.getByText(/Essential Day-One Gear & Drop-In Upgrades/i)).toBeInTheDocument();
+
+    // Expand accordion
+    fireEvent.click(screen.getByText(/View 4 Inspection Checks/i));
+
+    // Specific critical inspection checkpoints now visible
     expect(screen.getByText(/Bill of Sale & Pricing Verification/i)).toBeInTheDocument();
     expect(screen.getByText(/Physical Key Fobs & Deliverables Handover/i)).toBeInTheDocument();
     expect(screen.getByText(/Exterior Paint & PDI Transport Spacer Removal/i)).toBeInTheDocument();
     expect(screen.getByText(/Hybrid Battery Vent & Electronics Verification/i)).toBeInTheDocument();
-
-    // Verify gear cards follow immediately below
-    expect(screen.getByText(/Essential Day-One Gear & Drop-In Upgrades/i)).toBeInTheDocument();
   });
 
-  it('allows checking off inspection items and resets them', () => {
+  it('allows expanding, checking off inspection items, resetting, and collapsing', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    // Expand accordion
+    fireEvent.click(screen.getByText(/View 4 Inspection Checks/i));
 
     // Click Bill of Sale check item
     const billOfSaleTitle = screen.getByText(/Bill of Sale & Pricing Verification/i);
@@ -273,5 +280,10 @@ describe('DeliveryPrepChecklist Component', () => {
     fireEvent.click(resetBtn);
 
     expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
+
+    // Collapse checklist
+    const collapseBtn = screen.getByText(/Collapse Checklist/i);
+    fireEvent.click(collapseBtn);
+    expect(screen.queryByText(/Bill of Sale & Pricing Verification/i)).toBeNull();
   });
 });

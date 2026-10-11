@@ -56,71 +56,14 @@ export interface ChecklistProduct {
   videoTitle?: string;
 }
 
-export interface InspectionCheckItem {
-  id: string;
-  category: string;
-  title: string;
-  badge: string;
-  badgeColor?: string;
-  description: string;
-  tips: string[];
-}
+import {
+  PickupChecklist,
+  DELIVERY_INSPECTION_ITEMS,
+  type InspectionCheckItem,
+} from '@/components/delivery-prep/pickup-checklist';
 
-export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
-  {
-    id: 'inspect-bill-of-sale',
-    category: 'Paperwork & Finance',
-    title: 'Bill of Sale & Pricing Verification',
-    badge: 'Mandatory',
-    badgeColor: 'border-red-500/30 text-red-400 bg-red-500/10',
-    description: 'Verify final drive-away price matches your original signed vehicle order and MSRP agreement before handing over payment.',
-    tips: [
-      'Check that documentation fees adhere strictly to provincial OMVIC/AMVIC/VSA guidelines.',
-      'Ensure dealer has not added mandatory protection packages (etching, tire warranty, nitrogen fill, paint guard).',
-      'For PHEV/Prime: verify federal iZEV ($5,000) and provincial rebates are deducted directly off the bill of sale.',
-    ],
-  },
-  {
-    id: 'inspect-key-fobs',
-    category: 'Handover Deliverables',
-    title: 'Physical Key Fobs & Deliverables Handover',
-    badge: 'Critical',
-    badgeColor: 'border-amber-500/30 text-amber-400 bg-amber-500/10',
-    description: 'Audit physical keys and supplied accessories due to Toyota global smart key allocation guidelines.',
-    tips: [
-      'Confirm physical key count: Most 2024-2026 Toyotas deliver with 1 smart key + 1 mechanical key. Demand an official Toyota 2nd key allocation IOU voucher in writing.',
-      'Ensure wheel lock security key socket is inside glovebox/cargo tray (if lock nuts equipped).',
-      'For Prime/PHEV: confirm Level 1 (120V) OEM emergency charging cord is present in cargo sub-floor.',
-      'Verify owner manual packet, warranty book, and roadside assistance card.',
-    ],
-  },
-  {
-    id: 'inspect-pdi-exterior',
-    category: 'Exterior & PDI',
-    title: 'Exterior Paint & PDI Transport Spacer Removal',
-    badge: 'Inspection',
-    badgeColor: 'border-blue-500/30 text-blue-400 bg-blue-500/10',
-    description: 'Inspect vehicle outdoors in bright daylight before signing delivery acceptance; never under dim delivery-bay lights.',
-    tips: [
-      'Inspect front bumper chin, rocker panels, and tailgate lip for transit tie-down gouges and rail-dust fallout.',
-      'CRITICAL: Verify front/rear strut suspension transport blocks (yellow/orange plastic shipping spacers) were removed during Pre-Delivery Inspection (PDI).',
-      'Check all 4 rims for carrier strap curb rash and ensure tire pressure matches door jamb spec (transport prep often over-inflates to 45+ PSI).',
-    ],
-  },
-  {
-    id: 'inspect-hybrid-systems',
-    category: 'Hybrid & Cabin',
-    title: 'Hybrid Battery Vent & Electronics Verification',
-    badge: 'Pro Tip',
-    badgeColor: 'border-emerald-500/30 text-emerald-400 bg-emerald-500/10',
-    description: 'Verify high-voltage safety clearances and interior electrical systems before pulling onto the road.',
-    tips: [
-      'Verify the hybrid battery cooling air intake vent (located below rear passenger seat) has its factory filter screen seated and unobstructed.',
-      'Check odometer: Brand-new dealer arrivals typically show 5 to 30 km. If over 50 km, ask for explanation in writing.',
-      'Pair your smartphone with Toyota Multimedia (wireless Apple CarPlay / Android Auto) and confirm TSS 3.0 dash cameras initialize without warnings.',
-    ],
-  },
-];
+export { DELIVERY_INSPECTION_ITEMS, PickupChecklist };
+export type { InspectionCheckItem };
 
 export interface DeliveryPrepChecklistProps {
   model?: string;
@@ -465,81 +408,13 @@ export function DeliveryPrepChecklist({
             </p>
           </div>
 
-          {/* 1. Dealership Pickup Inspection Steps (Inspection, Bill of Sale, Key Fobs) */}
-          <div className="mx-4 sm:mx-5 mt-4 p-4 sm:p-5 rounded-xl border border-zinc-800 bg-zinc-950/40 space-y-3.5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h4 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
-                  <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
-                  <span>Dealership Pickup Day Inspection Steps</span>
-                </h4>
-                <p className="text-xs text-zinc-400">
-                  Audit these mandatory checkpoints with your delivery specialist before signing final vehicle acceptance.
-                </p>
-              </div>
-              <div className="text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md border border-amber-500/20 self-start sm:self-auto shrink-0">
-                {completedInspectionCount} of {DELIVERY_INSPECTION_ITEMS.length} Verified
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-              {DELIVERY_INSPECTION_ITEMS.map((item) => {
-                const isChecked = !!checkedItems[item.id];
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => toggleItem(item.id)}
-                    className={cn(
-                      'p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between space-y-2.5 select-none',
-                      isChecked
-                        ? 'bg-emerald-950/20 border-emerald-500/40 text-zinc-300 shadow-2xs'
-                        : 'bg-zinc-900/70 border-zinc-800 hover:border-zinc-700 text-zinc-200'
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          role="checkbox"
-                          aria-checked={isChecked}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleItem(item.id);
-                          }}
-                          className={cn(
-                            'h-4 w-4 rounded border flex items-center justify-center shrink-0 transition-colors cursor-pointer',
-                            isChecked
-                              ? 'bg-emerald-500 border-emerald-500 text-zinc-950'
-                              : 'border-zinc-600 bg-zinc-800/80 hover:border-amber-400'
-                          )}
-                        >
-                          {isChecked && <Check className="h-3 w-3 stroke-[3]" />}
-                        </button>
-                        <span className={cn('text-xs font-bold leading-snug', isChecked && 'line-through text-zinc-400')}>
-                          {item.title}
-                        </span>
-                      </div>
-                      <Badge variant="outline" className={cn('text-[10px] font-bold px-1.5 py-0 shrink-0', item.badgeColor)}>
-                        {item.badge}
-                      </Badge>
-                    </div>
-
-                    <p className="text-[11px] text-zinc-400 leading-relaxed pl-6">
-                      {item.description}
-                    </p>
-
-                    <ul className="text-[10px] text-zinc-400 space-y-1 pl-6 pt-1.5 border-t border-zinc-800/60">
-                      {item.tips.map((tip, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5">
-                          <span className="text-amber-500 font-bold shrink-0">•</span>
-                          <span>{tip}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
+          {/* 1. Dealership Pickup Day Checklist Accordion */}
+          <div className="mx-4 sm:mx-5 mt-4">
+            <PickupChecklist
+              checkedItems={checkedItems}
+              onToggle={toggleItem}
+              onReset={resetChecklist}
+            />
           </div>
 
           {/* 2. Curated Essential Gear & Mods Section */}

@@ -25,6 +25,11 @@ describe('Header Component', () => {
     expect(winterPrepDesktop).toBeInTheDocument();
     expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
 
+    // Pickup Checklist desktop nav link
+    const pickupDesktop = screen.getByRole('link', { name: /Pickup Checklist/i });
+    expect(pickupDesktop).toBeInTheDocument();
+    expect(pickupDesktop).toHaveAttribute('href', '/#checklist');
+
     // Toggle button should exist
     const toggleButton = screen.getByTestId('mobile-menu-toggle');
     expect(toggleButton).toBeInTheDocument();
@@ -134,6 +139,32 @@ describe('Header Component', () => {
       block: 'start',
     });
 
+    document.body.removeChild(mockSection);
+  });
+
+  it('triggers open-checklist event and scrolls to checklist anchor when Pickup Checklist is clicked', () => {
+    const mockSection = document.createElement('div');
+    mockSection.id = 'checklist';
+    const scrollMock = vi.fn();
+    mockSection.scrollIntoView = scrollMock;
+    document.body.appendChild(mockSection);
+
+    const eventListener = vi.fn();
+    window.addEventListener('toyotawait:open-checklist', eventListener);
+
+    render(<Header />);
+
+    // Click desktop Pickup Checklist link
+    const pickupLink = screen.getByRole('link', { name: /Pickup Checklist/i });
+    fireEvent.click(pickupLink);
+
+    expect(eventListener).toHaveBeenCalled();
+    expect(scrollMock).toHaveBeenCalledWith({
+      behavior: 'smooth',
+      block: 'start',
+    });
+
+    window.removeEventListener('toyotawait:open-checklist', eventListener);
     document.body.removeChild(mockSection);
   });
 });

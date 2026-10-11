@@ -30,6 +30,9 @@ export function Header() {
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     setMobileMenuOpen(false);
+    if (targetId === 'checklist' && typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('toyotawait:open-checklist'));
+    }
     if (pathname === '/') {
       const target = document.getElementById(targetId);
       if (target) {
@@ -95,6 +98,16 @@ export function Header() {
           >
             <Snowflake className="h-4 w-4 text-cyan-400" />
             <span>Winter Prep ❄️</span>
+          </Link>
+
+          {/* Pickup Checklist Desktop Link */}
+          <Link
+            href="/#checklist"
+            onClick={(e) => handleAnchorClick(e, 'checklist')}
+            className="hover:text-amber-500 transition-colors flex items-center gap-1.5"
+          >
+            <ClipboardCheck className="h-4 w-4 text-zinc-400" />
+            Pickup Checklist
           </Link>
 
           {/* Desktop Mod Guides Dropdown */}
@@ -184,15 +197,26 @@ export function Header() {
             {desktopGearOpen && (
               <div className="absolute top-full left-0 w-80 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 shadow-xl z-50">
                 <Link
+                  href="/#checklist"
+                  onClick={(e) => {
+                    setDesktopGearOpen(false);
+                    handleAnchorClick(e, 'checklist');
+                  }}
+                  className="block p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors mb-1"
+                >
+                  <p className="text-xs font-bold text-amber-500">📋 Pickup Day Checklist</p>
+                  <p className="text-[11px] text-zinc-400">PDI inspection, bill of sale &amp; key fobs</p>
+                </Link>
+                <Link
                   href="/#delivery-prep"
                   onClick={(e) => {
                     setDesktopGearOpen(false);
                     handleAnchorClick(e, 'delivery-prep');
                   }}
-                  className="block p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors mb-1"
+                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors mb-1"
                 >
-                  <p className="text-xs font-bold text-amber-500">Delivery Day Prep Checklist</p>
-                  <p className="text-[11px] text-zinc-400">Interactive visual checklist &amp; pricing</p>
+                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Delivery Day Prep Gear</p>
+                  <p className="text-[11px] text-zinc-400">Curated accessories &amp; drop-in armor</p>
                 </Link>
                 <a
                   href="/out/fitcamx-rav4"
@@ -360,6 +384,28 @@ export function Header() {
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Dealership Pickup Checklist */}
+                <Link
+                  href="/#checklist"
+                  onClick={(e) => handleAnchorClick(e, 'checklist')}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <ClipboardCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Pickup Checklist
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Bill of sale, key fobs &amp; PDI spacer inspection
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
                 </Link>
               </div>
             </div>
