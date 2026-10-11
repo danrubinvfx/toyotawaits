@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
+import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
@@ -64,36 +65,40 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="space-y-12 pb-16">
-      {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-8 pb-12 sm:pt-12 sm:pb-16 dark:border-zinc-800 text-white">
-        <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
-          {/* Tight Header */}
-          <div className="text-center space-y-2.5 max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
-              <Flame className="h-3.5 w-3.5 text-amber-400" />
-              <span>ToyotaWaits.ca</span>
-              <span className="text-zinc-600">•</span>
-              <span>Canadian Community Tracker</span>
+    <div className="pb-16">
+      {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
+      <StickyVehiclePills />
+
+      <div className="space-y-12">
+        {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
+        <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-8 pb-12 sm:pt-12 sm:pb-16 dark:border-zinc-800 text-white">
+          <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+            {/* Tight Header */}
+            <div className="text-center space-y-2.5 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
+                <Flame className="h-3.5 w-3.5 text-amber-400" />
+                <span>ToyotaWaits.ca</span>
+                <span className="text-zinc-600">•</span>
+                <span>Canadian Community Tracker</span>
+              </div>
+
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+                Canadian Toyota Wait Time Tracker
+              </h1>
+
+              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+                Crowdsourced delivery timelines across Canada. Select your model to estimate your wait.
+              </p>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-              Canadian Toyota Wait Time Tracker
-            </h1>
-
-            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
-              Crowdsourced delivery timelines across Canada. Select your model to estimate your wait.
-            </p>
+            {/* Estimator Container immediately below header */}
+            <div id="estimator" className="pt-2 mt-4 scroll-mt-28">
+              <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
+                <WaitTimeEstimator />
+              </React.Suspense>
+            </div>
           </div>
-
-          {/* Estimator Container immediately below header */}
-          <div id="estimator" className="scroll-mt-20">
-            <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
-              <WaitTimeEstimator />
-            </React.Suspense>
-          </div>
-        </div>
-      </section>
+        </section>
 
       {/* 2. Secondary Content: Live Delivery Logs & Community Submissions Feed */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
@@ -275,6 +280,7 @@ export default async function HomePage() {
           </Button>
         </div>
       </section>
+      </div>
     </div>
   );
 }

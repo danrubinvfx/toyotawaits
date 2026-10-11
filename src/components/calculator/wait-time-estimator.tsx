@@ -88,6 +88,11 @@ export function WaitTimeEstimator({
           setPowertrainSlug(m.powertrains[0].slug);
           setTrimSlug('all');
         }
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(
+            new CustomEvent('toyotawait:model-sync', { detail: { model: paramModel } })
+          );
+        }
       }
       if (paramProvince && CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince)) {
         setProvince(paramProvince);
@@ -140,7 +145,27 @@ export function WaitTimeEstimator({
       setPowertrainSlug(m.powertrains[0].slug);
       setTrimSlug('all');
     }
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-sync', { detail: { model: slug } })
+      );
+    }
   };
+
+  // Listen for model change events from external controls (e.g. StickyVehiclePills)
+  useEffect(() => {
+    const handleExternalChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ model: string }>;
+      if (customEvent.detail?.model) {
+        handleModelChange(customEvent.detail.model);
+      }
+    };
+
+    window.addEventListener('toyotawait:model-change', handleExternalChange);
+    return () => {
+      window.removeEventListener('toyotawait:model-change', handleExternalChange);
+    };
+  }, []);
 
   const handlePowertrainChange = (slug: string) => {
     setPowertrainSlug(slug);
@@ -358,7 +383,7 @@ export function WaitTimeEstimator({
   }, [province, powertrainSlug, stats, isRebateEligible]);
 
   return (
-    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 scroll-mt-20">
+    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-4 scroll-mt-28">
       <CardHeader className="space-y-1 bg-gradient-to-r from-amber-500/10 via-zinc-50 to-transparent dark:from-amber-950/20 dark:via-zinc-900 border-b border-zinc-200 dark:border-zinc-800 rounded-t-xl">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center space-x-2">
@@ -423,45 +448,6 @@ export function WaitTimeEstimator({
             </button>
           </div>
         )}
-
-        {/* Quick-Select Vehicle Model Pills */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
-              Popular Models
-            </span>
-            <span className="text-[11px] text-zinc-400 dark:text-zinc-500 hidden sm:inline">
-              Tap for instant timeline
-            </span>
-          </div>
-          <div
-            role="tablist"
-            aria-label="Popular models list"
-            className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 px-1"
-          >
-            {QUICK_SELECT_MODELS.map((opt) => {
-              const isActive = opt.matchSlugs.includes(modelSlug);
-              return (
-                <button
-                  key={opt.label}
-                  type="button"
-                  role="tab"
-                  aria-selected={isActive}
-                  data-testid={`quick-model-${opt.slug}`}
-                  onClick={() => handleModelChange(opt.slug)}
-                  className={cn(
-                    'shrink-0 px-3.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer',
-                    isActive
-                      ? 'bg-amber-500 text-black font-semibold shadow-sm border border-amber-400'
-                      : 'bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 border border-neutral-800'
-                  )}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Selector Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">

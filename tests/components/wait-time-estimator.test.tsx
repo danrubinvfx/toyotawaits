@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
+import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import * as navigation from 'next/navigation';
 
 describe('WaitTimeEstimator Component', () => {
@@ -529,10 +530,11 @@ describe('WaitTimeEstimator Component', () => {
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent(/Estimated Wait: \d+ – \d+ Months/i);
 
-    // Card scroll-mt-20
+    // Card mt-4 scroll-mt-28
     const card = container.querySelector('#estimator');
     expect(card).toBeInTheDocument();
-    expect(card?.className).toContain('scroll-mt-20');
+    expect(card?.className).toContain('scroll-mt-28');
+    expect(card?.className).toContain('mt-4');
   });
 
   it('renders quick-select vehicle pills and supports bi-directional sync with the model dropdown', async () => {
@@ -555,7 +557,12 @@ describe('WaitTimeEstimator Component', () => {
     window.fetch = fetchMock;
     global.fetch = fetchMock;
 
-    render(<WaitTimeEstimator initialModel="rav4" />);
+    render(
+      <>
+        <StickyVehiclePills initialModel="rav4" />
+        <WaitTimeEstimator initialModel="rav4" />
+      </>
+    );
 
     // Verify all 6 pills are rendered
     const rav4Pill = screen.getByRole('tab', { name: 'RAV4' });
