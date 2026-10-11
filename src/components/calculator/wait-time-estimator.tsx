@@ -26,6 +26,21 @@ import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
+export interface QuickSelectModelOption {
+  label: string;
+  slug: string;
+  matchSlugs: string[];
+}
+
+export const QUICK_SELECT_MODELS: QuickSelectModelOption[] = [
+  { label: 'RAV4', slug: 'rav4', matchSlugs: ['rav4'] },
+  { label: 'Sienna', slug: 'sienna', matchSlugs: ['sienna'] },
+  { label: 'Grand Highlander', slug: 'grand-highlander', matchSlugs: ['grand-highlander'] },
+  { label: 'Prius / Prime', slug: 'prius', matchSlugs: ['prius', 'prius-prime'] },
+  { label: 'Land Cruiser 250', slug: 'land-cruiser', matchSlugs: ['land-cruiser'] },
+  { label: 'Tacoma', slug: 'tacoma', matchSlugs: ['tacoma'] },
+];
+
 export interface WaitTimeEstimatorProps {
   initialModel?: string;
   initialPowertrain?: string;
@@ -408,6 +423,45 @@ export function WaitTimeEstimator({
             </button>
           </div>
         )}
+
+        {/* Quick-Select Vehicle Model Pills */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+              Popular Models
+            </span>
+            <span className="text-[11px] text-zinc-400 dark:text-zinc-500 hidden sm:inline">
+              Tap for instant timeline
+            </span>
+          </div>
+          <div
+            role="tablist"
+            aria-label="Popular models list"
+            className="flex items-center gap-2 overflow-x-auto no-scrollbar py-2 px-1"
+          >
+            {QUICK_SELECT_MODELS.map((opt) => {
+              const isActive = opt.matchSlugs.includes(modelSlug);
+              return (
+                <button
+                  key={opt.label}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  data-testid={`quick-model-${opt.slug}`}
+                  onClick={() => handleModelChange(opt.slug)}
+                  className={cn(
+                    'shrink-0 px-3.5 py-1.5 rounded-full text-xs sm:text-sm transition-all cursor-pointer',
+                    isActive
+                      ? 'bg-amber-500 text-black font-semibold shadow-sm border border-amber-400'
+                      : 'bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 border border-neutral-800'
+                  )}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Selector Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">

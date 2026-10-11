@@ -190,6 +190,34 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
       },
     ],
   },
+  {
+    id: '10000000-0000-4000-8000-000000000007',
+    slug: 'tacoma',
+    name: 'Tacoma',
+    generationStartYear: 2024,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000070',
+        slug: 'hev',
+        name: 'i-FORCE MAX Hybrid',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000091', slug: 'trd-off-road-premium', name: 'TRD Off-Road Premium', msrpCad: 64850 },
+          { id: '30000000-0000-4000-8000-000000000092', slug: 'trd-pro', name: 'TRD Pro', msrpCad: 76990 },
+          { id: '30000000-0000-4000-8000-000000000093', slug: 'trailhunter', name: 'Trailhunter', msrpCad: 82950 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000071',
+        slug: 'gas',
+        name: 'i-FORCE 2.4L Turbo Gas',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000094', slug: 'sr5', name: 'SR5', msrpCad: 46950 },
+          { id: '30000000-0000-4000-8000-000000000095', slug: 'trd-sport', name: 'TRD Sport', msrpCad: 50050 },
+          { id: '30000000-0000-4000-8000-000000000096', slug: 'trd-off-road', name: 'TRD Off-Road', msrpCad: 50650 },
+        ],
+      },
+    ],
+  },
 ];
 
 export const CANADIAN_PROVINCES_LIST = [

@@ -534,4 +534,68 @@ describe('WaitTimeEstimator Component', () => {
     expect(card).toBeInTheDocument();
     expect(card?.className).toContain('scroll-mt-20');
   });
+
+  it('renders quick-select vehicle pills and supports bi-directional sync with the model dropdown', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          modelSlug: 'rav4',
+          modelName: 'RAV4',
+          powertrainSlug: 'phev',
+          province: 'BC',
+          sampleCounts: { total: 40, delivered: 35, pending: 5 },
+          waitStats: { p25: 120, median: 180, p75: 240, mean: 180, min: 90, max: 300 },
+          pricingInsights: { atMsrpPercent: 88, aboveMsrpPercent: 12, avgAddonsCad: 250 },
+        },
+      }),
+    } as any);
+
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator initialModel="rav4" />);
+
+    // Verify all 6 pills are rendered
+    const rav4Pill = screen.getByRole('tab', { name: 'RAV4' });
+    const siennaPill = screen.getByRole('tab', { name: 'Sienna' });
+    const ghPill = screen.getByRole('tab', { name: 'Grand Highlander' });
+    const priusPill = screen.getByRole('tab', { name: 'Prius / Prime' });
+    const lcPill = screen.getByRole('tab', { name: 'Land Cruiser 250' });
+    const tacomaPill = screen.getByRole('tab', { name: 'Tacoma' });
+
+    expect(rav4Pill).toBeInTheDocument();
+    expect(siennaPill).toBeInTheDocument();
+    expect(ghPill).toBeInTheDocument();
+    expect(priusPill).toBeInTheDocument();
+    expect(lcPill).toBeInTheDocument();
+    expect(tacomaPill).toBeInTheDocument();
+
+    // Default RAV4 pill is active
+    expect(rav4Pill).toHaveAttribute('aria-selected', 'true');
+    expect(rav4Pill.className).toContain('bg-amber-500');
+    expect(siennaPill).toHaveAttribute('aria-selected', 'false');
+
+    // 1. Tapping 'Sienna' pill updates dropdown and triggers fetch
+    fireEvent.click(siennaPill);
+
+    const modelSelect = screen.getByLabelText(/Vehicle Model/i) as HTMLSelectElement;
+    expect(modelSelect.value).toBe('sienna');
+    expect(siennaPill).toHaveAttribute('aria-selected', 'true');
+    expect(siennaPill.className).toContain('bg-amber-500');
+    expect(rav4Pill).toHaveAttribute('aria-selected', 'false');
+
+    // 2. Changing dropdown to Tacoma updates pill highlight
+    fireEvent.change(modelSelect, { target: { value: 'tacoma' } });
+    expect(tacomaPill).toHaveAttribute('aria-selected', 'true');
+    expect(tacomaPill.className).toContain('bg-amber-500');
+    expect(siennaPill).toHaveAttribute('aria-selected', 'false');
+
+    // 3. Changing dropdown to Prius Prime highlights Prius / Prime pill
+    fireEvent.change(modelSelect, { target: { value: 'prius-prime' } });
+    expect(priusPill).toHaveAttribute('aria-selected', 'true');
+    expect(priusPill.className).toContain('bg-amber-500');
+    expect(tacomaPill).toHaveAttribute('aria-selected', 'false');
+  });
 });
