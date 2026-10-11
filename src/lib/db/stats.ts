@@ -74,6 +74,26 @@ export const BASELINE_MODEL_BENCHMARKS: Record<string, ModelWaitBenchmark> = {
     max_days: 170,
     mean_days: 115.8,
   },
+  'corolla-cross': {
+    model: 'corolla-cross',
+    sample_size: 9,
+    min_days: 90,
+    p25_days: 140,
+    median_days: 210,
+    p75_days: 280,
+    max_days: 350,
+    mean_days: 215.0,
+  },
+  tacoma: {
+    model: 'tacoma',
+    sample_size: 8,
+    min_days: 120,
+    p25_days: 160,
+    median_days: 240,
+    p75_days: 310,
+    max_days: 380,
+    mean_days: 235.0,
+  },
 };
 
 /**

@@ -6,6 +6,7 @@ import { HeroEstimateButton } from '@/components/calculator/hero-estimate-button
 import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
+import { BenchmarkFeed } from '@/components/benchmarks/benchmark-feed';
 import { ModelSummaryCards } from '@/components/dashboard/model-summary-cards';
 import { getModelWaitBenchmarks } from '@/lib/db/stats';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
@@ -128,10 +129,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Model Benchmark Summary Cards */}
-      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <React.Suspense fallback={<div className="h-48 rounded-xl bg-zinc-100 animate-pulse" />}>
-          <ModelSummaryCards initialBenchmarks={benchmarks} />
+      {/* Model Benchmark Feed & Vehicle-Specific Delivery Prep */}
+      <section id="benchmarks" className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+          <BenchmarkFeed initialBenchmarks={benchmarks} />
         </React.Suspense>
       </section>
 

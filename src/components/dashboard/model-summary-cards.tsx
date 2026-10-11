@@ -183,3 +183,6 @@ export function ModelSummaryCards({
     </div>
   );
 }
+
+export { BenchmarkFeed } from '@/components/benchmarks/benchmark-feed';
+
