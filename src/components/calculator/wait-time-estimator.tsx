@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -62,7 +62,13 @@ export function WaitTimeEstimator({
 
   // Inputs
   const [modelSlug, setModelSlug] = useState<string>(initialModel);
-  const [powertrainSlug, setPowertrainSlug] = useState<string>(initialPowertrain);
+  const [powertrainSlug, setPowertrainSlug] = useState<string>(() => {
+    const m = CANADIAN_VEHICLE_CATALOG.find((x) => x.slug === initialModel);
+    if (m && m.powertrains.length > 0 && !m.powertrains.some((p) => p.slug === initialPowertrain)) {
+      return m.powertrains[0].slug;
+    }
+    return initialPowertrain;
+  });
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
   const [province, setProvince] = useState<string>(initialProvince);
   const [depositDate, setDepositDate] = useState<string>('2026-01-15');
@@ -344,43 +350,51 @@ export function WaitTimeEstimator({
       phevDays = Math.min(stats.waitStats.median, 410);
     }
 
-    const maxDays = Math.max(gasDays, hybridDays, phevDays, 1);
-
-    return [
+    const vehicleModel = CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === modelSlug);
+    const availableSlugs = vehicleModel ? vehicleModel.powertrains.map((p) => p.slug) : [];
+    const candidateList = [
       {
         slug: 'gas',
         name: 'Gasoline (Gas)',
         days: gasDays,
         months: (gasDays / 30.4).toFixed(1),
-        percentage: Math.round((gasDays / maxDays) * 100),
         badge: 'Fastest Allocation',
         badgeColor: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300',
         barColor: 'bg-emerald-500',
+        isAvailable: availableSlugs.includes('gas'),
       },
       {
         slug: 'hev',
         name: 'Hybrid (HEV)',
         days: hybridDays,
         months: (hybridDays / 30.4).toFixed(1),
-        percentage: Math.round((hybridDays / maxDays) * 100),
         badge: 'High Demand',
         badgeColor: 'bg-amber-100 text-amber-800 dark:bg-amber-950/70 dark:text-amber-300',
         barColor: hybridDays > 230 ? 'bg-amber-500' : 'bg-emerald-500',
+        isAvailable: availableSlugs.includes('hev') || availableSlugs.includes('hybrid-max'),
       },
       {
         slug: 'phev',
         name: 'Plug-in Hybrid (PHEV)',
         days: phevDays,
         months: (phevDays / 30.4).toFixed(1),
-        percentage: Math.round((phevDays / maxDays) * 100),
         badge: isRebateEligible ? 'Rebate Eligible' : 'Longest Queue',
         badgeColor: isRebateEligible
           ? 'bg-purple-100 text-purple-800 dark:bg-purple-950/70 dark:text-purple-300'
           : 'bg-red-100 text-red-800 dark:bg-red-950/70 dark:text-red-300',
         barColor: phevDays > 350 ? 'bg-red-600' : 'bg-amber-500',
+        isAvailable: availableSlugs.includes('phev'),
       },
     ];
-  }, [province, powertrainSlug, stats, isRebateEligible]);
+
+    const filtered = candidateList.filter((item) => item.isAvailable);
+    const maxDays = Math.max(...filtered.map((item) => item.days), 1);
+
+    return filtered.map((item) => ({
+      ...item,
+      percentage: Math.round((item.days / maxDays) * 100),
+    }));
+  }, [province, powertrainSlug, stats, isRebateEligible, modelSlug]);
 
   return (
     <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-4 scroll-mt-28">
@@ -473,6 +487,7 @@ export function WaitTimeEstimator({
               id={`${compId}-powertrain`}
               value={powertrainSlug}
               onChange={(e) => handlePowertrainChange(e.target.value)}
+              disabled={currentPowertrains.length === 1}
               className="font-medium"
             >
               {currentPowertrains.map((p) => (
@@ -544,28 +559,28 @@ export function WaitTimeEstimator({
               isLoading && 'opacity-70 pointer-events-none'
             )}
           >
-            {/* Primary KPI Banner */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <div className="space-y-2">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
-                    Estimated Delivery Window in {province}
-                  </span>
-                  <Badge variant="outline" className={`text-[11px] font-bold ${currentTier.className}`}>
-                    Tier: {currentTier.label}
-                  </Badge>
-                  <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold">
-                    Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
-                  </Badge>
-                </div>
+            {/* Primary KPI Banner - Centered Clean Layout */}
+            <div className="flex flex-col items-center text-center space-y-3.5 pb-6 border-b border-zinc-100 dark:border-zinc-800">
+              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
+                Estimated Delivery Window in {province}
+              </span>
 
-                <div className="flex items-baseline gap-2">
-                  <span className="text-2xl sm:text-4xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight">
-                    {optimisticDate} – {conservativeDate}
-                  </span>
-                </div>
-                <p className="text-xs text-zinc-500 flex items-center gap-1.5">
-                  <Calendar className="h-3.5 w-3.5 text-amber-500" />
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Badge variant="outline" className={`text-[11px] font-bold ${currentTier.className}`}>
+                  Tier: {currentTier.label}
+                </Badge>
+                <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold">
+                  Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
+                </Badge>
+              </div>
+
+              <div className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight">
+                {optimisticDate} – {conservativeDate}
+              </div>
+
+              <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 flex-wrap">
+                <Calendar className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <span>
                   Based on 25th – 75th percentile wait durations
                   {daysAlreadyWaited > 0 ? ` (${daysAlreadyWaited} days waited so far)` : ''} for orders placed on{' '}
                   {new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')).toLocaleDateString('en-CA', {
@@ -573,30 +588,33 @@ export function WaitTimeEstimator({
                     day: 'numeric',
                     year: 'numeric',
                   })}
-                </p>
-                {isLimitedRegionalData ? (
-                  <div
-                    data-testid="limited-data-fallback-note"
-                    className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2.5 py-1.5 rounded-md font-medium"
-                  >
-                    <Info className="h-3.5 w-3.5 shrink-0" />
-                    <span>Based on overall model median (limited regional data)</span>
-                  </div>
-                ) : stats?.trimNote ? (
-                  <div
-                    data-testid="trim-fallback-note"
-                    className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-2.5 py-1.5 rounded-md font-medium"
-                  >
-                    <Info className="h-3.5 w-3.5 shrink-0" />
-                    <span>{stats.trimNote}</span>
-                  </div>
-                ) : null}
-                <p className="text-[11px] text-zinc-400 italic">
-                  &ldquo;{currentTier.sub}&rdquo;
-                </p>
-              </div>
+                </span>
+              </p>
 
-              <div className="flex flex-col sm:items-end gap-2">
+              {isLimitedRegionalData ? (
+                <div
+                  data-testid="limited-data-fallback-note"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
+                >
+                  <Info className="h-3.5 w-3.5 shrink-0" />
+                  <span>Based on overall model median (limited regional data)</span>
+                </div>
+              ) : stats?.trimNote ? (
+                <div
+                  data-testid="trim-fallback-note"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
+                >
+                  <Info className="h-3.5 w-3.5 shrink-0" />
+                  <span>{stats.trimNote}</span>
+                </div>
+              ) : null}
+
+              <p className="text-[11px] text-zinc-400 italic max-w-md mx-auto">
+                &ldquo;{currentTier.sub}&rdquo;
+              </p>
+
+              {/* Median Wait & Verified Deliveries */}
+              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 pt-1">
                 <div className="inline-flex items-baseline gap-1.5 bg-amber-500/10 dark:bg-amber-950/40 px-3 py-1.5 rounded-lg border border-amber-500/20">
                   <span className="text-xs font-medium text-amber-800 dark:text-amber-300">Median Wait:</span>
                   <span className="text-xl font-bold text-amber-600 dark:text-amber-400">
@@ -606,48 +624,46 @@ export function WaitTimeEstimator({
                     (~{medianMonths} mos)
                   </span>
                 </div>
-                <div className="text-[11px] text-zinc-500 flex flex-col sm:items-end gap-0.5">
-                  <div className="flex items-center gap-1">
-                    <CheckCircle className="h-3 w-3 text-emerald-600" />
-                    <span>Based on {verifiedSampleSize} verified deliveries</span>
-                  </div>
-                  {stats?.sampleCounts?.pending ? (
-                    <div className="text-[10px] text-zinc-400">
-                      Active Queue: {stats.sampleCounts.pending} waiting orders (volume context)
-                    </div>
-                  ) : null}
+                <div className="text-[11px] text-zinc-500 flex items-center gap-1">
+                  <CheckCircle className="h-3 w-3 text-emerald-600" />
+                  <span>Based on {verifiedSampleSize} verified deliveries</span>
                 </div>
+                {stats?.sampleCounts?.pending ? (
+                  <span className="text-[10px] text-zinc-400">
+                    ({stats.sampleCounts.pending} active queue)
+                  </span>
+                ) : null}
+              </div>
 
-                {/* Action Buttons: Calendar + Reddit Share + Notify Me */}
-                <div className="flex items-center gap-2 pt-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDownloadCalendar}
-                    className="h-7 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1 px-2.5"
-                  >
-                    <Download className="h-3 w-3 text-amber-500" />
-                    Calendar (.ics)
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsShareModalOpen(true)}
-                    className="h-7 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1 px-2.5"
-                  >
-                    <Share2 className="h-3 w-3 text-amber-500" />
-                    Share to Reddit
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsNotifyModalOpen(true)}
-                    className="h-7 text-xs border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1 px-2.5 font-semibold"
-                  >
-                    <Bell className="h-3 w-3 text-amber-500" />
-                    Notify Me
-                  </Button>
-                </div>
+              {/* Action Buttons: Calendar + Reddit Share + Notify Me in Balanced Responsive Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full max-w-xl mx-auto pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadCalendar}
+                  className="h-8 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1.5 px-3 w-full justify-center"
+                >
+                  <Download className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Calendar (.ics)</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="h-8 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1.5 px-3 w-full justify-center"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Share to Reddit</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsNotifyModalOpen(true)}
+                  className="h-8 text-xs border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1.5 px-3 font-semibold w-full justify-center"
+                >
+                  <Bell className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Notify Me</span>
+                </Button>
               </div>
             </div>
 
@@ -751,68 +767,95 @@ export function WaitTimeEstimator({
             )}
 
             {/* Trim & Powertrain Comparison Chart */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
-                <div>
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
-                    <Zap className="h-4 w-4 text-amber-500" />
-                    {`Powertrain Wait-Time Comparison in ${provinceName} (${province})`}
+            {currentPowertrains.length === 1 ? (
+              <div
+                data-testid="single-powertrain-notice"
+                className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-3"
+              >
+                <div className="flex items-center gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
+                  <Zap className="h-4 w-4 text-amber-500" />
+                  <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50">
+                    Powertrain Availability in Canada
                   </h4>
-                  <p className="text-xs text-zinc-500 mt-0.5">
-                    Side-by-side empirical wait times for Gas vs Hybrid vs PHEV across {provinceName}.
-                  </p>
                 </div>
-                <Badge variant="outline" className="text-[11px] self-start sm:self-auto border-zinc-300 dark:border-zinc-700">
-                  {province} Regional Benchmarks
-                </Badge>
-              </div>
-
-              <div className="space-y-3.5">
-                {powertrainComparisonData.map((pt) => (
-                  <div key={pt.slug} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
-                      <div className="flex items-center gap-2">
-                        {pt.slug === 'gas' ? (
-                          <Fuel className="h-3.5 w-3.5 text-zinc-500" />
-                        ) : (
-                          <Zap className="h-3.5 w-3.5 text-amber-500" />
-                        )}
-                        <span className="font-bold text-zinc-900 dark:text-zinc-100">{pt.name}</span>
-                        <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${pt.badgeColor}`}>
-                          {pt.badge}
-                        </span>
-                      </div>
-
-                      <div className="flex items-baseline gap-2">
-                        <span className="font-bold text-zinc-950 dark:text-zinc-50">{pt.days} Days</span>
-                        <span className="text-[11px] text-zinc-500">(~{pt.months} mos)</span>
-                      </div>
-                    </div>
-
-                    {/* Horizontal Bar Chart matching provincial-comparison.tsx */}
-                    <div className="h-2.5 sm:h-3 w-full rounded-full bg-zinc-200/70 dark:bg-zinc-800 overflow-hidden flex">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 ${pt.barColor}`}
-                        style={{ width: `${pt.percentage}%` }}
-                      />
-                    </div>
+                <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3.5 flex items-start gap-2.5 text-xs text-zinc-700 dark:text-zinc-300">
+                  <Info className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold text-zinc-900 dark:text-zinc-100">
+                      Toyota {currentModel.name} is exclusively available with a {currentPowertrains[0].name} powertrain in Canada.
+                    </p>
+                    <p className="text-zinc-500 dark:text-zinc-400 mt-0.5">
+                      There are no standalone Gasoline or Plug-in Hybrid (PHEV) variants offered for this model in the Canadian market.
+                    </p>
                   </div>
-                ))}
+                </div>
               </div>
+            ) : (
+              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
+                  <div>
+                    <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-amber-500" />
+                      {`Powertrain Wait-Time Comparison in ${provinceName} (${province})`}
+                    </h4>
+                    <p className="text-xs text-zinc-500 mt-0.5">
+                      Side-by-side empirical wait times for available {currentModel.name} powertrains across {provinceName}.
+                    </p>
+                  </div>
+                  <Badge variant="outline" className="text-[11px] self-start sm:self-auto border-zinc-300 dark:border-zinc-700">
+                    {province} Regional Benchmarks
+                  </Badge>
+                </div>
 
-              <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-3 border border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-500 flex items-center gap-2">
-                <Info className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
-                <span>
-                  <strong>Provincial Trend:</strong> In {provinceName}, PHEVs face up to{' '}
-                  {(() => {
-                    const phevPt = powertrainComparisonData.find((p) => p.slug === 'phev') || { days: 280 };
-                    const gasPt = powertrainComparisonData.find((p) => p.slug === 'gas') || { days: 65 };
-                    return (phevPt.days / (gasPt.days || 1)).toFixed(1);
-                  })()}
-                  x longer waitlists than Gas models due to allocation limits and consumer demand.
-                </span>
+                <div className="space-y-3.5">
+                  {powertrainComparisonData.map((pt) => (
+                    <div key={pt.slug} className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
+                        <div className="flex items-center gap-2">
+                          {pt.slug === 'gas' ? (
+                            <Fuel className="h-3.5 w-3.5 text-zinc-500" />
+                          ) : (
+                            <Zap className="h-3.5 w-3.5 text-amber-500" />
+                          )}
+                          <span className="font-bold text-zinc-900 dark:text-zinc-100">{pt.name}</span>
+                          <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ${pt.badgeColor}`}>
+                            {pt.badge}
+                          </span>
+                        </div>
+
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-bold text-zinc-950 dark:text-zinc-50">{pt.days} Days</span>
+                          <span className="text-[11px] text-zinc-500">(~{pt.months} mos)</span>
+                        </div>
+                      </div>
+
+                      {/* Horizontal Bar Chart matching provincial-comparison.tsx */}
+                      <div className="h-2.5 sm:h-3 w-full rounded-full bg-zinc-200/70 dark:bg-zinc-800 overflow-hidden flex">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${pt.barColor}`}
+                          style={{ width: `${pt.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {powertrainComparisonData.length > 1 && (
+                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-3 border border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-500 flex items-center gap-2">
+                    <Info className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+                    <span>
+                      <strong>Provincial Trend:</strong> In {provinceName},{' '}
+                      {(() => {
+                        const highest = [...powertrainComparisonData].sort((a, b) => b.days - a.days)[0];
+                        const lowest = [...powertrainComparisonData].sort((a, b) => a.days - b.days)[0];
+                        const ratio = (highest.days / (lowest.days || 1)).toFixed(1);
+                        return `${highest.name} faces up to ${ratio}x longer waitlists than ${lowest.name} due to allocation limits and consumer demand.`;
+                      })()}
+                    </span>
+                  </div>
+                )}
               </div>
-            </div>
+            )}
 
             {/* Contextual Model DIY Mod Guide Callout Banner */}
             {(() => {
@@ -894,6 +937,34 @@ export function WaitTimeEstimator({
                 </Link>
               );
             })()}
+
+            {/* Primary Crowdsource Contribution CTA Banner */}
+            <div
+              data-testid="estimator-submit-wait-time-banner"
+              className="rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-amber-500/10 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
+            >
+              <div className="space-y-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
+                  <h4 className="font-bold text-zinc-900 dark:text-zinc-50 text-sm sm:text-base">
+                    Waiting on a {currentModel.name} or Already Delivered?
+                  </h4>
+                </div>
+                <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                  Contribute your deposit or delivery timeline to keep Canadian wait estimates accurate. 100% anonymous, takes &lt;60s.
+                </p>
+              </div>
+              <Button
+                asChild
+                size="default"
+                className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold shadow-md shrink-0 gap-1.5 h-10 px-5 cursor-pointer"
+              >
+                <Link href={`/submit?model=${modelSlug}&province=${province}`}>
+                  <PlusCircle className="h-4 w-4 text-zinc-950" />
+                  <span>Submit Your Wait Time</span>
+                </Link>
+              </Button>
+            </div>
 
             {/* Delivery Day Prep & Gear Quick Anchor Link */}
             <div className="pt-2">

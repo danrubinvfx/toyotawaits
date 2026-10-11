@@ -75,6 +75,15 @@ export const VEHICLE_OPTIONS: VehicleOption[] = [
     badgeColor: 'border-amber-500/30 text-amber-500 bg-amber-500/10',
     powertrain: 'hev',
   },
+  {
+    id: 'tacoma',
+    label: 'Tacoma',
+    name: 'Toyota Tacoma',
+    subtitle: 'i-FORCE MAX Hybrid & Turbo Gas',
+    badge: 'Mid-Size Truck',
+    badgeColor: 'border-orange-500/30 text-orange-500 bg-orange-500/10',
+    powertrain: 'hev',
+  },
 ];
 
 export interface BenchmarkFeedProps {
@@ -113,6 +122,29 @@ export function BenchmarkFeed({
     };
   }, []);
 
+  // Listen for global vehicle model changes from StickyVehiclePills or WaitTimeEstimator
+  useEffect(() => {
+    const handleSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ model: string }>;
+      if (customEvent.detail?.model) {
+        const slug = customEvent.detail.model;
+        const matched = VEHICLE_OPTIONS.find((v) => v.id === slug);
+        if (matched) {
+          setSelectedModel(matched.id);
+        } else if (slug === 'prius' || slug === 'prius-prime') {
+          setSelectedModel(slug);
+        }
+      }
+    };
+
+    window.addEventListener('toyotawait:model-change', handleSync);
+    window.addEventListener('toyotawait:model-sync', handleSync);
+    return () => {
+      window.removeEventListener('toyotawait:model-change', handleSync);
+      window.removeEventListener('toyotawait:model-sync', handleSync);
+    };
+  }, []);
+
   const activeVehicle =
     VEHICLE_OPTIONS.find((v) => v.id === selectedModel) || VEHICLE_OPTIONS[0];
 
@@ -138,6 +170,11 @@ export function BenchmarkFeed({
   const handleModelChange = (id: string) => {
     setSelectedModel(id);
     onSelectModel?.(id);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-change', { detail: { model: id } })
+      );
+    }
   };
 
   return (
@@ -163,7 +200,7 @@ export function BenchmarkFeed({
       </div>
 
       {/* 2. Prominent Vehicle Selector (Mobile: Scrollable Pills, Desktop: Segmented Control) */}
-      <div className="sticky top-14 sm:top-16 z-20 bg-zinc-950/90 backdrop-blur-md py-2.5 -mx-4 px-4 sm:mx-0 sm:px-0 border-y sm:border sm:rounded-xl border-zinc-800/80 shadow-md">
+      <div className="py-2.5 -mx-4 px-4 sm:mx-0 sm:px-0 border-y sm:border sm:rounded-xl border-zinc-800/80 bg-zinc-900/60 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-zinc-400 pl-3 shrink-0">
             <Car className="h-4 w-4 text-amber-500" />

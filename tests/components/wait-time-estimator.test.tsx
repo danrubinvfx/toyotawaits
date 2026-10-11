@@ -605,4 +605,55 @@ describe('WaitTimeEstimator Component', () => {
     expect(priusPill.className).toContain('bg-amber-500');
     expect(tacomaPill).toHaveAttribute('aria-selected', 'false');
   });
+
+  it('restricts powertrain to Hybrid (HEV), disables dropdown, and shows single-powertrain notice for Sienna', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          modelSlug: 'sienna',
+          modelName: 'Sienna',
+          powertrainSlug: 'hev',
+          province: 'BC',
+          sampleCounts: { total: 40, delivered: 35, pending: 5 },
+          waitStats: { p25: 300, median: 400, p75: 500, mean: 400, min: 200, max: 600 },
+          pricingInsights: { atMsrpPercent: 80, aboveMsrpPercent: 20, avgAddonsCad: 500 },
+        },
+      }),
+    } as any);
+
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator initialModel="sienna" />);
+
+    // 1. Powertrain select should be disabled and only have Hybrid (HEV)
+    const powertrainSelect = screen.getByLabelText(/Powertrain/i) as HTMLSelectElement;
+    expect(powertrainSelect).toBeDisabled();
+    expect(powertrainSelect.value).toBe('hev');
+    expect(screen.queryByRole('option', { name: 'Gasoline' })).toBeNull();
+    expect(screen.queryByRole('option', { name: 'Plug-in Hybrid (PHEV)' })).toBeNull();
+
+    // 2. Wait for async load to finish and check single-powertrain notice and comparison
+    await waitFor(() => {
+      const notice = screen.getByTestId('single-powertrain-notice');
+      expect(notice).toBeInTheDocument();
+      expect(notice).toHaveTextContent(/Toyota Sienna is exclusively available with a Hybrid \(HEV\) powertrain in Canada/i);
+      expect(screen.queryByText('Fastest Allocation')).toBeNull();
+    });
+
+    // 3. Renders prominent crowdsource submit banner
+    const submitBanner = screen.getByTestId('estimator-submit-wait-time-banner');
+    expect(submitBanner).toBeInTheDocument();
+    expect(submitBanner).toHaveTextContent(/Waiting on a Sienna or Already Delivered\?/i);
+    const submitLink = screen.getByRole('link', { name: /Submit Your Wait Time/i });
+    expect(submitLink).toBeInTheDocument();
+    expect(submitLink).toHaveAttribute('href', expect.stringContaining('/submit?model=sienna'));
+
+    // 4. Renders all 3 CTA action buttons in responsive grid
+    expect(screen.getByRole('button', { name: /Calendar \(\.ics\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Share to Reddit/i })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /Notify Me/i }).length).toBeGreaterThanOrEqual(1);
+  });
 });

@@ -23,7 +23,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
 
 export function getTodayLocalDate(): string {
@@ -37,16 +37,28 @@ export function getTodayLocalDate(): string {
 export function SubmissionForm() {
   const formId = useId();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const paramModel = searchParams?.get('model');
+  const paramProvince = searchParams?.get('province');
 
   // Cascading Selection State
-  const [selectedModelSlug, setSelectedModelSlug] = useState<string>('rav4');
-  const [selectedPowertrainSlug, setSelectedPowertrainSlug] = useState<string>('hev');
+  const initialModel = (paramModel && CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === paramModel)) || CANADIAN_VEHICLE_CATALOG[0];
+  const initialPowertrain = initialModel.powertrains[0];
+  const initialTrim = initialPowertrain?.trims[0];
+
+  const [selectedModelSlug, setSelectedModelSlug] = useState<string>(initialModel.slug);
+  const [selectedPowertrainSlug, setSelectedPowertrainSlug] = useState<string>(initialPowertrain?.slug || 'hev');
   const [selectedTrimId, setSelectedTrimId] = useState<string>(
-    '30000000-0000-4000-8000-000000000002' // Default XLE AWD
+    initialTrim?.id || '30000000-0000-4000-8000-000000000002'
   );
 
   // Form Fields State
-  const [province, setProvince] = useState<string>('ON');
+  const [province, setProvince] = useState<string>(() => {
+    if (paramProvince && CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince)) {
+      return paramProvince;
+    }
+    return 'ON';
+  });
   const [dealershipCity, setDealershipCity] = useState<string>('');
   const [modelYear, setModelYear] = useState<number>(2026);
   const [orderDate, setOrderDate] = useState<string>(getTodayLocalDate);

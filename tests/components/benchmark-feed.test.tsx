@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BenchmarkFeed, VEHICLE_OPTIONS } from '@/components/benchmarks/benchmark-feed';
 
 describe('BenchmarkFeed Component', () => {
@@ -101,5 +101,34 @@ describe('BenchmarkFeed Component', () => {
     const guideLink = screen.getByRole('link', { name: /View our Canadian Winter Guide →/i });
     expect(guideLink).toBeInTheDocument();
     expect(guideLink).toHaveAttribute('href', '/winter-prep');
+  });
+
+  it('synchronizes active model when toyotawait:model-change event is dispatched and dispatches event on pill click', async () => {
+    const eventHandler = vi.fn();
+    window.addEventListener('toyotawait:model-change', eventHandler);
+
+    render(<BenchmarkFeed defaultModelId="rav4" />);
+
+    // Initially RAV4 card is rendered
+    expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
+
+    // 1. External event selects Sienna
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-change', { detail: { model: 'sienna' } })
+      );
+    });
+
+    expect(screen.getByTestId('benchmark-card-sienna')).toBeInTheDocument();
+    expect(screen.queryByTestId('benchmark-card-rav4')).toBeNull();
+
+    // 2. Clicking Tacoma pill updates view and dispatches event
+    const tacomaBtn = screen.getByRole('button', { name: 'Tacoma' });
+    fireEvent.click(tacomaBtn);
+
+    expect(screen.getByTestId('benchmark-card-tacoma')).toBeInTheDocument();
+    expect(eventHandler).toHaveBeenCalled();
+
+    window.removeEventListener('toyotawait:model-change', eventHandler);
   });
 });

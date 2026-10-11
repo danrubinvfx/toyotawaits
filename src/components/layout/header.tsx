@@ -297,22 +297,22 @@ export function Header() {
         </nav>
 
         {/* Action Button & Ko-fi Support */}
-        <div className="hidden sm:flex items-center space-x-2.5">
-          <KofiHeaderPill />
-          <Button asChild size="sm" className="gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40">
+        <div className="flex items-center space-x-2">
+          <div className="hidden sm:block">
+            <KofiHeaderPill />
+          </div>
+          <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9">
             <Link href="/submit">
-              <PlusCircle className="h-4 w-4 text-zinc-950" />
-              Submit Wait Time
+              <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
+              <span>Submit <span className="hidden sm:inline">Wait Time</span></span>
             </Link>
           </Button>
-        </div>
 
-        {/* Mobile Menu Button */}
-        <div className="flex lg:hidden">
+          {/* Mobile Menu Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg focus:outline-none"
+            className="p-1.5 sm:p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg focus:outline-none lg:hidden"
             aria-label="Toggle menu"
             data-testid="mobile-menu-toggle"
           >
