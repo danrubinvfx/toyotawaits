@@ -14,17 +14,88 @@ import {
   ExternalLink,
   BatteryCharging,
   Info,
+  Package,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { getWinterPrepForModel } from '@/data/winter-prep';
+import { getWinterPrepForModel, WinterRecommendedProduct } from '@/data/winter-prep';
 
 export interface WinterGuideProps {
   modelKey?: string;
   className?: string;
 }
 
+interface RecommendedGearModuleProps {
+  product: WinterRecommendedProduct;
+  badgeVariant?: 'amber' | 'emerald' | 'cyan';
+  testId?: string;
+}
+
+function RecommendedGearModule({
+  product,
+  badgeVariant = 'amber',
+  testId,
+}: RecommendedGearModuleProps) {
+  const badgeColors = {
+    amber: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
+    emerald: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
+    cyan: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
+  };
+
+  return (
+    <div
+      data-testid={testId}
+      className="mt-4 pt-3.5 border-t border-zinc-800 bg-zinc-950/60 -mx-4 -mb-4 p-4 rounded-b-xl flex flex-col justify-between space-y-3"
+    >
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+            <Package className="h-3.5 w-3.5 text-zinc-300" />
+            <span>Recommended Gear</span>
+          </div>
+          <Badge
+            variant="outline"
+            className={cn('text-[10px] font-bold px-2 py-0.5', badgeColors[badgeVariant])}
+          >
+            {product.badge}
+          </Badge>
+        </div>
+
+        <p className="font-bold text-zinc-100 text-xs sm:text-sm leading-snug">
+          {product.title}
+        </p>
+        <p className="text-[11px] text-zinc-400 leading-relaxed">
+          {product.benefit}
+        </p>
+      </div>
+
+      <Button
+        asChild
+        size="sm"
+        className={cn(
+          'w-full font-bold text-xs h-8 gap-1.5 cursor-pointer shadow-xs transition-all',
+          badgeVariant === 'amber'
+            ? 'bg-amber-500 hover:bg-amber-400 text-zinc-950'
+            : badgeVariant === 'emerald'
+            ? 'bg-emerald-600 hover:bg-emerald-500 text-zinc-50'
+            : 'bg-cyan-600 hover:bg-cyan-500 text-zinc-50'
+        )}
+      >
+        <Link
+          href={product.url}
+          target="_blank"
+          rel="noopener noreferrer nofollow sponsored"
+        >
+          <span>View on Amazon.ca</span>
+          <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
 export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) {
   const config = getWinterPrepForModel(modelKey);
+  const { batteryTopic, floorTopic, windshieldTopic } = config;
 
   return (
     <section
@@ -59,38 +130,39 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
         </Badge>
       </div>
 
-      {/* 3 Clear Visual Cards Grid */}
+      {/* 3 Two-Part Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Card 1: 12V Hybrid Cold-Start & Jump Points */}
+        {/* Card 1: 12V Battery & Cold Starts */}
         <Card
           data-testid="winter-card-battery"
           className="border-zinc-800 bg-zinc-900/80 shadow-md flex flex-col justify-between overflow-hidden hover:border-zinc-700 transition-colors"
         >
-          <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
-            <div className="flex items-center justify-between">
-              <Badge
-                variant="outline"
-                className="border-amber-500/30 text-amber-400 bg-amber-500/10 text-[10px] font-bold"
-              >
-                Cold-Start Protocol
-              </Badge>
-              <BatteryCharging className="h-4 w-4 text-amber-400" />
-            </div>
-            <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
-              <Zap className="h-4 w-4 text-amber-400 shrink-0" />
-              12V Hybrid Cold-Start &amp; Jump Points
-            </CardTitle>
-          </CardHeader>
+          {/* Upper Section: Clean Model-Tailored Tip */}
+          <div>
+            <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
+              <div className="flex items-center justify-between">
+                <Badge
+                  variant="outline"
+                  className="border-amber-500/30 text-amber-400 bg-amber-500/10 text-[10px] font-bold"
+                >
+                  Cold-Start Protocol
+                </Badge>
+                <BatteryCharging className="h-4 w-4 text-amber-400" />
+              </div>
+              <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
+                <Zap className="h-4 w-4 text-amber-400 shrink-0" />
+                {batteryTopic.title}
+              </CardTitle>
+            </CardHeader>
 
-          <CardContent className="p-4 space-y-3.5 text-xs flex-1 flex flex-col justify-between">
-            <div className="space-y-2.5">
+            <CardContent className="p-4 space-y-2.5 text-xs">
               {/* Battery Location */}
               <div className="bg-zinc-950/70 p-2.5 rounded-lg border border-zinc-800/80">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block mb-0.5">
                   12V Aux Battery Location
                 </span>
                 <p className="text-zinc-200 font-medium leading-relaxed">
-                  {config.batterySpecs.auxBatteryLocation}
+                  {batteryTopic.auxBatteryLocation}
                 </p>
               </div>
 
@@ -101,75 +173,64 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
                   Jump Terminal Callout
                 </span>
                 <p className="text-zinc-200 leading-relaxed font-mono text-[11px]">
-                  {config.batterySpecs.jumpPointLocation}
+                  {batteryTopic.jumpPointLocation}
                 </p>
               </div>
 
-              {/* Cold Weather Tip / Warning */}
+              {/* Cold Weather Tip / Relay Draining Context */}
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-2.5 text-zinc-300">
                 <div className="flex items-center gap-1 text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">
                   <AlertTriangle className="h-3 w-3 shrink-0" />
-                  <span>Sub-Zero Hybrid Note</span>
+                  <span>Sub-Zero Starter Relay Note</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-zinc-300">
-                  {config.batterySpecs.hybridColdWeatherTip}
+                  {batteryTopic.coldWeatherTip}
                 </p>
               </div>
-            </div>
+            </CardContent>
+          </div>
 
-            {/* Recommended Jump Pack CTA */}
-            <div className="pt-2 border-t border-zinc-800/80">
-              <span className="text-[10px] text-zinc-400 block mb-1.5 font-medium">
-                Recommended Lithium Starter:
-              </span>
-              <Button
-                asChild
-                size="sm"
-                className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs h-8 gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Link
-                  href={config.batterySpecs.amazonLink}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                >
-                  <span>{config.batterySpecs.recommendedJumpPack}</span>
-                  <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
+          {/* Lower Section: Embedded Recommended Gear Module */}
+          <div className="px-4 pb-4">
+            <RecommendedGearModule
+              product={batteryTopic.product}
+              badgeVariant="amber"
+              testId="recommended-gear-battery"
+            />
+          </div>
         </Card>
 
-        {/* Card 2: Sub-Zero Floor & Salt Defense */}
+        {/* Card 2: Salt & Slush Floor Protection */}
         <Card
           data-testid="winter-card-floors"
           className="border-zinc-800 bg-zinc-900/80 shadow-md flex flex-col justify-between overflow-hidden hover:border-zinc-700 transition-colors"
         >
-          <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
-            <div className="flex items-center justify-between">
-              <Badge
-                variant="outline"
-                className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-bold"
-              >
-                Salt &amp; Brine Armor
-              </Badge>
-              <ShieldAlert className="h-4 w-4 text-emerald-400" />
-            </div>
-            <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
-              <ShieldAlert className="h-4 w-4 text-emerald-400 shrink-0" />
-              Sub-Zero Floor &amp; Salt Defense
-            </CardTitle>
-          </CardHeader>
+          {/* Upper Section: Clean Model-Tailored Tip */}
+          <div>
+            <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
+              <div className="flex items-center justify-between">
+                <Badge
+                  variant="outline"
+                  className="border-emerald-500/30 text-emerald-400 bg-emerald-500/10 text-[10px] font-bold"
+                >
+                  Salt &amp; Brine Armor
+                </Badge>
+                <ShieldAlert className="h-4 w-4 text-emerald-400" />
+              </div>
+              <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
+                <ShieldAlert className="h-4 w-4 text-emerald-400 shrink-0" />
+                {floorTopic.title}
+              </CardTitle>
+            </CardHeader>
 
-          <CardContent className="p-4 space-y-3.5 text-xs flex-1 flex flex-col justify-between">
-            <div className="space-y-2.5">
+            <CardContent className="p-4 space-y-2.5 text-xs">
               {/* Floor Mat Type */}
               <div className="bg-zinc-950/70 p-2.5 rounded-lg border border-zinc-800/80">
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block mb-0.5">
                   Recommended Liners
                 </span>
                 <p className="text-zinc-200 font-medium leading-relaxed">
-                  {config.interiorProtection.floorMatType}
+                  {floorTopic.floorMatType}
                 </p>
               </div>
 
@@ -179,7 +240,7 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
                   Salt &amp; Slush Containment
                 </span>
                 <p className="text-zinc-300 leading-relaxed text-[11px]">
-                  {config.interiorProtection.coverageNote}
+                  {floorTopic.carpetProtectionNote}
                 </p>
               </div>
 
@@ -190,58 +251,46 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
                   <span>Battery Vent Clearance Warning</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-zinc-200">
-                  {config.interiorProtection.batteryVentClearance}
+                  {floorTopic.batteryVentClearance}
                 </p>
               </div>
-            </div>
+            </CardContent>
+          </div>
 
-            {/* Custom Mats Link CTA */}
-            <div className="pt-2 border-t border-zinc-800/80">
-              <span className="text-[10px] text-zinc-400 block mb-1.5 font-medium">
-                Vetted All-Weather Floor Mats:
-              </span>
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="w-full border-zinc-700 bg-zinc-900/80 text-zinc-100 hover:text-amber-400 hover:border-amber-500/40 font-bold text-xs h-8 gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Link
-                  href={config.interiorProtection.amazonLink}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                >
-                  <span>View Custom-Fit Floor Liners</span>
-                  <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
+          {/* Lower Section: Embedded Recommended Gear Module */}
+          <div className="px-4 pb-4">
+            <RecommendedGearModule
+              product={floorTopic.product}
+              badgeVariant="emerald"
+              testId="recommended-gear-floors"
+            />
+          </div>
         </Card>
 
-        {/* Card 3: Freezing Rain & Windshield Care */}
+        {/* Card 3: Frost & Windshield Protection */}
         <Card
           data-testid="winter-card-windshield"
           className="border-zinc-800 bg-zinc-900/80 shadow-md flex flex-col justify-between overflow-hidden hover:border-zinc-700 transition-colors"
         >
-          <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
-            <div className="flex items-center justify-between">
-              <Badge
-                variant="outline"
-                className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-[10px] font-bold"
-              >
-                Clear-Coat Safe
-              </Badge>
-              <Wind className="h-4 w-4 text-cyan-400" />
-            </div>
-            <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
-              <Snowflake className="h-4 w-4 text-cyan-400 shrink-0" />
-              Freezing Rain &amp; Windshield Care
-            </CardTitle>
-          </CardHeader>
+          {/* Upper Section: Clean Model-Tailored Tip */}
+          <div>
+            <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/40 space-y-2">
+              <div className="flex items-center justify-between">
+                <Badge
+                  variant="outline"
+                  className="border-cyan-500/30 text-cyan-400 bg-cyan-500/10 text-[10px] font-bold"
+                >
+                  Clear-Coat Safe
+                </Badge>
+                <Wind className="h-4 w-4 text-cyan-400" />
+              </div>
+              <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
+                <Snowflake className="h-4 w-4 text-cyan-400 shrink-0" />
+                {windshieldTopic.title}
+              </CardTitle>
+            </CardHeader>
 
-          <CardContent className="p-4 space-y-3.5 text-xs flex-1 flex flex-col justify-between">
-            <div className="space-y-2.5">
+            <CardContent className="p-4 space-y-2.5 text-xs">
               {/* Educational Notice: Why Outdoor Covers Freeze to Clear Coats */}
               <div className="bg-cyan-950/30 border border-cyan-500/20 rounded-lg p-2.5 text-zinc-300">
                 <div className="flex items-center gap-1 text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-1">
@@ -249,20 +298,17 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
                   <span>Why Full Covers Freeze to Paint</span>
                 </div>
                 <p className="text-[11px] leading-relaxed text-zinc-300">
-                  Full fabric outdoor car covers trap rising engine condensation against sheet metal.
-                  In Canadian freeze-thaw cycles, moisture freezes solid between cover and paint,
-                  causing severe clear-coat scratches and micro-marring when pulled off. Instead, use a
-                  door-flap anchored glass frost shield that touches only glass and rubber seals.
+                  {windshieldTopic.carCoverWarning}
                 </p>
               </div>
 
-              {/* Windshield Frost Guard Spec */}
+              {/* Wiper Arm Frozen Hinge Prevention Tip */}
               <div className="bg-zinc-950/70 p-2.5 rounded-lg border border-zinc-800/80">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 block mb-0.5">
-                  Flap-Anchored Frost Guard
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-cyan-400 block mb-0.5">
+                  Wiper Arm Frozen Hinge Prevention
                 </span>
-                <p className="text-zinc-200 leading-relaxed text-[11px]">
-                  {config.exteriorWinterGear.frostGuardType}
+                <p className="text-zinc-300 leading-relaxed text-[11px]">
+                  {windshieldTopic.wiperHingeTip}
                 </p>
               </div>
 
@@ -272,33 +318,20 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
                   Sub-Zero Winter Wipers
                 </span>
                 <p className="text-zinc-200 leading-relaxed text-[11px]">
-                  {config.exteriorWinterGear.wiperSpecs}
+                  {windshieldTopic.wiperSpecs}
                 </p>
               </div>
-            </div>
+            </CardContent>
+          </div>
 
-            {/* Frost Guard Link CTA */}
-            <div className="pt-2 border-t border-zinc-800/80">
-              <span className="text-[10px] text-zinc-400 block mb-1.5 font-medium">
-                Door Flap Windshield Guard:
-              </span>
-              <Button
-                asChild
-                size="sm"
-                variant="outline"
-                className="w-full border-zinc-700 bg-zinc-900/80 text-zinc-100 hover:text-cyan-400 hover:border-cyan-500/40 font-bold text-xs h-8 gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Link
-                  href={config.exteriorWinterGear.amazonLink}
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                >
-                  <span>View Windshield Frost Guard</span>
-                  <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
+          {/* Lower Section: Embedded Recommended Gear Module */}
+          <div className="px-4 pb-4">
+            <RecommendedGearModule
+              product={windshieldTopic.product}
+              badgeVariant="cyan"
+              testId="recommended-gear-windshield"
+            />
+          </div>
         </Card>
       </div>
 
