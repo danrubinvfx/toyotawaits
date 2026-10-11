@@ -530,6 +530,43 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
     clickCount: 0,
     isActive: true,
   },
+  // Canadian Winter Prep & Survival Guide Accessories
+  'corolla-cross-all-weather-liners': {
+    id: 'f3000001-0001-4001-8001-000000000001',
+    slug: 'corolla-cross-all-weather-liners',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20',
+    title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross)',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'tacoma-all-weather-liners': {
+    id: 'f3000002-0002-4002-8002-000000000002',
+    slug: 'tacoma-all-weather-liners',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Tacoma+all+weather+floor+mats+liners&tag=toyotawaits-20',
+    title: 'Heavy-Duty All-Weather Floor Liners (Tacoma)',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'windshield-frost-guard': {
+    id: 'f3000003-0003-4003-8003-000000000003',
+    slug: 'windshield-frost-guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=windshield+frost+guard+snow+cover+door+flaps&tag=toyotawaits-20',
+    title: 'All-Weather Windshield Frost Guard with Door Flap Anchors',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
+  'silicone-winter-wipers': {
+    id: 'f3000004-0004-4004-8004-000000000004',
+    slug: 'silicone-winter-wipers',
+    destinationUrl: 'https://www.amazon.ca/s?k=silicone+beam+winter+wiper+blades&tag=toyotawaits-20',
+    title: 'Extreme Sub-Zero Beam Silicone Winter Wiper Blades',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
 };
 
 function isLegacyPlaceholderUrl(url: string): boolean {

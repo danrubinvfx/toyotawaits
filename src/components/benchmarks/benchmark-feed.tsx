@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
+import { WinterGuide } from '@/components/winter-prep/winter-guide';
 import { cn } from '@/lib/utils';
 
 export interface VehicleOption {
@@ -315,6 +316,9 @@ export function BenchmarkFeed({
           defaultExpanded={true}
         />
       </div>
+
+      {/* 5. Canadian Winter Prep & Survival Guide Bound to Selected Vehicle */}
+      <WinterGuide modelKey={activeVehicle.id} />
     </div>
   );
 }
