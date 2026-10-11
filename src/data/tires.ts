@@ -7,21 +7,28 @@
 
 export type TireCategory = 'Dedicated Winter' | 'All-Weather 3PMSF';
 
-export interface TireRecommendation {
+export interface TireItem {
   id: string;
   name: string;
   brand: string;
-  category: TireCategory;
-  badge: string;
-  oemFitment: string;
-  rating: number; // e.g. 4.9
-  reviewCount: number;
+  category: 'Dedicated Winter' | 'All-Weather 3PMSF';
+  oemSize: string;
   bestFor: string;
   pros: string[];
   cons: string[];
   amazonUrl: string;
-  searchQuery: string;
+  badge?: string;
+  asin?: string;
+  loadIndex?: string;
+  speedRating?: string;
+  // Extended UI attributes (strictly optional to prevent compiler errors)
+  oemFitment?: string;
+  rating?: number;
+  reviewCount?: number;
+  searchQuery?: string;
 }
+
+export type TireRecommendation = TireItem;
 
 export interface ModelTireConfig {
   modelId: string;
@@ -30,7 +37,7 @@ export interface ModelTireConfig {
   badge: string;
   factorySizes: string[];
   downsizingTip: string;
-  tires: TireRecommendation[];
+  tires: TireItem[];
 }
 
 export const TIRE_VEHICLE_OPTIONS: Array<{
@@ -90,7 +97,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin X-Ice Snow',
         brand: 'Michelin',
         category: 'Dedicated Winter',
+        oemSize: '225/65R17',
         badge: 'Top Pick for Hybrids',
+        loadIndex: '102',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.9,
         reviewCount: 1840,
@@ -115,7 +125,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Bridgestone Blizzak WS90',
         brand: 'Bridgestone',
         category: 'Dedicated Winter',
+        oemSize: '225/65R17',
         badge: 'Deep Snow & Slush Bite',
+        loadIndex: '102',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.8,
         reviewCount: 2150,
@@ -139,7 +152,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin CrossClimate 2',
         brand: 'Michelin',
         category: 'All-Weather 3PMSF',
+        oemSize: '225/65R17',
         badge: 'Top Year-Round All-Weather',
+        loadIndex: '102',
+        speedRating: 'H',
         oemFitment: 'Fits OEM 17" (225/65R17), 18" (225/60R18), & 19" (235/55R19)',
         rating: 4.8,
         reviewCount: 3410,
@@ -164,7 +180,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Hankook Kinergy 4S2 (H750)',
         brand: 'Hankook',
         category: 'All-Weather 3PMSF',
+        oemSize: '225/65R17',
         badge: 'Best Value All-Weather',
+        loadIndex: '102',
+        speedRating: 'V',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.6,
         reviewCount: 920,
@@ -203,7 +222,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Nokian Hakkapeliitta R5 SUV',
         brand: 'Nokian',
         category: 'Dedicated Winter',
+        oemSize: '235/65R17',
         badge: 'Nordic Arctic Master',
+        loadIndex: '108',
+        speedRating: 'R',
         oemFitment: 'Fits OEM 17" (235/65R17) & 18" (235/60R18)',
         rating: 4.9,
         reviewCount: 860,
@@ -227,7 +249,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Bridgestone Blizzak DM-V2',
         brand: 'Bridgestone',
         category: 'Dedicated Winter',
+        oemSize: '235/65R17',
         badge: 'Heavy Minivan & SUV Specialist',
+        loadIndex: '108',
+        speedRating: 'S',
         oemFitment: 'Fits OEM 17" (235/65R17) & 18" (235/60R18)',
         rating: 4.8,
         reviewCount: 1680,
@@ -251,7 +276,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin CrossClimate 2 SUV',
         brand: 'Michelin',
         category: 'All-Weather 3PMSF',
+        oemSize: '235/65R17',
         badge: 'Year-Round Family Cruiser',
+        loadIndex: '108',
+        speedRating: 'V',
         oemFitment: 'Fits OEM 17" (235/65R17), 18" (235/60R18), & 20" (235/50R20)',
         rating: 4.8,
         reviewCount: 2240,
@@ -290,7 +318,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin X-Ice Snow SUV',
         brand: 'Michelin',
         category: 'Dedicated Winter',
+        oemSize: '255/65R18',
         badge: 'Premium 3-Row Winter King',
+        loadIndex: '111',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.9,
         reviewCount: 1420,
@@ -315,7 +346,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Bridgestone Blizzak DM-V2',
         brand: 'Bridgestone',
         category: 'Dedicated Winter',
+        oemSize: '255/65R18',
         badge: 'Heavy Snow & Slush Champ',
+        loadIndex: '111',
+        speedRating: 'S',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.8,
         reviewCount: 1530,
@@ -339,7 +373,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Goodyear Assurance WeatherReady',
         brand: 'Goodyear',
         category: 'All-Weather 3PMSF',
+        oemSize: '255/65R18',
         badge: 'Asymmetric 4-Season Performer',
+        loadIndex: '111',
+        speedRating: 'H',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.7,
         reviewCount: 1110,
@@ -363,7 +400,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin CrossClimate 2 SUV',
         brand: 'Michelin',
         category: 'All-Weather 3PMSF',
+        oemSize: '255/65R18',
         badge: 'Top Crossover All-Weather',
+        loadIndex: '111',
+        speedRating: 'H',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.8,
         reviewCount: 2040,
@@ -401,7 +441,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Continental VikingContact 7',
         brand: 'Continental',
         category: 'Dedicated Winter',
+        oemSize: '195/60R17',
         badge: 'Hybrid Efficiency & Grip',
+        loadIndex: '90',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 17" (195/60R17) & 19" (195/50R19)',
         rating: 4.8,
         reviewCount: 940,
@@ -425,7 +468,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Michelin X-Ice Snow',
         brand: 'Michelin',
         category: 'Dedicated Winter',
+        oemSize: '195/60R17',
         badge: 'EV Range Optimizer',
+        loadIndex: '90',
+        speedRating: 'H',
         oemFitment: 'Fits OEM 17" (195/60R17) & 19" (195/50R19)',
         rating: 4.9,
         reviewCount: 1720,
@@ -449,7 +495,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Pirelli Cinturato WeatherActive',
         brand: 'Pirelli',
         category: 'All-Weather 3PMSF',
+        oemSize: '195/60R17',
         badge: 'Sporty All-Weather 3PMSF',
+        loadIndex: '90',
+        speedRating: 'H',
         oemFitment: 'Fits OEM 17" (195/60R17)',
         rating: 4.7,
         reviewCount: 650,
@@ -487,7 +536,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Falken Wildpeak A/T4W',
         brand: 'Falken',
         category: 'All-Weather 3PMSF',
+        oemSize: '265/70R18',
         badge: 'Severe Snow Trail Beast',
+        loadIndex: '116',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 18" (265/70R18) & 20" (265/60R20)',
         rating: 4.9,
         reviewCount: 2310,
@@ -512,7 +564,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Nokian Outpost nAT',
         brand: 'Nokian',
         category: 'All-Weather 3PMSF',
+        oemSize: '265/70R18',
         badge: 'Aramid-Armored All-Terrain',
+        loadIndex: '116',
+        speedRating: 'T',
         oemFitment: 'Fits OEM 18" (265/70R18) & 20" (265/60R20)',
         rating: 4.8,
         reviewCount: 780,
@@ -536,7 +591,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Nokian Hakkapeliitta LT3',
         brand: 'Nokian',
         category: 'Dedicated Winter',
+        oemSize: '265/70R18',
         badge: 'Arctic Expedition Benchmark',
+        loadIndex: '124',
+        speedRating: 'Q',
         oemFitment: 'Fits OEM 18" (265/70R18)',
         rating: 4.9,
         reviewCount: 620,
@@ -561,7 +619,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         name: 'Bridgestone Blizzak LT',
         brand: 'Bridgestone',
         category: 'Dedicated Winter',
+        oemSize: '265/70R18',
         badge: 'Heavy Commercial Winter',
+        loadIndex: '124',
+        speedRating: 'R',
         oemFitment: 'Fits OEM 18" (265/70R18)',
         rating: 4.7,
         reviewCount: 890,
@@ -583,6 +644,21 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     ],
   },
 };
+
+export function formatAmazonAffiliateUrl(url: string): string {
+  const defaultTag =
+    process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
+    'toyotawaits-20';
+  try {
+    const parsed = new URL(url);
+    if (!parsed.searchParams.has('tag')) {
+      parsed.searchParams.set('tag', defaultTag);
+    }
+    return parsed.toString();
+  } catch {
+    return url.includes('tag=') ? url : `${url}${url.includes('?') ? '&' : '?'}tag=${defaultTag}`;
+  }
+}
 
 export function getTiresForModel(modelId: string): ModelTireConfig {
   return TIRE_CATALOG_DATA[modelId] || TIRE_CATALOG_DATA['rav4'];

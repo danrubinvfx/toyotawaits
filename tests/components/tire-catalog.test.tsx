@@ -180,12 +180,22 @@ describe('TireCatalog Component', () => {
     });
   });
 
+  it('renders 90-day cookie window micro-copy below every tire card CTA', () => {
+    render(<TireCatalog />);
+
+    const tips = screen.getAllByText(
+      /Tip: Add your selected tire size to your Amazon cart or wish list to lock in pricing and verify delivery dates closer to vehicle pickup\./i
+    );
+    expect(tips.length).toBeGreaterThanOrEqual(1);
+  });
+
   it('renders statutory Amazon Associates disclaimer without hardcoded dollar prices', () => {
     render(<TireCatalog />);
 
-    expect(
-      screen.getByText(/As an Amazon Associate I earn from qualifying purchases\./i)
-    ).toBeInTheDocument();
+    const disclaimers = screen.getAllByText(
+      /As an Amazon Associate I earn from qualifying purchases\./i
+    );
+    expect(disclaimers.length).toBeGreaterThanOrEqual(1);
 
     // Verify no static hardcoded dollar prices like $199 or $250.00 exist in the tire cards
     const priceDollarMatches = screen.queryAllByText(/^\$\d+(\.\d{2})?$/);

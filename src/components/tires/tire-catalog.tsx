@@ -23,6 +23,7 @@ import {
   TIRE_CATALOG_DATA,
   TireCategory,
   TireRecommendation,
+  formatAmazonAffiliateUrl,
 } from '@/data/tires';
 
 export interface TireCatalogProps {
@@ -150,6 +151,16 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
           </div>
         </div>
       </section>
+
+      {/* Statutory Amazon Associates Disclosure Bar */}
+      <div className="container mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="flex items-center justify-center gap-2 text-[11px] text-zinc-500 dark:text-zinc-400 bg-zinc-100/70 dark:bg-zinc-900/60 rounded-xl py-2 px-3 border border-zinc-200 dark:border-zinc-800 text-center shadow-xs">
+          <ShieldCheck className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
+          <span>
+            <strong>Amazon Disclosure:</strong> As an Amazon Associate I earn from qualifying purchases.
+          </span>
+        </div>
+      </div>
 
       {/* 3. Active Vehicle OEM Specs & Downsizing Advisory */}
       <section className="container mx-auto max-w-5xl px-4 sm:px-6 space-y-4">
@@ -333,9 +344,11 @@ function TireCard({ tire }: TireCardProps) {
             <span>{tire.category}</span>
           </Badge>
 
-          <Badge className="bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 text-[10px] font-semibold">
-            {tire.badge}
-          </Badge>
+          {tire.badge && (
+            <Badge className="bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 text-[10px] font-semibold">
+              {tire.badge}
+            </Badge>
+          )}
         </div>
 
         {/* Tire Title & Brand */}
@@ -348,19 +361,29 @@ function TireCard({ tire }: TireCardProps) {
           </CardTitle>
         </div>
 
-        {/* Rating and OEM Fitment */}
+        {/* Rating, OEM Fitment, and Load/Speed Ratings */}
         <div className="flex flex-wrap items-center gap-2 pt-0.5 text-xs">
-          <div className="flex items-center gap-1 text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-            <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-            <span>{tire.rating.toFixed(1)}</span>
-            <span className="text-zinc-400 font-normal text-[11px]">
-              ({tire.reviewCount.toLocaleString()}+ reviews)
-            </span>
-          </div>
+          {tire.rating !== undefined && (
+            <div className="flex items-center gap-1 text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+              <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+              <span>{tire.rating.toFixed(1)}</span>
+              {tire.reviewCount !== undefined && (
+                <span className="text-zinc-400 font-normal text-[11px]">
+                  ({tire.reviewCount.toLocaleString()}+ reviews)
+                </span>
+              )}
+            </div>
+          )}
 
           <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-800">
-            {tire.oemFitment}
+            {tire.oemFitment || `Fits OEM: ${tire.oemSize}`}
           </span>
+
+          {(tire.loadIndex || tire.speedRating) && (
+            <span className="text-[11px] font-mono font-medium text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-800">
+              {[tire.loadIndex, tire.speedRating].filter(Boolean).join(' ')}
+            </span>
+          )}
         </div>
       </CardHeader>
 
@@ -425,7 +448,7 @@ function TireCard({ tire }: TireCardProps) {
             )}
           >
             <a
-              href={tire.amazonUrl}
+              href={formatAmazonAffiliateUrl(tire.amazonUrl)}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
             >
@@ -433,6 +456,11 @@ function TireCard({ tire }: TireCardProps) {
               <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
             </a>
           </Button>
+
+          {/* 90-Day Cookie Window Micro-Copy */}
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 italic text-center leading-snug pt-0.5">
+            Tip: Add your selected tire size to your Amazon cart or wish list to lock in pricing and verify delivery dates closer to vehicle pickup.
+          </p>
         </div>
       </CardContent>
     </Card>
