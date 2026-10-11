@@ -82,12 +82,20 @@ describe('ModCard Component', () => {
     expect(onToggleMock).toHaveBeenCalledWith('sample-dashcam');
   });
 
-  it('renders video embed when youtubeVideoId is present', () => {
+  it('renders external video walkthrough link button when youtubeVideoId is present', () => {
     render(<ModCard item={sampleItem} />);
 
-    const iframe = screen.getByTitle('Dashcam Installation Guide');
-    expect(iframe).toBeDefined();
-    expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/sampleVid123');
+    const videoLink = screen.getByText(/Watch Install Walkthrough ↗/i);
+    expect(videoLink).toBeDefined();
+
+    const linkAnchor = videoLink.closest('a');
+    expect(linkAnchor).toBeInTheDocument();
+    expect(linkAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=sampleVid123');
+    expect(linkAnchor?.getAttribute('target')).toBe('_blank');
+    expect(linkAnchor?.getAttribute('rel')).toContain('noopener');
+
+    // Confirm no iframe element is present
+    expect(document.querySelector('iframe')).toBeNull();
   });
 
   it('getThemedCategoryIcon correctly assigns contextual Lucide icons', () => {

@@ -22,8 +22,8 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.getByRole('button', { name: 'Grand Highlander' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Sienna' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Prius Prime' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Corolla Cross' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Tacoma' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Prius' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Land Cruiser' })).toBeInTheDocument();
   });
 
   it('defaults to RAV4 (Hybrid/Prime) as pre-selected model and displays ONLY one benchmark card', async () => {

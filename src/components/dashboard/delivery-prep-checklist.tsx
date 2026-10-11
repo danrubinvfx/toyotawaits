@@ -161,6 +161,8 @@ export function DeliveryPrepChecklist({
     if (m.includes('grand') || m.includes('highlander')) return 'grand-highlander';
     if (m.includes('land') || m.includes('cruiser') || m.includes('lc250') || m.includes('1958')) return 'land-cruiser';
     if (m.includes('corolla') || m.includes('cross')) return 'corolla-cross';
+    if (m.includes('prius')) return m.includes('prime') ? 'prius-prime' : 'prius';
+    if (m.includes('tacoma')) return 'tacoma';
     if (m.includes('rav4') || m.includes('prime')) return 'rav4';
     return m || 'all';
   }, [model]);
@@ -310,6 +312,12 @@ export function DeliveryPrepChecklist({
         return 'Land Cruiser 250';
       case 'corolla-cross':
         return 'Corolla Cross';
+      case 'prius-prime':
+        return 'Prius Prime (PHEV)';
+      case 'prius':
+        return 'Toyota Prius';
+      case 'tacoma':
+        return 'Toyota Tacoma';
       case 'rav4':
         return normalizedPowertrain === 'phev' ? 'RAV4 Prime (PHEV)' : 'RAV4';
       default:

@@ -198,22 +198,22 @@ export function PickupChecklist({
         data-testid="pickup-checklist-header"
         onClick={() => setIsOpen((prev) => !prev)}
         className={cn(
-          'p-3 sm:p-4 transition-colors cursor-pointer select-none flex flex-col sm:flex-row sm:items-center justify-between gap-2.5',
+          'px-3.5 py-2.5 sm:px-4 sm:py-3 transition-colors cursor-pointer select-none flex items-center justify-between gap-2 min-h-[50px] max-h-[70px]',
           isOpen ? 'bg-zinc-900/80 border-b border-zinc-800/80' : 'hover:bg-zinc-900/40'
         )}
       >
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
             <span className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight">
-              📋 Dealership Pickup Day Checklist
+              Dealership Pickup Day Inspection Steps
             </span>
           </div>
 
           <Badge
             variant="outline"
             className={cn(
-              'text-[10px] font-semibold px-2 py-0.5',
+              'text-[10px] font-semibold px-2 py-0.5 shrink-0',
               verifiedCount === totalCount
                 ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
                 : 'border-amber-500/30 text-amber-400 bg-amber-500/10'
@@ -223,7 +223,7 @@ export function PickupChecklist({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 shrink-0">
           <Button
             type="button"
             variant="ghost"
@@ -232,10 +232,10 @@ export function PickupChecklist({
               e.stopPropagation();
               setIsOpen((prev) => !prev);
             }}
-            className="h-7 px-2.5 text-xs font-semibold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 gap-1.5 cursor-pointer"
+            className="h-7 px-2 sm:px-2.5 text-xs font-semibold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 gap-1 cursor-pointer shrink-0"
             aria-expanded={isOpen}
           >
-            <span>{isOpen ? 'Hide Checklist ▴' : `View ${totalCount} Inspection Checks ▾`}</span>
+            <span>{isOpen ? 'Hide Checklist ▴' : 'View Inspection Checks ▾'}</span>
           </Button>
         </div>
       </div>

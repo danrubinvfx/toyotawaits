@@ -13,9 +13,9 @@ describe('PickupChecklist Component', () => {
     render(<PickupChecklist />);
 
     // Header bar elements
-    expect(screen.getByText(/Dealership Pickup Day Checklist/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dealership Pickup Day Inspection Steps/i)).toBeInTheDocument();
     expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
-    expect(screen.getByText(/View 4 Inspection Checks/i)).toBeInTheDocument();
+    expect(screen.getByText(/View Inspection Checks/i)).toBeInTheDocument();
 
     // Body cards are hidden initially
     expect(screen.queryByText(/Bill of Sale & Pricing Verification/i)).toBeNull();
@@ -26,7 +26,7 @@ describe('PickupChecklist Component', () => {
     render(<PickupChecklist />);
 
     // Click expand button
-    const expandBtn = screen.getByText(/View 4 Inspection Checks/i);
+    const expandBtn = screen.getByText(/View Inspection Checks/i);
     fireEvent.click(expandBtn);
 
     // All 4 inspection cards now visible

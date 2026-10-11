@@ -257,39 +257,35 @@ export function ModCard({
         </div>
       </div>
 
-      {/* Dynamic Inline Video Embed */}
+      {/* External Video Guide / Walkthrough Button (replaces broken iframe) */}
       {item.youtubeVideoId && (
-        <div className="mt-3 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950 print:hidden w-full">
-          {item.videoTitle && (
-            <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-800 bg-neutral-900/60">
-              <div className="flex items-center gap-2">
-                <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
-                <span className="text-xs font-semibold text-neutral-200">
-                  {item.videoTitle}
-                </span>
-              </div>
-              <a
-                href={`https://www.youtube.com/watch?v=${item.youtubeVideoId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-link-${item.slug}`}
-                className="text-[11px] text-neutral-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1"
-              >
-                <span>Open in YouTube</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
-            </div>
-          )}
-          <div className="aspect-video w-full">
-            <iframe
-              src={`https://www.youtube-nocookie.com/embed/${item.youtubeVideoId}`}
-              title={item.videoTitle || item.name || item.title}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="h-full w-full border-0"
-            />
+        <div className="mt-2 pt-2.5 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
+            <span className="text-xs font-semibold text-zinc-300 truncate">
+              {item.videoTitle || 'Video Guide'}
+            </span>
           </div>
+          <Button
+            asChild
+            size="sm"
+            variant="ghost"
+            className="h-7 px-2.5 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 shrink-0 transition-all cursor-pointer self-start sm:self-auto"
+          >
+            <a
+              href={`https://www.youtube.com/watch?v=${item.youtubeVideoId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-link-${item.slug}`}
+              className="inline-flex items-center gap-1.5"
+            >
+              <span>
+                {(item.title || '').toLowerCase().includes('dashcam') || (item.title || '').toLowerCase().includes('harness')
+                  ? 'Watch Install Walkthrough ↗'
+                  : 'Watch Video Guide ↗'}
+              </span>
+            </a>
+          </Button>
         </div>
       )}
     </div>

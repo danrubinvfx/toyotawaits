@@ -179,23 +179,25 @@ describe('DeliveryPrepChecklist Component', () => {
   it('renders dynamic inline video embeds for items with youtubeVideoId and omits for items without', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    // 1. NOCO GB40 embed
-    const nocoIframe = screen.getByTitle(/GB40 vs GBX45 Comparison/i);
-    expect(nocoIframe).toBeDefined();
-    expect(nocoIframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/gNDH1z4Is48');
-    expect(nocoIframe.getAttribute('loading')).toBe('lazy');
-    expect(nocoIframe.getAttribute('allow')).toContain('accelerometer');
-    expect(nocoIframe.getAttribute('allow')).toContain('encrypted-media');
+    // 1. NOCO GB40 external video guide button
+    const nocoLink = screen.getByText(/Watch Video Guide ↗/i);
+    expect(nocoLink).toBeDefined();
+    const nocoAnchor = nocoLink.closest('a');
+    expect(nocoAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=gNDH1z4Is48');
+    expect(nocoAnchor?.getAttribute('target')).toBe('_blank');
+    expect(nocoAnchor?.getAttribute('rel')).toContain('noopener');
 
-    // 2. Fitcamx Dashcam embed
-    const fitcamxIframe = screen.getByTitle(/Fitcamx Plug & Play Installation & Clarity/i);
-    expect(fitcamxIframe).toBeDefined();
-    expect(fitcamxIframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/HrrClvzZpnI');
-    expect(fitcamxIframe.getAttribute('loading')).toBe('lazy');
+    // 2. Fitcamx Dashcam external install walkthrough button
+    const fitcamxLink = screen.getByText(/Watch Install Walkthrough ↗/i);
+    expect(fitcamxLink).toBeDefined();
+    const fitcamxAnchor = fitcamxLink.closest('a');
+    expect(fitcamxAnchor?.getAttribute('href')).toBe('https://www.youtube.com/watch?v=HrrClvzZpnI');
+    expect(fitcamxAnchor?.getAttribute('target')).toBe('_blank');
+    expect(fitcamxAnchor?.getAttribute('rel')).toContain('noopener');
 
-    // 3. Exactly 2 iframes present on RAV4 HEV page (NOCO + Fitcamx), none for screen protectors or floor mats
+    // 3. Exactly 0 iframes present on page (no broken iframes)
     const allIframes = document.querySelectorAll('iframe');
-    expect(allIframes.length).toBe(2);
+    expect(allIframes.length).toBe(0);
   });
 
   it('filters by Cargo & Utility category and renders roof rack crossbars', () => {
@@ -245,15 +247,15 @@ describe('DeliveryPrepChecklist Component', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     // Compact collapsed accordion header
-    expect(screen.getByText(/Dealership Pickup Day Checklist/i)).toBeInTheDocument();
+    expect(screen.getByText(/Dealership Pickup Day Inspection Steps/i)).toBeInTheDocument();
     expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
-    expect(screen.getByText(/View 4 Inspection Checks/i)).toBeInTheDocument();
+    expect(screen.getByText(/View Inspection Checks/i)).toBeInTheDocument();
 
     // Verify gear cards follow immediately below in viewport
     expect(screen.getByText(/Essential Day-One Gear & Drop-In Upgrades/i)).toBeInTheDocument();
 
     // Expand accordion
-    fireEvent.click(screen.getByText(/View 4 Inspection Checks/i));
+    fireEvent.click(screen.getByText(/View Inspection Checks/i));
 
     // Specific critical inspection checkpoints now visible
     expect(screen.getByText(/Bill of Sale & Pricing Verification/i)).toBeInTheDocument();
@@ -266,7 +268,7 @@ describe('DeliveryPrepChecklist Component', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     // Expand accordion
-    fireEvent.click(screen.getByText(/View 4 Inspection Checks/i));
+    fireEvent.click(screen.getByText(/View Inspection Checks/i));
 
     // Click Bill of Sale check item
     const billOfSaleTitle = screen.getByText(/Bill of Sale & Pricing Verification/i);
