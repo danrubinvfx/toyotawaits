@@ -737,36 +737,36 @@ export function SubmissionForm() {
       {/* Success Modal with Secret Edit Key */}
       {successModalData && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) handleDoneAndViewEstimates(); }}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-2">
+          <DialogContent className="w-[calc(100vw-2rem)] max-w-lg mx-auto p-4 sm:p-6 overflow-hidden overflow-x-hidden bg-zinc-950 border-zinc-800 text-zinc-100">
+            <DialogHeader className="text-center sm:text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <DialogTitle className="text-center text-xl font-bold">
+              <DialogTitle className="text-center text-lg sm:text-xl font-bold tracking-tight text-white">
                 Timeline Recorded Successfully!
               </DialogTitle>
-              <DialogDescription className="text-center text-sm">
+              <DialogDescription className="text-center text-xs sm:text-sm text-neutral-400 mt-1 mb-4">
                 Thank you for contributing to the Canadian car buyer community.
                 {successModalData.waitDays != null && (
-                  <span className="block font-semibold text-emerald-700 dark:text-emerald-400 mt-1">
+                  <span className="block font-semibold text-emerald-400 mt-1">
                     Total Wait: {successModalData.waitDays} days recorded.
                   </span>
                 )}
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 py-2">
+            <div className="space-y-3 py-2 overflow-x-hidden">
               {/* Bookmark Link Block */}
-              <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900 p-3.5 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                  <span className="flex items-center gap-1.5">
-                    <Bookmark className="h-4 w-4 text-amber-500" />
-                    Save your private link to update this order later
+              <div className="rounded-lg bg-zinc-900/90 p-3 sm:p-3.5 border border-zinc-800 space-y-1.5 overflow-hidden">
+                <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
+                  <span className="flex items-center gap-1.5 truncate">
+                    <Bookmark className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span className="truncate">Save your private link to update this order later</span>
                   </span>
-                  <span className="text-[11px] text-zinc-400 font-normal">Frictionless Edit Link</span>
+                  <span className="text-[11px] text-zinc-400 font-normal shrink-0 ml-2 hidden sm:inline">Frictionless Edit Link</span>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200 dark:border-zinc-800">
-                  <code className="text-xs font-mono select-all text-zinc-800 dark:text-zinc-200 truncate">
+                <div className="flex items-center justify-between gap-2 bg-zinc-950 p-2 rounded-lg border border-zinc-800 min-w-0">
+                  <code className="text-xs font-mono select-all text-zinc-200 truncate break-all overflow-x-auto min-w-0 flex-1">
                     {typeof window !== 'undefined'
                       ? `${window.location.origin}/edit/${successModalData.editToken || successModalData.id}`
                       : `https://toyotawaits.ca/edit/${successModalData.editToken || successModalData.id}`}
@@ -775,66 +775,68 @@ export function SubmissionForm() {
                     size="sm"
                     variant="outline"
                     onClick={copyEditLinkToClipboard}
-                    className="h-7 px-2.5 gap-1 shrink-0 text-xs"
+                    className="h-8 px-2.5 gap-1 shrink-0 text-xs font-semibold border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 cursor-pointer"
                   >
                     <Copy className="h-3.5 w-3.5" />
-                    {copiedLink ? 'Copied!' : 'Copy Link'}
+                    <span>{copiedLink ? 'Copied!' : 'Copy Link'}</span>
                   </Button>
                 </div>
-                <p className="text-[11px] text-zinc-500 leading-relaxed">
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
                   Bookmark or save this private link to easily update your delivery date or toggle status to Delivered without logging in.
                 </p>
               </div>
 
               {/* Secret Edit Key Block */}
-              <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900 p-3.5 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+              <div className="rounded-lg bg-zinc-900/90 p-3 sm:p-3.5 border border-zinc-800 space-y-1.5 overflow-hidden">
+                <div className="flex items-center justify-between text-xs font-semibold text-zinc-300">
                   <span className="flex items-center gap-1.5">
-                    <KeyRound className="h-4 w-4 text-red-600" />
-                    Your Secret Edit Key
+                    <KeyRound className="h-4 w-4 text-red-500 shrink-0" />
+                    <span>Your Secret Edit Key</span>
                   </span>
-                  <span className="text-[11px] text-zinc-400 font-normal">Saved to this device</span>
+                  <span className="text-[11px] text-zinc-400 font-normal shrink-0 ml-2 hidden sm:inline">Saved to this device</span>
                 </div>
-                <div className="flex items-center justify-between gap-2 bg-white dark:bg-zinc-950 p-2 rounded border border-zinc-200 dark:border-zinc-800">
-                  <code className="text-xs font-mono select-all text-zinc-800 dark:text-zinc-200 truncate">
+                <div className="flex items-center justify-between gap-2 bg-zinc-950 p-2 rounded-lg border border-zinc-800 min-w-0">
+                  <code className="font-mono text-xs sm:text-sm break-all select-all text-zinc-200 min-w-0 flex-1">
                     {successModalData.editKey}
                   </code>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={copyEditKeyToClipboard}
-                    className="h-7 px-2.5 gap-1 shrink-0 text-xs"
+                    className="h-8 px-2.5 gap-1 shrink-0 text-xs font-semibold border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 cursor-pointer"
                   >
                     <Copy className="h-3.5 w-3.5" />
-                    {copiedKey ? 'Copied!' : 'Copy'}
+                    <span>{copiedKey ? 'Copied!' : 'Copy Key'}</span>
                   </Button>
                 </div>
-                <p className="text-[11px] text-zinc-500 leading-relaxed">
-                  Keep this key if you want to update your status from another computer or browser later. No login or
-                  password needed!
+                <p className="text-[11px] text-zinc-400 leading-relaxed">
+                  Keep this key if you want to update your status from another computer or browser later. No login or password needed!
                 </p>
               </div>
 
               {/* Discrete Ko-fi Support Note */}
-              <div className="pt-2 text-center border-t border-zinc-100 dark:border-zinc-800/80">
+              <div className="pt-2 text-center border-t border-zinc-800/80">
                 <a
                   href="https://ko-fi.com/toyotawaits"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 transition-colors inline-block leading-relaxed"
+                  className="text-center text-xs text-neutral-400 hover:text-amber-400 transition-colors inline-block leading-relaxed"
                 >
                   Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider supporting server costs on Ko-fi →
                 </a>
               </div>
             </div>
 
-            <DialogFooter className="sm:justify-center flex-col sm:flex-row gap-2">
-              <p className="text-xs text-zinc-500 text-center w-full sm:w-auto self-center">
+            <DialogFooter className="flex flex-col items-center gap-2 pt-2 sm:space-x-0 w-full">
+              <Button
+                onClick={handleDoneAndViewEstimates}
+                className="w-full py-3 px-4 rounded-xl font-semibold text-sm sm:text-base cursor-pointer"
+              >
+                <span className="truncate">Done & View Estimates</span>
+              </Button>
+              <p className="text-center text-xs text-neutral-500 mt-2">
                 Redirecting to estimates in {countdown}s...
               </p>
-              <Button onClick={handleDoneAndViewEstimates} className="w-full sm:w-auto px-8">
-                Done & View Estimates
-              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

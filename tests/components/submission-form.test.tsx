@@ -272,4 +272,52 @@ describe('SubmissionForm Component', () => {
     expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2026');
     expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue(getTodayLocalDate());
   });
+
+  it('renders Submission Success Modal with mobile viewport constraints and copy actions', async () => {
+    const mockResponse = {
+      success: true,
+      data: {
+        id: 'sub-mobile-modal-test',
+        status: 'pending',
+        editKey: 'mock-uuid-key-mobile-1234',
+        editToken: 'mock-edit-token-5678',
+      },
+    };
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockResponse,
+    } as any);
+
+    render(<SubmissionForm />);
+
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    });
+
+    // 1. Check title and subtitle centering
+    const title = screen.getByText('Timeline Recorded Successfully!');
+    expect(title.className).toContain('text-center');
+    expect(title.className).toContain('font-bold');
+
+    // 2. Check Copy Link button and URL break-all styling
+    const copyLinkBtn = screen.getByRole('button', { name: /Copy Link/i });
+    expect(copyLinkBtn).toBeInTheDocument();
+
+    // 3. Check Secret Edit Key wrapping and Copy Key button
+    const keyEl = screen.getByText('mock-uuid-key-mobile-1234');
+    expect(keyEl.className).toContain('break-all');
+    expect(keyEl.className).toContain('font-mono');
+    const copyKeyBtn = screen.getByRole('button', { name: /Copy Key/i });
+    expect(copyKeyBtn).toBeInTheDocument();
+
+    // 4. Check primary CTA button and timer text
+    const doneBtn = screen.getByRole('button', { name: /Done & View Estimates/i });
+    expect(doneBtn.className).toContain('w-full');
+    expect(doneBtn.className).toContain('rounded-xl');
+    expect(screen.getByText(/Redirecting to estimates in/i)).toBeInTheDocument();
+  });
 });
