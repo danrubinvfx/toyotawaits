@@ -5,6 +5,7 @@ import {
   ChecklistProduct,
 } from '@/components/dashboard/delivery-prep-checklist';
 import { MODS_CONFIG, ModItem } from '@/data/mods';
+import { ModCard, ModCardProps } from '@/components/delivery-prep/mod-card';
 
 export const AMAZON_ASSOCIATES_DISCLAIMER =
   'As an Amazon Associate I earn from qualifying purchases.';
@@ -17,5 +18,5 @@ export function ModsGuide(props: DeliveryPrepChecklistProps) {
 }
 
 export default ModsGuide;
-export { DeliveryPrepChecklist, MODS_CONFIG };
-export type { DeliveryPrepChecklistProps, ChecklistProduct, ModItem };
+export { DeliveryPrepChecklist, MODS_CONFIG, ModCard };
+export type { DeliveryPrepChecklistProps, ChecklistProduct, ModItem, ModCardProps };

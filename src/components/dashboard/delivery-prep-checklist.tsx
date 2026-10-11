@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
 import productsData from '@/lib/data/affiliate-products.json';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,17 +10,15 @@ import {
   Eye,
   Layers,
   ShieldAlert,
-  ExternalLink,
   Printer,
   ChevronDown,
   ChevronUp,
-  Check,
   ShieldCheck,
   RotateCcw,
-  Play,
   Luggage,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ModCard } from '@/components/delivery-prep/mod-card';
 
 export interface ChecklistProduct {
   id: string;
@@ -38,13 +35,16 @@ export interface ChecklistProduct {
     | 'Electronics & Safety'
     | 'Organization'
     | 'Battery & Emergency';
+  categories?: string[];
   title: string;
   name?: string;
   priceEst?: string;
   priceEstCad?: string;
   whyBuy?: string;
   utilityNote?: string;
-  image: string;
+  description?: string;
+  image?: string;
+  imageSrc?: string;
   asin?: string;
   destinationUrl: string;
   affiliateUrl?: string;
@@ -70,8 +70,38 @@ const CATEGORIES = [
   { id: 'roadside_winter', label: 'Roadside Armor', icon: ShieldAlert },
 ] as const;
 
-function matchesCategory(itemCategory: string, selectedCategory: string): boolean {
+function matchesCategory(item: ChecklistProduct, selectedCategory: string): boolean {
   if (selectedCategory === 'all') return true;
+
+  // Check multi-category array if present
+  if (item.categories && item.categories.length > 0) {
+    if (item.categories.includes(selectedCategory as any)) return true;
+    if (
+      selectedCategory === 'visibility_protection' &&
+      item.categories.includes('Electronics & Safety')
+    )
+      return true;
+    if (
+      selectedCategory === 'cabin_organization' &&
+      (item.categories.includes('Interior Protection') ||
+        item.categories.includes('Organization'))
+    )
+      return true;
+    if (
+      selectedCategory === 'cargo_utility' &&
+      item.categories.includes('Cargo & Utility')
+    )
+      return true;
+    if (
+      selectedCategory === 'roadside_winter' &&
+      (item.categories.includes('Battery & Emergency') ||
+        item.categories.includes('Winter Prep'))
+    )
+      return true;
+  }
+
+  // Fallback to single item.category
+  const itemCategory = item.category;
   if (itemCategory === selectedCategory) return true;
 
   if (selectedCategory === 'visibility_protection') {
@@ -170,9 +200,12 @@ export function DeliveryPrepChecklist({
     }
   };
 
-  // Filter items matching model and powertrain
+  // Filter items matching model and powertrain with deduplication by item.id and item.asin
   const filteredProducts = useMemo(() => {
     const list = productsData as ChecklistProduct[];
+    const seenIds = new Set<string>();
+    const seenAsins = new Set<string>();
+
     return list.filter((item) => {
       // Model match
       const modelMatch =
@@ -190,17 +223,30 @@ export function DeliveryPrepChecklist({
       }
 
       // Category match
-      if (!matchesCategory(item.category, selectedCategory)) {
+      if (!matchesCategory(item, selectedCategory)) {
         return false;
+      }
+
+      // Deduplicate by id
+      if (seenIds.has(item.id)) return false;
+      seenIds.add(item.id);
+
+      // Deduplicate by asin
+      if (item.asin) {
+        if (seenAsins.has(item.asin)) return false;
+        seenAsins.add(item.asin);
       }
 
       return true;
     });
   }, [normalizedModel, normalizedPowertrain, selectedCategory]);
 
-  // Overall completion for this vehicle
+  // Overall completion for this vehicle with deduplication
   const totalModelItems = useMemo(() => {
     const list = productsData as ChecklistProduct[];
+    const seenIds = new Set<string>();
+    const seenAsins = new Set<string>();
+
     return list.filter((item) => {
       const modelMatch =
         item.models.includes('all') ||
@@ -212,6 +258,15 @@ export function DeliveryPrepChecklist({
           return false;
         }
       }
+
+      if (seenIds.has(item.id)) return false;
+      seenIds.add(item.id);
+
+      if (item.asin) {
+        if (seenAsins.has(item.asin)) return false;
+        seenAsins.add(item.asin);
+      }
+
       return true;
     });
   }, [normalizedModel, normalizedPowertrain]);
@@ -360,178 +415,22 @@ export function DeliveryPrepChecklist({
             })}
           </div>
 
-          {/* Checklist Items - Vertical Stack */}
+          {/* Checklist Items - Vertical Stack rendered via ModCard */}
           <CardContent className="p-4 sm:p-5 space-y-3.5">
             {filteredProducts.length === 0 ? (
               <div className="p-6 text-center text-xs text-zinc-500">
                 No accessories found matching this vehicle and filter criteria.
               </div>
             ) : (
-              filteredProducts.map((item) => {
-                const isChecked = !!checkedItems[item.slug];
-                const price = item.priceEst || item.priceEstCad;
-                const note = item.whyBuy || item.utilityNote;
-
-                return (
-                  <div
-                    key={item.slug}
-                    data-testid={`checklist-item-${item.slug}`}
-                    className={cn(
-                      'relative rounded-xl border p-3.5 sm:p-4 transition-all duration-200 flex flex-col justify-between gap-4',
-                      isChecked
-                        ? 'border-amber-500/40 bg-zinc-900/90 shadow-inner'
-                        : 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700/80 hover:bg-zinc-900/80'
-                    )}
-                  >
-                    {/* Top corner clickable checkbox */}
-                    <div className="absolute top-3 right-3 sm:top-3.5 sm:right-3.5 z-10">
-                      <button
-                        type="button"
-                        onClick={() => toggleItem(item.slug)}
-                        aria-checked={isChecked}
-                        role="checkbox"
-                        aria-label={`Mark ${item.title} as acquired`}
-                        className={cn(
-                          'h-6 w-6 rounded-md border flex items-center justify-center transition-all cursor-pointer',
-                          isChecked
-                            ? 'bg-amber-500 border-amber-500 text-zinc-950 shadow-xs'
-                            : 'border-zinc-700 bg-zinc-950/80 text-transparent hover:border-amber-500/80 hover:bg-zinc-900'
-                        )}
-                      >
-                        <Check className={cn('h-3.5 w-3.5 stroke-[3]', isChecked ? 'opacity-100' : 'opacity-0')} />
-                      </button>
-                    </div>
-
-                    {/* Main Row: Thumbnail + Details + Outbound Action */}
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-                      {/* Left & Middle content container */}
-                      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 flex-1 pr-8 sm:pr-2">
-                        {/* Left: 80x80px Product Thumbnail */}
-                        <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 flex items-center justify-center shadow-xs">
-                          <Image
-                            src={item.image || `/images/accessories/${item.slug}.png`}
-                            alt={item.title}
-                            width={80}
-                            height={80}
-                            unoptimized
-                            className={cn(
-                              'w-full h-full object-cover transition-transform duration-300',
-                              isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
-                            )}
-                          />
-                        </div>
-
-                        {/* Middle: Details */}
-                        <div className="space-y-1.5 flex-1 min-w-0">
-                          {/* Badges & Compatibility Tag */}
-                          {(item.badge || item.compatibility) && (
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              {item.badge && (
-                                <Badge
-                                  variant="outline"
-                                  className={cn(
-                                    'text-[10px] sm:text-xs font-semibold px-2 py-0.5 border',
-                                    item.badge === 'Essential'
-                                      ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
-                                      : item.badge === 'Recommended' || item.badge === 'Recommended Upgrade'
-                                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                                      : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
-                                  )}
-                                >
-                                  {item.badge}
-                                </Badge>
-                              )}
-                              {item.compatibility && (
-                                <span className="text-[10px] sm:text-[11px] text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 rounded font-mono">
-                                  {item.compatibility}
-                                </span>
-                              )}
-                            </div>
-                          )}
-
-                          <div className="flex flex-wrap items-baseline gap-2">
-                            <h4
-                              className={cn(
-                                'text-sm font-semibold tracking-tight transition-colors',
-                                isChecked
-                                  ? 'line-through text-zinc-500'
-                                  : 'text-zinc-100'
-                              )}
-                            >
-                              {item.title}
-                            </h4>
-                            {price && (
-                              <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                                {price}
-                              </span>
-                            )}
-                          </div>
-                          {note && (
-                            <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                              {note}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Right: Outbound Action Button */}
-                      <div className="sm:self-center shrink-0 w-full sm:w-auto pt-1 sm:pt-0 print:hidden">
-                        <Button
-                          asChild
-                          size="sm"
-                          variant="outline"
-                          className="w-full sm:w-auto text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
-                        >
-                          <a
-                            href={item.affiliateUrl || `/out/${item.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer nofollow sponsored"
-                          >
-                            <span>View on Amazon</span>
-                            <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
-                          </a>
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Dynamic Inline Video Embed (Rendered ONLY if item.youtubeVideoId is defined) */}
-                    {item.youtubeVideoId && (
-                      <div className="mt-3 overflow-hidden rounded-lg border border-neutral-800 bg-neutral-950 print:hidden w-full">
-                        {item.videoTitle && (
-                          <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-800 bg-neutral-900/60">
-                            <div className="flex items-center gap-2">
-                              <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
-                              <span className="text-xs font-semibold text-neutral-200">
-                                {item.videoTitle}
-                              </span>
-                            </div>
-                            <a
-                              href={`https://www.youtube.com/watch?v=${item.youtubeVideoId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-link-${item.slug}`}
-                              className="text-[11px] text-neutral-400 hover:text-amber-400 transition-colors inline-flex items-center gap-1"
-                            >
-                              <span>Open in YouTube</span>
-                              <ExternalLink className="h-3 w-3" />
-                            </a>
-                          </div>
-                        )}
-                        <div className="aspect-video w-full">
-                          <iframe
-                            src={`https://www.youtube-nocookie.com/embed/${item.youtubeVideoId}`}
-                            title={item.videoTitle || item.name || item.title}
-                            loading="lazy"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="h-full w-full border-0"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })
+              filteredProducts.map((item) => (
+                <ModCard
+                  key={item.id || item.slug}
+                  item={item}
+                  isChecked={!!checkedItems[item.slug]}
+                  onToggle={toggleItem}
+                  showCheckbox={true}
+                />
+              ))
             )}
           </CardContent>
 

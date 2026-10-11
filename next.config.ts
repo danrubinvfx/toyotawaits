@@ -10,6 +10,22 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images-na.ssl-images-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.amazon.com',
+      },
+    ],
+  },
   async redirects() {
     return [
       { source: '/mods/rav4', destination: '/guides/rav4-se-mods', permanent: false },
