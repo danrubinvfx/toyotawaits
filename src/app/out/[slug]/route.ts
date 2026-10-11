@@ -27,13 +27,34 @@ export async function GET(
     }
 
     // 2. Query target redirect URL
-    const destinationUrl = await getAffiliateRedirect(validation.data.slug);
+    let destinationUrl = await getAffiliateRedirect(validation.data.slug);
 
     if (!destinationUrl) {
       // Fallback for unknown slugs: Redirect safely to home page
       return NextResponse.redirect(new URL('/', request.url), {
         status: 302,
       });
+    }
+
+    // 3. Safe Outbound Link Handler & Geolocation Strategy:
+    // Default to Amazon Canada (amazon.ca) with universal OneLink tagging
+    if (destinationUrl.includes('amazon.')) {
+      try {
+        const urlObj = new URL(destinationUrl);
+        if (!urlObj.hostname.includes('amazon.ca')) {
+          urlObj.hostname = 'www.amazon.ca';
+        }
+        const defaultTag =
+          process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
+          process.env.AMAZON_AFFILIATE_TAG ||
+          'toyotawaits-20';
+        if (!urlObj.searchParams.has('tag')) {
+          urlObj.searchParams.set('tag', defaultTag);
+        }
+        destinationUrl = urlObj.toString();
+      } catch {
+        // preserve original URL if parsing fails
+      }
     }
 
     // 3. Return 307 Temporary Redirect with strict privacy headers

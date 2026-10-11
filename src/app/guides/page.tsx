@@ -118,31 +118,31 @@ const POPULAR_GEAR = [
   {
     title: 'FitcamX OEM Integrated 4K Dashcam',
     tagline: 'Replaces TSS mirror shroud with zero dangling cables and no fuse box tapping.',
-    price: '~$210 CAD',
+    price: 'Saves ~$350+ vs dealer install',
     slug: 'fitcamx-rav4',
   },
   {
     title: 'NOCO Boost Plus GB40 1000A Jump Starter',
     tagline: 'Compact 12V lithium rescue pack preventing hybrid ready-state lockouts in freezing temps.',
-    price: '~$135 CAD',
+    price: 'Avoids costly roadside towing',
     slug: 'noco-gb40-jump-pack',
   },
   {
     title: 'Matte 9H Anti-Glare Screen Protector',
     tagline: 'Eliminates touchscreen glare and protects displays against scratches.',
-    price: '~$24 CAD',
+    price: 'Protects expensive OEM display',
     slug: 'screen-protector-rav4',
   },
   {
     title: 'Laser-Fit Center Console Organizer Tray',
     tagline: 'Drop-in dual-tier storage dividing cavernous armrest compartments.',
-    price: '~$22 CAD',
+    price: 'OEM-fit dual-tier storage',
     slug: 'console-tray-rav4',
   },
   {
     title: 'J1772 Charger Port Lock Ring',
     tagline: 'Stops unauthorized public EV charger handle disconnections on PHEV models.',
-    price: '~$19 CAD',
+    price: 'Prevents unplugged charge sessions',
     slug: 'j1772-charger-lock',
   },
 ];
@@ -247,6 +247,9 @@ export default function GuidesIndexPage() {
             <p className="text-sm text-zinc-500">
               Drop-in accessories vetted by Canadian owners. No drilling, no wire splicing.
             </p>
+            <p className="text-[11px] text-zinc-500 mt-0.5">
+              As an Amazon Associate I earn from qualifying purchases. Outbound links support ToyotaWaits.ca.
+            </p>
           </div>
           <Button asChild variant="outline" size="sm" className="border-amber-500/40 text-amber-500 hover:bg-amber-500/10 text-xs">
             <Link href="/#delivery-prep">
@@ -284,7 +287,7 @@ export default function GuidesIndexPage() {
                 )}
               </div>
               <Button asChild size="sm" variant="outline" className="w-full text-xs font-semibold border-zinc-700 hover:border-amber-500 hover:text-amber-400 gap-1.5 cursor-pointer">
-                <a href={`/out/${item.slug}`} target="_blank" rel="noopener noreferrer sponsored">
+                <a href={`/out/${item.slug}`} target="_blank" rel="noopener noreferrer nofollow sponsored">
                   Check on Amazon.ca <ExternalLink className="h-3 w-3" />
                 </a>
               </Button>

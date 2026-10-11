@@ -97,7 +97,7 @@ export default function WinterTiresGuidePage() {
                 </li>
               </ul>
               <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
-                <a href="/out/michelin-xice" target="_blank" rel="noopener noreferrer sponsored">
+                <a href="/out/michelin-xice" target="_blank" rel="noopener noreferrer nofollow sponsored">
                   Check Canadian Availability
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
@@ -126,7 +126,7 @@ export default function WinterTiresGuidePage() {
                 </li>
               </ul>
               <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
-                <a href="/out/bridgestone-blizzak" target="_blank" rel="noopener noreferrer sponsored">
+                <a href="/out/bridgestone-blizzak" target="_blank" rel="noopener noreferrer nofollow sponsored">
                   Check Canadian Availability
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
@@ -137,7 +137,7 @@ export default function WinterTiresGuidePage() {
       </div>
 
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
-        <strong>Affiliate Transparency:</strong> Product links redirect through clean first-party redirects earning referral fees that maintain ToyotaWaits.ca. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you. Zero third-party trackers.
+        <strong>Affiliate Transparency:</strong> Product links redirect through clean first-party redirects earning referral fees that maintain ToyotaWaits.ca. As an Amazon Associate I earn from qualifying purchases. Zero third-party trackers.
       </p>
     </div>
   );

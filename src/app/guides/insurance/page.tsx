@@ -98,7 +98,7 @@ export default function InsuranceGuidePage() {
           </ul>
 
           <Button asChild className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs px-6 cursor-pointer">
-            <a href="/out/rates-ca-insurance" target="_blank" rel="noopener noreferrer sponsored">
+            <a href="/out/rates-ca-insurance" target="_blank" rel="noopener noreferrer nofollow sponsored">
               Compare Canadian Auto Quotes
               <ExternalLink className="h-3.5 w-3.5" />
             </a>

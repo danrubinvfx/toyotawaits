@@ -25,4 +25,9 @@ describe('Footer Component', () => {
       expect(btn.className).toContain('text-neutral-400');
     });
   });
+
+  it('renders statutory Amazon Associates disclaimer', () => {
+    render(<Footer />);
+    expect(screen.getByText(/As an Amazon Associate I earn from qualifying purchases\./i)).toBeInTheDocument();
+  });
 });

@@ -92,7 +92,7 @@ export default function EVChargingGuidePage() {
             </ul>
 
             <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
-              <a href="/out/grizzl-e-charger" target="_blank" rel="noopener noreferrer sponsored">
+              <a href="/out/grizzl-e-charger" target="_blank" rel="noopener noreferrer nofollow sponsored">
                 Check Canadian Price
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
@@ -129,7 +129,7 @@ export default function EVChargingGuidePage() {
             </ul>
 
             <Button asChild className="w-full bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1.5 text-xs cursor-pointer">
-              <a href="/out/flo-g5" target="_blank" rel="noopener noreferrer sponsored">
+              <a href="/out/flo-g5" target="_blank" rel="noopener noreferrer nofollow sponsored">
                 View FLO Station Specs
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
@@ -140,7 +140,7 @@ export default function EVChargingGuidePage() {
 
       {/* Disclosure */}
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
-        <strong>Affiliate Transparency:</strong> Links on this guide use first-party cloaked redirects that earn a referral fee supporting ToyotaWaits.ca hosting and open data infrastructure. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you. We do not use third-party tracking cookies.
+        <strong>Affiliate Transparency:</strong> Links on this guide use first-party cloaked redirects that earn a referral fee supporting ToyotaWaits.ca hosting and open data infrastructure. As an Amazon Associate I earn from qualifying purchases. We do not use third-party tracking cookies.
       </p>
     </div>
   );

@@ -28,12 +28,21 @@ export interface ChecklistProduct {
   slug: string;
   models: string[];
   powertrains?: string[];
-  category: 'visibility_protection' | 'cabin_organization' | 'cargo_utility' | 'roadside_winter';
+  category:
+    | 'visibility_protection'
+    | 'cabin_organization'
+    | 'cargo_utility'
+    | 'roadside_winter'
+    | 'Interior Protection'
+    | 'Cargo & Utility'
+    | 'Electronics & Safety'
+    | 'Organization'
+    | 'Battery & Emergency';
   title: string;
   name?: string;
-  priceEst: string;
+  priceEst?: string;
   priceEstCad?: string;
-  whyBuy: string;
+  whyBuy?: string;
   utilityNote?: string;
   image: string;
   asin?: string;
@@ -41,6 +50,7 @@ export interface ChecklistProduct {
   affiliateUrl?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | string;
   compatibility?: string;
+  amazonCaAsinOrUrl?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
 }
@@ -59,6 +69,38 @@ const CATEGORIES = [
   { id: 'cargo_utility', label: 'Cargo & Utility', icon: Luggage },
   { id: 'roadside_winter', label: 'Roadside Armor', icon: ShieldAlert },
 ] as const;
+
+function matchesCategory(itemCategory: string, selectedCategory: string): boolean {
+  if (selectedCategory === 'all') return true;
+  if (itemCategory === selectedCategory) return true;
+
+  if (selectedCategory === 'visibility_protection') {
+    return (
+      itemCategory === 'visibility_protection' ||
+      itemCategory === 'Electronics & Safety'
+    );
+  }
+  if (selectedCategory === 'cabin_organization') {
+    return (
+      itemCategory === 'cabin_organization' ||
+      itemCategory === 'Interior Protection' ||
+      itemCategory === 'Organization'
+    );
+  }
+  if (selectedCategory === 'cargo_utility') {
+    return (
+      itemCategory === 'cargo_utility' ||
+      itemCategory === 'Cargo & Utility'
+    );
+  }
+  if (selectedCategory === 'roadside_winter') {
+    return (
+      itemCategory === 'roadside_winter' ||
+      itemCategory === 'Battery & Emergency'
+    );
+  }
+  return false;
+}
 
 const LOCAL_STORAGE_KEY = 'toyotawaits_prep_checklist_checks';
 
@@ -148,7 +190,7 @@ export function DeliveryPrepChecklist({
       }
 
       // Category match
-      if (selectedCategory !== 'all' && item.category !== selectedCategory) {
+      if (!matchesCategory(item.category, selectedCategory)) {
         return false;
       }
 
@@ -230,6 +272,9 @@ export function DeliveryPrepChecklist({
             </CardTitle>
             <CardDescription className="text-xs text-zinc-400 italic font-serif">
               &ldquo;Glovebox essentials and rainy-day armor while you wait out the clock.&rdquo;
+              <span className="block mt-1 font-sans not-italic text-[11px] text-zinc-400">
+                As an Amazon Associate I earn from qualifying purchases.
+              </span>
             </CardDescription>
           </div>
 
@@ -287,7 +332,7 @@ export function DeliveryPrepChecklist({
           >
             <ShieldAlert className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
-              <strong className="text-amber-400 font-semibold">Community Transparency:</strong> Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free.
+              <strong className="text-amber-400 font-semibold">Community Transparency:</strong> Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free. As an Amazon Associate I earn from qualifying purchases.
             </p>
           </div>
 
@@ -440,7 +485,7 @@ export function DeliveryPrepChecklist({
                           <a
                             href={item.affiliateUrl || `/out/${item.slug}`}
                             target="_blank"
-                            rel="noopener noreferrer"
+                            rel="noopener noreferrer nofollow sponsored"
                           >
                             <span>View on Amazon</span>
                             <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
@@ -492,10 +537,15 @@ export function DeliveryPrepChecklist({
 
           {/* Card Footer Disclosures */}
           <CardFooter className="p-4 bg-zinc-950/60 border-t border-zinc-800/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
-            <div className="flex items-center gap-1.5 text-zinc-400 text-[11px]">
-              <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-              <span>
-                Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
+            <div className="flex flex-col gap-1 text-[11px] text-zinc-400">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                <span>
+                  Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
+                </span>
+              </div>
+              <span className="text-zinc-500 text-[10px]">
+                As an Amazon Associate I earn from qualifying purchases.
               </span>
             </div>
 

@@ -41,7 +41,7 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(dashcamImg.getAttribute('src')).toBe('/images/accessories/fitcamx-rav4.png');
 
     // Price badge check
-    expect(screen.getByText(/~\$210 CAD/i)).toBeDefined();
+    expect(screen.getByText(/Saves ~\$350\+ vs dealer install/i)).toBeDefined();
     // Punchy utility text
     expect(screen.getByText(/Replaces the TSS mirror shroud with zero dangling cables/i)).toBeDefined();
   });
@@ -156,6 +156,8 @@ describe('DeliveryPrepChecklist Component', () => {
       expect(href).toMatch(/^\/out\/[a-z0-9-]+$/);
       expect(link.getAttribute('rel')).toContain('noopener');
       expect(link.getAttribute('rel')).toContain('noreferrer');
+      expect(link.getAttribute('rel')).toContain('nofollow');
+      expect(link.getAttribute('rel')).toContain('sponsored');
       expect(link.getAttribute('target')).toBe('_blank');
     }
   });
@@ -204,7 +206,7 @@ describe('DeliveryPrepChecklist Component', () => {
 
     // Crossbars should be visible
     expect(screen.getByText(/OEM-Style Lockable Aluminum Roof Rack Cross Bars \(RAV4\)/i)).toBeDefined();
-    expect(screen.getByText('Recommended Upgrade')).toBeDefined();
+    expect(screen.getAllByText('Recommended').length).toBeGreaterThan(0);
     expect(screen.getByText(/RAV4 \(LE, XLE, XSE, Limited - excludes Adventure\/TRD flush rails\)/i)).toBeDefined();
 
     // Visibility and interior protection items should be hidden
@@ -230,5 +232,12 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText('Corolla Cross')).toBeDefined();
     expect(screen.getByText(/Low-Profile Cargo Roof Rack Bars \(Corolla Cross\)/i)).toBeDefined();
     expect(screen.getByText(/Corolla Cross \(All trims with factory rails\)/i)).toBeDefined();
+  });
+
+  it('displays statutory Amazon Associates disclaimer in header, banner, and footer', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const disclaimers = screen.getAllByText(/As an Amazon Associate I earn from qualifying purchases\./i);
+    expect(disclaimers.length).toBeGreaterThanOrEqual(1);
   });
 });

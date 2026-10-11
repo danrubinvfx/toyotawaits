@@ -181,52 +181,52 @@ export function Header() {
                 <a
                   href="/out/fitcamx-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setDesktopGearOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                 >
                   <div>
                     <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">FitcamX 4K Dashcam</p>
-                    <p className="text-[11px] text-zinc-500">OEM mirror tap • ~$210 CAD</p>
+                    <p className="text-[11px] text-zinc-500">OEM mirror tap • Saves ~$350+ vs dealer</p>
                   </div>
                   <ExternalLink className="h-3 w-3 text-zinc-400" />
                 </a>
                 <a
                   href="/out/noco-gb40-jump-pack"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setDesktopGearOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                 >
                   <div>
                     <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">NOCO Boost GB40 Jump Pack</p>
-                    <p className="text-[11px] text-zinc-500">12V lithium rescue • ~$135 CAD</p>
+                    <p className="text-[11px] text-zinc-500">12V lithium rescue • Essential Roadside</p>
                   </div>
                   <ExternalLink className="h-3 w-3 text-zinc-400" />
                 </a>
                 <a
                   href="/out/screen-protector-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setDesktopGearOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                 >
                   <div>
                     <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Matte 9H Screen Protector</p>
-                    <p className="text-[11px] text-zinc-500">Anti-glare tempered • ~$24 CAD</p>
+                    <p className="text-[11px] text-zinc-500">Anti-glare tempered • Scratch Shield</p>
                   </div>
                   <ExternalLink className="h-3 w-3 text-zinc-400" />
                 </a>
                 <a
                   href="/out/console-tray-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setDesktopGearOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
                 >
                   <div>
                     <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Console Organizer Tray</p>
-                    <p className="text-[11px] text-zinc-500">Dual-tier storage • ~$22 CAD</p>
+                    <p className="text-[11px] text-zinc-500">Dual-tier storage • Laser Fit</p>
                   </div>
                   <ExternalLink className="h-3 w-3 text-zinc-400" />
                 </a>
@@ -475,7 +475,7 @@ export function Header() {
                 <a
                   href="/out/fitcamx-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
@@ -484,7 +484,7 @@ export function Header() {
                       FitcamX 4K Integrated Dashcam
                     </span>
                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                      ~$210 CAD
+                      Saves ~$350+ vs dealer
                     </span>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
@@ -493,7 +493,7 @@ export function Header() {
                 <a
                   href="/out/noco-gb40-jump-pack"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
@@ -502,7 +502,7 @@ export function Header() {
                       NOCO Boost GB40 Jump Starter
                     </span>
                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                      ~$135 CAD
+                      Essential Roadside
                     </span>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
@@ -511,7 +511,7 @@ export function Header() {
                 <a
                   href="/out/screen-protector-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
@@ -520,7 +520,7 @@ export function Header() {
                       Matte 9H Tempered Glass Screen Protector
                     </span>
                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                      ~$24 CAD
+                      Scratch Shield
                     </span>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
@@ -529,7 +529,7 @@ export function Header() {
                 <a
                   href="/out/console-tray-rav4"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
@@ -538,7 +538,7 @@ export function Header() {
                       Center Console Organizer Tray
                     </span>
                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                      ~$22 CAD
+                      Laser Fit
                     </span>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
@@ -547,7 +547,7 @@ export function Header() {
                 <a
                   href="/out/j1772-charger-lock"
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow sponsored"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
@@ -556,7 +556,7 @@ export function Header() {
                       J1772 Charger Port Lock Ring (PHEV)
                     </span>
                     <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
-                      ~$19 CAD
+                      Anti-Theft Lock
                     </span>
                   </div>
                   <ExternalLink className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
