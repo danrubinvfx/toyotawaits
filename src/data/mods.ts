@@ -11,6 +11,7 @@ export interface ModItem {
   slug: string;
   name?: string;
   title: string;
+  description?: string;
   models: string[];
   powertrains?: string[];
   category:
@@ -35,6 +36,7 @@ export interface ModItem {
 }
 
 export const MODS_CONFIG: ModItem[] = [
+  // 1. Electronics & Safety: Integrated Dashcams
   {
     id: 'prod-fitcamx-rav4',
     slug: 'fitcamx-rav4',
@@ -42,6 +44,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (RAV4)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam',
+    description: 'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
     whyBuy: 'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.',
@@ -63,6 +66,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)',
+    description: 'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
     whyBuy: 'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.',
@@ -82,6 +86,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)',
+    description: 'OEM-factory integrated fitment beneath the digital mirror with 4K recording.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
     whyBuy: 'OEM-factory integrated fitment beneath the digital mirror with 4K recording.',
@@ -101,6 +106,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)',
+    description: 'Trail-tested integrated dashcam powered directly by the rearview mirror harness.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
     whyBuy: 'Trail-tested integrated dashcam powered directly by the rearview mirror harness.',
@@ -113,13 +119,110 @@ export const MODS_CONFIG: ModItem[] = [
     badge: 'Recommended',
     compatibility: 'TSS Mirror Plug & Play',
   },
+
+  // 2. Electronics & Safety: Mirror Harness Dashcam Adapters (Dongar / Fitcamx)
+  {
+    id: 'prod-dongar-10pin-a',
+    slug: 'dongar-10pin-type-a',
+    models: ['rav4', 'highlander', 'tacoma'],
+    category: 'Electronics & Safety',
+    badge: 'Pro Tip',
+    compatibility: 'RAV4 (2019-2021), Highlander, Tacoma',
+    title: '10-Pin Type A TSS Mirror Harness Adapter (Dongar Style)',
+    name: '10-Pin Type A TSS Mirror Harness Adapter',
+    description:
+      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+    whyBuy:
+      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+    utilityNote:
+      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+    priceEst: 'Clean 5V plug-and-play mirror tap',
+    priceEstCad: 'Clean 5V plug-and-play mirror tap',
+    image: '/images/accessories/dongar-10pin-type-a.png',
+    asin: 'B07D888RZV',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B07D888RZV?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B07D888RZV?tag=toyotawaits-20',
+    affiliateUrl: '/out/dongar-10pin-type-a',
+  },
+  {
+    id: 'prod-dongar-12pin-b',
+    slug: 'dongar-12pin-type-b',
+    models: ['rav4', 'sienna', 'grand-highlander'],
+    category: 'Electronics & Safety',
+    badge: 'Pro Tip',
+    compatibility: 'RAV4 (2022-2026), Sienna (2021+), Grand Highlander',
+    title: '12-Pin Type B TSS Mirror Harness Adapter (Dongar Style)',
+    name: '12-Pin Type B TSS Mirror Harness Adapter',
+    description:
+      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+    whyBuy:
+      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+    utilityNote:
+      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+    priceEst: 'Clean 12-pin plug-and-play tap',
+    priceEstCad: 'Clean 12-pin plug-and-play tap',
+    image: '/images/accessories/dongar-12pin-type-b.png',
+    asin: 'B09RRSC9XF',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B09RRSC9XF?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B09RRSC9XF?tag=toyotawaits-20',
+    affiliateUrl: '/out/dongar-12pin-type-b',
+  },
+
+  // 3. Interior Protection: Matte Tempered Glass Screen Protectors
+  {
+    id: 'prod-screen-8inch',
+    slug: 'screen-protector-8inch',
+    models: ['rav4', 'corolla-cross'],
+    category: 'Interior Protection',
+    badge: 'Recommended',
+    compatibility: 'RAV4 LE/XLE, Corolla Cross (8-inch Multimedia)',
+    title: '8-Inch Anti-Glare Touchscreen Protector',
+    name: '8-Inch Anti-Glare Touchscreen Protector',
+    description:
+      'Matte 9H tempered glass that cuts blinding direct sunlight reflections and eliminates oily finger smudges on the center display.',
+    whyBuy:
+      'Matte 9H tempered glass that cuts blinding direct sunlight reflections and eliminates oily finger smudges on the center display.',
+    utilityNote:
+      'Matte 9H tempered glass that cuts blinding direct sunlight reflections and eliminates oily finger smudges on the center display.',
+    priceEst: 'High-ROI glare and scratch defense',
+    priceEstCad: 'High-ROI glare and scratch defense',
+    image: '/images/accessories/screen-protector-rav4.png',
+    asin: 'B0892TYG6K',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B0892TYG6K?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B0892TYG6K?tag=toyotawaits-20',
+    affiliateUrl: '/out/screen-protector-8inch',
+  },
+  {
+    id: 'prod-screen-widescreen',
+    slug: 'screen-protector-12-3inch',
+    models: ['rav4', 'grand-highlander', 'crown'],
+    category: 'Interior Protection',
+    badge: 'Recommended',
+    compatibility: 'RAV4 XSE/Limited, Grand Highlander, Crown (10.5" & 12.3")',
+    title: '10.5-Inch & 12.3-Inch Anti-Glare Display Protector',
+    name: '10.5-Inch & 12.3-Inch Anti-Glare Display Protector',
+    description:
+      'Full coverage oleophobic screen protector tailored for high-trim widescreen displays.',
+    whyBuy:
+      'Full coverage oleophobic screen protector tailored for high-trim widescreen displays.',
+    utilityNote:
+      'Full coverage oleophobic screen protector tailored for high-trim widescreen displays.',
+    priceEst: 'Full-coverage widescreen scratch defense',
+    priceEstCad: 'Full-coverage widescreen scratch defense',
+    image: '/images/accessories/screen-protector-grand-highlander.png',
+    asin: 'B0CDFXRPL7',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B0CDFXRPL7?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B0CDFXRPL7?tag=toyotawaits-20',
+    affiliateUrl: '/out/screen-protector-12-3inch',
+  },
   {
     id: 'prod-screen-rav4',
     slug: 'screen-protector-rav4',
     models: ['rav4'],
-    category: 'Electronics & Safety',
+    category: 'Interior Protection',
     title: 'Anti-Glare 9H Tempered Glass Screen Protector (RAV4)',
     name: 'Anti-Glare Screen Protector',
+    description: '9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.',
     priceEst: 'High-ROI scratch defense',
     priceEstCad: 'High-ROI scratch defense',
     whyBuy: '9H hardness eliminates fingerprint smudges and prevents hairline scratches on the touchscreen.',
@@ -136,9 +239,10 @@ export const MODS_CONFIG: ModItem[] = [
     id: 'prod-screen-sienna',
     slug: 'screen-protector-sienna',
     models: ['sienna'],
-    category: 'Electronics & Safety',
+    category: 'Interior Protection',
     title: 'Matte Anti-Glare Screen Protector (Toyota Sienna)',
     name: 'Matte Anti-Glare Screen Protector',
+    description: 'Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.',
     priceEst: 'High-ROI scratch defense',
     priceEstCad: 'High-ROI scratch defense',
     whyBuy: 'Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.',
@@ -155,9 +259,10 @@ export const MODS_CONFIG: ModItem[] = [
     id: 'prod-screen-grand-highlander',
     slug: 'screen-protector-grand-highlander',
     models: ['grand-highlander'],
-    category: 'Electronics & Safety',
+    category: 'Interior Protection',
     title: '12.3-inch Anti-Glare Tempered Glass (Grand Highlander)',
     name: '12.3-inch Anti-Glare Tempered Glass',
+    description: 'Preserves factory display clarity and stops scratches on the wide infotainment screen.',
     priceEst: 'High-ROI scratch defense',
     priceEstCad: 'High-ROI scratch defense',
     whyBuy: 'Preserves factory display clarity and stops scratches on the wide infotainment screen.',
@@ -174,9 +279,10 @@ export const MODS_CONFIG: ModItem[] = [
     id: 'prod-screen-land-cruiser',
     slug: 'screen-protector-land-cruiser',
     models: ['land-cruiser'],
-    category: 'Electronics & Safety',
+    category: 'Interior Protection',
     title: 'Armor-Grade Multimedia Screen Shield (Land Cruiser 250)',
     name: 'Armor-Grade Multimedia Screen Shield',
+    description: 'Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.',
     priceEst: 'High-ROI scratch defense',
     priceEstCad: 'High-ROI scratch defense',
     whyBuy: 'Armor-grade glass shield preventing trail dust and grit from abrading the multimedia display.',
@@ -189,62 +295,76 @@ export const MODS_CONFIG: ModItem[] = [
     badge: 'Recommended',
     compatibility: 'Armor-Grade 12.3" Display Shield',
   },
+
+  // 4. Organization: Center Console & Bridge Organizers
   {
     id: 'prod-tray-rav4',
     slug: 'console-tray-rav4',
     models: ['rav4'],
     category: 'Organization',
-    title: 'Drop-In Center Console Divider & Coin Tray (RAV4)',
-    name: 'Center Console Organizer Tray',
+    badge: 'Pro Tip',
+    compatibility: 'RAV4 2019-2026 (All Trims)',
+    title: 'RAV4 Dual-Tier Console Organizer Tray',
+    name: 'RAV4 Dual-Tier Console Organizer Tray',
+    description:
+      'Drops into the deep factory console to add a top coin/card tier while preserving bottom storage and USB cable routing pass-through.',
+    whyBuy:
+      'Drops into the deep factory console to add a top coin/card tier while preserving bottom storage and USB cable routing pass-through.',
+    utilityNote:
+      'Drops into the deep factory console to add a top coin/card tier while preserving bottom storage and USB cable routing pass-through.',
     priceEst: 'Dual-tier OEM-fit utility',
     priceEstCad: 'Dual-tier OEM-fit utility',
-    whyBuy: 'Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.',
-    utilityNote: 'Transforms the deep, chaotic armrest box into dual-tier organized storage with cord cutouts.',
     image: '/images/accessories/console-tray-rav4.png',
     asin: 'B07WCSG2R8',
-    amazonCaAsinOrUrl: 'B07WCSG2R8',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B07WCSG2R8?tag=toyotawaits-20',
     destinationUrl: 'https://www.amazon.ca/dp/B07WCSG2R8?tag=toyotawaits-20',
     affiliateUrl: '/out/console-tray-rav4',
-    badge: 'Pro Tip',
-    compatibility: 'Dual-Tier Armrest Mold',
   },
   {
     id: 'prod-tray-sienna',
     slug: 'console-tray-sienna',
     models: ['sienna'],
     category: 'Organization',
-    title: 'Dual-Tier Center Console & Bridge Organizer (Sienna)',
-    name: 'Dual-Tier Bridge Organizer',
-    priceEst: 'Bridge console organizer',
-    priceEstCad: 'Bridge console organizer',
-    whyBuy: 'Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.',
-    utilityNote: 'Reclaims the cavernous open void under the shifter bridge so bottles and phones stop sliding.',
+    badge: 'Essential',
+    compatibility: 'Sienna 2021-2026 (All Trims)',
+    title: 'Sienna Center Bridge Lower Tray',
+    name: 'Sienna Center Bridge Lower Tray',
+    description:
+      'Custom tray designed for the open floor bridge between the front seats. Prevents bags and bottles from sliding under driver pedals.',
+    whyBuy:
+      'Custom tray designed for the open floor bridge between the front seats. Prevents bags and bottles from sliding under driver pedals.',
+    utilityNote:
+      'Custom tray designed for the open floor bridge between the front seats. Prevents bags and bottles from sliding under driver pedals.',
+    priceEst: 'Bridge floor storage utility',
+    priceEstCad: 'Bridge floor storage utility',
     image: '/images/accessories/console-tray-sienna.png',
     asin: 'B097GZ9X5B',
-    amazonCaAsinOrUrl: 'B097GZ9X5B',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B097GZ9X5B?tag=toyotawaits-20',
     destinationUrl: 'https://www.amazon.ca/dp/B097GZ9X5B?tag=toyotawaits-20',
     affiliateUrl: '/out/console-tray-sienna',
-    badge: 'Pro Tip',
-    compatibility: 'Bridge Shifter Lower Cubby',
   },
   {
     id: 'prod-tray-grand-highlander',
     slug: 'console-tray-grand-highlander',
     models: ['grand-highlander'],
     category: 'Organization',
-    title: 'Precision Armrest Divider & Upper Storage Tray (Grand Highlander)',
-    name: 'Armrest Divider & Upper Storage Tray',
-    priceEst: 'Precision armrest utility',
-    priceEstCad: 'Precision armrest utility',
-    whyBuy: 'Divides the 10-inch-deep cavernous vault into easily reachable compartments.',
-    utilityNote: 'Divides the 10-inch-deep cavernous vault into easily reachable compartments.',
+    badge: 'Pro Tip',
+    compatibility: 'Grand Highlander 2024-2026',
+    title: 'Grand Highlander Multi-Tier Armrest Box',
+    name: 'Grand Highlander Multi-Tier Armrest Box',
+    description:
+      'Precision-fit divided tray for the massive center console with non-slip textured rubber inserts.',
+    whyBuy:
+      'Precision-fit divided tray for the massive center console with non-slip textured rubber inserts.',
+    utilityNote:
+      'Precision-fit divided tray for the massive center console with non-slip textured rubber inserts.',
+    priceEst: 'Precision armrest divider',
+    priceEstCad: 'Precision armrest divider',
     image: '/images/accessories/console-tray-grand-highlander.png',
     asin: 'B0CC9H5S4W',
-    amazonCaAsinOrUrl: 'B0CC9H5S4W',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B0CC9H5S4W?tag=toyotawaits-20',
     destinationUrl: 'https://www.amazon.ca/dp/B0CC9H5S4W?tag=toyotawaits-20',
     affiliateUrl: '/out/console-tray-grand-highlander',
-    badge: 'Pro Tip',
-    compatibility: 'Precision Armrest Divider',
   },
   {
     id: 'prod-tray-land-cruiser',
@@ -253,6 +373,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Organization',
     title: 'Heavy-Duty Armrest Storage Organizer (Land Cruiser 250)',
     name: 'Heavy-Duty Armrest Organizer',
+    description: 'Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.',
     priceEst: 'Heavy-duty console storage',
     priceEstCad: 'Heavy-duty console storage',
     whyBuy: 'Organizes sunglasses, tools, and tire pressure gauges without blocking the console box.',
@@ -265,6 +386,55 @@ export const MODS_CONFIG: ModItem[] = [
     badge: 'Pro Tip',
     compatibility: 'Heavy-Duty Armrest Storage',
   },
+
+  // 5. Interior Protection: Hybrid Auxiliary Protection & Threshold Defense
+  {
+    id: 'prod-filter-hybrid',
+    slug: 'hybrid-battery-filter-mesh',
+    models: ['rav4', 'sienna'],
+    powertrains: ['hev', 'phev'],
+    category: 'Interior Protection',
+    badge: 'Essential',
+    compatibility: 'RAV4 Hybrid & Prime, Sienna Hybrid',
+    title: 'Hybrid Battery Intake Pre-Filter Mesh',
+    name: 'Hybrid Battery Intake Pre-Filter Mesh',
+    description:
+      'Breathable fine mesh guard that snaps over the rear seat battery fan intake. Stops pet fur and grit without impeding cooling airflow.',
+    whyBuy:
+      'Breathable fine mesh guard that snaps over the rear seat battery fan intake. Stops pet fur and grit without impeding cooling airflow.',
+    utilityNote:
+      'Breathable fine mesh guard that snaps over the rear seat battery fan intake. Stops pet fur and grit without impeding cooling airflow.',
+    priceEst: 'Prevents costly hybrid fan cleanings',
+    priceEstCad: 'Prevents costly hybrid fan cleanings',
+    image: '/images/accessories/hybrid-battery-filter-mesh.png',
+    asin: 'B0C39XQ7NV',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B0C39XQ7NV?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B0C39XQ7NV?tag=toyotawaits-20',
+    affiliateUrl: '/out/hybrid-battery-filter-mesh',
+  },
+  {
+    id: 'prod-door-sills',
+    slug: 'door-sill-scuff-guards',
+    models: ['rav4', 'grand-highlander', 'corolla-cross'],
+    category: 'Interior Protection',
+    badge: 'Recommended',
+    compatibility: 'RAV4, Grand Highlander, Corolla Cross',
+    title: 'Stainless Steel / ABS Door Sill Scuff Guards',
+    name: 'Stainless Steel / ABS Door Sill Scuff Guards',
+    description:
+      'Direct-stick sill protection that prevents shoe heel gouges on bare painted thresholds. Replaces $200+ dealer port sill options.',
+    whyBuy:
+      'Direct-stick sill protection that prevents shoe heel gouges on bare painted thresholds. Replaces $200+ dealer port sill options.',
+    utilityNote:
+      'Direct-stick sill protection that prevents shoe heel gouges on bare painted thresholds. Replaces $200+ dealer port sill options.',
+    priceEst: 'Saves ~$200+ vs dealer port sill options',
+    priceEstCad: 'Saves ~$200+ vs dealer port sill options',
+    image: '/images/accessories/door-sill-scuff-guards.png',
+    asin: 'B08F9V3NZ8',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B08F9V3NZ8?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/dp/B08F9V3NZ8?tag=toyotawaits-20',
+    affiliateUrl: '/out/door-sill-scuff-guards',
+  },
   {
     id: 'prod-mats-rav4',
     slug: 'high-wall-floor-liners-rav4',
@@ -272,6 +442,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Interior Protection',
     title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 Hybrid & Prime)',
     name: 'High-Wall All-Weather Floor Liners & Cargo Mat',
+    description: 'Edge-to-edge laser measured floor protection. Maximum salt and slush barrier that does not block hybrid battery ventilation vents.',
     priceEst: 'Saves ~$150+ vs dealer mats',
     priceEstCad: 'Saves ~$150+ vs dealer mats',
     whyBuy: 'Edge-to-edge laser measured floor protection. Maximum salt and slush barrier that does not block hybrid battery ventilation vents.',
@@ -291,6 +462,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Interior Protection',
     title: '3-Row Heavy Duty All-Weather Floor Liners (Grand Highlander & Sienna)',
     name: '3-Row Heavy Duty All-Weather Floor Liners',
+    description: 'Complete floor coverage across all three rows and cargo area with raised lip protection against mud and melted snow.',
     priceEst: 'Saves ~$200+ vs dealer 3-row package',
     priceEstCad: 'Saves ~$200+ vs dealer 3-row package',
     whyBuy: 'Complete floor coverage across all three rows and cargo area with raised lip protection against mud and melted snow.',
@@ -302,6 +474,8 @@ export const MODS_CONFIG: ModItem[] = [
     badge: 'Essential',
     compatibility: 'Grand Highlander / Sienna',
   },
+
+  // 6. Cargo & Utility: Crossbars
   {
     id: 'prod-crossbars-rav4',
     slug: 'roof-rack-crossbars-rav4',
@@ -309,6 +483,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Cargo & Utility',
     title: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4)',
     name: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars',
+    description: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
     priceEst: 'Saves ~$250+ compared to dealer port package',
     priceEstCad: 'Saves ~$250+ compared to dealer port package',
     whyBuy: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
@@ -327,6 +502,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Cargo & Utility',
     title: 'Heavy-Duty Roof Crossbar System (Highlander & Grand Highlander)',
     name: 'Heavy-Duty Roof Crossbar System',
+    description: 'Direct bolt-on crossbars rated for rooftop cargo boxes, bikes, and skis. Saves $300+ compared to dealer port installation.',
     priceEst: 'Saves ~$300+ compared to dealer port package',
     priceEstCad: 'Saves ~$300+ compared to dealer port package',
     whyBuy: 'Direct bolt-on crossbars rated for rooftop cargo boxes, bikes, and skis. Saves $300+ compared to dealer port installation.',
@@ -345,6 +521,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Cargo & Utility',
     title: 'Low-Profile Cargo Roof Rack Bars (Corolla Cross)',
     name: 'Low-Profile Cargo Roof Rack Bars',
+    description: 'Sturdy aluminum bars that bolt into factory roof rails for roof boxes and sports gear.',
     priceEst: 'Saves ~$200+ compared to dealer port package',
     priceEstCad: 'Saves ~$200+ compared to dealer port package',
     whyBuy: 'Sturdy aluminum bars that bolt into factory roof rails for roof boxes and sports gear.',
@@ -356,6 +533,8 @@ export const MODS_CONFIG: ModItem[] = [
     badge: 'Recommended',
     compatibility: 'Corolla Cross (All trims with factory rails)',
   },
+
+  // 7. Battery & Emergency
   {
     id: 'prod-noco-gb40',
     slug: 'noco-gb40-jump-pack',
@@ -363,6 +542,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Battery & Emergency',
     title: 'NOCO Boost Plus GB40 1000A 12V UltraSafe Lithium Jump Starter',
     name: 'NOCO Boost Plus GB40 1000A Jump Starter',
+    description: 'Revives a dead 12V auxiliary battery in -30°C Canadian winters without needing another vehicle.',
     priceEst: 'Emergency essential vs towing fees',
     priceEstCad: 'Emergency essential vs towing fees',
     whyBuy: 'Revives a dead 12V auxiliary battery in -30°C Canadian winters without needing another vehicle.',
@@ -385,6 +565,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Battery & Emergency',
     title: 'J1772 Public EV Charging Port Combination Lock Ring',
     name: 'J1772 EV Charger Combination Lock',
+    description: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
     priceEst: 'Public EV charge security',
     priceEstCad: 'Public EV charge security',
     whyBuy: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
