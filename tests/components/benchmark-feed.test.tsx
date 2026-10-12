@@ -15,23 +15,8 @@ describe('BenchmarkFeed Component', () => {
     global.fetch = fetchMock;
   });
 
-  it('renders the vehicle selector with all 6 required vehicle options', async () => {
-    render(<BenchmarkFeed />);
-
-    expect(screen.getByRole('button', { name: 'RAV4 (Hybrid/Prime)' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Grand Highlander' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Sienna' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Prius Prime' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Prius' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Land Cruiser' })).toBeInTheDocument();
-  });
-
   it('defaults to RAV4 (Hybrid/Prime) as pre-selected model and displays ONLY one benchmark card', async () => {
     render(<BenchmarkFeed />);
-
-    // RAV4 button should be marked as pressed/active
-    const rav4Btn = screen.getByRole('button', { name: 'RAV4 (Hybrid/Prime)' });
-    expect(rav4Btn.getAttribute('aria-pressed')).toBe('true');
 
     // ONLY the single RAV4 benchmark card is rendered
     expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
@@ -50,16 +35,18 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.getByText(/Calculate Toyota RAV4 Timeline/i)).toBeInTheDocument();
   });
 
-  it('switches benchmark card and updates metrics when another vehicle is selected', async () => {
-    const onSelectModel = vi.fn();
-    render(<BenchmarkFeed onSelectModel={onSelectModel} />);
+  it('switches benchmark card and updates metrics when global model-change event is dispatched', async () => {
+    render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    // Click Grand Highlander
-    const ghBtn = screen.getByRole('button', { name: 'Grand Highlander' });
-    fireEvent.click(ghBtn);
+    // Initially RAV4
+    expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
 
-    expect(onSelectModel).toHaveBeenCalledWith('grand-highlander');
-    expect(ghBtn.getAttribute('aria-pressed')).toBe('true');
+    // Dispatch global event for Grand Highlander
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-change', { detail: { model: 'grand-highlander' } })
+      );
+    });
 
     // ONLY Grand Highlander card rendered
     expect(screen.getByTestId('benchmark-card-grand-highlander')).toBeInTheDocument();
@@ -73,7 +60,7 @@ describe('BenchmarkFeed Component', () => {
 
     // Delivery Prep section header with active model label
     expect(screen.getByRole('heading', { name: /Delivery (Day )?Prep & (Priority|Essential) Gear/i })).toBeInTheDocument();
-    expect(screen.getAllByText('RAV4 (Hybrid/Prime)').length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
 
     // DeliveryPrepChecklist is present with gear for RAV4
     expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
@@ -103,10 +90,7 @@ describe('BenchmarkFeed Component', () => {
     expect(guideLink).toHaveAttribute('href', '/winter-prep');
   });
 
-  it('synchronizes active model when toyotawait:model-change event is dispatched and dispatches event on pill click', async () => {
-    const eventHandler = vi.fn();
-    window.addEventListener('toyotawait:model-change', eventHandler);
-
+  it('synchronizes active model when toyotawait:model-change event is dispatched', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
     // Initially RAV4 card is rendered
@@ -122,13 +106,14 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.getByTestId('benchmark-card-sienna')).toBeInTheDocument();
     expect(screen.queryByTestId('benchmark-card-rav4')).toBeNull();
 
-    // 2. Clicking Tacoma pill updates view and dispatches event
-    const tacomaBtn = screen.getByRole('button', { name: 'Tacoma' });
-    fireEvent.click(tacomaBtn);
+    // 2. External event selects Tacoma
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-change', { detail: { model: 'tacoma' } })
+      );
+    });
 
     expect(screen.getByTestId('benchmark-card-tacoma')).toBeInTheDocument();
-    expect(eventHandler).toHaveBeenCalled();
-
-    window.removeEventListener('toyotawait:model-change', eventHandler);
+    expect(screen.queryByTestId('benchmark-card-sienna')).toBeNull();
   });
 });

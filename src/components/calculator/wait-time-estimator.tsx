@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Info, Fuel, Zap, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -833,100 +833,6 @@ export function WaitTimeEstimator({
               </div>
             )}
 
-            {/* Contextual Model DIY Mod Guide Callout Banner */}
-            {(() => {
-              const getContextualGuide = () => {
-                if (
-                  modelSlug === 'prius' ||
-                  modelSlug === 'prius-prime' ||
-                  currentModel.name === 'Prius' ||
-                  currentModel.name === 'Prius Prime'
-                ) {
-                  return {
-                    href: '/guides/prius-mods',
-                    prefix: 'Planning ahead while you wait?',
-                    title: 'Check out our 2023-2026 Prius & Prius Prime Essential Mods & Accessories Guide',
-                    cta: 'Read Prius Guide',
-                  };
-                }
-                if (
-                  modelSlug === 'rav4' ||
-                  currentModel.name === 'RAV4' ||
-                  currentModel.name === 'RAV4 Prime'
-                ) {
-                  return {
-                    href: '/guides/rav4-se-mods',
-                    prefix: 'Planning ahead while you wait?',
-                    title: 'RAV4 Prime & Hybrid Essential Mods & Upgrades Guide',
-                    cta: 'Read RAV4 Guide',
-                  };
-                }
-                if (modelSlug === 'sienna' || currentModel.name === 'Sienna') {
-                  return {
-                    href: '/guides/sienna-mods',
-                    prefix: 'Planning ahead while you wait?',
-                    title: 'Toyota Sienna Road-Trip & Family Mods Guide',
-                    cta: 'Read Sienna Playbook',
-                  };
-                }
-                if (modelSlug === 'grand-highlander' || currentModel.name === 'Grand Highlander') {
-                  return {
-                    href: '/guides/grand-highlander-mods',
-                    prefix: 'Planning ahead while you wait?',
-                    title: 'Toyota Grand Highlander Cabin & Utility Mods Guide',
-                    cta: 'Read Grand Highlander Guide',
-                  };
-                }
-                if (modelSlug === 'land-cruiser' || currentModel.name === 'Land Cruiser') {
-                  return {
-                    href: '/guides/land-cruiser-mods',
-                    prefix: 'Planning ahead while you wait?',
-                    title: 'Toyota Land Cruiser 250 Overhaul & Armor Guide',
-                    cta: 'Read LC250 Mod Guide',
-                  };
-                }
-                return null;
-              };
-
-              const guide = getContextualGuide();
-              if (!guide) return null;
-
-              return (
-                <Link
-                  href={guide.href}
-                  className="group rounded-xl border border-amber-500/30 hover:border-amber-500/60 bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-950/20 dark:hover:bg-amber-950/30 dark:border-amber-500/30 dark:hover:border-amber-500/60 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs transition-all duration-200 shadow-xs hover:shadow-md"
-                >
-                  <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-                    <div className="h-8 w-8 rounded-lg bg-amber-500/20 dark:bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400 group-hover:scale-105 transition-transform">
-                      <Wrench className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-zinc-900 dark:text-zinc-100 flex flex-wrap items-center gap-1.5 leading-snug">
-                        <span className="font-bold text-amber-700 dark:text-amber-400">{guide.prefix}</span>
-                        <span>{guide.title}</span>
-                      </p>
-                    </div>
-                  </div>
-                  <span className="inline-flex items-center gap-1 font-bold text-amber-600 dark:text-amber-400 group-hover:text-amber-500 shrink-0 group-hover:translate-x-0.5 transition-transform">
-                    {guide.cta} <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
-                </Link>
-              );
-            })()}
-
-            {/* Delivery Day Prep & Gear Quick Anchor Link */}
-            <div className="pt-1">
-              <Button
-                asChild
-                variant="outline"
-                className="w-full border-amber-500/30 bg-amber-500/5 hover:bg-amber-500/10 text-amber-400 hover:text-amber-300 font-semibold text-xs h-10 gap-2 cursor-pointer transition-all"
-              >
-                <Link href="#delivery-prep">
-                  <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
-                  <span>View Delivery Day Prep &amp; Essential Gear for {currentModel.name} →</span>
-                </Link>
-              </Button>
-            </div>
           </div>
         )}
 

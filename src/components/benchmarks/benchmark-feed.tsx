@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
-import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Car, Snowflake, Disc3 } from 'lucide-react';
+import { Clock, CheckCircle2, ArrowRight, Sparkles, SlidersHorizontal, Snowflake, Disc3 } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { cn } from '@/lib/utils';
 
@@ -167,16 +167,6 @@ export function BenchmarkFeed({
   const sampleSize = stats.sample_size;
   const medianMonths = (medianDays / 30.4).toFixed(1);
 
-  const handleModelChange = (id: string) => {
-    setSelectedModel(id);
-    onSelectModel?.(id);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('toyotawait:model-change', { detail: { model: id } })
-      );
-    }
-  };
-
   return (
     <div className={cn('space-y-6', className)} data-testid="benchmark-feed">
       {/* 1. Header Bar */}
@@ -199,40 +189,7 @@ export function BenchmarkFeed({
         </Badge>
       </div>
 
-      {/* 2. Prominent Vehicle Selector (Mobile: Scrollable Pills, Desktop: Segmented Control) */}
-      <div className="py-2.5 -mx-4 px-4 sm:mx-0 sm:px-0 border-y sm:border sm:rounded-xl border-zinc-800/80 bg-zinc-900/60 shadow-sm">
-        <div className="flex items-center gap-2">
-          <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-zinc-400 pl-3 shrink-0">
-            <Car className="h-4 w-4 text-amber-500" />
-            <span>Select Vehicle:</span>
-          </div>
-
-          {/* Segmented Options: Horizontal Scroll on Mobile */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 w-full sm:w-auto flex-1">
-            {VEHICLE_OPTIONS.map((option) => {
-              const isSelected = selectedModel === option.id;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => handleModelChange(option.id)}
-                  aria-pressed={isSelected}
-                  className={cn(
-                    'inline-flex items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer shrink-0',
-                    isSelected
-                      ? 'bg-amber-500 text-zinc-950 shadow-sm font-bold scale-[1.02]'
-                      : 'bg-zinc-900/80 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-800/60'
-                  )}
-                >
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {/* 3. Single Active Benchmark Card */}
+      {/* 2. Single Active Benchmark Card */}
       <Card
         data-testid={`benchmark-card-${activeVehicle.id}`}
         className="border-zinc-800 bg-zinc-900/80 shadow-md overflow-hidden transition-all duration-200 hover:border-zinc-700"

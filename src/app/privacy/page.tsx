@@ -29,10 +29,9 @@ export default function PrivacyPage() {
       <div className="space-y-4 text-center sm:text-left">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Wait Times
+          ← Back to Wait Time Tracker
         </Link>
 
         <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">

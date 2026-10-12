@@ -9,7 +9,6 @@ import {
   Wrench,
   Clock,
   Volume2,
-  ArrowLeft,
   DollarSign,
   Layers,
   Video,
@@ -40,10 +39,9 @@ export default function Rav4SeModsGuidePage() {
       <div className="space-y-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-400 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Wait Times
+          ← Back to Wait Time Tracker
         </Link>
 
         <div className="flex flex-wrap items-center gap-2">

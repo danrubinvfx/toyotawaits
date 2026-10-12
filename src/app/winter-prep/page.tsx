@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { WinterPrepView } from '@/components/winter-prep/winter-prep-view';
 
 export const metadata: Metadata = {
@@ -39,6 +40,14 @@ export const metadata: Metadata = {
 export default function WinterPrepPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
+        >
+          ← Back to Wait Time Tracker
+        </Link>
+      </div>
       <WinterPrepView />
     </main>
   );

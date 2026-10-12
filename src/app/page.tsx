@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
-import { ProvincialComparison } from '@/components/dashboard/provincial-comparison';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 import { BenchmarkFeed } from '@/components/benchmarks/benchmark-feed';
@@ -16,11 +15,10 @@ import {
   MapPin,
   ShieldCheck,
   ChevronRight,
-  BarChart3,
   Flame,
   Snowflake,
   Disc3,
-  Wrench,
+  ClipboardCheck,
   Zap,
 } from 'lucide-react';
 
@@ -87,6 +85,10 @@ export default async function HomePage() {
                 Canadian Toyota Wait Time Tracker
               </h1>
 
+              <p className="text-xs text-neutral-400 font-medium tracking-wide">
+                Over 1,000+ verified Canadian deliveries tracked.
+              </p>
+
               <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
                 Crowdsourced delivery timelines across Canada. Select your model to estimate your wait.
               </p>
@@ -100,106 +102,88 @@ export default async function HomePage() {
             </div>
 
             {/* Elevated Compact Guides Grid directly underneath estimator */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 my-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full my-4">
               <Link
                 href="/winter-prep"
-                className="group rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-950/40 transition-all h-[72px]"
+                className="group rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-950/40 transition-all min-h-[72px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                   <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
                     <Snowflake className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-cyan-400 transition-colors">
-                      Winter Prep Guide
+                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-cyan-400 transition-colors">
+                      Winter Prep
                     </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                      12V Care &amp; TuxMat Fit
+                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                      12V &amp; Floor Mats
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
               </Link>
 
               <Link
                 href="/tires"
-                className="group rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-950/40 transition-all h-[72px]"
+                className="group rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-950/40 transition-all min-h-[72px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                   <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
                     <Disc3 className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-amber-400 transition-colors">
-                      Tire Fitment Guide
+                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-amber-400 transition-colors">
+                      Tire Fitment
                     </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 truncate mt-0.5">
+                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
                       OEM Sizes &amp; 3PMSF
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
               </Link>
 
               <Link
-                href="/guides"
-                className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all h-[72px]"
+                href="/#delivery-prep"
+                className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all min-h-[72px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                   <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                    <Wrench className="h-4 w-4" />
+                    <ClipboardCheck className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-emerald-400 transition-colors">
-                      Owner Playbook
+                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-emerald-400 transition-colors">
+                      Delivery Day Prep
                     </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                      Trim DIYs &amp; Audio Swap
+                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                      Inspection Checklist
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
               </Link>
 
               <Link
                 href="/guides/ev-charging"
-                className="group rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-purple-500/50 hover:bg-purple-950/40 transition-all h-[72px]"
+                className="group rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-purple-500/50 hover:bg-purple-950/40 transition-all min-h-[72px]"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                   <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
                     <Zap className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white truncate group-hover:text-purple-400 transition-colors">
-                      EV &amp; Rebates
+                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-purple-400 transition-colors">
+                      EV Rebates
                     </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 truncate mt-0.5">
-                      Federal iZEV &amp; Level 2
+                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                      Federal &amp; Provincial
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
               </Link>
             </div>
           </div>
-        </section>
-
-        {/* 2. Canada-Wide Wait Time Analytics Dashboard */}
-        <section id="analytics" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 scroll-mt-20">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-                <BarChart3 className="h-6 w-6 text-red-600" />
-                Canada-Wide Wait Time Analytics
-              </h2>
-              <p className="text-sm text-zinc-500">
-                Aggregated delivery metrics comparing rebate and non-rebate provincial allocation trends.
-              </p>
-            </div>
-          </div>
-          <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-            <ProvincialComparison />
-          </React.Suspense>
         </section>
 
         {/* 3. Popular Mods & Accessories Hub */}

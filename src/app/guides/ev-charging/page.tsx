@@ -4,7 +4,7 @@ import { Metadata } from 'next';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Zap, ShieldCheck, ArrowLeft, ExternalLink, ThermometerSnowflake, CheckCircle2 } from 'lucide-react';
+import { Zap, ShieldCheck, ExternalLink, ThermometerSnowflake, CheckCircle2 } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Canadian Level 2 EV Home Charging Prep Guide | ToyotaWaits.ca',
@@ -19,10 +19,9 @@ export default function EVChargingGuidePage() {
       <div className="space-y-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-400 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
         >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Wait Times
+          ← Back to Wait Time Tracker
         </Link>
 
         <div className="flex flex-wrap items-center gap-2">

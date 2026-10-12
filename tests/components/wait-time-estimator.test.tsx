@@ -320,7 +320,7 @@ describe('WaitTimeEstimator Component', () => {
     });
   });
 
-  it('displays contextual mod guide banner for selected vehicle model', async () => {
+  it('updates mod link dynamically for selected vehicle model', async () => {
     const mockData = {
       success: true,
       data: {
@@ -344,8 +344,8 @@ describe('WaitTimeEstimator Component', () => {
     render(<WaitTimeEstimator />);
 
     await waitFor(() => {
-      const rav4Link = screen.getByRole('link', { name: /RAV4 Prime & Hybrid Essential Mods/i });
-      expect(rav4Link).toHaveAttribute('href', '/guides/rav4-se-mods');
+      const modsLink = screen.getByTestId('delivery-estimate-mods-link');
+      expect(modsLink).toHaveAttribute('href', '/mods/rav4');
     });
 
     // Select Prius
@@ -353,8 +353,8 @@ describe('WaitTimeEstimator Component', () => {
     fireEvent.change(modelSelect, { target: { value: 'prius' } });
 
     await waitFor(() => {
-      const priusLink = screen.getByRole('link', { name: /2023-2026 Prius & Prius Prime Essential Mods/i });
-      expect(priusLink).toHaveAttribute('href', '/guides/prius-mods');
+      const modsLink = screen.getByTestId('delivery-estimate-mods-link');
+      expect(modsLink).toHaveAttribute('href', '/mods/prius');
     });
   });
 
@@ -643,10 +643,10 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.queryByText('Fastest Allocation')).toBeNull();
     });
 
-    // 3. Verifies redundant middle-page crowdsource banner is removed
+    // 3. Verifies redundant middle-page crowdsource banner and standalone cards are removed
     expect(screen.queryByTestId('estimator-submit-wait-time-banner')).toBeNull();
-    expect(screen.getByText(/Toyota Sienna Road-Trip & Family Mods Guide/i)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /View Delivery Day Prep & Essential Gear for Sienna/i })).toBeInTheDocument();
+    expect(screen.queryByText(/Toyota Sienna Road-Trip & Family Mods Guide/i)).toBeNull();
+    expect(screen.queryByRole('link', { name: /View Delivery Day Prep & Essential Gear for Sienna/i })).toBeNull();
 
     // 4. Renders all 3 CTA action buttons in responsive grid
     expect(screen.getByRole('button', { name: /Calendar \(\.ics\)/i })).toBeInTheDocument();
