@@ -24,7 +24,6 @@ export interface TireItem {
   // Extended UI attributes (strictly optional to prevent compiler errors)
   oemFitment?: string;
   rating?: number;
-  reviewCount?: number;
   searchQuery?: string;
 }
 
@@ -35,6 +34,10 @@ export interface ModelTireConfig {
   modelName: string;
   label: string;
   badge: string;
+  yearRange: string;
+  boltPattern: string;
+  centerBore: string;
+  recommendedLoadIndex: string;
   factorySizes: string[];
   downsizingTip: string;
   tires: TireItem[];
@@ -84,6 +87,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota RAV4 (Hybrid, Prime & Gas)',
     label: 'RAV4 (Hybrid / Prime)',
     badge: 'Canada #1 Selling SUV',
+    yearRange: '2019–2026 (Gen 5)',
+    boltPattern: '5x114.3',
+    centerBore: '60.1 mm',
+    recommendedLoadIndex: '102 (SL/XL)',
     factorySizes: [
       '225/65R17 (LE, XLE, Woodland)',
       '225/60R18 (XSE, Prime SE/XSE, Trail)',
@@ -103,7 +110,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.9,
-        reviewCount: 1840,
         bestFor:
           'Low rolling resistance preserves winter EV range; whisper-quiet hybrid cabin comfort with class-leading ice braking.',
         pros: [
@@ -131,16 +137,15 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.8,
-        reviewCount: 2150,
         bestFor:
           'Deep unplowed snow, heavy slush evacuation, and abrupt stops on wet black ice during severe prairie or mountain storms.',
         pros: [
           'Patented NanoPro-Tech Multicell compound absorbs micro-layer of water over smooth ice',
-          '15% more block edges deliver aggressive bite when accelerating up snowed-in inclines',
+          'High-density 3D zig-zag block edges deliver aggressive mechanical bite when accelerating up snowed-in inclines',
           'Superb lateral grip when changing lanes across slush ridges at highway speeds',
         ],
         cons: [
-          'Slightly higher rolling resistance (~3% lower winter EV efficiency vs X-Ice)',
+          'Slightly higher rolling resistance than low-drag touring rubber due to deep bite siping',
           'Multicell compound wears rapidly if kept on above +7°C in late spring',
         ],
         amazonUrl:
@@ -158,7 +163,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'H',
         oemFitment: 'Fits OEM 17" (225/65R17), 18" (225/60R18), & 19" (235/55R19)',
         rating: 4.8,
-        reviewCount: 3410,
         bestFor:
           'Severe snow certified (3PMSF) four-season driving with zero bi-annual tire swap hassle, garage line-ups, or storage fees.',
         pros: [
@@ -169,7 +173,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         ],
         cons: [
           'Directional tread allows only front-to-back rotation (no cross rotation)',
-          'Stopping distance on pure glazed black ice is ~12% longer than dedicated Nordic winter rubber',
+          'Stopping distance on pure glazed black ice is longer than dedicated Nordic winter rubber compounds',
         ],
         amazonUrl:
           'https://www.amazon.ca/s?k=Michelin+CrossClimate+2+225+65R17&tag=toyotawaits-20',
@@ -186,7 +190,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'V',
         oemFitment: 'Fits OEM 17" (225/65R17) & 18" (225/60R18)',
         rating: 4.6,
-        reviewCount: 920,
         bestFor:
           'Budget-conscious Canadian drivers who want genuine 3PMSF severe snow safety without paying top-tier brand premiums.',
         pros: [
@@ -209,6 +212,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota Sienna Hybrid AWD',
     label: 'Sienna',
     badge: 'Heavyweight Family Minivan',
+    yearRange: '2021–2026 (Gen 4)',
+    boltPattern: '5x114.3',
+    centerBore: '60.1 mm',
+    recommendedLoadIndex: '108 (Reinforced XL)',
     factorySizes: [
       '235/65R17 (LE)',
       '235/60R18 (XLE, Limited)',
@@ -228,7 +235,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'R',
         oemFitment: 'Fits OEM 17" (235/65R17) & 18" (235/60R18)',
         rating: 4.9,
-        reviewCount: 860,
         bestFor:
           'Uncompromising northern winter security, packed ice, snowstorms, and heavy minivan stability in Ontario, Quebec, and the Prairies.',
         pros: [
@@ -255,7 +261,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'S',
         oemFitment: 'Fits OEM 17" (235/65R17) & 18" (235/60R18)',
         rating: 4.8,
-        reviewCount: 1680,
         bestFor:
           'Controlling the heavy 4,600+ lb Sienna chassis on slushy multi-lane highways and unplowed suburban school runs.',
         pros: [
@@ -282,7 +287,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'V',
         oemFitment: 'Fits OEM 17" (235/65R17), 18" (235/60R18), & 20" (235/50R20)',
         rating: 4.8,
-        reviewCount: 2240,
         bestFor:
           'Families who want severe-snow 3PMSF legal compliance without the twice-yearly ritual of loading four heavy wheels into the minivan.',
         pros: [
@@ -306,6 +310,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota Grand Highlander (Hybrid MAX & Turbo Gas)',
     label: 'Grand Highlander',
     badge: '3-Row Flagship SUV',
+    yearRange: '2024–2026',
+    boltPattern: '5x114.3',
+    centerBore: '60.1 mm',
+    recommendedLoadIndex: '111 (Reinforced XL)',
     factorySizes: [
       '255/65R18 (XLE)',
       '255/55R20 (Limited, Platinum, Hybrid MAX)',
@@ -324,7 +332,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.9,
-        reviewCount: 1420,
         bestFor:
           'Quiet, smooth winter highway cruising with Hybrid MAX or gas AWD stability and minimal range/fuel economy penalty.',
         pros: [
@@ -352,7 +359,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'S',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.8,
-        reviewCount: 1530,
         bestFor:
           'Maximum traction in heavy cottage country snowfalls, unplowed rural driveways, and steep mountain grades.',
         pros: [
@@ -379,7 +385,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'H',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.7,
-        reviewCount: 1110,
         bestFor:
           'Canadian 3-row drivers seeking true all-weather 3PMSF severe snow traction with asymmetric tread cross-rotation flexibility.',
         pros: [
@@ -406,7 +411,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'H',
         oemFitment: 'Fits OEM 18" (255/65R18) & 20" (255/55R20)',
         rating: 4.8,
-        reviewCount: 2040,
         bestFor:
           'Year-round peace of mind, severe snow certification, and wet slush dominance on family Grand Highlander road trips.',
         pros: [
@@ -429,6 +433,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota Prius & Prius Prime (Gen 5)',
     label: 'Prius / Prime',
     badge: 'Aero Efficient EV/HEV',
+    yearRange: '2023–2026 (Gen 5)',
+    boltPattern: '5x114.3',
+    centerBore: '60.1 mm',
+    recommendedLoadIndex: '90 (Standard Load)',
     factorySizes: [
       '195/60R17 (LE, Prime SE)',
       '195/50R19 (XLE, Limited, Prime XSE)',
@@ -447,7 +455,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 17" (195/60R17) & 19" (195/50R19)',
         rating: 4.8,
-        reviewCount: 940,
         bestFor:
           'Preserving EV battery range while delivering phenomenal ice and hardpack snow control with whisper-quiet cabin acoustics.',
         pros: [
@@ -474,7 +481,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'H',
         oemFitment: 'Fits OEM 17" (195/60R17) & 19" (195/50R19)',
         rating: 4.9,
-        reviewCount: 1720,
         bestFor:
           'Maximum electric range retention, low rolling drag, and class-leading braking distance on icy city streets and highways.',
         pros: [
@@ -501,7 +507,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'H',
         oemFitment: 'Fits OEM 17" (195/60R17)',
         rating: 4.7,
-        reviewCount: 650,
         bestFor:
           'Prius drivers seeking sporty handling, low rolling resistance, and year-round 3PMSF severe snow certification.',
         pros: [
@@ -511,7 +516,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         ],
         cons: [
           'Currently available primarily for 17" wheels (19" drivers must downsize)',
-          'Slush braking distance is 8–12% longer than dedicated Nordic winter tires on glare ice',
+          'Braking distance on smooth glare ice is longer than dedicated Nordic winter rubber compounds',
         ],
         amazonUrl:
           'https://www.amazon.ca/s?k=Pirelli+Cinturato+WeatherActive+195+60R17&tag=toyotawaits-20',
@@ -524,6 +529,10 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota Land Cruiser 250 (1958 & First Edition)',
     label: 'Land Cruiser 250',
     badge: 'Trail & Arctic Heavy Duty',
+    yearRange: '2024–2026 (J250)',
+    boltPattern: '6x139.7',
+    centerBore: '95.1 mm',
+    recommendedLoadIndex: '116 / 124 (LT Commercial)',
     factorySizes: [
       '265/70R18 (1958 Trim, Land Cruiser Grade)',
       '265/60R20 (First Edition, Premium)',
@@ -542,7 +551,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 18" (265/70R18) & 20" (265/60R20)',
         rating: 4.9,
-        reviewCount: 2310,
         bestFor:
           'Year-round off-road capability, sharp rocky trail durability, and genuine 3PMSF severe snow winter performance.',
         pros: [
@@ -570,7 +578,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'T',
         oemFitment: 'Fits OEM 18" (265/70R18) & 20" (265/60R20)',
         rating: 4.8,
-        reviewCount: 780,
         bestFor:
           'Overlanding utility, heavy towing, and severe Canadian mountain highway pass crossings in all four seasons.',
         pros: [
@@ -597,7 +604,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'Q',
         oemFitment: 'Fits OEM 18" (265/70R18)',
         rating: 4.9,
-        reviewCount: 620,
         bestFor:
           'Extreme northern Canadian ice, unplowed logging roads, sub-zero expedition travel, and heavy-duty winter towing.',
         pros: [
@@ -625,7 +631,6 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         speedRating: 'R',
         oemFitment: 'Fits OEM 18" (265/70R18)',
         rating: 4.7,
-        reviewCount: 890,
         bestFor:
           'Reliable heavy-duty stopping power in snow, ice, and winter slush with high resistance to tire sway while towing.',
         pros: [

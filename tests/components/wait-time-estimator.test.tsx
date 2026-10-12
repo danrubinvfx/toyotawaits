@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import * as navigation from 'next/navigation';
+import * as calendarUtils from '@/lib/utils/calendar';
 
 describe('WaitTimeEstimator Component', () => {
   beforeEach(() => {
@@ -278,11 +279,17 @@ describe('WaitTimeEstimator Component', () => {
     window.fetch = fetchMock as any;
     global.fetch = fetchMock as any;
 
-    render(<WaitTimeEstimator />);
+    render(<WaitTimeEstimator initialProvince="PE" />);
 
     await waitFor(() => {
       expect(
         screen.getByText('Based on overall model median (limited regional data)')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByTestId('regional-baseline-badge')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/National baseline · Limited regional data for PE/i)
       ).toBeInTheDocument();
       // Grounded in RAV4 baseline median (375 Days) instead of regional 150 Days
       expect(screen.getAllByText(/375 Days/i).length).toBeGreaterThanOrEqual(1);
@@ -652,5 +659,65 @@ describe('WaitTimeEstimator Component', () => {
     expect(screen.getByRole('button', { name: /Calendar \(\.ics\)/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Share to Reddit/i })).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /Notify Me/i }).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('reactively recalculates delivery date windows and updates calendar export when deposit date changes', async () => {
+    const mockData = {
+      success: true,
+      data: {
+        modelSlug: 'rav4',
+        modelName: 'RAV4',
+        powertrainSlug: 'phev',
+        powertrainName: 'Plug-in Hybrid (PHEV)',
+        province: 'BC',
+        sampleCounts: { total: 100, delivered: 80, pending: 20 },
+        waitStats: {
+          p25: 100,
+          median: 200,
+          p75: 300,
+          mean: 200,
+          min: 50,
+          max: 410,
+        },
+        pricingInsights: { atMsrpPercent: 90, aboveMsrpPercent: 10, avgAddonsCad: 200 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockData,
+    } as any);
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/200 Days/i).length).toBeGreaterThanOrEqual(1);
+    });
+
+    const dateInput = screen.getByLabelText(/Deposit \/ Order Date/i) as HTMLInputElement;
+    expect(dateInput).toBeInTheDocument();
+
+    // Change deposit date to 2025-01-01
+    fireEvent.change(dateInput, { target: { value: '2025-01-01' } });
+    expect(dateInput.value).toBe('2025-01-01');
+
+    // 1. Order date label immediately reflects updated order date
+    expect(screen.getByText(/orders placed on Jan 1, 2025/i)).toBeInTheDocument();
+
+    // 2. Percentile dates recalculate reactively based on 2025-01-01
+    // P25: 2025-01-01 + 100 days (~Apr 2025)
+    // P75: 2025-01-01 + 300 days (~Oct 2025)
+    expect(screen.getByText(/Apr 2025 – Oct 2025/i)).toBeInTheDocument();
+
+    // 3. Calendar export includes the updated order date
+    const downloadSpy = vi.spyOn(calendarUtils, 'downloadCalendarEvent').mockImplementation(() => {});
+    const calendarBtn = screen.getByRole('button', { name: /Calendar \(\.ics\)/i });
+    fireEvent.click(calendarBtn);
+
+    expect(downloadSpy).toHaveBeenCalledTimes(1);
+    expect(downloadSpy.mock.calls[0][0]).toContain('Order date: 2025-01-01');
+    downloadSpy.mockRestore();
   });
 });

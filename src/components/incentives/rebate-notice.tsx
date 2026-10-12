@@ -71,7 +71,9 @@ export function RebateNotice({
                 Canadian ZEV Rebate Intelligence
               </span>
               <p className="text-[11px] text-zinc-400 hidden sm:block">
-                Federal iZEV ($5,000) {hasProvincial ? `+ ${prov} (${provincialAmount}) point-of-sale rebates` : 'point-of-sale rebate'}
+                {hasProvincial
+                  ? `${prov} (${provincialAmount}) point-of-sale rebates & clean-energy programs`
+                  : 'Clean-energy incentive eligibility & federal program funding pools'}
               </p>
             </div>
           </div>
@@ -99,10 +101,10 @@ export function RebateNotice({
               <div className="rounded-lg bg-zinc-900/80 p-3 border border-zinc-800 space-y-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-semibold text-zinc-300">🇨🇦 Federal iZEV Incentive</span>
-                  <span className="font-black text-amber-400 font-mono">$5,000 CAD</span>
+                  <span className="font-semibold text-amber-400 font-mono text-[11px]">Subject to program funds</span>
                 </div>
                 <p className="text-[11px] text-zinc-400 leading-snug">
-                  Point-of-sale deduction off the total vehicle purchase price for qualifying PHEVs with ≥ 50 km electric range.
+                  Verify remaining provincial clean-energy incentives (e.g. BC CleanBC, QC Roulez vert) where applicable, as federal programs and program funding pools adjust.
                 </p>
               </div>
 
@@ -124,7 +126,7 @@ export function RebateNotice({
                     <span className="text-zinc-500 font-medium">None Active</span>
                   </div>
                   <p className="text-[11px] text-zinc-400 leading-snug">
-                    No provincial top-up currently in {prov}. Buyers qualify exclusively for the $5,000 Federal iZEV grant.
+                    No provincial top-up currently in {prov}. Verify remaining provincial clean-energy incentives (e.g. BC CleanBC, QC Roulez vert) where applicable, as federal programs and program funding pools adjust.
                   </p>
                 </div>
               )}

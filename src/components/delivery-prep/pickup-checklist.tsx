@@ -32,7 +32,7 @@ export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
     tips: [
       'Check that documentation fees adhere strictly to provincial OMVIC/AMVIC/VSA guidelines.',
       'Ensure dealer has not added mandatory protection packages (etching, tire warranty, nitrogen fill, paint guard).',
-      'For PHEV/Prime: verify federal iZEV ($5,000) and provincial rebates are deducted directly off the bill of sale.',
+      'For PHEV/Prime: verify remaining provincial clean-energy incentives (e.g. BC CleanBC, QC Roulez vert) where applicable, as federal programs and program funding pools adjust.',
     ],
   },
   {

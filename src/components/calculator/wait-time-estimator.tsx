@@ -47,6 +47,8 @@ export interface WaitTimeEstimatorProps {
   initialProvince?: string;
 }
 
+export const SSR_DEFAULT_DEPOSIT_DATE = '2026-01-15';
+
 export function WaitTimeEstimator({
   initialModel = 'rav4',
   initialPowertrain = 'phev',
@@ -70,7 +72,8 @@ export function WaitTimeEstimator({
   });
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
   const [province, setProvince] = useState<string>(initialProvince);
-  const [depositDate, setDepositDate] = useState<string>('2026-01-15');
+  const [depositDate, setDepositDate] = useState<string>(SSR_DEFAULT_DEPOSIT_DATE);
+  const [todayDate, setTodayDate] = useState<Date>(() => new Date('2026-01-15T00:00:00Z'));
   const [showSubmittedBanner, setShowSubmittedBanner] = useState<boolean>(false);
 
   // Dynamic Benchmarks State
@@ -131,7 +134,9 @@ export function WaitTimeEstimator({
 
   // Sync client-side date after mount
   useEffect(() => {
-    setDepositDate(new Date().toISOString().split('T')[0]);
+    const now = new Date();
+    setTodayDate(now);
+    setDepositDate(now.toISOString().split('T')[0]);
   }, []);
 
   // Current catalog objects
@@ -222,13 +227,6 @@ export function WaitTimeEstimator({
     };
   }, [modelSlug, powertrainSlug, province, trimSlug]);
 
-  // Normalized current date for clean target arrival projections
-  const [todayDate] = useState<Date>(() => {
-    const d = new Date();
-    d.setHours(0, 0, 0, 0);
-    return d;
-  });
-
   // Calculate days already elapsed since deposit date
   const daysAlreadyWaited = useMemo(() => {
     if (!depositDate) return 0;
@@ -237,11 +235,12 @@ export function WaitTimeEstimator({
     return Math.max(0, Math.floor((todayDate.getTime() - base.getTime()) / (1000 * 60 * 60 * 24)));
   }, [depositDate, todayDate]);
 
-  // Projected Date Calculations: cleanly adds (estimated_days - days_already_waited) to today's date
+  // Projected Date Calculations: cleanly calculates arrival window directly from deposit date
   const calculateProjectedDate = (daysOffset: number): string => {
     const clampedOffset = Math.min(daysOffset, 420);
-    const remainingDays = Math.max(0, clampedOffset - daysAlreadyWaited);
-    const target = new Date(todayDate.getTime() + remainingDays * 24 * 60 * 60 * 1000);
+    const base = depositDate ? new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')) : todayDate;
+    const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
+    const target = new Date(baseTime + clampedOffset * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',
@@ -322,12 +321,13 @@ export function WaitTimeEstimator({
   const currentTier = getWaitTier(medianDays);
 
   const handleDownloadCalendar = () => {
-    const remainingMedian = Math.max(0, medianDays - daysAlreadyWaited);
-    const targetDate = new Date(todayDate.getTime() + remainingMedian * 24 * 60 * 60 * 1000);
+    const base = depositDate ? new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')) : todayDate;
+    const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
+    const targetDate = new Date(baseTime + medianDays * 24 * 60 * 60 * 1000);
 
     const ics = generateCalendarReminder({
       title: `Toyota Arrival Window: ${currentModel.name} ${currentPowertrain.name}`,
-      description: `Projected delivery arrival window for ${currentModel.name} ${currentPowertrain.name} (${province}). Median wait: ${medianDays} days (~${medianMonths} months).`,
+      description: `Projected delivery arrival window for ${currentModel.name} ${currentPowertrain.name} (${province}). Order date: ${depositDate}. Median wait: ${medianDays} days (~${medianMonths} months).`,
       startDate: targetDate,
       location: `${province} Dealership`,
     });
@@ -535,6 +535,7 @@ export function WaitTimeEstimator({
               type="date"
               value={depositDate}
               onChange={(e) => setDepositDate(e.target.value)}
+              suppressHydrationWarning
             />
           </div>
         </div>
@@ -573,15 +574,27 @@ export function WaitTimeEstimator({
                 >
                   Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                 </Badge>
+                {isLimitedRegionalData && (
+                  <Badge
+                    variant="outline"
+                    data-testid="regional-baseline-badge"
+                    className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
+                  >
+                    National baseline · Limited regional data for {province}
+                  </Badge>
+                )}
               </div>
 
-              <div className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight">
+              <div
+                className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight"
+                suppressHydrationWarning
+              >
                 {optimisticDate} – {conservativeDate}
               </div>
 
               <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 flex-wrap">
                 <Calendar className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                <span>
+                <span suppressHydrationWarning>
                   Based on 25th – 75th percentile wait durations
                   {daysAlreadyWaited > 0 ? ` (${daysAlreadyWaited} days waited so far)` : ''} for orders placed on{' '}
                   {new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')).toLocaleDateString('en-CA', {
@@ -635,7 +648,7 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
                     {p25Days} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
                     ~{optimisticDate}
                   </p>
                 </div>
@@ -650,7 +663,7 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-extrabold tracking-tight text-amber-400">
                     {medianDays} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
                     ~{calculateProjectedDate(medianDays)}
                   </p>
                 </div>
@@ -665,7 +678,7 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
                     {p75Days} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
                     ~{conservativeDate}
                   </p>
                 </div>

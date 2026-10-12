@@ -465,7 +465,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] font-semibold text-zinc-500 block">
+                            <span className="text-[10px] font-semibold text-zinc-500 block" suppressHydrationWarning>
                               {calculateDaysWaitedSoFar(r.orderDate)} days so far
                             </span>
                           </div>

@@ -229,6 +229,26 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
             </div>
           </div>
 
+          {/* Verified Manufacturer Specifications Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pb-1">
+            <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-2.5 border border-zinc-200 dark:border-zinc-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">Model Years</span>
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{activeVehicle.yearRange}</span>
+            </div>
+            <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-2.5 border border-zinc-200 dark:border-zinc-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">Bolt Pattern</span>
+              <span className="text-xs font-mono font-bold text-amber-500">{activeVehicle.boltPattern}</span>
+            </div>
+            <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-2.5 border border-zinc-200 dark:border-zinc-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">Center Bore</span>
+              <span className="text-xs font-mono font-semibold text-zinc-900 dark:text-zinc-100">{activeVehicle.centerBore}</span>
+            </div>
+            <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-2.5 border border-zinc-200 dark:border-zinc-800 text-center">
+              <span className="text-[10px] uppercase font-bold text-zinc-500 block">Min Load Rating</span>
+              <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{activeVehicle.recommendedLoadIndex}</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Factory OEM Sizes */}
             <div className="space-y-2">
@@ -367,11 +387,6 @@ function TireCard({ tire }: TireCardProps) {
             <div className="flex items-center gap-1 text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
               <span>{tire.rating.toFixed(1)}</span>
-              {tire.reviewCount !== undefined && (
-                <span className="text-zinc-400 font-normal text-[11px]">
-                  ({tire.reviewCount.toLocaleString()}+ reviews)
-                </span>
-              )}
             </div>
           )}
 
