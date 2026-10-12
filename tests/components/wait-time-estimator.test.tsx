@@ -54,7 +54,7 @@ describe('WaitTimeEstimator Component', () => {
     });
 
     expect(screen.getByText(/290 Days/i)).toBeInTheDocument();
-    expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/360 Days/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/85%/i)).toBeInTheDocument();
     expect(screen.getByText(/Powertrain Wait-Time Comparison/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Gasoline \(Gas\)/i).length).toBeGreaterThanOrEqual(1);
@@ -346,6 +346,11 @@ describe('WaitTimeEstimator Component', () => {
     await waitFor(() => {
       // Conservative P75 displays true value (560 Days) without 420-day clamping
       expect(screen.getAllByText(/560 Days/i).length).toBeGreaterThanOrEqual(1);
+      // Multiplier breakdown shows base P75 scaling to adjusted wait
+      expect(screen.getByTestId('multiplier-breakdown-note')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Base P75: 450 days · Adjusted to ~560 days based on Ontario regional allocation and AWD demand factors\./i)
+      ).toBeInTheDocument();
       // Explanatory carryover allocation notice is rendered
       expect(screen.getByTestId('carryover-allocation-notice')).toBeInTheDocument();
       expect(
@@ -468,7 +473,7 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.getAllByText(/335 Days/i).length).toBeGreaterThanOrEqual(1);
       // P25 and P75 bounds under 420 days
       expect(screen.getByText(/315 Days/i)).toBeInTheDocument();
-      expect(screen.getByText(/360 Days/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/360 Days/i).length).toBeGreaterThanOrEqual(1);
       // Arrival date must be in 2027 and never 2028
       expect(screen.getAllByText(/2027/i).length).toBeGreaterThanOrEqual(1);
       expect(screen.queryByText(/2028/i)).not.toBeInTheDocument();
@@ -808,6 +813,43 @@ describe('WaitTimeEstimator Component', () => {
       expect(
         screen.getAllByText(/Historical pricing varies by model year \(current 2026 MSRP shown for reference\)\./i).length
       ).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('displays historical dealer benchmark badge when Tacoma is selected', async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/api/stats')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ success: true, data: {} }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'tacoma',
+            modelName: 'Tacoma',
+            powertrainSlug: 'gas',
+            province: 'BC',
+            sampleCounts: { total: 10, delivered: 10, pending: 0 },
+            waitStats: { p25: 120, median: 150, p75: 180, mean: 150, min: 90, max: 210 },
+            pricingInsights: { atMsrpPercent: 100, aboveMsrpPercent: 0, avgAddonsCad: 0 },
+          },
+        }),
+      });
+    });
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="tacoma" initialPowertrain="gas" initialProvince="BC" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('tacoma-benchmark-badge')).toBeInTheDocument();
+      expect(
+        screen.getByText(/10 Historical Dealer Benchmarks \(Community submissions opening soon\)\./i)
+      ).toBeInTheDocument();
     });
   });
 });

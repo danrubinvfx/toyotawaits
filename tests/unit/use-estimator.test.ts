@@ -38,6 +38,10 @@ describe('useEstimator Hook', () => {
 
     // P75 is 560 days, NOT clamped to 420
     expect(result.current.p75Days).toBe(560);
+    expect(result.current.baseP75Days).toBe(450);
+    expect(result.current.multiplierBreakdown).toBe(
+      'Base P75: 450 days · Adjusted to ~560 days based on Ontario regional allocation and AWD demand factors.'
+    );
     expect(result.current.medianDays).toBe(510);
     expect(result.current.p25Days).toBe(440);
     expect(result.current.exceedsCarryoverThreshold).toBe(true);
@@ -94,5 +98,19 @@ describe('useEstimator Hook', () => {
     expect(result.current.p75Days).toBe(120);
     expect(result.current.exceedsCarryoverThreshold).toBe(false);
     expect(result.current.carryoverNote).toBeNull();
+  });
+
+  it('renders Tacoma sampleBadgeText indicating historical dealer benchmarks', () => {
+    const { result } = renderHook(() =>
+      useEstimator({
+        modelSlug: 'tacoma',
+        powertrainSlug: 'gas',
+        province: 'BC',
+      })
+    );
+
+    expect(result.current.sampleBadgeText).toBe(
+      '10 Historical Dealer Benchmarks (Community submissions opening soon).'
+    );
   });
 });

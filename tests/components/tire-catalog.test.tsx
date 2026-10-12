@@ -201,4 +201,17 @@ describe('TireCatalog Component', () => {
     const priceDollarMatches = screen.queryAllByText(/^\$\d+(\.\d{2})?$/);
     expect(priceDollarMatches).toHaveLength(0);
   });
+
+  it('renders editorial rating badges and severe snow methodology notice', () => {
+    render(<TireCatalog />);
+
+    expect(
+      screen.getByText(
+        /Scores represent editorial ratings based on Canadian severe-snow compliance \(3PMSF\), compound flexibility below 7°C, and real-world treadwear feedback\./i
+      )
+    ).toBeInTheDocument();
+
+    const editorialBadges = screen.getAllByText(/Editorial Rating: \d\.\d \/ 5/i);
+    expect(editorialBadges.length).toBeGreaterThanOrEqual(1);
+  });
 });

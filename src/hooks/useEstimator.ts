@@ -1,10 +1,13 @@
 import { useMemo } from 'react';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
+import { CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
 
 export interface UseEstimatorOptions {
   modelSlug: string;
   powertrainSlug?: string;
+  trimSlug?: string;
+  trimName?: string;
   province?: string;
   depositDate?: string;
   todayDate?: Date;
@@ -16,6 +19,8 @@ export interface EstimatorCalculationResult {
   p25Days: number;
   medianDays: number;
   p75Days: number;
+  baseP75Days: number;
+  multiplierBreakdown: string | null;
   minWaitMonths: number;
   maxWaitMonths: number;
   medianMonths: string;
@@ -26,6 +31,7 @@ export interface EstimatorCalculationResult {
   isHistoricalOrderDate: boolean;
   isLimitedRegionalData: boolean;
   verifiedSampleSize: number;
+  sampleBadgeText: string;
   carryoverNote: string | null;
   exceedsCarryoverThreshold: boolean;
   calculateProjectedDate: (daysOffset: number) => string;
@@ -34,8 +40,22 @@ export interface EstimatorCalculationResult {
 export const CARRYOVER_ALLOCATION_NOTE =
   'Orders over 14 months typically carry over into subsequent model-year allocation queues.';
 
+export const BASE_MODEL_P75: Record<string, number> = {
+  sienna: 450,
+  rav4: 410,
+  'grand-highlander': 380,
+  'prius-prime': 230,
+  prius: 120,
+  'land-cruiser': 145,
+  tacoma: 180,
+};
+
 export function useEstimator({
   modelSlug,
+  powertrainSlug: _powertrainSlug,
+  trimSlug,
+  trimName,
+  province,
   depositDate,
   todayDate = new Date(),
   benchmarks = BASELINE_MODEL_BENCHMARKS,
@@ -108,10 +128,37 @@ export function useEstimator({
   const exceedsCarryoverThreshold = p75Days > 400;
   const carryoverNote = exceedsCarryoverThreshold ? CARRYOVER_ALLOCATION_NOTE : null;
 
+  // Multiplier Breakdown & Base P75 calculation
+  const baseP75Days = BASE_MODEL_P75[modelSlug] ?? currentBenchmark?.p75_days ?? 450;
+  const provinceObj = CANADIAN_PROVINCES_LIST.find(
+    (p) => p.code.toLowerCase() === province?.toLowerCase()
+  );
+  const provinceLabel = provinceObj ? provinceObj.name : province || 'regional';
+  const trimLabel =
+    trimName && trimName !== 'All Trims' && trimName !== 'all'
+      ? trimName
+      : modelSlug === 'sienna'
+      ? 'AWD'
+      : trimSlug && trimSlug !== 'all'
+      ? trimSlug
+      : 'trim';
+
+  const multiplierBreakdown =
+    p75Days !== baseP75Days
+      ? `Base P75: ${baseP75Days} days · Adjusted to ~${p75Days} days based on ${provinceLabel} regional allocation and ${trimLabel} demand factors.`
+      : null;
+
+  const sampleBadgeText =
+    modelSlug === 'tacoma'
+      ? '10 Historical Dealer Benchmarks (Community submissions opening soon).'
+      : `Based on ${verifiedSampleSize} verified deliveries`;
+
   return {
     p25Days,
     medianDays,
     p75Days,
+    baseP75Days,
+    multiplierBreakdown,
     minWaitMonths,
     maxWaitMonths,
     medianMonths,
@@ -122,6 +169,7 @@ export function useEstimator({
     isHistoricalOrderDate,
     isLimitedRegionalData,
     verifiedSampleSize,
+    sampleBadgeText,
     carryoverNote,
     exceedsCarryoverThreshold,
     calculateProjectedDate,

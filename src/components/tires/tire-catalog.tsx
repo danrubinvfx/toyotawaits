@@ -71,6 +71,14 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
             winter and all-weather rubber for Canadian snow, black ice, and mountain passes.
           </p>
 
+          <div
+            data-testid="tire-editorial-methodology-note"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950/80 px-4 py-2 text-xs text-zinc-300 max-w-2xl mx-auto shadow-xs"
+          >
+            <Info className="h-4 w-4 text-amber-500 shrink-0" />
+            <span>Scores represent editorial ratings based on Canadian severe-snow compliance (3PMSF), compound flexibility below 7°C, and real-world treadwear feedback.</span>
+          </div>
+
           {/* Canadian Winter Context Ticker */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-3xl mx-auto pt-6 border-t border-zinc-800/80 text-left">
             <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3.5 space-y-1">
@@ -383,7 +391,7 @@ function TireCard({ tire }: TireCardProps) {
           {tire.rating !== undefined && (
             <div className="flex items-center gap-1 text-amber-500 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
               <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
-              <span>{tire.rating.toFixed(1)}</span>
+              <span>Editorial Rating: {tire.rating.toFixed(1)} / 5</span>
             </div>
           )}
 

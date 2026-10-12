@@ -22,7 +22,7 @@ import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS, getPowertrainBenchmark } from '@/lib/db/stats';
-import { CARRYOVER_ALLOCATION_NOTE } from '@/hooks/useEstimator';
+import { CARRYOVER_ALLOCATION_NOTE, BASE_MODEL_P75 } from '@/hooks/useEstimator';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -369,6 +369,20 @@ export function WaitTimeEstimator({
   const provinceObj = CANADIAN_PROVINCES_LIST.find((p) => p.code === province);
   const provinceName = provinceObj ? provinceObj.name : province;
 
+  const baseP75Days = BASE_MODEL_P75[modelSlug] ?? fallbackBenchmark?.p75_days ?? 450;
+  const currentTrim = currentTrims.find((t) => t.slug === trimSlug);
+  const trimDisplayName =
+    currentTrim && trimSlug !== 'all'
+      ? currentTrim.name
+      : modelSlug === 'sienna'
+      ? 'AWD'
+      : 'trim';
+
+  const multiplierBreakdown =
+    p75Days !== baseP75Days
+      ? `Base P75: ${baseP75Days} days · Adjusted to ~${p75Days} days based on ${provinceName} regional allocation and ${trimDisplayName} demand factors.`
+      : null;
+
   const powertrainComparisonData = useMemo(() => {
     // Provincial factor based on empirical Canadian data
     let provFactor = 1.0;
@@ -627,6 +641,15 @@ export function WaitTimeEstimator({
                 {optimisticDate} – {conservativeDate}
               </div>
 
+              {multiplierBreakdown && (
+                <div
+                  data-testid="multiplier-breakdown-note"
+                  className="text-xs text-amber-600/90 dark:text-amber-400/90 font-medium text-center max-w-xl px-2"
+                >
+                  {multiplierBreakdown}
+                </div>
+              )}
+
               <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 flex-wrap">
                 <Calendar className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 <span suppressHydrationWarning>
@@ -660,8 +683,14 @@ export function WaitTimeEstimator({
 
               <div className="text-[11px] text-zinc-500 flex items-center justify-center gap-1 pt-0.5">
                 <CheckCircle className="h-3 w-3 text-emerald-600" />
-                <span>Based on {verifiedSampleSize} verified deliveries</span>
-                {stats?.sampleCounts?.pending ? (
+                {modelSlug === 'tacoma' ? (
+                  <span data-testid="tacoma-benchmark-badge">
+                    10 Historical Dealer Benchmarks (Community submissions opening soon).
+                  </span>
+                ) : (
+                  <span>Based on {verifiedSampleSize} verified deliveries</span>
+                )}
+                {modelSlug !== 'tacoma' && stats?.sampleCounts?.pending ? (
                   <span className="text-[10px] text-zinc-400">
                     ({stats.sampleCounts.pending} active queue)
                   </span>

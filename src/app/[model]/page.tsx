@@ -79,7 +79,11 @@ export default async function ModelPage({ params }: RouteProps) {
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-medium">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
-                  <span>Based on {benchmark.sample_size} verified deliveries</span>
+                  {model.slug === 'tacoma' ? (
+                    <span>10 Historical Dealer Benchmarks (Community submissions opening soon).</span>
+                  ) : (
+                    <span>Based on {benchmark.sample_size} verified deliveries</span>
+                  )}
                 </div>
               </div>
             </div>
