@@ -38,6 +38,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const [modelFilter, setModelFilter] = useState<string>('all');
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [powertrainFilter, setPowertrainFilter] = useState<string>('all');
   const [pillFilter, setPillFilter] = useState<'all' | 'hybrid' | 'phev' | 'pending' | 'delivered'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
@@ -114,6 +115,11 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     for (const r of records) {
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
+      if (powertrainFilter !== 'all') {
+        if (powertrainFilter === 'hev' && !isHybrid(r)) continue;
+        if (powertrainFilter === 'phev' && !isPhev(r)) continue;
+        if (powertrainFilter === 'gas' && (isHybrid(r) || isPhev(r))) continue;
+      }
       all++;
       if (isHybrid(r)) hybrid++;
       if (isPhev(r)) phev++;
@@ -121,7 +127,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
       else if (r.status === 'pending') pending++;
     }
     return { all, hybrid, phev, delivered, pending };
-  }, [records, modelFilter, provinceFilter]);
+  }, [records, modelFilter, provinceFilter, powertrainFilter]);
 
   // Filter and sort items (includes both delivered and pending submissions)
   const filteredRecords = useMemo(() => {
@@ -131,8 +137,18 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
         if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
         if (statusFilter !== 'all' && r.status !== statusFilter) return false;
 
-        if (pillFilter === 'hybrid' && !isHybrid(r)) return false;
-        if (pillFilter === 'phev' && !isPhev(r)) return false;
+        const effectivePowertrain = powertrainFilter !== 'all'
+          ? powertrainFilter
+          : pillFilter === 'hybrid'
+            ? 'hev'
+            : pillFilter === 'phev'
+              ? 'phev'
+              : 'all';
+
+        if (effectivePowertrain === 'hev' && !isHybrid(r)) return false;
+        if (effectivePowertrain === 'phev' && !isPhev(r)) return false;
+        if (effectivePowertrain === 'gas' && (isHybrid(r) || isPhev(r))) return false;
+
         if (pillFilter === 'pending' && r.status !== 'pending') return false;
         if (pillFilter === 'delivered' && r.status !== 'delivered') return false;
 
@@ -167,19 +183,32 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           return sortOrder === 'desc' ? daysB - daysA : daysA - daysB;
         }
       });
-  }, [records, modelFilter, provinceFilter, statusFilter, pillFilter, debouncedSearch, sortBy, sortOrder]);
+  }, [records, modelFilter, provinceFilter, statusFilter, powertrainFilter, pillFilter, debouncedSearch, sortBy, sortOrder]);
 
   const totalPages = Math.ceil(filteredRecords.length / pageSize) || 1;
   const paginatedRecords = filteredRecords.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // Dynamic CSV download link with query params directly routing to /api/export
   const csvDownloadUrl = useMemo(() => {
-    const params = new URLSearchParams({ format: 'csv' });
-    if (modelFilter !== 'all') params.append('model', modelFilter);
-    if (provinceFilter !== 'all') params.append('province', provinceFilter);
-    if (statusFilter !== 'all') params.append('status', statusFilter);
-    return `/api/export?${params.toString()}`;
-  }, [modelFilter, provinceFilter, statusFilter]);
+    const model = modelFilter;
+    const powertrain = powertrainFilter !== 'all'
+      ? powertrainFilter
+      : pillFilter === 'hybrid'
+        ? 'hev'
+        : pillFilter === 'phev'
+          ? 'phev'
+          : 'all';
+    const status = statusFilter !== 'all'
+      ? statusFilter
+      : pillFilter === 'delivered'
+        ? 'delivered'
+        : pillFilter === 'pending'
+          ? 'pending'
+          : 'all';
+    const province = provinceFilter;
+
+    return `/api/export?format=csv${model !== 'all' ? `&model=${encodeURIComponent(model)}` : ''}${powertrain !== 'all' ? `&powertrain=${encodeURIComponent(powertrain)}` : ''}${status !== 'all' ? `&status=${encodeURIComponent(status)}` : ''}${province !== 'all' ? `&province=${encodeURIComponent(province)}` : ''}`;
+  }, [modelFilter, powertrainFilter, pillFilter, statusFilter, provinceFilter]);
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-sm">
@@ -211,6 +240,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               onClick={() => {
                 setPillFilter('all');
                 setStatusFilter('all');
+                setPowertrainFilter('all');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer ${
@@ -227,6 +257,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               onClick={() => {
                 setPillFilter('hybrid');
                 setStatusFilter('all');
+                setPowertrainFilter('hev');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -244,6 +275,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               onClick={() => {
                 setPillFilter('phev');
                 setStatusFilter('all');
+                setPowertrainFilter('phev');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
@@ -325,8 +357,9 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 pt-1">
           <Select
+            aria-label="Filter deliveries by vehicle model"
             value={modelFilter}
             onChange={(e) => {
               setModelFilter(e.target.value);
@@ -343,6 +376,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </Select>
 
           <Select
+            aria-label="Filter deliveries by province or territory"
             value={provinceFilter}
             onChange={(e) => {
               setProvinceFilter(e.target.value);
@@ -359,9 +393,13 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </Select>
 
           <Select
+            aria-label="Filter deliveries by delivery status"
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
+              if (e.target.value === 'delivered') setPillFilter('delivered');
+              else if (e.target.value === 'pending') setPillFilter('pending');
+              else if (pillFilter === 'delivered' || pillFilter === 'pending') setPillFilter('all');
               setCurrentPage(1);
             }}
             className="text-xs h-9"
@@ -372,6 +410,25 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </Select>
 
           <Select
+            aria-label="Filter deliveries by powertrain"
+            value={powertrainFilter}
+            onChange={(e) => {
+              setPowertrainFilter(e.target.value);
+              if (e.target.value === 'hev') setPillFilter('hybrid');
+              else if (e.target.value === 'phev') setPillFilter('phev');
+              else if (pillFilter === 'hybrid' || pillFilter === 'phev') setPillFilter('all');
+              setCurrentPage(1);
+            }}
+            className="text-xs h-9"
+          >
+            <option value="all">All Powertrains</option>
+            <option value="hev">Hybrid (HEV)</option>
+            <option value="phev">Plug-in Hybrid (PHEV)</option>
+            <option value="gas">Gasoline</option>
+          </Select>
+
+          <Select
+            aria-label="Sort delivery records"
             value={`${sortBy}-${sortOrder}`}
             onChange={(e) => {
               const [sb, so] = e.target.value.split('-') as ['orderDate' | 'waitDays', 'desc' | 'asc'];

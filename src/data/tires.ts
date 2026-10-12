@@ -87,17 +87,20 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
     modelName: 'Toyota RAV4 (Hybrid, Prime & Gas)',
     label: 'RAV4 (Hybrid / Prime)',
     badge: 'Canada #1 Selling SUV',
-    yearRange: '2019–2026 (Gen 5)',
+    yearRange: '2019–2025 (Gen 5) & 2026+ (Gen 6)',
     boltPattern: '5x114.3',
     centerBore: '60.1 mm',
     recommendedLoadIndex: '102 (SL/XL)',
     factorySizes: [
-      '225/65R17 (LE, XLE, Woodland)',
-      '225/60R18 (XSE, Prime SE/XSE, Trail)',
-      '235/55R19 (Limited)',
+      '5th Gen (2019–2025): 225/65R17 (LE, XLE, Woodland)',
+      '5th Gen (2019–2025): 225/60R18 (XSE, Prime SE/XSE, Trail)',
+      '5th Gen (2019–2025): 235/55R19 (Limited)',
+      '6th Gen (2026+): 225/65R17 (Core LE)',
+      '6th Gen (2026+): 225/60R18 (Core XLE, Woodland)',
+      '6th Gen (2026+): 235/50R20 (Sport XSE, GR SPORT)',
     ],
     downsizingTip:
-      'Downsizing 18" or 19" factory wheels to 17" rims (225/65R17) for winter saves ~$250–$400 per package and provides taller sidewalls to cushion against winter frost heaves and potholes.',
+      'Downsizing 18" or 19" factory wheels to 17" rims (225/65R17) for winter saves ~$250–$400 per package and provides taller sidewalls to cushion against winter frost heaves and potholes. For 2026+ models with up to 20" wheels on Sport and GR SPORT trims, downsizing to 17" or 18" rims offers the same substantial sidewall protection and savings.',
     tires: [
       {
         id: 'rav4-michelin-xice',

@@ -8,6 +8,9 @@ export interface CatalogTrim {
   slug: string;
   name: string;
   msrpCad: number;
+  minYear?: number;
+  maxYear?: number;
+  generationGroup?: 'gen5' | 'gen6' | 'both';
 }
 
 export interface CatalogPowertrain {
@@ -25,6 +28,36 @@ export interface CatalogModel {
   powertrains: CatalogPowertrain[];
 }
 
+export const RAV4_GENERATIONS = {
+  gen5: {
+    generation: 5,
+    label: '5th Generation (2019–2025)',
+    yearRange: '2019–2025',
+    trims: [
+      'LE',
+      'XLE',
+      'XLE Premium',
+      'Trail',
+      'Woodland',
+      'Limited',
+      'SE',
+      'XSE',
+      'Prime SE',
+      'Prime XSE',
+    ],
+  },
+  gen6: {
+    generation: 6,
+    label: '6th Generation (2026+)',
+    yearRange: '2026+',
+    trims: [
+      'Core (LE, XLE, Limited)',
+      'Woodland',
+      'Sport (SE, XSE, GR SPORT)',
+    ],
+  },
+} as const;
+
 export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
   {
     id: '10000000-0000-4000-8000-000000000001',
@@ -37,12 +70,13 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
         slug: 'hev',
         name: 'Hybrid (HEV)',
         trims: [
-          { id: '30000000-0000-4000-8000-000000000001', slug: 'le-awd', name: 'LE AWD', msrpCad: 37500 },
-          { id: '30000000-0000-4000-8000-000000000002', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 41300 },
-          { id: '30000000-0000-4000-8000-000000000003', slug: 'woodland-awd', name: 'Woodland Edition AWD', msrpCad: 47000 },
-          { id: '30000000-0000-4000-8000-000000000004', slug: 'se-awd', name: 'SE AWD', msrpCad: 43500 },
-          { id: '30000000-0000-4000-8000-000000000005', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 50900 },
-          { id: '30000000-0000-4000-8000-000000000006', slug: 'limited-awd', name: 'Limited AWD', msrpCad: 52000 },
+          { id: '30000000-0000-4000-8000-000000000001', slug: 'le-awd', name: 'LE AWD', msrpCad: 37500, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000002', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 41300, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000007', slug: 'xle-premium-awd', name: 'XLE Premium AWD', msrpCad: 43000, maxYear: 2025, generationGroup: 'gen5' },
+          { id: '30000000-0000-4000-8000-000000000003', slug: 'woodland-awd', name: 'Woodland Edition AWD', msrpCad: 47000, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000004', slug: 'se-awd', name: 'SE AWD', msrpCad: 43500, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000005', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 50900, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000006', slug: 'limited-awd', name: 'Limited AWD', msrpCad: 52000, generationGroup: 'both' },
         ],
       },
       {
@@ -50,10 +84,10 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
         slug: 'phev',
         name: 'Plug-in Hybrid (PHEV)',
         trims: [
-          { id: '30000000-0000-4000-8000-000000000010', slug: 'se-awd', name: 'SE AWD', msrpCad: 48750 },
-          { id: '30000000-0000-4000-8000-000000000011', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 56400 },
-          { id: '30000000-0000-4000-8000-000000000012', slug: 'xse-technology-awd', name: 'XSE AWD Technology Package', msrpCad: 59350 },
-          { id: '30000000-0000-4000-8000-000000000013', slug: 'gr-sport-awd', name: 'GR SPORT AWD', msrpCad: 57500 },
+          { id: '30000000-0000-4000-8000-000000000010', slug: 'se-awd', name: 'SE AWD', msrpCad: 48750, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000011', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 56400, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000012', slug: 'xse-technology-awd', name: 'XSE AWD Technology Package', msrpCad: 59350, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000013', slug: 'gr-sport-awd', name: 'GR SPORT AWD', msrpCad: 57500, minYear: 2026, generationGroup: 'gen6' },
         ],
       },
       {
@@ -61,10 +95,11 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
         slug: 'gas',
         name: 'Gasoline',
         trims: [
-          { id: '30000000-0000-4000-8000-000000000021', slug: 'le-awd', name: 'LE AWD', msrpCad: 35650 },
-          { id: '30000000-0000-4000-8000-000000000022', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 38550 },
-          { id: '30000000-0000-4000-8000-000000000023', slug: 'trail-awd', name: 'Trail AWD', msrpCad: 42450 },
-          { id: '30000000-0000-4000-8000-000000000024', slug: 'limited-awd', name: 'Limited AWD', msrpCad: 46050 },
+          { id: '30000000-0000-4000-8000-000000000021', slug: 'le-awd', name: 'LE AWD', msrpCad: 35650, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000022', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 38550, generationGroup: 'both' },
+          { id: '30000000-0000-4000-8000-000000000025', slug: 'xle-premium-awd', name: 'XLE Premium AWD', msrpCad: 40550, maxYear: 2025, generationGroup: 'gen5' },
+          { id: '30000000-0000-4000-8000-000000000023', slug: 'trail-awd', name: 'Trail AWD', msrpCad: 42450, maxYear: 2025, generationGroup: 'gen5' },
+          { id: '30000000-0000-4000-8000-000000000024', slug: 'limited-awd', name: 'Limited AWD', msrpCad: 46050, generationGroup: 'both' },
         ],
       },
     ],

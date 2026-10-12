@@ -72,7 +72,7 @@ export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
     tips: [
       'Verify the hybrid battery cooling air intake vent (located below rear passenger seat) has its factory filter screen seated and unobstructed.',
       'Check odometer: Brand-new dealer arrivals typically show 5 to 30 km. If over 50 km, ask for explanation in writing.',
-      'Pair your smartphone with Toyota Multimedia (wireless Apple CarPlay / Android Auto) and confirm TSS 3.0 dash cameras initialize without warnings.',
+      'Pair your smartphone with Toyota Multimedia (wireless Apple CarPlay / Android Auto). For clean recording, use an OEM-Style TSS Mirror Tap (Powers aftermarket dashcams from the Safety Sense mirror shroud without splicing).',
     ],
   },
 ];

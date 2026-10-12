@@ -20,9 +20,9 @@ export function Footer() {
               Crowdsourced Canadian vehicle delivery tracker for RAV4 HEV/PHEV, Sienna, Grand Highlander,
               and Land Cruiser. Helping Canadian car buyers cut through allocation opacity.
             </p>
-            <div className="flex items-center space-x-2 text-xs text-zinc-500">
-              <Lock className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Strict Zero-PII Policy: Zero names, emails, VINs, or IPs stored.</span>
+            <div className="flex items-start space-x-2 text-xs text-zinc-500">
+              <Lock className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
+              <span>Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for &apos;Notify Me&apos; delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.</span>
             </div>
             <div className="pt-1">
               <a

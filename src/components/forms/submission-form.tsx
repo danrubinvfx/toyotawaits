@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useId, useRef } from 'react';
+import React, { useState, useId, useRef, useEffect } from 'react';
 import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
@@ -142,7 +142,20 @@ export function SubmissionForm() {
     currentPowertrains.find((p) => p.slug === selectedPowertrainSlug) ||
     currentPowertrains[0];
 
-  const currentTrims: CatalogTrim[] = currentPowertrain.trims;
+  const currentTrims: CatalogTrim[] = currentPowertrain.trims.filter((t) => {
+    if (modelYear <= 2025) {
+      if (t.minYear && t.minYear > 2025) return false;
+      if (t.name.toLowerCase().includes('gr sport') || t.slug === 'gr-sport-awd') return false;
+    }
+    if (modelYear >= 2026) {
+      if (t.maxYear && t.maxYear < 2026) return false;
+    }
+    return true;
+  });
+
+  const effectiveTrimId = currentTrims.some((t) => t.id === selectedTrimId)
+    ? selectedTrimId
+    : currentTrims[0]?.id || selectedTrimId;
 
   // Handle Model Change
   const handleModelChange = (modelSlug: string) => {
@@ -179,7 +192,7 @@ export function SubmissionForm() {
     setFieldErrors({});
 
     try {
-      const currentTrim = currentTrims.find((t) => t.id === selectedTrimId) || currentTrims[0];
+      const currentTrim = currentTrims.find((t) => t.id === effectiveTrimId) || currentTrims[0];
 
       const payload = {
         modelId: currentModel.id,
@@ -514,7 +527,7 @@ export function SubmissionForm() {
               <Label htmlFor={`${formId}-trim`}>Trim Level (Canada)</Label>
               <Select
                 id={`${formId}-trim`}
-                value={selectedTrimId}
+                value={effectiveTrimId}
                 onChange={(e) => setSelectedTrimId(e.target.value)}
                 className="font-medium"
               >

@@ -20,7 +20,7 @@ import {
 export const metadata: Metadata = {
   title: 'Zero-PII Privacy Charter & PIPEDA Compliance | ToyotaWaits.ca',
   description:
-    'Our strict zero-PII privacy guarantee: no VINs, names, emails, IPs, or tracking cookies stored. Anonymous order tracking powered by client-side SHA-256 keys.',
+    'Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for Notify Me delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.',
 };
 
 export default function PrivacyPage() {
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         </h1>
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
           At ToyotaWaits.ca, privacy is not a policy addendum—it is our core software architecture.
-          We designed our database and APIs so it is technically impossible for us to collect, store, or sell your personal information.
+          Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for &apos;Notify Me&apos; delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.
         </p>
       </div>
 
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
             <CardTitle className="text-base font-bold">Zero PII Collected</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
-            No names, emails, phone numbers, dealer names, or 17-digit Vehicle Identification Numbers (VINs).
+            Order timeline submissions are 100% anonymous and never require personal identifiers. Optional &apos;Notify Me&apos; alert emails are stored in an isolated queue and can be deleted at any time.
           </CardContent>
         </Card>
 

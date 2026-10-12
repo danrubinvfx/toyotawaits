@@ -449,7 +449,7 @@ function TireCard({ tire }: TireCardProps) {
         {/* Pricing Notice & Amazon CTA */}
         <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-2 mt-auto">
           <div className="flex items-center justify-between text-[11px] text-zinc-500">
-            <span>Amazon.ca Live Listing</span>
+            <span>{tire.asin ? 'Amazon.ca Live Listing' : 'Search on Amazon.ca'}</span>
             <span className="text-zinc-400">Prime &amp; Express Delivery</span>
           </div>
 
@@ -466,8 +466,9 @@ function TireCard({ tire }: TireCardProps) {
               href={formatAmazonAffiliateUrl(tire.amazonUrl)}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
+              aria-label="Check Price on Amazon.ca"
             >
-              <span>Check Price on Amazon.ca</span>
+              <span>{tire.asin ? 'Check Price on Amazon.ca' : 'Search on Amazon.ca'}</span>
               <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
             </a>
           </Button>

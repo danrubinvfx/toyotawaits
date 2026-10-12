@@ -335,4 +335,27 @@ describe('SubmissionForm Component', () => {
     expect(doneBtn.className).toContain('rounded-xl');
     expect(screen.getByText(/Redirecting to estimates in/i)).toBeInTheDocument();
   });
+
+  it('filters out GR SPORT trim for model years <= 2025 and shows it for 2026+', () => {
+    render(<SubmissionForm />);
+
+    // Select RAV4 PHEV (where GR SPORT is offered)
+    const powertrainSelect = screen.getByLabelText(/Powertrain/i);
+    fireEvent.change(powertrainSelect, { target: { value: 'phev' } });
+
+    // Default year is 2026: GR SPORT should be in the trim options
+    const trimSelect = screen.getByLabelText(/Trim Level/i);
+    expect(screen.getByRole('option', { name: /GR SPORT AWD/i })).toBeInTheDocument();
+
+    // Change model year to 2025
+    const yearSelect = screen.getByLabelText(/Model Year/i);
+    fireEvent.change(yearSelect, { target: { value: '2025' } });
+
+    // GR SPORT should NOT be present for <= 2025
+    expect(screen.queryByRole('option', { name: /GR SPORT AWD/i })).not.toBeInTheDocument();
+
+    // Revert year back to 2026
+    fireEvent.change(yearSelect, { target: { value: '2026' } });
+    expect(screen.getByRole('option', { name: /GR SPORT AWD/i })).toBeInTheDocument();
+  });
 });

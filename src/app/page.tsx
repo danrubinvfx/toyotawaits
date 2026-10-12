@@ -255,8 +255,7 @@ export default async function HomePage() {
               <CardTitle className="text-lg">Zero-PII Privacy</CardTitle>
             </CardHeader>
             <CardContent className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Zero login requirements, zero VIN tracking, and zero email collection. We use client-side cryptographic
-              secret keys so you can update delivery status later without revealing who you are.
+              Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for &apos;Notify Me&apos; delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.
             </CardContent>
           </Card>
 

@@ -150,5 +150,35 @@ describe('CommunityDataTable Component', () => {
 
     expect(screen.getAllByText(/Hybrid/i).length).toBeGreaterThan(0);
   });
+
+  it('renders explicit accessibility aria-labels on all delivery log filter dropdowns', () => {
+    render(<CommunityDataTable />);
+
+    expect(screen.getByRole('combobox', { name: 'Filter deliveries by vehicle model' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Filter deliveries by powertrain' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Filter deliveries by province or territory' })).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Filter deliveries by delivery status' })).toBeInTheDocument();
+  });
+
+  it('passes all active filters dynamically to the CSV export URL', () => {
+    render(<CommunityDataTable />);
+
+    const downloadLink = screen.getByText('Download Filtered CSV').closest('a');
+    expect(downloadLink).toBeInTheDocument();
+
+    const modelSelect = screen.getByRole('combobox', { name: 'Filter deliveries by vehicle model' });
+    const provSelect = screen.getByRole('combobox', { name: 'Filter deliveries by province or territory' });
+    const statusSelect = screen.getByRole('combobox', { name: 'Filter deliveries by delivery status' });
+    const powertrainSelect = screen.getByRole('combobox', { name: 'Filter deliveries by powertrain' });
+
+    fireEvent.change(modelSelect, { target: { value: 'rav4' } });
+    fireEvent.change(powertrainSelect, { target: { value: 'phev' } });
+    fireEvent.change(statusSelect, { target: { value: 'delivered' } });
+    fireEvent.change(provSelect, { target: { value: 'BC' } });
+
+    expect(downloadLink?.getAttribute('href')).toBe(
+      '/api/export?format=csv&model=rav4&powertrain=phev&status=delivered&province=BC'
+    );
+  });
 });
 
