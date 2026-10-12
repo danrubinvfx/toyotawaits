@@ -48,7 +48,7 @@ describe('BenchmarkFeed Component', () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
     // Delivery Prep section header with active model label
-    expect(screen.getByRole('heading', { name: /Delivery (Day )?Prep & (Priority|Essential) Gear/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Delivery (Day )?Prep & (Priority|Essential )?Gear/i })).toBeInTheDocument();
     expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
 
     // DeliveryPrepChecklist is present with gear for RAV4

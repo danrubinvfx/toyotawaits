@@ -17,6 +17,7 @@ import {
   RotateCcw,
   Luggage,
   Check,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModCard } from '@/components/delivery-prep/mod-card';
@@ -70,6 +71,9 @@ export interface DeliveryPrepChecklistProps {
   powertrain?: string;
   className?: string;
   defaultExpanded?: boolean;
+  vehicleLabel?: string;
+  showUniversalGear?: boolean;
+  onToggleUniversalGear?: () => void;
 }
 
 const CATEGORIES = [
@@ -149,6 +153,9 @@ export function DeliveryPrepChecklist({
   powertrain,
   className,
   defaultExpanded = true,
+  vehicleLabel,
+  showUniversalGear,
+  onToggleUniversalGear,
 }: DeliveryPrepChecklistProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -303,9 +310,14 @@ export function DeliveryPrepChecklist({
   };
 
   const getModelDisplayName = () => {
+    if (vehicleLabel && normalizedModel !== 'all') {
+      return vehicleLabel;
+    }
     switch (normalizedModel) {
+      case 'all':
+        return 'Universal Toyota Gear';
       case 'sienna':
-        return 'Toyota Sienna';
+        return 'Sienna';
       case 'grand-highlander':
         return 'Grand Highlander';
       case 'land-cruiser':
@@ -317,9 +329,9 @@ export function DeliveryPrepChecklist({
       case 'prius':
         return 'Toyota Prius';
       case 'tacoma':
-        return 'Toyota Tacoma';
+        return 'Tacoma';
       case 'rav4':
-        return normalizedPowertrain === 'phev' ? 'RAV4 Prime (PHEV)' : 'RAV4';
+        return normalizedPowertrain === 'phev' ? 'RAV4 Prime (PHEV)' : 'RAV4 (Hybrid/Prime)';
       default:
         return 'Your Toyota';
     }
@@ -334,28 +346,24 @@ export function DeliveryPrepChecklist({
         className
       )}
     >
-      {/* Header Bar */}
+      {/* 1. Header Bar: Clean Left-Aligned Block */}
       <CardHeader className="p-4 sm:p-5 border-b border-zinc-800/80 bg-zinc-900/40">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Badge className="bg-amber-500 text-zinc-950 font-bold text-[10px] sm:text-xs hover:bg-amber-400 gap-1 border-none">
-                <ClipboardCheck className="h-3 w-3" />
-                Delivery Day Prep Checklist
-              </Badge>
-              <Badge variant="outline" className="text-[10px] sm:text-xs border-amber-500/30 text-amber-400 bg-amber-500/5">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                Delivery Day Prep &amp; Gear
+              </h2>
+              <Badge
+                variant="outline"
+                className="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full border-amber-500/30 text-amber-400 bg-amber-500/10"
+              >
                 {getModelDisplayName()}
               </Badge>
             </div>
-            <CardTitle className="text-base sm:text-lg font-bold text-zinc-100">
-              Glovebox Essentials &amp; Rainy-Day Armor
-            </CardTitle>
-            <CardDescription className="text-xs text-zinc-400 italic font-serif">
-              &ldquo;Glovebox essentials and rainy-day armor while you wait out the clock.&rdquo;
-              <span className="block mt-1 font-sans not-italic text-[11px] text-zinc-400">
-                As an Amazon Associate I earn from qualifying purchases.
-              </span>
-            </CardDescription>
+            <p className="text-xs text-zinc-400">
+              Dealership pickup checklist and community-vetted drop-in gear for {getModelDisplayName()}.
+            </p>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto print:hidden">
@@ -368,16 +376,17 @@ export function DeliveryPrepChecklist({
               </div>
             </div>
 
+            {/* Subtle icon button for Print */}
             <Button
               type="button"
               variant="outline"
-              size="sm"
+              size="icon"
               onClick={handlePrint}
-              className="text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/60 text-zinc-300 hover:text-amber-400 hover:border-amber-500/50"
+              className="h-8 w-8 rounded-lg border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:text-amber-400 hover:border-amber-500/40 cursor-pointer transition-colors"
               title="Print checklist for delivery day"
+              aria-label="Print checklist"
             >
-              <Printer className="h-3.5 w-3.5 text-zinc-400" />
-              <span className="hidden sm:inline">Print</span>
+              <Printer className="h-3.5 w-3.5" />
             </Button>
 
             <Button
@@ -385,7 +394,7 @@ export function DeliveryPrepChecklist({
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs h-8 w-8 p-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60"
+              className="text-xs h-8 w-8 p-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60 cursor-pointer"
               aria-label={isExpanded ? 'Collapse Checklist' : 'Expand Checklist'}
             >
               {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -402,11 +411,11 @@ export function DeliveryPrepChecklist({
         </div>
       </CardHeader>
 
-      {/* Expandable Body */}
+      {/* 2. Expandable Body with Clean Stacked Sub-Blocks */}
       {isExpanded && (
-        <>
-          {/* 1. Dealership Pickup Day Checklist Accordion */}
-          <div className="mx-4 sm:mx-5 mt-4">
+        <div className="p-4 sm:p-5 space-y-5">
+          {/* Sub-Block 1: Dealership Pickup Day Inspection Card */}
+          <div className="space-y-1">
             <PickupChecklist
               checkedItems={checkedItems}
               onToggle={toggleItem}
@@ -414,46 +423,67 @@ export function DeliveryPrepChecklist({
             />
           </div>
 
-          {/* 2. Curated Essential Gear & Mods Section */}
-          <div className="space-y-0 pt-2">
-            <div className="p-4 sm:p-5 pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h4 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
-                  <Luggage className="h-4 w-4 text-amber-500 shrink-0" />
-                  <span>Essential Day-One Gear &amp; Drop-In Upgrades</span>
-                </h4>
-                <p className="text-xs text-zinc-400">
-                  Community-vetted drop-in organizers, all-weather liners, and dashcam harnesses for {getModelDisplayName()}.
-                </p>
-              </div>
-            </div>
+          {/* Sub-Block 2: Essential Day-One Gear Card */}
+          <Card className="border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs">
+            <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/30">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
+                    <Luggage className="h-4 w-4 text-amber-500 shrink-0" />
+                    <span>Essential Day-One Gear &amp; Drop-In Upgrades</span>
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-0.5">
+                    Community-vetted drop-in organizers, all-weather liners, and dashcam harnesses for {getModelDisplayName()}.
+                  </p>
+                </div>
 
-            {/* Category Navigation Tabs */}
-            <div className="px-4 sm:px-5 pb-3 border-b border-zinc-800/60 flex flex-wrap gap-1.5 print:hidden">
-              {CATEGORIES.map((cat) => {
-                const Icon = cat.icon;
-                const isActive = selectedCategory === cat.id;
-                return (
-                  <button
-                    key={cat.id}
+                {/* Secondary Toggle: View All Universal Delivery Gear */}
+                {onToggleUniversalGear && (
+                  <Button
                     type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
+                    variant="outline"
+                    size="sm"
+                    onClick={onToggleUniversalGear}
                     className={cn(
-                      'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer',
-                      isActive
-                        ? 'bg-amber-500 text-zinc-950 font-bold shadow-xs'
-                        : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                      'text-xs h-7 sm:h-8 border-zinc-700 transition-all font-medium self-start sm:self-auto cursor-pointer shrink-0',
+                      showUniversalGear
+                        ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 hover:bg-amber-500/20'
+                        : 'bg-zinc-900/80 text-zinc-300 hover:text-amber-400 hover:border-amber-500/40'
                     )}
                   >
-                    <Icon className="h-3 w-3" />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+                    <SlidersHorizontal className="h-3 w-3 mr-1.5 text-amber-500 shrink-0" />
+                    {showUniversalGear ? `Filter to ${vehicleLabel || getModelDisplayName()} Only` : 'View All Universal Delivery Gear'}
+                  </Button>
+                )}
+              </div>
+
+              {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
+              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2 mt-2.5 border-t border-zinc-800/50 print:hidden">
+                {CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  const isActive = selectedCategory === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={cn(
+                        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap',
+                        isActive
+                          ? 'bg-amber-500 text-zinc-950 font-bold shadow-xs'
+                          : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                      )}
+                    >
+                      <Icon className="h-3 w-3 shrink-0" />
+                      <span>{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </CardHeader>
 
             {/* Checklist Items - Vertical Stack rendered via ModCard */}
-            <CardContent className="p-4 sm:p-5 space-y-3.5">
+            <CardContent className="p-4 space-y-3.5">
               {filteredProducts.length === 0 ? (
                 <div className="p-6 text-center text-xs text-zinc-500">
                   No accessories found matching this vehicle and filter criteria.
@@ -470,34 +500,29 @@ export function DeliveryPrepChecklist({
                 ))
               )}
             </CardContent>
-          </div>
 
-          {/* Card Footer Disclosures */}
-          <CardFooter className="p-4 bg-zinc-950/60 border-t border-zinc-800/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
-            <div className="flex flex-col gap-1 text-[11px] text-zinc-400">
-              <div className="flex items-center gap-1.5">
+            {/* Card Footer Disclosures */}
+            <CardFooter className="p-3.5 sm:p-4 bg-zinc-950/80 border-t border-zinc-800/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+              <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
                 <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 <span>
                   Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
                 </span>
               </div>
-              <span className="text-zinc-500 text-[10px]">
-                As an Amazon Associate I earn from qualifying purchases.
-              </span>
-            </div>
 
-            {totalCompleted > 0 && (
-              <button
-                type="button"
-                onClick={resetChecklist}
-                className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
-              >
-                <RotateCcw className="h-3 w-3" />
-                Reset Checks
-              </button>
-            )}
-          </CardFooter>
-        </>
+              {totalCompleted > 0 && (
+                <button
+                  type="button"
+                  onClick={resetChecklist}
+                  className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Reset Checks
+                </button>
+              )}
+            </CardFooter>
+          </Card>
+        </div>
       )}
     </Card>
   );

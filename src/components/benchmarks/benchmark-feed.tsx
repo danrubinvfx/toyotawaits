@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { SlidersHorizontal, Snowflake, Disc3 } from 'lucide-react';
+import { Snowflake, Disc3 } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { cn } from '@/lib/utils';
 
@@ -127,44 +127,18 @@ export function BenchmarkFeed({
   return (
     <div className={cn('space-y-6', className)} data-testid="delivery-prep-section">
       {/* Dynamic Gear & Mods Placement */}
-      <div id="delivery-prep" className="space-y-3 scroll-mt-24 pt-2">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-1">
-          <div>
-            <h3 className="text-base sm:text-lg font-bold text-zinc-100 flex items-center gap-2">
-              <span>Delivery Day Prep &amp; Essential Gear:</span>
-              <span className="text-amber-400">{activeVehicle.label}</span>
-            </h3>
-            <p className="text-xs text-zinc-400">
-              Community-vetted drop-in gear, dashcam harnesses, and protective armor matching {activeVehicle.name}.
-            </p>
-          </div>
-
-          {/* Secondary Toggle: View All Universal Delivery Gear */}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setShowUniversalGear((prev) => !prev);
-              onSelectModel?.(activeVehicle.id);
-            }}
-            className={cn(
-              'text-xs h-8 border-zinc-700 transition-all font-medium self-start sm:self-auto cursor-pointer',
-              showUniversalGear
-                ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 hover:bg-amber-500/20'
-                : 'bg-zinc-900/80 text-zinc-300 hover:text-amber-400 hover:border-amber-500/40'
-            )}
-          >
-            <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5 text-amber-500 shrink-0" />
-            {showUniversalGear ? `Filter to ${activeVehicle.label} Only` : 'View All Universal Delivery Gear'}
-          </Button>
-        </div>
-
+      <div id="delivery-prep" className="space-y-4 scroll-mt-24 pt-2">
         {/* Dynamic Delivery Prep Checklist Component */}
         <DeliveryPrepChecklist
           model={showUniversalGear ? 'all' : activeVehicle.id}
           powertrain={activeVehicle.powertrain}
           defaultExpanded={true}
+          vehicleLabel={activeVehicle.label}
+          showUniversalGear={showUniversalGear}
+          onToggleUniversalGear={() => {
+            setShowUniversalGear((prev) => !prev);
+            onSelectModel?.(activeVehicle.id);
+          }}
         />
       </div>
 

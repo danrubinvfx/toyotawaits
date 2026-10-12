@@ -12,8 +12,7 @@ describe('DeliveryPrepChecklist Component', () => {
   it('renders correctly with default props and shows title and microcopy', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    expect(screen.getByText(/Delivery Day Prep Checklist/i)).toBeDefined();
-    expect(screen.getByText(/Glovebox Essentials & Rainy-Day Armor/i)).toBeDefined();
+    expect(screen.getByRole('heading', { name: /Delivery Day Prep & Gear/i })).toBeDefined();
     expect(
       screen.getByText(/Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data./i)
     ).toBeDefined();
@@ -231,11 +230,10 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText(/Corolla Cross \(All trims with factory rails\)/i)).toBeDefined();
   });
 
-  it('displays statutory Amazon Associates disclaimer in header, banner, and footer', () => {
+  it('does not render body Amazon Associates disclaimer (relocated to footer)', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    const disclaimers = screen.getAllByText(/As an Amazon Associate I earn from qualifying purchases\./i);
-    expect(disclaimers.length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText(/As an Amazon Associate I earn from qualifying purchases\./i)).toBeNull();
   });
 
   it('renders dealership pickup inspection checklist items in collapsible accordion above gear cards', () => {
