@@ -164,6 +164,24 @@ export default function PrivacyPage() {
             <strong>Monetization Disclosure:</strong> Curated accessory links under <code className="bg-zinc-200 dark:bg-zinc-800 px-1 py-0.5 rounded">/out/[slug]</code> use first-party redirects that do not set cookies. If you purchase products through these links, we may receive an affiliate referral fee that supports site hosting and open data infrastructure.
           </p>
         </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
+            <Lock className="h-5 w-5 text-red-600" />
+            6. Email Wait-Time Alerts &amp; Notification Privacy (&quot;Notify Me&quot;)
+          </h2>
+          <p>
+            Submitting vehicle order timelines to ToyotaWaits.ca is <strong>100% anonymous without personal identifiers</strong>—no email address or account is ever required to log or edit an order.
+          </p>
+          <p>
+            If you voluntarily subscribe to the &quot;Notify Me&quot; wait-time alert feature:
+          </p>
+          <ul className="list-disc pl-5 space-y-1.5 text-zinc-600 dark:text-zinc-400">
+            <li><strong>Isolated storage:</strong> Your email address is stored strictly in a separate notification table and is never linked, merged, or correlated with crowdsourced order submissions.</li>
+            <li><strong>Exclusive use:</strong> Email addresses are used exclusively for automated delivery arrival window notifications and regional allocation updates matching your selected model and province.</li>
+            <li><strong>1-Click Unsubscribe &amp; Immediate Purge:</strong> Every notification email includes a secure, one-click unsubscribe link that immediately and permanently deletes your email address from our systems. We never send marketing emails, third-party newsletters, or dealer solicitations.</li>
+          </ul>
+        </section>
       </div>
 
       <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex justify-center sm:justify-start">

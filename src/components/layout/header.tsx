@@ -109,8 +109,9 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full max-w-full overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
-      <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible px-3 sm:px-4 py-2.5 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
+      {/* Fixed h-14 / sm:h-16 so sticky bars below can use matching top-14 / sm:top-16 offsets */}
+      <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible h-14 sm:h-16 px-3 sm:px-4 py-2.5 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 min-w-0 shrink font-bold text-lg tracking-tight group">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-amber-600 text-white shadow-sm group-hover:scale-105 transition-transform shrink-0">
@@ -141,8 +142,8 @@ export function Header() {
           </Link>
 
           <Link
-            href="/#analytics"
-            onClick={(e) => handleAnchorClick(e, 'analytics')}
+            href="/#community-log"
+            onClick={(e) => handleAnchorClick(e, 'community-log')}
             className="hover:text-amber-500 transition-colors flex items-center gap-1.5"
           >
             <BarChart3 className="h-4 w-4 text-zinc-400" />
@@ -179,9 +180,13 @@ export function Header() {
 
           {/* Pickup Checklist Desktop Link */}
           <Link
-            href="/#checklist"
-            onClick={(e) => handleAnchorClick(e, 'checklist')}
-            className="hover:text-amber-500 transition-colors flex items-center gap-1.5"
+            href="/delivery-prep"
+            className={cn(
+              'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1',
+              pathname === '/delivery-prep'
+                ? 'text-amber-500 font-bold'
+                : 'text-zinc-600 dark:text-zinc-300'
+            )}
           >
             <ClipboardCheck className="h-4 w-4 text-zinc-400" />
             Pickup Checklist
@@ -274,11 +279,8 @@ export function Header() {
             {desktopGearOpen && (
               <div className="absolute top-full left-0 w-80 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 shadow-xl z-50">
                 <Link
-                  href="/#checklist"
-                  onClick={(e) => {
-                    setDesktopGearOpen(false);
-                    handleAnchorClick(e, 'checklist');
-                  }}
+                  href="/delivery-prep"
+                  onClick={() => setDesktopGearOpen(false)}
                   className="block p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors mb-1"
                 >
                   <p className="text-xs font-bold text-amber-500">📋 Pickup Day Checklist</p>
@@ -431,8 +433,8 @@ export function Header() {
                 </Link>
 
                 <Link
-                  href="/#analytics"
-                  onClick={(e) => handleAnchorClick(e, 'analytics')}
+                  href="/#community-log"
+                  onClick={(e) => handleAnchorClick(e, 'community-log')}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
@@ -507,9 +509,14 @@ export function Header() {
 
                 {/* Dealership Pickup Checklist */}
                 <Link
-                  href="/#checklist"
-                  onClick={(e) => handleAnchorClick(e, 'checklist')}
-                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
+                  href="/delivery-prep"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/delivery-prep'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">

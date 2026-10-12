@@ -40,10 +40,15 @@ export function SubmissionForm() {
   const searchParams = useSearchParams();
   const paramModel = searchParams?.get('model');
   const paramProvince = searchParams?.get('province');
+  const paramPowertrain = searchParams?.get('powertrain');
 
   // Cascading Selection State
-  const initialModel = (paramModel && CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === paramModel)) || CANADIAN_VEHICLE_CATALOG[0];
-  const initialPowertrain = initialModel.powertrains[0];
+  const initialModel =
+    (paramModel && CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === paramModel)) ||
+    CANADIAN_VEHICLE_CATALOG[0];
+  const initialPowertrain =
+    (paramPowertrain && initialModel.powertrains.find((p) => p.slug === paramPowertrain)) ||
+    initialModel.powertrains[0];
   const initialTrim = initialPowertrain?.trims[0];
 
   const [selectedModelSlug, setSelectedModelSlug] = useState<string>(initialModel.slug);
@@ -70,8 +75,8 @@ export function SubmissionForm() {
   const [stage, setStage] = useState<'deposit_placed' | 'allocation_confirmed' | 'in_transit' | 'delivered'>('deposit_placed');
   const [status, setStatus] = useState<'pending' | 'delivered'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>('');
-  const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('at_msrp');
-  const [mandatoryAddonsCad, setMandatoryAddonsCad] = useState<string>('0');
+  const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('undisclosed');
+  const [mandatoryAddonsCad, setMandatoryAddonsCad] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [honeypot, setHoneypot] = useState<string>('');
 
@@ -120,8 +125,8 @@ export function SubmissionForm() {
     setStage('deposit_placed');
     setStatus('pending');
     setDeliveryDate('');
-    setPricing('at_msrp');
-    setMandatoryAddonsCad('0');
+    setPricing('undisclosed');
+    setMandatoryAddonsCad('');
     setNotes('');
     setHoneypot('');
     setFieldErrors({});
@@ -695,10 +700,10 @@ export function SubmissionForm() {
                     value={pricing}
                     onChange={(e) => setPricing(e.target.value as any)}
                   >
+                    <option value="undisclosed">Not Specified (Optional)</option>
                     <option value="at_msrp">Exact MSRP (No Markup)</option>
                     <option value="above_msrp">Above MSRP (Dealer Markup)</option>
                     <option value="below_msrp">Below MSRP (Discounted)</option>
-                    <option value="undisclosed">Prefer not to say</option>
                   </Select>
                 </div>
 

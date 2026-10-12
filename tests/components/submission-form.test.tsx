@@ -19,6 +19,20 @@ describe('SubmissionForm Component', () => {
     expect(screen.getByLabelText(/Province/i)).toHaveValue('ON');
     expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2026');
     expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue(getTodayLocalDate());
+    expect(screen.getByLabelText(/Pricing Status/i)).toHaveValue('undisclosed');
+  });
+
+  it('inherits model, powertrain, and province from URL search parameters', async () => {
+    const nextNav = await import('next/navigation');
+    vi.spyOn(nextNav, 'useSearchParams').mockReturnValue(
+      new URLSearchParams('model=prius&powertrain=phev&province=BC') as any
+    );
+
+    render(<SubmissionForm />);
+
+    expect(screen.getByLabelText(/Vehicle Model/i)).toHaveValue('prius');
+    expect(screen.getByLabelText(/Powertrain/i)).toHaveValue('phev');
+    expect(screen.getByLabelText(/Province/i)).toHaveValue('BC');
   });
 
   it('updates powertrains and trims when Model changes to Sienna', async () => {
@@ -268,7 +282,8 @@ describe('SubmissionForm Component', () => {
     // Check fields are reset
     expect(cityInput).toHaveValue('');
     expect(notesInput).toHaveValue('');
-    expect(addonsInput).toHaveValue(0);
+    expect(addonsInput).toHaveValue(null);
+    expect(screen.getByLabelText(/Pricing Status/i)).toHaveValue('undisclosed');
     expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2026');
     expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue(getTodayLocalDate());
   });

@@ -233,7 +233,7 @@ export default async function ProvincialVehiclePage({ params }: RouteProps) {
 
             <div className="flex items-center gap-2 self-start md:self-auto">
               <Button asChild className="font-semibold gap-1.5 shadow-sm">
-                <Link href="/submit">
+                <Link href={`/submit?model=${model.slug}&powertrain=${powertrain.slug}&province=${province.code}`}>
                   Add Your Wait Time
                 </Link>
               </Button>
@@ -400,13 +400,13 @@ export default async function ProvincialVehiclePage({ params }: RouteProps) {
 
           <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0 w-full sm:w-auto">
             <Button asChild variant="outline" className="w-full sm:w-auto font-semibold text-zinc-900 bg-white hover:bg-zinc-100">
-              <Link href="/#analytics">
+              <Link href="/#community-log">
                 <TrendingUp className="h-4 w-4 mr-1.5 text-red-600" />
                 Provincial Analytics
               </Link>
             </Button>
             <Button asChild className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold">
-              <Link href="/submit">
+              <Link href={`/submit?model=${model.slug}&powertrain=${powertrain.slug}&province=${province.code}`}>
                 Submit Timeline
               </Link>
             </Button>

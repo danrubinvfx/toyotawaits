@@ -177,6 +177,21 @@ export function WaitTimeEstimator({
     setTrimSlug('all');
   };
 
+  // Sync active model, powertrain, and province to other page components
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-sync', {
+          detail: {
+            model: modelSlug,
+            powertrain: powertrainSlug,
+            province,
+          },
+        })
+      );
+    }
+  }, [modelSlug, powertrainSlug, province]);
+
   // Fetch aggregate data whenever filters change
   useEffect(() => {
     let isCancelled = false;

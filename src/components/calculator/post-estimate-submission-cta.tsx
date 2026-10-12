@@ -22,6 +22,32 @@ export interface PostEstimateSubmissionCtaProps {
 
 export function PostEstimateSubmissionCta({ className }: PostEstimateSubmissionCtaProps) {
   const [submission, setSubmission] = useState<StoredSubmission | null>(null);
+  const [activeSelection, setActiveSelection] = useState<{
+    model?: string;
+    powertrain?: string;
+    province?: string;
+  }>({});
+
+  useEffect(() => {
+    const handleModelSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ model?: string; powertrain?: string; province?: string }>;
+      if (customEvent.detail) {
+        setActiveSelection((prev) => ({
+          ...prev,
+          model: customEvent.detail.model || prev.model,
+          powertrain: customEvent.detail.powertrain || prev.powertrain,
+          province: customEvent.detail.province || prev.province,
+        }));
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('toyotawait:model-sync', handleModelSync);
+      return () => {
+        window.removeEventListener('toyotawait:model-sync', handleModelSync);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const checkSubmission = () => {
@@ -68,11 +94,21 @@ export function PostEstimateSubmissionCta({ className }: PostEstimateSubmissionC
     }
   }, []);
 
-  const editHref = submission
-    ? `/edit/${submission.id || submission.editToken}?key=${encodeURIComponent(
+  const buildSubmitHref = () => {
+    if (submission) {
+      return `/edit/${submission.id || submission.editToken}?key=${encodeURIComponent(
         submission.editKey || submission.edit_key || ''
-      )}`
-    : '/submit';
+      )}`;
+    }
+    const params = new URLSearchParams();
+    if (activeSelection.model) params.set('model', activeSelection.model);
+    if (activeSelection.powertrain) params.set('powertrain', activeSelection.powertrain);
+    if (activeSelection.province) params.set('province', activeSelection.province);
+    const qs = params.toString();
+    return qs ? `/submit?${qs}` : '/submit';
+  };
+
+  const editHref = buildSubmitHref();
 
   const modelDisplay = submission?.model || submission?.modelName || 'vehicle';
 

@@ -41,12 +41,21 @@ export const metadata: Metadata = {
     siteName: 'ToyotaWaits',
     locale: 'en_CA',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ToyotaWaits.ca - Canadian Toyota Wait Times & Allocation Tracker',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
       'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+    images: ['/og-image.png'],
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '3gM-Rt6pfp2XODYUowsn5BNJt0CIfuxUoY-9ugCPK_E',
@@ -83,9 +92,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth overflow-x-hidden`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-sans overflow-x-hidden">
+      {/* overflow-x-clip (not hidden): clips sideways wobble without creating a scroll container, which would break position: sticky */}
+      <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-sans overflow-x-clip">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

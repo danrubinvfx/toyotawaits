@@ -164,7 +164,7 @@ export function WinterPrepView() {
 
       {/* 3. Interactive Vehicle Selector (Sticky / Top-Level) */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
-        <div className="sticky top-16 z-30 bg-zinc-950/95 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-3 border-y sm:border sm:rounded-xl border-zinc-800 shadow-md">
+        <div className="sticky top-14 sm:top-16 z-30 bg-zinc-950/95 backdrop-blur-md py-3 -mx-4 px-4 sm:mx-0 sm:px-3 border-y sm:border sm:rounded-xl border-zinc-800 shadow-md">
           <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-zinc-400 pl-2 shrink-0">
               <Car className="h-4 w-4 text-cyan-400" />

@@ -52,7 +52,7 @@ export function StickyVehiclePills({
       role="region"
       aria-label="Popular models quick selector"
       className={cn(
-        'sticky top-16 z-30 w-full bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800/80 py-2 sm:py-2.5 px-4 shadow-md',
+        'sticky top-14 sm:top-16 z-40 w-full bg-neutral-950/90 backdrop-blur-md border-b border-neutral-800/80 py-2 px-4 shadow-md',
         className
       )}
     >
@@ -86,7 +86,7 @@ export function StickyVehiclePills({
         </div>
 
         <Link
-          href="/submit"
+          href={selectedModel ? `/submit?model=${selectedModel}` : '/submit'}
           className="shrink-0 hidden lg:inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-3 py-1 rounded-full transition-all whitespace-nowrap"
         >
           <PlusCircle className="h-3.5 w-3.5" />

@@ -48,7 +48,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#analytics" className="hover:text-amber-500 transition-colors">
+                <Link href="/#community-log" className="hover:text-amber-500 transition-colors">
                   Provincial Analytics
                 </Link>
               </li>
@@ -59,7 +59,7 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/api/export" className="hover:text-amber-500 transition-colors">
-                  Download CSV Data
+                  Download Full Database (CSV)
                 </Link>
               </li>
             </ul>
@@ -87,7 +87,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#gear" className="hover:text-amber-500 transition-colors">
+                <Link href="/delivery-prep" className="hover:text-amber-500 transition-colors">
                   Delivery Prep Checklist
                 </Link>
               </li>

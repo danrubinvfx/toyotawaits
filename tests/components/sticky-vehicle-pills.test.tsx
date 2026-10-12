@@ -15,7 +15,7 @@ describe('StickyVehiclePills Component', () => {
     expect(region).toBeInTheDocument();
     expect(region.className).toContain('sticky');
     expect(region.className).toContain('top-16');
-    expect(region.className).toContain('z-30');
+    expect(region.className).toContain('z-40');
     expect(region.className).toContain('backdrop-blur-md');
 
     const tablist = screen.getByRole('tablist', { name: /Popular models list/i });

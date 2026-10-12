@@ -95,7 +95,7 @@ export function NotificationSubscriptionModal({
             {isSuccess ? 'Alert Active' : 'Delivery Window & Allocation Alerts'}
           </DialogTitle>
           <DialogDescription className="text-center text-xs text-zinc-400 max-w-sm mx-auto">
-            Get notified when matching deliveries occur or regional wait times adjust.
+            Get notified when matching deliveries occur or regional wait times adjust. Order submissions remain 100% anonymous without personal identifiers.
           </DialogDescription>
         </DialogHeader>
 
@@ -109,7 +109,7 @@ export function NotificationSubscriptionModal({
               </div>
             </div>
             <p className="text-[11px] text-zinc-500">
-              You can unsubscribe anytime with a single click using the link in the footer of any alert.
+              You can unsubscribe anytime with a single click. Email addresses are permanently purged upon unsubscribe.
             </p>
             <DialogFooter className="sm:justify-center pt-2">
               <Button onClick={handleResetAndClose} className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs h-9 px-6">
@@ -159,9 +159,11 @@ export function NotificationSubscriptionModal({
                   className="pl-9 bg-zinc-900 border-zinc-800 text-white text-xs sm:text-sm h-10 focus-visible:ring-amber-500"
                 />
               </div>
-              <p className="text-[11px] text-zinc-500 flex items-center gap-1 mt-1">
-                <ShieldCheck className="h-3 w-3 text-emerald-500 shrink-0" />
-                Strict Zero-Spam Guarantee. Only delivery notifications.
+              <p className="text-[11px] text-zinc-400 flex items-start gap-1.5 mt-1.5">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                <span>
+                  Strict Privacy: Used exclusively for wait-time delivery notifications with a 1-click unsubscribe and permanent purge.
+                </span>
               </p>
             </div>
 

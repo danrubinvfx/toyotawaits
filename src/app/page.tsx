@@ -87,7 +87,7 @@ export default async function HomePage() {
               </h1>
 
               <p className="text-xs text-neutral-400 font-medium tracking-wide">
-                Over 1,000+ verified Canadian deliveries tracked.
+                Tracking real-world Canadian order timelines and dealer deliveries.
               </p>
 
               <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
@@ -148,7 +148,7 @@ export default async function HomePage() {
               </Link>
 
               <Link
-                href="/#gear"
+                href="/delivery-prep"
                 className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all min-h-[72px]"
               >
                 <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
@@ -192,7 +192,6 @@ export default async function HomePage() {
 
         {/* 3. Model Gear Checklist */}
         <section id="gear" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
-          <div id="delivery-prep" className="scroll-mt-24" />
           <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ModelGearChecklist />
           </React.Suspense>
@@ -200,6 +199,7 @@ export default async function HomePage() {
 
         {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
         <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6 scroll-mt-20">
+          <div id="analytics" className="scroll-mt-24" />
           {/* Active Order Stepper (for returning users with edit keys) */}
           <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ActiveOrderStepper />

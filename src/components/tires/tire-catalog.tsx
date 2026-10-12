@@ -110,7 +110,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
       </section>
 
       {/* 2. Interactive Vehicle Selector (Horizontal Sticky Pills) */}
-      <section className="sticky top-16 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-y border-zinc-200 dark:border-zinc-800 py-3 shadow-xs">
+      <section className="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-y border-zinc-200 dark:border-zinc-800 py-3 shadow-xs">
         <div className="container mx-auto max-w-5xl px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 shrink-0 text-xs font-bold text-zinc-500 uppercase tracking-wider hidden md:flex">

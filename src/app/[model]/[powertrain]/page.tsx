@@ -92,7 +92,7 @@ export default async function ModelPowertrainPage({ params }: RouteProps) {
             </div>
 
             <Button asChild className="font-semibold gap-1.5 shadow-sm">
-              <Link href="/submit">
+              <Link href={`/submit?model=${model.slug}&powertrain=${powertrain.slug}`}>
                 <PlusCircle className="h-4 w-4" />
                 Submit Wait Time
               </Link>
