@@ -8,7 +8,7 @@ import {
   CatalogPowertrain,
   CatalogTrim,
 } from '@/lib/data/vehicles';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -16,9 +16,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Info, Fuel, Zap, Bell } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, DollarSign, Share2, Download, Info, Fuel, Zap, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
@@ -398,32 +397,7 @@ export function WaitTimeEstimator({
 
   return (
     <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-4 scroll-mt-28">
-      <CardHeader className="space-y-1 bg-gradient-to-r from-amber-500/10 via-zinc-50 to-transparent dark:from-amber-950/20 dark:via-zinc-900 border-b border-zinc-200 dark:border-zinc-800 rounded-t-xl">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center space-x-2">
-            <Badge className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1 px-2.5">
-              <Sparkles className="h-3 w-3" /> Live Community Predictor
-            </Badge>
-            <span className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-              Canadian Regional Model
-            </span>
-          </div>
-          <Badge
-            data-testid="estimator-range-badge"
-            className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-black text-xs sm:text-sm px-3 py-1 shadow-xs shrink-0"
-          >
-            Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
-          </Badge>
-        </div>
-        <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Interactive Delivery Wait-Time Estimator
-        </CardTitle>
-        <CardDescription className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
-          Calculate empirical delivery arrival windows based on verified Canadian community wait times.
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="p-6 space-y-6">
+      <CardContent className="p-4 sm:p-6 space-y-5">
         {/* Post-Submission Confirmation Feedback Banner */}
         {showSubmittedBanner && (
           <div
@@ -578,7 +552,10 @@ export function WaitTimeEstimator({
                 <Badge variant="outline" className={`text-[11px] font-bold ${currentTier.className}`}>
                   Tier: {currentTier.label}
                 </Badge>
-                <Badge className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold">
+                <Badge
+                  data-testid="estimator-range-badge"
+                  className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold"
+                >
                   Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                 </Badge>
               </div>
@@ -836,12 +813,6 @@ export function WaitTimeEstimator({
           </div>
         )}
 
-        {/* Dynamic Rebate Intelligence for PHEVs (Moved below estimator results) */}
-        <RebateNotice
-          powertrainSlug={powertrainSlug}
-          provinceCode={province}
-          defaultExpanded={false}
-        />
       </CardContent>
 
       <RedditShareModal

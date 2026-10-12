@@ -46,7 +46,7 @@ describe('WaitTimeEstimator Component', () => {
 
     render(<WaitTimeEstimator />);
 
-    expect(screen.getByText('Interactive Delivery Wait-Time Estimator')).toBeInTheDocument();
+    expect(screen.getByText('Vehicle Model')).toBeInTheDocument();
 
     await waitFor(() => {
       expect(screen.getAllByText(/330 Days/i).length).toBeGreaterThanOrEqual(1);
@@ -525,8 +525,8 @@ describe('WaitTimeEstimator Component', () => {
 
     const { container } = render(<WaitTimeEstimator />);
 
-    // Header badge
-    const badge = screen.getByTestId('estimator-range-badge');
+    // Output badge
+    const badge = await screen.findByTestId('estimator-range-badge');
     expect(badge).toBeInTheDocument();
     expect(badge).toHaveTextContent(/Estimated Wait: \d+ – \d+ Months/i);
 

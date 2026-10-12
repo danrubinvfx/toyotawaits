@@ -64,12 +64,12 @@ export default async function HomePage() {
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />
 
-      <div className="space-y-12">
+      <div className="space-y-6 sm:space-y-8">
         {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
-        <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-8 pb-12 sm:pt-12 sm:pb-16 dark:border-zinc-800 text-white">
-          <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+        <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-4 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white">
+          <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6">
             {/* Tight Header */}
-            <div className="text-center space-y-2.5 max-w-3xl mx-auto">
+            <div className="text-center space-y-2 max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
                 <Flame className="h-3.5 w-3.5 text-amber-400" />
                 <span>ToyotaWaits.ca</span>
@@ -91,14 +91,14 @@ export default async function HomePage() {
             </div>
 
             {/* Estimator Container immediately below header */}
-            <div id="estimator" className="pt-2 mt-4 scroll-mt-28">
+            <div className="mt-2">
               <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
                 <WaitTimeEstimator />
               </React.Suspense>
             </div>
 
             {/* Elevated Compact Guides Grid directly underneath estimator */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full my-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full mt-3 mb-0 sm:mt-4 sm:mb-0">
               <Link
                 href="/winter-prep"
                 className="group rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-950/40 transition-all min-h-[72px]"
@@ -190,7 +190,7 @@ export default async function HomePage() {
         </section>
 
         {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
-        <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6 scroll-mt-20">
+        <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6 scroll-mt-20">
           {/* Active Order Stepper (for returning users with edit keys) */}
           <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ActiveOrderStepper />
@@ -214,7 +214,7 @@ export default async function HomePage() {
         </section>
 
       {/* 5. Secondary Content: FAQ / Crowdsourcing Disclaimer */}
-      <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
         <div className="text-center space-y-2 max-w-xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             Why Track With ToyotaWaits.ca?
