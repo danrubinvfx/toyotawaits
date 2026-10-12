@@ -294,12 +294,8 @@ export function DeliveryPrepChecklist({
     return totalModelItems.filter((item) => !!checkedItems[item.slug]).length;
   }, [totalModelItems, checkedItems]);
 
-  const completedInspectionCount = useMemo(() => {
-    return DELIVERY_INSPECTION_ITEMS.filter((item) => !!checkedItems[item.id]).length;
-  }, [checkedItems]);
-
-  const totalChecklistItems = totalModelItems.length + DELIVERY_INSPECTION_ITEMS.length;
-  const totalCompleted = completedCount + completedInspectionCount;
+  const totalChecklistItems = totalModelItems.length;
+  const totalCompleted = completedCount;
 
   const completionPercent = totalChecklistItems > 0
     ? Math.round((totalCompleted / totalChecklistItems) * 100)
@@ -362,7 +358,7 @@ export function DeliveryPrepChecklist({
               </Badge>
             </div>
             <p className="text-xs text-zinc-400">
-              Dealership pickup checklist and community-vetted drop-in gear for {getModelDisplayName()}.
+              Community-vetted drop-in gear and essential upgrades for {getModelDisplayName()}.
             </p>
           </div>
 
@@ -411,19 +407,10 @@ export function DeliveryPrepChecklist({
         </div>
       </CardHeader>
 
-      {/* 2. Expandable Body with Clean Stacked Sub-Blocks */}
+      {/* 2. Expandable Body */}
       {isExpanded && (
-        <div className="p-4 sm:p-5 space-y-5">
-          {/* Sub-Block 1: Dealership Pickup Day Inspection Card */}
-          <div className="space-y-1">
-            <PickupChecklist
-              checkedItems={checkedItems}
-              onToggle={toggleItem}
-              onReset={resetChecklist}
-            />
-          </div>
-
-          {/* Sub-Block 2: Essential Day-One Gear Card */}
+        <div className="p-3 sm:p-4">
+          {/* Essential Day-One Gear Card */}
           <Card className="border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs">
             <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/30">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
@@ -479,6 +466,14 @@ export function DeliveryPrepChecklist({
                     </button>
                   );
                 })}
+              </div>
+
+              {/* Swipe Hint / Carousel Indicators */}
+              <div className="flex items-center justify-between text-[11px] text-neutral-400 px-1 pt-1 mb-2 print:hidden">
+                <span>Showing recommended gear</span>
+                <span className="flex items-center gap-1 font-medium text-amber-400">
+                  <span className="animate-pulse">Swipe →</span>
+                </span>
               </div>
             </CardHeader>
 

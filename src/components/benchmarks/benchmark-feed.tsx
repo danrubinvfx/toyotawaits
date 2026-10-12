@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Snowflake, Disc3 } from 'lucide-react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { cn } from '@/lib/utils';
 
@@ -125,9 +122,8 @@ export function BenchmarkFeed({
     VEHICLE_OPTIONS.find((v) => v.id === selectedModel) || VEHICLE_OPTIONS[0];
 
   return (
-    <div className={cn('space-y-6', className)} data-testid="delivery-prep-section">
-      {/* Dynamic Gear & Mods Placement */}
-      <div id="delivery-prep" className="space-y-4 scroll-mt-24 pt-2">
+    <div className={cn(className)} data-testid="delivery-prep-section">
+      <div id="delivery-prep" className="scroll-mt-24">
         {/* Dynamic Delivery Prep Checklist Component */}
         <DeliveryPrepChecklist
           model={showUniversalGear ? 'all' : activeVehicle.id}
@@ -140,51 +136,6 @@ export function BenchmarkFeed({
             onSelectModel?.(activeVehicle.id);
           }}
         />
-      </div>
-
-      {/* Compact Seasonal Winter Prep Banner */}
-      <div
-        data-testid="winter-prep-seasonal-banner"
-        className="rounded-xl border border-cyan-500/30 bg-cyan-950/20 p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs"
-      >
-        <div className="flex items-center gap-2.5 text-zinc-300">
-          <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 shrink-0">
-            <Snowflake className="h-4 w-4" />
-          </div>
-          <div>
-            <p className="font-semibold text-zinc-100">
-              Prepping for sub-zero deliveries?
-            </p>
-            <p className="text-zinc-400 text-[11px]">
-              Model-by-model 12V hybrid jump procedures, TuxMat vent clearance, and freezing rain gear.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 self-end sm:self-center shrink-0">
-          <Button
-            asChild
-            size="sm"
-            variant="outline"
-            className="border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-bold text-xs h-8 gap-1.5"
-          >
-            <Link href="/tires">
-              <Disc3 className="h-3.5 w-3.5" />
-              <span>Tire Guide 🛞</span>
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            size="sm"
-            variant="outline"
-            className="border-cyan-500/40 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 font-bold text-xs h-8 gap-1.5"
-          >
-            <Link href="/winter-prep">
-              <span>View our Canadian Winter Guide →</span>
-            </Link>
-          </Button>
-        </div>
       </div>
     </div>
   );

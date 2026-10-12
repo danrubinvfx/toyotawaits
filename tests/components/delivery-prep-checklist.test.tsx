@@ -236,49 +236,19 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.queryByText(/As an Amazon Associate I earn from qualifying purchases\./i)).toBeNull();
   });
 
-  it('renders dealership pickup inspection checklist items in collapsible accordion above gear cards', () => {
+  it('does not render dealership pickup inspection accordion in gear checklist', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    // Compact collapsed accordion header
-    expect(screen.getByText(/Dealership Pickup Day Inspection Steps/i)).toBeInTheDocument();
-    expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
-    expect(screen.getByText(/View Inspection Checks/i)).toBeInTheDocument();
-
-    // Verify gear cards follow immediately below in viewport
+    expect(screen.queryByText(/Dealership Pickup Day Inspection Steps/i)).toBeNull();
+    expect(screen.queryByText(/0 of 4 Verified/i)).toBeNull();
+    expect(screen.queryByText(/View Inspection Checks/i)).toBeNull();
     expect(screen.getByText(/Essential Day-One Gear & Drop-In Upgrades/i)).toBeInTheDocument();
-
-    // Expand accordion
-    fireEvent.click(screen.getByText(/View Inspection Checks/i));
-
-    // Specific critical inspection checkpoints now visible
-    expect(screen.getByText(/Bill of Sale & Pricing Verification/i)).toBeInTheDocument();
-    expect(screen.getByText(/Physical Key Fobs & Deliverables Handover/i)).toBeInTheDocument();
-    expect(screen.getByText(/Exterior Paint & PDI Transport Spacer Removal/i)).toBeInTheDocument();
-    expect(screen.getByText(/Hybrid Battery Vent & Electronics Verification/i)).toBeInTheDocument();
   });
 
-  it('allows expanding, checking off inspection items, resetting, and collapsing', () => {
+  it('renders swipe hint cue for the horizontal gear carousel', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    // Expand accordion
-    fireEvent.click(screen.getByText(/View Inspection Checks/i));
-
-    // Click Bill of Sale check item
-    const billOfSaleTitle = screen.getByText(/Bill of Sale & Pricing Verification/i);
-    fireEvent.click(billOfSaleTitle);
-
-    expect(screen.getByText(/1 of 4 Verified/i)).toBeInTheDocument();
-
-    // Reset button should now be available
-    const resetBtn = screen.getByRole('button', { name: /Reset Checks/i });
-    expect(resetBtn).toBeInTheDocument();
-    fireEvent.click(resetBtn);
-
-    expect(screen.getByText(/0 of 4 Verified/i)).toBeInTheDocument();
-
-    // Collapse checklist
-    const collapseBtn = screen.getByText(/Collapse Checklist/i);
-    fireEvent.click(collapseBtn);
-    expect(screen.queryByText(/Bill of Sale & Pricing Verification/i)).toBeNull();
+    expect(screen.getByText('Showing recommended gear')).toBeInTheDocument();
+    expect(screen.getByText(/Swipe →/i)).toBeInTheDocument();
   });
 });

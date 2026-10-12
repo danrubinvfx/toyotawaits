@@ -69,14 +69,11 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.getByText(/NOCO Boost Plus GB40 1000A/i)).toBeInTheDocument();
   });
 
-  it('renders the compact seasonal winter prep banner linking to /winter-prep', async () => {
+  it('does not render redundant seasonal banner, transitioning directly into delivery log', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    expect(screen.getByTestId('winter-prep-seasonal-banner')).toBeInTheDocument();
-    expect(screen.getByText(/Prepping for sub-zero deliveries\?/i)).toBeInTheDocument();
-    const guideLink = screen.getByRole('link', { name: /View our Canadian Winter Guide →/i });
-    expect(guideLink).toBeInTheDocument();
-    expect(guideLink).toHaveAttribute('href', '/winter-prep');
+    expect(screen.queryByTestId('winter-prep-seasonal-banner')).toBeNull();
+    expect(screen.queryByText(/Prepping for sub-zero deliveries\?/i)).toBeNull();
   });
 
   it('synchronizes active model when toyotawait:model-change event is dispatched', async () => {
