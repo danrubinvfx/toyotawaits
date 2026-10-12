@@ -117,17 +117,11 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(Object.values(saved)).toContain(true);
   });
 
-  it('renders prominent Community Transparency affiliate disclosure banner', () => {
+  it('does not render standalone banner in main content body, disclaimers moved to footer', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    expect(
-      screen.getByText(/Community Transparency:/i)
-    ).toBeDefined();
-    expect(
-      screen.getByText(
-        /Some links on this page are affiliate links\. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free\./i
-      )
-    ).toBeDefined();
+    expect(screen.queryByTestId('affiliate-disclosure-banner')).toBeNull();
+    expect(screen.queryByText(/Community Transparency:/i)).toBeNull();
   });
 
   it('renders badges (Essential, Recommended, Pro Tip) and compatibility tags on product cards', () => {

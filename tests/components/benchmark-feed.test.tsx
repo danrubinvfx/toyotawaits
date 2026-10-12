@@ -1,45 +1,35 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { BenchmarkFeed, VEHICLE_OPTIONS } from '@/components/benchmarks/benchmark-feed';
 
 describe('BenchmarkFeed Component', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.restoreAllMocks();
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => ({ success: true, data: {} }),
-    } as any);
-    window.fetch = fetchMock;
-    global.fetch = fetchMock;
   });
 
-  it('defaults to RAV4 (Hybrid/Prime) as pre-selected model and displays ONLY one benchmark card', async () => {
+  it('defaults to RAV4 (Hybrid/Prime) as pre-selected model and does NOT render redundant benchmark cards', async () => {
     render(<BenchmarkFeed />);
 
-    // ONLY the single RAV4 benchmark card is rendered
-    expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
-    expect(screen.queryByTestId('benchmark-card-sienna')).toBeNull();
-    expect(screen.queryByTestId('benchmark-card-grand-highlander')).toBeNull();
-    expect(screen.queryByTestId('benchmark-card-prius-prime')).toBeNull();
+    // Verified Canadian Wait-Time Benchmarks card is completely removed
+    expect(screen.queryByTestId('benchmark-card-rav4')).toBeNull();
+    expect(screen.queryByText(/Median National Delivery Wait/i)).toBeNull();
+    expect(screen.queryByText(/Live 2026 Supabase Feed/i)).toBeNull();
+    expect(screen.queryByText(/Calculate .* Timeline/i)).toBeNull();
 
-    // Contains vehicle details, median days, percentile ranges, and sample count
-    expect(screen.getByText('Toyota RAV4')).toBeInTheDocument();
-    expect(screen.getByText('Prime PHEV & Hybrid (AWD)')).toBeInTheDocument();
-    expect(screen.getByText(/Median National Delivery Wait/i)).toBeInTheDocument();
-    expect(screen.getByText(/Empirical Wait Range \(P25 – P75\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Based on \d+ verified deliveries/i)).toBeInTheDocument();
+    // Delivery Prep section header defaults to RAV4
+    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
 
-    // CTA button exists
-    expect(screen.getByText(/Calculate Toyota RAV4 Timeline/i)).toBeInTheDocument();
+    // DeliveryPrepChecklist is present with gear for RAV4
+    expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
+    expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeInTheDocument();
   });
 
-  it('switches benchmark card and updates metrics when global model-change event is dispatched', async () => {
+  it('switches model gear checklist when global model-change event is dispatched', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    // Initially RAV4
-    expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
+    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
 
     // Dispatch global event for Grand Highlander
     act(() => {
@@ -48,14 +38,13 @@ describe('BenchmarkFeed Component', () => {
       );
     });
 
-    // ONLY Grand Highlander card rendered
-    expect(screen.getByTestId('benchmark-card-grand-highlander')).toBeInTheDocument();
-    expect(screen.queryByTestId('benchmark-card-rav4')).toBeNull();
-    expect(screen.getByText('Toyota Grand Highlander')).toBeInTheDocument();
-    expect(screen.getByText(/Calculate Toyota Grand Highlander Timeline/i)).toBeInTheDocument();
+    // Active vehicle updates to Grand Highlander and no duplicate benchmark card exists
+    expect(screen.getAllByText('Grand Highlander').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
+    expect(screen.queryByTestId('benchmark-card-grand-highlander')).toBeNull();
   });
 
-  it('positions the Delivery Prep & Gear section immediately below the benchmark card and prioritizes vehicle gear', async () => {
+  it('positions the Delivery Prep & Gear section with vehicle-specific gear', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
     // Delivery Prep section header with active model label
@@ -93,9 +82,6 @@ describe('BenchmarkFeed Component', () => {
   it('synchronizes active model when toyotawait:model-change event is dispatched', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    // Initially RAV4 card is rendered
-    expect(screen.getByTestId('benchmark-card-rav4')).toBeInTheDocument();
-
     // 1. External event selects Sienna
     act(() => {
       window.dispatchEvent(
@@ -103,8 +89,7 @@ describe('BenchmarkFeed Component', () => {
       );
     });
 
-    expect(screen.getByTestId('benchmark-card-sienna')).toBeInTheDocument();
-    expect(screen.queryByTestId('benchmark-card-rav4')).toBeNull();
+    expect(screen.getAllByText('Sienna').length).toBeGreaterThanOrEqual(1);
 
     // 2. External event selects Tacoma
     act(() => {
@@ -113,7 +98,6 @@ describe('BenchmarkFeed Component', () => {
       );
     });
 
-    expect(screen.getByTestId('benchmark-card-tacoma')).toBeInTheDocument();
-    expect(screen.queryByTestId('benchmark-card-sienna')).toBeNull();
+    expect(screen.getAllByText('Tacoma').length).toBeGreaterThanOrEqual(1);
   });
 });

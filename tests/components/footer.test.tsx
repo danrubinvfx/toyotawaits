@@ -26,9 +26,10 @@ describe('Footer Component', () => {
     });
   });
 
-  it('renders statutory Amazon Associates disclaimer', () => {
+  it('renders statutory Amazon Associates and Community Transparency affiliate disclaimer in footer', () => {
     render(<Footer />);
     expect(screen.getByText(/As an Amazon Associate I earn from qualifying purchases\./i)).toBeInTheDocument();
+    expect(screen.getByText(/Some links on this page are affiliate links/i)).toBeInTheDocument();
   });
 
   it('renders secondary Ko-fi community callout card with verified link', () => {

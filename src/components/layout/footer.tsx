@@ -140,9 +140,7 @@ export function Footer() {
             and brands are property of their respective owners.
           </p>
           <p className="leading-relaxed">
-            <strong>Monetization & Affiliate Disclosure:</strong> ToyotaWaits.ca is community-supported. When you purchase
-            accessories through curated links on this site, we may earn an affiliate commission at no additional cost to you.
-            As an Amazon Associate I earn from qualifying purchases.
+            <strong>Monetization Disclosure:</strong> ToyotaWaits.ca is community-supported and ad-free.
             We do not accept paid dealer promotions or sponsored wait-time modifications.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-400 gap-3">
@@ -162,6 +160,11 @@ export function Footer() {
             </div>
           </div>
         </div>
+
+        {/* Amazon Associates / Community Transparency Disclosure */}
+        <p className="text-[11px] text-neutral-500 max-w-xl mx-auto text-center leading-relaxed mt-8 pt-6 border-t border-neutral-800/60">
+          Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free. As an Amazon Associate I earn from qualifying purchases.
+        </p>
       </div>
     </footer>
   );

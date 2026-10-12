@@ -5,8 +5,7 @@ import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
-import { BenchmarkFeed } from '@/components/benchmarks/benchmark-feed';
-import { getModelWaitBenchmarks } from '@/lib/db/stats';
+import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -58,10 +57,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [benchmarks, submissions] = await Promise.all([
-    getModelWaitBenchmarks(),
-    getCommunitySubmissions(),
-  ]);
+  const submissions = await getCommunitySubmissions();
 
   return (
     <div className="pb-16">
@@ -186,13 +182,11 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* 3. Popular Mods & Accessories Hub */}
-        <section id="benchmarks" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-20">
-          <div id="delivery-prep" className="scroll-mt-20">
-            <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-              <BenchmarkFeed initialBenchmarks={benchmarks} />
-            </React.Suspense>
-          </div>
+        {/* 3. Model Gear Checklist */}
+        <section id="delivery-prep" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-20">
+          <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+            <ModelGearChecklist />
+          </React.Suspense>
         </section>
 
         {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}

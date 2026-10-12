@@ -405,17 +405,6 @@ export function DeliveryPrepChecklist({
       {/* Expandable Body */}
       {isExpanded && (
         <>
-          {/* Community Transparency Disclosure Banner */}
-          <div
-            data-testid="affiliate-disclosure-banner"
-            className="mx-4 sm:mx-5 mt-4 p-3.5 sm:p-4 rounded-lg border border-amber-500/20 bg-amber-500/5 text-xs text-zinc-300 flex items-start gap-2.5 print:hidden"
-          >
-            <ShieldAlert className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-            <p className="leading-relaxed">
-              <strong className="text-amber-400 font-semibold">Community Transparency:</strong> Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free. As an Amazon Associate I earn from qualifying purchases.
-            </p>
-          </div>
-
           {/* 1. Dealership Pickup Day Checklist Accordion */}
           <div className="mx-4 sm:mx-5 mt-4">
             <PickupChecklist
