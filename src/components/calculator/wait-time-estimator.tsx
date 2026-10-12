@@ -635,95 +635,102 @@ export function WaitTimeEstimator({
                 ) : null}
               </div>
 
-              {/* Action Buttons: Calendar + Reddit Share + Notify Me in Balanced Responsive Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full max-w-xl mx-auto pt-1">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadCalendar}
-                  className="h-8 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1.5 px-3 w-full justify-center"
-                >
-                  <Download className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Calendar (.ics)</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsShareModalOpen(true)}
-                  className="h-8 text-xs border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 gap-1.5 px-3 w-full justify-center"
-                >
-                  <Share2 className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Share to Reddit</span>
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsNotifyModalOpen(true)}
-                  className="h-8 text-xs border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1.5 px-3 font-semibold w-full justify-center"
-                >
-                  <Bell className="h-3.5 w-3.5 text-amber-500" />
-                  <span>Notify Me</span>
-                </Button>
+              {/* Action Buttons: Clean 2-Column Row for Share to Reddit & Notify Me */}
+              <div className="w-full max-w-md mx-auto my-3">
+                <div className="grid grid-cols-2 gap-2 w-full">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsShareModalOpen(true)}
+                    className="py-2 px-3 text-xs sm:text-sm font-medium rounded-xl border-zinc-300 dark:border-neutral-800 text-zinc-700 dark:text-neutral-300 gap-1.5 w-full justify-center h-auto"
+                  >
+                    <Share2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    <span className="truncate">Share to Reddit</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsNotifyModalOpen(true)}
+                    className="py-2 px-3 text-xs sm:text-sm font-medium rounded-xl border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1.5 font-semibold w-full justify-center h-auto"
+                  >
+                    <Bell className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    <span className="truncate">Notify Me</span>
+                  </Button>
+                </div>
+                <div className="flex items-center justify-center mt-1.5">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleDownloadCalendar}
+                    className="h-7 text-xs text-zinc-500 hover:text-amber-500 dark:text-neutral-400 dark:hover:text-amber-400 gap-1.5 px-2 font-normal"
+                  >
+                    <Download className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                    <span>Calendar (.ics)</span>
+                  </Button>
+                </div>
               </div>
             </div>
 
-            {/* Distribution Breakdown Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50/60 dark:border-zinc-800 dark:bg-zinc-900/40 p-4">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-                  <span>Fast / Optimistic</span>
-                  <Badge variant="secondary" className="text-[10px] py-0 px-1.5 font-normal">
-                    P25
-                  </Badge>
+            {/* Distribution Breakdown Metric Card & Tight Mod Link */}
+            <div className="space-y-2 !mt-4">
+              {/* Single 3-Column Metric Card */}
+              <div className="grid grid-cols-3 gap-2 bg-neutral-900/70 border border-neutral-800 rounded-2xl p-3 sm:p-4 text-center">
+                <div className="border-r border-neutral-800/60 pr-1 sm:pr-2 flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs text-neutral-400 font-medium inline-flex items-center justify-center gap-1">
+                    <span>Optimistic</span>
+                    <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-semibold bg-neutral-800 text-neutral-300 border border-neutral-700/60">
+                      P25
+                    </span>
+                  </div>
+                  <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
+                    {p25Days} Days
+                  </div>
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                    ~{optimisticDate}
+                  </p>
                 </div>
-                <div className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {p25Days} Days
+
+                <div className="border-r border-neutral-800/60 pr-1 sm:pr-2 flex flex-col items-center">
+                  <div className="text-[11px] sm:text-xs text-amber-400/90 font-medium inline-flex items-center justify-center gap-1">
+                    <span>Median</span>
+                    <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-bold bg-amber-500 text-neutral-950">
+                      P50
+                    </span>
+                  </div>
+                  <div className="mt-1 text-lg sm:text-2xl font-extrabold tracking-tight text-amber-400">
+                    {medianDays} Days
+                  </div>
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                    ~{calculateProjectedDate(medianDays)}
+                  </p>
                 </div>
-                <p className="text-[11px] text-zinc-500 mt-0.5">
-                  Arrival by {optimisticDate}
-                </p>
+
+                <div className="flex flex-col items-center pl-1 sm:pl-2">
+                  <div className="text-[11px] sm:text-xs text-neutral-400 font-medium inline-flex items-center justify-center gap-1">
+                    <span>Conservative</span>
+                    <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-semibold bg-neutral-800 text-neutral-300 border border-neutral-700/60">
+                      P75
+                    </span>
+                  </div>
+                  <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
+                    {p75Days} Days
+                  </div>
+                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate">
+                    ~{conservativeDate}
+                  </p>
+                </div>
               </div>
 
-              <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 dark:border-amber-500/20 dark:bg-amber-950/20 p-4">
-                <div className="flex items-center justify-between text-xs font-semibold text-amber-700 dark:text-amber-300">
-                  <span>Expected / Median</span>
-                  <Badge className="bg-amber-500 text-zinc-950 font-bold text-[10px] py-0 px-1.5">
-                    P50
-                  </Badge>
-                </div>
-                <div className="mt-2 text-xl font-bold text-amber-600 dark:text-amber-400">
-                  {medianDays} Days
-                </div>
-                <p className="text-[11px] text-zinc-500 mt-0.5">
-                  Arrival around {calculateProjectedDate(medianDays)}
-                </p>
+              {/* Subtle High-Contrast Mod Guide Link - Kept tight right beneath metric bar */}
+              <div className="flex items-center justify-end pt-0.5 pb-0">
+                <Link
+                  href={`/mods/${modelSlug}`}
+                  data-testid="delivery-estimate-mods-link"
+                  className="group inline-flex items-center gap-1 text-xs text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 font-medium transition-colors"
+                >
+                  Planning your build? Browse popular community accessories &amp; mods &rarr;
+                </Link>
               </div>
-
-              <div className="rounded-lg border border-zinc-200 bg-zinc-50/60 dark:border-zinc-800 dark:bg-zinc-900/40 p-4">
-                <div className="flex items-center justify-between text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-                  <span>Conservative</span>
-                  <Badge variant="secondary" className="text-[10px] py-0 px-1.5 font-normal">
-                    P75
-                  </Badge>
-                </div>
-                <div className="mt-2 text-xl font-bold text-zinc-900 dark:text-zinc-100">
-                  {p75Days} Days
-                </div>
-                <p className="text-[11px] text-zinc-500 mt-0.5">
-                  Arrival by {conservativeDate}
-                </p>
-              </div>
-            </div>
-
-            {/* Subtle High-Contrast Mod Guide Link */}
-            <div className="flex items-center justify-end pt-1 pb-0.5">
-              <Link
-                href={`/mods/${modelSlug}`}
-                data-testid="delivery-estimate-mods-link"
-                className="group inline-flex items-center gap-1 text-xs text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400 font-medium transition-colors"
-              >
-                Planning your build? Browse popular community accessories &amp; mods &rarr;
-              </Link>
             </div>
 
             {/* Minimalist Notify Me Trigger Banner */}
