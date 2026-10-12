@@ -234,4 +234,38 @@ describe('Header Component', () => {
     expect(screen.getByTestId('mobile-menu-drawer')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /\+ Log another vehicle/i })).toHaveAttribute('href', '/submit');
   });
+
+  it('enforces mobile action grouping, shrink-0 restraint, and responsive labels', () => {
+    localStorage.clear();
+    const { container } = render(<Header />);
+
+    // 1. Right-side unified cluster wrapper
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    const rightCluster = toggle.parentElement;
+    expect(rightCluster).toBeInTheDocument();
+    expect(rightCluster).toHaveClass('flex', 'items-center', 'gap-2', 'shrink-0', 'ml-auto');
+
+    // 2. Hamburger toggle shrink-0
+    expect(toggle).toHaveClass('shrink-0');
+
+    // 3. Responsive button text spans
+    const submitBtn = screen.getAllByRole('link', { name: /\+ Log Order/i })[0];
+    expect(submitBtn).toHaveClass('shrink-0', 'whitespace-nowrap', 'text-xs', 'font-semibold', 'rounded-lg');
+    const fullTextSpan = submitBtn.querySelector('span.xs\\:inline, span[class*="xs:inline"]');
+    const compactTextSpan = submitBtn.querySelector('span.xs\\:hidden, span[class*="xs:hidden"]');
+    expect(fullTextSpan).toBeInTheDocument();
+    expect(fullTextSpan).toHaveTextContent('+ Log Order');
+    expect(compactTextSpan).toBeInTheDocument();
+    expect(compactTextSpan).toHaveTextContent('+ Order');
+
+    // 4. Left brand container restraint
+    const brandLink = screen.getByRole('link', { name: /ToyotaWaits/i });
+    expect(brandLink).toHaveClass('flex', 'items-center', 'gap-2', 'min-w-0', 'shrink');
+
+    // 5. Outer header and inner nav boundary enforcement
+    const headerElem = container.querySelector('header');
+    expect(headerElem).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden');
+    const innerWrapper = headerElem?.firstElementChild;
+    expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden', 'px-3', 'py-2.5', 'flex', 'items-center', 'justify-between');
+  });
 });

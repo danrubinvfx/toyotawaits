@@ -109,21 +109,21 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
-      <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-40 w-full max-w-full overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
+      <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible px-3 sm:px-4 py-2.5 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center space-x-2 font-bold text-lg tracking-tight group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-amber-600 text-white shadow-sm group-hover:scale-105 transition-transform">
+        <Link href="/" className="flex items-center gap-2 min-w-0 shrink font-bold text-lg tracking-tight group">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-amber-600 text-white shadow-sm group-hover:scale-105 transition-transform shrink-0">
             <Car className="h-5 w-5" />
           </div>
-          <div className="flex flex-col">
-            <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black">
+          <div className="flex flex-col min-w-0">
+            <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black truncate text-base sm:text-lg">
               ToyotaWaits<span className="text-amber-500">.ca</span>
-              <span className="ml-1.5 rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-amber-500 dark:text-amber-400">
+              <span className="ml-1.5 hidden xs:inline-flex rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-amber-500 dark:text-amber-400 shrink-0">
                 🇨🇦 Canada
               </span>
             </span>
-            <span className="text-[10px] font-medium text-zinc-500 italic truncate max-w-[240px] sm:max-w-none">
+            <span className="text-[10px] font-medium text-zinc-500 italic truncate max-w-[240px] sm:max-w-none hidden sm:block">
               &ldquo;The piano has been drinking, and your Toyota is still on a boat.&rdquo;
             </span>
           </div>
@@ -358,26 +358,28 @@ export function Header() {
         </nav>
 
         {/* Action Button & Ko-fi Support */}
-        <div className="flex items-center space-x-2">
-          <div className="hidden sm:block">
+        <div className="flex items-center gap-2 shrink-0 ml-auto">
+          <div className="hidden sm:block shrink-0">
             <KofiHeaderPill />
           </div>
           {submission ? (
             <Link
               href={editHref}
-              className="bg-amber-500 text-black font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center gap-1.5 shrink-0 cursor-pointer"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
-              <span>Update Status</span>
+              <span className="hidden xs:inline">Update Status</span>
+              <span className="xs:hidden">Status</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
             </Link>
           ) : (
             <Link
               href="/submit"
-              className="bg-amber-500 text-black font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center gap-1.5 shrink-0 cursor-pointer"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
             >
               <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
-              <span>+ Log Order</span>
+              <span className="hidden xs:inline">+ Log Order</span>
+              <span className="xs:hidden">+ Order</span>
             </Link>
           )}
 
@@ -385,7 +387,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 sm:p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg focus:outline-none lg:hidden"
+            className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white rounded-lg focus:outline-none lg:hidden shrink-0"
             aria-label="Toggle menu"
             data-testid="mobile-menu-toggle"
           >
