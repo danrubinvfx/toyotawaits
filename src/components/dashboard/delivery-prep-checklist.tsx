@@ -482,22 +482,24 @@ export function DeliveryPrepChecklist({
               </div>
             </CardHeader>
 
-            {/* Checklist Items - Vertical Stack rendered via ModCard */}
-            <CardContent className="p-4 space-y-3.5">
+            {/* Checklist Items - Horizontal Snap Carousel rendered via ModCard */}
+            <CardContent className="p-3 sm:p-4">
               {filteredProducts.length === 0 ? (
-                <div className="p-6 text-center text-xs text-zinc-500">
+                <div className="p-6 text-center text-xs text-zinc-500 w-full">
                   No accessories found matching this vehicle and filter criteria.
                 </div>
               ) : (
-                filteredProducts.map((item) => (
-                  <ModCard
-                    key={item.id || item.slug}
-                    item={item}
-                    isChecked={!!checkedItems[item.slug]}
-                    onToggle={toggleItem}
-                    showCheckbox={true}
-                  />
-                ))
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1">
+                  {filteredProducts.map((item) => (
+                    <ModCard
+                      key={item.id || item.slug}
+                      item={item}
+                      isChecked={!!checkedItems[item.slug]}
+                      onToggle={toggleItem}
+                      showCheckbox={true}
+                    />
+                  ))}
+                </div>
               )}
             </CardContent>
 

@@ -126,16 +126,16 @@ export function ModCard({
     <div
       data-testid={`checklist-item-${item.slug}`}
       className={cn(
-        'relative rounded-xl border p-3.5 sm:p-4 transition-all duration-200 flex flex-col justify-between gap-4',
+        'relative w-[82vw] max-w-[320px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200',
         isChecked
-          ? 'border-amber-500/40 bg-zinc-900/90 shadow-inner'
-          : 'border-zinc-800 bg-zinc-900/60 hover:border-zinc-700/80 hover:bg-zinc-900/80',
+          ? 'border-amber-500/40 bg-neutral-900/95 shadow-inner'
+          : 'hover:border-neutral-700 hover:bg-neutral-900/90',
         className
       )}
     >
       {/* Top corner clickable checkbox */}
       {showCheckbox && onToggle && (
-        <div className="absolute top-3 right-3 sm:top-3.5 sm:right-3.5 z-10">
+        <div className="absolute top-3 right-3 z-10">
           <button
             type="button"
             onClick={() => onToggle(item.slug)}
@@ -143,7 +143,7 @@ export function ModCard({
             role="checkbox"
             aria-label={`Mark ${item.title} as acquired`}
             className={cn(
-              'h-6 w-6 rounded-md border flex items-center justify-center transition-all cursor-pointer',
+              'h-6 w-6 rounded-md border flex items-center justify-center transition-all cursor-pointer backdrop-blur-xs',
               isChecked
                 ? 'bg-amber-500 border-amber-500 text-zinc-950 shadow-xs'
                 : 'border-zinc-700 bg-zinc-950/80 text-transparent hover:border-amber-500/80 hover:bg-zinc-900'
@@ -154,142 +154,129 @@ export function ModCard({
         </div>
       )}
 
-      {/* Main Row: Thumbnail + Details + Outbound Action */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
-        {/* Left & Middle content container */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3.5 flex-1 pr-8 sm:pr-2">
-          {/* Left: 80x80px Product Thumbnail with Graceful SVG Fallback */}
-          {showImage ? (
-            <div className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-950 flex items-center justify-center shadow-xs">
-              <img
-                src={imageSource!}
-                alt={item.title}
-                width={80}
-                height={80}
-                loading="lazy"
-                onError={() => setImgError(true)}
-                className={cn(
-                  'w-full h-full object-cover transition-transform duration-300',
-                  isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
-                )}
-              />
-            </div>
-          ) : (
-            <div
-              data-testid={`fallback-icon-${item.slug}`}
-              className="relative w-20 h-20 shrink-0 rounded-lg border border-zinc-800 bg-zinc-950/90 flex items-center justify-center text-amber-500/80 shadow-xs"
-              title={item.title}
-            >
-              {React.createElement(getThemedCategoryIcon(item.category, item.title), {
-                className: 'h-8 w-8 stroke-[1.5]',
-              })}
-            </div>
-          )}
+      {/* Top Section: Media + Badges + Title + Savings Callout + Note */}
+      <div className="flex-1 flex flex-col">
+        {/* Constrain image height (h-36 w-full object-cover rounded-xl mb-3) */}
+        {showImage ? (
+          <div className="relative h-36 w-full shrink-0 rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center shadow-xs mb-3">
+            <img
+              src={imageSource!}
+              alt={item.title}
+              loading="lazy"
+              onError={() => setImgError(true)}
+              className={cn(
+                'w-full h-full object-cover transition-transform duration-300',
+                isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
+              )}
+            />
+          </div>
+        ) : (
+          <div
+            data-testid={`fallback-icon-${item.slug}`}
+            className="relative h-36 w-full shrink-0 rounded-xl border border-neutral-800 bg-neutral-950/90 flex items-center justify-center text-amber-500/80 shadow-xs mb-3"
+            title={item.title}
+          >
+            {React.createElement(getThemedCategoryIcon(item.category, item.title), {
+              className: 'h-10 w-10 stroke-[1.5]',
+            })}
+          </div>
+        )}
 
-          {/* Middle: Details */}
-          <div className="space-y-1.5 flex-1 min-w-0">
-            {/* Badges & Compatibility Tag */}
-            {(item.badge || item.compatibility) && (
-              <div className="flex flex-wrap items-center gap-1.5">
-                {item.badge && (
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      'text-[10px] sm:text-xs font-semibold px-2 py-0.5 border',
-                      item.badge === 'Essential'
-                        ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
-                        : item.badge === 'Recommended' || item.badge === 'Recommended Upgrade'
-                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                        : item.badge === 'Top Pick'
-                        ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
-                        : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
-                    )}
-                  >
-                    {item.badge}
-                  </Badge>
-                )}
-                {item.compatibility && (
-                  <span className="text-[10px] sm:text-[11px] text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 rounded font-mono">
-                    {item.compatibility}
-                  </span>
-                )}
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-baseline gap-2">
-              <h4
+        {/* Group badges into a single line (flex items-center gap-1.5 mb-2 overflow-hidden text-[11px]) */}
+        {(item.badge || item.compatibility) && (
+          <div className="flex items-center gap-1.5 mb-2 overflow-hidden text-[11px]">
+            {item.badge && (
+              <Badge
+                variant="outline"
                 className={cn(
-                  'text-sm font-semibold tracking-tight transition-colors',
-                  isChecked ? 'line-through text-zinc-500' : 'text-zinc-100'
+                  'text-[10px] font-semibold px-2 py-0.5 border shrink-0',
+                  item.badge === 'Essential'
+                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
+                    : item.badge === 'Recommended' || item.badge === 'Recommended Upgrade'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                    : item.badge === 'Top Pick'
+                    ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
+                    : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
                 )}
               >
-                {item.title}
-              </h4>
-              {price && (
-                <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                  {price}
-                </span>
-              )}
-            </div>
-            {note && (
-              <p className="text-xs text-zinc-400 leading-relaxed font-sans">
-                {note}
-              </p>
+                {item.badge}
+              </Badge>
+            )}
+            {item.compatibility && (
+              <span className="text-[10px] text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 rounded font-mono truncate">
+                {item.compatibility}
+              </span>
             )}
           </div>
-        </div>
+        )}
 
-        {/* Right: Outbound Action Button */}
-        <div className="sm:self-center shrink-0 w-full sm:w-auto pt-1 sm:pt-0 print:hidden">
-          <Button
-            asChild
-            size="sm"
-            variant="outline"
-            className="w-full sm:w-auto text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
-          >
-            <a
-              href={item.affiliateUrl || `/out/${item.slug}`}
-              target="_blank"
-              rel="noopener noreferrer nofollow sponsored"
-            >
-              <span>View on Amazon</span>
-              <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
-            </a>
-          </Button>
-        </div>
+        {/* Title */}
+        <h4
+          className={cn(
+            'text-sm font-semibold tracking-tight transition-colors line-clamp-1 mb-1.5',
+            isChecked ? 'line-through text-zinc-500' : 'text-zinc-100'
+          )}
+        >
+          {item.title}
+        </h4>
+
+        {/* Keep the savings callout compact (text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-md inline-block w-fit mb-2) */}
+        {price && (
+          <span className="text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-1 rounded-md inline-block w-fit mb-2">
+            {price}
+          </span>
+        )}
+
+        {/* Truncate body text to 2 lines maximum (line-clamp-2 text-xs text-neutral-400) */}
+        {note && (
+          <p className="line-clamp-2 text-xs text-neutral-400 leading-relaxed font-sans mb-3">
+            {note}
+          </p>
+        )}
       </div>
 
-      {/* On-Site Video Guide Modal CTA */}
-      {item.youtubeVideoId && (
-        <>
-          <div className="mt-2 pt-2.5 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 print:hidden w-full">
-            <div className="flex items-center gap-2 min-w-0">
-              <Play className="h-3.5 w-3.5 text-red-500 fill-red-500 shrink-0" />
-              <span className="text-xs font-semibold text-zinc-300 truncate">
-                {item.videoTitle || 'Video Guide'}
-              </span>
-            </div>
+      {/* Bottom Action Section: Amazon Outbound Link + Optional Video Guide */}
+      <div className="pt-2.5 border-t border-neutral-800/80 mt-auto w-full space-y-2 print:hidden">
+        <Button
+          asChild
+          size="sm"
+          variant="outline"
+          className="w-full text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
+        >
+          <a
+            href={item.affiliateUrl || `/out/${item.slug}`}
+            target="_blank"
+            rel="noopener noreferrer nofollow sponsored"
+          >
+            <span>View on Amazon</span>
+            <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
+          </a>
+        </Button>
+
+        {/* On-Site Video Guide Modal CTA */}
+        {item.youtubeVideoId && (
+          <>
             <Button
               type="button"
               size="sm"
               variant="ghost"
               onClick={() => setIsVideoModalOpen(true)}
               data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-modal-btn-${item.slug}`}
-              className="h-7 px-2.5 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 shrink-0 transition-all cursor-pointer self-start sm:self-auto gap-1.5"
+              className="w-full h-7 px-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 border border-red-500/20 transition-all cursor-pointer gap-1.5"
             >
               <Play className="h-3 w-3 fill-red-500 text-red-500 shrink-0" />
               <span>Watch Video Guide</span>
             </Button>
-          </div>
 
-          <VideoModal
-            isOpen={isVideoModalOpen}
-            onClose={() => setIsVideoModalOpen(false)}
-            videoId={item.youtubeVideoId}
-            title={item.videoTitle || item.name || item.title}
-          />
-        </>
-      )}
+            <VideoModal
+              isOpen={isVideoModalOpen}
+              onClose={() => setIsVideoModalOpen(false)}
+              videoId={item.youtubeVideoId}
+              title={item.videoTitle || item.name || item.title}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }
