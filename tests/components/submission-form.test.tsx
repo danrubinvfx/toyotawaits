@@ -22,10 +22,10 @@ describe('SubmissionForm Component', () => {
     expect(screen.getByLabelText(/Pricing Status/i)).toHaveValue('undisclosed');
   });
 
-  it('inherits model, powertrain, and province from URL search parameters', async () => {
+  it('inherits model, powertrain, province, and orderDate from URL search parameters', async () => {
     const nextNav = await import('next/navigation');
     vi.spyOn(nextNav, 'useSearchParams').mockReturnValue(
-      new URLSearchParams('model=prius&powertrain=phev&province=BC') as any
+      new URLSearchParams('model=prius&powertrain=phev&province=BC&orderDate=2025-01-01') as any
     );
 
     render(<SubmissionForm />);
@@ -33,6 +33,15 @@ describe('SubmissionForm Component', () => {
     expect(screen.getByLabelText(/Vehicle Model/i)).toHaveValue('prius');
     expect(screen.getByLabelText(/Powertrain/i)).toHaveValue('phev');
     expect(screen.getByLabelText(/Province/i)).toHaveValue('BC');
+    expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue('2025-01-01');
+    expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2025');
+  });
+
+  it('accepts initialOrderDate prop to initialize order date and model year', () => {
+    render(<SubmissionForm initialOrderDate="2024-05-10" />);
+
+    expect(screen.getByLabelText(/Order \/ Deposit Date/i)).toHaveValue('2024-05-10');
+    expect(screen.getByLabelText(/Model Year/i)).toHaveValue('2024');
   });
 
   it('updates powertrains and trims when Model changes to Sienna', async () => {
@@ -357,5 +366,19 @@ describe('SubmissionForm Component', () => {
     // Revert year back to 2026
     fireEvent.change(yearSelect, { target: { value: '2026' } });
     expect(screen.getByRole('option', { name: /GR SPORT AWD/i })).toBeInTheDocument();
+  });
+
+  it('displays historical pricing disclaimers and 2026 MSRP reference prefix when model year < 2026', () => {
+    render(<SubmissionForm />);
+
+    const yearSelect = screen.getByLabelText(/Model Year/i);
+    fireEvent.change(yearSelect, { target: { value: '2025' } });
+
+    expect(
+      screen.getByText(/Historical pricing varies by model year \(current 2026 MSRP shown for reference\)\./i)
+    ).toBeInTheDocument();
+
+    const trimSelect = screen.getByLabelText(/Trim Level/i);
+    expect(trimSelect.textContent).toContain('2026 MSRP Ref: CAD');
   });
 });

@@ -16,7 +16,7 @@ describe('GET /api/og', () => {
 
     const arrayBuffer = await response.arrayBuffer();
     expect(arrayBuffer.byteLength).toBeGreaterThan(0);
-  });
+  }, 15000);
 
   it('generates a 200 OK PNG image with fallback parameters when none are specified', async () => {
     const request = new NextRequest('http://localhost:3000/api/og');

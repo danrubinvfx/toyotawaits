@@ -126,16 +126,11 @@ export default function PrivacyPage() {
 
         <section className="space-y-3">
           <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
-            <Scale className="h-5 w-5 text-red-600" />
-            3. PIPEDA &amp; Canadian Legal Compliance
+            <Lock className="h-5 w-5 text-red-600" />
+            3. Email Notifications &amp; Alert Data
           </h2>
           <p>
-            ToyotaWaits.ca complies fully with the <em>Personal Information Protection and Electronic Documents Act</em> (PIPEDA)
-            and provincial privacy statutes (PIPA Alberta, PIPA British Columbia, and Quebec Law 25).
-          </p>
-          <p>
-            Under PIPEDA Principle 4.4 (Limiting Collection), an organization may only collect personal information necessary for specified purposes.
-            Because ToyotaWaits.ca does not collect personal identifiers, no personal data can be intercepted, breached, or subpoenaed from our systems.
+            Order timeline submissions are 100% anonymous and collect no personal identifiers. Email addresses provided voluntarily for the optional &apos;Notify Me&apos; delivery alerts are stored in an isolated alert queue solely to deliver notifications, with 1-click unsubscribe and permanent deletion available at any time.
           </p>
         </section>
 
@@ -167,20 +162,17 @@ export default function PrivacyPage() {
 
         <section className="space-y-3">
           <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
-            <Lock className="h-5 w-5 text-red-600" />
-            6. Email Wait-Time Alerts &amp; Notification Privacy (&quot;Notify Me&quot;)
+            <Scale className="h-5 w-5 text-red-600" />
+            6. PIPEDA &amp; Canadian Legal Compliance
           </h2>
           <p>
-            Submitting vehicle order timelines to ToyotaWaits.ca is <strong>100% anonymous without personal identifiers</strong>—no email address or account is ever required to log or edit an order.
+            ToyotaWaits.ca complies fully with the <em>Personal Information Protection and Electronic Documents Act</em> (PIPEDA)
+            and provincial privacy statutes (PIPA Alberta, PIPA British Columbia, and Quebec Law 25).
           </p>
           <p>
-            If you voluntarily subscribe to the &quot;Notify Me&quot; wait-time alert feature:
+            Under PIPEDA Principle 4.4 (Limiting Collection), an organization may only collect personal information necessary for specified purposes.
+            Because ToyotaWaits.ca does not collect personal identifiers for vehicle order tracking, no personal order data can be intercepted, breached, or subpoenaed from our systems.
           </p>
-          <ul className="list-disc pl-5 space-y-1.5 text-zinc-600 dark:text-zinc-400">
-            <li><strong>Isolated storage:</strong> Your email address is stored strictly in a separate notification table and is never linked, merged, or correlated with crowdsourced order submissions.</li>
-            <li><strong>Exclusive use:</strong> Email addresses are used exclusively for automated delivery arrival window notifications and regional allocation updates matching your selected model and province.</li>
-            <li><strong>1-Click Unsubscribe &amp; Immediate Purge:</strong> Every notification email includes a secure, one-click unsubscribe link that immediately and permanently deletes your email address from our systems. We never send marketing emails, third-party newsletters, or dealer solicitations.</li>
-          </ul>
         </section>
       </div>
 

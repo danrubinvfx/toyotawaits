@@ -119,7 +119,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'FleX-Ice 2.0 silica compound stays pliable in -40°C Canadian deep freezes',
           'Low rolling resistance minimizes winter fuel penalty on RAV4 Hybrid & Prime EV mode',
           'V-shaped tread pattern provides confidence-inspiring tracking in frozen ruts',
-          'Long tread life backed by Michelin 60,000 km winter manufacturer warranty',
+          'Exceptional winter durability backed by manufacturer winter treadwear warranty',
         ],
         cons: [
           'Higher upfront investment per corner than secondary-tier winter brands',
@@ -201,7 +201,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'High grip silica tread compound stays flexible across wide Canadian temperature swings',
         ],
         cons: [
-          'Tread life typically 15,000 km lower than CrossClimate 2 under high highway mileage',
+          'Higher wear rate if driven continuously during hot summer highway conditions compared to dedicated touring rubber',
           'Noticeable road hum on coarse asphalt surfaces',
         ],
         amazonUrl:
@@ -272,7 +272,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'Deep block depth bites into heavy slush banks when passing or turning at intersections',
         ],
         cons: [
-          'Hybrid fuel economy drops ~0.3–0.5 L/100km due to aggressive winter block resistance',
+          'Slight hybrid fuel economy impact due to aggressive high-traction winter block resistance',
           'Tread wears more quickly when driven on dry highways in late spring',
         ],
         amazonUrl:
@@ -341,7 +341,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'Reinforced SUV casing tuned for 4,500+ lb 3-row crossover weight and towing dynamics',
           'Maintains rubber flexibility down to -40°C in bitter Canadian winter cold spells',
           'Superior directional stability on rutted slush and packed highway snow lanes',
-          'Excellent tire longevity backed by Michelin 60,000 km winter tread warranty',
+          'Excellent tire longevity backed by manufacturer winter treadwear warranty',
         ],
         cons: [
           'Substantial cost per corner in factory 20-inch size (255/55R20)',
@@ -417,9 +417,9 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         bestFor:
           'Year-round peace of mind, severe snow certification, and wet slush dominance on family Grand Highlander road trips.',
         pros: [
-          'Stops up to 16 feet shorter in snow than leading standard all-weather competitors',
+          'Transport Canada 3PMSF severe snow certified braking and traction over standard all-season tires',
           'Exceptional hydroplaning resistance when encountering standing slush and spring highway puddles',
-          'Ultra-long tread life warranty (up to 95,000 km)',
+          'Extended tread life backed by multi-season manufacturer warranty',
         ],
         cons: [
           'Higher purchase price in 20-inch sizing (255/55R20)',
@@ -485,11 +485,11 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         oemFitment: 'Fits OEM 17" (195/60R17) & 19" (195/50R19)',
         rating: 4.9,
         bestFor:
-          'Maximum electric range retention, low rolling drag, and class-leading braking distance on icy city streets and highways.',
+          'Maximum electric range retention, low rolling drag, and confident 3PMSF sub-zero braking on icy city streets and highways.',
         pros: [
           'Lowest rolling resistance among premium Nordic winter tires—minimizes winter EV battery drop',
           'Superb lateral stability on slushy highway lane changes and exit ramps',
-          'Proven 60,000 km winter treadwear warranty provides multi-season longevity',
+          'Manufacturer winter treadwear warranty provides multi-season longevity',
         ],
         cons: [
           'Firm sidewall profile transmits sharp frost cracks on broken city roads',
@@ -563,7 +563,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'Exceptional towing stability and heat dissipation for heavy trailers',
         ],
         cons: [
-          'Heavier unsprung tire weight slightly impacts hybrid fuel efficiency (~0.5 L/100km)',
+          'Heavier unsprung tire weight slightly impacts hybrid fuel efficiency compared to highway touring tires',
           'Mild road hum audible at 110+ km/h compared to smooth highway touring tires',
         ],
         amazonUrl:
@@ -589,7 +589,7 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
           'Summit Sidewalls offer lateral clawing grip when extricating from deep unplowed snow ruts',
         ],
         cons: [
-          'Aggressive tread pattern requires regular 8,000 km rotations to prevent cupping',
+          'Aggressive tread pattern requires regular seasonal rotations to prevent cupping',
           'Higher price point reflecting specialized Nordic engineering',
         ],
         amazonUrl:

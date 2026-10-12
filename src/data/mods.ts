@@ -56,11 +56,14 @@ export const MODS_CONFIG: ModItem[] = [
     categories: ['Electronics & Safety'],
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (RAV4)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam',
-    description: 'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.',
+    description:
+      'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
-    whyBuy: 'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.',
-    utilityNote: 'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing.',
+    whyBuy:
+      'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
+    utilityNote:
+      'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     image: '/images/accessories/fitcamx-rav4.png',
     asin: 'B09GLVMB76',
     amazonCaAsinOrUrl: 'B09GLVMB76',
@@ -79,11 +82,14 @@ export const MODS_CONFIG: ModItem[] = [
     categories: ['Electronics & Safety'],
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)',
-    description: 'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.',
+    description:
+      'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
-    whyBuy: 'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.',
-    utilityNote: 'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter.',
+    whyBuy:
+      'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
+    utilityNote:
+      'Discrete integrated mirror tap protecting your family minivan with zero windshield clutter. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     image: '/images/accessories/fitcamx-sienna.png',
     asin: 'B09GFNZK3C',
     amazonCaAsinOrUrl: 'B09GFNZK3C',
@@ -100,11 +106,14 @@ export const MODS_CONFIG: ModItem[] = [
     categories: ['Electronics & Safety'],
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)',
-    description: 'OEM-factory integrated fitment beneath the digital mirror with 4K recording.',
+    description:
+      'OEM-factory integrated fitment beneath the digital mirror with 4K recording. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
-    whyBuy: 'OEM-factory integrated fitment beneath the digital mirror with 4K recording.',
-    utilityNote: 'OEM-factory integrated fitment beneath the digital mirror with 4K recording.',
+    whyBuy:
+      'OEM-factory integrated fitment beneath the digital mirror with 4K recording. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
+    utilityNote:
+      'OEM-factory integrated fitment beneath the digital mirror with 4K recording. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     image: '/images/accessories/fitcamx-grand-highlander.png',
     asin: 'B0CK5M3N7V',
     amazonCaAsinOrUrl: 'B0CK5M3N7V',
@@ -121,11 +130,14 @@ export const MODS_CONFIG: ModItem[] = [
     categories: ['Electronics & Safety'],
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)',
     name: 'FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)',
-    description: 'Trail-tested integrated dashcam powered directly by the rearview mirror harness.',
+    description:
+      'Trail-tested integrated dashcam powered directly by the rearview mirror harness. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     priceEst: 'Saves ~$350+ vs dealer install',
     priceEstCad: 'Saves ~$350+ vs dealer install',
-    whyBuy: 'Trail-tested integrated dashcam powered directly by the rearview mirror harness.',
-    utilityNote: 'Trail-tested integrated dashcam powered directly by the rearview mirror harness.',
+    whyBuy:
+      'Trail-tested integrated dashcam powered directly by the rearview mirror harness. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
+    utilityNote:
+      'Trail-tested integrated dashcam powered directly by the rearview mirror harness. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     image: '/images/accessories/fitcamx-land-cruiser.png',
     asin: 'B0D8TY5M67',
     amazonCaAsinOrUrl: 'B0D8TY5M67',
@@ -143,15 +155,15 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     categories: ['Electronics & Safety'],
     badge: 'Pro Tip',
-    compatibility: 'RAV4 (2019-2021), Highlander, Tacoma',
+    compatibility: '10-Pin Tap: Auto-Dim Mirror (XSE/Limited/Platinum)',
     title: '10-Pin Type A TSS Mirror Harness Adapter (Dongar Style)',
     name: '10-Pin Type A TSS Mirror Harness Adapter',
     description:
-      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+      '10-Pin Mirror Tap: Requires factory auto-dimming rearview mirror (XSE/Limited/Platinum). Plugs between mirror and factory harness for clean 5V USB power.',
     whyBuy:
-      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+      '10-Pin Mirror Tap: Requires factory auto-dimming rearview mirror (XSE/Limited/Platinum). Plugs between mirror and factory harness for clean 5V USB power.',
     utilityNote:
-      'Clean 5V USB power tap that plugs between the auto-dimming rearview mirror and factory harness. No fuse tapping or wire tucking.',
+      '10-Pin Mirror Tap: Requires factory auto-dimming rearview mirror (XSE/Limited/Platinum). Plugs between mirror and factory harness for clean 5V USB power.',
     priceEst: 'Clean 5V plug-and-play mirror tap',
     priceEstCad: 'Clean 5V plug-and-play mirror tap',
     image: '/images/accessories/dongar-10pin-type-a.png',
@@ -167,15 +179,15 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     categories: ['Electronics & Safety'],
     badge: 'Pro Tip',
-    compatibility: 'RAV4 (2022-2026), Sienna (2021+), Grand Highlander',
-    title: '12-Pin Type B TSS Mirror Harness Adapter (Dongar Style)',
-    name: '12-Pin Type B TSS Mirror Harness Adapter',
+    compatibility: '12-Pin/16-Pin TSS Tap: Safety Sense Shroud (Base/Manual Trims)',
+    title: '12-Pin / 16-Pin Type B TSS Mirror Harness Adapter (Dongar Style)',
+    name: '12-Pin / 16-Pin Type B TSS Mirror Harness Adapter',
     description:
-      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+      '12-Pin / 16-Pin TSS Tap: Connects to the Safety Sense camera shroud (compatible with base/manual mirror trims). Runs any USB dashcam cleanly.',
     whyBuy:
-      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+      '12-Pin / 16-Pin TSS Tap: Connects to the Safety Sense camera shroud (compatible with base/manual mirror trims). Runs any USB dashcam cleanly.',
     utilityNote:
-      '12-pin plug and play power tap for newer Safety Sense mirror shrouds to run any USB dashcam cleanly.',
+      '12-Pin / 16-Pin TSS Tap: Connects to the Safety Sense camera shroud (compatible with base/manual mirror trims). Runs any USB dashcam cleanly.',
     priceEst: 'Clean 12-pin plug-and-play tap',
     priceEstCad: 'Clean 12-pin plug-and-play tap',
     image: '/images/accessories/dongar-12pin-type-b.png',

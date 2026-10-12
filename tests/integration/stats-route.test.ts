@@ -18,5 +18,6 @@ describe('GET /api/stats', () => {
     expect(json.data['prius-prime']).toBeDefined();
     expect(json.data.prius).toBeDefined();
     expect(json.data.sienna).toBeDefined();
+    expect(json.data.tacoma).toBeUndefined();
   });
 });

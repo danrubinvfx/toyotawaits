@@ -80,4 +80,14 @@ describe('GET /api/aggregate', () => {
       'Displaying overall Plug-in Hybrid (PHEV) baseline due to limited trim-specific data.'
     );
   });
+
+  it('rejects unlisted or mock models like Tacoma with 400 MODEL_NOT_TRACKED', async () => {
+    const request = new NextRequest('http://localhost:3000/api/aggregate?model=tacoma');
+    const response = await GET(request);
+    expect(response.status).toBe(400);
+
+    const json = await response.json();
+    expect(json.success).toBe(false);
+    expect(json.error.code).toBe('MODEL_NOT_TRACKED');
+  });
 });

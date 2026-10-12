@@ -871,16 +871,16 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
           pricing,
           mandatory_addons_cad,
           created_at,
-          vehicle_models(name, slug),
-          vehicle_powertrains(name, slug),
+          vehicle_models!inner(name, slug),
+          vehicle_powertrains!inner(name, slug),
           vehicle_trims(name, slug)
         `)
         .or('is_flagged.eq.false,is_flagged.is.null');
 
-      if (filters.model) {
+      if (filters.model && filters.model !== 'all') {
         query = query.eq('vehicle_models.slug', filters.model.toLowerCase());
       }
-      if (filters.powertrain) {
+      if (filters.powertrain && filters.powertrain !== 'all') {
         query = query.eq('vehicle_powertrains.slug', filters.powertrain.toLowerCase());
       }
       if (filters.province) {
@@ -922,8 +922,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
   for (const item of inMemorySubmissions.values()) {
     if (item.is_flagged) continue;
 
-    if (filters.model && item.model_slug !== filters.model.toLowerCase()) continue;
-    if (filters.powertrain && item.powertrain_slug !== filters.powertrain.toLowerCase()) continue;
+    if (filters.model && filters.model !== 'all' && item.model_slug !== filters.model.toLowerCase()) continue;
+    if (filters.powertrain && filters.powertrain !== 'all' && item.powertrain_slug !== filters.powertrain.toLowerCase()) continue;
     if (filters.province && item.province !== filters.province) continue;
     if (filters.status && item.status !== filters.status) continue;
 

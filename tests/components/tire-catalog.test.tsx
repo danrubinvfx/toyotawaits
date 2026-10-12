@@ -184,7 +184,7 @@ describe('TireCatalog Component', () => {
     render(<TireCatalog />);
 
     const tips = screen.getAllByText(
-      /Tip: Add your selected tire size to your Amazon cart or wish list to lock in pricing and verify delivery dates closer to vehicle pickup\./i
+      /Tip: Add your selected tire size to your Amazon cart or wish list to monitor price changes and stock closer to vehicle pickup\./i
     );
     expect(tips.length).toBeGreaterThanOrEqual(1);
   });

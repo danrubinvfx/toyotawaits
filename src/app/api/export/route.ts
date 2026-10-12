@@ -16,11 +16,16 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
+    const rawModel = searchParams.get('model');
+    const rawPowertrain = searchParams.get('powertrain');
+    const rawProvince = searchParams.get('province');
+    const rawStatus = searchParams.get('status');
+
     const queryParams = {
-      model: searchParams.get('model') || undefined,
-      powertrain: searchParams.get('powertrain') || undefined,
-      province: searchParams.get('province') || undefined,
-      status: searchParams.get('status') || undefined,
+      model: rawModel && rawModel !== 'all' ? rawModel : undefined,
+      powertrain: rawPowertrain && rawPowertrain !== 'all' ? rawPowertrain : undefined,
+      province: rawProvince && rawProvince !== 'all' ? rawProvince : undefined,
+      status: rawStatus && rawStatus !== 'all' ? rawStatus : undefined,
       format: (searchParams.get('format') || 'csv') as 'csv',
     };
 

@@ -74,30 +74,143 @@ export const BASELINE_MODEL_BENCHMARKS: Record<string, ModelWaitBenchmark> = {
     max_days: 170,
     mean_days: 115.8,
   },
-  'corolla-cross': {
-    model: 'corolla-cross',
-    sample_size: 9,
-    min_days: 90,
-    p25_days: 140,
-    median_days: 210,
-    p75_days: 280,
-    max_days: 350,
-    mean_days: 215.0,
+};
+
+export const ACTIVE_TRACKED_MODELS = [
+  'rav4',
+  'prius-prime',
+  'prius',
+  'sienna',
+  'grand-highlander',
+  'land-cruiser',
+] as const;
+
+export type ActiveTrackedModel = (typeof ACTIVE_TRACKED_MODELS)[number];
+
+export interface PowertrainWaitBenchmark {
+  model: string;
+  powertrain: string;
+  powertrainName: string;
+  sample_size: number;
+  min_days: number;
+  p25_days: number;
+  median_days: number;
+  p75_days: number;
+  max_days: number;
+  mean_days: number;
+}
+
+export const BASELINE_POWERTRAIN_BENCHMARKS: Record<string, PowertrainWaitBenchmark> = {
+  'rav4-phev': {
+    model: 'rav4',
+    powertrain: 'phev',
+    powertrainName: 'Plug-in Hybrid (PHEV)',
+    sample_size: 6,
+    min_days: 240,
+    p25_days: 285,
+    median_days: 340,
+    p75_days: 410,
+    max_days: 410,
+    mean_days: 345.0,
   },
-  tacoma: {
-    model: 'tacoma',
+  'rav4-hev': {
+    model: 'rav4',
+    powertrain: 'hev',
+    powertrainName: 'Hybrid (HEV)',
     sample_size: 8,
-    min_days: 120,
-    p25_days: 160,
-    median_days: 240,
-    p75_days: 310,
-    max_days: 380,
-    mean_days: 235.0,
+    min_days: 110,
+    p25_days: 130,
+    median_days: 175,
+    p75_days: 220,
+    max_days: 260,
+    mean_days: 178.5,
+  },
+  'sienna-hev': {
+    model: 'sienna',
+    powertrain: 'hev',
+    powertrainName: 'Hybrid (HEV)',
+    sample_size: 7,
+    min_days: 400,
+    p25_days: 440,
+    median_days: 510,
+    p75_days: 560,
+    max_days: 620,
+    mean_days: 505.7,
+  },
+  'grand-highlander-hev': {
+    model: 'grand-highlander',
+    powertrain: 'hev',
+    powertrainName: 'Hybrid (HEV)',
+    sample_size: 5,
+    min_days: 240,
+    p25_days: 270,
+    median_days: 320,
+    p75_days: 375,
+    max_days: 410,
+    mean_days: 320.0,
+  },
+  'grand-highlander-hybrid-max': {
+    model: 'grand-highlander',
+    powertrain: 'hybrid-max',
+    powertrainName: 'Hybrid MAX',
+    sample_size: 2,
+    min_days: 320,
+    p25_days: 350,
+    median_days: 380,
+    p75_days: 420,
+    max_days: 450,
+    mean_days: 385.0,
+  },
+  'prius-prime-phev': {
+    model: 'prius-prime',
+    powertrain: 'phev',
+    powertrainName: 'Plug-in Hybrid (PHEV)',
+    sample_size: 12,
+    min_days: 28,
+    p25_days: 140,
+    median_days: 181,
+    p75_days: 230,
+    max_days: 390,
+    mean_days: 175.4,
+  },
+  'prius-hev': {
+    model: 'prius',
+    powertrain: 'hev',
+    powertrainName: 'Hybrid (HEV)',
+    sample_size: 6,
+    min_days: 80,
+    p25_days: 95,
+    median_days: 104,
+    p75_days: 120,
+    max_days: 135,
+    mean_days: 107.2,
+  },
+  'land-cruiser-hev': {
+    model: 'land-cruiser',
+    powertrain: 'hev',
+    powertrainName: 'i-FORCE MAX Hybrid',
+    sample_size: 6,
+    min_days: 60,
+    p25_days: 85,
+    median_days: 125,
+    p75_days: 145,
+    max_days: 170,
+    mean_days: 115.8,
   },
 };
 
+export function getPowertrainBenchmark(
+  modelSlug: string,
+  powertrainSlug?: string
+): PowertrainWaitBenchmark | null {
+  if (!powertrainSlug) return null;
+  const key = `${modelSlug.toLowerCase()}-${powertrainSlug.toLowerCase()}`;
+  return BASELINE_POWERTRAIN_BENCHMARKS[key] || null;
+}
+
 /**
  * Direct fetch from Supabase model_wait_benchmarks view with graceful degradation.
+ * Excludes legacy or unlisted models (e.g. Tacoma) to align with public delivery logs.
  */
 export async function fetchRawModelWaitBenchmarks(): Promise<Record<string, ModelWaitBenchmark>> {
   const result: Record<string, ModelWaitBenchmark> = { ...BASELINE_MODEL_BENCHMARKS };
@@ -116,10 +229,12 @@ export async function fetchRawModelWaitBenchmarks(): Promise<Record<string, Mode
       if (!error && Array.isArray(data) && data.length > 0) {
         for (const row of data) {
           const sampleSize = Number(row.sample_size) || 0;
+          const modelKey = String(row.model || '').toLowerCase();
           // Only adopt dynamic database metrics if model has at least 2 delivered entries
-          if (sampleSize >= 2 && row.model) {
-            result[row.model] = {
-              model: String(row.model),
+          // and belongs to active tracked models (excluding Tacoma / legacy unlisted models)
+          if (sampleSize >= 2 && (ACTIVE_TRACKED_MODELS as readonly string[]).includes(modelKey)) {
+            result[modelKey] = {
+              model: modelKey,
               sample_size: sampleSize,
               min_days: Number(row.min_days) || 0,
               p25_days: Number(row.p25_days) || 0,

@@ -79,8 +79,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
                 <span>Provincial 3PMSF Laws</span>
               </div>
               <p className="text-[11px] text-zinc-400 leading-snug">
-                Quebec mandates 3PMSF rubber Dec 1–Mar 15. BC requires winter-rated tires on mountain
-                passes Oct 1–Apr 30.
+                Transport Canada 3PMSF severe snow certified. Quebec mandates 3PMSF Dec 1–Mar 15; BC requires on mountain passes Oct 1–Apr 30.
               </p>
             </div>
 
@@ -90,8 +89,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
                 <span>Hybrid &amp; EV Range</span>
               </div>
               <p className="text-[11px] text-zinc-400 leading-snug">
-                Low rolling resistance compounds preserve electric driving range and battery efficiency
-                in -25°C weather.
+                Rubber hardens below 7°C glass-transition point. 3PMSF silica compounds stay flexible to preserve cold-weather hybrid efficiency and EV range.
               </p>
             </div>
 
@@ -101,8 +99,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
                 <span>Insurance Discounts</span>
               </div>
               <p className="text-[11px] text-zinc-400 leading-snug">
-                Ontario insurers mandate up to ~5% auto policy discounts when certified winter tires are
-                installed.
+                Ontario insurers mandate up to ~5% auto policy discounts when certified 3PMSF winter tires are installed.
               </p>
             </div>
           </div>
@@ -450,7 +447,7 @@ function TireCard({ tire }: TireCardProps) {
         <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-2 mt-auto">
           <div className="flex items-center justify-between text-[11px] text-zinc-500">
             <span>{tire.asin ? 'Amazon.ca Live Listing' : 'Search on Amazon.ca'}</span>
-            <span className="text-zinc-400">Prime &amp; Express Delivery</span>
+            <span className="text-zinc-400">Check live stock on Amazon.ca</span>
           </div>
 
           <Button
@@ -475,7 +472,7 @@ function TireCard({ tire }: TireCardProps) {
 
           {/* 90-Day Cookie Window Micro-Copy */}
           <p className="text-[11px] text-zinc-500 dark:text-zinc-400 italic text-center leading-snug pt-0.5">
-            Tip: Add your selected tire size to your Amazon cart or wish list to lock in pricing and verify delivery dates closer to vehicle pickup.
+            Tip: Add your selected tire size to your Amazon cart or wish list to monitor price changes and stock closer to vehicle pickup.
           </p>
         </div>
       </CardContent>

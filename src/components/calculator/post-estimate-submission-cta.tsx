@@ -26,17 +26,25 @@ export function PostEstimateSubmissionCta({ className }: PostEstimateSubmissionC
     model?: string;
     powertrain?: string;
     province?: string;
+    orderDate?: string;
   }>({});
 
   useEffect(() => {
     const handleModelSync = (e: Event) => {
-      const customEvent = e as CustomEvent<{ model?: string; powertrain?: string; province?: string }>;
+      const customEvent = e as CustomEvent<{
+        model?: string;
+        powertrain?: string;
+        province?: string;
+        orderDate?: string;
+        depositDate?: string;
+      }>;
       if (customEvent.detail) {
         setActiveSelection((prev) => ({
           ...prev,
           model: customEvent.detail.model || prev.model,
           powertrain: customEvent.detail.powertrain || prev.powertrain,
           province: customEvent.detail.province || prev.province,
+          orderDate: customEvent.detail.orderDate || customEvent.detail.depositDate || prev.orderDate,
         }));
       }
     };
@@ -104,6 +112,7 @@ export function PostEstimateSubmissionCta({ className }: PostEstimateSubmissionC
     if (activeSelection.model) params.set('model', activeSelection.model);
     if (activeSelection.powertrain) params.set('powertrain', activeSelection.powertrain);
     if (activeSelection.province) params.set('province', activeSelection.province);
+    if (activeSelection.orderDate) params.set('orderDate', activeSelection.orderDate);
     const qs = params.toString();
     return qs ? `/submit?${qs}` : '/submit';
   };

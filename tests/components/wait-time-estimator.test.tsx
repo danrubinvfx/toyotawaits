@@ -283,7 +283,7 @@ describe('WaitTimeEstimator Component', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('Based on overall model median (limited regional data)')
+        screen.getByText(/National baseline: Based on 14 deliveries across all RAV4 powertrains \(Hybrid & PHEV\)\./i)
       ).toBeInTheDocument();
       expect(
         screen.getByTestId('regional-baseline-badge')
@@ -293,6 +293,64 @@ describe('WaitTimeEstimator Component', () => {
       ).toBeInTheDocument();
       // Grounded in RAV4 baseline median (375 Days) instead of regional 150 Days
       expect(screen.getAllByText(/375 Days/i).length).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it('displays inline explanatory carryover note when wait time exceeds 12 months', async () => {
+    const mockSiennaData = {
+      success: true,
+      data: {
+        modelSlug: 'sienna',
+        modelName: 'Sienna',
+        powertrainSlug: 'hev',
+        powertrainName: 'Hybrid (HEV)',
+        province: 'ON',
+        sampleCounts: { total: 30, delivered: 25, pending: 5 },
+        // Conservative wait time exceeds 14 months (e.g. 450-560 days)
+        waitStats: { p25: 400, median: 480, p75: 560, mean: 490, min: 380, max: 620 },
+        pricingInsights: { atMsrpPercent: 85, aboveMsrpPercent: 15, avgAddonsCad: 0 },
+      },
+    };
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/api/stats')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: {
+              sienna: {
+                model: 'sienna',
+                sample_size: 7,
+                min_days: 400,
+                p25_days: 440,
+                median_days: 510,
+                p75_days: 560,
+                max_days: 620,
+                mean_days: 505.7,
+              },
+            },
+          }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => mockSiennaData,
+      });
+    });
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="sienna" initialPowertrain="hev" initialProvince="ON" />);
+
+    await waitFor(() => {
+      // Conservative P75 displays true value (560 Days) without 420-day clamping
+      expect(screen.getAllByText(/560 Days/i).length).toBeGreaterThanOrEqual(1);
+      // Explanatory carryover allocation notice is rendered
+      expect(screen.getByTestId('carryover-allocation-notice')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Orders over 14 months typically carry over into subsequent model-year allocation queues\./i)
+      ).toBeInTheDocument();
     });
   });
 
@@ -719,5 +777,37 @@ describe('WaitTimeEstimator Component', () => {
     expect(downloadSpy).toHaveBeenCalledTimes(1);
     expect(downloadSpy.mock.calls[0][0]).toContain('Order date: 2025-01-01');
     downloadSpy.mockRestore();
+  });
+
+  it('displays historical pricing disclaimers when deposit date is earlier than 2026', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          modelSlug: 'rav4',
+          modelName: 'RAV4',
+          powertrainSlug: 'hev',
+          province: 'ON',
+          sampleCounts: { total: 30, delivered: 25, pending: 5 },
+          waitStats: { p25: 100, median: 200, p75: 300, mean: 200, min: 50, max: 400 },
+          pricingInsights: { atMsrpPercent: 80, aboveMsrpPercent: 20, avgAddonsCad: 300 },
+        },
+      }),
+    } as any);
+
+    window.fetch = fetchMock;
+    global.fetch = fetchMock;
+
+    render(<WaitTimeEstimator />);
+
+    const dateInput = screen.getByLabelText(/Deposit \/ Order Date/i) as HTMLInputElement;
+    fireEvent.change(dateInput, { target: { value: '2024-06-15' } });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Historical pricing varies by model year \(current 2026 MSRP shown for reference\)\./i).length
+      ).toBeGreaterThanOrEqual(1);
+    });
   });
 });

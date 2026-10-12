@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { aggregateQuerySchema } from '@/lib/validations/schemas';
 import { getAggregateStats } from '@/lib/db/aggregate';
 import { ApiResponse, RegionalWaitSummary } from '@/lib/types/contracts';
+import { ACTIVE_TRACKED_MODELS } from '@/lib/db/stats';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +26,20 @@ export async function GET(request: NextRequest) {
             code: 'INVALID_QUERY_PARAMS',
             message: 'Invalid parameters for aggregate analytics.',
             details: validation.error.flatten().fieldErrors as any,
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    const normalizedModel = validation.data.model.toLowerCase();
+    if (!(ACTIVE_TRACKED_MODELS as readonly string[]).includes(normalizedModel)) {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'MODEL_NOT_TRACKED',
+            message: `Model '${validation.data.model}' is not an actively tracked vehicle model.`,
           },
         },
         { status: 400 }

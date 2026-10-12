@@ -19,13 +19,27 @@ export function StickyVehiclePills({
   className,
 }: StickyVehiclePillsProps) {
   const [selectedModel, setSelectedModel] = useState<string>(initialModel);
+  const [selectedPowertrain, setSelectedPowertrain] = useState<string>('');
+  const [selectedProvince, setSelectedProvince] = useState<string>('');
+  const [orderDate, setOrderDate] = useState<string>('');
 
   // Listen for model sync events from the Estimator dropdown
   useEffect(() => {
     const handleModelSync = (e: Event) => {
-      const customEvent = e as CustomEvent<{ model: string }>;
-      if (customEvent.detail?.model) {
-        setSelectedModel(customEvent.detail.model);
+      const customEvent = e as CustomEvent<{
+        model?: string;
+        powertrain?: string;
+        province?: string;
+        orderDate?: string;
+        depositDate?: string;
+      }>;
+      if (customEvent.detail) {
+        if (customEvent.detail.model) setSelectedModel(customEvent.detail.model);
+        if (customEvent.detail.powertrain) setSelectedPowertrain(customEvent.detail.powertrain);
+        if (customEvent.detail.province) setSelectedProvince(customEvent.detail.province);
+        if (customEvent.detail.orderDate || customEvent.detail.depositDate) {
+          setOrderDate(customEvent.detail.orderDate || customEvent.detail.depositDate || '');
+        }
       }
     };
 
@@ -86,7 +100,15 @@ export function StickyVehiclePills({
         </div>
 
         <Link
-          href={selectedModel ? `/submit?model=${selectedModel}` : '/submit'}
+          href={(() => {
+            const params = new URLSearchParams();
+            if (selectedModel) params.set('model', selectedModel);
+            if (selectedPowertrain) params.set('powertrain', selectedPowertrain);
+            if (selectedProvince) params.set('province', selectedProvince);
+            if (orderDate) params.set('orderDate', orderDate);
+            const qs = params.toString();
+            return qs ? `/submit?${qs}` : '/submit';
+          })()}
           className="shrink-0 hidden lg:inline-flex items-center gap-1 text-xs font-semibold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 px-3 py-1 rounded-full transition-all whitespace-nowrap"
         >
           <PlusCircle className="h-3.5 w-3.5" />

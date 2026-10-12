@@ -44,4 +44,25 @@ describe('PostEstimateSubmissionCta Component', () => {
     expect(btn).toBeInTheDocument();
     expect(btn.getAttribute('href')).toContain('/edit/sub-test-456?key=key-test-789');
   });
+
+  it('updates submit URL with active model, powertrain, province, and orderDate when model-sync event fires', async () => {
+    const { act } = await import('@testing-library/react');
+    render(<PostEstimateSubmissionCta />);
+
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-sync', {
+          detail: {
+            model: 'rav4',
+            powertrain: 'phev',
+            province: 'BC',
+            orderDate: '2025-06-01',
+          },
+        })
+      );
+    });
+
+    const btn = screen.getByRole('link', { name: /\+ Add Your Wait Time/i });
+    expect(btn).toHaveAttribute('href', '/submit?model=rav4&powertrain=phev&province=BC&orderDate=2025-06-01');
+  });
 });

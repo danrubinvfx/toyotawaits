@@ -235,12 +235,42 @@ export async function getAggregateStats(
       trimNote = null;
     } else {
       // Fewer than 3 submissions exist for this specific trim
-      dataset = BASELINE_WAIT_DATA[lookupKey] || [150, 180, 220, 260, 310, 380, 420];
       isTrimFallback = true;
       trimNote = `Displaying overall ${powertrainDisplayName} baseline due to limited trim-specific data.`;
     }
-  } else {
-    dataset = BASELINE_WAIT_DATA[lookupKey] || [150, 180, 220, 260, 310, 380, 420];
+  }
+
+  if (!dataset!) {
+    if (BASELINE_WAIT_DATA[lookupKey]) {
+      dataset = BASELINE_WAIT_DATA[lookupKey];
+    } else {
+      // Restrict regional fallback pooling to active powertrain (model === selectedModel AND powertrain === selectedPowertrain)
+      const activePowertrainKey = Object.keys(BASELINE_WAIT_DATA).find((k) =>
+        k.startsWith(`${modelSlug}-${powertrainSlug}-`)
+      );
+      if (activePowertrainKey && BASELINE_WAIT_DATA[activePowertrainKey]) {
+        dataset = BASELINE_WAIT_DATA[activePowertrainKey];
+        if (!trimNote) {
+          trimNote = `National baseline: Based on ${dataset.length} deliveries for ${powertrainDisplayName} (limited ${province} data).`;
+        }
+      } else {
+        // If sample size requires pooling across all powertrains
+        const allModelKeys = Object.keys(BASELINE_WAIT_DATA).filter((k) =>
+          k.startsWith(`${modelSlug}-`)
+        );
+        const pooled = allModelKeys.flatMap((k) => BASELINE_WAIT_DATA[k]);
+        dataset = pooled.length > 0 ? pooled : [150, 180, 220, 260, 310, 380, 420];
+        const powertrainsLabel =
+          modelSlug === 'rav4'
+            ? 'Hybrid & PHEV'
+            : modelSlug === 'grand-highlander'
+            ? 'Hybrid & Hybrid MAX'
+            : modelSlug === 'prius' || modelSlug === 'prius-prime'
+            ? 'Hybrid & PHEV'
+            : powertrainDisplayName;
+        trimNote = `National baseline: Based on ${dataset.length} deliveries across all ${modelSlug.toUpperCase()} powertrains (${powertrainsLabel}).`;
+      }
+    }
   }
 
   const sorted = [...dataset].sort((a, b) => a - b);

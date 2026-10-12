@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getModelWaitBenchmarks } from '@/lib/db/stats';
+import { getModelWaitBenchmarks, ACTIVE_TRACKED_MODELS } from '@/lib/db/stats';
 import { ApiResponse } from '@/lib/types/contracts';
 import { ModelWaitBenchmark } from '@/lib/db/stats';
 
@@ -9,10 +9,19 @@ export async function GET() {
   try {
     const benchmarks = await getModelWaitBenchmarks();
 
+    // Ensure orphan or mock models (e.g. Tacoma) are purged from public aggregate counts
+    const filteredBenchmarks: Record<string, ModelWaitBenchmark> = {};
+    for (const [key, val] of Object.entries(benchmarks)) {
+      const lower = key.toLowerCase();
+      if ((ACTIVE_TRACKED_MODELS as readonly string[]).includes(lower) && lower !== 'tacoma') {
+        filteredBenchmarks[lower] = val;
+      }
+    }
+
     return NextResponse.json<ApiResponse<Record<string, ModelWaitBenchmark>>>(
       {
         success: true,
-        data: benchmarks,
+        data: filteredBenchmarks,
       },
       {
         status: 200,

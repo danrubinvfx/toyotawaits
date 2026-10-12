@@ -34,13 +34,18 @@ export function getTodayLocalDate(): string {
   return `${year}-${month}-${day}`;
 }
 
-export function SubmissionForm() {
+export interface SubmissionFormProps {
+  initialOrderDate?: string;
+}
+
+export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   const formId = useId();
   const router = useRouter();
   const searchParams = useSearchParams();
   const paramModel = searchParams?.get('model');
   const paramProvince = searchParams?.get('province');
   const paramPowertrain = searchParams?.get('powertrain');
+  const paramOrderDate = initialOrderDate || searchParams?.get('orderDate');
 
   // Cascading Selection State
   const initialModel =
@@ -65,8 +70,19 @@ export function SubmissionForm() {
     return 'ON';
   });
   const [dealershipCity, setDealershipCity] = useState<string>('');
-  const [modelYear, setModelYear] = useState<number>(2026);
-  const [orderDate, setOrderDate] = useState<string>(getTodayLocalDate);
+  const [modelYear, setModelYear] = useState<number>(() => {
+    if (paramOrderDate && /^\d{4}-\d{2}-\d{2}$/.test(paramOrderDate)) {
+      const yr = new Date(paramOrderDate + 'T00:00:00').getFullYear();
+      if (!isNaN(yr) && yr >= 2019 && yr <= 2028) return yr;
+    }
+    return 2026;
+  });
+  const [orderDate, setOrderDate] = useState<string>(() => {
+    if (paramOrderDate && /^\d{4}-\d{2}-\d{2}$/.test(paramOrderDate)) {
+      return paramOrderDate;
+    }
+    return getTodayLocalDate();
+  });
   const [maxDate] = useState<string>(() => {
     const d = new Date();
     d.setDate(d.getDate() + 1);
@@ -156,6 +172,10 @@ export function SubmissionForm() {
   const effectiveTrimId = currentTrims.some((t) => t.id === selectedTrimId)
     ? selectedTrimId
     : currentTrims[0]?.id || selectedTrimId;
+
+  const isHistorical =
+    Number(modelYear) < 2026 ||
+    Boolean(orderDate && new Date(orderDate + (orderDate.includes('T') ? '' : 'T00:00:00')).getFullYear() < 2026);
 
   // Handle Model Change
   const handleModelChange = (modelSlug: string) => {
@@ -533,10 +553,15 @@ export function SubmissionForm() {
               >
                 {currentTrims.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.name} (CAD ${t.msrpCad.toLocaleString()})
+                    {t.name} ({isHistorical ? '2026 MSRP Ref: ' : ''}CAD ${t.msrpCad.toLocaleString()})
                   </option>
                 ))}
               </Select>
+              {isHistorical && (
+                <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+                  Historical pricing varies by model year (current 2026 MSRP shown for reference).
+                </p>
+              )}
             </div>
 
             {/* 2. Geography & Model Year */}
@@ -718,6 +743,11 @@ export function SubmissionForm() {
                     <option value="above_msrp">Above MSRP (Dealer Markup)</option>
                     <option value="below_msrp">Below MSRP (Discounted)</option>
                   </Select>
+                  {isHistorical && (
+                    <p className="text-[11px] text-zinc-500 mt-1">
+                      Pricing varies by model year.
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-1.5">

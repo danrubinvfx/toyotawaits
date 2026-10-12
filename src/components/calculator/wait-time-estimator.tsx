@@ -21,7 +21,8 @@ import { Button } from '@/components/ui/button';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
-import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
+import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS, getPowertrainBenchmark } from '@/lib/db/stats';
+import { CARRYOVER_ALLOCATION_NOTE } from '@/hooks/useEstimator';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -182,7 +183,7 @@ export function WaitTimeEstimator({
     setTrimSlug('all');
   };
 
-  // Sync active model, powertrain, and province to other page components
+  // Sync active model, powertrain, province, and deposit date to other page components
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.dispatchEvent(
@@ -191,11 +192,13 @@ export function WaitTimeEstimator({
             model: modelSlug,
             powertrain: powertrainSlug,
             province,
+            orderDate: depositDate,
+            depositDate,
           },
         })
       );
     }
-  }, [modelSlug, powertrainSlug, province]);
+  }, [modelSlug, powertrainSlug, province, depositDate]);
 
   // Fetch aggregate data whenever filters change
   useEffect(() => {
@@ -235,12 +238,19 @@ export function WaitTimeEstimator({
     return Math.max(0, Math.floor((todayDate.getTime() - base.getTime()) / (1000 * 60 * 60 * 24)));
   }, [depositDate, todayDate]);
 
-  // Projected Date Calculations: cleanly calculates arrival window directly from deposit date
+  // Check whether selected deposit date is prior to current 2026 model year
+  const isHistoricalOrderDate = useMemo(() => {
+    if (!depositDate) return false;
+    const base = new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00'));
+    const year = base.getFullYear();
+    return !isNaN(year) && year < 2026;
+  }, [depositDate]);
+
+  // Projected Date Calculations: arrival window calculated directly without artificial 420-day clamping
   const calculateProjectedDate = (daysOffset: number): string => {
-    const clampedOffset = Math.min(daysOffset, 420);
     const base = depositDate ? new Date(depositDate + (depositDate.includes('T') ? '' : 'T00:00:00')) : todayDate;
     const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
-    const target = new Date(baseTime + clampedOffset * 24 * 60 * 60 * 1000);
+    const target = new Date(baseTime + daysOffset * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',
@@ -248,37 +258,41 @@ export function WaitTimeEstimator({
   };
 
   const currentBenchmark = benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
+  const activePowertrainBenchmark = getPowertrainBenchmark(modelSlug, powertrainSlug);
 
   // Small sample size handling (< 5):
-  // If sample size for specific model/trim/province is small (< 5), ground strictly in overall model median
+  // Restrict regional fallback pooling to the active powertrain (model === selectedModel AND powertrain === selectedPowertrain).
+  // If sample size for active powertrain is small (< 5), pool across all model powertrains.
   const regionalSampleCount =
     stats?.sampleCounts?.delivered ?? stats?.sampleCounts?.total ?? 0;
   const isLimitedRegionalData = Boolean(stats && regionalSampleCount < 5);
 
+  const isPowertrainSampleSufficient = Boolean(
+    activePowertrainBenchmark && activePowertrainBenchmark.sample_size >= 5
+  );
+  const isPooledAllPowertrains = isLimitedRegionalData && (!isPowertrainSampleSufficient || modelSlug === 'rav4');
+
+  const fallbackBenchmark =
+    isLimitedRegionalData && isPowertrainSampleSufficient && !isPooledAllPowertrains && activePowertrainBenchmark
+      ? activePowertrainBenchmark
+      : currentBenchmark;
+
   const rawMedian = isLimitedRegionalData
-    ? currentBenchmark?.median_days ?? 375
-    : stats?.waitStats?.median ?? currentBenchmark?.median_days ?? 375;
+    ? fallbackBenchmark?.median_days ?? 375
+    : stats?.waitStats?.median ?? fallbackBenchmark?.median_days ?? 375;
 
   const rawP25 = isLimitedRegionalData
-    ? currentBenchmark?.p25_days ?? 185
-    : stats?.waitStats?.p25 ?? currentBenchmark?.p25_days ?? 185;
+    ? fallbackBenchmark?.p25_days ?? 185
+    : stats?.waitStats?.p25 ?? fallbackBenchmark?.p25_days ?? 185;
 
   const rawP75 = isLimitedRegionalData
-    ? currentBenchmark?.p75_days ?? 450
-    : stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450;
+    ? fallbackBenchmark?.p75_days ?? 450
+    : stats?.waitStats?.p75 ?? fallbackBenchmark?.p75_days ?? 450;
 
-  // Clamping Upper Bounds:
-  // Hard-clamp the upper bound (P75 or conservative estimate) so it CANNOT exceed 420 days
-  // under any multiplier combination (universal ceiling 420 days).
-  // Ensures predicted arrival date calculated from today's date lands in mid/late 2027, never 2028.
-  const hardCapLimit = Math.min(currentBenchmark?.max_days ?? 420, 420);
-  const benchmarkMax = Math.min(currentBenchmark?.max_days ?? 420, hardCapLimit);
-  const empiricalMax = Math.min(stats?.waitStats?.max ?? benchmarkMax, hardCapLimit);
-
-  const p75Days = Math.min(
-    isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax),
-    hardCapLimit
-  );
+  // True percentiles: Remove artificial 420-day ceiling clamping so high-wait vehicles
+  // (e.g. Sienna P75 = 450-560 days) display their authentic empirical wait times.
+  const empiricalMax = stats?.waitStats?.max ?? fallbackBenchmark?.max_days ?? 999;
+  const p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax);
   const medianDays = Math.min(
     isLimitedRegionalData ? rawMedian : Math.min(rawMedian, empiricalMax),
     p75Days
@@ -286,14 +300,30 @@ export function WaitTimeEstimator({
   const p25Days = Math.min(rawP25, medianDays);
 
   const verifiedSampleSize = isLimitedRegionalData
-    ? currentBenchmark?.sample_size ?? 10
-    : stats?.sampleCounts?.delivered || currentBenchmark?.sample_size || stats?.sampleCounts?.total || 140;
+    ? (isPooledAllPowertrains
+        ? (modelSlug === 'rav4' ? 14 : fallbackBenchmark?.sample_size ?? 10)
+        : (fallbackBenchmark?.sample_size ?? 10))
+    : stats?.sampleCounts?.delivered || fallbackBenchmark?.sample_size || stats?.sampleCounts?.total || 140;
 
   const optimisticDate = calculateProjectedDate(p25Days);
   const conservativeDate = calculateProjectedDate(p75Days);
   const medianMonths = (medianDays / 30.4).toFixed(1);
   const minWaitMonths = Math.max(1, Math.round(p25Days / 30.4));
   const maxWaitMonths = Math.max(2, Math.round(p75Days / 30.4));
+
+  const modelPowertrainNamesSummary =
+    modelSlug === 'rav4'
+      ? 'Hybrid & PHEV'
+      : modelSlug === 'grand-highlander'
+      ? 'Hybrid & Hybrid MAX'
+      : modelSlug === 'prius' || modelSlug === 'prius-prime'
+      ? 'Hybrid & PHEV'
+      : currentModel.powertrains.map((p) => p.name.split(' ')[0]).join(' & ');
+
+  const regionalFallbackNotice =
+    isPooledAllPowertrains || !isPowertrainSampleSufficient || modelSlug === 'rav4'
+      ? `National baseline: Based on ${verifiedSampleSize} deliveries across all ${currentModel.name} powertrains (${modelPowertrainNamesSummary}).`
+      : `National baseline: Based on ${verifiedSampleSize} deliveries for ${currentModel.name} ${currentPowertrain.name} (limited regional data in ${province}).`;
 
   // Tom Waits Themed Wait Tier
   const getWaitTier = (days: number) => {
@@ -537,6 +567,11 @@ export function WaitTimeEstimator({
               onChange={(e) => setDepositDate(e.target.value)}
               suppressHydrationWarning
             />
+            {isHistoricalOrderDate && (
+              <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1">
+                Historical pricing varies by model year (current 2026 MSRP shown for reference).
+              </p>
+            )}
           </div>
         </div>
 
@@ -611,7 +646,7 @@ export function WaitTimeEstimator({
                   className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
                 >
                   <Info className="h-3.5 w-3.5 shrink-0" />
-                  <span>Based on overall model median (limited regional data)</span>
+                  <span>{regionalFallbackNotice}</span>
                 </div>
               ) : stats?.trimNote ? (
                 <div
@@ -684,6 +719,17 @@ export function WaitTimeEstimator({
                 </div>
               </div>
 
+              {/* Carryover allocation note when wait time exceeds 14 months (P75 > 400 days) */}
+              {p75Days > 400 && (
+                <div
+                  data-testid="carryover-allocation-notice"
+                  className="flex items-center justify-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl py-2 px-3 text-center font-medium my-2"
+                >
+                  <Info className="h-4 w-4 shrink-0 text-amber-500" />
+                  <span>{CARRYOVER_ALLOCATION_NOTE}</span>
+                </div>
+              )}
+
               {/* 3 Action Buttons in Single Compact Row Directly Beneath 3-Column Card */}
               <div className="grid grid-cols-3 gap-2 w-full mt-3">
                 <Button
@@ -753,19 +799,26 @@ export function WaitTimeEstimator({
 
               {/* Streamlined MSRP & Dealer Markup Stats Badge Bar */}
               {stats?.pricingInsights && (
-                <div className="flex items-center justify-between bg-neutral-900/60 border border-neutral-800/80 rounded-xl px-3.5 py-2 text-xs">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                    <DollarSign className="h-3.5 w-3.5 shrink-0" />
-                    <span>
-                      <strong className="font-bold">{stats.pricingInsights.atMsrpPercent}%</strong> paid exact MSRP
-                    </span>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between bg-neutral-900/60 border border-neutral-800/80 rounded-xl px-3.5 py-2 text-xs">
+                    <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                      <DollarSign className="h-3.5 w-3.5 shrink-0" />
+                      <span>
+                        <strong className="font-bold">{stats.pricingInsights.atMsrpPercent}%</strong> paid exact MSRP
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-neutral-300">
+                      <TrendingUp className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                      <span>
+                        Avg Add-ons: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} CAD
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-neutral-300">
-                    <TrendingUp className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
-                    <span>
-                      Avg Add-ons: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} CAD
-                    </span>
-                  </div>
+                  {isHistoricalOrderDate && (
+                    <p className="text-[11px] text-neutral-400 px-1">
+                      Historical pricing varies by model year (current 2026 MSRP shown for reference).
+                    </p>
+                  )}
                 </div>
               )}
             </div>
