@@ -137,7 +137,7 @@ describe('Header Component', () => {
 
   it('smoothly scrolls to target anchor when anchor link is clicked while on home page', () => {
     const mockSection = document.createElement('div');
-    mockSection.id = 'delivery-prep';
+    mockSection.id = 'gear';
     const scrollMock = vi.fn();
     mockSection.scrollIntoView = scrollMock;
     document.body.appendChild(mockSection);

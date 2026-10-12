@@ -7,6 +7,7 @@ import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
+import { HashScrollHandler } from '@/components/common/hash-scroll-handler';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -62,6 +63,9 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
+      {/* Client-Side Hash Scroll Listener for anchor deep-linking */}
+      <HashScrollHandler />
+
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />
 
@@ -144,7 +148,7 @@ export default async function HomePage() {
               </Link>
 
               <Link
-                href="/#delivery-prep"
+                href="/#gear"
                 className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all min-h-[72px]"
               >
                 <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
@@ -187,7 +191,8 @@ export default async function HomePage() {
         </section>
 
         {/* 3. Model Gear Checklist */}
-        <section id="delivery-prep" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-20">
+        <section id="gear" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
+          <div id="delivery-prep" className="scroll-mt-24" />
           <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ModelGearChecklist />
           </React.Suspense>

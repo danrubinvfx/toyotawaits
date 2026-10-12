@@ -315,7 +315,7 @@ export function ActiveOrderStepper() {
           size="sm"
           className="text-xs border-amber-500/30 bg-amber-500/5 text-amber-400 hover:bg-amber-500/10 gap-1.5"
         >
-          <Link href="#delivery-prep">
+          <Link href="#gear">
             <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
             <span>Delivery Day Prep &amp; Essential Gear</span>
           </Link>

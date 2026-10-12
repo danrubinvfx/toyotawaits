@@ -87,7 +87,7 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/#delivery-prep" className="hover:text-amber-500 transition-colors">
+                <Link href="/#gear" className="hover:text-amber-500 transition-colors">
                   Delivery Prep Checklist
                 </Link>
               </li>

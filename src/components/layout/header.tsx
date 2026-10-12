@@ -263,8 +263,8 @@ export function Header() {
             onMouseLeave={() => setDesktopGearOpen(false)}
           >
             <Link
-              href="/#delivery-prep"
-              onClick={(e) => handleAnchorClick(e, 'delivery-prep')}
+              href="/#gear"
+              onClick={(e) => handleAnchorClick(e, 'gear')}
               className="hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1"
             >
               <ShoppingBag className="h-4 w-4 text-zinc-400" />
@@ -285,10 +285,10 @@ export function Header() {
                   <p className="text-[11px] text-zinc-400">PDI inspection, bill of sale &amp; key fobs</p>
                 </Link>
                 <Link
-                  href="/#delivery-prep"
+                  href="/#gear"
                   onClick={(e) => {
                     setDesktopGearOpen(false);
-                    handleAnchorClick(e, 'delivery-prep');
+                    handleAnchorClick(e, 'gear');
                   }}
                   className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors mb-1"
                 >
@@ -658,8 +658,8 @@ export function Header() {
 
               {/* In-page Delivery Checklist Jump */}
               <Link
-                href="/#delivery-prep"
-                onClick={(e) => handleAnchorClick(e, 'delivery-prep')}
+                href="/#gear"
+                onClick={(e) => handleAnchorClick(e, 'gear')}
                 className="flex items-center justify-between p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors group"
               >
                 <div className="flex items-center gap-2.5">

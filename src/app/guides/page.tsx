@@ -246,7 +246,7 @@ export default function GuidesIndexPage() {
             </p>
           </div>
           <Button asChild variant="outline" size="sm" className="border-amber-500/40 text-amber-500 hover:bg-amber-500/10 text-xs">
-            <Link href="/#delivery-prep">
+            <Link href="/#gear">
               View Interactive Checklist
             </Link>
           </Button>
