@@ -618,70 +618,19 @@ export function WaitTimeEstimator({
                 </div>
               ) : null}
 
-              <p className="text-[11px] text-zinc-400 italic max-w-md mx-auto">
-                &ldquo;{currentTier.sub}&rdquo;
-              </p>
-
-              {/* Median Wait & Verified Deliveries */}
-              <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 pt-1">
-                <div className="inline-flex items-baseline gap-1.5 bg-amber-500/10 dark:bg-amber-950/40 px-3 py-1.5 rounded-lg border border-amber-500/20">
-                  <span className="text-xs font-medium text-amber-800 dark:text-amber-300">Median Wait:</span>
-                  <span className="text-xl font-bold text-amber-600 dark:text-amber-400">
-                    {medianDays} Days
-                  </span>
-                  <span className="text-xs text-amber-700/80 dark:text-amber-300/80">
-                    (~{medianMonths} mos)
-                  </span>
-                </div>
-                <div className="text-[11px] text-zinc-500 flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3 text-emerald-600" />
-                  <span>Based on {verifiedSampleSize} verified deliveries</span>
-                </div>
+              <div className="text-[11px] text-zinc-500 flex items-center justify-center gap-1 pt-0.5">
+                <CheckCircle className="h-3 w-3 text-emerald-600" />
+                <span>Based on {verifiedSampleSize} verified deliveries</span>
                 {stats?.sampleCounts?.pending ? (
                   <span className="text-[10px] text-zinc-400">
                     ({stats.sampleCounts.pending} active queue)
                   </span>
                 ) : null}
               </div>
-
-              {/* Action Buttons: Clean 2-Column Row for Share to Reddit & Notify Me */}
-              <div className="w-full max-w-md mx-auto my-3">
-                <div className="grid grid-cols-2 gap-2 w-full">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsShareModalOpen(true)}
-                    className="py-2 px-3 text-xs sm:text-sm font-medium rounded-xl border-zinc-300 dark:border-neutral-800 text-zinc-700 dark:text-neutral-300 gap-1.5 w-full justify-center h-auto"
-                  >
-                    <Share2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                    <span className="truncate">Share to Reddit</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsNotifyModalOpen(true)}
-                    className="py-2 px-3 text-xs sm:text-sm font-medium rounded-xl border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1.5 font-semibold w-full justify-center h-auto"
-                  >
-                    <Bell className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                    <span className="truncate">Notify Me</span>
-                  </Button>
-                </div>
-                <div className="flex items-center justify-center mt-1.5">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleDownloadCalendar}
-                    className="h-7 text-xs text-zinc-500 hover:text-amber-500 dark:text-neutral-400 dark:hover:text-amber-400 gap-1.5 px-2 font-normal"
-                  >
-                    <Download className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                    <span>Calendar (.ics)</span>
-                  </Button>
-                </div>
-              </div>
             </div>
 
-            {/* Distribution Breakdown Metric Card & Tight Mod Link */}
-            <div className="space-y-2 !mt-4">
+            {/* Distribution Breakdown Metric Card & Actions */}
+            <div className="space-y-2 !mt-3">
               {/* Single 3-Column Metric Card */}
               <div className="grid grid-cols-3 gap-2 bg-neutral-900/70 border border-neutral-800 rounded-2xl p-3 sm:p-4 text-center">
                 <div className="border-r border-neutral-800/60 pr-1 sm:pr-2 flex flex-col items-center">
@@ -730,7 +679,38 @@ export function WaitTimeEstimator({
                 </div>
               </div>
 
-              {/* Subtle High-Contrast Mod Guide Link - Kept tight right beneath metric bar */}
+              {/* 3 Action Buttons in Single Compact Row Directly Beneath 3-Column Card */}
+              <div className="grid grid-cols-3 gap-2 w-full mt-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="py-1.5 px-2 text-xs font-medium rounded-lg border-zinc-300 dark:border-neutral-800 text-zinc-700 dark:text-neutral-300 gap-1 w-full justify-center h-auto"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">Share to Reddit</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsNotifyModalOpen(true)}
+                  className="py-1.5 px-2 text-xs font-semibold rounded-lg border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1 w-full justify-center h-auto"
+                >
+                  <Bell className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">Notify Me</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadCalendar}
+                  className="py-1.5 px-2 text-xs font-medium rounded-lg border-zinc-300 dark:border-neutral-800 text-zinc-700 dark:text-neutral-300 gap-1 w-full justify-center h-auto"
+                >
+                  <Download className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">Calendar (.ics)</span>
+                </Button>
+              </div>
+
+              {/* Subtle High-Contrast Mod Guide Link - Kept tight right beneath buttons */}
               <div className="flex items-center justify-end pt-0.5 pb-0">
                 <Link
                   href={`/mods/${modelSlug}`}

@@ -3,8 +3,9 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
-import { TrendingUp, Users, CheckCircle2, ShieldAlert, Award } from 'lucide-react';
+import { TrendingUp, Users, CheckCircle2, ShieldAlert, Award, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ProvincialWaitData {
   provinceCode: string;
@@ -27,8 +28,23 @@ const PROVINCIAL_STATS: ProvincialWaitData[] = [
   { provinceCode: 'PE', provinceName: 'PEI', medianDays: 230, sampleCount: 16, rebateEligible: true },
 ];
 
-export function ProvincialComparison() {
+interface ProvincialComparisonProps {
+  selectedProvince?: string;
+}
+
+export function ProvincialComparison({ selectedProvince = 'BC' }: ProvincialComparisonProps) {
+  const [isExpanded, setIsExpanded] = React.useState(false);
   const maxDays = Math.max(...PROVINCIAL_STATS.map((p) => p.medianDays));
+
+  // Selected province data (default to BC)
+  const currentProv =
+    PROVINCIAL_STATS.find((p) => p.provinceCode === selectedProvince) ||
+    PROVINCIAL_STATS[0];
+  const nationalMedianDays = 265;
+  const nationalPercentage = Math.round((nationalMedianDays / maxDays) * 100);
+
+  // Show only selected province when collapsed; show all 10 when expanded
+  const displayedProvinces = isExpanded ? PROVINCIAL_STATS : [currentProv];
 
   return (
     <div className="space-y-6">
@@ -116,7 +132,7 @@ export function ProvincialComparison() {
 
         <CardContent className="p-5 sm:p-6 space-y-4">
           <div className="space-y-3">
-            {PROVINCIAL_STATS.map((prov) => {
+            {displayedProvinces.map((prov) => {
               const percentage = Math.round((prov.medianDays / maxDays) * 100);
               const months = (prov.medianDays / 30.4).toFixed(1);
 
@@ -163,6 +179,62 @@ export function ProvincialComparison() {
                 </div>
               );
             })}
+
+            {/* National Median Benchmark Bar (shown in collapsed mode) */}
+            {!isExpanded && (
+              <div className="space-y-1.5 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+                <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-amber-500">🇨🇦</span>
+                    <span className="text-zinc-700 dark:text-zinc-300 font-semibold">
+                      National Median Benchmark
+                    </span>
+                    <span className="rounded bg-amber-500/10 px-1.5 py-0.2 text-[10px] font-semibold text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      Baseline
+                    </span>
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-bold text-zinc-950 dark:text-zinc-50">
+                      {nationalMedianDays} Days
+                    </span>
+                    <span className="text-[11px] text-zinc-500">
+                      (~8.7 mos)
+                    </span>
+                  </div>
+                </div>
+
+                <div className="h-3 w-full rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden flex">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 bg-amber-500"
+                    style={{ width: `${nationalPercentage}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Collapsible Toggle Button */}
+          <div className="pt-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-full justify-center text-xs font-semibold border-zinc-300 dark:border-neutral-800 bg-zinc-50 dark:bg-neutral-900/60 hover:bg-zinc-100 dark:hover:bg-neutral-800 text-zinc-700 dark:text-neutral-200 rounded-xl py-2 h-auto"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="h-3.5 w-3.5 mr-1.5 text-neutral-400 shrink-0" />
+                  <span>Collapse to summary view</span>
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-3.5 w-3.5 mr-1.5 text-amber-500 shrink-0" />
+                  <span>Show all 10 provinces (BC, QC, ON, AB...)</span>
+                </>
+              )}
+            </Button>
           </div>
 
           <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900/60 p-3.5 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 flex items-center gap-2">
