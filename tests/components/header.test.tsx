@@ -183,4 +183,55 @@ describe('Header Component', () => {
     window.removeEventListener('toyotawait:open-checklist', eventListener);
     document.body.removeChild(mockSection);
   });
+
+  it('renders "+ Submit" action button linking to /submit when no local submission exists', () => {
+    localStorage.clear();
+    render(<Header />);
+
+    const submitButtons = screen.getAllByRole('link', { name: /\+ Submit/i });
+    expect(submitButtons.length).toBeGreaterThanOrEqual(1);
+    expect(submitButtons[0]).toHaveAttribute('href', '/submit');
+  });
+
+  it('renders "Update Status" button linking to /edit/[id]?key=[editKey] when local submission exists', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'mock-sub-id-1234',
+        editKey: 'mock-key-5678',
+        model: 'RAV4 Prime',
+        status: 'pending',
+      })
+    );
+
+    render(<Header />);
+
+    const updateButtons = screen.getAllByRole('link', { name: /Update Status/i });
+    expect(updateButtons.length).toBeGreaterThanOrEqual(1);
+    expect(updateButtons[0]).toHaveAttribute(
+      'href',
+      expect.stringContaining('/edit/mock-sub-id-1234?key=mock-key-5678')
+    );
+  });
+
+  it('toggles mobile drawer and renders secondary submit link when submission exists', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'mock-sub-id-1234',
+        editKey: 'mock-key-5678',
+        model: 'Sienna',
+        status: 'pending',
+      })
+    );
+
+    render(<Header />);
+
+    // Open mobile drawer
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    expect(screen.getByTestId('mobile-menu-drawer')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /\+ Submit another vehicle/i })).toHaveAttribute('href', '/submit');
+  });
 });

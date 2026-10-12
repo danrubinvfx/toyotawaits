@@ -528,6 +528,16 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
           </CardFooter>
         </Card>
       </form>
+
+      {/* Secondary Action: Submit another vehicle */}
+      <div className="text-center pt-2">
+        <Link
+          href="/submit"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 font-medium transition-colors"
+        >
+          <span>+ Submit another vehicle order</span>
+        </Link>
+      </div>
     </div>
   );
 }

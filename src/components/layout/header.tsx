@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -24,11 +24,72 @@ import { Button } from '@/components/ui/button';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
 
+interface HeaderSubmission {
+  id: string;
+  editKey?: string;
+  edit_key?: string;
+  editToken?: string;
+  model?: string;
+  status?: string;
+}
+
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopModsOpen, setDesktopModsOpen] = useState(false);
   const [desktopGearOpen, setDesktopGearOpen] = useState(false);
+  const [submission, setSubmission] = useState<HeaderSubmission | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const loadSubmission = () => {
+      try {
+        const raw = localStorage.getItem('toyotawaits_submission');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && (parsed.id || parsed.editToken)) {
+            setSubmission(parsed);
+            return;
+          }
+        }
+        const pendingRaw = localStorage.getItem('toyotawait_pending_submission');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed && (parsed.id || parsed.editToken)) {
+            setSubmission(parsed);
+            return;
+          }
+        }
+        const mySubs = localStorage.getItem('toyotawait_my_submissions');
+        if (mySubs) {
+          const parsedList = JSON.parse(mySubs);
+          if (Array.isArray(parsedList) && parsedList.length > 0) {
+            setSubmission(parsedList[0]);
+            return;
+          }
+        }
+        setSubmission(null);
+      } catch {
+        // SSR / localStorage disabled fallback
+      }
+    };
+
+    loadSubmission();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('toyotawaits:submission-updated', loadSubmission);
+      window.addEventListener('storage', loadSubmission);
+      return () => {
+        window.removeEventListener('toyotawaits:submission-updated', loadSubmission);
+        window.removeEventListener('storage', loadSubmission);
+      };
+    }
+  }, []);
+
+  const editHref = submission
+    ? `/edit/${submission.id || submission.editToken}?key=${encodeURIComponent(
+        submission.editKey || submission.edit_key || ''
+      )}`
+    : '/submit';
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     setMobileMenuOpen(false);
@@ -301,12 +362,21 @@ export function Header() {
           <div className="hidden sm:block">
             <KofiHeaderPill />
           </div>
-          <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9">
-            <Link href="/submit">
-              <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
-              <span>Submit <span className="hidden sm:inline">Wait Time</span></span>
-            </Link>
-          </Button>
+          {submission ? (
+            <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9 cursor-pointer">
+              <Link href={editHref}>
+                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
+                <span>Update Status</span>
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9 cursor-pointer">
+              <Link href="/submit">
+                <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
+                <span>+ Submit <span className="hidden sm:inline">Wait Time</span></span>
+              </Link>
+            </Button>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -699,12 +769,30 @@ export function Header() {
 
             {/* 4. Community Action & Open Data */}
             <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2">
-              <Button asChild className="w-full gap-2 font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950">
-                <Link href="/submit" onClick={() => setMobileMenuOpen(false)}>
-                  <PlusCircle className="h-4 w-4" />
-                  Submit Wait Time (Anonymous)
-                </Link>
-              </Button>
+              {submission ? (
+                <div className="space-y-2">
+                  <Button asChild className="w-full gap-2 font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950">
+                    <Link href={editHref} onClick={() => setMobileMenuOpen(false)}>
+                      <Clock className="h-4 w-4" />
+                      Update Status {submission.model ? `(${submission.model})` : ''}
+                    </Link>
+                  </Button>
+                  <Link
+                    href="/submit"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 py-1 font-medium transition-colors"
+                  >
+                    + Submit another vehicle
+                  </Link>
+                </div>
+              ) : (
+                <Button asChild className="w-full gap-2 font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950">
+                  <Link href="/submit" onClick={() => setMobileMenuOpen(false)}>
+                    <PlusCircle className="h-4 w-4" />
+                    + Submit Wait Time (Anonymous)
+                  </Link>
+                </Button>
+              )}
 
               <Link
                 href="/api/export"

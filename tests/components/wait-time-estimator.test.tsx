@@ -643,13 +643,10 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.queryByText('Fastest Allocation')).toBeNull();
     });
 
-    // 3. Renders prominent crowdsource submit banner
-    const submitBanner = screen.getByTestId('estimator-submit-wait-time-banner');
-    expect(submitBanner).toBeInTheDocument();
-    expect(submitBanner).toHaveTextContent(/Waiting on a Sienna or Already Delivered\?/i);
-    const submitLink = screen.getByRole('link', { name: /Submit Your Wait Time/i });
-    expect(submitLink).toBeInTheDocument();
-    expect(submitLink).toHaveAttribute('href', expect.stringContaining('/submit?model=sienna'));
+    // 3. Verifies redundant middle-page crowdsource banner is removed
+    expect(screen.queryByTestId('estimator-submit-wait-time-banner')).toBeNull();
+    expect(screen.getByText(/Toyota Sienna Road-Trip & Family Mods Guide/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /View Delivery Day Prep & Essential Gear for Sienna/i })).toBeInTheDocument();
 
     // 4. Renders all 3 CTA action buttons in responsive grid
     expect(screen.getByRole('button', { name: /Calendar \(\.ics\)/i })).toBeInTheDocument();

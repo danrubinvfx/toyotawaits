@@ -214,6 +214,27 @@ export function SubmissionForm() {
       const finalEditToken = result.data.editToken || result.data.id;
       setPersistentEditToken(finalEditToken);
 
+      // Store persistent local submission recognition
+      try {
+        localStorage.setItem(
+          'toyotawaits_submission',
+          JSON.stringify({
+            id: result.data.id,
+            editKey: result.data.editKey || result.data.edit_key,
+            edit_key: result.data.editKey || result.data.edit_key,
+            editToken: finalEditToken,
+            model: currentModel.name,
+            status: result.data.status || status || 'waiting',
+            submittedAt: new Date().toISOString(),
+          })
+        );
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+        }
+      } catch {
+        // localStorage disabled fallback
+      }
+
       // Save secret key locally for zero-account management
       saveStoredSubmission({
         id: result.data.id,

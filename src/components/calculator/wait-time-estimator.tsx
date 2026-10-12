@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import Link from 'next/link';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck, PlusCircle } from 'lucide-react';
+import { Calendar, CheckCircle, TrendingUp, DollarSign, Sparkles, Share2, Download, Wrench, ArrowRight, Info, Fuel, Zap, Bell, ClipboardCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { RebateNotice } from '@/components/incentives/rebate-notice';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -938,36 +938,8 @@ export function WaitTimeEstimator({
               );
             })()}
 
-            {/* Primary Crowdsource Contribution CTA Banner */}
-            <div
-              data-testid="estimator-submit-wait-time-banner"
-              className="rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-amber-500/10 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm"
-            >
-              <div className="space-y-1 text-center sm:text-left">
-                <div className="flex items-center justify-center sm:justify-start gap-2">
-                  <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
-                  <h4 className="font-bold text-zinc-900 dark:text-zinc-50 text-sm sm:text-base">
-                    Waiting on a {currentModel.name} or Already Delivered?
-                  </h4>
-                </div>
-                <p className="text-xs text-zinc-600 dark:text-zinc-400">
-                  Contribute your deposit or delivery timeline to keep Canadian wait estimates accurate. 100% anonymous, takes &lt;60s.
-                </p>
-              </div>
-              <Button
-                asChild
-                size="default"
-                className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold shadow-md shrink-0 gap-1.5 h-10 px-5 cursor-pointer"
-              >
-                <Link href={`/submit?model=${modelSlug}&province=${province}`}>
-                  <PlusCircle className="h-4 w-4 text-zinc-950" />
-                  <span>Submit Your Wait Time</span>
-                </Link>
-              </Button>
-            </div>
-
             {/* Delivery Day Prep & Gear Quick Anchor Link */}
-            <div className="pt-2">
+            <div className="pt-1">
               <Button
                 asChild
                 variant="outline"

@@ -1097,7 +1097,7 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           vehicle_powertrains(name, slug),
           vehicle_trims(name, slug)
         `)
-        .eq('edit_token', editToken)
+        .or(`edit_token.eq.${editToken},id.eq.${editToken}`)
         .maybeSingle();
 
       if (!error && data) {
