@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { WinterPrepView } from '@/components/winter-prep/winter-prep-view';
+import { BackButton } from '@/components/common/back-button';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
@@ -41,12 +41,7 @@ export default function WinterPrepPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
-        >
-          ← Back to Wait Time Tracker
-        </Link>
+        <BackButton className="mb-4" />
       </div>
       <WinterPrepView />
     </main>

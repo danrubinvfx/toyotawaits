@@ -123,7 +123,7 @@ export function BenchmarkFeed({
 
   return (
     <div className={cn(className)} data-testid="delivery-prep-section">
-      <div id="delivery-prep" className="scroll-mt-24">
+      <div className="scroll-mt-24">
         {/* Dynamic Delivery Prep Checklist Component */}
         <DeliveryPrepChecklist
           model={showUniversalGear ? 'all' : activeVehicle.id}

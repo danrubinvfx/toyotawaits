@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { BackButton } from '@/components/common/back-button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -27,12 +28,7 @@ export default function PrivacyPage() {
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-10">
       {/* Page Header */}
       <div className="space-y-4 text-center sm:text-left">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
-        >
-          ← Back to Wait Time Tracker
-        </Link>
+        <BackButton className="mb-4" />
 
         <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
           <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 px-2.5">

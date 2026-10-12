@@ -1,10 +1,10 @@
 import React from 'react';
-import Link from 'next/link';
 import { Metadata } from 'next';
+import { BackButton } from '@/components/common/back-button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Snowflake, ArrowLeft, ExternalLink, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Snowflake, ExternalLink, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Canadian Winter Tire Laws & Toyota Fitment Guide | ToyotaWaits.ca',
@@ -17,13 +17,7 @@ export default function WinterTiresGuidePage() {
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-10">
       {/* Header */}
       <div className="space-y-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-amber-400 transition-colors"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Wait Times
-        </Link>
+        <BackButton className="mb-4" />
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">

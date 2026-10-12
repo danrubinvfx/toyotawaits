@@ -2,21 +2,16 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import productsData from '@/lib/data/affiliate-products.json';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   ClipboardCheck,
   Eye,
   Layers,
   ShieldAlert,
-  Printer,
-  ChevronDown,
-  ChevronUp,
   ShieldCheck,
   RotateCcw,
   Luggage,
-  Check,
   SlidersHorizontal,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -157,7 +152,6 @@ export function DeliveryPrepChecklist({
   showUniversalGear,
   onToggleUniversalGear,
 }: DeliveryPrepChecklistProps) {
-  const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
@@ -294,16 +288,7 @@ export function DeliveryPrepChecklist({
     return totalModelItems.filter((item) => !!checkedItems[item.slug]).length;
   }, [totalModelItems, checkedItems]);
 
-  const totalChecklistItems = totalModelItems.length;
   const totalCompleted = completedCount;
-
-  const completionPercent = totalChecklistItems > 0
-    ? Math.round((totalCompleted / totalChecklistItems) * 100)
-    : 0;
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   const getModelDisplayName = () => {
     if (vehicleLabel && normalizedModel !== 'all') {
@@ -338,189 +323,116 @@ export function DeliveryPrepChecklist({
       id="accessories"
       data-testid="delivery-prep-checklist"
       className={cn(
-        'border-zinc-800 bg-zinc-900/60 overflow-hidden shadow-sm print:border-none print:shadow-none text-zinc-100 scroll-mt-24',
+        'border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs text-zinc-100 scroll-mt-24',
         className
       )}
     >
-      {/* 1. Header Bar: Clean Left-Aligned Block */}
-      <CardHeader className="p-4 sm:p-5 border-b border-zinc-800/80 bg-zinc-900/40">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                Delivery Day Prep &amp; Gear
-              </h2>
-              <Badge
-                variant="outline"
-                className="text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full border-amber-500/30 text-amber-400 bg-amber-500/10"
-              >
-                {getModelDisplayName()}
-              </Badge>
-            </div>
-            <p className="text-xs text-zinc-400">
-              Community-vetted drop-in gear and essential upgrades for {getModelDisplayName()}.
+      <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
+              <Luggage className="h-4 w-4 text-amber-500 shrink-0" />
+              <span>Essential Day-One Gear &amp; Drop-In Upgrades</span>
+            </h3>
+            <p className="text-xs text-zinc-400 mt-0.5">
+              Community-vetted drop-in organizers, all-weather liners, and dashcam harnesses for {getModelDisplayName()}.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto print:hidden">
-            <div className="text-right hidden sm:block">
-              <div className="text-[11px] font-semibold text-zinc-300">
-                {totalCompleted} of {totalChecklistItems} Checked
-              </div>
-              <div className="text-[10px] text-zinc-500">
-                {completionPercent}% Ready for Delivery
-              </div>
-            </div>
-
-            {/* Subtle icon button for Print */}
+          {/* Secondary Toggle: View All Universal Delivery Gear */}
+          {onToggleUniversalGear && (
             <Button
               type="button"
               variant="outline"
-              size="icon"
-              onClick={handlePrint}
-              className="h-8 w-8 rounded-lg border-zinc-700/80 bg-zinc-900/60 text-zinc-400 hover:text-amber-400 hover:border-amber-500/40 cursor-pointer transition-colors"
-              title="Print checklist for delivery day"
-              aria-label="Print checklist"
-            >
-              <Printer className="h-3.5 w-3.5" />
-            </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs h-8 w-8 p-0 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800/60 cursor-pointer"
-              aria-label={isExpanded ? 'Collapse Checklist' : 'Expand Checklist'}
+              onClick={onToggleUniversalGear}
+              className={cn(
+                'text-xs h-7 sm:h-8 border-zinc-700 transition-all font-medium self-start sm:self-auto cursor-pointer shrink-0',
+                showUniversalGear
+                  ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 hover:bg-amber-500/20'
+                  : 'bg-zinc-900/80 text-zinc-300 hover:text-amber-400 hover:border-amber-500/40'
+              )}
             >
-              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              <SlidersHorizontal className="h-3 w-3 mr-1.5 text-amber-500 shrink-0" />
+              {showUniversalGear ? `Filter to ${vehicleLabel || getModelDisplayName()} Only` : 'View All Universal Delivery Gear'}
             </Button>
-          </div>
+          )}
         </div>
 
-        {/* Amber progress bar */}
-        <div className="w-full bg-zinc-800/80 h-1.5 rounded-full overflow-hidden mt-3 print:hidden">
-          <div
-            className="bg-amber-500 h-full transition-all duration-300"
-            style={{ width: `${completionPercent}%` }}
-          />
+        {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
+        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2 mt-2.5 border-t border-zinc-800/50 print:hidden">
+          {CATEGORIES.map((cat) => {
+            const Icon = cat.icon;
+            const isActive = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCategory(cat.id)}
+                className={cn(
+                  'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap',
+                  isActive
+                    ? 'bg-amber-500 text-zinc-950 font-bold shadow-xs'
+                    : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
+                )}
+              >
+                <Icon className="h-3 w-3 shrink-0" />
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Swipe Hint / Carousel Indicators */}
+        <div className="flex items-center justify-between text-[11px] text-neutral-400 px-1 pt-1 mb-2 print:hidden">
+          <span>Showing recommended gear</span>
+          <span className="flex items-center gap-1 font-medium text-amber-400">
+            <span className="animate-pulse">Swipe →</span>
+          </span>
         </div>
       </CardHeader>
 
-      {/* 2. Expandable Body */}
-      {isExpanded && (
-        <div className="p-3 sm:p-4">
-          {/* Essential Day-One Gear Card */}
-          <Card className="border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs">
-            <CardHeader className="p-4 pb-3 border-b border-zinc-800/80 bg-zinc-900/30">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-zinc-100 flex items-center gap-2">
-                    <Luggage className="h-4 w-4 text-amber-500 shrink-0" />
-                    <span>Essential Day-One Gear &amp; Drop-In Upgrades</span>
-                  </h3>
-                  <p className="text-xs text-zinc-400 mt-0.5">
-                    Community-vetted drop-in organizers, all-weather liners, and dashcam harnesses for {getModelDisplayName()}.
-                  </p>
-                </div>
+      {/* Checklist Items - Horizontal Snap Carousel rendered via ModCard */}
+      <CardContent className="p-3 sm:p-4">
+        {filteredProducts.length === 0 ? (
+          <div className="p-6 text-center text-xs text-zinc-500 w-full">
+            No accessories found matching this vehicle and filter criteria.
+          </div>
+        ) : (
+          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1">
+            {filteredProducts.map((item) => (
+              <ModCard
+                key={item.id || item.slug}
+                item={item}
+                isChecked={!!checkedItems[item.slug]}
+                onToggle={toggleItem}
+                showCheckbox={true}
+              />
+            ))}
+          </div>
+        )}
+      </CardContent>
 
-                {/* Secondary Toggle: View All Universal Delivery Gear */}
-                {onToggleUniversalGear && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={onToggleUniversalGear}
-                    className={cn(
-                      'text-xs h-7 sm:h-8 border-zinc-700 transition-all font-medium self-start sm:self-auto cursor-pointer shrink-0',
-                      showUniversalGear
-                        ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 hover:bg-amber-500/20'
-                        : 'bg-zinc-900/80 text-zinc-300 hover:text-amber-400 hover:border-amber-500/40'
-                    )}
-                  >
-                    <SlidersHorizontal className="h-3 w-3 mr-1.5 text-amber-500 shrink-0" />
-                    {showUniversalGear ? `Filter to ${vehicleLabel || getModelDisplayName()} Only` : 'View All Universal Delivery Gear'}
-                  </Button>
-                )}
-              </div>
-
-              {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2 mt-2.5 border-t border-zinc-800/50 print:hidden">
-                {CATEGORIES.map((cat) => {
-                  const Icon = cat.icon;
-                  const isActive = selectedCategory === cat.id;
-                  return (
-                    <button
-                      key={cat.id}
-                      type="button"
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={cn(
-                        'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap',
-                        isActive
-                          ? 'bg-amber-500 text-zinc-950 font-bold shadow-xs'
-                          : 'bg-zinc-800/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'
-                      )}
-                    >
-                      <Icon className="h-3 w-3 shrink-0" />
-                      <span>{cat.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Swipe Hint / Carousel Indicators */}
-              <div className="flex items-center justify-between text-[11px] text-neutral-400 px-1 pt-1 mb-2 print:hidden">
-                <span>Showing recommended gear</span>
-                <span className="flex items-center gap-1 font-medium text-amber-400">
-                  <span className="animate-pulse">Swipe →</span>
-                </span>
-              </div>
-            </CardHeader>
-
-            {/* Checklist Items - Horizontal Snap Carousel rendered via ModCard */}
-            <CardContent className="p-3 sm:p-4">
-              {filteredProducts.length === 0 ? (
-                <div className="p-6 text-center text-xs text-zinc-500 w-full">
-                  No accessories found matching this vehicle and filter criteria.
-                </div>
-              ) : (
-                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1">
-                  {filteredProducts.map((item) => (
-                    <ModCard
-                      key={item.id || item.slug}
-                      item={item}
-                      isChecked={!!checkedItems[item.slug]}
-                      onToggle={toggleItem}
-                      showCheckbox={true}
-                    />
-                  ))}
-                </div>
-              )}
-            </CardContent>
-
-            {/* Card Footer Disclosures */}
-            <CardFooter className="p-3.5 sm:p-4 bg-zinc-950/80 border-t border-zinc-800/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
-              <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
-                <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                <span>
-                  Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
-                </span>
-              </div>
-
-              {totalCompleted > 0 && (
-                <button
-                  type="button"
-                  onClick={resetChecklist}
-                  className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
-                >
-                  <RotateCcw className="h-3 w-3" />
-                  Reset Checks
-                </button>
-              )}
-            </CardFooter>
-          </Card>
+      {/* Card Footer Disclosures */}
+      <CardFooter className="p-3.5 sm:p-4 bg-zinc-950/80 border-t border-zinc-800/70 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+        <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
+          <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+          <span>
+            Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
+          </span>
         </div>
-      )}
+
+        {totalCompleted > 0 && (
+          <button
+            type="button"
+            onClick={resetChecklist}
+            className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
+          >
+            <RotateCcw className="h-3 w-3" />
+            Reset Checks
+          </button>
+        )}
+      </CardFooter>
     </Card>
   );
 }

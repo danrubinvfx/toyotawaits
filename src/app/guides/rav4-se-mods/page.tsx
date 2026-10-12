@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { BackButton } from '@/components/common/back-button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,12 +38,7 @@ export default function Rav4SeModsGuidePage() {
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* Header & Breadcrumb */}
       <div className="space-y-4">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
-        >
-          ← Back to Wait Time Tracker
-        </Link>
+        <BackButton className="mb-4" />
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">

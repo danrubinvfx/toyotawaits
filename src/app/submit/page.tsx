@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import Link from 'next/link';
+import { BackButton } from '@/components/common/back-button';
 import { SubmissionForm } from '@/components/forms/submission-form';
 import { ShieldCheck, Lock, Sparkles } from 'lucide-react';
 
@@ -14,12 +14,7 @@ export default function SubmitPage() {
   return (
     <div className="py-8 sm:py-12 px-4 sm:px-6 container mx-auto max-w-4xl space-y-8">
       <div>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
-        >
-          ← Back to Wait Time Tracker
-        </Link>
+        <BackButton className="mb-4" />
       </div>
 
       {/* Page Title & Privacy Header */}

@@ -12,7 +12,7 @@ describe('DeliveryPrepChecklist Component', () => {
   it('renders correctly with default props and shows title and microcopy', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
-    expect(screen.getByRole('heading', { name: /Delivery Day Prep & Gear/i })).toBeDefined();
+    expect(screen.getByRole('heading', { name: /Essential Day-One Gear & Drop-In Upgrades/i })).toBeDefined();
     expect(
       screen.getByText(/Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data./i)
     ).toBeDefined();
@@ -155,18 +155,17 @@ describe('DeliveryPrepChecklist Component', () => {
     }
   });
 
-  it('collapses and expands when toggle button is clicked', () => {
+  it('does not render redundant outer header card, print button, or collapse toggle', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" defaultExpanded={true} />);
 
-    // Items visible initially
+    // Outer redundant header elements removed
+    expect(screen.queryByRole('heading', { name: /Delivery Day Prep & Gear/i })).toBeNull();
+    expect(screen.queryByLabelText(/Print checklist/i)).toBeNull();
+    expect(screen.queryByLabelText(/Collapse Checklist/i)).toBeNull();
+
+    // Clean inner header is present and products are visible
+    expect(screen.getByRole('heading', { name: /Essential Day-One Gear & Drop-In Upgrades/i })).toBeDefined();
     expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeDefined();
-
-    // Click collapse toggle button
-    const toggleBtn = screen.getByLabelText(/Collapse Checklist/i);
-    fireEvent.click(toggleBtn);
-
-    // Items should now be hidden
-    expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();
   });
 
   it('renders on-site video modal trigger buttons for items with youtubeVideoId and omits for items without', () => {
@@ -225,7 +224,7 @@ describe('DeliveryPrepChecklist Component', () => {
   it('renders low-profile crossbars for Corolla Cross model', () => {
     render(<DeliveryPrepChecklist model="corolla-cross" />);
 
-    expect(screen.getByText('Corolla Cross')).toBeDefined();
+    expect(screen.getAllByText(/Corolla Cross/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Low-Profile Cargo Roof Rack Bars \(Corolla Cross\)/i)).toBeDefined();
     expect(screen.getByText(/Corolla Cross \(All trims with factory rails\)/i)).toBeDefined();
   });

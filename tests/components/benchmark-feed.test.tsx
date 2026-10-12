@@ -18,8 +18,8 @@ describe('BenchmarkFeed Component', () => {
     expect(screen.queryByText(/Live 2026 Supabase Feed/i)).toBeNull();
     expect(screen.queryByText(/Calculate .* Timeline/i)).toBeNull();
 
-    // Delivery Prep section header defaults to RAV4
-    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
+    // Essential Gear section header defaults to RAV4
+    expect(screen.getByText(/RAV4 \(Hybrid\/Prime\)/i)).toBeInTheDocument();
 
     // DeliveryPrepChecklist is present with gear for RAV4
     expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe('BenchmarkFeed Component', () => {
   it('switches model gear checklist when global model-change event is dispatched', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
+    expect(screen.getByText(/RAV4 \(Hybrid\/Prime\)/i)).toBeInTheDocument();
 
     // Dispatch global event for Grand Highlander
     act(() => {
@@ -39,7 +39,7 @@ describe('BenchmarkFeed Component', () => {
     });
 
     // Active vehicle updates to Grand Highlander and no duplicate benchmark card exists
-    expect(screen.getAllByText('Grand Highlander').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Grand Highlander/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
     expect(screen.queryByTestId('benchmark-card-grand-highlander')).toBeNull();
   });
@@ -47,9 +47,9 @@ describe('BenchmarkFeed Component', () => {
   it('positions the Delivery Prep & Gear section with vehicle-specific gear', async () => {
     render(<BenchmarkFeed defaultModelId="rav4" />);
 
-    // Delivery Prep section header with active model label
-    expect(screen.getByRole('heading', { name: /Delivery (Day )?Prep & (Priority|Essential )?Gear/i })).toBeInTheDocument();
-    expect(screen.getByText('RAV4 (Hybrid/Prime)')).toBeInTheDocument();
+    // Essential Gear section header with active model label in subtitle
+    expect(screen.getByRole('heading', { name: /Essential Day-One Gear & Drop-In Upgrades/i })).toBeInTheDocument();
+    expect(screen.getByText(/RAV4 \(Hybrid\/Prime\)/i)).toBeInTheDocument();
 
     // DeliveryPrepChecklist is present with gear for RAV4
     expect(screen.getByTestId('delivery-prep-checklist')).toBeInTheDocument();
@@ -86,7 +86,7 @@ describe('BenchmarkFeed Component', () => {
       );
     });
 
-    expect(screen.getAllByText('Sienna').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Sienna/i).length).toBeGreaterThanOrEqual(1);
 
     // 2. External event selects Tacoma
     act(() => {
@@ -95,6 +95,6 @@ describe('BenchmarkFeed Component', () => {
       );
     });
 
-    expect(screen.getAllByText('Tacoma').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Tacoma/i).length).toBeGreaterThanOrEqual(1);
   });
 });

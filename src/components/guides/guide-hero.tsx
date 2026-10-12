@@ -1,7 +1,7 @@
 import React from 'react';
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { LucideIcon } from 'lucide-react';
+import { BackButton } from '@/components/common/back-button';
 
 interface GuideHeroProps {
   badgeText: string;
@@ -22,12 +22,7 @@ export function GuideHero({
 }: GuideHeroProps) {
   return (
     <div className="space-y-4">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-1.5 text-xs text-neutral-400 hover:text-amber-400 mb-4 transition-colors"
-      >
-        ← Back to Wait Time Tracker
-      </Link>
+      <BackButton className="mb-4" />
 
       <div className="flex flex-wrap items-center gap-2">
         <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">
