@@ -496,6 +496,15 @@ export function WaitTimeEstimator({
                 </option>
               ))}
             </Select>
+            {currentPowertrains.length === 1 && (
+              <p
+                data-testid="single-powertrain-notice"
+                className="text-xs text-neutral-400 mt-1 flex items-center gap-1.5"
+              >
+                <span>ℹ️</span>
+                <span>Toyota {currentModel.name} is exclusively available with a {currentPowertrains[0].name} powertrain in Canada.</span>
+              </p>
+            )}
           </div>
 
           <div className="space-y-1.5">
@@ -733,72 +742,52 @@ export function WaitTimeEstimator({
               </div>
             </div>
 
-            {/* Minimalist Notify Me Trigger Banner */}
-            <div
-              data-testid="notify-me-trigger-card"
-              className="rounded-lg border border-amber-500/30 bg-amber-500/5 dark:border-amber-500/20 dark:bg-amber-950/20 p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs"
-            >
-              <div className="flex items-center gap-2.5 text-zinc-800 dark:text-zinc-200">
-                <div className="h-7 w-7 rounded-md bg-amber-500/20 dark:bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
-                  <Bell className="h-3.5 w-3.5 text-amber-500" />
-                </div>
-                <span className="text-zinc-800 dark:text-zinc-200 font-medium">
-                  Get notified when matching deliveries occur or regional wait times adjust.
-                </span>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => setIsNotifyModalOpen(true)}
-                className="h-7 text-xs border-amber-500/40 text-amber-700 dark:text-amber-300 hover:bg-amber-500/10 font-bold px-3 shrink-0 self-end sm:self-auto"
+            {/* Secondary Metrics & Notification Chips */}
+            <div className="space-y-2 !mt-2.5">
+              {/* Condensed Notify Me Trigger Bar */}
+              <div
+                data-testid="notify-me-trigger-card"
+                className="flex items-center justify-between gap-3 bg-neutral-900/40 border border-neutral-800 rounded-xl p-2.5 pl-3 text-xs text-neutral-300"
               >
-                Notify Me
-              </Button>
-            </div>
-
-            {/* Pricing Transparency Summary */}
-            {stats?.pricingInsights && (
-              <div className="rounded-lg bg-zinc-50 dark:bg-zinc-900 p-3.5 border border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-600 dark:text-zinc-300">
-                <div className="flex items-center gap-2">
-                  <DollarSign className="h-4 w-4 text-emerald-600 shrink-0" />
-                  <span>
-                    <strong>{stats.pricingInsights.atMsrpPercent}%</strong> of buyers in this region paid exact MSRP with no dealer markup.
+                <div className="flex items-center gap-2 truncate">
+                  <Bell className="h-3.5 w-3.5 text-amber-500 shrink-0" />
+                  <span className="truncate">
+                    Get notified when matching deliveries occur or regional wait times adjust.
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-zinc-500 shrink-0">
-                  <TrendingUp className="h-4 w-4 text-zinc-400" />
-                  <span>Avg Mandatory Add-ons: ${stats.pricingInsights.avgAddonsCad.toFixed(0)} CAD</span>
-                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setIsNotifyModalOpen(true)}
+                  className="h-7 px-3 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 shrink-0"
+                >
+                  Notify Me
+                </Button>
               </div>
-            )}
 
-            {/* Trim & Powertrain Comparison Chart */}
-            {currentPowertrains.length === 1 ? (
-              <div
-                data-testid="single-powertrain-notice"
-                className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-3"
-              >
-                <div className="flex items-center gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
-                  <Zap className="h-4 w-4 text-amber-500" />
-                  <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50">
-                    Powertrain Availability in Canada
-                  </h4>
-                </div>
-                <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3.5 flex items-start gap-2.5 text-xs text-zinc-700 dark:text-zinc-300">
-                  <Info className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-zinc-900 dark:text-zinc-100">
-                      Toyota {currentModel.name} is exclusively available with a {currentPowertrains[0].name} powertrain in Canada.
-                    </p>
-                    <p className="text-zinc-500 dark:text-zinc-400 mt-0.5">
-                      There are no standalone Gasoline or Plug-in Hybrid (PHEV) variants offered for this model in the Canadian market.
-                    </p>
+              {/* Streamlined MSRP & Dealer Markup Stats Badge Bar */}
+              {stats?.pricingInsights && (
+                <div className="flex items-center justify-between bg-neutral-900/60 border border-neutral-800/80 rounded-xl px-3.5 py-2 text-xs">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                    <DollarSign className="h-3.5 w-3.5 shrink-0" />
+                    <span>
+                      <strong className="font-bold">{stats.pricingInsights.atMsrpPercent}%</strong> paid exact MSRP
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-neutral-300">
+                    <TrendingUp className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                    <span>
+                      Avg Add-ons: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} CAD
+                    </span>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4">
+              )}
+            </div>
+
+            {/* Powertrain Comparison Chart (Only when model has 2+ powertrain options in Canada) */}
+            {currentPowertrains.length > 1 && (
+              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 !mt-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
                   <div>
                     <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
