@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
+import { PostEstimateSubmissionCta } from '@/components/calculator/post-estimate-submission-cta';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
@@ -96,6 +97,9 @@ export default async function HomePage() {
                 <WaitTimeEstimator />
               </React.Suspense>
             </div>
+
+            {/* High-Contrast Post-Estimate Crowdsourcing Submission Card */}
+            <PostEstimateSubmissionCta />
 
             {/* Elevated Compact Guides Grid directly underneath estimator */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full mt-3 mb-0 sm:mt-4 sm:mb-0">

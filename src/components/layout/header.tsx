@@ -19,8 +19,8 @@ import {
   ClipboardCheck,
   Snowflake,
   Disc3,
+  CheckCircle2,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
 
@@ -363,19 +363,22 @@ export function Header() {
             <KofiHeaderPill />
           </div>
           {submission ? (
-            <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9 cursor-pointer">
-              <Link href={editHref}>
-                <Clock className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
-                <span>Update Status</span>
-              </Link>
-            </Button>
+            <Link
+              href={editHref}
+              className="bg-amber-500 text-black font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
+              <span>Update Status</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
+            </Link>
           ) : (
-            <Button asChild size="sm" className="gap-1 sm:gap-1.5 font-bold bg-amber-500 hover:bg-amber-600 text-zinc-950 shadow-sm border border-amber-400/40 text-xs px-2.5 sm:px-3 h-8 sm:h-9 cursor-pointer">
-              <Link href="/submit">
-                <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-zinc-950" />
-                <span>+ Submit <span className="hidden sm:inline">Wait Time</span></span>
-              </Link>
-            </Button>
+            <Link
+              href="/submit"
+              className="bg-amber-500 text-black font-bold px-3.5 py-1.5 rounded-xl text-xs sm:text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center gap-1.5 shrink-0 cursor-pointer"
+            >
+              <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
+              <span>+ Log Order</span>
+            </Link>
           )}
 
           {/* Mobile Menu Button */}
@@ -771,27 +774,32 @@ export function Header() {
             <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2">
               {submission ? (
                 <div className="space-y-2">
-                  <Button asChild className="w-full gap-2 font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950">
-                    <Link href={editHref} onClick={() => setMobileMenuOpen(false)}>
-                      <Clock className="h-4 w-4" />
-                      Update Status {submission.model ? `(${submission.model})` : ''}
-                    </Link>
-                  </Button>
+                  <Link
+                    href={editHref}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 className="h-4 w-4 text-black shrink-0" />
+                    <span>Update Status {submission.model ? `(${submission.model})` : ''}</span>
+                    <span className="h-2 w-2 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
+                  </Link>
                   <Link
                     href="/submit"
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 py-1 font-medium transition-colors"
                   >
-                    + Submit another vehicle
+                    + Log another vehicle
                   </Link>
                 </div>
               ) : (
-                <Button asChild className="w-full gap-2 font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950">
-                  <Link href="/submit" onClick={() => setMobileMenuOpen(false)}>
-                    <PlusCircle className="h-4 w-4" />
-                    + Submit Wait Time (Anonymous)
-                  </Link>
-                </Button>
+                <Link
+                  href="/submit"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2"
+                >
+                  <PlusCircle className="h-4 w-4 text-black shrink-0" />
+                  <span>+ Log Order (Anonymous)</span>
+                </Link>
               )}
 
               <Link

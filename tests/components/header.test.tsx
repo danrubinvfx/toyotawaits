@@ -184,11 +184,11 @@ describe('Header Component', () => {
     document.body.removeChild(mockSection);
   });
 
-  it('renders "+ Submit" action button linking to /submit when no local submission exists', () => {
+  it('renders "+ Log Order" action button linking to /submit when no local submission exists', () => {
     localStorage.clear();
     render(<Header />);
 
-    const submitButtons = screen.getAllByRole('link', { name: /\+ Submit/i });
+    const submitButtons = screen.getAllByRole('link', { name: /\+ Log Order/i });
     expect(submitButtons.length).toBeGreaterThanOrEqual(1);
     expect(submitButtons[0]).toHaveAttribute('href', '/submit');
   });
@@ -232,6 +232,6 @@ describe('Header Component', () => {
     fireEvent.click(toggle);
 
     expect(screen.getByTestId('mobile-menu-drawer')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /\+ Submit another vehicle/i })).toHaveAttribute('href', '/submit');
+    expect(screen.getByRole('link', { name: /\+ Log another vehicle/i })).toHaveAttribute('href', '/submit');
   });
 });
