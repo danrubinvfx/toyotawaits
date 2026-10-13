@@ -162,7 +162,7 @@ export default function Rav4SeModsGuidePage() {
           priceEst="~$350–$700 CAD"
           installEffort="1.5-hr Install"
           integration="OEM Factory Look"
-          fitmentBadge="Verified 2019–2026 RAV4"
+          fitmentBadge="Verified 2019–2025 (Gen 5) & 2026+ (Gen 6) RAV4"
           whyThisPick="Why pay $4,800+ CAD more for the XSE trim just to get SofTex leather? Clazzio (perforated genuine leather inserts) and EKR (4-layer waterproof leatherette) are laser-measured specifically for 5th-gen RAV4 seats. Both feature certified tear-away seams for side-impact airbag deployment."
           proTip="Warm the covers indoors or under sunlight before installation to maximize leatherette flexibility. Sliding a thin plastic grocery bag over headrests helps the snug covers slide on without snagging."
           factoryIssue="Standard SE cloth seats readily soak up winter road salt, coffee spills, and pet hair, whereas factory SofTex requires jumping up to top-tier XSE packages with lengthy wait lists."
