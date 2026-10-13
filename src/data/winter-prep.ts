@@ -88,7 +88,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       product: {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
-          'Instantly delivers the 12V auxiliary surge to close hybrid starter relays in -30°C without risk of vehicle electronics damage.',
+          'Delivers the 12V auxiliary surge needed to close hybrid starter relays. Operating range: -20°C to +50°C (device temperature, not outdoor air) — store indoors in extreme cold. Follow your vehicle owner\'s manual and the NOCO manual for the correct 12V jump procedure.',
         url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
         badge: 'Essential',
       },

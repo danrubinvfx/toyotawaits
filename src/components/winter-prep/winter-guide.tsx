@@ -117,7 +117,7 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
           </div>
           <p className="text-xs text-zinc-400 max-w-2xl">
             Critical sub-zero jump points, road salt and slush armor, and freezing rain defense
-            calibrated for Canadian deep-freeze conditions (-30°C).
+            calibrated for Canadian deep-freeze conditions (jump-starter operating range: -20°C to +50°C).
           </p>
         </div>
 

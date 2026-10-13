@@ -82,7 +82,7 @@ export function WinterPrepView() {
             <Snowflake className="h-3.5 w-3.5 text-cyan-400" />
             <span>🇨🇦 Canadian Winter Survival Playbook</span>
             <span className="text-zinc-600">•</span>
-            <span>Sub-Zero Rated (-30°C)</span>
+            <span>Jump Packs Rated -20°C to +50°C</span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">

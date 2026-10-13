@@ -686,6 +686,9 @@ export function WaitTimeEstimator({
                 {modelSlug === 'tacoma' ? (
                   <span data-testid="tacoma-benchmark-badge">
                     10 Historical Dealer Benchmarks (Community submissions opening soon).
+                    <span data-testid="tacoma-methodology-note" className="block text-[10px] text-zinc-400 mt-0.5">
+                      Historical dealer benchmarks collected Q4 2024–Q1 2025 across Canadian dealerships (n=10). Median baseline calculation methodology excludes outlier custom factory orders.
+                    </span>
                   </span>
                 ) : (
                   <span>Based on {verifiedSampleSize} verified deliveries</span>

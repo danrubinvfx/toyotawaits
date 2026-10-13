@@ -80,7 +80,12 @@ export default async function ModelPage({ params }: RouteProps) {
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20 font-medium">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                   {model.slug === 'tacoma' ? (
-                    <span>10 Historical Dealer Benchmarks (Community submissions opening soon).</span>
+                    <span>
+                      10 Historical Dealer Benchmarks (Community submissions opening soon).
+                      <span className="block text-[11px] font-normal opacity-80 mt-0.5">
+                        Historical dealer benchmarks collected Q4 2024–Q1 2025 across Canadian dealerships (n=10). Median baseline calculation methodology excludes outlier custom factory orders.
+                      </span>
+                    </span>
                   ) : (
                     <span>Based on {benchmark.sample_size} verified deliveries</span>
                   )}

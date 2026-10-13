@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     'prius prime sub zero heating',
   ],
   alternates: {
-    canonical: '/winter-prep',
+    canonical: 'https://www.toyotawaits.ca/winter-prep',
   },
   openGraph: {
     title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',

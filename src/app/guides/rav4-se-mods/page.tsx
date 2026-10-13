@@ -21,7 +21,10 @@ import {
 export const metadata: Metadata = {
   title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE | ToyotaWaits.ca',
   description:
-    'Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD without voiding warranty.',
+    'Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD.',
+  alternates: {
+    canonical: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
+  },
   openGraph: {
     title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',
     description:
@@ -118,7 +121,7 @@ export default function Rav4SeModsGuidePage() {
           installEffort="20-min Install"
           integration="Direct Harness Tap"
           fitmentBadge="Verified 2019–2026 RAV4"
-          whyThisPick="The factory SE sound system uses cheap 2.5-inch paper-cone dash speakers that muffle podcasts and dialogue. High-sensitivity 3.5-inch JBL Club 3412Ts drop right into the factory corner dash sockets and plug directly into custom Red Wolf adapter harnesses—no wire cutting, soldering, or warranty concerns."
+          whyThisPick="The factory SE sound system uses cheap 2.5-inch paper-cone dash speakers that muffle podcasts and dialogue. High-sensitivity 3.5-inch JBL Club 3412Ts drop right into the factory corner dash sockets and plug directly into custom Red Wolf adapter harnesses—no wire cutting or soldering. As with any aftermarket electrical modification, follow the harness and speaker manufacturers' instructions; consult your dealer or Toyota warranty booklet if you have coverage questions."
           proTip="Use nylon trim pry tools along the outer windshield edge to pop dash grilles straight up without leaving indents on the soft dash vinyl. Point the speaker terminals towards the cabin to avoid interference with the defroster vent ducting."
           factoryIssue="The factory SE sound system relies on tiny 2.5-inch paper-cone dash tweeters that clip early and muffle high-frequency vocal clarity, requiring excessive volume."
           solution="Drop-in 3.5-inch 2-way coaxial JBL Club drivers paired with plug-and-play Toyota adapter harnesses. Delivers concert-grade treble and spacious soundstage without splicing factory wiring."

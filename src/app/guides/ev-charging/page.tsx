@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: 'Canadian Level 2 EV Home Charging Prep Guide | ToyotaWaits.ca',
   description:
     'Comprehensive Canadian winter charging guide for Toyota RAV4 Prime / Plug-in Hybrid owners. Comparing Grizzl-E Classic and FLO Home G5 EVSE stations.',
+  alternates: {
+    canonical: 'https://www.toyotawaits.ca/guides/ev-charging',
+  },
 };
 
 export default function EVChargingGuidePage() {
