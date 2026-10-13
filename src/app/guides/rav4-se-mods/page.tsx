@@ -162,16 +162,16 @@ export default function Rav4SeModsGuidePage() {
           priceEst="~$350–$700 CAD"
           installEffort="1.5-hr Install"
           integration="OEM Factory Look"
-          fitmentBadge="Verified 2019–2025 (Gen 5) & 2026+ (Gen 6) RAV4"
-          whyThisPick="Why pay $4,800+ CAD more for the XSE trim just to get SofTex leather? Clazzio (perforated genuine leather inserts) and EKR (4-layer waterproof leatherette) are laser-measured specifically for 5th-gen RAV4 seats. Both feature certified tear-away seams for side-impact airbag deployment."
+          fitmentBadge="5th Gen (2019–2025) RAV4 · 6th Gen (2026+) Unconfirmed"
+          whyThisPick="Why pay $4,800+ CAD more for the XSE trim just to get SofTex leather? Clazzio (perforated genuine leather inserts) and EKR (4-layer waterproof leatherette) are patterned for 5th Gen (2019–2025) RAV4 seats. 6th Gen (2026+) seat patterns are not yet confirmed — check the seller's listed model years before ordering. For seats with side airbags, follow the cover manufacturer's airbag-compatibility guidance and your Toyota owner's manual."
           proTip="Warm the covers indoors or under sunlight before installation to maximize leatherette flexibility. Sliding a thin plastic grocery bag over headrests helps the snug covers slide on without snagging."
           factoryIssue="Standard SE cloth seats readily soak up winter road salt, coffee spills, and pet hair, whereas factory SofTex requires jumping up to top-tier XSE packages with lengthy wait lists."
-          solution="Tailored slip-over leatherette or leather covers laser-scanned to 5th-gen RAV4 seating contours. Includes front and 60/40 rear seats, headrests, and verified side airbag deployment seams."
+          solution="Tailored slip-over leatherette or leather covers laser-scanned to 5th Gen (2019–2025) RAV4 seating contours. Includes front and 60/40 rear seats and headrests. Confirm 6th Gen (2026+) fitment and side-airbag compatibility with the cover manufacturer before purchase."
           steps={[
             'Warm covers indoors before installation to maximize material elasticity and ease stretching.',
             'Slip the bottom cushion cover over the seat base and feed the anchor chucks through the rear cushion crevice.',
             'Pull the lower anchor straps tight underneath the seat frame and secure the industrial hook-and-loop fasteners.',
-            'Slide the backrest cover down over the seat upright, verifying the airbag tag aligns with the outer door seam.',
+            'Slide the backrest cover down over the seat upright, following the cover manufacturer\'s instructions for seats with side airbags.',
             'Slide custom headrest covers on and tuck the lower seam flap underneath the plastic bezel.',
           ]}
           affiliateSlug="clazzio-leather-covers"

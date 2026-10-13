@@ -50,7 +50,10 @@ export default function EVChargingGuidePage() {
         </CardHeader>
         <CardContent className="space-y-3 text-xs text-zinc-300 leading-relaxed">
           <p>
-            A dedicated 240V Level 2 (32A or 40A) EVSE charges the RAV4 Plug-in Hybrid&apos;s 18.1 kWh battery from empty to 100% in approximately <strong>2.5 hours</strong>, enabling you to take full advantage of off-peak provincial electricity rates.
+            A dedicated 240V Level 2 (32A or 40A) EVSE charges the 2019–2025 RAV4 Prime&apos;s 18.1 kWh battery (6.6 kW onboard charger) from empty to 100% in approximately <strong>2.5 hours</strong>, enabling you to take full advantage of off-peak provincial electricity rates.
+          </p>
+          <p className="rounded-md border border-amber-500/30 bg-amber-500/5 p-3 text-zinc-300">
+            <strong>Note:</strong> For 2026 RAV4 PHEV models, standard Level 2 (32A) charging takes approximately 3.5 hours. Faster ~2.5-hour charging requires 48A charging on trims equipped with the upgraded 11 kW onboard charger (such as the XSE Technology package).
           </p>
         </CardContent>
       </Card>

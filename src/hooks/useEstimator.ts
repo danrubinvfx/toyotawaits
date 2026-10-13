@@ -42,7 +42,7 @@ export const CARRYOVER_ALLOCATION_NOTE =
 
 export const BASE_MODEL_P75: Record<string, number> = {
   sienna: 450,
-  rav4: 410,
+  rav4: 382,
   'grand-highlander': 380,
   'prius-prime': 230,
   prius: 120,
