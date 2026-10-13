@@ -28,13 +28,13 @@ export const metadata: Metadata = {
   description:
     'Comprehensive Canadian DIY upgrade playbooks and delivery day prep gear for Toyota RAV4 Prime, Sienna, Grand Highlander, and Land Cruiser 250 buyers.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides',
+    canonical: 'https://www.toyotawaits.ca/guides',
   },
   openGraph: {
     title: 'Toyota DIY Mod Guides & Delivery Prep Almanac',
     description:
       'Skip lengthy dealer waitlists with DIY trim upgrades, and prep your vehicle for Canadian roads with community-vetted accessories.',
-    url: 'https://toyotawaits.ca/guides',
+    url: 'https://www.toyotawaits.ca/guides',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'website',

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://toyotawaits.ca';
+  const baseUrl = 'https://www.toyotawaits.ca';
   const now = new Date();
 
   return [

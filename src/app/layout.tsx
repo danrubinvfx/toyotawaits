@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
+  metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
   description:
     'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
       'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
-    url: 'https://toyotawaits.ca',
+    url: 'https://www.toyotawaits.ca',
     siteName: 'ToyotaWaits',
     locale: 'en_CA',
     type: 'website',
@@ -64,18 +64,18 @@ export const jsonLd = {
   '@graph': [
     {
       '@type': 'WebApplication',
-      '@id': 'https://toyotawaits.ca/#webapp',
+      '@id': 'https://www.toyotawaits.ca/#webapp',
       name: 'ToyotaWaits',
-      url: 'https://toyotawaits.ca',
+      url: 'https://www.toyotawaits.ca',
       applicationCategory: 'AutomotiveApplication',
       operatingSystem: 'All',
       description: 'Community wait time tracker for Canadian Toyota allocations.',
     },
     {
       '@type': 'Organization',
-      '@id': 'https://toyotawaits.ca/#organization',
+      '@id': 'https://www.toyotawaits.ca/#organization',
       name: 'ToyotaWaits',
-      url: 'https://toyotawaits.ca',
+      url: 'https://www.toyotawaits.ca',
       description: 'Community wait time tracker for Canadian Toyota allocations.',
     },
   ],

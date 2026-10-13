@@ -4,7 +4,7 @@ import { TireCatalog } from '@/components/tires/tire-catalog';
 import { BackButton } from '@/components/common/back-button';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
+  metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Toyota Tire Guide: Winter & All-Weather Recommendations | ToyotaWaits.ca',
   description:
     'Factory tire sizes, Canadian winter reviews (3PMSF), and curated Amazon.ca links for RAV4, Sienna, Grand Highlander, Prius, and Land Cruiser.',
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     'michelin crossclimate 2 hybrid',
   ],
   alternates: {
-    canonical: 'https://toyotawaits.ca/tires',
+    canonical: 'https://www.toyotawaits.ca/tires',
   },
   openGraph: {
     title: 'Canadian Toyota Tire Guide: Winter & All-Weather Recommendations | ToyotaWaits.ca',
     description:
       'Factory tire sizes, Canadian winter reviews (3PMSF), and curated Amazon.ca links for RAV4, Sienna, Grand Highlander, Prius, and Land Cruiser.',
-    url: 'https://toyotawaits.ca/tires',
+    url: 'https://www.toyotawaits.ca/tires',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

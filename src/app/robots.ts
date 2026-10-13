@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/out/',
     },
-    sitemap: 'https://toyotawaits.ca/sitemap.xml',
+    sitemap: 'https://www.toyotawaits.ca/sitemap.xml',
   };
 }

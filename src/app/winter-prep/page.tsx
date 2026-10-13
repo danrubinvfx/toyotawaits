@@ -4,7 +4,7 @@ import { WinterPrepView } from '@/components/winter-prep/winter-prep-view';
 import { BackButton } from '@/components/common/back-button';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
+  metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',
   description:
     'Model-by-model winter survival advice for Canadian Toyota owners: 12V hybrid jump procedures, salt defense liners, and cold-weather gear.',
@@ -18,13 +18,13 @@ export const metadata: Metadata = {
     'prius prime sub zero heating',
   ],
   alternates: {
-    canonical: 'https://toyotawaits.ca/winter-prep',
+    canonical: 'https://www.toyotawaits.ca/winter-prep',
   },
   openGraph: {
     title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',
     description:
       'Model-by-model winter survival advice for Canadian Toyota owners: 12V hybrid jump procedures, salt defense liners, and cold-weather gear.',
-    url: 'https://toyotawaits.ca/winter-prep',
+    url: 'https://www.toyotawaits.ca/winter-prep',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

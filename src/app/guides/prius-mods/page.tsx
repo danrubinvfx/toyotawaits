@@ -25,13 +25,13 @@ export const metadata: Metadata = {
   description:
     'The essential exterior armor, interior protection, and tech upgrades for Canadian Gen 5 Prius owners. Protect against winter road salt, scratches, and glare.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/prius-mods',
+    canonical: 'https://www.toyotawaits.ca/guides/prius-mods',
   },
   openGraph: {
     title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods',
     description:
       'The essential exterior armor, interior protection, and tech upgrades for Canadian Gen 5 Prius owners.',
-    url: 'https://toyotawaits.ca/guides/prius-mods',
+    url: 'https://www.toyotawaits.ca/guides/prius-mods',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

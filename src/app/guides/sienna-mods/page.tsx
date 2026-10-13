@@ -20,13 +20,13 @@ export const metadata: Metadata = {
   description:
     'Essential DIY upgrades for Canadian Toyota Sienna owners: Air Lift 1000 rear suspension helpers, console bridge trays, FitcamX OEM dashcam, and cargo hatch LED lighting.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/sienna-mods',
+    canonical: 'https://www.toyotawaits.ca/guides/sienna-mods',
   },
   openGraph: {
     title: 'The Road Dog Cruiser: Essential Toyota Sienna Mods & Road-Trip Prep',
     description:
       'Community-proven DIY upgrades to fix factory minivan annoyances: suspension sag, dark trunks, and flying bridge clutter.',
-    url: 'https://toyotawaits.ca/guides/sienna-mods',
+    url: 'https://www.toyotawaits.ca/guides/sienna-mods',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

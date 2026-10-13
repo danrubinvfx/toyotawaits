@@ -11,6 +11,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Unsubscribe from Alerts | ToyotaWaits.ca',
   description: 'Manage your email notification and delivery alert preferences on ToyotaWaits.ca.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 interface UnsubscribePageProps {

@@ -26,7 +26,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
+  metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
   description:
     'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
     'rav4 prime wait time',
   ],
   alternates: {
-    canonical: 'https://toyotawaits.ca',
+    canonical: 'https://www.toyotawaits.ca',
   },
   openGraph: {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
       'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
-    url: 'https://toyotawaits.ca',
+    url: 'https://www.toyotawaits.ca',
     siteName: 'ToyotaWaits',
     locale: 'en_CA',
     type: 'website',

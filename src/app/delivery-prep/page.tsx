@@ -7,7 +7,7 @@ import { ShieldCheck, Car, KeyRound, Wrench } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
+  metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',
   description:
     'Comprehensive Canadian Toyota delivery day inspection checklist: bill of sale verification, PDI suspension shipping spacer removal, key fob count audits, and hybrid battery intake checks.',
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     'canadian toyota delivery checklist',
   ],
   alternates: {
-    canonical: 'https://toyotawaits.ca/delivery-prep',
+    canonical: 'https://www.toyotawaits.ca/delivery-prep',
   },
   openGraph: {
     title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',
     description:
       'Comprehensive Canadian Toyota delivery day inspection checklist: bill of sale verification, PDI suspension shipping spacer removal, key fob count audits, and hybrid battery intake checks.',
-    url: 'https://toyotawaits.ca/delivery-prep',
+    url: 'https://www.toyotawaits.ca/delivery-prep',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

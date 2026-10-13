@@ -23,13 +23,13 @@ export const metadata: Metadata = {
   description:
     'Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/rav4-se-mods',
+    canonical: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
   },
   openGraph: {
     title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',
     description:
       'The DIY playbook for Canadian buyers tired of waiting 18+ months for an XSE. Get premium sound and leather on an SE for $700 CAD.',
-    url: 'https://toyotawaits.ca/guides/rav4-se-mods',
+    url: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

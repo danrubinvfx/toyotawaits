@@ -91,12 +91,12 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     title,
     description,
     alternates: {
-      canonical: `https://toyotawaits.ca/${model.slug}/${powertrain.slug}/${province.code.toLowerCase()}`,
+      canonical: `https://www.toyotawaits.ca/${model.slug}/${powertrain.slug}/${province.code.toLowerCase()}`,
     },
     openGraph: {
       title,
       description,
-      url: `https://toyotawaits.ca/${model.slug}/${powertrain.slug}/${province.code.toLowerCase()}`,
+      url: `https://www.toyotawaits.ca/${model.slug}/${powertrain.slug}/${province.code.toLowerCase()}`,
       siteName: 'ToyotaWaits.ca',
       locale: 'en_CA',
       type: 'website',

@@ -20,13 +20,13 @@ export const metadata: Metadata = {
   description:
     'Essential DIY upgrades for Canadian Toyota Land Cruiser 250 owners: 1958 trim drop-in speaker upgrades, frame-mounted rock sliders, and winter wheel packages.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/land-cruiser-mods',
+    canonical: 'https://www.toyotawaits.ca/guides/land-cruiser-mods',
   },
   openGraph: {
     title: 'Backroads & Borderlines: LC250 1958 Trim Upgrades & Trail Prep',
     description:
       'Community-tested modifications to fix the base Land Cruiser 1958 trim: audio upgrades, rock sliders, and severe Canadian winter rubber.',
-    url: 'https://toyotawaits.ca/guides/land-cruiser-mods',
+    url: 'https://www.toyotawaits.ca/guides/land-cruiser-mods',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

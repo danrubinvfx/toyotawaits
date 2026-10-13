@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     'How high vehicle theft rates in Ontario and Quebec affect Toyota insurance premiums. Comparing quotes, TAG system installation discounts, and hybrid replacement policies.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/insurance',
+    canonical: 'https://www.toyotawaits.ca/guides/insurance',
   },
 };
 

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'Contribute your Toyota reservation deposit or vehicle delivery date anonymously to help Canadian buyers track genuine allocation wait times.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/submit',
+    canonical: 'https://www.toyotawaits.ca/submit',
   },
 };
 
