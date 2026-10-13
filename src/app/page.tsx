@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     'rav4 prime wait time',
   ],
   alternates: {
-    canonical: '/',
+    canonical: 'https://toyotawaits.ca',
   },
   openGraph: {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',

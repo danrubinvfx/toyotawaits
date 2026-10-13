@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     'canadian toyota delivery checklist',
   ],
   alternates: {
-    canonical: '/delivery-prep',
+    canonical: 'https://toyotawaits.ca/delivery-prep',
   },
   openGraph: {
     title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',

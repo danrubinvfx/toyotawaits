@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: 'Backroads & Borderlines: Land Cruiser 250 (1958) Mods | ToyotaWaits.ca',
   description:
     'Essential DIY upgrades for Canadian Toyota Land Cruiser 250 owners: 1958 trim drop-in speaker upgrades, frame-mounted rock sliders, and winter wheel packages.',
+  alternates: {
+    canonical: 'https://toyotawaits.ca/guides/land-cruiser-mods',
+  },
   openGraph: {
     title: 'Backroads & Borderlines: LC250 1958 Trim Upgrades & Trail Prep',
     description:

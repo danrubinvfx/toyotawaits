@@ -49,6 +49,9 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   return {
     title: `Toyota ${model.name} ${powertrain.name} Wait Times Across Canada | ToyotaWaits.ca`,
     description: `Crowdsourced delivery wait times, trim breakdown, and provincial allocation comparison for the Toyota ${model.name} (${powertrain.name}) in Canada.`,
+    alternates: {
+      canonical: `https://toyotawaits.ca/${model.slug}/${powertrain.slug}`,
+    },
   };
 }
 

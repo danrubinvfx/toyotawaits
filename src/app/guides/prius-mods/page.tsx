@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods | ToyotaWaits.ca',
   description:
     'The essential exterior armor, interior protection, and tech upgrades for Canadian Gen 5 Prius owners. Protect against winter road salt, scratches, and glare.',
+  alternates: {
+    canonical: 'https://toyotawaits.ca/guides/prius-mods',
+  },
   openGraph: {
     title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods',
     description:

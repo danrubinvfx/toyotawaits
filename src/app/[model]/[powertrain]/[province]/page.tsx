@@ -90,6 +90,9 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
   return {
     title,
     description,
+    alternates: {
+      canonical: `https://toyotawaits.ca/${model.slug}/${powertrain.slug}/${province.code.toLowerCase()}`,
+    },
     openGraph: {
       title,
       description,

@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description:
     'Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD.',
   alternates: {
-    canonical: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
+    canonical: 'https://toyotawaits.ca/guides/rav4-se-mods',
   },
   openGraph: {
     title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',

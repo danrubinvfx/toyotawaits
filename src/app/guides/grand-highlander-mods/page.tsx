@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: 'Big Rig Comfort: Essential Grand Highlander Mods | ToyotaWaits.ca',
   description:
     'Essential DIY utility and cabin upgrades for Canadian Toyota Grand Highlander owners: OEM-style hatch LED lamps, console organizers, and anti-slip Qi mats.',
+  alternates: {
+    canonical: 'https://toyotawaits.ca/guides/grand-highlander-mods',
+  },
   openGraph: {
     title: 'Big Rig Comfort: Essential Grand Highlander Mods & Cabin Upgrades',
     description:

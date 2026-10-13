@@ -30,9 +30,6 @@ export const metadata: Metadata = {
     'toyota allocation canada',
     'rav4 prime wait time',
   ],
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:

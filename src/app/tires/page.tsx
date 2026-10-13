@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     'michelin crossclimate 2 hybrid',
   ],
   alternates: {
-    canonical: '/tires',
+    canonical: 'https://toyotawaits.ca/tires',
   },
   openGraph: {
     title: 'Canadian Toyota Tire Guide: Winter & All-Weather Recommendations | ToyotaWaits.ca',

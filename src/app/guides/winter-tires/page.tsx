@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: 'Canadian Winter Tire Laws & Toyota Fitment Guide | ToyotaWaits.ca',
   description:
     'Provincial winter tire mandates for British Columbia and Quebec. Recommended wheel downsizing specs and winter tire packages for Toyota RAV4, Sienna, Grand Highlander, and Land Cruiser.',
+  alternates: {
+    canonical: 'https://toyotawaits.ca/guides/winter-tires',
+  },
 };
 
 export default function WinterTiresGuidePage() {

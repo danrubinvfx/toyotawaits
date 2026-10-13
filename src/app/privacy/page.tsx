@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: 'Zero-PII Privacy Charter & PIPEDA Compliance | ToyotaWaits.ca',
   description:
     'Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for Notify Me delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.',
+  alternates: {
+    canonical: 'https://toyotawaits.ca/privacy',
+  },
 };
 
 export default function PrivacyPage() {
