@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -42,6 +42,8 @@ export function getTodayLocalDate(): string {
 export default function EditSubmissionPage({ params }: EditPageProps) {
   const { token } = use(params);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryKey = searchParams?.get('key') || searchParams?.get('edit_token') || searchParams?.get('editKey') || '';
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +67,8 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await fetch(`/api/submissions/edit/${token}`, { cache: 'no-store' });
+        const queryParam = queryKey ? `?key=${encodeURIComponent(queryKey)}` : '';
+        const res = await fetch(`/api/submissions/edit/${token}${queryParam}`, { cache: 'no-store' });
         const json = await res.json();
 
         if (!isMounted) return;
@@ -152,9 +155,17 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       waitDays: isCancelled ? null : prev?.waitDays,
     }));
 
+    const secretKey = queryKey || submission?.editToken || token;
+    const submissionId = submission?.id || token;
+
     try {
       const payload: Record<string, any> = {
+        id: submissionId,
+        edit_token: secretKey,
+        key: secretKey,
+        milestone: targetStage,
         stage: targetStage,
+        currentStage: targetStage,
         status: targetStatus,
         notes: notes.trim() || null,
       };
@@ -163,7 +174,8 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
         payload.deliveryDate = deliveryDate;
       }
 
-      const res = await fetch(`/api/submissions/edit/${token}`, {
+      const queryParam = queryKey ? `?key=${encodeURIComponent(queryKey)}` : '';
+      const res = await fetch(`/api/submissions/edit/${token}${queryParam}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -204,6 +216,11 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       updateStoredSubmissionByToken(token, {
         status: targetStatus,
       });
+      if (submissionId && submissionId !== token) {
+        updateStoredSubmissionByToken(submissionId, {
+          status: targetStatus,
+        });
+      }
 
       try {
         const pendingRaw = localStorage.getItem('toyotawait_pending_submission');

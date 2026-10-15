@@ -13,6 +13,11 @@ export async function GET(
 ) {
   try {
     const { token } = await params;
+    const queryKey =
+      request.nextUrl.searchParams.get('key') ||
+      request.nextUrl.searchParams.get('edit_token') ||
+      request.nextUrl.searchParams.get('editKey') ||
+      undefined;
 
     if (!token || !UUID_REGEX.test(token)) {
       return NextResponse.json<ApiResponse<null>>(
@@ -27,7 +32,7 @@ export async function GET(
       );
     }
 
-    const submission = await getSubmissionByEditToken(token);
+    const submission = await getSubmissionByEditToken(token, queryKey);
 
     if (!submission) {
       return NextResponse.json<ApiResponse<null>>(
@@ -75,6 +80,11 @@ export async function PATCH(
 ) {
   try {
     const { token } = await params;
+    const queryKey =
+      request.nextUrl.searchParams.get('key') ||
+      request.nextUrl.searchParams.get('edit_token') ||
+      request.nextUrl.searchParams.get('editKey') ||
+      '';
 
     if (!token || !UUID_REGEX.test(token)) {
       return NextResponse.json<ApiResponse<null>>(
@@ -105,8 +115,12 @@ export async function PATCH(
       );
     }
 
-    const { status, deliveryDate, notes, currentStage, stage, modelId, powertrainId, trimId, model, modelSlug, powertrainSlug, trimSlug } = body;
-    const resolvedStage = stage || currentStage;
+    const submissionId = body.id || body.submissionId || (UUID_REGEX.test(token) ? token : undefined);
+    const secretKey = body.edit_token || body.key || body.editKey || queryKey || token;
+    const rawMilestone = body.milestone || body.stage || body.currentStage;
+
+    const { status, deliveryDate, notes, modelId, powertrainId, trimId, model, modelSlug, powertrainSlug, trimSlug } = body;
+    const resolvedStage = rawMilestone;
 
     const finalStatus =
       status ||
@@ -164,6 +178,10 @@ export async function PATCH(
     const effectiveStage = resolvedStage || (finalStatus === 'cancelled' ? 'cancelled' : undefined);
 
     const updated = await updateSubmissionByEditToken(token, {
+      id: submissionId,
+      edit_token: secretKey,
+      key: secretKey,
+      milestone: effectiveStage,
       status: finalStatus as SubmissionStatus | undefined,
       deliveryDate: deliveryDate !== undefined ? deliveryDate : undefined,
       notes: typeof notes === 'string' ? notes.trim() : undefined,
@@ -196,6 +214,9 @@ export async function PATCH(
       revalidatePath('/edit/[token]', 'page');
       revalidatePath('/edit/[token]');
       revalidatePath(`/edit/${token}`);
+      if (submissionId && submissionId !== token) {
+        revalidatePath(`/edit/${submissionId}`);
+      }
       revalidatePath('/analytics');
       revalidatePath('/api/analytics');
       revalidatePath('/');

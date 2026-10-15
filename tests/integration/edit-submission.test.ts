@@ -316,4 +316,81 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     expect(getJson.data.model).toBe('Tacoma');
     expect(getJson.data.stage).toBe('in_transit');
   });
+
+  it('retrieves and updates submission when accessing via /edit/[id]?key=[secret_edit_key]', async () => {
+    // 1. Seed a submission with distinct ID and edit token
+    const seeded = await insertSubmission({
+      modelId: '10000000-0000-4000-8000-000000000001',
+      powertrainId: '20000000-0000-4000-8000-000000000002',
+      trimId: '30000000-0000-4000-8000-000000000010',
+      province: 'ON',
+      dealershipCity: 'Toronto',
+      dealershipName: 'Downtown Toyota',
+      modelYear: 2026,
+      orderDate: '2025-11-01',
+      deliveryDate: null,
+      status: 'pending',
+      stage: 'deposit_placed',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      editKeyHash: 'test-hash-secret-123',
+      editToken: 'a1111111-2222-3333-4444-555555555555',
+      isFlagged: false,
+    });
+
+    const submissionId = seeded.id;
+    const secretKey = 'a1111111-2222-3333-4444-555555555555';
+
+    // 2. GET /api/submissions/edit/[id]?key=[secretKey]
+    const getReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${submissionId}?key=${secretKey}`);
+    const getRes = await GET(getReq, { params: Promise.resolve({ token: submissionId }) });
+    const getJson = await getRes.json();
+
+    expect(getRes.status).toBe(200);
+    expect(getJson.success).toBe(true);
+    expect(getJson.data.id).toBe(submissionId);
+    expect(getJson.data.stage).toBe('deposit_placed');
+
+    // 3. PATCH /api/submissions/edit/[id]?key=[secretKey] with body payload containing id, edit_token, milestone
+    const patchReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${submissionId}?key=${secretKey}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: submissionId,
+        edit_token: secretKey,
+        key: secretKey,
+        milestone: 'in_transit',
+        notes: 'Now in freight transit from factory.',
+      }),
+    });
+
+    const patchRes = await PATCH(patchReq, { params: Promise.resolve({ token: submissionId }) });
+    const patchJson = await patchRes.json();
+
+    expect(patchRes.status).toBe(200);
+    expect(patchJson.success).toBe(true);
+    expect(patchJson.data.stage).toBe('in_transit');
+    expect(patchJson.data.notes).toBe('Now in freight transit from factory.');
+
+    // 4. Reject update when wrong edit token is supplied with submission ID
+    const badKey = '00000000-0000-0000-0000-999999999999';
+    const badPatchReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${submissionId}?key=${badKey}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: submissionId,
+        edit_token: badKey,
+        key: badKey,
+        milestone: 'delivered',
+        deliveryDate: '2026-03-15',
+      }),
+    });
+
+    const badPatchRes = await PATCH(badPatchReq, { params: Promise.resolve({ token: submissionId }) });
+    const badPatchJson = await badPatchRes.json();
+
+    expect(badPatchRes.status).toBe(404);
+    expect(badPatchJson.success).toBe(false);
+  });
 });

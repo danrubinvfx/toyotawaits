@@ -1676,7 +1676,10 @@ export interface EditableSubmission {
   updatedAt?: string | null;
 }
 
-export async function getSubmissionByEditToken(editToken: string): Promise<EditableSubmission | null> {
+export async function getSubmissionByEditToken(
+  editToken: string,
+  secretKey?: string
+): Promise<EditableSubmission | null> {
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
@@ -1684,37 +1687,120 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
   ) {
     try {
       const supabase = createServerClient();
-      const { data, error } = await supabase
-        .from('submissions')
-        .select(`
-          id,
-          edit_token,
-          country_code,
-          province,
-          state,
-          dealer_markup_adm,
-          port_destination,
-          dealership_city,
-          dealership_name,
-          model_year,
-          order_date,
-          delivery_date,
-          wait_days,
-          status,
-          current_stage,
-          stage,
-          stage_updated_at,
-          pricing,
-          mandatory_addons_cad,
-          notes,
-          created_at,
-          updated_at,
-          vehicle_models(name, slug),
-          vehicle_powertrains(name, slug),
-          vehicle_trims(name, slug)
-        `)
-        .or(`edit_token.eq.${editToken},id.eq.${editToken}`)
-        .maybeSingle();
+      let data: any = null;
+      let error: any = null;
+
+      if (secretKey && secretKey !== editToken) {
+        const { data: matched } = await supabase
+          .from('submissions')
+          .select(`
+            id,
+            edit_token,
+            country_code,
+            province,
+            state,
+            dealer_markup_adm,
+            port_destination,
+            dealership_city,
+            dealership_name,
+            model_year,
+            order_date,
+            delivery_date,
+            wait_days,
+            status,
+            current_stage,
+            stage,
+            stage_updated_at,
+            pricing,
+            mandatory_addons_cad,
+            notes,
+            created_at,
+            updated_at,
+            vehicle_models(name, slug),
+            vehicle_powertrains(name, slug),
+            vehicle_trims(name, slug)
+          `)
+          .match({ id: editToken, edit_token: secretKey })
+          .maybeSingle();
+
+        if (matched) {
+          data = matched;
+        } else {
+          const secretKeyHash = crypto.createHash('sha256').update(secretKey).digest('hex');
+          const { data: hashMatched } = await supabase
+            .from('submissions')
+            .select(`
+              id,
+              edit_token,
+              country_code,
+              province,
+              state,
+              dealer_markup_adm,
+              port_destination,
+              dealership_city,
+              dealership_name,
+              model_year,
+              order_date,
+              delivery_date,
+              wait_days,
+              status,
+              current_stage,
+              stage,
+              stage_updated_at,
+              pricing,
+              mandatory_addons_cad,
+              notes,
+              created_at,
+              updated_at,
+              vehicle_models(name, slug),
+              vehicle_powertrains(name, slug),
+              vehicle_trims(name, slug)
+            `)
+            .match({ id: editToken, edit_key_hash: secretKeyHash })
+            .maybeSingle();
+
+          if (hashMatched) {
+            data = hashMatched;
+          }
+        }
+      }
+
+      if (!data) {
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('submissions')
+          .select(`
+            id,
+            edit_token,
+            country_code,
+            province,
+            state,
+            dealer_markup_adm,
+            port_destination,
+            dealership_city,
+            dealership_name,
+            model_year,
+            order_date,
+            delivery_date,
+            wait_days,
+            status,
+            current_stage,
+            stage,
+            stage_updated_at,
+            pricing,
+            mandatory_addons_cad,
+            notes,
+            created_at,
+            updated_at,
+            vehicle_models(name, slug),
+            vehicle_powertrains(name, slug),
+            vehicle_trims(name, slug)
+          `)
+          .or(`edit_token.eq.${editToken},id.eq.${editToken}${secretKey && secretKey !== editToken ? `,edit_token.eq.${secretKey}` : ''}`)
+          .maybeSingle();
+
+        data = fallbackData;
+        error = fallbackError;
+      }
 
       if (!error && data) {
         return {
@@ -1756,7 +1842,18 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
 
   // In-memory fallback
   for (const item of inMemorySubmissions.values()) {
-    if (item.edit_token === editToken || item.id === editToken) {
+    const keyHash = secretKey ? crypto.createHash('sha256').update(secretKey).digest('hex') : null;
+    const isMatch =
+      item.edit_token === editToken ||
+      item.id === editToken ||
+      Boolean(
+        secretKey &&
+          (item.edit_token === secretKey ||
+            item.edit_key_hash === keyHash ||
+            (item as any).editKey === secretKey)
+      );
+
+    if (isMatch) {
       return {
         id: item.id,
         editToken: item.edit_token || editToken,
@@ -1794,9 +1891,15 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
   return null;
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function updateSubmissionByEditToken(
   editToken: string,
   updates: {
+    id?: string;
+    edit_token?: string;
+    key?: string;
+    milestone?: string;
     status?: SubmissionStatus;
     deliveryDate?: string | null;
     notes?: string | null;
@@ -1820,8 +1923,11 @@ export async function updateSubmissionByEditToken(
   notes?: string | null;
   updatedAt: string;
 } | null> {
-  const finalStage = updates.stage || updates.currentStage || (updates.status === 'delivered' ? 'delivered' : updates.status === 'cancelled' ? 'cancelled' : undefined);
+  const finalStage = updates.stage || updates.currentStage || updates.milestone || (updates.status === 'delivered' ? 'delivered' : updates.status === 'cancelled' ? 'cancelled' : undefined);
   const finalStatus = updates.status || (finalStage === 'delivered' ? 'delivered' : finalStage === 'cancelled' ? 'cancelled' : undefined);
+
+  const submissionId = updates.id || (UUID_REGEX.test(editToken) ? editToken : undefined);
+  const secretKey = updates.edit_token || updates.key || editToken;
 
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -1831,12 +1937,58 @@ export async function updateSubmissionByEditToken(
     try {
       const supabase = createServerClient();
 
-      // Fetch existing record to calculate wait_days if transitioning to delivered
-      const { data: existing } = await supabase
-        .from('submissions')
-        .select('id, order_date, wait_days')
-        .eq('edit_token', editToken)
-        .maybeSingle();
+      let existing: { id: string; order_date: string; wait_days: number | null; edit_token: string | null } | null = null;
+
+      // 1. If both submissionId and secretKey are provided and distinct, attempt match({ id, edit_token })
+      if (submissionId && secretKey && submissionId !== secretKey) {
+        const { data: matched } = await supabase
+          .from('submissions')
+          .select('id, order_date, wait_days, edit_token, edit_key_hash')
+          .match({ id: submissionId, edit_token: secretKey })
+          .maybeSingle();
+
+        if (matched) {
+          existing = matched;
+        } else {
+          // Check if secretKey matches edit_key_hash
+          const secretKeyHash = crypto.createHash('sha256').update(secretKey).digest('hex');
+          const { data: hashMatched } = await supabase
+            .from('submissions')
+            .select('id, order_date, wait_days, edit_token, edit_key_hash')
+            .match({ id: submissionId, edit_key_hash: secretKeyHash })
+            .maybeSingle();
+
+          if (hashMatched) {
+            existing = hashMatched;
+          } else {
+            // Diagnostic check: log whether ID exists or edit_token was invalid
+            const { data: idCheck } = await supabase
+              .from('submissions')
+              .select('id, edit_token, edit_key_hash')
+              .eq('id', submissionId)
+              .maybeSingle();
+
+            if (idCheck) {
+              console.warn(`[Edit Auth Diagnostic] Submission ID '${submissionId}' exists, but provided edit key/token does not match.`);
+            } else {
+              console.warn(`[Edit Auth Diagnostic] Submission ID '${submissionId}' not found in database.`);
+            }
+          }
+        }
+      }
+
+      // 2. Fallback lookup by edit_token or id
+      if (!existing) {
+        const { data: fallbackMatch } = await supabase
+          .from('submissions')
+          .select('id, order_date, wait_days, edit_token, edit_key_hash')
+          .or(`edit_token.eq.${editToken},id.eq.${editToken}${secretKey && secretKey !== editToken ? `,edit_token.eq.${secretKey}` : ''}`)
+          .maybeSingle();
+
+        if (fallbackMatch) {
+          existing = fallbackMatch;
+        }
+      }
 
       if (existing) {
         const nowIso = new Date().toISOString();
@@ -1895,7 +2047,7 @@ export async function updateSubmissionByEditToken(
         const { data: updated, error } = await supabase
           .from('submissions')
           .update(updatePayload)
-          .eq('edit_token', editToken)
+          .eq('id', existing.id)
           .select('id, status, current_stage, stage, delivery_date, wait_days, notes, updated_at')
           .single();
 
@@ -1937,7 +2089,21 @@ export async function updateSubmissionByEditToken(
 
   // In-memory fallback
   for (const item of inMemorySubmissions.values()) {
-    if (item.edit_token === editToken || item.id === editToken) {
+    const keyHash = secretKey ? crypto.createHash('sha256').update(secretKey).digest('hex') : null;
+    const isIdMatch = submissionId ? item.id === submissionId : item.id === editToken;
+    const isTokenMatch = item.edit_token === editToken || item.edit_token === secretKey;
+    const isKeyMatch = Boolean(
+      secretKey &&
+      (item.edit_token === secretKey ||
+       item.edit_key_hash === keyHash ||
+       (item as any).editKey === secretKey)
+    );
+
+    const matches = (submissionId && secretKey && submissionId !== secretKey)
+      ? (item.id === submissionId && isKeyMatch)
+      : (isTokenMatch || isIdMatch);
+
+    if (matches) {
       if (finalStatus) item.status = finalStatus;
       if (finalStage) {
         item.current_stage = finalStage;
