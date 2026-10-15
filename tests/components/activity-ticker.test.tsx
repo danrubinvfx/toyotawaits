@@ -8,7 +8,7 @@ import {
   formatActionDescription,
   formatTickerSummary,
 } from '@/components/feed/ActivityTicker';
-import { RecentActivityItem } from '@/lib/types/contracts';
+import { RecentActivityItem, TickerItem } from '@/lib/types/contracts';
 
 describe('Activity Ticker Formatting Helpers', () => {
   it('formats relative time correctly for various intervals', () => {
@@ -138,50 +138,37 @@ describe('Activity Ticker Formatting Helpers', () => {
   });
 });
 
-describe('ActivityTicker Component', () => {
-  const mockSubmissions: RecentActivityItem[] = [
+describe('ActivityTicker Component — Alternating News Wire & Delivered Milestones', () => {
+  const mockTickerData: TickerItem[] = [
     {
-      id: 'rec-1',
+      type: 'delivery',
+      id: 'del-1',
       province: 'BC',
       model_name: 'RAV4',
       trim_name: 'SE',
-      powertrain: 'Plug-in Hybrid (PHEV)',
-      status: 'pending',
-      lifecycle_status: 'deposit_placed',
-      order_date: '2026-01-01',
-      delivered_date: null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      powertrain: 'Plug-in Hybrid',
       model_year: 2026,
+      daysWaited: 240,
+      timestamp: '2026-10-15T12:00:00Z',
     },
     {
-      id: 'rec-2',
-      province: 'ON',
-      model_name: 'Tacoma',
-      trim_name: 'SR5',
-      powertrain: 'i-FORCE Turbo',
-      status: 'pending',
-      lifecycle_status: 'in_transit',
-      order_date: '2026-01-01',
-      delivered_date: null,
-      created_at: new Date(Date.now() - 7200000).toISOString(),
-      updated_at: new Date(Date.now() - 7200000).toISOString(),
-      model_year: 2026,
+      type: 'news',
+      id: 'news-1',
+      title: 'Q4 Canadian Allocation Update: High hybrid production slots allocated for BC & ON',
+      tag: 'ALLOCATION ALERT',
+      url: '/guides',
+      timestamp: '2026-10-14T10:00:00Z',
     },
     {
-      id: 'rec-3',
+      type: 'delivery',
+      id: 'del-2',
       province: 'AB',
       model_name: 'Sienna',
       trim_name: 'XSE AWD',
       powertrain: 'Hybrid',
-      status: 'delivered',
-      lifecycle_status: 'delivered',
-      wait_days: 142,
-      order_date: '2025-10-01',
-      delivered_date: '2026-02-20',
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-      updated_at: new Date(Date.now() - 86400000).toISOString(),
       model_year: 2026,
+      daysWaited: 142,
+      timestamp: '2026-10-13T08:00:00Z',
     },
   ];
 
@@ -193,23 +180,23 @@ describe('ActivityTicker Component', () => {
     vi.useRealTimers();
   });
 
-  it('renders the live activity badge and accessible aria-live container', () => {
-    render(<ActivityTicker initialData={mockSubmissions} />);
+  it('renders a verified delivery item with DELIVERED badge and days waited', () => {
+    render(<ActivityTicker initialData={mockTickerData} />);
 
-    // Live Badge Indicator
-    expect(screen.getByText(/Canadian Activity Pulse/i)).toBeInTheDocument();
+    // DELIVERED Badge
+    expect(screen.getByText(/DELIVERED/i)).toBeInTheDocument();
 
-    // Accessibility
-    const container = screen.getByRole('region', { name: /Live Canadian Toyota order activity/i });
-    expect(container).toBeInTheDocument();
-    expect(container).toHaveAttribute('aria-live', 'polite');
-
-    // First item content rendered
-    expect(screen.getByText(/placed on deposit/i)).toBeInTheDocument();
+    // Content format: BC: 2026 RAV4 Plug-in Hybrid SE — 240 days wait
+    expect(screen.getByText('BC:')).toBeInTheDocument();
+    expect(screen.getByText(/2026 RAV4 Plug-in Hybrid SE/)).toBeInTheDocument();
+    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
   });
 
-  it('allows manual progression with next and previous navigation buttons', () => {
-    render(<ActivityTicker initialData={mockSubmissions} />);
+  it('alternates to News Wire item when advancing to next ticker item', () => {
+    render(<ActivityTicker initialData={mockTickerData} />);
+
+    // Initially displays delivery
+    expect(screen.getByText(/DELIVERED/i)).toBeInTheDocument();
 
     // Click Next
     const nextBtn = screen.getByRole('button', { name: /Next update/i });
@@ -219,51 +206,47 @@ describe('ActivityTicker Component', () => {
       vi.advanceTimersByTime(250);
     });
 
-    // Should now display the second item
-    expect(screen.getByText(/advanced to In Transit/i)).toBeInTheDocument();
+    // Should now display the news wire announcement with ALLOCATION ALERT badge
+    expect(screen.getByText(/ALLOCATION ALERT/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Q4 Canadian Allocation Update: High hybrid production slots/i)
+    ).toBeInTheDocument();
 
-    // Click Previous
-    const prevBtn = screen.getByRole('button', { name: /Previous update/i });
-    fireEvent.click(prevBtn);
-
-    act(() => {
-      vi.advanceTimersByTime(250);
+    // Verify it links to the article URL
+    const newsLink = screen.getByRole('link', {
+      name: /Q4 Canadian Allocation Update/i,
     });
-
-    // Should return to first item
-    expect(screen.getByText(/placed on deposit/i)).toBeInTheDocument();
+    expect(newsLink).toHaveAttribute('href', '/guides');
   });
 
   it('pauses auto-scrolling when hovered or focused', () => {
-    render(<ActivityTicker initialData={mockSubmissions} />);
+    render(<ActivityTicker initialData={mockTickerData} />);
 
     const container = screen.getByRole('region', { name: /Live Canadian Toyota order activity/i });
 
     // Hover container
     fireEvent.mouseEnter(container);
 
-    // Advance interval timer beyond 4500ms
+    // Advance timer beyond 4500ms
     act(() => {
       vi.advanceTimersByTime(5000);
     });
 
-    // Still on first item because paused
-    expect(screen.getByText(/placed on deposit/i)).toBeInTheDocument();
+    // Still on first delivery item because paused
+    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
 
     // Leave hover
     fireEvent.mouseLeave(container);
 
-    // Advance timers
     act(() => {
       vi.advanceTimersByTime(5000);
     });
 
-    // Successfully rotated to next item
-    expect(screen.getByText(/advanced to In Transit/i)).toBeInTheDocument();
+    // Rotated to news item
+    expect(screen.getByText(/ALLOCATION ALERT/i)).toBeInTheDocument();
   });
 
-  it('respects prefers-reduced-motion by rendering a static horizontal scrollable list', () => {
-    // Mock matchMedia for prefers-reduced-motion
+  it('respects prefers-reduced-motion by rendering both deliveries and news alerts as static pills', () => {
     window.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: query === '(prefers-reduced-motion: reduce)',
       media: query,
@@ -275,18 +258,17 @@ describe('ActivityTicker Component', () => {
       dispatchEvent: vi.fn(),
     }));
 
-    render(<ActivityTicker initialData={mockSubmissions} />);
+    render(<ActivityTicker initialData={mockTickerData} />);
 
-    // In reduced motion mode, all items are listed as static pills in a scrollable list
     const scrollContainer = screen.getByLabelText(/Scrollable list of recent community submissions/i);
     expect(scrollContainer).toBeInTheDocument();
 
-    expect(screen.getByText(/BC: 2026 RAV4 Plug-in Hybrid SE placed on deposit/i)).toBeInTheDocument();
-    expect(screen.getByText(/ON: 2026 Tacoma i-FORCE Turbo SR5 advanced to In Transit/i)).toBeInTheDocument();
-    expect(screen.getByText(/AB: 2026 Sienna/i)).toBeInTheDocument();
+    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
+    expect(screen.getByText(/Q4 Canadian Allocation Update/i)).toBeInTheDocument();
+    expect(screen.getByText(/142 days wait/i)).toBeInTheDocument();
   });
 
-  it('returns null cleanly when no submissions are provided', () => {
+  it('returns null cleanly when no items are provided', () => {
     const { container } = render(<ActivityTicker initialData={[]} />);
     expect(container.firstChild).toBeNull();
   });

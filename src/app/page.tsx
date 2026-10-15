@@ -9,7 +9,8 @@ import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper'
 import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
 import { HashScrollHandler } from '@/components/common/hash-scroll-handler';
 import { ActivityTicker } from '@/components/feed/ActivityTicker';
-import { getCommunitySubmissions, getRecentActivity } from '@/lib/db/submissions';
+import { getCommunitySubmissions } from '@/lib/db/submissions';
+import { getTickerItems } from '@/lib/db/ticker';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -64,7 +65,7 @@ export default async function HomePage() {
   const headersList = await headers();
   const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
   const submissions = await getCommunitySubmissions(region);
-  const recentSubmissions = await getRecentActivity(10, region);
+  const tickerItems = await getTickerItems(10, region);
 
   return (
     <div className="pb-16">
@@ -72,7 +73,7 @@ export default async function HomePage() {
       <HashScrollHandler />
 
       {/* Live Activity Ticker directly below top navigation/header banner */}
-      <ActivityTicker initialData={recentSubmissions} />
+      <ActivityTicker initialData={tickerItems} />
 
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />

@@ -252,3 +252,29 @@ export interface RecentActivityItem {
   wait_days?: number | null;
 }
 
+export interface NewsTickerItem {
+  type: 'news';
+  id: string;
+  title: string;
+  summary?: string | null;
+  tag?: string | null;
+  url?: string | null;
+  timestamp: string;
+}
+
+export interface DeliveryTickerItem {
+  type: 'delivery';
+  id: string;
+  province: string;
+  model_name: string;
+  trim_name: string;
+  powertrain: string;
+  model_year?: number;
+  daysWaited: number;
+  wait_days?: number | null;
+  timestamp: string;
+}
+
+export type TickerItem = NewsTickerItem | DeliveryTickerItem;
+
+

@@ -271,10 +271,12 @@ export async function POST(request: NextRequest) {
       revalidatePath('/api/aggregate');
       revalidatePath('/api/submissions');
       revalidatePath('/api/submissions/recent');
+      revalidatePath('/api/ticker');
       revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
       revalidateTag('stats', 'max');
       revalidateTag('recent_submissions', 'max');
+      revalidateTag('ticker', 'max');
     } catch (revalidateErr) {
       if (process.env.NODE_ENV !== 'test') {
         console.warn('Cache revalidation notice in POST /api/submissions:', revalidateErr);

@@ -1,11 +1,33 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { RecentActivityItem } from '@/lib/types/contracts';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import Link from 'next/link';
+import {
+  TickerItem,
+  NewsTickerItem,
+  DeliveryTickerItem,
+  RecentActivityItem,
+} from '@/lib/types/contracts';
+import { ChevronLeft, ChevronRight, Pause, Play, ExternalLink } from 'lucide-react';
+
+export type AnyTickerItem = TickerItem | RecentActivityItem | any;
 
 export interface ActivityTickerProps {
-  initialData?: RecentActivityItem[];
+  initialData?: AnyTickerItem[];
+}
+
+export function isNewsItem(item: AnyTickerItem): item is NewsTickerItem {
+  return Boolean(item && (item.type === 'news' || ('title' in item && !('model_name' in item))));
+}
+
+export function isDeliveryItem(item: AnyTickerItem): item is DeliveryTickerItem {
+  return Boolean(
+    item &&
+      (item.type === 'delivery' ||
+        item.status === 'delivered' ||
+        item.lifecycle_status === 'delivered' ||
+        item.daysWaited != null)
+  );
 }
 
 /**
@@ -35,7 +57,7 @@ export function formatRelativeTime(dateString?: string | null): string {
 /**
  * Normalizes vehicle name string into clean format (e.g. 2026 RAV4 Plug-in Hybrid SE)
  */
-export function formatVehicleDescription(item: RecentActivityItem): string {
+export function formatVehicleDescription(item: AnyTickerItem): string {
   const year = item.model_year || 2026;
   const model = item.model_name || 'RAV4';
 
@@ -57,12 +79,13 @@ export function formatVehicleDescription(item: RecentActivityItem): string {
 /**
  * Maps lifecycle/order status to friendly action description
  */
-export function formatActionDescription(item: RecentActivityItem): string {
+export function formatActionDescription(item: AnyTickerItem): string {
   const stage = (item.lifecycle_status || item.status || '').toLowerCase();
 
   if (stage === 'delivered' || item.status === 'delivered') {
-    if (item.wait_days != null && item.wait_days > 0) {
-      return `delivered (${item.wait_days} days wait)`;
+    const days = item.daysWaited != null ? item.daysWaited : item.wait_days;
+    if (days != null && days > 0) {
+      return `delivered (${days} days wait)`;
     }
     return 'delivered';
   }
@@ -85,16 +108,27 @@ export function formatActionDescription(item: RecentActivityItem): string {
 /**
  * Generates the full Zero-PII ticker summary text
  */
-export function formatTickerSummary(item: RecentActivityItem): string {
-  const timeAgo = formatRelativeTime(item.updated_at || item.created_at);
+export function formatTickerSummary(item: AnyTickerItem): string {
+  if (isNewsItem(item)) {
+    const tag = item.tag || 'NEWS WIRE';
+    return `${tag} • ${item.title}`;
+  }
+
   const prov = item.province || 'CA';
   const vehicle = formatVehicleDescription(item);
+
+  if (isDeliveryItem(item)) {
+    const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 120;
+    return `DELIVERED • ${prov}: ${vehicle} — ${days} days wait`;
+  }
+
+  const timeAgo = formatRelativeTime(item.updated_at || item.created_at);
   const action = formatActionDescription(item);
   return `${timeAgo} • ${prov}: ${vehicle} ${action}`;
 }
 
 export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
-  const [items, setItems] = useState<RecentActivityItem[]>(initialData);
+  const [items, setItems] = useState<AnyTickerItem[]>(initialData);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -121,13 +155,21 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     return () => mediaQuery.removeEventListener?.('change', handler);
   }, []);
 
-  // Periodic silent background refresh
+  // Periodic silent background refresh from /api/ticker (with fallback to /api/submissions/recent)
   useEffect(() => {
-    const fetchRecent = async () => {
+    const fetchTicker = async () => {
       try {
-        const res = await fetch('/api/submissions/recent');
+        const res = await fetch('/api/ticker');
         if (res.ok) {
           const json = await res.json();
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+            setItems(json.data);
+            return;
+          }
+        }
+        const fallbackRes = await fetch('/api/submissions/recent');
+        if (fallbackRes.ok) {
+          const json = await fallbackRes.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {
             setItems(json.data);
           }
@@ -137,7 +179,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       }
     };
 
-    const interval = setInterval(fetchRecent, 60000);
+    const interval = setInterval(fetchTicker, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -203,24 +245,64 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
             className="flex items-center gap-2 overflow-x-auto py-0.5 text-xs text-zinc-300 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 rounded-md"
             aria-label="Scrollable list of recent community submissions"
           >
-            {items.map((item, idx) => (
-              <span
-                key={item.id || idx}
-                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 border border-white/10 shrink-0 whitespace-nowrap text-zinc-200 font-medium"
-              >
-                {formatTickerSummary(item)}
-              </span>
-            ))}
+            {items.map((item, idx) => {
+              if (isNewsItem(item)) {
+                return (
+                  <span
+                    key={item.id || idx}
+                    className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 shrink-0 whitespace-nowrap text-amber-300 font-medium"
+                  >
+                    <span className="text-[10px] font-bold">⚡ {item.tag || 'NEWS WIRE'}:</span>
+                    {item.url ? (
+                      <Link href={item.url} className="hover:underline">
+                        {item.title}
+                      </Link>
+                    ) : (
+                      <span>{item.title}</span>
+                    )}
+                  </span>
+                );
+              }
+
+              if (isDeliveryItem(item)) {
+                const vehicle = formatVehicleDescription(item);
+                const days =
+                  item.daysWaited != null
+                    ? item.daysWaited
+                    : item.wait_days != null
+                    ? item.wait_days
+                    : 120;
+                return (
+                  <span
+                    key={item.id || idx}
+                    className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shrink-0 whitespace-nowrap text-emerald-300 font-medium"
+                  >
+                    <span className="text-[10px] font-bold">🎉 DELIVERED:</span>
+                    <span>
+                      {item.province}: {vehicle} — {days} days wait
+                    </span>
+                  </span>
+                );
+              }
+
+              return (
+                <span
+                  key={item.id || idx}
+                  className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 border border-white/10 shrink-0 whitespace-nowrap text-zinc-200 font-medium"
+                >
+                  {formatTickerSummary(item)}
+                </span>
+              );
+            })}
           </div>
         </div>
       </div>
     );
   }
 
-  // 2. Standard Mode: Smooth fading ticker with hover/focus pause & navigation
-  const timeAgo = formatRelativeTime(currentItem.updated_at || currentItem.created_at);
-  const vehicle = formatVehicleDescription(currentItem);
-  const action = formatActionDescription(currentItem);
+  // 2. Standard Mode: Render current alternating item (News Wire / Delivery / Activity)
+  const isNews = isNewsItem(currentItem);
+  const isDelivered = !isNews && isDeliveryItem(currentItem);
 
   return (
     <div
@@ -234,15 +316,32 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       onBlur={() => setIsPaused(false)}
     >
       <div className="container mx-auto max-w-6xl px-3 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-3">
-        {/* Left: Amber/Green Pulsing Live Indicator Badge */}
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="hidden sm:inline">⚡ Canadian Activity Pulse</span>
-          <span className="sm:hidden">● Live Updates</span>
-        </div>
+        {/* Left Badge: Dynamic depending on item type */}
+        {isNews ? (
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-400 border border-amber-500/30 shrink-0 select-none">
+            <span className="relative flex h-2 w-2">
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+            </span>
+            <span>{currentItem.tag ? `⚡ ${currentItem.tag}` : '📢 NEWS WIRE'}</span>
+          </div>
+        ) : isDelivered ? (
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span>🎉 DELIVERED</span>
+          </div>
+        ) : (
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="hidden sm:inline">⚡ Canadian Activity Pulse</span>
+            <span className="sm:hidden">● Live Updates</span>
+          </div>
+        )}
 
         {/* Center: Smooth Ticker Event Text */}
         <div className="min-w-0 flex-1 overflow-hidden">
@@ -251,17 +350,49 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
               isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
             }`}
           >
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
-              <span className="text-zinc-400 shrink-0">{timeAgo}</span>
-              <span className="text-zinc-600 shrink-0">•</span>
-              <span className="font-bold text-white shrink-0">
-                {currentItem.province}:
-              </span>
-              <span className="text-zinc-200 truncate">{vehicle}</span>
-              <span className="font-semibold text-emerald-400 shrink-0">
-                {action}
-              </span>
-            </div>
+            {isNews ? (
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-200 truncate font-medium">
+                <span className="text-zinc-600 shrink-0">•</span>
+                {currentItem.url ? (
+                  <Link
+                    href={currentItem.url}
+                    className="hover:underline hover:text-white transition-colors truncate inline-flex items-center gap-1"
+                  >
+                    <span className="truncate">{currentItem.title}</span>
+                    <ExternalLink className="h-3 w-3 shrink-0 opacity-70" />
+                  </Link>
+                ) : (
+                  <span className="truncate">{currentItem.title}</span>
+                )}
+              </div>
+            ) : isDelivered ? (
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
+                <span className="text-zinc-600 shrink-0">•</span>
+                <span className="font-bold text-white shrink-0">{currentItem.province}:</span>
+                <span className="text-zinc-200 truncate">{formatVehicleDescription(currentItem)}</span>
+                <span className="text-zinc-500 shrink-0">—</span>
+                <span className="font-semibold text-emerald-400 shrink-0">
+                  {currentItem.daysWaited != null
+                    ? currentItem.daysWaited
+                    : currentItem.wait_days != null
+                    ? currentItem.wait_days
+                    : 120}{' '}
+                  days wait
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
+                <span className="text-zinc-400 shrink-0">
+                  {formatRelativeTime(currentItem.updated_at || currentItem.created_at)}
+                </span>
+                <span className="text-zinc-600 shrink-0">•</span>
+                <span className="font-bold text-white shrink-0">{currentItem.province}:</span>
+                <span className="text-zinc-200 truncate">{formatVehicleDescription(currentItem)}</span>
+                <span className="font-semibold text-emerald-400 shrink-0">
+                  {formatActionDescription(currentItem)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -303,4 +434,3 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     </div>
   );
 }
-
