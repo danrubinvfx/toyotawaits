@@ -180,73 +180,65 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
     vi.useRealTimers();
   });
 
-  it('renders a verified delivery item with DELIVERED badge and days waited', () => {
+  it('renders verified delivery items with DELIVERED badge and days waited', () => {
     render(<ActivityTicker initialData={mockTickerData} />);
 
     // DELIVERED Badge
-    expect(screen.getByText(/DELIVERED/i)).toBeInTheDocument();
+    const deliveredBadges = screen.getAllByText(/DELIVERED/i);
+    expect(deliveredBadges.length).toBeGreaterThan(0);
 
-    // Content format: BC: 2026 RAV4 Plug-in Hybrid SE — 240 days wait
-    expect(screen.getByText('BC:')).toBeInTheDocument();
-    expect(screen.getByText(/2026 RAV4 Plug-in Hybrid SE/)).toBeInTheDocument();
-    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
+    // Content format: BC • 2026 RAV4 Plug-in Hybrid SE — 240 days wait
+    const bcDeliveries = screen.getAllByText('BC');
+    expect(bcDeliveries.length).toBeGreaterThan(0);
+    const rav4Matches = screen.getAllByText(/2026 RAV4 Plug-in Hybrid SE/);
+    expect(rav4Matches.length).toBeGreaterThan(0);
+    const waitDaysMatches = screen.getAllByText(/240 days wait/i);
+    expect(waitDaysMatches.length).toBeGreaterThan(0);
   });
 
-  it('alternates to News Wire item when advancing to next ticker item', () => {
+  it('renders news wire items with category badge, headline, and external link in new tab', () => {
     render(<ActivityTicker initialData={mockTickerData} />);
 
-    // Initially displays delivery
-    expect(screen.getByText(/DELIVERED/i)).toBeInTheDocument();
+    // Should display the news wire announcement with category badge
+    const alertBadges = screen.getAllByText(/ALLOCATION ALERT/i);
+    expect(alertBadges.length).toBeGreaterThan(0);
 
-    // Click Next
-    const nextBtn = screen.getByRole('button', { name: /Next update/i });
-    fireEvent.click(nextBtn);
+    const headlines = screen.getAllByText(
+      /Q4 Canadian Allocation Update: High hybrid production slots/i
+    );
+    expect(headlines.length).toBeGreaterThan(0);
 
-    act(() => {
-      vi.advanceTimersByTime(250);
-    });
-
-    // Should now display the news wire announcement with ALLOCATION ALERT badge
-    expect(screen.getByText(/ALLOCATION ALERT/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Q4 Canadian Allocation Update: High hybrid production slots/i)
-    ).toBeInTheDocument();
-
-    // Verify it links to the article URL
-    const newsLink = screen.getByRole('link', {
+    // Verify it links to the article URL in a new tab with rel="noopener noreferrer"
+    const newsLinks = screen.getAllByRole('link', {
       name: /Q4 Canadian Allocation Update/i,
     });
-    expect(newsLink).toHaveAttribute('href', '/guides');
+    expect(newsLinks[0]).toHaveAttribute('href', '/guides');
+    expect(newsLinks[0]).toHaveAttribute('target', '_blank');
+    expect(newsLinks[0]).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
-  it('pauses auto-scrolling when hovered or focused', () => {
-    render(<ActivityTicker initialData={mockTickerData} />);
+  it('pauses marquee roll when hovered or focused', () => {
+    const { container } = render(<ActivityTicker initialData={mockTickerData} />);
 
-    const container = screen.getByRole('region', { name: /Live Canadian Toyota order activity/i });
+    const region = screen.getByRole('region', { name: /Live Canadian Toyota order activity/i });
+    const marqueeTrack = container.querySelector('.animate-marquee') as HTMLElement;
+    expect(marqueeTrack).toBeInTheDocument();
+    expect(marqueeTrack.style.animationPlayState).toBe('running');
 
     // Hover container
-    fireEvent.mouseEnter(container);
-
-    // Advance timer beyond 4500ms
-    act(() => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    // Still on first delivery item because paused
-    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
+    fireEvent.mouseEnter(region);
+    expect(marqueeTrack.style.animationPlayState).toBe('paused');
 
     // Leave hover
-    fireEvent.mouseLeave(container);
+    fireEvent.mouseLeave(region);
+    expect(marqueeTrack.style.animationPlayState).toBe('running');
 
-    act(() => {
-      vi.advanceTimersByTime(5000);
-    });
-
-    // Rotated to news item
-    expect(screen.getByText(/ALLOCATION ALERT/i)).toBeInTheDocument();
+    // Focus container
+    fireEvent.focus(region);
+    expect(marqueeTrack.style.animationPlayState).toBe('paused');
   });
 
-  it('respects prefers-reduced-motion by rendering both deliveries and news alerts as static pills', () => {
+  it('respects prefers-reduced-motion by rendering items in standard horizontal scroll without continuous animation', () => {
     window.matchMedia = vi.fn().mockImplementation((query) => ({
       matches: query === '(prefers-reduced-motion: reduce)',
       media: query,
@@ -258,9 +250,12 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
       dispatchEvent: vi.fn(),
     }));
 
-    render(<ActivityTicker initialData={mockTickerData} />);
+    const { container } = render(<ActivityTicker initialData={mockTickerData} />);
 
-    const scrollContainer = screen.getByLabelText(/Scrollable list of recent community submissions/i);
+    // No animate-marquee class in reduced motion
+    expect(container.querySelector('.animate-marquee')).toBeNull();
+
+    const scrollContainer = screen.getByLabelText(/Scrollable list of recent community submissions and news/i);
     expect(scrollContainer).toBeInTheDocument();
 
     expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();

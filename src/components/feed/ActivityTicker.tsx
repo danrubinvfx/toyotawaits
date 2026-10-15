@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import Link from 'next/link';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   TickerItem,
   NewsTickerItem,
   DeliveryTickerItem,
   RecentActivityItem,
 } from '@/lib/types/contracts';
-import { ChevronLeft, ChevronRight, Pause, Play, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 
 export type AnyTickerItem = TickerItem | RecentActivityItem | any;
 
@@ -17,7 +16,12 @@ export interface ActivityTickerProps {
 }
 
 export function isNewsItem(item: AnyTickerItem): item is NewsTickerItem {
-  return Boolean(item && (item.type === 'news' || ('title' in item && !('model_name' in item))));
+  return Boolean(
+    item &&
+      (item.type === 'news' ||
+        'headline' in item ||
+        ('title' in item && !('model_name' in item)))
+  );
 }
 
 export function isDeliveryItem(item: AnyTickerItem): item is DeliveryTickerItem {
@@ -106,20 +110,21 @@ export function formatActionDescription(item: AnyTickerItem): string {
 }
 
 /**
- * Generates the full Zero-PII ticker summary text
+ * Generates full Zero-PII ticker summary text (used for accessibility / fallback)
  */
 export function formatTickerSummary(item: AnyTickerItem): string {
   if (isNewsItem(item)) {
-    const tag = item.tag || 'NEWS WIRE';
-    return `${tag} • ${item.title}`;
+    const category = item.category || item.tag || 'MARKET_DATA';
+    const headline = item.headline || item.title || 'Toyota News Alert';
+    return `📢 ${category} • ${headline}`;
   }
 
-  const prov = item.province || 'CA';
+  const prov = item.province || (item as any).state || 'CA';
   const vehicle = formatVehicleDescription(item);
 
   if (isDeliveryItem(item)) {
     const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 120;
-    return `DELIVERED • ${prov}: ${vehicle} — ${days} days wait`;
+    return `🟢 DELIVERED • ${prov}: ${vehicle} — ${days} days wait`;
   }
 
   const timeAgo = formatRelativeTime(item.updated_at || item.created_at);
@@ -129,10 +134,8 @@ export function formatTickerSummary(item: AnyTickerItem): string {
 
 export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
   const [items, setItems] = useState<AnyTickerItem[]>(initialData);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
 
   // Sync if initialData changes
   useEffect(() => {
@@ -183,252 +186,164 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const total = items.length;
+  // Ensure enough items in the marquee loop so it smoothly covers ultra-wide monitors
+  const displayItems = useMemo(() => {
+    if (items.length === 0) return [];
+    if (items.length < 4) {
+      return [...items, ...items, ...items];
+    }
+    return items;
+  }, [items]);
 
-  const nextItem = useCallback(() => {
-    if (total <= 1) return;
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % total);
-      setIsAnimating(false);
-    }, 200);
-  }, [total]);
-
-  const prevItem = useCallback(() => {
-    if (total <= 1) return;
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev - 1 + total) % total);
-      setIsAnimating(false);
-    }, 200);
-  }, [total]);
-
-  // Automatic ticker progression with pause on hover/focus
-  useEffect(() => {
-    if (prefersReducedMotion || isPaused || total <= 1) return;
-
-    const interval = setInterval(() => {
-      nextItem();
-    }, 4500);
-
-    return () => clearInterval(interval);
-  }, [prefersReducedMotion, isPaused, total, nextItem]);
-
-  const currentItem = useMemo(() => {
-    if (total === 0) return null;
-    return items[currentIndex % total];
-  }, [items, currentIndex, total]);
-
-  if (total === 0 || !currentItem) {
+  if (items.length === 0) {
     return null;
   }
 
-  // 1. Reduced Motion Mode: Render static horizontal scrollable list of pills
-  if (prefersReducedMotion) {
-    return (
-      <div
-        className="w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200"
-        aria-live="polite"
-        role="region"
-        aria-label="Recent vehicle order activity"
-      >
-        <div className="container mx-auto max-w-6xl px-3 sm:px-6 py-1.5 sm:py-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 self-start sm:self-auto select-none">
-            <span className="relative flex h-2 w-2">
-              <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span>⚡ Canadian Activity Pulse</span>
-          </div>
+  const renderItemContent = (item: AnyTickerItem, keyPrefix: string, index: number) => {
+    const key = `${keyPrefix}-${index}-${item.id || ''}`;
 
-          <div
-            tabIndex={0}
-            className="flex items-center gap-2 overflow-x-auto py-0.5 text-xs text-zinc-300 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 rounded-md"
-            aria-label="Scrollable list of recent community submissions"
-          >
-            {items.map((item, idx) => {
-              if (isNewsItem(item)) {
-                return (
-                  <span
-                    key={item.id || idx}
-                    className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 shrink-0 whitespace-nowrap text-amber-300 font-medium"
-                  >
-                    <span className="text-[10px] font-bold">⚡ {item.tag || 'NEWS WIRE'}:</span>
-                    {item.url ? (
-                      <Link href={item.url} className="hover:underline">
-                        {item.title}
-                      </Link>
-                    ) : (
-                      <span>{item.title}</span>
-                    )}
-                  </span>
-                );
-              }
+    if (isNewsItem(item)) {
+      const category = item.category || item.tag || 'MARKET_DATA';
+      const headline = item.headline || item.title || 'Toyota News Alert';
 
-              if (isDeliveryItem(item)) {
-                const vehicle = formatVehicleDescription(item);
-                const days =
-                  item.daysWaited != null
-                    ? item.daysWaited
-                    : item.wait_days != null
-                    ? item.wait_days
-                    : 120;
-                return (
-                  <span
-                    key={item.id || idx}
-                    className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 shrink-0 whitespace-nowrap text-emerald-300 font-medium"
-                  >
-                    <span className="text-[10px] font-bold">🎉 DELIVERED:</span>
-                    <span>
-                      {item.province}: {vehicle} — {days} days wait
-                    </span>
-                  </span>
-                );
-              }
-
-              return (
-                <span
-                  key={item.id || idx}
-                  className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 border border-white/10 shrink-0 whitespace-nowrap text-zinc-200 font-medium"
-                >
-                  {formatTickerSummary(item)}
-                </span>
-              );
-            })}
-          </div>
+      return (
+        <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
+            <span>📢</span>
+            <span>{category}</span>
+          </span>
+          {item.url ? (
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-200 hover:text-white hover:underline transition-colors whitespace-nowrap inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>{headline}</span>
+              <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />
+            </a>
+          ) : (
+            <span className="text-zinc-200 whitespace-nowrap">{headline}</span>
+          )}
         </div>
+      );
+    }
+
+    if (isDeliveryItem(item)) {
+      const prov = item.province || (item as any).state || 'CA';
+      const vehicle = formatVehicleDescription(item);
+      const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 120;
+
+      return (
+        <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+            <span>🟢</span>
+            <span>DELIVERED</span>
+          </span>
+          <span className="text-zinc-300 whitespace-nowrap">
+            <span className="font-semibold text-white">{prov}</span>
+            <span className="text-zinc-500 mx-1">•</span>
+            <span>{vehicle}</span>
+            <span className="text-zinc-500 mx-1.5">—</span>
+            <span className="font-semibold text-emerald-400">{days} days wait</span>
+          </span>
+        </div>
+      );
+    }
+
+    // Generic order lifecycle update
+    const prov = item.province || (item as any).state || 'CA';
+    const vehicle = formatVehicleDescription(item);
+    const action = formatActionDescription(item);
+
+    return (
+      <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 whitespace-nowrap">
+          <span>⚡</span>
+          <span>UPDATE</span>
+        </span>
+        <span className="text-zinc-300 whitespace-nowrap">
+          <span className="font-semibold text-white">{prov}</span>
+          <span className="text-zinc-500 mx-1">•</span>
+          <span>{vehicle}</span>
+          <span className="text-zinc-500 mx-1.5">—</span>
+          <span className="font-semibold text-sky-400">{action}</span>
+        </span>
       </div>
     );
-  }
-
-  // 2. Standard Mode: Render current alternating item (News Wire / Delivery / Activity)
-  const isNews = isNewsItem(currentItem);
-  const isDelivered = !isNews && isDeliveryItem(currentItem);
+  };
 
   return (
     <div
-      className="group relative w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200 transition-colors"
+      className="group relative w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200 select-none overflow-hidden"
       aria-live="polite"
       role="region"
-      aria-label="Live Canadian Toyota order activity"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
-      onFocus={() => setIsPaused(true)}
-      onBlur={() => setIsPaused(false)}
+      aria-label="Live Canadian Toyota order activity and news wire"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
     >
-      <div className="container mx-auto max-w-6xl px-3 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-3">
-        {/* Left Badge: Dynamic depending on item type */}
-        {isNews ? (
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/15 px-2.5 py-0.5 text-xs font-bold text-amber-400 border border-amber-500/30 shrink-0 select-none">
-            <span className="relative flex h-2 w-2">
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
-            </span>
-            <span>{currentItem.tag ? `⚡ ${currentItem.tag}` : '📢 NEWS WIRE'}</span>
-          </div>
-        ) : isDelivered ? (
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span>🎉 DELIVERED</span>
-          </div>
-        ) : (
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="hidden sm:inline">⚡ Canadian Activity Pulse</span>
-            <span className="sm:hidden">● Live Updates</span>
-          </div>
-        )}
-
-        {/* Center: Smooth Ticker Event Text */}
-        <div className="min-w-0 flex-1 overflow-hidden">
-          <div
-            className={`transition-all duration-200 ease-in-out ${
-              isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
-            }`}
-          >
-            {isNews ? (
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-200 truncate font-medium">
-                <span className="text-zinc-600 shrink-0">•</span>
-                {currentItem.url ? (
-                  <Link
-                    href={currentItem.url}
-                    className="hover:underline hover:text-white transition-colors truncate inline-flex items-center gap-1"
-                  >
-                    <span className="truncate">{currentItem.title}</span>
-                    <ExternalLink className="h-3 w-3 shrink-0 opacity-70" />
-                  </Link>
-                ) : (
-                  <span className="truncate">{currentItem.title}</span>
-                )}
-              </div>
-            ) : isDelivered ? (
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
-                <span className="text-zinc-600 shrink-0">•</span>
-                <span className="font-bold text-white shrink-0">{currentItem.province}:</span>
-                <span className="text-zinc-200 truncate">{formatVehicleDescription(currentItem)}</span>
-                <span className="text-zinc-500 shrink-0">—</span>
-                <span className="font-semibold text-emerald-400 shrink-0">
-                  {currentItem.daysWaited != null
-                    ? currentItem.daysWaited
-                    : currentItem.wait_days != null
-                    ? currentItem.wait_days
-                    : 120}{' '}
-                  days wait
-                </span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
-                <span className="text-zinc-400 shrink-0">
-                  {formatRelativeTime(currentItem.updated_at || currentItem.created_at)}
-                </span>
-                <span className="text-zinc-600 shrink-0">•</span>
-                <span className="font-bold text-white shrink-0">{currentItem.province}:</span>
-                <span className="text-zinc-200 truncate">{formatVehicleDescription(currentItem)}</span>
-                <span className="font-semibold text-emerald-400 shrink-0">
-                  {formatActionDescription(currentItem)}
-                </span>
-              </div>
-            )}
-          </div>
+      <div className="flex items-center">
+        {/* Left Anchor Pulse Badge */}
+        <div className="shrink-0 z-10 bg-zinc-950 dark:bg-zinc-950/95 pl-3 sm:pl-4 pr-3 py-2 border-r border-zinc-800 dark:border-white/10 flex items-center gap-1.5 shadow-md">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+          <span className="text-[11px] sm:text-xs font-bold text-zinc-300 uppercase tracking-wider whitespace-nowrap">
+            Live Pulse
+          </span>
         </div>
 
-        {/* Right: Manual navigation controls & state indicator */}
-        <div className="flex items-center gap-1 shrink-0 text-zinc-400">
-          <span className="text-[11px] tabular-nums font-mono px-1 select-none hidden md:inline text-zinc-400">
-            {currentIndex + 1}/{total}
-          </span>
+        {/* Marquee Track with gradient edge masks */}
+        <div className="relative flex-1 overflow-hidden">
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-1 bg-gradient-to-r from-zinc-950/90 dark:from-black/40 to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-1 bg-gradient-to-l from-zinc-950/90 dark:from-black/40 to-transparent" />
 
-          <button
-            type="button"
-            onClick={prevItem}
-            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer"
-            aria-label="Previous update"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-          </button>
+          {prefersReducedMotion ? (
+            <div
+              tabIndex={0}
+              className="flex items-center overflow-x-auto no-scrollbar py-2 px-3 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
+              aria-label="Scrollable list of recent community submissions and news"
+            >
+              {items.map((item, idx) => (
+                <React.Fragment key={`red-${idx}-${item.id || ''}`}>
+                  {renderItemContent(item, 'red', idx)}
+                  {idx < items.length - 1 && (
+                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="flex items-center animate-marquee hover:[animation-play-state:paused]"
+              style={{
+                animationPlayState: isHovered ? 'paused' : 'running',
+              }}
+            >
+              {/* Set 1: Original */}
+              <div className="flex items-center shrink-0">
+                {displayItems.map((item, idx) => (
+                  <React.Fragment key={`orig-${idx}-${item.id || ''}`}>
+                    {renderItemContent(item, 'orig', idx)}
+                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
+                  </React.Fragment>
+                ))}
+              </div>
 
-          <button
-            type="button"
-            onClick={nextItem}
-            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer"
-            aria-label="Next update"
-          >
-            <ChevronRight className="h-3.5 w-3.5" />
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsPaused((prev) => !prev)}
-            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer hidden sm:inline-flex"
-            aria-label={isPaused ? 'Resume auto-scroll' : 'Pause auto-scroll'}
-            title={isPaused ? 'Resume' : 'Pause'}
-          >
-            {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
-          </button>
+              {/* Set 2: Clone for seamless continuous rolling */}
+              <div className="flex items-center shrink-0" aria-hidden="true">
+                {displayItems.map((item, idx) => (
+                  <React.Fragment key={`clone-${idx}-${item.id || ''}`}>
+                    {renderItemContent(item, 'clone', idx)}
+                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

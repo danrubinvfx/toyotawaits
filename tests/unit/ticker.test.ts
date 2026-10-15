@@ -26,12 +26,11 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
   it('queries Supabase directly for news_wire and maps rows accurately', async () => {
     const mockRows = [
       {
-        id: 'news-live-101',
-        title: 'Toyota Canada boosts PHEV allocations for Q4',
-        summary: 'Official quota release for BC and ON dealers.',
-        tag: 'ALLOCATION ALERT',
+        id: 101,
+        headline: 'Toyota Canada boosts PHEV allocations for Q4',
+        category: 'ALLOCATION_ALERT',
         url: 'https://example.com/live-news',
-        published_at: '2026-10-15T10:00:00Z',
+        created_at: '2026-10-15T10:00:00Z',
       },
     ];
 
@@ -48,15 +47,16 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
     } as any);
 
     const news = await getNewsWireItems(5);
-    expect(mockSelect).toHaveBeenCalledWith('*');
-    expect(mockOrder).toHaveBeenCalledWith('published_at', { ascending: false });
+    expect(mockSelect).toHaveBeenCalledWith('id, created_at, url, headline, category');
+    expect(mockOrder).toHaveBeenCalledWith('created_at', { ascending: false });
     expect(news.length).toBe(1);
     expect(news[0]).toEqual({
+      id: 'news-101',
       type: 'news',
-      id: 'news-live-101',
+      headline: 'Toyota Canada boosts PHEV allocations for Q4',
       title: 'Toyota Canada boosts PHEV allocations for Q4',
-      summary: 'Official quota release for BC and ON dealers.',
-      tag: 'ALLOCATION ALERT',
+      category: 'ALLOCATION_ALERT',
+      tag: 'ALLOCATION_ALERT',
       url: 'https://example.com/live-news',
       timestamp: '2026-10-15T10:00:00Z',
     });
@@ -71,7 +71,7 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
         order: vi.fn().mockReturnThis(),
         limit: vi.fn().mockResolvedValue({
           data: null,
-          error: { message: 'relation "news_wire" does not exist' },
+          error: { message: 'relation "news_wire" does not exist', details: 'error details' },
         }),
       }),
     } as any);
@@ -86,9 +86,8 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       expect.stringContaining('[Ticker] news_wire query error:'),
-      expect.objectContaining({
-        message: 'relation "news_wire" does not exist',
-      })
+      'relation "news_wire" does not exist',
+      'error details'
     );
   });
 

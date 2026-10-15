@@ -255,7 +255,9 @@ export interface RecentActivityItem {
 export interface NewsTickerItem {
   type: 'news';
   id: string;
+  headline?: string;
   title: string;
+  category?: string | null;
   summary?: string | null;
   tag?: string | null;
   url?: string | null;

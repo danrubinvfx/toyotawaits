@@ -27,56 +27,36 @@ export function calculateDaysWaited(
  * Fetches active news wire items directly from Supabase news_wire table.
  * If query errors or table is empty, returns empty array (never mock items).
  */
-export async function getNewsWireItems(limit = 5): Promise<NewsTickerItem[]> {
+export async function getNewsWireItems(limit = 10): Promise<NewsTickerItem[]> {
   const effectiveLimit = Math.max(1, Math.min(limit, 20));
 
   try {
     const supabase = createServerClient();
-    let { data: newsItems, error: newsError } = await supabase
+    const { data, error } = await supabase
       .from('news_wire')
-      .select('*')
-      .order('published_at', { ascending: false })
+      .select('id, created_at, url, headline, category')
+      .order('created_at', { ascending: false })
       .limit(effectiveLimit);
 
-    // If published_at column does not exist (PostgreSQL code 42703), retry ordering by created_at
-    if (newsError && (newsError.code === '42703' || newsError.message?.includes('published_at'))) {
-      const retry = await supabase
-        .from('news_wire')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(effectiveLimit);
-      newsItems = retry.data;
-      newsError = retry.error;
-    }
-
-    if (newsError) {
-      console.error('[Ticker] news_wire query error:', {
-        message: newsError.message,
-        details: newsError.details,
-        hint: newsError.hint,
-        code: newsError.code,
-      });
+    if (error) {
+      console.error('[Ticker] news_wire query error:', error.message, error.details);
       return [];
     }
 
-    if (Array.isArray(newsItems)) {
-      return newsItems.map((item: any) => ({
+    if (Array.isArray(data)) {
+      return data.map((item: any) => ({
+        id: `news-${item.id}`,
         type: 'news' as const,
-        id: String(item.id),
-        title: item.title || item.headline || 'Toyota News Alert',
-        summary: item.summary || item.source_name || null,
-        tag: item.tag || item.category || null,
+        headline: item.headline,
+        title: item.headline || item.title || 'Toyota News Alert',
+        category: item.category || 'MARKET_DATA',
+        tag: item.category || 'MARKET_DATA',
         url: item.url || null,
-        timestamp: item.published_at || item.created_at || new Date().toISOString(),
+        timestamp: item.created_at,
       }));
     }
   } catch (err: any) {
-    console.error('[Ticker] news_wire query error:', {
-      message: err?.message || String(err),
-      details: err?.details || null,
-      hint: err?.hint || null,
-      code: err?.code || null,
-    });
+    console.error('[Ticker] news_wire query error:', err?.message || String(err), err?.details);
     return [];
   }
 
