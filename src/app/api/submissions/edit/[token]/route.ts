@@ -105,7 +105,7 @@ export async function PATCH(
       );
     }
 
-    const { status, deliveryDate, notes, currentStage, stage } = body;
+    const { status, deliveryDate, notes, currentStage, stage, modelId, powertrainId, trimId, model, modelSlug, powertrainSlug, trimSlug } = body;
     const resolvedStage = stage || currentStage;
 
     const finalStatus =
@@ -169,6 +169,13 @@ export async function PATCH(
       notes: typeof notes === 'string' ? notes.trim() : undefined,
       currentStage: effectiveStage as SubmissionStage | undefined,
       stage: effectiveStage,
+      modelId,
+      powertrainId,
+      trimId,
+      model,
+      modelSlug,
+      powertrainSlug,
+      trimSlug,
     });
 
     if (!updated) {

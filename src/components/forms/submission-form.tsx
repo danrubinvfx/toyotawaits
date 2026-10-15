@@ -216,8 +216,12 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
 
       const payload = {
         modelId: currentModel.id,
+        modelSlug: currentModel.slug,
+        model: currentModel.name,
         powertrainId: currentPowertrain.id,
+        powertrainSlug: currentPowertrain.slug,
         trimId: currentTrim.id,
+        trimSlug: currentTrim.slug,
         province,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),

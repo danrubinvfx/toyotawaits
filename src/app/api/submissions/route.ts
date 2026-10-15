@@ -8,6 +8,7 @@ import { insertSubmission, getCommunitySubmissions } from '@/lib/db/submissions'
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 import { CommunityRecord } from '@/lib/data/community-records';
+import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 
 export const dynamic = 'force-dynamic';
 
@@ -107,6 +108,59 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Vehicle Dimension Normalization (Gracefully maps slugs, vehicle names, or unformatted IDs to catalog UUIDs)
+    if (body && typeof body === 'object') {
+      const incomingModelStr = String(body.modelSlug || body.modelId || body.model || '').toLowerCase().trim();
+      const catalogModel = CANADIAN_VEHICLE_CATALOG.find(
+        (m) =>
+          m.id.toLowerCase() === incomingModelStr ||
+          m.slug.toLowerCase() === incomingModelStr ||
+          m.name.toLowerCase() === incomingModelStr
+      );
+
+      if (catalogModel) {
+        if (!body.modelId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.modelId)) {
+          body.modelId = catalogModel.id;
+        }
+        body.modelSlug = catalogModel.slug;
+        body.model = catalogModel.name;
+
+        // Powertrain normalization
+        const incomingPtStr = String(body.powertrainSlug || body.powertrainId || body.powertrain || '').toLowerCase().trim();
+        const catalogPt =
+          catalogModel.powertrains.find(
+            (p) =>
+              p.id.toLowerCase() === incomingPtStr ||
+              p.slug.toLowerCase() === incomingPtStr ||
+              p.name.toLowerCase() === incomingPtStr
+          ) || catalogModel.powertrains[0];
+
+        if (catalogPt) {
+          if (!body.powertrainId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.powertrainId)) {
+            body.powertrainId = catalogPt.id;
+          }
+          body.powertrainSlug = catalogPt.slug;
+
+          // Trim normalization
+          const incomingTrimStr = String(body.trimSlug || body.trimId || body.trim || '').toLowerCase().trim();
+          const catalogTrim =
+            catalogPt.trims.find(
+              (t) =>
+                t.id.toLowerCase() === incomingTrimStr ||
+                t.slug.toLowerCase() === incomingTrimStr ||
+                t.name.toLowerCase() === incomingTrimStr
+            ) || catalogPt.trims[0];
+
+          if (catalogTrim) {
+            if (!body.trimId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.trimId)) {
+              body.trimId = catalogTrim.id;
+            }
+            body.trimSlug = catalogTrim.slug;
+          }
+        }
+      }
+    }
+
     // 3. Schema & Bound Validation
     const validation = submissionCreateSchema.safeParse(body);
     if (!validation.success) {
@@ -171,8 +225,12 @@ export async function POST(request: NextRequest) {
     // 7. Persist Submission
     const record = await insertSubmission({
       modelId: validData.modelId,
+      modelSlug: (validData as any).modelSlug || body?.modelSlug,
       powertrainId: validData.powertrainId,
+      powertrainSlug: (validData as any).powertrainSlug || body?.powertrainSlug,
       trimId: validData.trimId,
+      trimSlug: (validData as any).trimSlug || body?.trimSlug,
+      model: (validData as any).model || body?.model,
       countryCode: validData.countryCode,
       country_code: validData.country_code,
       province: validData.province,

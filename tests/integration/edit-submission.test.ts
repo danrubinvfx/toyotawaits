@@ -290,4 +290,30 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     expect(getJson.data.status).toBe('pending');
     expect(getJson.data.stage).toBe('deposit_placed');
   });
+
+  it('updates an existing submission with vehicle model changes without foreign key errors', async () => {
+    const updateReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'Tacoma',
+        modelSlug: 'tacoma',
+        stage: 'in_transit',
+      }),
+    });
+
+    const updateRes = await PATCH(updateReq, { params: Promise.resolve({ token: validEditToken }) });
+    const updateJson = await updateRes.json();
+
+    expect(updateRes.status).toBe(200);
+    expect(updateJson.success).toBe(true);
+    expect(updateJson.data.stage).toBe('in_transit');
+
+    const getReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`);
+    const getRes = await GET(getReq, { params: Promise.resolve({ token: validEditToken }) });
+    const getJson = await getRes.json();
+    expect(getRes.status).toBe(200);
+    expect(getJson.data.model).toBe('Tacoma');
+    expect(getJson.data.stage).toBe('in_transit');
+  });
 });

@@ -438,6 +438,74 @@ describe('PATCH /api/submissions/[id]', () => {
     const transitData = await patchTransitRes.json();
     expect(transitData.data.currentStage).toBe('freight_transit');
   });
+
+  it('successfully creates a submission for Tacoma using catalog UUIDs without foreign key errors', async () => {
+    const payload = {
+      modelId: '10000000-0000-4000-8000-000000000007',
+      powertrainId: '20000000-0000-4000-8000-000000000070',
+      trimId: '30000000-0000-4000-8000-000000000091',
+      province: 'AB',
+      dealershipCity: 'Calgary',
+      modelYear: 2024,
+      orderDate: '2024-03-01',
+      status: 'pending',
+      stage: 'deposit_placed',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      notes: 'Tacoma TRD Off-Road ordered.',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.99',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.id).toBeDefined();
+    expect(data.data.status).toBe('pending');
+  });
+
+  it('normalizes model name string "Tacoma" to valid catalog UUID and succeeds', async () => {
+    const payload = {
+      model: 'Tacoma',
+      province: 'BC',
+      dealershipCity: 'Kelowna',
+      modelYear: 2024,
+      orderDate: '2024-02-15',
+      status: 'pending',
+      stage: 'deposit_placed',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      notes: 'Tacoma i-FORCE MAX hybrid submission.',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.100',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.id).toBeDefined();
+    expect(data.data.status).toBe('pending');
+  });
 });
 
 describe('GET /api/submissions', () => {

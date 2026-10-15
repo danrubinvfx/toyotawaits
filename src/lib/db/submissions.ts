@@ -9,6 +9,12 @@ export interface SubmissionCreateData {
   modelId: string;
   powertrainId: string;
   trimId: string;
+  modelSlug?: string;
+  powertrainSlug?: string;
+  trimSlug?: string;
+  model?: string;
+  powertrain?: string;
+  trim?: string;
   countryCode?: CountryCode;
   country_code?: CountryCode;
   province?: CanadianProvince | null;
@@ -44,6 +50,13 @@ export interface SubmissionUpdateData {
   currentStage?: SubmissionStage;
   deliveryDate?: string | null;
   notes?: string | null;
+  modelId?: string;
+  powertrainId?: string;
+  trimId?: string;
+  modelSlug?: string;
+  powertrainSlug?: string;
+  trimSlug?: string;
+  model?: string;
   countryCode?: CountryCode;
   country_code?: CountryCode;
   state?: string | null;
@@ -560,6 +573,249 @@ function seedInitialData() {
 
 seedInitialData();
 
+export interface VehicleResolutionParams {
+  modelId?: string;
+  powertrainId?: string;
+  trimId?: string;
+  modelSlug?: string;
+  powertrainSlug?: string;
+  trimSlug?: string;
+  modelName?: string;
+}
+
+export interface ResolvedVehicleIds {
+  modelId: string;
+  powertrainId: string;
+  trimId: string;
+  modelSlug: string;
+  powertrainSlug: string;
+  trimSlug: string;
+  modelName: string;
+}
+
+const dbVehicleResolutionCache = new Map<string, ResolvedVehicleIds>();
+
+export async function resolveDatabaseVehicleIds(
+  supabase: any,
+  params: VehicleResolutionParams
+): Promise<ResolvedVehicleIds> {
+  const cacheKey = `${params.modelId || ''}:${params.powertrainId || ''}:${params.trimId || ''}:${params.modelSlug || ''}:${params.powertrainSlug || ''}:${params.trimSlug || ''}:${params.modelName || ''}`;
+  if (dbVehicleResolutionCache.has(cacheKey)) {
+    return dbVehicleResolutionCache.get(cacheKey)!;
+  }
+
+  // 1. Identify matching catalog model
+  const incomingModel = (params.modelSlug || params.modelId || params.modelName || '').toLowerCase().trim();
+  let catalogModel = CANADIAN_VEHICLE_CATALOG.find((m) => {
+    if (params.modelId && m.id.toLowerCase() === params.modelId.toLowerCase()) return true;
+    if (incomingModel && (m.slug.toLowerCase() === incomingModel || m.name.toLowerCase() === incomingModel)) return true;
+    return false;
+  });
+
+  if (!catalogModel) {
+    catalogModel = CANADIAN_VEHICLE_CATALOG[0];
+  }
+
+  const modelSlug = catalogModel.slug;
+  const modelName = catalogModel.name;
+
+  // 2. Identify matching catalog powertrain
+  const incomingPt = (params.powertrainSlug || params.powertrainId || '').toLowerCase().trim();
+  let catalogPowertrain = catalogModel.powertrains.find((p) => {
+    if (params.powertrainId && p.id.toLowerCase() === params.powertrainId.toLowerCase()) return true;
+    if (incomingPt && (p.slug.toLowerCase() === incomingPt || p.name.toLowerCase() === incomingPt)) return true;
+    return false;
+  }) || catalogModel.powertrains[0];
+
+  const powertrainSlug = catalogPowertrain?.slug || 'hev';
+
+  // 3. Identify matching catalog trim
+  const incomingTrim = (params.trimSlug || params.trimId || '').toLowerCase().trim();
+  let catalogTrim = catalogPowertrain?.trims.find((t) => {
+    if (params.trimId && t.id.toLowerCase() === params.trimId.toLowerCase()) return true;
+    if (incomingTrim && (t.slug.toLowerCase() === incomingTrim || t.name.toLowerCase() === incomingTrim)) return true;
+    return false;
+  }) || catalogPowertrain?.trims[0];
+
+  const trimSlug = catalogTrim?.slug || 'le-awd';
+
+  let actualModelId = params.modelId || catalogModel.id;
+  let actualPowertrainId = params.powertrainId || catalogPowertrain?.id;
+  let actualTrimId = params.trimId || catalogTrim?.id;
+
+  try {
+    // 4. Resolve Model ID against database
+    let dbModel: { id: string } | null = null;
+    if (params.modelId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.modelId)) {
+      const { data } = await supabase
+        .from('vehicle_models')
+        .select('id')
+        .eq('id', params.modelId)
+        .maybeSingle();
+      if (data?.id) dbModel = data;
+    }
+
+    if (!dbModel) {
+      const { data } = await supabase
+        .from('vehicle_models')
+        .select('id')
+        .eq('slug', modelSlug)
+        .maybeSingle();
+      if (data?.id) dbModel = data;
+    }
+
+    if (!dbModel) {
+      const { data: newModel } = await supabase
+        .from('vehicle_models')
+        .upsert(
+          {
+            id: catalogModel.id,
+            slug: catalogModel.slug,
+            name: catalogModel.name,
+            generation_start_year: catalogModel.generationStartYear,
+            is_active: true,
+            sort_order: 50,
+          },
+          { onConflict: 'slug' }
+        )
+        .select('id')
+        .maybeSingle();
+      if (newModel?.id) dbModel = newModel;
+    }
+
+    if (dbModel?.id) {
+      actualModelId = dbModel.id;
+    }
+
+    // 5. Resolve Powertrain ID against database
+    let dbPowertrain: { id: string } | null = null;
+    if (params.powertrainId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.powertrainId)) {
+      const { data } = await supabase
+        .from('vehicle_powertrains')
+        .select('id')
+        .eq('model_id', actualModelId)
+        .eq('id', params.powertrainId)
+        .maybeSingle();
+      if (data?.id) dbPowertrain = data;
+    }
+
+    if (!dbPowertrain) {
+      const { data } = await supabase
+        .from('vehicle_powertrains')
+        .select('id')
+        .eq('model_id', actualModelId)
+        .eq('slug', powertrainSlug)
+        .maybeSingle();
+      if (data?.id) dbPowertrain = data;
+    }
+
+    if (!dbPowertrain && catalogPowertrain) {
+      const { data: newPt } = await supabase
+        .from('vehicle_powertrains')
+        .upsert(
+          {
+            id: catalogPowertrain.id,
+            model_id: actualModelId,
+            slug: catalogPowertrain.slug,
+            name: catalogPowertrain.name,
+            sort_order: 1,
+          },
+          { onConflict: 'model_id, slug' }
+        )
+        .select('id')
+        .maybeSingle();
+      if (newPt?.id) dbPowertrain = newPt;
+    }
+
+    if (!dbPowertrain) {
+      // Fallback: any powertrain for this model
+      const { data } = await supabase
+        .from('vehicle_powertrains')
+        .select('id')
+        .eq('model_id', actualModelId)
+        .limit(1)
+        .maybeSingle();
+      if (data?.id) dbPowertrain = data;
+    }
+
+    if (dbPowertrain?.id) {
+      actualPowertrainId = dbPowertrain.id;
+    }
+
+    // 6. Resolve Trim ID against database
+    let dbTrim: { id: string } | null = null;
+    if (params.trimId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.trimId)) {
+      const { data } = await supabase
+        .from('vehicle_trims')
+        .select('id')
+        .eq('powertrain_id', actualPowertrainId)
+        .eq('id', params.trimId)
+        .maybeSingle();
+      if (data?.id) dbTrim = data;
+    }
+
+    if (!dbTrim) {
+      const { data } = await supabase
+        .from('vehicle_trims')
+        .select('id')
+        .eq('powertrain_id', actualPowertrainId)
+        .eq('slug', trimSlug)
+        .maybeSingle();
+      if (data?.id) dbTrim = data;
+    }
+
+    if (!dbTrim && catalogTrim) {
+      const { data: newTrim } = await supabase
+        .from('vehicle_trims')
+        .upsert(
+          {
+            id: catalogTrim.id,
+            model_id: actualModelId,
+            powertrain_id: actualPowertrainId,
+            slug: catalogTrim.slug,
+            name: catalogTrim.name,
+            msrp_cad: catalogTrim.msrpCad,
+            sort_order: 1,
+          },
+          { onConflict: 'powertrain_id, slug' }
+        )
+        .select('id')
+        .maybeSingle();
+      if (newTrim?.id) dbTrim = newTrim;
+    }
+
+    if (!dbTrim) {
+      // Fallback: any trim for this powertrain
+      const { data } = await supabase
+        .from('vehicle_trims')
+        .select('id')
+        .eq('powertrain_id', actualPowertrainId)
+        .limit(1)
+        .maybeSingle();
+      if (data?.id) dbTrim = data;
+    }
+
+    if (dbTrim?.id) {
+      actualTrimId = dbTrim.id;
+    }
+  } catch (lookupErr) {
+    console.warn('Error during resolveDatabaseVehicleIds:', lookupErr);
+  }
+
+  const result: ResolvedVehicleIds = {
+    modelId: actualModelId,
+    powertrainId: actualPowertrainId,
+    trimId: actualTrimId,
+    modelSlug,
+    powertrainSlug,
+    trimSlug,
+    modelName,
+  };
+
+  dbVehicleResolutionCache.set(cacheKey, result);
+  return result;
+}
+
 export async function insertSubmission(data: SubmissionCreateData): Promise<any> {
   const id = crypto.randomUUID();
   let waitDays: number | null = null;
@@ -583,14 +839,24 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   ) {
     try {
       const supabase = createServerClient();
+      const resolved = await resolveDatabaseVehicleIds(supabase, {
+        modelId: data.modelId,
+        powertrainId: data.powertrainId,
+        trimId: data.trimId,
+        modelSlug: data.modelSlug,
+        powertrainSlug: data.powertrainSlug,
+        trimSlug: data.trimSlug,
+        modelName: data.model,
+      });
+
       let { data: inserted, error } = await supabase
         .from('submissions')
         .insert({
           id,
           country_code: countryCode,
-          model_id: data.modelId,
-          powertrain_id: data.powertrainId,
-          trim_id: data.trimId,
+          model_id: resolved.modelId,
+          powertrain_id: resolved.powertrainId,
+          trim_id: resolved.trimId,
           province: data.province || null,
           state,
           dealer_markup_adm: dealerMarkupAdm,
@@ -615,111 +881,57 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
         .maybeSingle();
 
-      // 1. If foreign key constraint failed, dynamically resolve actual DB IDs by vehicle slug
+      // 1. If foreign key constraint failed, dynamically re-resolve DB IDs with fresh cache and retry
       if (error && (error.code === '23503' || error.message?.includes('foreign key'))) {
-        console.warn('Foreign key mismatch in Supabase insert, resolving actual DB IDs by slug...', error.message);
-        let modelSlug: string | undefined;
-        let powertrainSlug: string | undefined;
-        let trimSlug: string | undefined;
+        console.warn('Foreign key mismatch in Supabase insert, re-resolving actual DB IDs...', error.message);
+        dbVehicleResolutionCache.clear();
+        const retryResolved = await resolveDatabaseVehicleIds(supabase, {
+          modelId: data.modelId,
+          powertrainId: data.powertrainId,
+          trimId: data.trimId,
+          modelSlug: data.modelSlug,
+          powertrainSlug: data.powertrainSlug,
+          trimSlug: data.trimSlug,
+          modelName: data.model,
+        });
 
-        for (const m of CANADIAN_VEHICLE_CATALOG) {
-          if (m.id === data.modelId) {
-            modelSlug = m.slug;
-            for (const p of m.powertrains) {
-              if (p.id === data.powertrainId) {
-                powertrainSlug = p.slug;
-                for (const t of p.trims) {
-                  if (t.id === data.trimId) {
-                    trimSlug = t.slug;
-                    break;
-                  }
-                }
-                break;
-              }
-            }
-            break;
-          }
-        }
+        const retryRes = await supabase
+          .from('submissions')
+          .insert({
+            id,
+            country_code: countryCode,
+            model_id: retryResolved.modelId,
+            powertrain_id: retryResolved.powertrainId,
+            trim_id: retryResolved.trimId,
+            province: data.province || null,
+            state,
+            dealer_markup_adm: dealerMarkupAdm,
+            port_destination: portDestination,
+            dealership_city: data.dealershipCity,
+            dealership_name: data.dealershipName,
+            model_year: data.modelYear,
+            order_date: data.orderDate,
+            delivery_date: data.deliveryDate,
+            status: data.status,
+            current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            stage_updated_at: new Date().toISOString(),
+            pricing: data.pricing,
+            mandatory_addons_cad: data.mandatoryAddonsCad,
+            trade_in_required: data.tradeInRequired,
+            notes: data.notes,
+            edit_key_hash: data.editKeyHash,
+            edit_token: editToken,
+            is_flagged: data.isFlagged,
+          })
+          .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
+          .maybeSingle();
 
-        if (modelSlug) {
-          const { data: dbModel } = await supabase
-            .from('vehicle_models')
-            .select('id')
-            .eq('slug', modelSlug)
-            .maybeSingle();
-
-          if (dbModel) {
-            const actualModelId = dbModel.id;
-            const { data: dbPowertrain } = powertrainSlug
-              ? await supabase
-                  .from('vehicle_powertrains')
-                  .select('id')
-                  .eq('model_id', actualModelId)
-                  .eq('slug', powertrainSlug)
-                  .maybeSingle()
-              : { data: null };
-            const actualPowertrainId = dbPowertrain?.id || data.powertrainId;
-
-            const { data: dbTrim } = trimSlug && dbPowertrain
-              ? await supabase
-                  .from('vehicle_trims')
-                  .select('id')
-                  .eq('powertrain_id', actualPowertrainId)
-                  .eq('slug', trimSlug)
-                  .maybeSingle()
-              : { data: null };
-
-            // Fallback to any trim of this powertrain if exact slug wasn't found
-            const { data: dbAnyTrim } = !dbTrim && dbPowertrain
-              ? await supabase
-                  .from('vehicle_trims')
-                  .select('id')
-                  .eq('powertrain_id', actualPowertrainId)
-                  .limit(1)
-                  .maybeSingle()
-              : { data: null };
-
-            const actualTrimId = dbTrim?.id || dbAnyTrim?.id || data.trimId;
-
-            const retryRes = await supabase
-              .from('submissions')
-              .insert({
-                id,
-                country_code: countryCode,
-                model_id: actualModelId,
-                powertrain_id: actualPowertrainId,
-                trim_id: actualTrimId,
-                province: data.province || null,
-                state,
-                dealer_markup_adm: dealerMarkupAdm,
-                port_destination: portDestination,
-                dealership_city: data.dealershipCity,
-                dealership_name: data.dealershipName,
-                model_year: data.modelYear,
-                order_date: data.orderDate,
-                delivery_date: data.deliveryDate,
-                status: data.status,
-                current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
-                stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
-                stage_updated_at: new Date().toISOString(),
-                pricing: data.pricing,
-                mandatory_addons_cad: data.mandatoryAddonsCad,
-                trade_in_required: data.tradeInRequired,
-                notes: data.notes,
-                edit_key_hash: data.editKeyHash,
-                edit_token: editToken,
-                is_flagged: data.isFlagged,
-              })
-              .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
-              .maybeSingle();
-
-            if (!retryRes.error) {
-              inserted = retryRes.data;
-              error = null;
-            } else {
-              console.error('Retry insert with resolved DB IDs failed:', retryRes.error);
-            }
-          }
+        if (!retryRes.error) {
+          inserted = retryRes.data;
+          error = null;
+        } else {
+          console.error('Retry insert with resolved DB IDs failed:', retryRes.error);
         }
       }
 
@@ -731,9 +943,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           .insert({
             id,
             country_code: countryCode,
-            model_id: data.modelId,
-            powertrain_id: data.powertrainId,
-            trim_id: data.trimId,
+            model_id: resolved.modelId,
+            powertrain_id: resolved.powertrainId,
+            trim_id: resolved.trimId,
             province: data.province || null,
             state,
             dealer_markup_adm: dealerMarkupAdm,
@@ -809,6 +1021,41 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
   // In-memory fallback
   const currentStage = data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed');
+
+  let memModelSlug = 'rav4';
+  let memModelName = 'RAV4';
+  let memPtSlug = 'hev';
+  let memPtName = 'Hybrid (HEV)';
+  let memTrimSlug = 'xle-awd';
+  let memTrimName = 'XLE AWD';
+
+  for (const m of CANADIAN_VEHICLE_CATALOG) {
+    if (
+      m.id === data.modelId ||
+      m.slug === data.modelSlug ||
+      (data.model && m.name.toLowerCase() === data.model.toLowerCase()) ||
+      (data.modelId && m.slug.toLowerCase() === data.modelId.toLowerCase())
+    ) {
+      memModelSlug = m.slug;
+      memModelName = m.name;
+      for (const p of m.powertrains) {
+        if (p.id === data.powertrainId || p.slug === data.powertrainSlug) {
+          memPtSlug = p.slug;
+          memPtName = p.name;
+          for (const t of p.trims) {
+            if (t.id === data.trimId || t.slug === data.trimSlug) {
+              memTrimSlug = t.slug;
+              memTrimName = t.name;
+              break;
+            }
+          }
+          break;
+        }
+      }
+      break;
+    }
+  }
+
   const record = {
     id,
     country_code: countryCode,
@@ -819,14 +1066,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     port_destination: portDestination,
     portDestination,
     model_id: data.modelId,
-    model_slug: 'rav4',
-    model_name: 'RAV4',
+    model_slug: memModelSlug,
+    model_name: memModelName,
     powertrain_id: data.powertrainId,
-    powertrain_slug: 'hev',
-    powertrain_name: 'Hybrid (HEV)',
+    powertrain_slug: memPtSlug,
+    powertrain_name: memPtName,
     trim_id: data.trimId,
-    trim_slug: 'xle-awd',
-    trim_name: 'XLE AWD',
+    trim_slug: memTrimSlug,
+    trim_name: memTrimName,
     province: data.province || state || 'ON',
     dealership_city: data.dealershipCity || '',
     dealership_name: data.dealershipName || '',
@@ -905,6 +1152,21 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
         }
       }
       if (data.notes !== undefined) updatePayload.notes = data.notes;
+
+      if (data.modelId || data.modelSlug || data.model) {
+        const resolved = await resolveDatabaseVehicleIds(supabase, {
+          modelId: data.modelId,
+          powertrainId: data.powertrainId,
+          trimId: data.trimId,
+          modelSlug: data.modelSlug,
+          powertrainSlug: data.powertrainSlug,
+          trimSlug: data.trimSlug,
+          modelName: data.model,
+        });
+        updatePayload.model_id = resolved.modelId;
+        if (resolved.powertrainId) updatePayload.powertrain_id = resolved.powertrainId;
+        if (resolved.trimId) updatePayload.trim_id = resolved.trimId;
+      }
 
       const { data: updated, error } = await supabase
         .from('submissions')
@@ -1441,6 +1703,13 @@ export async function updateSubmissionByEditToken(
     notes?: string | null;
     currentStage?: SubmissionStage;
     stage?: string;
+    modelId?: string;
+    powertrainId?: string;
+    trimId?: string;
+    modelSlug?: string;
+    powertrainSlug?: string;
+    trimSlug?: string;
+    model?: string;
   }
 ): Promise<{
   id: string;
@@ -1509,6 +1778,21 @@ export async function updateSubmissionByEditToken(
           updatePayload.notes = updates.notes;
         }
 
+        if (updates.modelId || updates.modelSlug || updates.model) {
+          const resolved = await resolveDatabaseVehicleIds(supabase, {
+            modelId: updates.modelId,
+            powertrainId: updates.powertrainId,
+            trimId: updates.trimId,
+            modelSlug: updates.modelSlug,
+            powertrainSlug: updates.powertrainSlug,
+            trimSlug: updates.trimSlug,
+            modelName: updates.model,
+          });
+          updatePayload.model_id = resolved.modelId;
+          if (resolved.powertrainId) updatePayload.powertrain_id = resolved.powertrainId;
+          if (resolved.trimId) updatePayload.trim_id = resolved.trimId;
+        }
+
         const { data: updated, error } = await supabase
           .from('submissions')
           .update(updatePayload)
@@ -1575,6 +1859,38 @@ export async function updateSubmissionByEditToken(
         }
       }
       if (updates.notes !== undefined) item.notes = updates.notes;
+
+      if (updates.modelId || updates.modelSlug || updates.model) {
+        for (const m of CANADIAN_VEHICLE_CATALOG) {
+          if (
+            m.id === updates.modelId ||
+            m.slug === updates.modelSlug ||
+            (updates.model && m.name.toLowerCase() === updates.model.toLowerCase()) ||
+            (updates.modelId && m.slug.toLowerCase() === updates.modelId.toLowerCase())
+          ) {
+            item.model_slug = m.slug;
+            item.model_name = m.name;
+            item.model = m.name;
+            for (const p of m.powertrains) {
+              if (p.id === updates.powertrainId || p.slug === updates.powertrainSlug) {
+                item.powertrain_slug = p.slug;
+                item.powertrain_name = p.name;
+                for (const t of p.trims) {
+                  if (t.id === updates.trimId || t.slug === updates.trimSlug) {
+                    item.trim_slug = t.slug;
+                    item.trim_name = t.name;
+                    item.trim = t.name;
+                    break;
+                  }
+                }
+                break;
+              }
+            }
+            break;
+          }
+        }
+      }
+
       item.updated_at = new Date().toISOString();
 
       return {
