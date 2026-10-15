@@ -85,8 +85,10 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
     expect(news.some((n) => mockIds.includes(n.id))).toBe(false);
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      expect.stringContaining('[Ticker] Supabase news_wire query error:'),
-      expect.anything()
+      expect.stringContaining('[Ticker] news_wire query error:'),
+      expect.objectContaining({
+        message: 'relation "news_wire" does not exist',
+      })
     );
   });
 

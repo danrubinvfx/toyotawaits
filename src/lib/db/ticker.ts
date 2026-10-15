@@ -50,7 +50,12 @@ export async function getNewsWireItems(limit = 5): Promise<NewsTickerItem[]> {
     }
 
     if (newsError) {
-      console.error('[Ticker] Supabase news_wire query error:', newsError);
+      console.error('[Ticker] news_wire query error:', {
+        message: newsError.message,
+        details: newsError.details,
+        hint: newsError.hint,
+        code: newsError.code,
+      });
       return [];
     }
 
@@ -65,8 +70,13 @@ export async function getNewsWireItems(limit = 5): Promise<NewsTickerItem[]> {
         timestamp: item.published_at || item.created_at || new Date().toISOString(),
       }));
     }
-  } catch (err) {
-    console.error('[Ticker] Supabase news_wire query error:', err);
+  } catch (err: any) {
+    console.error('[Ticker] news_wire query error:', {
+      message: err?.message || String(err),
+      details: err?.details || null,
+      hint: err?.hint || null,
+      code: err?.code || null,
+    });
     return [];
   }
 
