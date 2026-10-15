@@ -235,3 +235,20 @@ export interface ApiResponse<T> {
     details?: Record<string, string[]>;
   };
 }
+
+export interface RecentActivityItem {
+  id: string;
+  province: string;
+  model_name: string;
+  trim_name: string;
+  powertrain: string;
+  status: string;
+  lifecycle_status: string;
+  order_date: string;
+  delivered_date: string | null;
+  created_at: string;
+  updated_at: string;
+  model_year?: number;
+  wait_days?: number | null;
+}
+

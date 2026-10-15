@@ -224,9 +224,11 @@ export async function PATCH(
       revalidatePath('/api/stats');
       revalidatePath('/api/aggregate');
       revalidatePath('/api/submissions');
+      revalidatePath('/api/submissions/recent');
       revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
       revalidateTag('stats', 'max');
+      revalidateTag('recent_submissions', 'max');
     } catch (revalidateErr) {
       if (process.env.NODE_ENV !== 'test') {
         console.warn('Cache revalidation notice in PATCH /api/submissions/edit/[token]:', revalidateErr);

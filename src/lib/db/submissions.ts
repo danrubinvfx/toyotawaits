@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
-import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
+import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult, RecentActivityItem } from '@/lib/types/contracts';
+
+export type { RecentActivityItem };
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS, INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { isSubmissionStale } from '@/lib/utils/confidence-decay';
@@ -1425,6 +1427,176 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
   rows.sort((a, b) => new Date(b.created_at || b.submitted_at || 0).getTime() - new Date(a.created_at || a.submitted_at || 0).getTime());
 
   return rows;
+}
+
+/**
+ * Retrieves the latest active events from submissions (Zero-PII compliant).
+ * Returns compact summaries ordered by updated_at / created_at descending.
+ * Soft-deleted, cancelled, and flagged submissions are strictly filtered out.
+ */
+export async function getRecentActivity(limit = 10, countryCode?: CountryCode | string): Promise<RecentActivityItem[]> {
+  const isUs = countryCode === 'US';
+  const effectiveLimit = Math.max(1, Math.min(limit, 50));
+
+  if (
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
+  ) {
+    try {
+      const supabase = createServerClient();
+      let query = supabase
+        .from('submissions')
+        .select(`
+          id,
+          province,
+          state,
+          country_code,
+          model_year,
+          order_date,
+          delivery_date,
+          wait_days,
+          status,
+          stage,
+          current_stage,
+          created_at,
+          updated_at,
+          vehicle_models(name),
+          vehicle_powertrains(name),
+          vehicle_trims(name)
+        `)
+        .or('is_flagged.eq.false,is_flagged.is.null')
+        .neq('status', 'cancelled');
+
+      if (isUs) {
+        query = query.eq('country_code', 'US');
+      } else {
+        query = query.or('country_code.eq.CA,country_code.is.null');
+      }
+
+      const { data, error } = await query
+        .order('updated_at', { ascending: false })
+        .limit(effectiveLimit);
+
+      if (!error && Array.isArray(data) && data.length > 0) {
+        const records: RecentActivityItem[] = data
+          .filter((item: any) => item.status !== 'cancelled' && item.stage !== 'cancelled' && !item.is_cancelled)
+          .map((item: any) => {
+            const rawStage = item.stage || item.current_stage;
+            const lifecycleStatus =
+              rawStage || (item.status === 'delivered' ? 'delivered' : 'deposit_placed');
+
+            return {
+              id: String(item.id),
+              province: String(item.province || item.state || (isUs ? 'CA' : 'ON')),
+              model_name: item.vehicle_models?.name || item.model_name || 'RAV4',
+              trim_name: item.vehicle_trims?.name || item.trim_name || '',
+              powertrain: item.vehicle_powertrains?.name || item.powertrain_name || '',
+              status: item.status,
+              lifecycle_status: lifecycleStatus,
+              order_date: item.order_date,
+              delivered_date: item.delivery_date || null,
+              created_at: item.created_at,
+              updated_at: item.updated_at || item.created_at,
+              model_year: item.model_year ? Number(item.model_year) : 2026,
+              wait_days: item.wait_days != null ? Number(item.wait_days) : null,
+            };
+          });
+
+        return records.slice(0, effectiveLimit);
+      } else if (error) {
+        console.warn('Supabase query error in getRecentActivity, falling back to local memory store:', error.message);
+      }
+    } catch (err) {
+      console.warn('Supabase query exception in getRecentActivity:', err);
+    }
+  }
+
+  // Fallback to in-memory store and seeded records
+  const items: RecentActivityItem[] = [];
+  const seenIds = new Set<string>();
+
+  for (const item of inMemorySubmissions.values()) {
+    if (item.is_flagged) continue;
+    if (item.status === 'cancelled' || item.stage === 'cancelled' || item.is_cancelled) continue;
+    if (item.is_deleted || item.deleted_at) continue;
+
+    if (isUs) {
+      if (item.country_code !== 'US' && item.countryCode !== 'US') continue;
+    } else {
+      if (item.country_code === 'US' || item.countryCode === 'US') continue;
+    }
+
+    const rawStage = item.stage || item.current_stage;
+    const lifecycleStatus =
+      rawStage || (item.status === 'delivered' ? 'delivered' : 'deposit_placed');
+
+    const updatedAt =
+      item.updated_at ||
+      item.stage_updated_at ||
+      item.created_at ||
+      item.delivery_date ||
+      item.order_date ||
+      new Date().toISOString();
+
+    const createdAt = item.created_at || item.order_date || updatedAt;
+
+    items.push({
+      id: String(item.id || crypto.randomUUID()),
+      province: String(item.province || item.state || (isUs ? 'CA' : 'ON')),
+      model_name: item.model_name || item.model || 'RAV4',
+      trim_name: item.trim_name || item.trim || '',
+      powertrain: item.powertrain_name || item.powertrain || '',
+      status: item.status || (lifecycleStatus === 'delivered' ? 'delivered' : 'pending'),
+      lifecycle_status: lifecycleStatus,
+      order_date: item.order_date || '2026-01-01',
+      delivered_date: item.delivery_date || null,
+      created_at: new Date(createdAt).toISOString(),
+      updated_at: new Date(updatedAt).toISOString(),
+      model_year: item.model_year ? Number(item.model_year) : 2026,
+      wait_days: item.wait_days != null ? Number(item.wait_days) : null,
+    });
+    seenIds.add(String(item.id));
+  }
+
+  // If inMemorySubmissions has fewer items than limit, supplement with initial community records
+  if (items.length < effectiveLimit) {
+    const catalog = isUs ? INITIAL_US_COMMUNITY_RECORDS : INITIAL_COMMUNITY_RECORDS;
+    for (const r of catalog) {
+      if (seenIds.has(r.id)) continue;
+      if (r.status === 'cancelled') continue;
+
+      const orderTime = r.orderDate ? new Date(r.orderDate).getTime() : Date.now();
+      const deliveryTime = r.deliveryDate ? new Date(r.deliveryDate).getTime() : orderTime;
+      const ts = new Date(Math.max(orderTime, deliveryTime)).toISOString();
+
+      items.push({
+        id: r.id,
+        province: r.province || (isUs ? 'CA' : 'ON'),
+        model_name: r.model || 'RAV4',
+        trim_name: r.trim || '',
+        powertrain: r.powertrain || '',
+        status: r.status,
+        lifecycle_status: r.stage || (r.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+        order_date: r.orderDate,
+        delivered_date: r.deliveryDate || null,
+        created_at: ts,
+        updated_at: ts,
+        model_year: r.modelYear || 2026,
+        wait_days: r.waitDays != null ? Number(r.waitDays) : null,
+      });
+      seenIds.add(r.id);
+    }
+  }
+
+  // Sort by updated_at / created_at descending
+  items.sort((a, b) => {
+    const timeA = new Date(a.updated_at || a.created_at).getTime();
+    const timeB = new Date(b.updated_at || b.created_at).getTime();
+    return timeB - timeA;
+  });
+
+  return items.slice(0, effectiveLimit);
 }
 
 export async function getCommunitySubmissions(countryCode?: CountryCode | string): Promise<CommunityRecord[]> {

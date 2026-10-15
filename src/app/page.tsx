@@ -8,7 +8,8 @@ import { CommunityDataTable } from '@/components/dashboard/community-data-table'
 import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
 import { HashScrollHandler } from '@/components/common/hash-scroll-handler';
-import { getCommunitySubmissions } from '@/lib/db/submissions';
+import { ActivityTicker } from '@/components/feed/ActivityTicker';
+import { getCommunitySubmissions, getRecentActivity } from '@/lib/db/submissions';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -63,6 +64,7 @@ export default async function HomePage() {
   const headersList = await headers();
   const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
   const submissions = await getCommunitySubmissions(region);
+  const recentSubmissions = await getRecentActivity(10, region);
 
   return (
     <div className="pb-16">
@@ -207,6 +209,9 @@ export default async function HomePage() {
           <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ActiveOrderStepper />
           </React.Suspense>
+
+          {/* Live Activity Ticker & Real-Time Pulse */}
+          <ActivityTicker initialData={recentSubmissions} />
 
           <div className="space-y-4">
             <div>
