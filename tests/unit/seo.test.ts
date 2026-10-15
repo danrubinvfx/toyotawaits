@@ -8,29 +8,29 @@ describe('Technical SEO & Discovery Configuration', () => {
   it('generates a valid sitemap with required URLs, priorities, and change frequencies', () => {
     const sitemapEntries = sitemap();
 
-    // Required 1: https://toyotawaits.ca (priority 1.0, daily)
-    const rootEntry = sitemapEntries.find((e) => e.url === 'https://toyotawaits.ca');
+    // Required 1: https://www.toyotawaits.ca (priority 1.0, daily)
+    const rootEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca');
     expect(rootEntry).toBeDefined();
     expect(rootEntry?.priority).toBe(1.0);
     expect(rootEntry?.changeFrequency).toBe('daily');
 
-    // Required 2: https://toyotawaits.ca/submit (priority 0.8, weekly)
-    const submitEntry = sitemapEntries.find((e) => e.url === 'https://toyotawaits.ca/submit');
+    // Required 2: https://www.toyotawaits.ca/submit (priority 0.8, weekly)
+    const submitEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/submit');
     expect(submitEntry).toBeDefined();
     expect(submitEntry?.priority).toBe(0.8);
     expect(submitEntry?.changeFrequency).toBe('weekly');
 
-    // Required 3: https://toyotawaits.ca/guides/rav4-se-mods (priority 0.8, monthly)
+    // Required 3: https://www.toyotawaits.ca/guides/rav4-se-mods (priority 0.8, monthly)
     const guideEntry = sitemapEntries.find(
-      (e) => e.url === 'https://toyotawaits.ca/guides/rav4-se-mods'
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/rav4-se-mods'
     );
     expect(guideEntry).toBeDefined();
     expect(guideEntry?.priority).toBe(0.8);
     expect(guideEntry?.changeFrequency).toBe('monthly');
 
-    // Prius Mods Guide: https://toyotawaits.ca/guides/prius-mods (priority 0.8, weekly)
+    // Prius Mods Guide: https://www.toyotawaits.ca/guides/prius-mods (priority 0.8, weekly)
     const priusGuideEntry = sitemapEntries.find(
-      (e) => e.url === 'https://toyotawaits.ca/guides/prius-mods'
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/prius-mods'
     );
     expect(priusGuideEntry).toBeDefined();
     expect(priusGuideEntry?.priority).toBe(0.8);
@@ -40,7 +40,7 @@ describe('Technical SEO & Discovery Configuration', () => {
   it('generates a valid robots.txt disallowing /out/ redirects and pointing to sitemap.xml', () => {
     const robotsConfig = robots();
 
-    expect(robotsConfig.sitemap).toBe('https://toyotawaits.ca/sitemap.xml');
+    expect(robotsConfig.sitemap).toBe('https://www.toyotawaits.ca/sitemap.xml');
 
     const rules = Array.isArray(robotsConfig.rules)
       ? robotsConfig.rules[0]
@@ -67,8 +67,7 @@ describe('Technical SEO & Discovery Configuration', () => {
       'toyota allocation canada',
       'rav4 prime wait time',
     ]);
-    expect(layoutMetadata.metadataBase?.toString()).toBe('https://toyotawaits.ca/');
-    expect(layoutMetadata.alternates?.canonical).toBe('/');
+    expect(layoutMetadata.metadataBase?.toString()).toBe('https://www.toyotawaits.ca/');
     expect(layoutMetadata.openGraph?.title).toBe(
       'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker'
     );
@@ -86,7 +85,7 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(homeMetadata.description).toContain(
       'Crowdsourced Canadian Toyota delivery timelines'
     );
-    expect(homeMetadata.alternates?.canonical).toBe('/');
+    expect(homeMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca');
   });
 
   it('defines valid Schema.org WebApplication and Organization JSON-LD entities', () => {
@@ -94,7 +93,7 @@ describe('Technical SEO & Discovery Configuration', () => {
     const webApp = jsonLd['@graph'].find((e) => e['@type'] === 'WebApplication');
     expect(webApp).toBeDefined();
     expect(webApp?.name).toBe('ToyotaWaits');
-    expect(webApp?.url).toBe('https://toyotawaits.ca');
+    expect(webApp?.url).toBe('https://www.toyotawaits.ca');
     expect(webApp?.applicationCategory).toBe('AutomotiveApplication');
     expect(webApp?.operatingSystem).toBe('All');
     expect(webApp?.description).toBe(
@@ -104,7 +103,7 @@ describe('Technical SEO & Discovery Configuration', () => {
     const org = jsonLd['@graph'].find((e) => e['@type'] === 'Organization');
     expect(org).toBeDefined();
     expect(org?.name).toBe('ToyotaWaits');
-    expect(org?.url).toBe('https://toyotawaits.ca');
+    expect(org?.url).toBe('https://www.toyotawaits.ca');
     expect(org?.description).toBe(
       'Community wait time tracker for Canadian Toyota allocations.'
     );

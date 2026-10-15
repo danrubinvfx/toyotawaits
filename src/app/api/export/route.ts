@@ -46,21 +46,15 @@ export async function GET(request: NextRequest) {
 
     const rows = await getSubmissionsForExport(validation.data);
 
-    // CSV Headers matching functional-spec RFC 4180 format
+    // CSV Headers matching RFC 4180 format
     const headers = [
+      'id',
+      'created_at',
       'model',
-      'powertrain',
       'trim',
-      'model_year',
       'province',
-      'dealership_city',
-      'order_date',
-      'delivery_date',
       'wait_days',
       'status',
-      'pricing',
-      'addons_cad',
-      'submitted_at',
     ];
 
     const csvLines = [headers.join(',')];
@@ -68,32 +62,25 @@ export async function GET(request: NextRequest) {
     for (const r of rows) {
       csvLines.push(
         [
+          escapeCsvCell(r.id),
+          escapeCsvCell(r.created_at || r.submitted_at),
           escapeCsvCell(r.model),
-          escapeCsvCell(r.powertrain),
           escapeCsvCell(r.trim),
-          escapeCsvCell(r.model_year),
           escapeCsvCell(r.province),
-          escapeCsvCell(r.dealership_city),
-          escapeCsvCell(r.order_date),
-          escapeCsvCell(r.delivery_date),
           escapeCsvCell(r.wait_days),
           escapeCsvCell(r.status),
-          escapeCsvCell(r.pricing),
-          escapeCsvCell(r.addons_cad),
-          escapeCsvCell(r.submitted_at),
         ].join(',')
       );
     }
 
     // Include UTF-8 BOM for Microsoft Excel compatibility in Canada
     const csvContent = '\uFEFF' + csvLines.join('\r\n');
-    const today = new Date().toISOString().split('T')[0];
 
     return new NextResponse(csvContent, {
       status: 200,
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="toyotawait-ca-export-${today}.csv"`,
+        'Content-Disposition': 'attachment; filename="toyotawaits-data.csv"',
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
     });

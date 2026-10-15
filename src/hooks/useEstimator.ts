@@ -16,6 +16,10 @@ export interface UseEstimatorOptions {
 }
 
 export interface EstimatorCalculationResult {
+  p25: number;
+  p50: number;
+  p75: number;
+  median: number;
   p25Days: number;
   medianDays: number;
   p75Days: number;
@@ -154,6 +158,10 @@ export function useEstimator({
       : `Based on ${verifiedSampleSize} verified deliveries`;
 
   return {
+    p25: p25Days,
+    p50: medianDays,
+    p75: p75Days,
+    median: medianDays,
     p25Days,
     medianDays,
     p75Days,

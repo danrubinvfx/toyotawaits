@@ -11,7 +11,7 @@ describe('TiresPage Route', () => {
     expect(metadata.description).toBe(
       'Factory tire sizes, Canadian winter reviews (3PMSF), and curated Amazon.ca links for RAV4, Sienna, Grand Highlander, Prius, and Land Cruiser.'
     );
-    expect(metadata.alternates?.canonical).toBe('/tires');
+    expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/tires');
   });
 
   it('renders the TiresPage component without crashing', () => {

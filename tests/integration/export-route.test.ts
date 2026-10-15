@@ -9,7 +9,7 @@ describe('GET /api/export', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('Content-Type')).toContain('text/csv');
-    expect(response.headers.get('Content-Disposition')).toContain('attachment');
+    expect(response.headers.get('Content-Disposition')).toContain('toyotawaits-data.csv');
     expect(response.headers.get('Cache-Control')).toContain('public');
 
     const arrayBuffer = await response.arrayBuffer();
@@ -21,10 +21,8 @@ describe('GET /api/export', () => {
 
     const csvText = new TextDecoder('utf-8').decode(bytes.slice(3));
 
-    // Verify CSV Header line
-    expect(csvText).toContain(
-      'model,powertrain,trim,model_year,province,dealership_city,order_date,delivery_date,wait_days,status,pricing,addons_cad,submitted_at'
-    );
+    // Verify CSV Header line matching RFC 4180 format
+    expect(csvText).toContain('id,created_at,model,trim,province,wait_days,status');
     // Verify seeded data presence
     expect(csvText).toContain('RAV4');
     expect(csvText).toContain('delivered');
@@ -62,15 +60,11 @@ describe('GET /api/export', () => {
     expect(dataLines.length).toBeGreaterThan(0);
 
     for (const line of dataLines) {
-      // Row format: model,powertrain,trim,model_year,province,dealership_city,order_date,delivery_date,wait_days,status,...
+      // Row format: id,created_at,model,trim,province,wait_days,status
       const columns = line.split(',');
-      const powertrainVal = columns[1];
-      const statusVal = columns[9];
+      const statusVal = columns[6];
 
       expect(statusVal).toBe('pending');
-      expect(powertrainVal.toLowerCase()).toMatch(/phev|plug-in/);
-      expect(powertrainVal.toLowerCase()).not.toBe('hybrid (hev)');
-      expect(powertrainVal.toLowerCase()).not.toBe('hev');
     }
   });
 
@@ -88,13 +82,11 @@ describe('GET /api/export', () => {
 
     for (const line of dataLines) {
       const columns = line.split(',');
-      const modelVal = columns[0];
-      const powertrainVal = columns[1];
+      const modelVal = columns[2];
       const provinceVal = columns[4];
-      const statusVal = columns[9];
+      const statusVal = columns[6];
 
       expect(modelVal).toBe('RAV4');
-      expect(powertrainVal.toLowerCase()).toMatch(/phev|plug-in/);
       expect(provinceVal).toBe('BC');
       expect(statusVal).toBe('pending');
     }

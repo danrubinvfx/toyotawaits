@@ -47,6 +47,8 @@ export interface ExportFilterParams {
 }
 
 export interface ExportRow {
+  id?: string;
+  created_at?: string;
   model: string;
   powertrain: string;
   trim: string;
@@ -861,6 +863,7 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       let query = supabase
         .from('submissions')
         .select(`
+          id,
           province,
           dealership_city,
           model_year,
@@ -892,10 +895,12 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
         query = query.in('status', ['delivered', 'pending']);
       }
 
-      const { data, error } = await query.order('order_date', { ascending: false });
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
         return data.map((item: any) => ({
+          id: item.id || '',
+          created_at: item.created_at || '',
           model: item.vehicle_models?.name || 'RAV4',
           powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
           trim: item.vehicle_trims?.name || 'XLE AWD',
@@ -928,6 +933,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
     if (filters.status && item.status !== filters.status) continue;
 
     rows.push({
+      id: item.id || '',
+      created_at: item.created_at || '',
       model: item.model_name || 'RAV4',
       powertrain: item.powertrain_name || 'HEV',
       trim: item.trim_name || 'XLE AWD',
@@ -943,6 +950,9 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       submitted_at: item.created_at,
     });
   }
+
+  // Sort by created_at DESC
+  rows.sort((a, b) => new Date(b.created_at || b.submitted_at || 0).getTime() - new Date(a.created_at || a.submitted_at || 0).getTime());
 
   return rows;
 }

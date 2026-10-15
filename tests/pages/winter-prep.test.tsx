@@ -14,7 +14,7 @@ describe('WinterPrepView Page Component', () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText(/🇨🇦 Canadian Winter Survival Playbook/i)).toBeInTheDocument();
-    expect(screen.getByText(/Sub-Zero Rated \(-30°C\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Jump Packs Rated -20°C to \+50°C/i)).toBeInTheDocument();
 
     // 3 Realities Callouts
     expect(screen.getByText(/12V Battery Drop/i)).toBeInTheDocument();
