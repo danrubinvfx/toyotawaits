@@ -185,13 +185,13 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
   if (prefersReducedMotion) {
     return (
       <div
-        className="rounded-xl border border-zinc-200/80 bg-zinc-50/90 p-2.5 sm:px-4 sm:py-3 shadow-xs dark:border-zinc-800/80 dark:bg-zinc-900/90"
+        className="w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200"
         aria-live="polite"
         role="region"
         aria-label="Recent vehicle order activity"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 shrink-0 self-start sm:self-auto select-none">
+        <div className="container mx-auto max-w-6xl px-3 sm:px-6 py-1.5 sm:py-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 self-start sm:self-auto select-none">
             <span className="relative flex h-2 w-2">
               <span className="inline-flex rounded-full h-2 w-2 bg-emerald-500" />
             </span>
@@ -200,13 +200,13 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
 
           <div
             tabIndex={0}
-            className="flex items-center gap-2 overflow-x-auto py-1 text-xs text-zinc-700 dark:text-zinc-300 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 rounded-md"
+            className="flex items-center gap-2 overflow-x-auto py-0.5 text-xs text-zinc-300 focus:outline-hidden focus:ring-1 focus:ring-emerald-500 rounded-md"
             aria-label="Scrollable list of recent community submissions"
           >
             {items.map((item, idx) => (
               <span
                 key={item.id || idx}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white dark:bg-zinc-800/90 border border-zinc-200 dark:border-zinc-700/80 shrink-0 whitespace-nowrap shadow-2xs font-medium"
+                className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/10 border border-white/10 shrink-0 whitespace-nowrap text-zinc-200 font-medium"
               >
                 {formatTickerSummary(item)}
               </span>
@@ -224,7 +224,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
 
   return (
     <div
-      className="group relative rounded-xl border border-zinc-200/90 bg-gradient-to-r from-zinc-50 via-white to-zinc-50 p-2 sm:px-4 sm:py-2.5 shadow-xs transition-colors hover:border-zinc-300 dark:border-zinc-800/90 dark:from-zinc-900/90 dark:via-zinc-900 dark:to-zinc-900/90 dark:hover:border-zinc-700"
+      className="group relative w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200 transition-colors"
       aria-live="polite"
       role="region"
       aria-label="Live Canadian Toyota order activity"
@@ -233,9 +233,9 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
     >
-      <div className="flex items-center justify-between gap-2 sm:gap-3">
+      <div className="container mx-auto max-w-6xl px-3 sm:px-6 py-1.5 sm:py-2 flex items-center justify-between gap-2 sm:gap-3">
         {/* Left: Amber/Green Pulsing Live Indicator Badge */}
-        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-500/25 shrink-0 select-none">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 shrink-0 select-none">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -251,14 +251,14 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
               isAnimating ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'
             }`}
           >
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 truncate font-medium">
-              <span className="text-zinc-500 dark:text-zinc-400 shrink-0">{timeAgo}</span>
-              <span className="text-zinc-300 dark:text-zinc-700 shrink-0">•</span>
-              <span className="font-bold text-zinc-900 dark:text-zinc-100 shrink-0">
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-300 truncate font-medium">
+              <span className="text-zinc-400 shrink-0">{timeAgo}</span>
+              <span className="text-zinc-600 shrink-0">•</span>
+              <span className="font-bold text-white shrink-0">
                 {currentItem.province}:
               </span>
-              <span className="text-zinc-800 dark:text-zinc-200 truncate">{vehicle}</span>
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400 shrink-0">
+              <span className="text-zinc-200 truncate">{vehicle}</span>
+              <span className="font-semibold text-emerald-400 shrink-0">
                 {action}
               </span>
             </div>
@@ -266,15 +266,15 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
         </div>
 
         {/* Right: Manual navigation controls & state indicator */}
-        <div className="flex items-center gap-1 shrink-0 text-zinc-400 dark:text-zinc-500">
-          <span className="text-[11px] tabular-nums font-mono px-1 select-none hidden md:inline">
+        <div className="flex items-center gap-1 shrink-0 text-zinc-400">
+          <span className="text-[11px] tabular-nums font-mono px-1 select-none hidden md:inline text-zinc-400">
             {currentIndex + 1}/{total}
           </span>
 
           <button
             type="button"
             onClick={prevItem}
-            className="p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer"
             aria-label="Previous update"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
@@ -283,7 +283,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
           <button
             type="button"
             onClick={nextItem}
-            className="p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer"
+            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer"
             aria-label="Next update"
           >
             <ChevronRight className="h-3.5 w-3.5" />
@@ -292,7 +292,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
           <button
             type="button"
             onClick={() => setIsPaused((prev) => !prev)}
-            className="p-1 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-colors cursor-pointer hidden sm:inline-flex"
+            className="p-1 rounded-md hover:bg-white/10 text-zinc-300 hover:text-white transition-colors cursor-pointer hidden sm:inline-flex"
             aria-label={isPaused ? 'Resume auto-scroll' : 'Pause auto-scroll'}
             title={isPaused ? 'Resume' : 'Pause'}
           >
@@ -303,3 +303,4 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     </div>
   );
 }
+

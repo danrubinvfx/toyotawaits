@@ -71,6 +71,9 @@ export default async function HomePage() {
       {/* Client-Side Hash Scroll Listener for anchor deep-linking */}
       <HashScrollHandler />
 
+      {/* Live Activity Ticker directly below top navigation/header banner */}
+      <ActivityTicker initialData={recentSubmissions} />
+
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />
 
@@ -209,9 +212,6 @@ export default async function HomePage() {
           <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
             <ActiveOrderStepper />
           </React.Suspense>
-
-          {/* Live Activity Ticker & Real-Time Pulse */}
-          <ActivityTicker initialData={recentSubmissions} />
 
           <div className="space-y-4">
             <div>
