@@ -90,3 +90,79 @@ export function removeStoredSubmission(id: string): void {
     console.error('Failed to remove submission from localStorage:', err);
   }
 }
+
+export function clearStoredSubmissionByToken(token?: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem('toyota_submission_token');
+    localStorage.removeItem('toyota_edit_token');
+
+    // 1. toyotawaits_submission
+    const raw = localStorage.getItem('toyotawaits_submission');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token) {
+          localStorage.removeItem('toyotawaits_submission');
+        }
+      } catch {
+        localStorage.removeItem('toyotawaits_submission');
+      }
+    }
+
+    // 2. toyotawait_pending_submission
+    const pendingRaw = localStorage.getItem('toyotawait_pending_submission');
+    if (pendingRaw) {
+      try {
+        const parsed = JSON.parse(pendingRaw);
+        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token) {
+          localStorage.removeItem('toyotawait_pending_submission');
+        }
+      } catch {
+        localStorage.removeItem('toyotawait_pending_submission');
+      }
+    }
+
+    // 3. toyotawait_my_submissions
+    const mySubs = localStorage.getItem(STORAGE_KEY);
+    if (mySubs) {
+      try {
+        const list = JSON.parse(mySubs);
+        if (Array.isArray(list)) {
+          const filtered = token
+            ? list.filter((s) => s.id !== token && s.editToken !== token && s.editKey !== token)
+            : [];
+          if (filtered.length > 0) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        }
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+    window.dispatchEvent(new Event('storage'));
+  } catch (err) {
+    console.error('Failed to clear stored submission by token:', err);
+  }
+}
+
+export function clearAllStoredSubmissions(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('toyotawaits_submission');
+    localStorage.removeItem('toyotawait_pending_submission');
+    localStorage.removeItem('toyota_submission_token');
+    localStorage.removeItem('toyota_edit_token');
+
+    window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+    window.dispatchEvent(new Event('storage'));
+  } catch (err) {
+    console.error('Failed to clear all stored submissions:', err);
+  }
+}
+

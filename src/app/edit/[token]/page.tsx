@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { updateStoredSubmissionByToken } from '@/lib/storage/submission-storage';
+import { updateStoredSubmissionByToken, clearStoredSubmissionByToken, clearAllStoredSubmissions } from '@/lib/storage/submission-storage';
 import {
   CheckCircle2,
   Clock,
@@ -22,6 +22,8 @@ import {
   AlertCircle,
   Loader2,
   Truck,
+  PlusCircle,
+  Trash2,
 } from 'lucide-react';
 import { OrderStageIndicator } from '@/components/dashboard/order-stage-indicator';
 
@@ -258,6 +260,16 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       )
     : 0;
 
+  const handleClearSavedOrderAndGoHome = () => {
+    try {
+      clearStoredSubmissionByToken(token);
+      clearAllStoredSubmissions();
+    } catch (e) {
+      console.warn('Error clearing stored submission:', e);
+    }
+    router.push('/');
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto max-w-2xl px-4 py-12 space-y-6">
@@ -276,14 +288,25 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
         </div>
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-zinc-950 dark:text-zinc-50">Invalid or Expired Link</h1>
-          <p className="text-sm text-zinc-500 max-w-md mx-auto">{error}</p>
+          <p className="text-sm text-zinc-500 max-w-md mx-auto">
+            {error || 'This order edit link was not found or has expired. If this order was removed, you can submit a new wait time or clear your saved order from this browser.'}
+          </p>
         </div>
-        <div className="pt-2">
-          <Button asChild variant="outline">
-            <Link href="/" className="gap-2">
-              <ChevronLeft className="h-4 w-4" />
-              Back to Home
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Button asChild className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-black font-semibold shadow-sm">
+            <Link href="/#submit" className="gap-2">
+              <PlusCircle className="h-4 w-4" />
+              Submit New Wait Time
             </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleClearSavedOrderAndGoHome}
+            className="w-full sm:w-auto gap-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 cursor-pointer"
+          >
+            <Trash2 className="h-4 w-4 text-zinc-500" />
+            Clear Saved Order &amp; Go Home
           </Button>
         </div>
       </div>
