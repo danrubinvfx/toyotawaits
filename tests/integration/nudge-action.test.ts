@@ -116,4 +116,24 @@ describe('One-Click Nudge Action API (/api/orders/status-action)', () => {
     expect(json.action).toBe('still_waiting');
     expect(json.submission.id).toBeDefined();
   });
+
+  it('action=vin_assigned updates stage to vin_assigned while keeping status pending', async () => {
+    const req = new NextRequest(`http://localhost:3000/api/orders/status-action?token=${testEditToken}&action=vin_assigned`);
+    const res = await GET(req);
+
+    expect(res.status).toBe(303);
+    const sub = await getSubmissionByEditToken(testEditToken);
+    expect(sub?.status).toBe('pending');
+    expect(sub?.stage).toBe('vin_assigned');
+  });
+
+  it('action=in_transit updates stage to in_transit while keeping status pending', async () => {
+    const req = new NextRequest(`http://localhost:3000/api/orders/status-action?token=${testEditToken}&action=in_transit`);
+    const res = await GET(req);
+
+    expect(res.status).toBe(303);
+    const sub = await getSubmissionByEditToken(testEditToken);
+    expect(sub?.status).toBe('pending');
+    expect(sub?.stage).toBe('in_transit');
+  });
 });

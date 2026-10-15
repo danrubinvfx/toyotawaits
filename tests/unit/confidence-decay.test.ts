@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { isSubmissionStale, classifySubmissionsQueue } from '@/lib/utils/confidence-decay';
+import {
+  isSubmissionStale,
+  classifySubmissionsQueue,
+  filterActiveWaitingQueue,
+  calculateActiveQueueAverageWaitDays,
+} from '@/lib/utils/confidence-decay';
 
 describe('Estimator Confidence Decay & Active Queue Integrity', () => {
   const modelMedianDays = 375; // e.g. RAV4 model median
@@ -106,5 +111,25 @@ describe('Estimator Confidence Decay & Active Queue Integrity', () => {
     expect(result.activeStale.map((i) => i.id)).toEqual(['2']);
     expect(result.delivered.map((i) => i.id)).toEqual(['4']);
     expect(result.cancelled.map((i) => i.id)).toEqual(['5']);
+  });
+
+  it('separates delivered entries from the active wait-time calculating queue to prevent inflating averages', () => {
+    const mixedRecords = [
+      // Active orders: 100 days elapsed and 200 days elapsed -> Active Avg should be 150 days
+      { id: 'act-1', orderDate: '2026-07-02', stage: 'deposit_placed', status: 'pending' }, // 100d
+      { id: 'act-2', orderDate: '2026-03-24', stage: 'vin_assigned', status: 'pending' }, // 200d
+      // Delivered order with long completed wait time (e.g. 500 days wait)
+      { id: 'del-1', orderDate: '2025-05-28', stage: 'delivered', status: 'delivered', waitDays: 500 },
+      // Cancelled order
+      { id: 'can-1', orderDate: '2025-01-01', stage: 'cancelled', status: 'cancelled' },
+    ];
+
+    const activeQueue = filterActiveWaitingQueue(mixedRecords);
+    expect(activeQueue.map((r) => r.id)).toEqual(['act-1', 'act-2']);
+    expect(activeQueue.some((r) => r.status === 'delivered')).toBe(false);
+
+    // Active queue average should be 150 days, NOT inflated by the 500-day delivered wait time
+    const activeAvgDays = calculateActiveQueueAverageWaitDays(mixedRecords, referenceDate);
+    expect(activeAvgDays).toBe(150);
   });
 });

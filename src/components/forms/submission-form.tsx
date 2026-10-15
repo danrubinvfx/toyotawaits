@@ -88,7 +88,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     d.setDate(d.getDate() + 1);
     return d.toISOString().split('T')[0];
   });
-  const [stage, setStage] = useState<'deposit_placed' | 'allocation_confirmed' | 'in_transit' | 'delivered'>('deposit_placed');
+  const [stage, setStage] = useState<'deposit_placed' | 'vin_assigned' | 'allocation_confirmed' | 'in_transit' | 'delivered'>('deposit_placed');
   const [status, setStatus] = useState<'pending' | 'delivered'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('undisclosed');
@@ -628,25 +628,25 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 >
                   <span className="text-xs font-bold">1. Deposit Placed</span>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
-                    Deposit queue initiated
+                    Deposit Placed / Waiting on Allocation
                   </span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => {
-                    setStage('allocation_confirmed');
+                    setStage('vin_assigned');
                     setStatus('pending');
                   }}
                   className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
-                    stage === 'allocation_confirmed'
+                    stage === 'vin_assigned' || stage === 'allocation_confirmed'
                       ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
                   }`}
                 >
-                  <span className="text-xs font-bold">2. Allocation Assigned</span>
+                  <span className="text-xs font-bold">2. Build Assigned / VIN Generated</span>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
-                    Build slot / VIN confirmed
+                    Build Assigned / VIN Generated
                   </span>
                 </button>
 
@@ -662,9 +662,9 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
                   }`}
                 >
-                  <span className="text-xs font-bold">3. In Transit / Freight</span>
+                  <span className="text-xs font-bold">3. In Transit</span>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
-                    Rail or carrier in transit
+                    In Transit / Freight
                   </span>
                 </button>
 
@@ -682,7 +682,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 >
                   <span className="text-xs font-bold">4. Delivered</span>
                   <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">
-                    Vehicle received at dealer
+                    Delivered / Vehicle Received (Keys in Hand)
                   </span>
                 </button>
               </div>

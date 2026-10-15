@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import productsData from '@/lib/data/affiliate-products.json';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,8 @@ import {
   RotateCcw,
   Luggage,
   SlidersHorizontal,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModCard } from '@/components/delivery-prep/mod-card';
@@ -213,6 +215,41 @@ export function DeliveryPrepChecklist({
     }
   };
 
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScrollability = useCallback(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+  }, []);
+
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    checkScrollability();
+    el.addEventListener('scroll', checkScrollability, { passive: true });
+    window.addEventListener('resize', checkScrollability, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', checkScrollability);
+      window.removeEventListener('resize', checkScrollability);
+    };
+  }, [checkScrollability]);
+
+  const scrollByOneCard = (direction: 'left' | 'right') => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector<HTMLElement>('[data-testid^="checklist-item-"]');
+    const cardWidth = firstCard ? firstCard.offsetWidth + 12 : 280;
+    el.scrollBy({
+      left: direction === 'left' ? -cardWidth : cardWidth,
+      behavior: 'smooth',
+    });
+  };
+
   // Filter items matching model and powertrain with deduplication by item.id and item.asin
   const filteredProducts = useMemo(() => {
     const list = productsData as ChecklistProduct[];
@@ -392,23 +429,61 @@ export function DeliveryPrepChecklist({
         </div>
       </CardHeader>
 
-      {/* Checklist Items - Horizontal Snap Carousel rendered via ModCard */}
+      {/* Checklist Items - Horizontal Snap Carousel rendered via ModCard with Desktop Nav Buttons */}
       <CardContent className="p-3 sm:p-4">
         {filteredProducts.length === 0 ? (
           <div className="p-6 text-center text-xs text-zinc-500 w-full">
             No accessories found matching this vehicle and filter criteria.
           </div>
         ) : (
-          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1">
-            {filteredProducts.map((item) => (
-              <ModCard
-                key={item.id || item.slug}
-                item={item}
-                isChecked={!!checkedItems[item.slug]}
-                onToggle={toggleItem}
-                showCheckbox={true}
-              />
-            ))}
+          <div className="relative group">
+            {/* Desktop Prev Button */}
+            <button
+              type="button"
+              aria-label="Previous accessories"
+              data-testid="gear-carousel-prev"
+              disabled={!canScrollLeft}
+              onClick={() => scrollByOneCard('left')}
+              className={cn(
+                'hidden md:flex items-center justify-center absolute -left-3 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-200 shadow-lg transition-all duration-200 cursor-pointer',
+                'hover:bg-zinc-800 hover:text-white hover:border-amber-500/60',
+                !canScrollLeft && 'opacity-0 pointer-events-none cursor-not-allowed'
+              )}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+
+            <div
+              ref={carouselRef}
+              data-testid="gear-carousel-container"
+              className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1 scroll-smooth touch-pan-x"
+            >
+              {filteredProducts.map((item) => (
+                <ModCard
+                  key={item.id || item.slug}
+                  item={item}
+                  isChecked={!!checkedItems[item.slug]}
+                  onToggle={toggleItem}
+                  showCheckbox={true}
+                />
+              ))}
+            </div>
+
+            {/* Desktop Next Button */}
+            <button
+              type="button"
+              aria-label="Next accessories"
+              data-testid="gear-carousel-next"
+              disabled={!canScrollRight}
+              onClick={() => scrollByOneCard('right')}
+              className={cn(
+                'hidden md:flex items-center justify-center absolute -right-3 top-1/2 -translate-y-1/2 z-20 h-9 w-9 rounded-full border border-zinc-700 bg-zinc-900/95 text-zinc-200 shadow-lg transition-all duration-200 cursor-pointer',
+                'hover:bg-zinc-800 hover:text-white hover:border-amber-500/60',
+                !canScrollRight && 'opacity-0 pointer-events-none cursor-not-allowed'
+              )}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         )}
       </CardContent>

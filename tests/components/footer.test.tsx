@@ -55,4 +55,29 @@ describe('Footer Component', () => {
     expect(winterPrepLink).toBeInTheDocument();
     expect(winterPrepLink).toHaveAttribute('href', '/winter-prep');
   });
+
+  it('renders standardized Global Nominative Fair Use Disclaimer', () => {
+    render(<Footer />);
+
+    expect(
+      screen.getByText(
+        /toyotawaits\.ca is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or Toyota Canada Inc\./i
+      )
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use\./i
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('renders FTC and Canadian compliant Regulatory & Affiliate Notice in footer', () => {
+    render(<Footer />);
+
+    expect(
+      screen.getByText(
+        /toyotawaits\.ca participates in affiliate programs, including the Amazon Associates Program\. As an Amazon Associate, we may earn commissions from qualifying purchases made through links on this site at no additional cost to you\./i
+      )
+    ).toBeInTheDocument();
+  });
 });

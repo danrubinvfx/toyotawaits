@@ -19,8 +19,15 @@ export type CanadianProvince =
 
 export type SubmissionStatus = 'pending' | 'delivered' | 'cancelled';
 
+export type OrderLifecycleState =
+  | 'deposit_placed' // Deposit Placed / Waiting on Allocation
+  | 'vin_assigned' // Build Assigned / VIN Generated
+  | 'in_transit' // In Transit / Freight
+  | 'delivered'; // Delivered / Keys in Hand
+
 export type OrderStage =
   | 'deposit_placed'
+  | 'vin_assigned'
   | 'allocation_confirmed'
   | 'in_transit'
   | 'delivered'
@@ -28,6 +35,7 @@ export type OrderStage =
 
 export type SubmissionStage =
   | 'deposit_placed'
+  | 'vin_assigned'
   | 'allocation_confirmed'
   | 'in_transit'
   | 'freight_transit'
@@ -101,7 +109,14 @@ export interface Submission {
   updatedAt: string; // ISO 8601
 }
 
-export type NudgeAction = 'still_waiting' | 'delivered' | 'cancelled';
+export type NudgeAction =
+  | 'still_waiting'
+  | 'deposit_placed'
+  | 'vin_assigned'
+  | 'allocation_confirmed'
+  | 'in_transit'
+  | 'delivered'
+  | 'cancelled';
 
 export interface NudgeActionResult {
   success: boolean;

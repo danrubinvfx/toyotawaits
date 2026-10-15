@@ -110,3 +110,39 @@ export function classifySubmissionsQueue<T extends SubmissionDecaySubject>(
     activeStaleCount: activeStale.length,
   };
 }
+
+/**
+ * Separates and filters out "delivered" and "cancelled" entries from the submissions queue,
+ * returning strictly active waiting orders (deposit_placed, vin_assigned, in_transit).
+ */
+export function filterActiveWaitingQueue<T extends SubmissionDecaySubject>(submissions: T[]): T[] {
+  return submissions.filter((item) => {
+    const stage = item.stage || (item.status === 'delivered' ? 'delivered' : 'deposit_placed');
+    const status = item.status || (stage === 'delivered' ? 'delivered' : 'pending');
+    return status !== 'delivered' && stage !== 'delivered' && status !== 'cancelled' && stage !== 'cancelled';
+  });
+}
+
+/**
+ * Calculates the average elapsed wait time (in calendar days) for active waiting queue entries.
+ * Completed/delivered records are strictly excluded so they inform historical benchmarks
+ * without inflating or distorting active queue averages.
+ */
+export function calculateActiveQueueAverageWaitDays<T extends SubmissionDecaySubject>(
+  submissions: T[],
+  referenceDate: Date = new Date()
+): number {
+  const activeQueue = filterActiveWaitingQueue(submissions);
+  if (activeQueue.length === 0) return 0;
+
+  const refTime = referenceDate.getTime();
+  const totalDays = activeQueue.reduce((acc, item) => {
+    const orderTime = new Date(item.orderDate).getTime();
+    if (isNaN(orderTime)) return acc;
+    const elapsed = Math.max(0, Math.floor((refTime - orderTime) / (1000 * 60 * 60 * 24)));
+    return acc + elapsed;
+  }, 0);
+
+  return Math.round(totalDays / activeQueue.length);
+}
+

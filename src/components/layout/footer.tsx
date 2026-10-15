@@ -134,10 +134,10 @@ export function Footer() {
         {/* Disclaimer & Disclosure Section */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-500 space-y-3">
           <p className="leading-relaxed">
-            <strong>Legal Disclaimer:</strong> ToyotaWaits.ca is an independent community-driven initiative and is not
-            affiliated, associated, authorized, endorsed by, or in any way officially connected with Toyota Motor
-            Corporation, Toyota Canada Inc., or any of their subsidiaries or affiliates. All vehicle model names, logos,
-            and brands are property of their respective owners.
+            <strong>Nominative Fair Use Disclaimer:</strong> toyotawaits.ca is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or Toyota Canada Inc. All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use.
+          </p>
+          <p className="leading-relaxed">
+            <strong>Regulatory &amp; Affiliate Notice:</strong> toyotawaits.ca participates in affiliate programs, including the Amazon Associates Program. As an Amazon Associate, we may earn commissions from qualifying purchases made through links on this site at no additional cost to you.
           </p>
           <p className="leading-relaxed">
             <strong>Monetization Disclosure:</strong> ToyotaWaits.ca is community-supported and ad-free.
@@ -169,3 +169,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export default Footer;

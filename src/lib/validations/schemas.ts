@@ -15,6 +15,7 @@ export const submissionStatusSchema = z.enum(SUBMISSION_STATUSES);
 
 export const ORDER_STAGES = [
   'deposit_placed',
+  'vin_assigned',
   'allocation_confirmed',
   'in_transit',
   'delivered',
@@ -24,6 +25,7 @@ export const orderStageSchema = z.enum(ORDER_STAGES);
 
 export const SUBMISSION_STAGES = [
   'deposit_placed',
+  'vin_assigned',
   'allocation_confirmed',
   'in_transit',
   'freight_transit',
@@ -36,7 +38,15 @@ export const submissionStageSchema = z.enum(SUBMISSION_STAGES);
 export const PRICING_TYPES = ['at_msrp', 'above_msrp', 'below_msrp', 'undisclosed'] as const;
 export const pricingTypeSchema = z.enum(PRICING_TYPES);
 
-export const NUDGE_ACTIONS = ['still_waiting', 'delivered', 'cancelled'] as const;
+export const NUDGE_ACTIONS = [
+  'still_waiting',
+  'deposit_placed',
+  'vin_assigned',
+  'allocation_confirmed',
+  'in_transit',
+  'delivered',
+  'cancelled',
+] as const;
 export const nudgeActionSchema = z.enum(NUDGE_ACTIONS);
 
 // ----------------------------------------------------------------------------

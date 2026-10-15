@@ -1377,6 +1377,33 @@ export async function handleNudgeAction(
             ...updatePayload,
             status: 'pending',
           };
+        } else if (action === 'deposit_placed') {
+          finalStatus = 'pending';
+          finalStage = 'deposit_placed';
+          updatePayload = {
+            ...updatePayload,
+            status: 'pending',
+            stage: 'deposit_placed',
+            current_stage: 'deposit_placed',
+          };
+        } else if (action === 'vin_assigned' || action === 'allocation_confirmed') {
+          finalStatus = 'pending';
+          finalStage = 'vin_assigned';
+          updatePayload = {
+            ...updatePayload,
+            status: 'pending',
+            stage: 'vin_assigned',
+            current_stage: 'vin_assigned',
+          };
+        } else if (action === 'in_transit') {
+          finalStatus = 'pending';
+          finalStage = 'in_transit';
+          updatePayload = {
+            ...updatePayload,
+            status: 'pending',
+            stage: 'in_transit',
+            current_stage: 'in_transit',
+          };
         } else if (action === 'delivered') {
           finalStatus = 'delivered';
           finalStage = 'delivered';
@@ -1460,6 +1487,24 @@ export async function handleNudgeAction(
       if (action === 'still_waiting') {
         item.status = 'pending';
         finalStatus = 'pending';
+      } else if (action === 'deposit_placed') {
+        item.status = 'pending';
+        item.stage = 'deposit_placed';
+        item.current_stage = 'deposit_placed';
+        finalStatus = 'pending';
+        finalStage = 'deposit_placed';
+      } else if (action === 'vin_assigned' || action === 'allocation_confirmed') {
+        item.status = 'pending';
+        item.stage = 'vin_assigned';
+        item.current_stage = 'vin_assigned';
+        finalStatus = 'pending';
+        finalStage = 'vin_assigned';
+      } else if (action === 'in_transit') {
+        item.status = 'pending';
+        item.stage = 'in_transit';
+        item.current_stage = 'in_transit';
+        finalStatus = 'pending';
+        finalStage = 'in_transit';
       } else if (action === 'delivered') {
         item.status = 'delivered';
         item.stage = 'delivered';

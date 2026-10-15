@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 import { QUICK_SELECT_MODELS, QuickSelectModelOption } from './wait-time-estimator';
 
 import Link from 'next/link';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export interface StickyVehiclePillsProps {
   initialModel?: string;
@@ -18,10 +18,44 @@ export function StickyVehiclePills({
   onSelectModel,
   className,
 }: StickyVehiclePillsProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>(initialModel);
   const [selectedPowertrain, setSelectedPowertrain] = useState<string>('');
   const [selectedProvince, setSelectedProvince] = useState<string>('');
   const [orderDate, setOrderDate] = useState<string>('');
+
+  const checkScrollability = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 5);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    checkScrollability();
+    el.addEventListener('scroll', checkScrollability, { passive: true });
+    window.addEventListener('resize', checkScrollability, { passive: true });
+    return () => {
+      el.removeEventListener('scroll', checkScrollability);
+      window.removeEventListener('resize', checkScrollability);
+    };
+  }, [checkScrollability]);
+
+  const scrollByCard = (direction: 'left' | 'right') => {
+    const el = containerRef.current;
+    if (!el) return;
+    const firstButton = el.querySelector<HTMLElement>('button');
+    const scrollAmount = firstButton ? firstButton.offsetWidth + 8 : 150;
+    el.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+  };
 
   // Listen for model sync events from the Estimator dropdown
   useEffect(() => {
@@ -71,32 +105,65 @@ export function StickyVehiclePills({
       )}
     >
       <div className="container mx-auto max-w-6xl flex items-center justify-between gap-3 px-1 sm:px-4">
-        <div
-          role="tablist"
-          aria-label="Popular models list"
-          className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 w-full justify-start md:justify-center snap-x snap-mandatory scroll-smooth"
-        >
-          {QUICK_SELECT_MODELS.map((opt) => {
-            const isActive = opt.matchSlugs.includes(selectedModel);
-            return (
-              <button
-                key={opt.label}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                data-testid={`quick-model-${opt.slug}`}
-                onClick={() => handlePillClick(opt)}
-                className={cn(
-                  'snap-start shrink-0 px-3 py-1 text-xs sm:px-3.5 sm:py-1.5 sm:text-sm rounded-full transition-all cursor-pointer select-none',
-                  isActive
-                    ? 'bg-amber-500 text-black font-semibold shadow-sm border border-amber-400'
-                    : 'bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 border border-neutral-800'
-                )}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
+        <div className="relative flex-1 flex items-center min-w-0">
+          {/* Desktop Left Chevron Button */}
+          <button
+            type="button"
+            aria-label="Previous vehicles"
+            data-testid="pills-prev-button"
+            disabled={!canScrollLeft}
+            onClick={() => scrollByCard('left')}
+            className={cn(
+              'hidden md:flex items-center justify-center shrink-0 mr-1.5 h-7 w-7 rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer',
+              !canScrollLeft && 'opacity-25 pointer-events-none cursor-not-allowed'
+            )}
+          >
+            <ChevronLeft className="h-3.5 w-3.5" />
+          </button>
+
+          <div
+            ref={containerRef}
+            role="tablist"
+            aria-label="Popular models list"
+            className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-0.5 w-full justify-start md:justify-center snap-x snap-mandatory scroll-smooth touch-pan-x"
+          >
+            {QUICK_SELECT_MODELS.map((opt) => {
+              const isActive = opt.matchSlugs.includes(selectedModel);
+              return (
+                <button
+                  key={opt.label}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  data-testid={`quick-model-${opt.slug}`}
+                  onClick={() => handlePillClick(opt)}
+                  className={cn(
+                    'snap-start shrink-0 px-3 py-1 text-xs sm:px-3.5 sm:py-1.5 sm:text-sm rounded-full transition-all cursor-pointer select-none',
+                    isActive
+                      ? 'bg-amber-500 text-black font-semibold shadow-sm border border-amber-400'
+                      : 'bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 border border-neutral-800'
+                  )}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Desktop Right Chevron Button */}
+          <button
+            type="button"
+            aria-label="Next vehicles"
+            data-testid="pills-next-button"
+            disabled={!canScrollRight}
+            onClick={() => scrollByCard('right')}
+            className={cn(
+              'hidden md:flex items-center justify-center shrink-0 ml-1.5 h-7 w-7 rounded-full border border-neutral-700 bg-neutral-900 text-neutral-300 hover:text-white hover:bg-neutral-800 transition-all cursor-pointer',
+              !canScrollRight && 'opacity-25 pointer-events-none cursor-not-allowed'
+            )}
+          >
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
         </div>
 
         <Link

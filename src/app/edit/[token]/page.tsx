@@ -44,7 +44,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
   const [submission, setSubmission] = useState<any | null>(null);
 
   // Form states
-  const [stage, setStage] = useState<'deposit_placed' | 'allocation_confirmed' | 'in_transit' | 'delivered' | 'cancelled'>('deposit_placed');
+  const [stage, setStage] = useState<'deposit_placed' | 'vin_assigned' | 'allocation_confirmed' | 'in_transit' | 'delivered' | 'cancelled'>('deposit_placed');
   const [status, setStatus] = useState<'pending' | 'delivered' | 'cancelled'>('pending');
   const [deliveryDate, setDeliveryDate] = useState<string>(getTodayLocalDate());
   const [notes, setNotes] = useState<string>('');
@@ -358,7 +358,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     />
                     <div>
                       <p className="text-xs font-bold">1. Deposit Placed</p>
-                      <p className="text-[11px] text-zinc-500">Deposit on file with dealer</p>
+                      <p className="text-[11px] text-zinc-500">Deposit Placed / Waiting on Allocation</p>
                     </div>
                   </div>
                 </button>
@@ -366,11 +366,11 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                 <button
                   type="button"
                   onClick={() => {
-                    setStage('allocation_confirmed');
+                    setStage('vin_assigned');
                     setStatus('pending');
                   }}
                   className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'allocation_confirmed'
+                    stage === 'vin_assigned' || stage === 'allocation_confirmed'
                       ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
                       : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
                   }`}
@@ -378,12 +378,12 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'allocation_confirmed' ? 'text-amber-500' : 'text-zinc-400'
+                        stage === 'vin_assigned' || stage === 'allocation_confirmed' ? 'text-amber-500' : 'text-zinc-400'
                       }`}
                     />
                     <div>
-                      <p className="text-xs font-bold">2. Allocation Assigned</p>
-                      <p className="text-[11px] text-zinc-500">Build date / temp VIN confirmed</p>
+                      <p className="text-xs font-bold">2. Build Assigned / VIN Generated</p>
+                      <p className="text-[11px] text-zinc-500">Build Assigned / VIN Generated</p>
                     </div>
                   </div>
                 </button>
@@ -407,8 +407,8 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                       }`}
                     />
                     <div>
-                      <p className="text-xs font-bold">3. In Transit / Freight</p>
-                      <p className="text-[11px] text-zinc-500">Shipped by rail or carrier</p>
+                      <p className="text-xs font-bold">3. In Transit</p>
+                      <p className="text-[11px] text-zinc-500">In Transit / Freight</p>
                     </div>
                   </div>
                 </button>
@@ -432,8 +432,8 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                       }`}
                     />
                     <div>
-                      <p className="text-xs font-bold">4. Delivered at Dealership</p>
-                      <p className="text-[11px] text-zinc-500">Took delivery &amp; received keys</p>
+                      <p className="text-xs font-bold">4. Delivered</p>
+                      <p className="text-[11px] text-zinc-500">Delivered / Keys in Hand</p>
                     </div>
                   </div>
                 </button>

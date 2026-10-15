@@ -197,4 +197,42 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     const allAfter = await getCommunitySubmissions();
     expect(allAfter.length).toBe(countBefore); // ZERO duplicate rows created
   });
+
+  it('successfully updates submission to vin_assigned and in_transit lifecycle states', async () => {
+    // 1. Advance to vin_assigned
+    const req1 = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stage: 'vin_assigned',
+        notes: 'VIN generated and build assigned.',
+      }),
+    });
+
+    const res1 = await PATCH(req1, { params: Promise.resolve({ token: validEditToken }) });
+    const json1 = await res1.json();
+
+    expect(res1.status).toBe(200);
+    expect(json1.success).toBe(true);
+    expect(json1.data.stage).toBe('vin_assigned');
+    expect(json1.data.status).toBe('pending');
+
+    // 2. Advance to in_transit
+    const req2 = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stage: 'in_transit',
+        notes: 'On freight transport to dealer.',
+      }),
+    });
+
+    const res2 = await PATCH(req2, { params: Promise.resolve({ token: validEditToken }) });
+    const json2 = await res2.json();
+
+    expect(res2.status).toBe(200);
+    expect(json2.success).toBe(true);
+    expect(json2.data.stage).toBe('in_transit');
+    expect(json2.data.status).toBe('pending');
+  });
 });

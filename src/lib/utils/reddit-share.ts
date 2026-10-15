@@ -13,6 +13,7 @@ export interface RedditShareParams {
 
 export const STAGE_DISPLAY_NAMES: Record<SubmissionStage, string> = {
   deposit_placed: 'Deposit Placed',
+  vin_assigned: 'Build Assigned / VIN Generated',
   allocation_confirmed: 'Allocation Confirmed',
   in_transit: 'In Transit / Freight',
   freight_transit: 'Freight Transit',

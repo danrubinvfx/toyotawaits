@@ -26,7 +26,7 @@ export function getStageStepIndex(stage?: string | null, status?: string | null)
   if (status === 'cancelled' || stage === 'cancelled') return -1;
   if (status === 'delivered' || stage === 'delivered' || stage === 'arrived_at_dealer') return 3;
   if (stage === 'in_transit' || stage === 'freight_transit') return 2;
-  if (stage === 'allocation_confirmed') return 1;
+  if (stage === 'vin_assigned' || stage === 'allocation_confirmed') return 1;
   return 0; // default: deposit_placed
 }
 
@@ -34,8 +34,66 @@ export function getStageDisplayLabel(stage?: string | null, status?: string | nu
   if (status === 'cancelled' || stage === 'cancelled') return 'Cancelled';
   if (status === 'delivered' || stage === 'delivered' || stage === 'arrived_at_dealer') return 'Delivered';
   if (stage === 'in_transit' || stage === 'freight_transit') return 'In Transit';
+  if (stage === 'vin_assigned') return 'Build Assigned / VIN Generated';
   if (stage === 'allocation_confirmed') return 'Allocation Assigned';
   return 'Deposit Placed';
+}
+
+export interface OrderStageBadgeProps {
+  stage?: OrderStage | SubmissionStage | string | null;
+  status?: string | null;
+  className?: string;
+  showStepNumber?: boolean;
+}
+
+export function OrderStageBadge({
+  stage,
+  status,
+  className = '',
+  showStepNumber = true,
+}: OrderStageBadgeProps) {
+  const stepIndex = getStageStepIndex(stage, status);
+  const displayLabel = getStageDisplayLabel(stage, status);
+
+  if (stepIndex === -1) {
+    return (
+      <span
+        data-testid="order-stage-badge-cancelled"
+        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-zinc-200/60 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700 ${className}`}
+      >
+        <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+        <span>Cancelled</span>
+      </span>
+    );
+  }
+
+  // Visual styling for the 4 discrete lifecycle states
+  const styles = [
+    // 0. deposit_placed
+    'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 ring-amber-400/20',
+    // 1. vin_assigned
+    'bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20 ring-blue-400/20',
+    // 2. in_transit
+    'bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20 ring-purple-400/20',
+    // 3. delivered
+    'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 ring-emerald-400/20',
+  ];
+
+  const currentStyle = styles[stepIndex] || styles[0];
+
+  return (
+    <span
+      data-testid="order-stage-badge"
+      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold border transition-colors ${currentStyle} ${className}`}
+    >
+      {showStepNumber && (
+        <span className="font-mono text-[9px] px-1 py-0.2 rounded-full bg-black/10 dark:bg-white/10">
+          {stepIndex + 1}/4
+        </span>
+      )}
+      <span>{displayLabel}</span>
+    </span>
+  );
 }
 
 export function OrderStageIndicator({
