@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -338,6 +339,9 @@ export default function GuidesIndexPage() {
           ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
     </div>
   );
 }

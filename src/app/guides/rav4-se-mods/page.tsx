@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -302,6 +303,9 @@ export default function Rav4SeModsGuidePage() {
           As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
 
       {/* Back to Estimator CTA */}
       <div className="pt-4 flex items-center justify-between">

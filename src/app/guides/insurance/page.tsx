@@ -1,6 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -106,6 +107,9 @@ export default function InsuranceGuidePage() {
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
         <strong>Affiliate Transparency:</strong> Referral links use first-party cloaked redirects that help keep ToyotaWaits.ca free and zero-PII compliant. We do not store personal insurance data.
       </p>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
     </div>
   );
 }

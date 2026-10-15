@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import { GuideHero } from '@/components/guides/guide-hero';
 import { ToolChecklist } from '@/components/guides/tool-checklist';
 import { ModComparisonCard } from '@/components/guides/mod-comparison-card';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -290,6 +291,9 @@ export default function PriusModsGuidePage() {
           As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
 
       {/* Back to Estimator CTA */}
       <div className="pt-4 flex items-center justify-between">

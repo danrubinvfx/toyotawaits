@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { TireCatalog } from '@/components/tires/tire-catalog';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
@@ -47,6 +48,9 @@ export default function TiresPage() {
         <BackButton className="mb-4" />
       </div>
       <TireCatalog />
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 pt-8 pb-16">
+        <GuideDisclaimer />
+      </div>
     </main>
   );
 }

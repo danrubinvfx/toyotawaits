@@ -1,6 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -142,6 +143,9 @@ export default function EVChargingGuidePage() {
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
         <strong>Affiliate Transparency:</strong> Links on this guide use first-party cloaked redirects that earn a referral fee supporting ToyotaWaits.ca hosting and open data infrastructure. As an Amazon Associate I earn from qualifying purchases. We do not use third-party tracking cookies.
       </p>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
     </div>
   );
 }

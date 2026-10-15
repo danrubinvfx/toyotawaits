@@ -1,6 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -136,6 +137,9 @@ export default function WinterTiresGuidePage() {
       <p className="text-[11px] text-zinc-500 text-center leading-relaxed">
         <strong>Affiliate Transparency:</strong> Product links redirect through clean first-party redirects earning referral fees that maintain ToyotaWaits.ca. As an Amazon Associate I earn from qualifying purchases. Zero third-party trackers.
       </p>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { Metadata } from 'next';
 import { GuideHero } from '@/components/guides/guide-hero';
 import { ToolChecklist } from '@/components/guides/tool-checklist';
 import { ModComparisonCard } from '@/components/guides/mod-comparison-card';
+import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -187,6 +188,9 @@ export default function LandCruiserModsGuidePage() {
           As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
+
+      {/* Legal & Safety Disclaimer */}
+      <GuideDisclaimer />
 
       {/* Navigation CTA */}
       <div className="pt-4 flex items-center justify-between">
