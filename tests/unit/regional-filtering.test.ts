@@ -69,4 +69,46 @@ describe('Regional Schema Partitioning and Filtering (CA vs US)', () => {
     expect(caExport.length).toBeGreaterThan(0);
     expect(caExport.every((row) => row.country_code !== 'US')).toBe(true);
   });
+
+  it('successfully creates, retrieves and sorts pure gas Canadian submissions in community feed', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const createdGas = await insertSubmission({
+      modelId: 'tacoma',
+      modelSlug: 'tacoma',
+      model: 'Tacoma',
+      powertrainId: '20000000-0000-4000-8000-000000000071',
+      powertrainSlug: 'gas',
+      powertrain: 'i-FORCE 2.4L Turbo Gas',
+      trimId: '30000000-0000-4000-8000-000000000094',
+      trimSlug: 'sr5',
+      trim: 'SR5',
+      countryCode: 'CA',
+      province: 'AB',
+      dealershipCity: 'Calgary',
+      dealershipName: 'Calgary Toyota',
+      modelYear: 2026,
+      orderDate: today,
+      status: 'pending',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      notes: 'Tacoma gas test order',
+      editKeyHash: 'hash-ca-gas-test-123',
+      isFlagged: false,
+    });
+
+    expect(createdGas.id).toBeDefined();
+
+    const caFeed = await getCommunitySubmissions('CA');
+    const match = caFeed.find((s) => s.id === createdGas.id);
+    expect(match).toBeDefined();
+    expect(match?.model).toBe('Tacoma');
+    expect(match?.powertrainSlug).toBe('gas');
+    expect(match?.powertrain).toBe('i-FORCE 2.4L Turbo Gas');
+    expect(match?.province).toBe('AB');
+
+    // Default sort is descending by orderDate, so today's submission is at index 0
+    expect(caFeed[0].id).toBe(createdGas.id);
+  });
 });
+

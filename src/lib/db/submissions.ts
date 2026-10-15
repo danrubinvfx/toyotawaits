@@ -1,9 +1,34 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
-import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
+import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS, INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { isSubmissionStale } from '@/lib/utils/confidence-decay';
+
+/**
+ * Maps frontend/domain stage string to valid PostgreSQL `submission_stage` ENUM:
+ * ('deposit_placed', 'allocation_confirmed', 'freight_transit', 'arrived_at_dealer', 'delivered')
+ */
+export function toSubmissionStageEnum(stage?: string | null, status?: string | null): DbSubmissionStageEnum {
+  if (status === 'delivered' || stage === 'delivered') return 'delivered';
+  if (stage === 'freight_transit' || stage === 'in_transit') return 'freight_transit';
+  if (stage === 'allocation_confirmed' || stage === 'vin_assigned') return 'allocation_confirmed';
+  if (stage === 'arrived_at_dealer') return 'arrived_at_dealer';
+  return 'deposit_placed';
+}
+
+/**
+ * Normalizes stage string to valid PostgreSQL submissions.stage check constraint:
+ * ('deposit_placed', 'vin_assigned', 'allocation_confirmed', 'in_transit', 'delivered', 'cancelled')
+ */
+export function toOrderStageText(stage?: string | null, status?: string | null): OrderStage {
+  if (status === 'cancelled' || stage === 'cancelled') return 'cancelled';
+  if (status === 'delivered' || stage === 'delivered') return 'delivered';
+  if (stage === 'freight_transit' || stage === 'in_transit') return 'in_transit';
+  if (stage === 'vin_assigned') return 'vin_assigned';
+  if (stage === 'allocation_confirmed') return 'allocation_confirmed';
+  return 'deposit_placed';
+}
 
 export interface SubmissionCreateData {
   modelId: string;
@@ -831,6 +856,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     waitDays = Math.round((end - start) / (1000 * 60 * 60 * 24));
   }
 
+  const resolvedDbStage = toOrderStageText(data.stage || data.currentStage, data.status);
+  const resolvedDbCurrentStage = toSubmissionStageEnum(data.currentStage || data.stage, data.status);
+
   // If Supabase PostgreSQL is live
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -867,8 +895,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           order_date: data.orderDate,
           delivery_date: data.deliveryDate,
           status: data.status,
-          current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
-          stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+          current_stage: resolvedDbCurrentStage,
+          stage: resolvedDbStage,
           stage_updated_at: new Date().toISOString(),
           pricing: data.pricing,
           mandatory_addons_cad: data.mandatoryAddonsCad,
@@ -913,8 +941,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             order_date: data.orderDate,
             delivery_date: data.deliveryDate,
             status: data.status,
-            current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
-            stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            current_stage: resolvedDbCurrentStage,
+            stage: resolvedDbStage,
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
             mandatory_addons_cad: data.mandatoryAddonsCad,
@@ -956,8 +984,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             order_date: data.orderDate,
             delivery_date: data.deliveryDate,
             status: data.status,
-            current_stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
-            stage: data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+            current_stage: resolvedDbCurrentStage,
+            stage: resolvedDbStage,
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
             mandatory_addons_cad: data.mandatoryAddonsCad,
@@ -984,6 +1012,11 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             console.warn('Notice: Background refresh of mv_model_wait_summary encountered:', rpcErr);
           });
 
+        const normalizedReturnStage =
+          (inserted?.stage === 'freight_transit' ? 'in_transit' : inserted?.stage) ||
+          (inserted?.current_stage === 'freight_transit' ? 'in_transit' : inserted?.current_stage) ||
+          resolvedDbStage;
+
         return {
           id: inserted?.id || id,
           countryCode,
@@ -994,8 +1027,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           portDestination,
           port_destination: portDestination,
           status: inserted?.status || data.status,
-          currentStage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
-          stage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
+          currentStage: normalizedReturnStage,
+          stage: normalizedReturnStage,
           waitDays: inserted?.wait_days ?? waitDays,
           isFlagged: inserted?.is_flagged ?? data.isFlagged,
           editToken: inserted?.edit_token || editToken,
@@ -1020,14 +1053,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   }
 
   // In-memory fallback
-  const currentStage = data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed');
+  const currentStage = resolvedDbStage;
 
-  let memModelSlug = 'rav4';
-  let memModelName = 'RAV4';
-  let memPtSlug = 'hev';
-  let memPtName = 'Hybrid (HEV)';
-  let memTrimSlug = 'xle-awd';
-  let memTrimName = 'XLE AWD';
+  let memModelSlug = data.modelSlug || 'rav4';
+  let memModelName = data.model || 'RAV4';
+  let memPtSlug = data.powertrainSlug || 'hev';
+  let memPtName = data.powertrain || 'Hybrid (HEV)';
+  let memTrimSlug = data.trimSlug || 'xle-awd';
+  let memTrimName = data.trim || 'XLE AWD';
 
   for (const m of CANADIAN_VEHICLE_CATALOG) {
     if (
@@ -1039,11 +1072,19 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
       memModelSlug = m.slug;
       memModelName = m.name;
       for (const p of m.powertrains) {
-        if (p.id === data.powertrainId || p.slug === data.powertrainSlug) {
+        if (
+          p.id === data.powertrainId ||
+          p.slug === data.powertrainSlug ||
+          (data.powertrain && (p.name.toLowerCase() === (data.powertrain as string).toLowerCase() || p.slug.toLowerCase() === (data.powertrain as string).toLowerCase()))
+        ) {
           memPtSlug = p.slug;
           memPtName = p.name;
           for (const t of p.trims) {
-            if (t.id === data.trimId || t.slug === data.trimSlug) {
+            if (
+              t.id === data.trimId ||
+              t.slug === data.trimSlug ||
+              (data.trim && (t.name.toLowerCase() === (data.trim as string).toLowerCase() || t.slug.toLowerCase() === (data.trim as string).toLowerCase()))
+            ) {
               memTrimSlug = t.slug;
               memTrimName = t.name;
               break;
@@ -1055,6 +1096,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
       break;
     }
   }
+
+  if (data.model) memModelName = data.model;
+  if (data.powertrain) memPtName = data.powertrain;
+  if (data.trim) memTrimName = data.trim;
 
   const record = {
     id,
@@ -1082,8 +1127,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     delivery_date: data.deliveryDate || null,
     wait_days: waitDays,
     status: data.status,
-    current_stage: currentStage,
-    stage: currentStage,
+    current_stage: resolvedDbCurrentStage,
+    stage: resolvedDbStage,
     stage_updated_at: new Date().toISOString(),
     pricing: data.pricing,
     mandatory_addons_cad: data.mandatoryAddonsCad,
@@ -1094,6 +1139,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     is_flagged: data.isFlagged,
     created_at: new Date().toISOString(),
   };
+
+  if (editToken) {
+    for (const [existingId, item] of inMemorySubmissions.entries()) {
+      if (item.edit_token === editToken) {
+        inMemorySubmissions.delete(existingId);
+      }
+    }
+  }
 
   inMemorySubmissions.set(id, record);
 
@@ -1107,8 +1160,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     portDestination,
     port_destination: portDestination,
     status: data.status,
-    currentStage,
-    stage: currentStage,
+    currentStage: resolvedDbStage,
+    stage: resolvedDbStage,
     waitDays,
     isFlagged: data.isFlagged,
     editToken,
@@ -1144,11 +1197,8 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
       } else {
         if (finalStatus) updatePayload.status = finalStatus;
         if (finalStage) {
-          updatePayload.stage = finalStage;
-          const validEnumStages = ['deposit_placed', 'allocation_confirmed', 'freight_transit', 'arrived_at_dealer', 'delivered'];
-          if (validEnumStages.includes(finalStage)) {
-            updatePayload.current_stage = finalStage;
-          }
+          updatePayload.stage = toOrderStageText(finalStage, finalStatus);
+          updatePayload.current_stage = toSubmissionStageEnum(finalStage, finalStatus);
         }
       }
       if (data.notes !== undefined) updatePayload.notes = data.notes;
@@ -1193,6 +1243,7 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
           id: updated.id,
           status: updated.status,
           currentStage: updated.current_stage || 'deposit_placed',
+          stage: updated.stage || updated.current_stage || 'deposit_placed',
           waitDays: updated.wait_days,
           updatedAt: updated.updated_at,
         };
@@ -1212,7 +1263,10 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
   }
 
   if (finalStatus) record.status = finalStatus;
-  if (finalStage) record.current_stage = finalStage;
+  if (finalStage) {
+    record.stage = toOrderStageText(finalStage, finalStatus);
+    record.current_stage = toSubmissionStageEnum(finalStage, finalStatus);
+  }
   if (data.deliveryDate) {
     record.delivery_date = data.deliveryDate;
     const start = new Date(record.order_date).getTime();
@@ -1228,6 +1282,7 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
     id: record.id,
     status: record.status,
     currentStage: record.current_stage || (record.status === 'delivered' ? 'delivered' : 'deposit_placed'),
+    stage: record.stage || record.current_stage || (record.status === 'delivered' ? 'delivered' : 'deposit_placed'),
     waitDays: record.wait_days,
     updatedAt: record.updated_at,
   };
@@ -1524,25 +1579,69 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
         });
       }
     }
-    if (usRows.length > 0) return usRows;
+    if (usRows.length > 0) {
+      usRows.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+      return usRows;
+    }
     return INITIAL_US_COMMUNITY_RECORDS
       .filter((r) => r.status !== 'cancelled' && !cancelledIds.has(r.id))
       .map((r) => ({
         ...r,
-        countryCode: 'US',
-        country_code: 'US',
+        countryCode: 'US' as CountryCode,
+        country_code: 'US' as CountryCode,
         dealer_markup_adm: r.dealerMarkupAdm,
         port_destination: r.portDestination,
-      }));
+      }))
+      .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+  }
+
+  const caRows: CommunityRecord[] = [];
+  for (const item of inMemorySubmissions.values()) {
+    if (item.is_flagged) continue;
+    if (item.status === 'cancelled' || item.is_cancelled === true) continue;
+    if (item.country_code !== 'US' && item.countryCode !== 'US') {
+      caRows.push({
+        id: item.id,
+        model: item.model_name || 'RAV4',
+        modelSlug: item.model_slug || 'rav4',
+        powertrain: item.powertrain_name || 'Hybrid (HEV)',
+        powertrainSlug: item.powertrain_slug || 'hev',
+        trim: item.trim_name || 'XLE AWD',
+        modelYear: item.model_year,
+        countryCode: 'CA' as CountryCode,
+        country_code: 'CA' as CountryCode,
+        province: item.province || 'ON',
+        city: item.dealership_city || '',
+        dealerName: item.dealership_name || item.dealership_city || '',
+        dealershipName: item.dealership_name || '',
+        orderDate: item.order_date,
+        deliveryDate: item.delivery_date || null,
+        waitDays: item.wait_days != null ? Number(item.wait_days) : null,
+        status: item.status as SubmissionStatus,
+        stage: item.stage || item.current_stage || undefined,
+        pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
+          ? item.pricing
+          : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
+        addonsCad: Number(item.mandatory_addons_cad || 0),
+        dealerMarkupAdm: Number(item.dealer_markup_adm || 0),
+        portDestination: item.port_destination || undefined,
+      });
+    }
+  }
+
+  if (caRows.length > 0) {
+    caRows.sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
+    return caRows;
   }
 
   return INITIAL_COMMUNITY_RECORDS
     .filter((r) => r.status !== 'cancelled' && !cancelledIds.has(r.id))
     .map((r) => ({
       ...r,
-      countryCode: 'CA',
-      country_code: 'CA',
-    }));
+      countryCode: 'CA' as CountryCode,
+      country_code: 'CA' as CountryCode,
+    }))
+    .sort((a, b) => new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime());
 }
 
 export interface EditableSubmission {

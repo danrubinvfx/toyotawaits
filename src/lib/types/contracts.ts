@@ -53,6 +53,13 @@ export type SubmissionStage =
   | 'delivered'
   | 'cancelled';
 
+export type DbSubmissionStageEnum =
+  | 'deposit_placed'
+  | 'allocation_confirmed'
+  | 'freight_transit'
+  | 'arrived_at_dealer'
+  | 'delivered';
+
 export type PricingType = 'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed';
 
 // ----------------------------------------------------------------------------

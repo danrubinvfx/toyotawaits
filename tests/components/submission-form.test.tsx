@@ -381,4 +381,57 @@ describe('SubmissionForm Component', () => {
     const trimSelect = screen.getByLabelText(/Trim Level/i);
     expect(trimSelect.textContent).toContain('2026 MSRP Ref: CAD');
   });
+
+  it('automatically redirects to estimator when countdown reaches 0 without React errors', async () => {
+    vi.useFakeTimers();
+
+    const mockRouterPush = vi.fn();
+    const nextNav = await import('next/navigation');
+    vi.spyOn(nextNav, 'useRouter').mockReturnValue({
+      push: mockRouterPush,
+      replace: vi.fn(),
+      refresh: vi.fn(),
+      back: vi.fn(),
+      forward: vi.fn(),
+      prefetch: vi.fn(),
+    } as any);
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          id: 'test-auto-redirect-id',
+          status: 'pending',
+          editKey: 'test-key',
+          editToken: 'test-token',
+        },
+      }),
+    } as any);
+
+    render(<SubmissionForm />);
+
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+    fireEvent.click(submitBtn);
+
+    // Fast-forward resolve promise
+    await React.act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    expect(screen.getByText(/Redirecting to estimates in 5s/i)).toBeInTheDocument();
+
+    // Fast-forward countdown: 5 seconds + tick for setTimeout
+    await React.act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+      await vi.advanceTimersByTimeAsync(50);
+    });
+
+    expect(mockRouterPush).toHaveBeenCalledWith(
+      expect.stringContaining('/#estimator?submitted=true')
+    );
+
+    vi.useRealTimers();
+  });
 });

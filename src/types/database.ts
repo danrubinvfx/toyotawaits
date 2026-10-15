@@ -5,6 +5,7 @@ import type {
   SubmissionStatus,
   OrderStage,
   SubmissionStage,
+  DbSubmissionStageEnum,
   OrderLifecycleState,
   PricingType,
   VehicleModel,
@@ -20,6 +21,7 @@ export type {
   SubmissionStatus,
   OrderStage,
   SubmissionStage,
+  DbSubmissionStageEnum,
   OrderLifecycleState,
   PricingType,
   VehicleModel,
@@ -95,7 +97,7 @@ export interface Database {
           delivery_date: string | null;
           status: SubmissionStatus;
           stage: OrderStage;
-          current_stage?: SubmissionStage;
+          current_stage?: DbSubmissionStageEnum;
           stage_updated_at: string;
           wait_days: number | null;
           pricing: PricingType;

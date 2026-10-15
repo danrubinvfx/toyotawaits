@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { submissionCreateSchema } from '@/lib/validations/schemas';
 import { verifyTurnstileToken } from '@/lib/security/turnstile';
-import { checkRateLimit } from '@/lib/security/ratelimit';
+import { checkRateLimit, consumeRateLimit, rollbackRateLimit } from '@/lib/security/ratelimit';
 import { detectSubmissionOutlier } from '@/lib/security/outlier-detection';
 import { insertSubmission, getCommunitySubmissions } from '@/lib/db/submissions';
 import { revalidatePath, revalidateTag } from 'next/cache';
@@ -54,9 +54,10 @@ export async function GET(request?: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  let clientIp = '127.0.0.1';
   try {
     const forwarded = request.headers.get('x-forwarded-for') || request.headers.get('cf-connecting-ip');
-    const clientIp = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
+    clientIp = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
 
     let body: any;
     try {
@@ -88,7 +89,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Ephemeral In-Memory Rate Limiting (Zero-PII compliant)
-    const rateLimit = await checkRateLimit(clientIp, 5, 24 * 60 * 60 * 1000);
+    // Check quota without consuming attempt (only successful database insertions decrement quota)
+    const rateLimit = await checkRateLimit(clientIp, 5, 24 * 60 * 60 * 1000, false);
     if (!rateLimit.success) {
       return NextResponse.json<ApiResponse<null>>(
         {
@@ -246,6 +248,7 @@ export async function POST(request: NextRequest) {
       deliveryDate: validData.deliveryDate,
       status: validData.status,
       currentStage: validData.stage,
+      stage: validData.stage,
       pricing: validData.pricing,
       mandatoryAddonsCad: validData.mandatoryAddonsCad,
       tradeInRequired: validData.tradeInRequired,
@@ -255,9 +258,12 @@ export async function POST(request: NextRequest) {
       isFlagged: outlierResult.isFlagged,
     });
 
+    // 8. Consume rate limit only after successful persistence
+    await consumeRateLimit(clientIp, 24 * 60 * 60 * 1000);
+
     const finalEditToken = record.editToken || editToken;
 
-    // 8. Immediate Cache Revalidation for Public Feed and Statistics
+    // 9. Immediate Cache Revalidation for Public Feed and Statistics
     try {
       revalidatePath('/');
       revalidatePath('/submit');
@@ -297,6 +303,7 @@ export async function POST(request: NextRequest) {
       }
     );
   } catch (error: any) {
+    await rollbackRateLimit(clientIp);
     console.error('Unhandled error in POST /api/submissions:', {
       message: error?.message,
       code: error?.code,

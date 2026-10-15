@@ -19,6 +19,7 @@ import {
   Search,
   X,
   Zap,
+  Fuel,
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
@@ -39,7 +40,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [powertrainFilter, setPowertrainFilter] = useState<string>('all');
-  const [pillFilter, setPillFilter] = useState<'all' | 'hybrid' | 'phev' | 'pending' | 'delivered'>('all');
+  const [pillFilter, setPillFilter] = useState<'all' | 'hybrid' | 'phev' | 'gas' | 'pending' | 'delivered'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearch, setDebouncedSearch] = useState<string>('');
   const [sortBy, setSortBy] = useState<'orderDate' | 'waitDays'>('orderDate');
@@ -105,30 +106,30 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
       r.powertrain?.toLowerCase().includes('hybrid') ||
       r.powertrain?.toLowerCase().includes('hev'));
 
+  const isGas = (r: CommunityRecord) => !isPhev(r) && !isHybrid(r);
+
   // Status counts reflecting current model and province filters
   const statusCounts = useMemo(() => {
     let all = 0;
     let hybrid = 0;
     let phev = 0;
+    let gas = 0;
     let delivered = 0;
     let pending = 0;
     for (const r of records) {
       if (r.status === 'cancelled' || (r as any).is_cancelled) continue;
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
-      if (powertrainFilter !== 'all') {
-        if (powertrainFilter === 'hev' && !isHybrid(r)) continue;
-        if (powertrainFilter === 'phev' && !isPhev(r)) continue;
-        if (powertrainFilter === 'gas' && (isHybrid(r) || isPhev(r))) continue;
-      }
       all++;
       if (isHybrid(r)) hybrid++;
-      if (isPhev(r)) phev++;
+      else if (isPhev(r)) phev++;
+      else gas++;
+
       if (r.status === 'delivered') delivered++;
       else if (r.status === 'pending') pending++;
     }
-    return { all, hybrid, phev, delivered, pending };
-  }, [records, modelFilter, provinceFilter, powertrainFilter]);
+    return { all, hybrid, phev, gas, delivered, pending };
+  }, [records, modelFilter, provinceFilter]);
 
   // Filter and sort items (includes both delivered and pending submissions)
   const filteredRecords = useMemo(() => {
@@ -145,11 +146,13 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             ? 'hev'
             : pillFilter === 'phev'
               ? 'phev'
-              : 'all';
+              : pillFilter === 'gas'
+                ? 'gas'
+                : 'all';
 
         if (effectivePowertrain === 'hev' && !isHybrid(r)) return false;
         if (effectivePowertrain === 'phev' && !isPhev(r)) return false;
-        if (effectivePowertrain === 'gas' && (isHybrid(r) || isPhev(r))) return false;
+        if (effectivePowertrain === 'gas' && !isGas(r)) return false;
 
         if (pillFilter === 'pending' && r.status !== 'pending') return false;
         if (pillFilter === 'delivered' && r.status !== 'delivered') return false;
@@ -199,7 +202,9 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
         ? 'hev'
         : pillFilter === 'phev'
           ? 'phev'
-          : 'all';
+          : pillFilter === 'gas'
+            ? 'gas'
+            : 'all';
     const status = statusFilter !== 'all'
       ? statusFilter
       : pillFilter === 'delivered'
@@ -233,7 +238,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </a>
         </div>
 
-        {/* Minimalist Pill Toggles: [All] [Hybrid] [PHEV] [Waiting] [Delivered] */}
+        {/* Minimalist Pill Toggles: [All] [Hybrid] [PHEV] [Gas / Turbo] [Waiting] [Delivered] */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
           <div className="flex flex-wrap items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-800/80 rounded-lg text-xs font-semibold">
             <button
@@ -288,6 +293,24 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             >
               <Zap className="h-3 w-3" />
               PHEV ({statusCounts.phev})
+            </button>
+            <button
+              type="button"
+              aria-label="Gas / Turbo"
+              onClick={() => {
+                setPillFilter('gas');
+                setStatusFilter('all');
+                setPowertrainFilter('gas');
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1.5 rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
+                pillFilter === 'gas'
+                  ? 'bg-white dark:bg-zinc-950 text-emerald-600 dark:text-emerald-400 shadow-2xs font-bold'
+                  : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-zinc-100'
+              }`}
+            >
+              <Fuel className="h-3 w-3" />
+              Gas / Turbo ({statusCounts.gas})
             </button>
             <button
               type="button"
@@ -418,7 +441,8 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               setPowertrainFilter(e.target.value);
               if (e.target.value === 'hev') setPillFilter('hybrid');
               else if (e.target.value === 'phev') setPillFilter('phev');
-              else if (pillFilter === 'hybrid' || pillFilter === 'phev') setPillFilter('all');
+              else if (e.target.value === 'gas') setPillFilter('gas');
+              else if (pillFilter === 'hybrid' || pillFilter === 'phev' || pillFilter === 'gas') setPillFilter('all');
               setCurrentPage(1);
             }}
             className="text-xs h-9"
@@ -426,7 +450,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             <option value="all">All Powertrains</option>
             <option value="hev">Hybrid (HEV)</option>
             <option value="phev">Plug-in Hybrid (PHEV)</option>
-            <option value="gas">Gasoline</option>
+            <option value="gas">Gas / Turbo</option>
           </Select>
 
           <Select

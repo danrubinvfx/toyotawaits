@@ -180,5 +180,68 @@ describe('CommunityDataTable Component', () => {
       '/api/export?format=csv&model=rav4&powertrain=phev&status=delivered&province=BC'
     );
   });
+
+  it('renders Gas / Turbo filter pill and filters properly when gas records are present', () => {
+    const recordsWithGas = [
+      {
+        id: 'gas-tacoma-1',
+        model: 'Tacoma',
+        modelSlug: 'tacoma',
+        powertrain: 'i-FORCE 2.4L Turbo Gas',
+        powertrainSlug: 'gas',
+        trim: 'SR5',
+        modelYear: 2026,
+        province: 'AB',
+        city: 'Calgary',
+        orderDate: '2026-10-15',
+        deliveryDate: null,
+        waitDays: null,
+        status: 'pending' as const,
+        pricing: 'at_msrp' as const,
+        addonsCad: 0,
+      },
+      {
+        id: 'hybrid-rav4-1',
+        model: 'RAV4',
+        modelSlug: 'rav4',
+        powertrain: 'Hybrid (HEV)',
+        powertrainSlug: 'hev',
+        trim: 'XLE AWD',
+        modelYear: 2026,
+        province: 'ON',
+        city: 'Toronto',
+        orderDate: '2026-05-10',
+        deliveryDate: null,
+        waitDays: null,
+        status: 'pending' as const,
+        pricing: 'at_msrp' as const,
+        addonsCad: 0,
+      },
+    ];
+
+    render(<CommunityDataTable initialRecords={recordsWithGas} />);
+
+    // Total count reflects both gas and hybrid
+    expect(screen.getByRole('button', { name: 'All' })).toHaveTextContent('All (2)');
+    expect(screen.getByRole('button', { name: 'Hybrid' })).toHaveTextContent('Hybrid (1)');
+    expect(screen.getByRole('button', { name: 'Gas / Turbo' })).toHaveTextContent('Gas / Turbo (1)');
+
+    // Default view shows both (All is selected)
+    expect(screen.getByText('Tacoma 2026')).toBeInTheDocument();
+    expect(screen.getByText('RAV4 2026')).toBeInTheDocument();
+
+    // Click Gas / Turbo pill
+    const gasPill = screen.getByRole('button', { name: 'Gas / Turbo' });
+    fireEvent.click(gasPill);
+
+    // Only Tacoma should remain visible
+    expect(screen.getByText('Tacoma 2026')).toBeInTheDocument();
+    expect(screen.queryByText('RAV4 2026')).not.toBeInTheDocument();
+
+    // CSV link should reflect powertrain=gas
+    const downloadLink = screen.getByText('Download Filtered CSV').closest('a');
+    expect(downloadLink).toHaveAttribute('href', expect.stringContaining('powertrain=gas'));
+  });
 });
+
 

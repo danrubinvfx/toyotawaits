@@ -293,6 +293,185 @@ describe('POST /api/submissions', () => {
     expect(data.error.message).toContain('Connection refused');
     spy.mockRestore();
   });
+
+  it('creates a new submission with milestone 2 (vin_assigned) successfully', async () => {
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'AB',
+      dealershipCity: 'Calgary',
+      modelYear: 2026,
+      orderDate: '2025-01-10',
+      status: 'pending',
+      stage: 'vin_assigned',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.18',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.currentStage).toBe('vin_assigned');
+  });
+
+  it('creates a new submission with milestone 3 (in_transit) successfully without enum failure', async () => {
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'BC',
+      dealershipCity: 'Richmond',
+      modelYear: 2026,
+      orderDate: '2025-01-10',
+      status: 'pending',
+      stage: 'in_transit',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      tradeInRequired: false,
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.19',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.currentStage).toBe('in_transit');
+  });
+
+  it('does not count failed requests toward daily rate limit quota', async () => {
+    const testIp = '192.168.1.77';
+
+    // 1. Send 6 failed validation requests
+    for (let i = 0; i < 6; i++) {
+      const invalidReq = new NextRequest('http://localhost:3000/api/submissions', {
+        method: 'POST',
+        body: JSON.stringify({
+          modelId: 'invalid-uuid',
+          orderDate: 'invalid-date',
+          turnstileToken: 'mock-valid-turnstile-token',
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-forwarded-for': testIp,
+        },
+      });
+      const res = await POST(invalidReq);
+      expect(res.status).toBe(400);
+    }
+
+    // 2. Now send a valid request: must succeed (not be blocked by 429)
+    const validReq = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        province: 'ON',
+        dealershipCity: 'Ottawa',
+        modelYear: 2026,
+        orderDate: '2025-02-01',
+        status: 'pending',
+        stage: 'in_transit',
+        pricing: 'at_msrp',
+        mandatoryAddonsCad: 0,
+        tradeInRequired: false,
+        turnstileToken: 'mock-valid-turnstile-token',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': testIp,
+      },
+    });
+
+    const validRes = await POST(validReq);
+    expect(validRes.status).toBe(201);
+    const validData = await validRes.json();
+    expect(validData.success).toBe(true);
+  });
+
+  it('enforces 429 RATE_LIMIT_EXCEEDED only after 5 successful submissions', async () => {
+    const testIp = '192.168.1.88';
+
+    // 5 successful submissions
+    for (let i = 0; i < 5; i++) {
+      const req = new NextRequest('http://localhost:3000/api/submissions', {
+        method: 'POST',
+        body: JSON.stringify({
+          modelId: validUuid1,
+          powertrainId: validUuid2,
+          trimId: validUuid3,
+          province: 'BC',
+          dealershipCity: 'Vancouver',
+          modelYear: 2026,
+          orderDate: '2025-02-01',
+          status: 'pending',
+          stage: 'deposit_placed',
+          pricing: 'at_msrp',
+          mandatoryAddonsCad: 0,
+          tradeInRequired: false,
+          turnstileToken: 'mock-valid-turnstile-token',
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-forwarded-for': testIp,
+        },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(201);
+    }
+
+    // 6th attempt should be blocked with 429
+    const blockedReq = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        province: 'BC',
+        dealershipCity: 'Vancouver',
+        modelYear: 2026,
+        orderDate: '2025-02-01',
+        status: 'pending',
+        stage: 'deposit_placed',
+        pricing: 'at_msrp',
+        mandatoryAddonsCad: 0,
+        tradeInRequired: false,
+        turnstileToken: 'mock-valid-turnstile-token',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': testIp,
+      },
+    });
+    const blockedRes = await POST(blockedReq);
+    expect(blockedRes.status).toBe(429);
+    const blockedData = await blockedRes.json();
+    expect(blockedData.error.code).toBe('RATE_LIMIT_EXCEEDED');
+  });
 });
 
 describe('PATCH /api/submissions/[id]', () => {

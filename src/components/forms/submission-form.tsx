@@ -267,6 +267,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
             editToken: finalEditToken,
             model: currentModel.name,
             status: result.data.status || status || 'waiting',
+            stage: result.data.currentStage || stage || 'deposit_placed',
             submittedAt: new Date().toISOString(),
           })
         );
@@ -303,7 +304,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
               trimName: currentTrim.name,
               province,
               orderDate,
-              currentStage: stage,
+              stage: result.data.currentStage || stage,
+              currentStage: result.data.currentStage || stage,
               status: 'pending',
             })
           );
@@ -349,6 +351,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     router.push(`/#estimator?submitted=true&model=${encodeURIComponent(targetModel)}&province=${encodeURIComponent(targetProvince)}`);
   };
 
+  // 1. Countdown timer interval when success modal is open
   React.useEffect(() => {
     if (!successModalData) {
       if (redirectTimerRef.current) {
@@ -360,20 +363,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
 
     setCountdown(5);
     redirectTimerRef.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          if (redirectTimerRef.current) {
-            clearInterval(redirectTimerRef.current);
-            redirectTimerRef.current = null;
-          }
-          const targetModel = successModalData.modelSlug || selectedModelSlug;
-          const targetProvince = successModalData.province || province;
-          setSuccessModalData(null);
-          router.push(`/#estimator?submitted=true&model=${encodeURIComponent(targetModel)}&province=${encodeURIComponent(targetProvince)}`);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
 
     return () => {
@@ -382,7 +372,23 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         redirectTimerRef.current = null;
       }
     };
-  }, [successModalData, router, selectedModelSlug, province]);
+  }, [successModalData]);
+
+  // 2. Decouple navigation from render phase: trigger redirect cleanly when countdown reaches 0
+  React.useEffect(() => {
+    if (countdown === 0 && successModalData) {
+      if (redirectTimerRef.current) {
+        clearInterval(redirectTimerRef.current);
+        redirectTimerRef.current = null;
+      }
+      const targetModel = successModalData.modelSlug || selectedModelSlug;
+      const targetProvince = successModalData.province || province;
+      setSuccessModalData(null);
+      router.push(
+        `/#estimator?submitted=true&model=${encodeURIComponent(targetModel)}&province=${encodeURIComponent(targetProvince)}`
+      );
+    }
+  }, [countdown, successModalData, router, selectedModelSlug, province]);
 
   const copyEditKeyToClipboard = () => {
     if (successModalData?.editKey) {
