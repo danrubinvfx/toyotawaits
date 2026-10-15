@@ -646,7 +646,7 @@ export async function resolveDatabaseVehicleIds(
 
   // 2. Identify matching catalog powertrain
   const incomingPt = (params.powertrainSlug || params.powertrainId || '').toLowerCase().trim();
-  let catalogPowertrain = catalogModel.powertrains.find((p) => {
+  const catalogPowertrain = catalogModel.powertrains.find((p) => {
     if (params.powertrainId && p.id.toLowerCase() === params.powertrainId.toLowerCase()) return true;
     if (incomingPt && (p.slug.toLowerCase() === incomingPt || p.name.toLowerCase() === incomingPt)) return true;
     return false;
@@ -656,7 +656,7 @@ export async function resolveDatabaseVehicleIds(
 
   // 3. Identify matching catalog trim
   const incomingTrim = (params.trimSlug || params.trimId || '').toLowerCase().trim();
-  let catalogTrim = catalogPowertrain?.trims.find((t) => {
+  const catalogTrim = catalogPowertrain?.trims.find((t) => {
     if (params.trimId && t.id.toLowerCase() === params.trimId.toLowerCase()) return true;
     if (incomingTrim && (t.slug.toLowerCase() === incomingTrim || t.name.toLowerCase() === incomingTrim)) return true;
     return false;
