@@ -2,46 +2,6 @@ import { createServerClient } from '@/lib/supabase/server';
 import { NewsTickerItem, DeliveryTickerItem, TickerItem, CountryCode } from '@/lib/types/contracts';
 import { INITIAL_COMMUNITY_RECORDS, INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 
-// In-memory fallback news store for development, testing, and offline modes
-const inMemoryNewsWire: NewsTickerItem[] = [
-  {
-    type: 'news',
-    id: 'news-1',
-    title: 'Q4 Canadian Allocation Update: High hybrid production slots allocated for BC, ON & AB',
-    summary: 'Toyota Motor Manufacturing Canada ramps up 2026 hybrid deliveries across key provinces.',
-    tag: 'ALLOCATION ALERT',
-    url: '/estimates',
-    timestamp: '2026-10-14T14:00:00Z',
-  },
-  {
-    type: 'news',
-    id: 'news-2',
-    title: 'Federal iZEV Program: 2026 RAV4 Plug-in Hybrid qualifies for full $5,000 rebate',
-    summary: 'Updated eligibility guidelines confirmed for current model year deliveries in Canada.',
-    tag: 'ZEV REBATES',
-    url: '/guides/ev-charging',
-    timestamp: '2026-10-12T09:30:00Z',
-  },
-  {
-    type: 'news',
-    id: 'news-3',
-    title: 'Winter Tire Fitment Guide: Factory OEM specs & 3PMSF ratings now live',
-    summary: 'Check recommended wheel offsets and load indexes for Canadian winter roads.',
-    tag: 'BUYER GUIDE',
-    url: '/tires',
-    timestamp: '2026-10-10T16:00:00Z',
-  },
-  {
-    type: 'news',
-    id: 'news-4',
-    title: 'Toyota Sienna Wait Times: Prairie dealer allocations showing notable turnaround improvements',
-    summary: 'Average delivery duration in Alberta and Saskatchewan contracts by 28 days this quarter.',
-    tag: 'NEWS WIRE',
-    url: '/#community-log',
-    timestamp: '2026-10-08T11:15:00Z',
-  },
-];
-
 /**
  * Calculates calendar days waited between order and delivery
  */
@@ -64,42 +24,53 @@ export function calculateDaysWaited(
 }
 
 /**
- * Fetches active news wire items
+ * Fetches active news wire items directly from Supabase news_wire table.
+ * If query errors or table is empty, returns empty array (never mock items).
  */
 export async function getNewsWireItems(limit = 5): Promise<NewsTickerItem[]> {
   const effectiveLimit = Math.max(1, Math.min(limit, 20));
 
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
-  ) {
-    try {
-      const supabase = createServerClient();
-      const { data, error } = await supabase
-        .from('news_wire')
-        .select('id, title, summary, tag, url, published_at, is_active')
-        .eq('is_active', true)
-        .order('published_at', { ascending: false })
-        .limit(effectiveLimit);
+  try {
+    const supabase = createServerClient();
+    let { data: newsItems, error: newsError } = await supabase
+      .from('news_wire')
+      .select('*')
+      .order('published_at', { ascending: false })
+      .limit(effectiveLimit);
 
-      if (!error && Array.isArray(data) && data.length > 0) {
-        return data.map((item: any) => ({
-          type: 'news' as const,
-          id: String(item.id),
-          title: item.title,
-          summary: item.summary || null,
-          tag: item.tag || null,
-          url: item.url || null,
-          timestamp: item.published_at || new Date().toISOString(),
-        }));
-      }
-    } catch {
-      // Gracefully fall back to in-memory items if table doesn't exist
+    // If published_at column does not exist (PostgreSQL code 42703), retry ordering by created_at
+    if (newsError && (newsError.code === '42703' || newsError.message?.includes('published_at'))) {
+      const retry = await supabase
+        .from('news_wire')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(effectiveLimit);
+      newsItems = retry.data;
+      newsError = retry.error;
     }
+
+    if (newsError) {
+      console.error('[Ticker] Supabase news_wire query error:', newsError);
+      return [];
+    }
+
+    if (Array.isArray(newsItems)) {
+      return newsItems.map((item: any) => ({
+        type: 'news' as const,
+        id: String(item.id),
+        title: item.title || item.headline || 'Toyota News Alert',
+        summary: item.summary || item.source_name || null,
+        tag: item.tag || item.category || null,
+        url: item.url || null,
+        timestamp: item.published_at || item.created_at || new Date().toISOString(),
+      }));
+    }
+  } catch (err) {
+    console.error('[Ticker] Supabase news_wire query error:', err);
+    return [];
   }
 
-  return inMemoryNewsWire.slice(0, effectiveLimit);
+  return [];
 }
 
 /**
@@ -227,13 +198,4 @@ export async function getTickerItems(
   ]);
 
   return interleaveFeeds(news, deliveries, limit);
-}
-
-// Helper to push mock news items for testing
-export function _addMockNewsItem(item: NewsTickerItem) {
-  inMemoryNewsWire.unshift(item);
-}
-
-export function _resetMockNews() {
-  inMemoryNewsWire.length = 4;
 }

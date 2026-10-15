@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getNewsWireItems,
   getDeliveredMilestones,
@@ -7,8 +7,13 @@ import {
   interleaveFeeds,
 } from '@/lib/db/ticker';
 import { NewsTickerItem, DeliveryTickerItem } from '@/lib/types/contracts';
+import * as serverSupabase from '@/lib/supabase/server';
 
-describe('Ticker Data Fetcher & Aggregator (Zero-PII)', () => {
+describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('calculates calendar days waited accurately from order and delivery dates', () => {
     // 240 days wait
     const wait = calculateDaysWaited('2025-01-01', '2025-08-29', null);
@@ -18,18 +23,71 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII)', () => {
     expect(calculateDaysWaited('2025-01-01', '2025-08-29', 142)).toBe(142);
   });
 
-  it('fetches active news wire items with expected schema', async () => {
+  it('queries Supabase directly for news_wire and maps rows accurately', async () => {
+    const mockRows = [
+      {
+        id: 'news-live-101',
+        title: 'Toyota Canada boosts PHEV allocations for Q4',
+        summary: 'Official quota release for BC and ON dealers.',
+        tag: 'ALLOCATION ALERT',
+        url: 'https://example.com/live-news',
+        published_at: '2026-10-15T10:00:00Z',
+      },
+    ];
+
+    const mockSelect = vi.fn().mockReturnThis();
+    const mockOrder = vi.fn().mockReturnThis();
+    const mockLimit = vi.fn().mockResolvedValue({ data: mockRows, error: null });
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        select: mockSelect,
+        order: mockOrder,
+        limit: mockLimit,
+      }),
+    } as any);
+
+    const news = await getNewsWireItems(5);
+    expect(mockSelect).toHaveBeenCalledWith('*');
+    expect(mockOrder).toHaveBeenCalledWith('published_at', { ascending: false });
+    expect(news.length).toBe(1);
+    expect(news[0]).toEqual({
+      type: 'news',
+      id: 'news-live-101',
+      title: 'Toyota Canada boosts PHEV allocations for Q4',
+      summary: 'Official quota release for BC and ON dealers.',
+      tag: 'ALLOCATION ALERT',
+      url: 'https://example.com/live-news',
+      timestamp: '2026-10-15T10:00:00Z',
+    });
+  });
+
+  it('returns empty array when Supabase returns an error and NEVER returns mock items', async () => {
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        select: vi.fn().mockReturnThis(),
+        order: vi.fn().mockReturnThis(),
+        limit: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: 'relation "news_wire" does not exist' },
+        }),
+      }),
+    } as any);
+
     const news = await getNewsWireItems(5);
     expect(Array.isArray(news)).toBe(true);
-    expect(news.length).toBeGreaterThan(0);
-    expect(news.length).toBeLessThanOrEqual(5);
+    expect(news.length).toBe(0); // STRICT: empty array on error, never mock fallback
 
-    for (const item of news) {
-      expect(item.type).toBe('news');
-      expect(item.id).toBeDefined();
-      expect(typeof item.title).toBe('string');
-      expect(item.timestamp).toBeDefined();
-    }
+    // Ensure no mock fallback IDs exist
+    const mockIds = ['news-1', 'news-2', 'news-3', 'news-4'];
+    expect(news.some((n) => mockIds.includes(n.id))).toBe(false);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('[Ticker] Supabase news_wire query error:'),
+      expect.anything()
+    );
   });
 
   it('fetches delivered vehicle milestones with calculated daysWaited', async () => {
@@ -92,14 +150,15 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII)', () => {
     expect(merged[3].type).toBe('news');
   });
 
-  it('getTickerItems returns alternating feed within specified limit', async () => {
+  it('getTickerItems returns feed within specified limit and adheres to Zero-PII', async () => {
     const ticker = await getTickerItems(6);
     expect(ticker.length).toBeLessThanOrEqual(6);
     expect(ticker.length).toBeGreaterThan(0);
 
-    const hasNews = ticker.some((t) => t.type === 'news');
-    const hasDelivery = ticker.some((t) => t.type === 'delivery');
-    expect(hasNews).toBe(true);
-    expect(hasDelivery).toBe(true);
+    // Never contains old hardcoded mock IDs
+    const forbiddenMockIds = ['news-1', 'news-2', 'news-3', 'news-4'];
+    for (const item of ticker) {
+      expect(forbiddenMockIds.includes(item.id)).toBe(false);
+    }
   });
 });
