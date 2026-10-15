@@ -161,12 +161,14 @@ export async function PATCH(
       }
     }
 
+    const effectiveStage = resolvedStage || (finalStatus === 'cancelled' ? 'cancelled' : undefined);
+
     const updated = await updateSubmissionByEditToken(token, {
       status: finalStatus as SubmissionStatus | undefined,
       deliveryDate: deliveryDate !== undefined ? deliveryDate : undefined,
       notes: typeof notes === 'string' ? notes.trim() : undefined,
-      currentStage: resolvedStage as SubmissionStage | undefined,
-      stage: resolvedStage,
+      currentStage: effectiveStage as SubmissionStage | undefined,
+      stage: effectiveStage,
     });
 
     if (!updated) {
@@ -184,12 +186,16 @@ export async function PATCH(
 
     // Immediate Cache Revalidation
     try {
+      revalidatePath('/edit/[token]', 'page');
+      revalidatePath('/edit/[token]');
+      revalidatePath(`/edit/${token}`);
+      revalidatePath('/analytics');
+      revalidatePath('/api/analytics');
       revalidatePath('/');
       revalidatePath('/submit');
       revalidatePath('/api/stats');
       revalidatePath('/api/aggregate');
       revalidatePath('/api/submissions');
-      revalidatePath(`/edit/${token}`);
       revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
       revalidateTag('stats', 'max');

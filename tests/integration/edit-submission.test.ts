@@ -127,7 +127,7 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     expect(json.data.notes).toBe('Delivered at MSRP without markups.');
   });
 
-  it('successfully updates status to cancelled', async () => {
+  it('successfully updates status to cancelled and excludes from community submissions', async () => {
     const req = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -143,6 +143,10 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
     expect(json.data.status).toBe('cancelled');
+
+    const allAfter = await getCommunitySubmissions();
+    const foundAfter = allAfter.find(r => r.id === validEditToken || (r as any).editToken === validEditToken);
+    expect(foundAfter).toBeUndefined();
   });
 
   it('successfully updates status via PUT without creating duplicate rows', async () => {

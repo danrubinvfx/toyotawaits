@@ -30,7 +30,23 @@ export async function GET(
     let destinationUrl = await getAffiliateRedirect(validation.data.slug);
 
     if (!destinationUrl) {
-      // Fallback for unknown slugs: Redirect safely to home page
+      // Safe fallback for unmapped or unknown slugs:
+      // 1. If a referring page is present and same-origin, redirect safely back to it
+      const referer = request.headers.get('referer');
+      if (referer) {
+        try {
+          const refererUrl = new URL(referer);
+          if (refererUrl.origin === new URL(request.url).origin) {
+            return NextResponse.redirect(refererUrl, {
+              status: 302,
+            });
+          }
+        } catch {
+          // Ignore invalid referer URL and fallback to root
+        }
+      }
+
+      // 2. Default safe fallback to home page instead of throwing a hard 404
       return NextResponse.redirect(new URL('/', request.url), {
         status: 302,
       });

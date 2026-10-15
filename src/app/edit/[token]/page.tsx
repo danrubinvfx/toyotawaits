@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -38,6 +39,7 @@ export function getTodayLocalDate(): string {
 
 export default function EditSubmissionPage({ params }: EditPageProps) {
   const { token } = use(params);
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -103,6 +105,19 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
     };
   }, [token]);
 
+  const handleReactivateOrder = () => {
+    setStage('deposit_placed');
+    setStatus('pending');
+    setSubmission((prev: any) => ({
+      ...prev,
+      status: 'pending',
+      stage: 'deposit_placed',
+      currentStage: 'deposit_placed',
+    }));
+    setSaveSuccess(false);
+    setSaveMessage(null);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isSaving) return;
@@ -110,15 +125,33 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
     setIsSaving(true);
     setSaveSuccess(false);
     setSaveMessage(null);
+    setError(null);
+
+    const isCancelled = stage === 'cancelled' || status === 'cancelled';
+    const isDelivered = stage === 'delivered' || status === 'delivered';
+    const targetStatus = isDelivered ? 'delivered' : isCancelled ? 'cancelled' : 'pending';
+    const targetStage = isCancelled ? 'cancelled' : stage;
+
+    // Optimistically update local state immediately so top milestone stepper reflects change
+    const previousSubmission = submission;
+    setSubmission((prev: any) => ({
+      ...prev,
+      stage: targetStage,
+      currentStage: targetStage,
+      status: targetStatus,
+      deliveryDate: isDelivered ? deliveryDate : null,
+      notes: notes.trim() || prev?.notes,
+      waitDays: isCancelled ? null : prev?.waitDays,
+    }));
 
     try {
       const payload: Record<string, any> = {
-        stage,
-        status,
+        stage: targetStage,
+        status: targetStatus,
         notes: notes.trim() || null,
       };
 
-      if (stage === 'delivered' || status === 'delivered') {
+      if (isDelivered) {
         payload.deliveryDate = deliveryDate;
       }
 
@@ -131,29 +164,54 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
       const json = await res.json();
 
       if (!res.ok || !json.success) {
+        // Rollback optimistic update
+        setSubmission(previousSubmission);
         setError(json.error?.message || 'Failed to update submission. Please verify input fields.');
         return;
       }
 
-      // Update submission state in UI
+      // Update submission state in UI with DB response
       setSubmission((prev: any) => ({
         ...prev,
-        stage,
-        status,
-        deliveryDate: stage === 'delivered' || status === 'delivered' ? deliveryDate : null,
+        stage: json.data?.stage || targetStage,
+        currentStage: json.data?.currentStage || targetStage,
+        status: json.data?.status || targetStatus,
+        deliveryDate: isDelivered ? (json.data?.deliveryDate || deliveryDate) : null,
         notes: notes.trim() || prev?.notes,
-        waitDays: json.data?.waitDays ?? prev?.waitDays,
+        waitDays: isCancelled ? null : (json.data?.waitDays ?? prev?.waitDays),
       }));
 
       // Update local storage
       updateStoredSubmissionByToken(token, {
-        status,
+        status: targetStatus,
       });
 
+      const stageDisplayNames: Record<string, string> = {
+        deposit_placed: 'Deposit Placed',
+        vin_assigned: 'Build Assigned / VIN Generated',
+        allocation_confirmed: 'Allocation Assigned',
+        in_transit: 'In Transit',
+        delivered: 'Delivered',
+        cancelled: 'Cancelled',
+      };
+      const stageName = stageDisplayNames[targetStage] || targetStage;
+
       setSaveSuccess(true);
-      setSaveMessage('Your vehicle timeline was successfully updated! Estimates have been recalculated.');
+      setSaveMessage(
+        isCancelled
+          ? 'Order successfully cancelled and removed from the active queue.'
+          : `Status successfully updated to ${stageName}.`
+      );
+
+      // Trigger Next.js router refresh for fresh server component data
+      try {
+        router.refresh();
+      } catch (routerErr) {
+        console.warn('Router refresh notice:', routerErr);
+      }
     } catch (err: any) {
       console.error('Update submission error:', err);
+      setSubmission(previousSubmission);
       setError('A network error occurred while updating your submission.');
     } finally {
       setIsSaving(false);
@@ -202,6 +260,10 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
     );
   }
 
+  const isCancelledState = submission?.status === 'cancelled' || stage === 'cancelled' || status === 'cancelled';
+  const displayStatus = isCancelledState ? 'cancelled' : (submission?.status || status);
+  const displayStage = isCancelledState ? 'cancelled' : (submission?.stage || stage);
+
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 sm:py-12 space-y-6">
       {/* Top Navigation */}
@@ -230,14 +292,18 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
             </div>
             <Badge
               className={`capitalize text-xs font-bold self-start sm:self-auto ${
-                submission?.status === 'delivered'
+                displayStatus === 'delivered'
                   ? 'bg-emerald-600 text-white'
-                  : submission?.status === 'cancelled'
-                  ? 'bg-zinc-600 text-white'
+                  : displayStatus === 'cancelled'
+                  ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-300 dark:border-zinc-700'
                   : 'bg-amber-500 text-zinc-950'
               }`}
             >
-              {submission?.status === 'pending' ? 'Still Waiting' : submission?.status}
+              {displayStatus === 'pending'
+                ? 'Still Waiting'
+                : displayStatus === 'cancelled'
+                ? 'Cancelled / Refunded'
+                : displayStatus}
             </Badge>
           </div>
           <CardDescription className="text-xs text-zinc-500">
@@ -264,11 +330,15 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
           <div className="space-y-0.5">
             <span className="text-zinc-400 text-[11px] uppercase tracking-wider block">
-              {submission?.status === 'delivered' ? 'Total Wait' : 'Waited So Far'}
+              {displayStatus === 'delivered' ? 'Total Wait' : displayStatus === 'cancelled' ? 'Order Status' : 'Waited So Far'}
             </span>
             <span className="font-bold text-amber-600 dark:text-amber-400 flex items-center gap-1">
               <Clock className="h-3 w-3 text-amber-500" />
-              {submission?.waitDays != null ? `${submission.waitDays} days` : `${daysSoFar} days`}
+              {displayStatus === 'cancelled'
+                ? 'Cancelled'
+                : submission?.waitDays != null
+                ? `${submission.waitDays} days`
+                : `${daysSoFar} days`}
             </span>
           </div>
 
@@ -282,8 +352,8 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
         <div className="px-6 pb-4 pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
           <OrderStageIndicator
-            stage={submission?.stage || stage}
-            status={submission?.status || status}
+            stage={displayStage}
+            status={displayStatus}
             compact={false}
           />
         </div>
@@ -337,23 +407,57 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                 <span className="text-[11px] text-zinc-500">Advance order progress</span>
               </div>
 
+              {/* Re-activate Order Callout when in Cancelled State */}
+              {isCancelledState && (
+                <div
+                  data-testid="reactivate-order-callout"
+                  className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100/70 dark:bg-zinc-900/60 p-3.5 space-y-2.5"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-zinc-500 shrink-0 mt-0.5" />
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
+                          This order has been marked as cancelled.
+                        </p>
+                        <p className="text-[11px] text-zinc-500">
+                          Milestone progression buttons are locked while this order is cancelled. If this was an error, re-activate your order to proceed.
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleReactivateOrder}
+                      className="text-xs font-semibold shrink-0 border-amber-500/50 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 h-8 px-3 cursor-pointer"
+                    >
+                      Undo / Reactivate Order
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <button
                   type="button"
+                  disabled={isCancelledState}
                   onClick={() => {
                     setStage('deposit_placed');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'deposit_placed'
-                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    isCancelledState
+                      ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
+                      : stage === 'deposit_placed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500 cursor-pointer'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Clock
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'deposit_placed' ? 'text-amber-500' : 'text-zinc-400'
+                        !isCancelledState && stage === 'deposit_placed' ? 'text-amber-500' : 'text-zinc-400'
                       }`}
                     />
                     <div>
@@ -365,20 +469,25 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
                 <button
                   type="button"
+                  disabled={isCancelledState}
                   onClick={() => {
                     setStage('vin_assigned');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'vin_assigned' || stage === 'allocation_confirmed'
-                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    isCancelledState
+                      ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
+                      : stage === 'vin_assigned' || stage === 'allocation_confirmed'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500 cursor-pointer'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'vin_assigned' || stage === 'allocation_confirmed' ? 'text-amber-500' : 'text-zinc-400'
+                        !isCancelledState && (stage === 'vin_assigned' || stage === 'allocation_confirmed')
+                          ? 'text-amber-500'
+                          : 'text-zinc-400'
                       }`}
                     />
                     <div>
@@ -390,20 +499,23 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
                 <button
                   type="button"
+                  disabled={isCancelledState}
                   onClick={() => {
                     setStage('in_transit');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'in_transit'
-                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    isCancelledState
+                      ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
+                      : stage === 'in_transit'
+                      ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 shadow-xs ring-1 ring-amber-500 cursor-pointer'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <Truck
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'in_transit' ? 'text-amber-500' : 'text-zinc-400'
+                        !isCancelledState && stage === 'in_transit' ? 'text-amber-500' : 'text-zinc-400'
                       }`}
                     />
                     <div>
@@ -415,20 +527,23 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
                 <button
                   type="button"
+                  disabled={isCancelledState}
                   onClick={() => {
                     setStage('delivered');
                     setStatus('delivered');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'delivered'
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/50 dark:text-emerald-100 shadow-xs ring-1 ring-emerald-600'
-                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+                  className={`p-3 rounded-xl border text-left transition-all ${
+                    isCancelledState
+                      ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
+                      : stage === 'delivered'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/50 dark:text-emerald-100 shadow-xs ring-1 ring-emerald-600 cursor-pointer'
+                      : 'border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <CheckCircle2
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'delivered' ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-400'
+                        !isCancelledState && stage === 'delivered' ? 'text-emerald-600 dark:text-emerald-400' : 'text-zinc-400'
                       }`}
                     />
                     <div>
@@ -448,15 +563,15 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     setStatus('cancelled');
                   }}
                   className={`w-full p-2.5 rounded-lg border text-left transition-all cursor-pointer flex items-center justify-between gap-2 ${
-                    stage === 'cancelled'
-                      ? 'border-zinc-500 bg-zinc-100 dark:bg-zinc-800 text-zinc-950 dark:text-zinc-100 shadow-xs ring-1 ring-zinc-500'
+                    isCancelledState
+                      ? 'border-zinc-400 bg-zinc-200/70 dark:bg-zinc-800 dark:border-zinc-600 text-zinc-950 dark:text-zinc-100 shadow-xs ring-1 ring-zinc-400'
                       : 'border-zinc-200 dark:border-zinc-800/80 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <XCircle
                       className={`h-4 w-4 shrink-0 ${
-                        stage === 'cancelled' ? 'text-zinc-700 dark:text-zinc-300' : 'text-zinc-400'
+                        isCancelledState ? 'text-zinc-700 dark:text-zinc-300' : 'text-zinc-400'
                       }`}
                     />
                     <span className="text-xs font-semibold">Order Cancelled / Deposit Refunded</span>
@@ -467,7 +582,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
             </div>
 
             {/* Delivery Date Picker (shown when Delivered) */}
-            {(stage === 'delivered' || status === 'delivered') && (
+            {(stage === 'delivered' || status === 'delivered') && !isCancelledState && (
               <div className="space-y-1.5 p-4 rounded-xl border border-emerald-500/30 bg-emerald-50/30 dark:bg-emerald-950/20">
                 <Label htmlFor="delivery-date-input" className="text-xs font-semibold text-emerald-950 dark:text-emerald-100 flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5 text-emerald-600" />

@@ -107,10 +107,53 @@ export function OrderStageIndicator({
   const displayLabel = getStageDisplayLabel(stage, status);
 
   if (isCancelled) {
+    if (compact) {
+      return (
+        <div
+          data-testid="order-stage-indicator-compact"
+          className={`inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 ${className}`}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
+          <span>Order Cancelled</span>
+        </div>
+      );
+    }
+
     return (
-      <div className={`inline-flex items-center gap-1.5 text-[11px] font-medium text-zinc-500 ${className}`}>
-        <span className="h-1.5 w-1.5 rounded-full bg-zinc-400" />
-        <span>Order Cancelled</span>
+      <div
+        data-testid="order-stage-indicator"
+        className={`rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 p-2.5 space-y-2.5 ${className}`}
+      >
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
+            Order Milestone
+          </span>
+          <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-300 dark:border-zinc-700">
+            Cancelled / Refunded
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 p-2 rounded-md bg-zinc-100 dark:bg-zinc-800/60 text-zinc-600 dark:text-zinc-400 text-xs">
+          <ShieldAlert className="h-4 w-4 shrink-0 text-zinc-500" />
+          <span>This order has been marked as cancelled. Removed from active wait-time benchmarks.</span>
+        </div>
+
+        {/* Grayed-out / reset 4-stage stepper */}
+        <div className="relative pt-1 pb-1 opacity-40 grayscale">
+          <div className="absolute top-1/2 left-3 right-3 -translate-y-1/2 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0" />
+          <div className="grid grid-cols-4 relative z-10 text-center">
+            {MILESTONES.map((m, idx) => (
+              <div key={m.key} className="flex flex-col items-center gap-1">
+                <div className="h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold border border-zinc-300 dark:border-zinc-700 bg-zinc-100 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600">
+                  <span>{idx + 1}</span>
+                </div>
+                <span className="text-[10px] leading-tight text-zinc-400 dark:text-zinc-600">
+                  {m.shortLabel}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

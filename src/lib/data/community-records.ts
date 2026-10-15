@@ -1,4 +1,4 @@
-import { SubmissionStage, CountryCode } from '@/lib/types/contracts';
+import { SubmissionStage, CountryCode, SubmissionStatus } from '@/lib/types/contracts';
 
 export interface CommunityRecord {
   id: string;
@@ -18,7 +18,7 @@ export interface CommunityRecord {
   orderDate: string;
   deliveryDate: string | null;
   waitDays: number | null;
-  status: 'pending' | 'delivered';
+  status: SubmissionStatus;
   stage?: SubmissionStage;
   pricing: 'at_msrp' | 'above_msrp' | 'below_msrp';
   addonsCad: number;

@@ -17,6 +17,7 @@ export interface WinterRecommendedProduct {
   title: string;
   benefit: string;
   url: string;
+  slug?: string;
   badge: 'Essential' | 'Top Pick' | 'Recommended';
 }
 
@@ -123,7 +124,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard',
         benefit:
           'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper cowl cavity without contacting painted panels.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },
@@ -203,7 +205,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard (SUV Wide)',
         benefit:
           'Extra-wide coverage preventing freezing rain and heavy snow buildup inside the windshield wiper cowl cavity.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },
@@ -282,7 +285,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard',
         benefit:
           'Secures against high blizzard winds with interior door flaps, keeping wipers flexible and cowl clear of packed snow.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },
@@ -361,7 +365,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard',
         benefit:
           'Aero-fit front windshield guard that prevents ice buildup on wipers and eliminates early morning scraping.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },
@@ -422,7 +427,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross)',
         benefit:
           'Form-fit bucket liners containing melted snow while preserving open airflow to rear bench hybrid intake vents.',
-        url: 'https://www.amazon.ca/dp/B0821M4Z9Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20',
+        slug: 'custom-fit-all-weather-floor-mats-corolla-cross',
         badge: 'Top Pick',
       },
     },
@@ -440,7 +446,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard',
         benefit:
           'Protects compact SUV glass and wiper cowl from overnight freezing rain glaze and ice pack.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },
@@ -501,7 +508,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Heavy-Duty All-Weather Floor Liners (Tacoma)',
         benefit:
           'Deep snow and slush channels that keep work boot muck off cab carpet without blocking i-FORCE MAX battery fans.',
-        url: 'https://www.amazon.ca/dp/B0821M4Z9Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=Toyota+Tacoma+all+weather+floor+mats+liners&tag=toyotawaits-20',
+        slug: 'tacoma-all-weather-liners',
         badge: 'Top Pick',
       },
     },
@@ -519,7 +527,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Magnetic Door-Anchor Windshield Frost Guard (Truck/SUV)',
         benefit:
           'Heavy-duty windshield and wiper cowl cover anchored securely through cab doors against blizzard gusts.',
-        url: 'https://www.amazon.ca/dp/B08927GR5Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
     },

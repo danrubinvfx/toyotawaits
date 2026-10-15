@@ -540,6 +540,33 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
     clickCount: 0,
     isActive: true,
   },
+  'custom-fit-all-weather-floor-mats-corolla-cross': {
+    id: 'f3000005-0005-4005-8005-000000000005',
+    slug: 'custom-fit-all-weather-floor-mats-corolla-cross',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20',
+    title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross)',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-cross-all-weather-mats': {
+    id: 'f3000006-0006-4006-8006-000000000006',
+    slug: 'corolla-cross-all-weather-mats',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20',
+    title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross)',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-cross-all-weather-floor-mats': {
+    id: 'f3000007-0007-4007-8007-000000000007',
+    slug: 'corolla-cross-all-weather-floor-mats',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20',
+    title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross)',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
   'tacoma-all-weather-liners': {
     id: 'f3000002-0002-4002-8002-000000000002',
     slug: 'tacoma-all-weather-liners',
@@ -552,8 +579,26 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'windshield-frost-guard': {
     id: 'f3000003-0003-4003-8003-000000000003',
     slug: 'windshield-frost-guard',
-    destinationUrl: 'https://www.amazon.ca/s?k=windshield+frost+guard+snow+cover+door+flaps&tag=toyotawaits-20',
-    title: 'All-Weather Windshield Frost Guard with Door Flap Anchors',
+    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+    title: 'Magnetic Door-Anchor Windshield Frost Guard',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
+  'magnetic-door-anchor-windshield-frost-guard': {
+    id: 'f3000008-0008-4008-8008-000000000008',
+    slug: 'magnetic-door-anchor-windshield-frost-guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+    title: 'Magnetic Door-Anchor Windshield Frost Guard',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
+  'magnetic-door-anchor-frost-guard': {
+    id: 'f3000009-0009-4009-8009-000000000009',
+    slug: 'magnetic-door-anchor-frost-guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+    title: 'Magnetic Door-Anchor Windshield Frost Guard',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
@@ -581,6 +626,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B0BYZ98765') ||
     url.includes('B07XYZ9999') ||
     url.includes('B09XYZG5G5') ||
+    url.includes('B08927GR5Z') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );

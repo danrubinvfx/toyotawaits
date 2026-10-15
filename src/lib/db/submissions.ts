@@ -869,8 +869,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 }
 
 export async function updateSubmission(data: SubmissionUpdateData): Promise<any | null> {
-  const finalStatus = data.status || (data.currentStage === 'delivered' ? 'delivered' : undefined);
-  const finalStage = data.currentStage || (data.status === 'delivered' ? 'delivered' : undefined);
+  const finalStatus = data.status || (data.currentStage === 'delivered' ? 'delivered' : data.currentStage === 'cancelled' ? 'cancelled' : undefined);
+  const finalStage = data.currentStage || (data.status === 'delivered' ? 'delivered' : data.status === 'cancelled' ? 'cancelled' : undefined);
 
   // If Supabase PostgreSQL is live
   if (
@@ -1051,7 +1051,11 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
     } else {
       if (item.country_code === 'US' || item.countryCode === 'US') continue;
     }
-    if (filters.status && item.status !== filters.status) continue;
+    if (filters.status) {
+      if (item.status !== filters.status) continue;
+    } else {
+      if (item.status === 'cancelled' || item.is_cancelled === true) continue;
+    }
 
     rows.push({
       id: item.id || '',
@@ -1119,7 +1123,8 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
           vehicle_trims(name, slug)
         `)
         .or('is_flagged.eq.false,is_flagged.is.null')
-        .in('status', ['delivered', 'pending']);
+        .in('status', ['delivered', 'pending'])
+        .neq('status', 'cancelled');
 
       if (isUs) {
         query = query.eq('country_code', 'US');
@@ -1130,7 +1135,9 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
       const { data, error } = await query.order('order_date', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        const dbRecords: CommunityRecord[] = data.map((item: any) => {
+        const dbRecords: CommunityRecord[] = data
+          .filter((item: any) => item.status !== 'cancelled' && !item.is_cancelled)
+          .map((item: any) => {
           const modelSlug = item.vehicle_models?.slug || 'rav4';
           const modelMedian = modelSlug === 'sienna' ? 510 : modelSlug === 'rav4' ? 375 : 300;
           const isStale = isSubmissionStale(
@@ -1162,7 +1169,7 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
             orderDate: item.order_date,
             deliveryDate: item.delivery_date || null,
             waitDays: item.wait_days != null ? Number(item.wait_days) : null,
-            status: item.status as 'pending' | 'delivered',
+            status: item.status as SubmissionStatus,
             stage: item.stage || item.current_stage || undefined,
             pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
               ? item.pricing
@@ -1184,11 +1191,21 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
     }
   }
 
+  // Collect cancelled IDs and edit tokens from in-memory store
+  const cancelledIds = new Set<string>();
+  for (const item of inMemorySubmissions.values()) {
+    if (item.status === 'cancelled' || item.is_cancelled === true) {
+      if (item.id) cancelledIds.add(item.id);
+      if (item.edit_token) cancelledIds.add(item.edit_token);
+    }
+  }
+
   // Fallback to initial verified community dataset
   if (isUs) {
     const usRows: CommunityRecord[] = [];
     for (const item of inMemorySubmissions.values()) {
       if (item.is_flagged) continue;
+      if (item.status === 'cancelled' || item.is_cancelled === true) continue;
       if (item.country_code === 'US' || item.countryCode === 'US') {
         usRows.push({
           id: item.id,
@@ -1208,7 +1225,7 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
           orderDate: item.order_date,
           deliveryDate: item.delivery_date || null,
           waitDays: item.wait_days != null ? Number(item.wait_days) : null,
-          status: item.status as 'pending' | 'delivered',
+          status: item.status as SubmissionStatus,
           stage: item.stage || item.current_stage || undefined,
           pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
             ? item.pricing
@@ -1222,20 +1239,24 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
       }
     }
     if (usRows.length > 0) return usRows;
-    return INITIAL_US_COMMUNITY_RECORDS.map((r) => ({
-      ...r,
-      countryCode: 'US',
-      country_code: 'US',
-      dealer_markup_adm: r.dealerMarkupAdm,
-      port_destination: r.portDestination,
-    }));
+    return INITIAL_US_COMMUNITY_RECORDS
+      .filter((r) => r.status !== 'cancelled' && !cancelledIds.has(r.id))
+      .map((r) => ({
+        ...r,
+        countryCode: 'US',
+        country_code: 'US',
+        dealer_markup_adm: r.dealerMarkupAdm,
+        port_destination: r.portDestination,
+      }));
   }
 
-  return INITIAL_COMMUNITY_RECORDS.map((r) => ({
-    ...r,
-    countryCode: 'CA',
-    country_code: 'CA',
-  }));
+  return INITIAL_COMMUNITY_RECORDS
+    .filter((r) => r.status !== 'cancelled' && !cancelledIds.has(r.id))
+    .map((r) => ({
+      ...r,
+      countryCode: 'CA',
+      country_code: 'CA',
+    }));
 }
 
 export interface EditableSubmission {
@@ -1407,7 +1428,7 @@ export async function updateSubmissionByEditToken(
   notes?: string | null;
   updatedAt: string;
 } | null> {
-  const finalStage = updates.stage || updates.currentStage || (updates.status === 'delivered' ? 'delivered' : undefined);
+  const finalStage = updates.stage || updates.currentStage || (updates.status === 'delivered' ? 'delivered' : updates.status === 'cancelled' ? 'cancelled' : undefined);
   const finalStatus = updates.status || (finalStage === 'delivered' ? 'delivered' : finalStage === 'cancelled' ? 'cancelled' : undefined);
 
   if (

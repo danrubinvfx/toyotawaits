@@ -113,6 +113,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     let delivered = 0;
     let pending = 0;
     for (const r of records) {
+      if (r.status === 'cancelled' || (r as any).is_cancelled) continue;
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
       if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
       if (powertrainFilter !== 'all') {
@@ -133,6 +134,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const filteredRecords = useMemo(() => {
     return records
       .filter((r) => {
+        if (r.status === 'cancelled' || (r as any).is_cancelled) return false;
         if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
         if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
         if (statusFilter !== 'all' && r.status !== statusFilter) return false;

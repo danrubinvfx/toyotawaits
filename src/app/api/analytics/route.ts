@@ -60,8 +60,11 @@ export async function GET() {
     }
 
     // Fallback directly using verified public records matching the public delivery log
-    const activeRecords = INITIAL_COMMUNITY_RECORDS.filter((r) =>
-      (ACTIVE_TRACKED_MODELS as readonly string[]).includes(r.modelSlug)
+    // Strictly exclude cancelled records from active benchmarks and calculations
+    const activeRecords = INITIAL_COMMUNITY_RECORDS.filter(
+      (r) =>
+        (ACTIVE_TRACKED_MODELS as readonly string[]).includes(r.modelSlug) &&
+        (r.status === 'delivered' || r.status === 'pending')
     );
     const delivered = activeRecords.filter((r) => r.status === 'delivered').length;
     const pending = activeRecords.filter((r) => r.status === 'pending').length;
