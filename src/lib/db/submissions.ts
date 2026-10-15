@@ -880,12 +880,30 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
   ) {
     try {
       const supabase = createServerClient();
+      const nowIso = new Date().toISOString();
       const updatePayload: Record<string, any> = {
-        updated_at: new Date().toISOString(),
+        updated_at: nowIso,
       };
-      if (finalStatus) updatePayload.status = finalStatus;
-      if (finalStage) updatePayload.current_stage = finalStage;
-      if (data.deliveryDate) updatePayload.delivery_date = data.deliveryDate;
+      if (finalStatus === 'cancelled' || finalStage === 'cancelled') {
+        updatePayload.status = 'cancelled';
+        updatePayload.stage = 'cancelled';
+        updatePayload.cancelled_at = nowIso;
+        updatePayload.delivery_date = null;
+      } else if (finalStatus === 'delivered' || finalStage === 'delivered') {
+        updatePayload.status = 'delivered';
+        updatePayload.stage = 'delivered';
+        updatePayload.current_stage = 'delivered';
+        if (data.deliveryDate) updatePayload.delivery_date = data.deliveryDate;
+      } else {
+        if (finalStatus) updatePayload.status = finalStatus;
+        if (finalStage) {
+          updatePayload.stage = finalStage;
+          const validEnumStages = ['deposit_placed', 'allocation_confirmed', 'freight_transit', 'arrived_at_dealer', 'delivered'];
+          if (validEnumStages.includes(finalStage)) {
+            updatePayload.current_stage = finalStage;
+          }
+        }
+      }
       if (data.notes !== undefined) updatePayload.notes = data.notes;
 
       const { data: updated, error } = await supabase
@@ -896,7 +914,12 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
         .select()
         .single();
 
-      if (!error && updated) {
+      if (error) {
+        console.error('Supabase updateSubmission error:', error);
+        throw new Error(`Database update failed: ${error.message}`);
+      }
+
+      if (updated) {
         // Asynchronously refresh the materialized view so regional aggregations recalculate immediately
         Promise.resolve(supabase.rpc('refresh_wait_summary_mv'))
           .then(() => {})
@@ -913,6 +936,7 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
         };
       }
     } catch (err) {
+      if (process.env.NODE_ENV === 'production') throw err;
       console.warn('PostgreSQL update fallback to memory:', err);
     }
   }
@@ -1136,7 +1160,7 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
 
       if (!error && Array.isArray(data) && data.length > 0) {
         const dbRecords: CommunityRecord[] = data
-          .filter((item: any) => item.status !== 'cancelled' && !item.is_cancelled)
+          .filter((item: any) => item.status !== 'cancelled' && item.stage !== 'cancelled' && !item.is_cancelled)
           .map((item: any) => {
           const modelSlug = item.vehicle_models?.slug || 'rav4';
           const modelMedian = modelSlug === 'sienna' ? 510 : modelSlug === 'rav4' ? 375 : 300;
@@ -1352,8 +1376,8 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           deliveryDate: data.delivery_date || null,
           waitDays: data.wait_days != null ? Number(data.wait_days) : null,
           status: data.status as SubmissionStatus,
-          currentStage: (data as any).stage || data.current_stage || undefined,
-          stage: (data as any).stage || data.current_stage || 'deposit_placed',
+          currentStage: ((data as any).stage || data.current_stage) === 'freight_transit' ? 'in_transit' : ((data as any).stage || data.current_stage || undefined),
+          stage: ((data as any).stage || data.current_stage) === 'freight_transit' ? 'in_transit' : ((data as any).stage || data.current_stage || 'deposit_placed'),
           stageUpdatedAt: (data as any).stage_updated_at || data.updated_at,
           pricing: data.pricing as PricingType,
           mandatoryAddonsCad: Number(data.mandatory_addons_cad || 0),
@@ -1447,30 +1471,43 @@ export async function updateSubmissionByEditToken(
         .maybeSingle();
 
       if (existing) {
-        let waitDays: number | null = existing.wait_days;
-        if (finalStatus === 'delivered' && updates.deliveryDate) {
-          const start = new Date(existing.order_date).getTime();
-          const end = new Date(updates.deliveryDate).getTime();
-          waitDays = Math.max(0, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+        const nowIso = new Date().toISOString();
+        const updatePayload: Record<string, any> = {
+          updated_at: nowIso,
+        };
+
+        if (finalStatus === 'cancelled' || finalStage === 'cancelled') {
+          updatePayload.status = 'cancelled';
+          updatePayload.stage = 'cancelled';
+          updatePayload.cancelled_at = nowIso;
+          updatePayload.delivery_date = null;
+        } else if (finalStatus === 'delivered' || finalStage === 'delivered') {
+          updatePayload.status = 'delivered';
+          updatePayload.stage = 'delivered';
+          updatePayload.current_stage = 'delivered';
+          updatePayload.stage_updated_at = nowIso;
+          if (updates.deliveryDate) {
+            updatePayload.delivery_date = updates.deliveryDate;
+          }
+        } else {
+          if (finalStatus) updatePayload.status = finalStatus;
+          if (finalStage) {
+            updatePayload.stage = finalStage;
+            updatePayload.stage_updated_at = nowIso;
+            if (finalStage === 'deposit_placed') {
+              updatePayload.current_stage = 'deposit_placed';
+            } else if (finalStage === 'vin_assigned' || finalStage === 'allocation_confirmed') {
+              updatePayload.current_stage = 'allocation_confirmed';
+            } else if (finalStage === 'in_transit' || finalStage === 'freight_transit') {
+              updatePayload.current_stage = 'freight_transit';
+            }
+          }
+          updatePayload.delivery_date = null;
         }
 
-        const updatePayload: Record<string, any> = {
-          updated_at: new Date().toISOString(),
-        };
-        if (finalStatus) updatePayload.status = finalStatus;
-        if (finalStage) {
-          updatePayload.current_stage = finalStage;
-          updatePayload.stage = finalStage;
-          updatePayload.stage_updated_at = new Date().toISOString();
+        if (updates.notes !== undefined) {
+          updatePayload.notes = updates.notes;
         }
-        if (finalStatus === 'pending' || finalStatus === 'cancelled') {
-          updatePayload.delivery_date = null;
-          updatePayload.wait_days = null;
-        } else {
-          if (updates.deliveryDate !== undefined) updatePayload.delivery_date = updates.deliveryDate;
-          if (waitDays !== null && finalStatus === 'delivered') updatePayload.wait_days = waitDays;
-        }
-        if (updates.notes !== undefined) updatePayload.notes = updates.notes;
 
         const { data: updated, error } = await supabase
           .from('submissions')
@@ -1479,7 +1516,12 @@ export async function updateSubmissionByEditToken(
           .select('id, status, current_stage, stage, delivery_date, wait_days, notes, updated_at')
           .single();
 
-        if (!error && updated) {
+        if (error) {
+          console.error('Supabase updateSubmissionByEditToken error:', error);
+          throw new Error(`Database update failed: ${error.message} (${error.code || 'UNKNOWN'})`);
+        }
+
+        if (updated) {
           // Asynchronously refresh the materialized view
           Promise.resolve(supabase.rpc('refresh_wait_summary_mv'))
             .then(() => {})
@@ -1487,20 +1529,26 @@ export async function updateSubmissionByEditToken(
               console.warn('Notice: Background refresh of mv_model_wait_summary encountered:', rpcErr);
             });
 
+          let returnStage = updated.stage || updated.current_stage;
+          if (returnStage === 'freight_transit') returnStage = 'in_transit';
+
           return {
             id: updated.id,
             status: updated.status,
-            currentStage: updated.stage || updated.current_stage,
-            stage: updated.stage || updated.current_stage,
+            currentStage: returnStage,
+            stage: returnStage,
             deliveryDate: updated.delivery_date,
             waitDays: updated.wait_days,
             notes: updated.notes,
             updatedAt: updated.updated_at,
           };
         }
+      } else if (process.env.NODE_ENV === 'production') {
+        return null;
       }
     } catch (err) {
-      console.warn('PostgreSQL update by edit_token fallback to memory:', err);
+      if (process.env.NODE_ENV === 'production') throw err;
+      console.warn('PostgreSQL update by edit_token fallback to memory in dev/test:', err);
     }
   }
 
@@ -1622,7 +1670,7 @@ export async function handleNudgeAction(
             ...updatePayload,
             status: 'pending',
             stage: 'vin_assigned',
-            current_stage: 'vin_assigned',
+            current_stage: 'allocation_confirmed',
           };
         } else if (action === 'in_transit') {
           finalStatus = 'pending';
@@ -1631,7 +1679,7 @@ export async function handleNudgeAction(
             ...updatePayload,
             status: 'pending',
             stage: 'in_transit',
-            current_stage: 'in_transit',
+            current_stage: 'freight_transit',
           };
         } else if (action === 'delivered') {
           finalStatus = 'delivered';
@@ -1646,7 +1694,6 @@ export async function handleNudgeAction(
             stage: 'delivered',
             current_stage: 'delivered',
             delivery_date: todayYmd,
-            wait_days: finalWaitDays,
           };
         } else if (action === 'cancelled') {
           finalStatus = 'cancelled';
@@ -1657,10 +1704,8 @@ export async function handleNudgeAction(
             ...updatePayload,
             status: 'cancelled',
             stage: 'cancelled',
-            current_stage: 'cancelled',
             cancelled_at: nowIso,
             delivery_date: null,
-            wait_days: null,
           };
         }
 

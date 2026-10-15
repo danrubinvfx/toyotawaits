@@ -222,15 +222,16 @@ export async function PATCH(
     );
   } catch (error: any) {
     console.error('Error in PATCH /api/submissions/edit/[token]:', error);
-    return NextResponse.json<ApiResponse<null>>(
+    return NextResponse.json(
       {
         success: false,
         error: {
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'An unexpected error occurred updating your submission.',
+          code: 'UPDATE_FAILED',
+          message: error?.message || 'An unexpected error occurred updating your submission.',
         },
+        message: error?.message || 'An unexpected error occurred updating your submission.',
       },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      { status: 400, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

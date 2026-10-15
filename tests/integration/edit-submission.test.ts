@@ -238,5 +238,56 @@ describe('Edit Submission API Route (/api/submissions/edit/[token])', () => {
     expect(json2.success).toBe(true);
     expect(json2.data.stage).toBe('in_transit');
     expect(json2.data.status).toBe('pending');
+
+    // 3. Verify subsequent GET retains in_transit and does not snap back to deposit_placed
+    const getReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`);
+    const getRes = await GET(getReq, { params: Promise.resolve({ token: validEditToken }) });
+    const getJson = await getRes.json();
+
+    expect(getRes.status).toBe(200);
+    expect(getJson.success).toBe(true);
+    expect(getJson.data.stage).toBe('in_transit');
+    expect(getJson.data.status).toBe('pending');
+  });
+
+  it('allows re-activating a cancelled order back to active pending state', async () => {
+    // 1. Cancel the order
+    const cancelReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'cancelled',
+        stage: 'cancelled',
+      }),
+    });
+    const cancelRes = await PATCH(cancelReq, { params: Promise.resolve({ token: validEditToken }) });
+    const cancelJson = await cancelRes.json();
+    expect(cancelRes.status).toBe(200);
+    expect(cancelJson.data.status).toBe('cancelled');
+
+    // 2. Reactivate back to pending
+    const reactivateReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'pending',
+        stage: 'deposit_placed',
+      }),
+    });
+    const reactivateRes = await PATCH(reactivateReq, { params: Promise.resolve({ token: validEditToken }) });
+    const reactivateJson = await reactivateRes.json();
+
+    expect(reactivateRes.status).toBe(200);
+    expect(reactivateJson.success).toBe(true);
+    expect(reactivateJson.data.status).toBe('pending');
+    expect(reactivateJson.data.stage).toBe('deposit_placed');
+
+    // 3. Verify GET returns reactivated state
+    const getReq = new NextRequest(`http://localhost:3000/api/submissions/edit/${validEditToken}`);
+    const getRes = await GET(getReq, { params: Promise.resolve({ token: validEditToken }) });
+    const getJson = await getRes.json();
+    expect(getRes.status).toBe(200);
+    expect(getJson.data.status).toBe('pending');
+    expect(getJson.data.stage).toBe('deposit_placed');
   });
 });

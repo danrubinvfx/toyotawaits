@@ -103,7 +103,7 @@ export function ActiveOrderStepper() {
     }
   }, []);
 
-  if (!localOrder) {
+  if (!localOrder || localOrder.status === 'cancelled' || (localOrder.currentStage as string) === 'cancelled') {
     return null;
   }
 

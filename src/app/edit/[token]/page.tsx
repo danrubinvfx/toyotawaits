@@ -76,7 +76,10 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
         const data = json.data;
         setSubmission(data);
-        const resolvedStage = data.stage || data.currentStage || (data.status === 'delivered' ? 'delivered' : data.status === 'cancelled' ? 'cancelled' : 'deposit_placed');
+        let rawStage = data.stage || data.currentStage || (data.status === 'delivered' ? 'delivered' : data.status === 'cancelled' ? 'cancelled' : 'deposit_placed');
+        if (rawStage === 'freight_transit') rawStage = 'in_transit';
+        if (rawStage === 'allocation_confirmed' && !data.stage) rawStage = 'vin_assigned';
+        const resolvedStage = rawStage;
         setStage(resolvedStage);
         setStatus(data.status || (resolvedStage === 'delivered' ? 'delivered' : resolvedStage === 'cancelled' ? 'cancelled' : 'pending'));
         if (data.deliveryDate) {
@@ -134,6 +137,9 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
     // Optimistically update local state immediately so top milestone stepper reflects change
     const previousSubmission = submission;
+    const previousStage = stage;
+    const previousStatus = status;
+
     setSubmission((prev: any) => ({
       ...prev,
       stage: targetStage,
@@ -163,18 +169,29 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
       const json = await res.json();
 
-      if (!res.ok || !json.success) {
+      if (!res.ok || json.error || !json.success) {
         // Rollback optimistic update
         setSubmission(previousSubmission);
-        setError(json.error?.message || 'Failed to update submission. Please verify input fields.');
+        setStage(previousStage);
+        setStatus(previousStatus);
+        const errorDetails =
+          typeof json.error === 'string'
+            ? json.error
+            : json.error?.message || json.message || 'Please verify input fields and try again.';
+        setError(`Failed to update order status: ${errorDetails}`);
         return;
       }
 
-      // Update submission state in UI with DB response
+      // If res.ok: keep the milestone pinned at the new stage
+      const updatedStage = json.data?.stage || json.data?.currentStage || targetStage;
+      const normalizedUpdatedStage = updatedStage === 'freight_transit' ? 'in_transit' : updatedStage;
+      setStage(normalizedUpdatedStage);
+      setStatus(json.data?.status || targetStatus);
+
       setSubmission((prev: any) => ({
         ...prev,
-        stage: json.data?.stage || targetStage,
-        currentStage: json.data?.currentStage || targetStage,
+        stage: normalizedUpdatedStage,
+        currentStage: normalizedUpdatedStage,
         status: json.data?.status || targetStatus,
         deliveryDate: isDelivered ? (json.data?.deliveryDate || deliveryDate) : null,
         notes: notes.trim() || prev?.notes,
@@ -186,21 +203,32 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
         status: targetStatus,
       });
 
-      const stageDisplayNames: Record<string, string> = {
-        deposit_placed: 'Deposit Placed',
-        vin_assigned: 'Build Assigned / VIN Generated',
-        allocation_confirmed: 'Allocation Assigned',
-        in_transit: 'In Transit',
-        delivered: 'Delivered',
-        cancelled: 'Cancelled',
-      };
-      const stageName = stageDisplayNames[targetStage] || targetStage;
+      try {
+        const pendingRaw = localStorage.getItem('toyotawait_pending_submission');
+        if (pendingRaw) {
+          const parsed = JSON.parse(pendingRaw);
+          if (parsed.editToken === token || parsed.id === submission?.id || parsed.editKey === token) {
+            if (isCancelled) {
+              parsed.status = 'cancelled';
+              parsed.stage = 'cancelled';
+              parsed.currentStage = 'cancelled';
+            } else {
+              parsed.status = targetStatus;
+              parsed.stage = normalizedUpdatedStage;
+              parsed.currentStage = normalizedUpdatedStage;
+            }
+            localStorage.setItem('toyotawait_pending_submission', JSON.stringify(parsed));
+          }
+        }
+      } catch {
+        // Ignore localStorage error
+      }
 
       setSaveSuccess(true);
       setSaveMessage(
         isCancelled
           ? 'Order successfully cancelled and removed from the active queue.'
-          : `Status successfully updated to ${stageName}.`
+          : 'Order milestone updated successfully.'
       );
 
       // Trigger Next.js router refresh for fresh server component data
@@ -212,7 +240,9 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
     } catch (err: any) {
       console.error('Update submission error:', err);
       setSubmission(previousSubmission);
-      setError('A network error occurred while updating your submission.');
+      setStage(previousStage);
+      setStatus(previousStatus);
+      setError(`Failed to update order status: ${err?.message || 'A network error occurred.'}`);
     } finally {
       setIsSaving(false);
     }
@@ -383,6 +413,31 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
           </div>
           <Button asChild size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs shrink-0">
             <Link href="/#estimator">View Estimates</Link>
+          </Button>
+        </div>
+      )}
+
+      {/* Inline Error Banner */}
+      {error && submission && (
+        <div
+          data-testid="edit-submission-error-banner"
+          className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-900 dark:text-red-100 flex items-start justify-between gap-3 shadow-sm"
+        >
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <p className="text-sm font-bold">Failed to update order status</p>
+              <p className="text-xs text-red-700 dark:text-red-300">{error}</p>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setError(null)}
+            className="text-xs text-red-600 dark:text-red-400 hover:bg-red-500/20 h-7 px-2 cursor-pointer"
+          >
+            Dismiss
           </Button>
         </div>
       )}
