@@ -1,4 +1,4 @@
-import { SubmissionStage } from '@/lib/types/contracts';
+import { SubmissionStage, CountryCode } from '@/lib/types/contracts';
 
 export interface CommunityRecord {
   id: string;
@@ -8,7 +8,10 @@ export interface CommunityRecord {
   powertrainSlug: string;
   trim: string;
   modelYear: number;
+  countryCode?: CountryCode;
+  country_code?: CountryCode;
   province: string;
+  state?: string;
   city: string;
   dealerName?: string;
   dealershipName?: string;
@@ -19,8 +22,108 @@ export interface CommunityRecord {
   stage?: SubmissionStage;
   pricing: 'at_msrp' | 'above_msrp' | 'below_msrp';
   addonsCad: number;
+  dealerMarkupAdm?: number;
+  dealer_markup_adm?: number;
+  portDestination?: string;
+  port_destination?: string;
   isStale?: boolean;
 }
+
+// Verified U.S. crowdsourced records for toyotawaits.com
+export const INITIAL_US_COMMUNITY_RECORDS: CommunityRecord[] = [
+  {
+    id: 'us-rec-1',
+    model: 'RAV4',
+    modelSlug: 'rav4',
+    powertrain: 'Plug-in Hybrid (PHEV)',
+    powertrainSlug: 'phev',
+    trim: 'Prime XSE AWD',
+    modelYear: 2026,
+    countryCode: 'US',
+    province: 'CA',
+    state: 'CA',
+    city: 'Los Angeles',
+    dealerName: 'Longo Toyota',
+    dealershipName: 'Longo Toyota',
+    orderDate: '2025-08-10',
+    deliveryDate: '2026-01-20',
+    waitDays: 163,
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    dealerMarkupAdm: 0,
+    portDestination: 'Long Beach, CA',
+  },
+  {
+    id: 'us-rec-2',
+    model: 'Sienna',
+    modelSlug: 'sienna',
+    powertrain: 'Hybrid (HEV)',
+    powertrainSlug: 'hev',
+    trim: 'Platinum AWD',
+    modelYear: 2026,
+    countryCode: 'US',
+    province: 'WA',
+    state: 'WA',
+    city: 'Seattle',
+    dealerName: 'Toyota of Seattle',
+    dealershipName: 'Toyota of Seattle',
+    orderDate: '2025-05-15',
+    deliveryDate: '2026-02-10',
+    waitDays: 271,
+    status: 'delivered',
+    pricing: 'above_msrp',
+    addonsCad: 0,
+    dealerMarkupAdm: 2500,
+    portDestination: 'Portland, OR',
+  },
+  {
+    id: 'us-rec-3',
+    model: 'Grand Highlander',
+    modelSlug: 'grand-highlander',
+    powertrain: 'Hybrid MAX',
+    powertrainSlug: 'hybrid-max',
+    trim: 'Limited AWD',
+    modelYear: 2026,
+    countryCode: 'US',
+    province: 'TX',
+    state: 'TX',
+    city: 'Dallas',
+    dealerName: 'Toyota of Dallas',
+    dealershipName: 'Toyota of Dallas',
+    orderDate: '2025-09-01',
+    deliveryDate: '2026-03-15',
+    waitDays: 195,
+    status: 'delivered',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    dealerMarkupAdm: 0,
+    portDestination: 'Houston, TX',
+  },
+  {
+    id: 'us-rec-4',
+    model: 'Land Cruiser',
+    modelSlug: 'land-cruiser',
+    powertrain: 'i-FORCE MAX Hybrid',
+    powertrainSlug: 'hev',
+    trim: '1958 Grade',
+    modelYear: 2026,
+    countryCode: 'US',
+    province: 'CO',
+    state: 'CO',
+    city: 'Denver',
+    dealerName: 'Stevinson Toyota',
+    dealershipName: 'Stevinson Toyota',
+    orderDate: '2025-11-10',
+    deliveryDate: null,
+    waitDays: null,
+    status: 'pending',
+    pricing: 'at_msrp',
+    addonsCad: 0,
+    dealerMarkupAdm: 0,
+    portDestination: 'Long Beach, CA',
+  },
+];
 
 // Verified Canadian crowdsourced records from r/rav4club, r/Toyota, and RedFlagDeals
 export const INITIAL_COMMUNITY_RECORDS: CommunityRecord[] = [

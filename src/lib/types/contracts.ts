@@ -2,6 +2,16 @@
 // TOYOTAWAITS.CA DOMAIN TYPES & DATA CONTRACTS
 // ============================================================================
 
+export type CountryCode = 'CA' | 'US';
+
+export type USState =
+  | 'AL' | 'AK' | 'AZ' | 'AR' | 'CA' | 'CO' | 'CT' | 'DE' | 'FL' | 'GA'
+  | 'HI' | 'ID' | 'IL' | 'IN' | 'IA' | 'KS' | 'KY' | 'LA' | 'ME' | 'MD'
+  | 'MA' | 'MI' | 'MN' | 'MS' | 'MO' | 'MT' | 'NE' | 'NV' | 'NH' | 'NJ'
+  | 'NM' | 'NY' | 'NC' | 'ND' | 'OH' | 'OK' | 'OR' | 'PA' | 'RI' | 'SC'
+  | 'SD' | 'TN' | 'TX' | 'UT' | 'VT' | 'VA' | 'WA' | 'WV' | 'WI' | 'WY'
+  | 'DC';
+
 export type CanadianProvince =
   | 'AB' // Alberta
   | 'BC' // British Columbia
@@ -85,7 +95,10 @@ export interface Submission {
   modelId: string;
   powertrainId: string;
   trimId: string;
-  province: CanadianProvince;
+  countryCode?: CountryCode;
+  country_code?: CountryCode;
+  province?: CanadianProvince | null;
+  state?: USState | string | null;
   dealershipCity?: string | null;
   dealershipName?: string | null;
   modelYear: number;
@@ -98,6 +111,10 @@ export interface Submission {
   waitDays?: number | null; // Database-generated calendar days
   pricing: PricingType;
   mandatoryAddonsCad: number;
+  dealerMarkupAdm?: number | null;
+  dealer_markup_adm?: number | null;
+  portDestination?: string | null;
+  port_destination?: string | null;
   tradeInRequired: boolean;
   isFlagged: boolean;
   editToken?: string;

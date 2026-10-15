@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
           id: result.id,
           email: result.email || validation.data.email,
           model: result.model || validation.data.model,
-          province: result.province || validation.data.province,
+          province: result.province || validation.data.province || validation.data.state || '',
           unsubscribeToken: result.unsubscribeToken,
           isNew: result.isNew,
           message: result.isNew

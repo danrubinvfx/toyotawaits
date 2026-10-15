@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
-import { CanadianProvince, NotificationRequest } from '@/lib/types/contracts';
+import { CanadianProvince, NotificationRequest, CountryCode } from '@/lib/types/contracts';
 
 // In-memory store for test and development fallback
 const inMemoryNotifications = new Map<string, NotificationRequest>();
@@ -9,7 +9,10 @@ export interface SubscribeNotificationInput {
   email: string;
   model: string;
   trim?: string | null;
-  province: CanadianProvince;
+  province?: CanadianProvince | string | null;
+  state?: string | null;
+  countryCode?: CountryCode;
+  country_code?: CountryCode;
 }
 
 export interface SubscribeNotificationResult {
@@ -28,7 +31,7 @@ export async function subscribeToNotifications(
 ): Promise<SubscribeNotificationResult> {
   const normalizedEmail = input.email.trim().toLowerCase();
   const normalizedModel = input.model.trim().toLowerCase();
-  const normalizedProvince = input.province.toUpperCase() as CanadianProvince;
+  const normalizedProvince = (input.province || input.state || 'ON').toUpperCase() as CanadianProvince;
   const trimVal = input.trim ? input.trim.trim() : null;
 
   // 1. Supabase PostgreSQL live connection

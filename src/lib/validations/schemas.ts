@@ -10,6 +10,20 @@ export const CANADIAN_PROVINCES = [
 
 export const canadianProvinceSchema = z.enum(CANADIAN_PROVINCES);
 
+export const US_STATES = [
+  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
+  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
+  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
+  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
+  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY',
+  'DC',
+] as const;
+
+export const usStateSchema = z.enum(US_STATES);
+
+export const COUNTRY_CODES = ['CA', 'US'] as const;
+export const countryCodeSchema = z.enum(COUNTRY_CODES);
+
 export const SUBMISSION_STATUSES = ['pending', 'delivered', 'cancelled'] as const;
 export const submissionStatusSchema = z.enum(SUBMISSION_STATUSES);
 
@@ -83,7 +97,24 @@ export const submissionCreateSchema = z
     modelId: z.string().uuid({ message: 'Valid modelId UUID is required' }),
     powertrainId: z.string().uuid({ message: 'Valid powertrainId UUID is required' }),
     trimId: z.string().uuid({ message: 'Valid trimId UUID is required' }),
-    province: canadianProvinceSchema,
+    countryCode: countryCodeSchema.default('CA'),
+    country_code: countryCodeSchema.optional(),
+    province: canadianProvinceSchema.optional().nullable(),
+    state: usStateSchema.optional().nullable(),
+    dealerMarkupAdm: z
+      .number()
+      .min(0, 'Dealer markup / ADM cannot be negative')
+      .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
+      .optional()
+      .nullable(),
+    dealer_markup_adm: z
+      .number()
+      .min(0, 'Dealer markup / ADM cannot be negative')
+      .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
+      .optional()
+      .nullable(),
+    portDestination: z.string().trim().max(100).optional().nullable(),
+    port_destination: z.string().trim().max(100).optional().nullable(),
     dealershipCity: z.string().trim().max(100).optional().nullable(),
     dealershipName: z.string().trim().max(150).optional().nullable(),
     modelYear: z
@@ -120,6 +151,26 @@ export const submissionCreateSchema = z
     honeypot: z.string().max(0, 'Bot trap triggered').optional()
   })
   .superRefine((data, ctx) => {
+    // Validate regional partitioning
+    const activeCountry = data.country_code || data.countryCode || 'CA';
+    if (activeCountry === 'CA') {
+      if (!data.province) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Province is required for Canadian submissions',
+          path: ['province']
+        });
+      }
+    } else if (activeCountry === 'US') {
+      if (!data.state) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'State is required for U.S. submissions',
+          path: ['state']
+        });
+      }
+    }
+
     // If delivered, deliveryDate is strictly mandatory and must be >= orderDate
     if (data.status === 'delivered') {
       if (!data.deliveryDate) {
@@ -169,7 +220,14 @@ export const submissionUpdateSchema = z.object({
     })
     .optional()
     .nullable(),
-  notes: sanitizedNotesSchema
+  notes: sanitizedNotesSchema,
+  dealerMarkupAdm: z.number().min(0).max(100000).optional().nullable(),
+  dealer_markup_adm: z.number().min(0).max(100000).optional().nullable(),
+  portDestination: z.string().trim().max(100).optional().nullable(),
+  port_destination: z.string().trim().max(100).optional().nullable(),
+  state: usStateSchema.optional().nullable(),
+  countryCode: countryCodeSchema.optional(),
+  country_code: countryCodeSchema.optional(),
 });
 
 export type SubmissionUpdateInput = z.infer<typeof submissionUpdateSchema>;
@@ -181,6 +239,9 @@ export const aggregateQuerySchema = z.object({
   model: z.string().min(1).max(50),
   powertrain: z.string().min(1).max(50).optional(),
   province: canadianProvinceSchema.optional(),
+  state: usStateSchema.optional(),
+  countryCode: countryCodeSchema.optional(),
+  country_code: countryCodeSchema.optional(),
   trim: z.string().min(1).max(80).optional(),
   timeframe: z.enum(['all', '30d', '90d', '180d', '365d']).default('365d')
 });
@@ -194,6 +255,9 @@ export const exportQuerySchema = z.object({
   model: z.string().max(50).optional(),
   powertrain: z.string().max(50).optional(),
   province: canadianProvinceSchema.optional(),
+  state: usStateSchema.optional(),
+  countryCode: countryCodeSchema.optional(),
+  country_code: countryCodeSchema.optional(),
   status: submissionStatusSchema.optional(),
   format: z.literal('csv').default('csv')
 });
@@ -219,7 +283,10 @@ export const notificationSubscribeSchema = z.object({
   email: z.string().trim().email('Valid email address is required'),
   model: z.string().trim().min(1, 'Vehicle model is required'),
   trim: z.string().trim().max(100).optional().nullable(),
-  province: canadianProvinceSchema,
+  province: canadianProvinceSchema.optional().nullable(),
+  state: usStateSchema.optional().nullable(),
+  countryCode: countryCodeSchema.default('CA'),
+  country_code: countryCodeSchema.optional(),
 });
 
 export type NotificationSubscribeInput = z.infer<typeof notificationSubscribeSchema>;

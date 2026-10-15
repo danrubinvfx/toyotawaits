@@ -1,15 +1,18 @@
 import crypto from 'crypto';
 import { createServerClient } from '@/lib/supabase/server';
-import { Submission, CanadianProvince, SubmissionStatus, SubmissionStage, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
+import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, OrderStage, PricingType, NudgeAction, NudgeActionResult } from '@/lib/types/contracts';
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
-import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
+import { CommunityRecord, INITIAL_COMMUNITY_RECORDS, INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { isSubmissionStale } from '@/lib/utils/confidence-decay';
 
 export interface SubmissionCreateData {
   modelId: string;
   powertrainId: string;
   trimId: string;
-  province: CanadianProvince;
+  countryCode?: CountryCode;
+  country_code?: CountryCode;
+  province?: CanadianProvince | null;
+  state?: USState | string | null;
   dealershipCity?: string | null;
   dealershipName?: string | null;
   modelYear: number;
@@ -23,6 +26,10 @@ export interface SubmissionCreateData {
   cancelledAt?: string | null;
   pricing: PricingType;
   mandatoryAddonsCad: number;
+  dealerMarkupAdm?: number | null;
+  dealer_markup_adm?: number | null;
+  portDestination?: string | null;
+  port_destination?: string | null;
   tradeInRequired: boolean;
   notes?: string | null;
   editKeyHash: string;
@@ -37,12 +44,22 @@ export interface SubmissionUpdateData {
   currentStage?: SubmissionStage;
   deliveryDate?: string | null;
   notes?: string | null;
+  countryCode?: CountryCode;
+  country_code?: CountryCode;
+  state?: string | null;
+  dealerMarkupAdm?: number | null;
+  dealer_markup_adm?: number | null;
+  portDestination?: string | null;
+  port_destination?: string | null;
 }
 
 export interface ExportFilterParams {
   model?: string;
   powertrain?: string;
   province?: CanadianProvince;
+  state?: string;
+  country_code?: CountryCode;
+  countryCode?: CountryCode;
   status?: SubmissionStatus;
 }
 
@@ -53,7 +70,9 @@ export interface ExportRow {
   powertrain: string;
   trim: string;
   model_year: number;
+  country_code?: string;
   province: string;
+  state?: string;
   dealership_city: string;
   order_date: string;
   delivery_date: string;
@@ -61,6 +80,8 @@ export interface ExportRow {
   status: string;
   pricing: string;
   addons_cad: string;
+  dealer_markup_adm?: string;
+  port_destination?: string;
   submitted_at: string;
 }
 
@@ -492,7 +513,44 @@ function seedInitialData() {
       pricing: r.pricing,
       mandatory_addons_cad: r.addonsCad,
       trade_in_required: false,
+      country_code: 'CA',
+      countryCode: 'CA',
       notes: `${r.model} ${r.trim} crowdsourced Canadian submission`,
+      edit_key_hash: crypto.createHash('sha256').update(`seed-key-${uuidId}`).digest('hex'),
+      is_flagged: false,
+      created_at: r.orderDate ? `${r.orderDate}T12:00:00Z` : new Date().toISOString(),
+    });
+  }
+
+  // Seed verified U.S. records for toyotawaits.com
+  for (let i = 0; i < INITIAL_US_COMMUNITY_RECORDS.length; i++) {
+    const r = INITIAL_US_COMMUNITY_RECORDS[i];
+    const uuidId = `c1000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`;
+    inMemorySubmissions.set(uuidId, {
+      id: uuidId,
+      country_code: 'US',
+      countryCode: 'US',
+      model_slug: r.modelSlug,
+      model_name: r.model,
+      powertrain_slug: r.powertrainSlug,
+      powertrain_name: r.powertrain,
+      trim_slug: r.trim.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      trim_name: r.trim,
+      province: r.province || r.state || 'CA',
+      state: r.state || 'CA',
+      dealership_city: r.city,
+      dealership_name: r.dealershipName || r.dealerName || '',
+      model_year: r.modelYear,
+      order_date: r.orderDate,
+      delivery_date: r.deliveryDate,
+      wait_days: r.waitDays,
+      status: r.status,
+      pricing: r.pricing,
+      mandatory_addons_cad: r.addonsCad,
+      dealer_markup_adm: r.dealerMarkupAdm || 0,
+      port_destination: r.portDestination || '',
+      trade_in_required: false,
+      notes: `${r.model} ${r.trim} crowdsourced U.S. submission`,
       edit_key_hash: crypto.createHash('sha256').update(`seed-key-${uuidId}`).digest('hex'),
       is_flagged: false,
       created_at: r.orderDate ? `${r.orderDate}T12:00:00Z` : new Date().toISOString(),
@@ -506,6 +564,10 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   const id = crypto.randomUUID();
   let waitDays: number | null = null;
   const editToken = data.editToken || crypto.randomUUID();
+  const countryCode: CountryCode = data.country_code || data.countryCode || 'CA';
+  const state = data.state || null;
+  const dealerMarkupAdm = data.dealer_markup_adm ?? data.dealerMarkupAdm ?? null;
+  const portDestination = data.port_destination ?? data.portDestination ?? null;
 
   if (data.status === 'delivered' && data.deliveryDate) {
     const start = new Date(data.orderDate).getTime();
@@ -525,10 +587,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         .from('submissions')
         .insert({
           id,
+          country_code: countryCode,
           model_id: data.modelId,
           powertrain_id: data.powertrainId,
           trim_id: data.trimId,
-          province: data.province,
+          province: data.province || null,
+          state,
+          dealer_markup_adm: dealerMarkupAdm,
+          port_destination: portDestination,
           dealership_city: data.dealershipCity,
           dealership_name: data.dealershipName,
           model_year: data.modelYear,
@@ -619,10 +685,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
               .from('submissions')
               .insert({
                 id,
+                country_code: countryCode,
                 model_id: actualModelId,
                 powertrain_id: actualPowertrainId,
                 trim_id: actualTrimId,
-                province: data.province,
+                province: data.province || null,
+                state,
+                dealer_markup_adm: dealerMarkupAdm,
+                port_destination: portDestination,
                 dealership_city: data.dealershipCity,
                 dealership_name: data.dealershipName,
                 model_year: data.modelYear,
@@ -660,10 +730,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           .from('submissions')
           .insert({
             id,
+            country_code: countryCode,
             model_id: data.modelId,
             powertrain_id: data.powertrainId,
             trim_id: data.trimId,
-            province: data.province,
+            province: data.province || null,
+            state,
+            dealer_markup_adm: dealerMarkupAdm,
+            port_destination: portDestination,
             dealership_city: data.dealershipCity,
             dealership_name: data.dealershipName,
             model_year: data.modelYear,
@@ -700,6 +774,13 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
         return {
           id: inserted?.id || id,
+          countryCode,
+          country_code: countryCode,
+          state,
+          dealerMarkupAdm,
+          dealer_markup_adm: dealerMarkupAdm,
+          portDestination,
+          port_destination: portDestination,
           status: inserted?.status || data.status,
           currentStage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
           stage: inserted?.stage || inserted?.current_stage || data.currentStage || 'deposit_placed',
@@ -730,6 +811,13 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   const currentStage = data.currentStage || (data.status === 'delivered' ? 'delivered' : 'deposit_placed');
   const record = {
     id,
+    country_code: countryCode,
+    countryCode,
+    state,
+    dealer_markup_adm: dealerMarkupAdm,
+    dealerMarkupAdm,
+    port_destination: portDestination,
+    portDestination,
     model_id: data.modelId,
     model_slug: 'rav4',
     model_name: 'RAV4',
@@ -739,8 +827,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     trim_id: data.trimId,
     trim_slug: 'xle-awd',
     trim_name: 'XLE AWD',
-    province: data.province,
+    province: data.province || state || 'ON',
     dealership_city: data.dealershipCity || '',
+    dealership_name: data.dealershipName || '',
     model_year: data.modelYear,
     order_date: data.orderDate,
     delivery_date: data.deliveryDate || null,
@@ -763,6 +852,13 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
   return {
     id,
+    countryCode,
+    country_code: countryCode,
+    state,
+    dealerMarkupAdm,
+    dealer_markup_adm: dealerMarkupAdm,
+    portDestination,
+    port_destination: portDestination,
     status: data.status,
     currentStage,
     stage: currentStage,
@@ -852,6 +948,9 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
 }
 
 export async function getSubmissionsForExport(filters: ExportFilterParams): Promise<ExportRow[]> {
+  const isUsFilter = filters.country_code === 'US' || filters.countryCode === 'US';
+  const isCaFilter = filters.country_code === 'CA' || filters.countryCode === 'CA';
+
   // If Supabase PostgreSQL is live, query the complete unpaginated dataset from Supabase
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -864,7 +963,11 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
         .from('submissions')
         .select(`
           id,
+          country_code,
           province,
+          state,
+          dealer_markup_adm,
+          port_destination,
           dealership_city,
           model_year,
           order_date,
@@ -889,6 +992,14 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       if (filters.province) {
         query = query.eq('province', filters.province);
       }
+      if (filters.state) {
+        query = query.eq('state', filters.state);
+      }
+      if (isUsFilter) {
+        query = query.eq('country_code', 'US');
+      } else if (isCaFilter) {
+        query = query.or('country_code.eq.CA,country_code.is.null');
+      }
       if (filters.status) {
         query = query.eq('status', filters.status);
       } else {
@@ -905,7 +1016,9 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
           powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
           trim: item.vehicle_trims?.name || 'XLE AWD',
           model_year: item.model_year,
-          province: item.province,
+          country_code: item.country_code || (item.state ? 'US' : 'CA'),
+          province: item.province || item.state || '',
+          state: item.state || '',
           dealership_city: item.dealership_city || '',
           order_date: item.order_date,
           delivery_date: item.delivery_date || '',
@@ -913,6 +1026,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
           status: item.status,
           pricing: item.pricing || 'undisclosed',
           addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
+          dealer_markup_adm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '',
+          port_destination: item.port_destination || '',
           submitted_at: item.created_at,
         }));
       }
@@ -930,6 +1045,12 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
     if (filters.model && filters.model !== 'all' && item.model_slug !== filters.model.toLowerCase()) continue;
     if (filters.powertrain && filters.powertrain !== 'all' && item.powertrain_slug !== filters.powertrain.toLowerCase()) continue;
     if (filters.province && item.province !== filters.province) continue;
+    if (filters.state && item.state !== filters.state) continue;
+    if (isUsFilter) {
+      if (item.country_code !== 'US' && item.countryCode !== 'US') continue;
+    } else {
+      if (item.country_code === 'US' || item.countryCode === 'US') continue;
+    }
     if (filters.status && item.status !== filters.status) continue;
 
     rows.push({
@@ -939,7 +1060,9 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       powertrain: item.powertrain_name || 'HEV',
       trim: item.trim_name || 'XLE AWD',
       model_year: item.model_year,
-      province: item.province,
+      country_code: item.country_code || (item.state ? 'US' : 'CA'),
+      province: item.province || item.state || '',
+      state: item.state || '',
       dealership_city: item.dealership_city || '',
       order_date: item.order_date,
       delivery_date: item.delivery_date || '',
@@ -947,6 +1070,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       status: item.status,
       pricing: item.pricing || 'undisclosed',
       addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
+      dealer_markup_adm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '',
+      port_destination: item.port_destination || '',
       submitted_at: item.created_at,
     });
   }
@@ -957,7 +1082,8 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
   return rows;
 }
 
-export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
+export async function getCommunitySubmissions(countryCode?: CountryCode | string): Promise<CommunityRecord[]> {
+  const isUs = countryCode === 'US';
   if (
     process.env.NEXT_PUBLIC_SUPABASE_URL &&
     !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
@@ -965,11 +1091,15 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
   ) {
     try {
       const supabase = createServerClient();
-      const { data, error } = await supabase
+      let query = supabase
         .from('submissions')
         .select(`
           id,
+          country_code,
           province,
+          state,
+          dealer_markup_adm,
+          port_destination,
           dealership_city,
           dealership_name,
           model_year,
@@ -989,8 +1119,15 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
           vehicle_trims(name, slug)
         `)
         .or('is_flagged.eq.false,is_flagged.is.null')
-        .in('status', ['delivered', 'pending'])
-        .order('order_date', { ascending: false });
+        .in('status', ['delivered', 'pending']);
+
+      if (isUs) {
+        query = query.eq('country_code', 'US');
+      } else {
+        query = query.or('country_code.eq.CA,country_code.is.null');
+      }
+
+      const { data, error } = await query.order('order_date', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
         const dbRecords: CommunityRecord[] = data.map((item: any) => {
@@ -1015,7 +1152,10 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
             powertrainSlug: item.vehicle_powertrains?.slug || 'hev',
             trim: item.vehicle_trims?.name || 'XLE AWD',
             modelYear: item.model_year,
-            province: item.province,
+            countryCode: (item.country_code || (isUs ? 'US' : 'CA')) as CountryCode,
+            country_code: (item.country_code || (isUs ? 'US' : 'CA')) as CountryCode,
+            province: item.province || item.state || (isUs ? 'CA' : 'ON'),
+            state: item.state || (isUs ? item.province : undefined),
             city: item.dealership_city || '',
             dealerName: item.dealership_name || item.dealership_city || '',
             dealershipName: item.dealership_name || '',
@@ -1028,6 +1168,8 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
               ? item.pricing
               : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
             addonsCad: Number(item.mandatory_addons_cad || 0),
+            dealerMarkupAdm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm) : undefined,
+            portDestination: item.port_destination || undefined,
             isStale,
           };
         });
@@ -1043,7 +1185,57 @@ export async function getCommunitySubmissions(): Promise<CommunityRecord[]> {
   }
 
   // Fallback to initial verified community dataset
-  return [...INITIAL_COMMUNITY_RECORDS];
+  if (isUs) {
+    const usRows: CommunityRecord[] = [];
+    for (const item of inMemorySubmissions.values()) {
+      if (item.is_flagged) continue;
+      if (item.country_code === 'US' || item.countryCode === 'US') {
+        usRows.push({
+          id: item.id,
+          model: item.model_name || 'RAV4',
+          modelSlug: item.model_slug || 'rav4',
+          powertrain: item.powertrain_name || 'Hybrid (HEV)',
+          powertrainSlug: item.powertrain_slug || 'hev',
+          trim: item.trim_name || 'XLE AWD',
+          modelYear: item.model_year,
+          countryCode: 'US',
+          country_code: 'US',
+          province: item.province || item.state || 'CA',
+          state: item.state || item.province || 'CA',
+          city: item.dealership_city || '',
+          dealerName: item.dealership_name || item.dealership_city || '',
+          dealershipName: item.dealership_name || '',
+          orderDate: item.order_date,
+          deliveryDate: item.delivery_date || null,
+          waitDays: item.wait_days != null ? Number(item.wait_days) : null,
+          status: item.status as 'pending' | 'delivered',
+          stage: item.stage || item.current_stage || undefined,
+          pricing: (['at_msrp', 'above_msrp', 'below_msrp'].includes(item.pricing)
+            ? item.pricing
+            : 'at_msrp') as 'at_msrp' | 'above_msrp' | 'below_msrp',
+          addonsCad: Number(item.mandatory_addons_cad || 0),
+          dealerMarkupAdm: Number(item.dealer_markup_adm || 0),
+          dealer_markup_adm: Number(item.dealer_markup_adm || 0),
+          portDestination: item.port_destination || undefined,
+          port_destination: item.port_destination || undefined,
+        });
+      }
+    }
+    if (usRows.length > 0) return usRows;
+    return INITIAL_US_COMMUNITY_RECORDS.map((r) => ({
+      ...r,
+      countryCode: 'US',
+      country_code: 'US',
+      dealer_markup_adm: r.dealerMarkupAdm,
+      port_destination: r.portDestination,
+    }));
+  }
+
+  return INITIAL_COMMUNITY_RECORDS.map((r) => ({
+    ...r,
+    countryCode: 'CA',
+    country_code: 'CA',
+  }));
 }
 
 export interface EditableSubmission {
@@ -1056,7 +1248,9 @@ export interface EditableSubmission {
   trim: string;
   trimSlug?: string;
   modelYear: number;
-  province: CanadianProvince;
+  countryCode?: CountryCode;
+  province?: CanadianProvince | string | null;
+  state?: string | null;
   city: string;
   dealerName?: string;
   dealershipName?: string;
@@ -1069,6 +1263,8 @@ export interface EditableSubmission {
   stageUpdatedAt?: string | null;
   pricing: PricingType;
   mandatoryAddonsCad: number;
+  dealerMarkupAdm?: number | null;
+  portDestination?: string | null;
   notes?: string | null;
   createdAt: string;
   updatedAt?: string | null;
@@ -1087,7 +1283,11 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
         .select(`
           id,
           edit_token,
+          country_code,
           province,
+          state,
+          dealer_markup_adm,
+          port_destination,
           dealership_city,
           dealership_name,
           model_year,
@@ -1121,7 +1321,9 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           trim: (data as any).vehicle_trims?.name || 'XLE AWD',
           trimSlug: (data as any).vehicle_trims?.slug || 'xle-awd',
           modelYear: data.model_year,
+          countryCode: (data.country_code || (data.state ? 'US' : 'CA')) as CountryCode,
           province: data.province as CanadianProvince,
+          state: data.state || null,
           city: data.dealership_city || '',
           dealerName: data.dealership_name || data.dealership_city || '',
           dealershipName: data.dealership_name || '',
@@ -1134,6 +1336,8 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
           stageUpdatedAt: (data as any).stage_updated_at || data.updated_at,
           pricing: data.pricing as PricingType,
           mandatoryAddonsCad: Number(data.mandatory_addons_cad || 0),
+          dealerMarkupAdm: data.dealer_markup_adm != null ? Number(data.dealer_markup_adm) : null,
+          portDestination: data.port_destination || null,
           notes: data.notes || '',
           createdAt: data.created_at,
           updatedAt: data.updated_at,
@@ -1157,7 +1361,9 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
         trim: item.trim_name || 'XLE AWD',
         trimSlug: item.trim_slug || 'xle-awd',
         modelYear: item.model_year,
+        countryCode: (item.country_code || (item.state ? 'US' : 'CA')) as CountryCode,
         province: item.province,
+        state: item.state || null,
         city: item.dealership_city || '',
         dealerName: item.dealership_name || item.dealership_city || '',
         dealershipName: item.dealership_name || '',
@@ -1170,6 +1376,8 @@ export async function getSubmissionByEditToken(editToken: string): Promise<Edita
         stageUpdatedAt: item.stage_updated_at || item.updated_at,
         pricing: item.pricing,
         mandatoryAddonsCad: item.mandatory_addons_cad || 0,
+        dealerMarkupAdm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm) : null,
+        portDestination: item.port_destination || null,
         notes: item.notes || '',
         createdAt: item.created_at,
         updatedAt: item.updated_at,

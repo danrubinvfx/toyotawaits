@@ -11,9 +11,20 @@ import { CommunityRecord } from '@/lib/data/community-records';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request?: NextRequest) {
   try {
-    const submissions = await getCommunitySubmissions();
+    let targetCountry = 'CA';
+    if (request && request.url) {
+      try {
+        const { searchParams } = new URL(request.url);
+        const countryParam = searchParams.get('country') || searchParams.get('country_code') || searchParams.get('region');
+        const headerRegion = request.headers.get('x-region');
+        targetCountry = (countryParam || headerRegion) === 'US' ? 'US' : 'CA';
+      } catch {
+        // fallback
+      }
+    }
+    const submissions = await getCommunitySubmissions(targetCountry);
     return NextResponse.json<ApiResponse<CommunityRecord[]>>(
       {
         success: true,
@@ -162,7 +173,14 @@ export async function POST(request: NextRequest) {
       modelId: validData.modelId,
       powertrainId: validData.powertrainId,
       trimId: validData.trimId,
+      countryCode: validData.countryCode,
+      country_code: validData.country_code,
       province: validData.province,
+      state: validData.state,
+      dealerMarkupAdm: validData.dealerMarkupAdm,
+      dealer_markup_adm: validData.dealer_markup_adm,
+      portDestination: validData.portDestination,
+      port_destination: validData.port_destination,
       dealershipCity: validData.dealershipCity,
       dealershipName: validData.dealershipName,
       modelYear: validData.modelYear,

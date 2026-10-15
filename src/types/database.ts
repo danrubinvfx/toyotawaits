@@ -1,4 +1,6 @@
 import type {
+  CountryCode,
+  USState,
   CanadianProvince,
   SubmissionStatus,
   OrderStage,
@@ -12,6 +14,8 @@ import type {
 } from '@/lib/types/contracts';
 
 export type {
+  CountryCode,
+  USState,
   CanadianProvince,
   SubmissionStatus,
   OrderStage,
@@ -76,10 +80,14 @@ export interface Database {
       submissions: {
         Row: {
           id: string;
+          country_code: CountryCode;
           model_id: string;
           powertrain_id: string;
           trim_id: string;
-          province: CanadianProvince;
+          province: CanadianProvince | null;
+          state: string | null;
+          dealer_markup_adm: number | null;
+          port_destination: string | null;
           dealership_city: string | null;
           dealership_name: string | null;
           model_year: number;

@@ -363,4 +363,108 @@ describe('Zod Validation Schemas (Data Contracts)', () => {
       expect(affiliateSlugSchema.safeParse({ slug: 'tuxmat?tag=spam' }).success).toBe(false);
     });
   });
+
+  describe('Regional Schema Partitioning (CA vs US)', () => {
+    it('accepts valid U.S. submission with state and optional ADM / port destination', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        countryCode: 'US',
+        state: 'WA',
+        dealershipCity: 'Seattle',
+        modelYear: 2026,
+        orderDate: '2025-06-01',
+        status: 'pending',
+        pricing: 'above_msrp',
+        mandatoryAddonsCad: 0,
+        dealerMarkupAdm: 2500,
+        portDestination: 'Portland, OR',
+        tradeInRequired: false,
+        notes: 'Deposit in Seattle with $2500 ADM.',
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const result = submissionCreateSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.countryCode).toBe('US');
+        expect(result.data.state).toBe('WA');
+        expect(result.data.dealerMarkupAdm).toBe(2500);
+        expect(result.data.portDestination).toBe('Portland, OR');
+      }
+    });
+
+    it('rejects U.S. submission if state code is missing', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        countryCode: 'US',
+        modelYear: 2026,
+        orderDate: '2025-06-01',
+        status: 'pending',
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const result = submissionCreateSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues.some((i) => i.path.includes('state'))).toBe(true);
+      }
+    });
+
+    it('rejects U.S. submission with invalid state code', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        countryCode: 'US',
+        state: 'ZZ',
+        modelYear: 2026,
+        orderDate: '2025-06-01',
+        status: 'pending',
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const result = submissionCreateSchema.safeParse(input);
+      expect(result.success).toBe(false);
+    });
+
+    it('rejects Canadian submission if province is missing', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        countryCode: 'CA',
+        modelYear: 2026,
+        orderDate: '2025-06-01',
+        status: 'pending',
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const result = submissionCreateSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues.some((i) => i.path.includes('province'))).toBe(true);
+      }
+    });
+
+    it('accepts country_code and state parameters in aggregate and export schemas', () => {
+      const aggResult = aggregateQuerySchema.safeParse({
+        model: 'rav4',
+        country_code: 'US',
+        state: 'CA',
+      });
+      expect(aggResult.success).toBe(true);
+
+      const expResult = exportQuerySchema.safeParse({
+        model: 'rav4',
+        country_code: 'US',
+        state: 'TX',
+        format: 'csv',
+      });
+      expect(expResult.success).toBe(true);
+    });
+  });
 });

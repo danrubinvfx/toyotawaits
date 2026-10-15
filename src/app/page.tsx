@@ -22,6 +22,7 @@ import {
   ClipboardCheck,
   Zap,
 } from 'lucide-react';
+import { headers } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,7 +60,9 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const submissions = await getCommunitySubmissions();
+  const headersList = await headers();
+  const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
+  const submissions = await getCommunitySubmissions(region);
 
   return (
     <div className="pb-16">

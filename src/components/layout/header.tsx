@@ -33,12 +33,27 @@ interface HeaderSubmission {
   status?: string;
 }
 
-export function Header() {
+interface HeaderProps {
+  initialRegion?: 'CA' | 'US';
+}
+
+export function Header({ initialRegion = 'CA' }: HeaderProps = {}) {
+  const [region, setRegion] = useState<'CA' | 'US'>(initialRegion);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopModsOpen, setDesktopModsOpen] = useState(false);
   const [desktopGearOpen, setDesktopGearOpen] = useState(false);
   const [submission, setSubmission] = useState<HeaderSubmission | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.hostname.includes('toyotawaits.com')) {
+        setRegion('US');
+      }
+    }
+  }, []);
+
+  const isUs = region === 'US';
 
   useEffect(() => {
     const loadSubmission = () => {
@@ -119,9 +134,9 @@ export function Header() {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black truncate text-base sm:text-lg">
-              ToyotaWaits<span className="text-amber-500">.ca</span>
+              ToyotaWaits<span className="text-amber-500">{isUs ? '.com' : '.ca'}</span>
               <span className="ml-1.5 hidden xs:inline-flex rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-amber-500 dark:text-amber-400 shrink-0">
-                🇨🇦 Canada
+                {isUs ? '🇺🇸 USA' : '🇨🇦 Canada'}
               </span>
             </span>
             <span className="text-[10px] font-medium text-zinc-500 italic truncate max-w-[240px] sm:max-w-none hidden sm:block">
@@ -361,6 +376,34 @@ export function Header() {
 
         {/* Action Button & Ko-fi Support */}
         <div className="flex items-center gap-2 shrink-0 ml-auto">
+          {/* Subtle Domain/Region Switcher */}
+          <div className="hidden sm:inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold shrink-0" data-testid="region-switcher-header">
+            <a
+              href="https://toyotawaits.ca"
+              className={cn(
+                'px-2 py-0.5 rounded text-[11px] transition-colors',
+                !isUs
+                  ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+              )}
+              title="Switch to Canada (CAD)"
+            >
+              🇨🇦 CA (CAD)
+            </a>
+            <a
+              href="https://toyotawaits.com"
+              className={cn(
+                'px-2 py-0.5 rounded text-[11px] transition-colors',
+                isUs
+                  ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+              )}
+              title="Switch to United States (USD)"
+            >
+              🇺🇸 US (USD)
+            </a>
+          </div>
+
           <div className="hidden sm:block shrink-0">
             <KofiHeaderPill />
           </div>
@@ -405,6 +448,35 @@ export function Header() {
           className="lg:hidden border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
         >
           <div className="flex flex-col space-y-6 pb-4">
+            {/* Mobile Regional Switcher */}
+            <div className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
+              <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Market / Region</span>
+              <div className="inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold">
+                <a
+                  href="https://toyotawaits.ca"
+                  className={cn(
+                    'px-2.5 py-1 rounded text-xs transition-colors',
+                    !isUs
+                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs font-bold'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                  )}
+                >
+                  🇨🇦 CA (CAD)
+                </a>
+                <a
+                  href="https://toyotawaits.com"
+                  className={cn(
+                    'px-2.5 py-1 rounded text-xs transition-colors',
+                    isUs
+                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs font-bold'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                  )}
+                >
+                  🇺🇸 US (USD)
+                </a>
+              </div>
+            </div>
+
             {/* 1. Core Wait-Time Trackers */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
