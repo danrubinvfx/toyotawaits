@@ -259,14 +259,17 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(container).toHaveClass('scroll-smooth');
     expect(container).toHaveClass('snap-x');
     expect(container).toHaveClass('snap-mandatory');
+    expect(container).toHaveClass('touch-pan-x');
+    expect(container).toHaveClass('overscroll-x-contain');
     expect(container).toHaveClass('[-webkit-overflow-scrolling:touch]');
     expect(container).toHaveClass('cursor-grab');
     expect(container).toHaveClass('active:cursor-grabbing');
     expect(container).toHaveClass('select-none');
 
     const card = screen.getByTestId('checklist-item-fitcamx-rav4');
-    expect(card).toHaveClass('w-[260px]');
-    expect(card).toHaveClass('md:w-[280px]');
+    expect(card).toHaveClass('w-[82vw]');
+    expect(card).toHaveClass('max-w-[300px]');
+    expect(card).toHaveClass('sm:w-[280px]');
     expect(card).toHaveClass('snap-start');
     expect(card).toHaveClass('shrink-0');
   });

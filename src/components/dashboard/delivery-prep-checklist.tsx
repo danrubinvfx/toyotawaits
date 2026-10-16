@@ -254,7 +254,13 @@ export function DeliveryPrepChecklist({
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
+    if (e.button !== 0 || !carouselRef.current) return;
+    if (
+      (e.nativeEvent as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
+        ?.sourceCapabilities?.firesTouchEvents
+    ) {
+      return;
+    }
     const pageX = e.pageX ?? e.clientX;
     setIsDragging(true);
     hasDraggedRef.current = false;
@@ -433,7 +439,10 @@ export function DeliveryPrepChecklist({
         </div>
 
         {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2 mt-2.5 border-t border-zinc-800/50 print:hidden">
+        <div
+          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x overscroll-x-contain py-2 mt-2.5 border-t border-zinc-800/50 print:hidden"
+        >
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isActive = selectedCategory === cat.id;
@@ -498,11 +507,10 @@ export function DeliveryPrepChecklist({
               onMouseLeave={handleMouseLeaveOrUp}
               onClickCapture={handleClickCapture}
               onDragStart={(e) => e.preventDefault()}
+              style={{ WebkitOverflowScrolling: 'touch' }}
               className={cn(
-                'flex gap-3 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] touch-pan-y cursor-grab active:cursor-grabbing select-none px-1',
-                isDragging
-                  ? 'cursor-grabbing scroll-auto snap-none'
-                  : 'scroll-smooth snap-x snap-mandatory'
+                'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] cursor-grab active:cursor-grabbing select-none px-1',
+                isDragging && 'cursor-grabbing scroll-auto snap-none'
               )}
             >
               {filteredProducts.map((item) => (
@@ -512,7 +520,7 @@ export function DeliveryPrepChecklist({
                   isChecked={!!checkedItems[item.slug]}
                   onToggle={toggleItem}
                   showCheckbox={true}
-                  className="w-[260px] md:w-[280px] shrink-0 snap-start"
+                  className="w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 snap-start"
                 />
               ))}
             </div>
