@@ -1,12 +1,13 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
 import {
   OrderStageIndicator,
   OrderStageBadge,
   getStageStepIndex,
   getStageDisplayLabel,
 } from '@/components/dashboard/order-stage-indicator';
+import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
 
 describe('OrderStageIndicator Component', () => {
   describe('Helper logic', () => {
@@ -67,6 +68,65 @@ describe('OrderStageIndicator Component', () => {
       expect(screen.getByText('Allocated')).toBeInTheDocument();
       expect(screen.getByText('Delivered')).toBeInTheDocument();
     });
+
+    it('allows clicking milestone step buttons to view guidance details', () => {
+      render(<OrderStageIndicator stage="deposit_placed" status="pending" compact={false} />);
+
+      const allocatedBtn = screen.getByTestId('order-stage-step-allocation_confirmed');
+      expect(allocatedBtn.tagName).toBe('BUTTON');
+      expect(allocatedBtn.className).toContain('touch-manipulation');
+
+      fireEvent.click(allocatedBtn);
+      expect(allocatedBtn).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByTestId('order-stage-guidance')).toHaveTextContent(
+        'Step 02: Factory build slot and temporary VIN assigned.'
+      );
+    });
+  });
+
+  describe('ActiveOrderStepper interactive mobile stages', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('renders 5 semantic stage buttons and switches active state and guidance immediately on tap/click', () => {
+      localStorage.setItem(
+        'toyotawait_pending_submission',
+        JSON.stringify({
+          id: 'test-sub-123',
+          editKey: 'secret-key-9999',
+          modelName: 'RAV4',
+          powertrainName: 'Prime / Plug-in Hybrid',
+          trimName: 'XSE AWD',
+          province: 'BC',
+          orderDate: '2026-01-15',
+          currentStage: 'deposit_placed',
+          status: 'pending',
+        })
+      );
+
+      render(<ActiveOrderStepper />);
+
+      const step1 = screen.getByTestId('milestone-step-deposit_placed');
+      const step2 = screen.getByTestId('milestone-step-allocation_confirmed');
+      const step3 = screen.getByTestId('milestone-step-freight_transit');
+      const step4 = screen.getByTestId('milestone-step-arrived_at_dealer');
+
+      expect(step1.tagName).toBe('BUTTON');
+      expect(step2.tagName).toBe('BUTTON');
+      expect(step2.className).toContain('touch-manipulation');
+      expect(step1).toHaveAttribute('aria-pressed', 'true');
+
+      fireEvent.click(step3);
+      expect(step3).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Step 03 Active');
+      expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Freight Transit');
+
+      fireEvent.click(step4);
+      expect(step4).toHaveAttribute('aria-pressed', 'true');
+      expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Step 04 Active');
+      expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Arrived at Dealer');
+    });
   });
 
   describe('OrderStageBadge rendering', () => {
@@ -99,3 +159,4 @@ describe('OrderStageIndicator Component', () => {
     });
   });
 });
+

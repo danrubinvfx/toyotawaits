@@ -533,7 +533,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 relative z-10">
                 <button
                   type="button"
                   disabled={isCancelledState}
@@ -541,7 +541,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     setStage('deposit_placed');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3 rounded-xl border text-left select-none touch-manipulation active:scale-[0.99] transition-all ${
                     isCancelledState
                       ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
                       : stage === 'deposit_placed'
@@ -569,7 +569,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     setStage('vin_assigned');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3 rounded-xl border text-left select-none touch-manipulation active:scale-[0.99] transition-all ${
                     isCancelledState
                       ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
                       : stage === 'vin_assigned' || stage === 'allocation_confirmed'
@@ -599,7 +599,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     setStage('in_transit');
                     setStatus('pending');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3 rounded-xl border text-left select-none touch-manipulation active:scale-[0.99] transition-all ${
                     isCancelledState
                       ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
                       : stage === 'in_transit'
@@ -627,7 +627,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                     setStage('delivered');
                     setStatus('delivered');
                   }}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3 rounded-xl border text-left select-none touch-manipulation active:scale-[0.99] transition-all ${
                     isCancelledState
                       ? 'opacity-40 cursor-not-allowed border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400'
                       : stage === 'delivered'

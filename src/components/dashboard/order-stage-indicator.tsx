@@ -15,11 +15,32 @@ const MILESTONES: Array<{
   key: string;
   label: string;
   shortLabel: string;
+  guidance: string;
 }> = [
-  { key: 'deposit_placed', label: 'Deposit Placed', shortLabel: 'Deposit' },
-  { key: 'allocation_confirmed', label: 'Allocation Assigned', shortLabel: 'Allocated' },
-  { key: 'in_transit', label: 'In Transit', shortLabel: 'In Transit' },
-  { key: 'delivered', label: 'Delivered', shortLabel: 'Delivered' },
+  {
+    key: 'deposit_placed',
+    label: 'Deposit Placed',
+    shortLabel: 'Deposit',
+    guidance: 'Step 01: Order deposit recorded in dealership allocation queue.',
+  },
+  {
+    key: 'allocation_confirmed',
+    label: 'Allocation Assigned',
+    shortLabel: 'Allocated',
+    guidance: 'Step 02: Factory build slot and temporary VIN assigned.',
+  },
+  {
+    key: 'in_transit',
+    label: 'In Transit',
+    shortLabel: 'In Transit',
+    guidance: 'Step 03: Permanent VIN issued; rail or ocean freight carrier in motion.',
+  },
+  {
+    key: 'delivered',
+    label: 'Delivered',
+    shortLabel: 'Delivered',
+    guidance: 'Step 04: Pre-Delivery Inspection complete and vehicle handed over.',
+  },
 ];
 
 export function getStageStepIndex(stage?: string | null, status?: string | null): number {
@@ -105,6 +126,13 @@ export function OrderStageIndicator({
   const isCancelled = status === 'cancelled' || stage === 'cancelled';
   const activeStep = getStageStepIndex(stage, status);
   const displayLabel = getStageDisplayLabel(stage, status);
+  const [selectedStep, setSelectedStep] = React.useState<number>(Math.max(0, activeStep));
+
+  React.useEffect(() => {
+    if (activeStep >= 0) {
+      setSelectedStep(activeStep);
+    }
+  }, [activeStep]);
 
   if (isCancelled) {
     if (compact) {
@@ -140,7 +168,7 @@ export function OrderStageIndicator({
 
         {/* Grayed-out / reset 4-stage stepper */}
         <div className="relative pt-1 pb-1 opacity-40 grayscale">
-          <div className="absolute top-1/2 left-3 right-3 -translate-y-1/2 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0" />
+          <div className="pointer-events-none absolute top-1/2 left-3 right-3 -translate-y-1/2 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0" />
           <div className="grid grid-cols-4 relative z-10 text-center">
             {MILESTONES.map((m, idx) => (
               <div key={m.key} className="flex flex-col items-center gap-1">
@@ -197,11 +225,15 @@ export function OrderStageIndicator({
     );
   }
 
+  const effectiveSelectedIdx =
+    selectedStep >= 0 && selectedStep < MILESTONES.length ? selectedStep : Math.max(0, activeStep);
+  const selectedMilestone = MILESTONES[effectiveSelectedIdx] || MILESTONES[0];
+
   // Full / Expanded View (Ideal for Community Submission Cards)
   return (
     <div
       data-testid="order-stage-indicator"
-      className={`rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 p-2.5 space-y-2 ${className}`}
+      className={`rounded-lg bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/80 dark:border-zinc-800/80 p-2.5 space-y-2 relative z-10 ${className}`}
     >
       <div className="flex items-center justify-between text-xs">
         <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">
@@ -219,26 +251,38 @@ export function OrderStageIndicator({
       </div>
 
       {/* Stepper with connecting line */}
-      <div className="relative pt-1 pb-1">
-        <div className="absolute top-1/2 left-3 right-3 -translate-y-1/2 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0" />
+      <div className="relative pt-1 pb-1 z-10">
+        <div className="pointer-events-none absolute top-1/2 left-3 right-3 -translate-y-1/2 h-0.5 bg-zinc-200 dark:bg-zinc-800 z-0" />
         <div
-          className="absolute top-1/2 left-3 -translate-y-1/2 h-0.5 bg-amber-500 transition-all duration-500 z-0"
-          style={{ width: `${(activeStep / (MILESTONES.length - 1)) * 90}%` }}
+          className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 h-0.5 bg-amber-500 transition-all duration-500 z-0"
+          style={{ width: `${(effectiveSelectedIdx / (MILESTONES.length - 1)) * 90}%` }}
         />
 
-        <div className="grid grid-cols-4 relative z-10 text-center">
+        <div className="grid grid-cols-4 relative z-10 text-center gap-1">
           {MILESTONES.map((m, idx) => {
             const isCompleted = idx < activeStep;
             const isCurrent = idx === activeStep;
+            const isSelected = idx === effectiveSelectedIdx;
             const isDeliveredFinal = idx === 3 && activeStep === 3;
 
             return (
-              <div key={m.key} className="flex flex-col items-center gap-1">
+              <button
+                key={m.key}
+                type="button"
+                data-testid={`order-stage-step-${m.key}`}
+                aria-pressed={isSelected}
+                onClick={() => setSelectedStep(idx)}
+                className={`flex flex-col items-center gap-1 p-1 rounded-md cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all relative z-10 ${
+                  isSelected
+                    ? 'bg-amber-500/10 border border-amber-500/40'
+                    : 'border border-transparent hover:bg-zinc-200/40 dark:hover:bg-zinc-800/40'
+                }`}
+              >
                 <div
                   className={`h-5 w-5 rounded-full flex items-center justify-center text-[10px] font-bold border transition-all ${
                     isDeliveredFinal
                       ? 'bg-emerald-500 text-white border-emerald-600'
-                      : isCurrent
+                      : isCurrent || isSelected
                       ? 'bg-amber-500 text-zinc-950 border-amber-600 ring-2 ring-amber-400/30'
                       : isCompleted
                       ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 border-amber-400'
@@ -253,7 +297,7 @@ export function OrderStageIndicator({
                 </div>
                 <span
                   className={`text-[10px] leading-tight ${
-                    isCurrent
+                    isCurrent || isSelected
                       ? 'font-bold text-zinc-900 dark:text-zinc-100'
                       : isCompleted
                       ? 'font-medium text-zinc-600 dark:text-zinc-400'
@@ -262,10 +306,18 @@ export function OrderStageIndicator({
                 >
                   {m.shortLabel}
                 </span>
-              </div>
+              </button>
             );
           })}
         </div>
+      </div>
+
+      {/* Selected Step Details */}
+      <div
+        data-testid="order-stage-guidance"
+        className="text-[11px] text-zinc-600 dark:text-zinc-400 bg-zinc-100/80 dark:bg-zinc-800/50 rounded-md px-2.5 py-1.5 border border-zinc-200/60 dark:border-zinc-800"
+      >
+        {selectedMilestone.guidance}
       </div>
     </div>
   );

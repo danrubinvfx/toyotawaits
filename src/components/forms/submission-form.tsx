@@ -623,14 +623,14 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 <Label>Order Lifecycle Milestone</Label>
                 <span className="text-xs text-zinc-500">Milestone 1–4</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 relative z-10">
                 <button
                   type="button"
                   onClick={() => {
                     setStage('deposit_placed');
                     setStatus('pending');
                   }}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all ${
                     stage === 'deposit_placed'
                       ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
@@ -648,7 +648,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                     setStage('vin_assigned');
                     setStatus('pending');
                   }}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all ${
                     stage === 'vin_assigned' || stage === 'allocation_confirmed'
                       ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
@@ -666,7 +666,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                     setStage('in_transit');
                     setStatus('pending');
                   }}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all ${
                     stage === 'in_transit'
                       ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
@@ -684,7 +684,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                     setStage('delivered');
                     setStatus('delivered');
                   }}
-                  className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                  className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all ${
                     stage === 'delivered'
                       ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:bg-emerald-950/50 dark:text-emerald-100 ring-1 ring-emerald-600 shadow-xs'
                       : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
