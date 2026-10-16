@@ -33,10 +33,13 @@ export function createServerClient() {
   }
 
   const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseUrl =
-    envUrl && !envUrl.includes('placeholder')
-      ? envUrl
-      : FALLBACK_SUPABASE_URL;
+  const isMockUrl =
+    !envUrl ||
+    envUrl.includes('placeholder') ||
+    envUrl.includes('mock-') ||
+    envUrl.includes('toyotawait.local');
+
+  const supabaseUrl = isMockUrl ? FALLBACK_SUPABASE_URL : envUrl;
 
   let candidateKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!isUsableSupabaseKey(candidateKey)) {

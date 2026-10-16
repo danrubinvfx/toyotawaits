@@ -73,62 +73,56 @@ export async function getDeliveredMilestones(
   const isUs = countryCode === 'US';
   const effectiveLimit = Math.max(1, Math.min(limit, 20));
 
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
-  ) {
-    try {
-      const supabase = createServerClient();
-      let query = supabase
-        .from('submissions')
-        .select(`
-          id,
-          province,
-          state,
-          country_code,
-          model_year,
-          order_date,
-          delivery_date,
-          wait_days,
-          status,
-          updated_at,
-          vehicle_models(name),
-          vehicle_powertrains(name),
-          vehicle_trims(name)
-        `)
-        .eq('status', 'delivered')
-        .or('is_flagged.eq.false,is_flagged.is.null');
+  try {
+    const supabase = createServerClient();
+    let query = supabase
+      .from('submissions')
+      .select(`
+        id,
+        province,
+        state,
+        country_code,
+        model_year,
+        order_date,
+        delivery_date,
+        wait_days,
+        status,
+        updated_at,
+        vehicle_models(name),
+        vehicle_powertrains(name),
+        vehicle_trims(name)
+      `)
+      .eq('status', 'delivered')
+      .or('is_flagged.eq.false,is_flagged.is.null');
 
-      if (isUs) {
-        query = query.eq('country_code', 'US');
-      } else {
-        query = query.or('country_code.eq.CA,country_code.is.null');
-      }
-
-      const { data, error } = await query
-        .order('delivery_date', { ascending: false })
-        .limit(effectiveLimit);
-
-      if (!error && Array.isArray(data) && data.length > 0) {
-        return data.map((item: any) => {
-          const daysWaited = calculateDaysWaited(item.order_date, item.delivery_date, item.wait_days);
-          return {
-            type: 'delivery' as const,
-            id: String(item.id),
-            province: item.province || item.state || (isUs ? 'CA' : 'ON'),
-            model_name: item.vehicle_models?.name || 'RAV4',
-            trim_name: item.vehicle_trims?.name || '',
-            powertrain: item.vehicle_powertrains?.name || '',
-            model_year: item.model_year ? Number(item.model_year) : 2026,
-            daysWaited,
-            timestamp: item.delivery_date || item.updated_at || new Date().toISOString(),
-          };
-        });
-      }
-    } catch {
-      // Gracefully fall back to local community records
+    if (isUs) {
+      query = query.eq('country_code', 'US');
+    } else {
+      query = query.or('country_code.eq.CA,country_code.is.null');
     }
+
+    const { data, error } = await query
+      .order('delivery_date', { ascending: false })
+      .limit(effectiveLimit);
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return data.map((item: any) => {
+        const daysWaited = calculateDaysWaited(item.order_date, item.delivery_date, item.wait_days);
+        return {
+          type: 'delivery' as const,
+          id: String(item.id),
+          province: item.province || (item as any).state || (isUs ? 'CA' : 'ON'),
+          model_name: item.vehicle_models?.name || 'RAV4',
+          trim_name: item.vehicle_trims?.name || '',
+          powertrain: item.vehicle_powertrains?.name || '',
+          model_year: item.model_year ? Number(item.model_year) : 2026,
+          daysWaited,
+          timestamp: item.delivery_date || item.updated_at || new Date().toISOString(),
+        };
+      });
+    }
+  } catch (err: any) {
+    console.error('[Ticker] delivered milestones query error:', err?.message || String(err));
   }
 
   // Fallback to verified delivered community dataset

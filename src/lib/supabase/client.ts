@@ -6,13 +6,29 @@ const FALLBACK_ANON_KEY =
 
 function getUrl(): string {
   const u = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (u && !u.includes('placeholder')) return u;
+  if (
+    u &&
+    !u.includes('placeholder') &&
+    !u.includes('mock-') &&
+    !u.includes('toyotawait.local')
+  ) {
+    return u;
+  }
   return FALLBACK_SUPABASE_URL;
 }
 
 function getKey(): string {
   const k = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (k && !k.includes('placeholder') && !k.includes('SI6InNlcnZpY2V') && k.length < 250) return k;
+  if (
+    k &&
+    !k.includes('placeholder') &&
+    !k.includes('mock-') &&
+    !k.includes('SI6InNlcnZpY2V') &&
+    k.length < 250 &&
+    k.split('.').length === 3
+  ) {
+    return k;
+  }
   return FALLBACK_ANON_KEY;
 }
 
