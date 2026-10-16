@@ -5,8 +5,17 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/out/',
+      disallow: [
+        '/api/',
+        '/admin/',
+        '/internal/',
+        '/out/',
+        '/edit/',
+        '/orders/',
+        '/unsubscribe/',
+      ],
     },
-    sitemap: 'https://www.toyotawaits.ca/sitemap.xml',
+    sitemap: 'https://toyotawaits.ca/sitemap.xml',
   };
 }
+
