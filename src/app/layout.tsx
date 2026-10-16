@@ -6,6 +6,7 @@ import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
+import { MarketProvider } from '@/context/MarketContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -97,14 +98,16 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Header />
-        <main className="flex-1">
-          {children}
-          <Analytics />
-          <SpeedInsights />
-        </main>
-        <KofiFloatingPill />
-        <Footer />
+        <MarketProvider>
+          <Header />
+          <main className="flex-1">
+            {children}
+            <Analytics />
+            <SpeedInsights />
+          </main>
+          <KofiFloatingPill />
+          <Footer />
+        </MarketProvider>
       </body>
     </html>
   );

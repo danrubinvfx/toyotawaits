@@ -4,10 +4,17 @@ import React, { useState, useEffect, useMemo, useId } from 'react';
 import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
+  US_STATES_LIST,
+  getRegionsForMarket,
+  getRegionLabel,
+  getDefaultRegion,
+  isValidRegionForMarket,
+  getRegionByCode,
   CatalogModel,
   CatalogPowertrain,
   CatalogTrim,
 } from '@/lib/data/vehicles';
+import { useMarket } from '@/context/MarketContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
@@ -72,10 +79,23 @@ export function WaitTimeEstimator({
     return initialPowertrain;
   });
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
-  const [province, setProvince] = useState<string>(initialProvince);
+  const { market } = useMarket();
+  const [province, setProvince] = useState<string>(() => {
+    if (initialProvince && isValidRegionForMarket(initialProvince, market)) {
+      return initialProvince;
+    }
+    return getDefaultRegion(market);
+  });
   const [depositDate, setDepositDate] = useState<string>(SSR_DEFAULT_DEPOSIT_DATE);
   const [todayDate, setTodayDate] = useState<Date>(() => new Date('2026-01-15T00:00:00Z'));
   const [showSubmittedBanner, setShowSubmittedBanner] = useState<boolean>(false);
+
+  // Safely reset region when toggling market if current region is invalid for the new market
+  useEffect(() => {
+    if (!isValidRegionForMarket(province, market)) {
+      setProvince(getDefaultRegion(market));
+    }
+  }, [market, province]);
 
   // Dynamic Benchmarks State
   const [benchmarks, setBenchmarks] = useState<Record<string, ModelWaitBenchmark>>(BASELINE_MODEL_BENCHMARKS);
@@ -103,7 +123,11 @@ export function WaitTimeEstimator({
           );
         }
       }
-      if (paramProvince && CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince)) {
+      if (
+        paramProvince &&
+        (CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince) ||
+          US_STATES_LIST.some((p) => p.code === paramProvince))
+      ) {
         setProvince(paramProvince);
       }
       const el = document.getElementById('estimator');
@@ -366,7 +390,7 @@ export function WaitTimeEstimator({
   };
 
   const isRebateEligible = ['BC', 'QC', 'MB', 'NS', 'NB', 'PE', 'NL'].includes(province);
-  const provinceObj = CANADIAN_PROVINCES_LIST.find((p) => p.code === province);
+  const provinceObj = getRegionByCode(province);
   const provinceName = provinceObj ? provinceObj.name : province;
 
   const baseP75Days = BASE_MODEL_P75[modelSlug] ?? fallbackBenchmark?.p75_days ?? 450;
@@ -559,13 +583,13 @@ export function WaitTimeEstimator({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor={`${compId}-province`}>Province / Territory</Label>
+            <Label htmlFor={`${compId}-province`}>{getRegionLabel(market)}</Label>
             <Select
               id={`${compId}-province`}
               value={province}
               onChange={(e) => setProvince(e.target.value)}
             >
-              {CANADIAN_PROVINCES_LIST.map((p) => (
+              {getRegionsForMarket(market).map((p) => (
                 <option key={p.code} value={p.code}>
                   {p.name} ({p.code})
                 </option>

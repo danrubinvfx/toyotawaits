@@ -4,10 +4,15 @@ import React, { useState, useId, useRef, useEffect } from 'react';
 import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
+  getRegionsForMarket,
+  getRegionLabel,
+  getDefaultRegion,
+  isValidRegionForMarket,
   CatalogModel,
   CatalogPowertrain,
   CatalogTrim,
 } from '@/lib/data/vehicles';
+import { useMarket } from '@/context/MarketContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -63,12 +68,21 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   );
 
   // Form Fields State
+  const { market } = useMarket();
   const [province, setProvince] = useState<string>(() => {
-    if (paramProvince && CANADIAN_PROVINCES_LIST.some((p) => p.code === paramProvince)) {
+    if (paramProvince && isValidRegionForMarket(paramProvince, market)) {
       return paramProvince;
     }
-    return 'ON';
+    return market === 'US' ? 'CA' : 'ON';
   });
+
+  // Safely reset region when toggling market
+  useEffect(() => {
+    if (!isValidRegionForMarket(province, market)) {
+      setProvince(market === 'US' ? 'CA' : 'ON');
+    }
+  }, [market, province]);
+
   const [dealershipCity, setDealershipCity] = useState<string>('');
   const [modelYear, setModelYear] = useState<number>(() => {
     if (paramOrderDate && /^\d{4}-\d{2}-\d{2}$/.test(paramOrderDate)) {
@@ -134,7 +148,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setSelectedModelSlug('rav4');
     setSelectedPowertrainSlug('hev');
     setSelectedTrimId('30000000-0000-4000-8000-000000000002');
-    setProvince('ON');
+    setProvince(market === 'US' ? 'CA' : 'ON');
     setDealershipCity('');
     setModelYear(2026);
     setOrderDate(getTodayLocalDate());
@@ -222,7 +236,9 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         powertrainSlug: currentPowertrain.slug,
         trimId: currentTrim.id,
         trimSlug: currentTrim.slug,
-        province,
+        countryCode: market === 'US' ? 'US' : 'CA',
+        province: market === 'CA' ? province : undefined,
+        state: market === 'US' ? province : undefined,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),
         orderDate,
@@ -577,13 +593,13 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
             {/* 2. Geography & Model Year */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor={`${formId}-province`}>Province / Territory</Label>
+                <Label htmlFor={`${formId}-province`}>{getRegionLabel(market)}</Label>
                 <Select
                   id={`${formId}-province`}
                   value={province}
                   onChange={(e) => setProvince(e.target.value)}
                 >
-                  {CANADIAN_PROVINCES_LIST.map((p) => (
+                  {getRegionsForMarket(market).map((p) => (
                     <option key={p.code} value={p.code}>
                       {p.name} ({p.code})
                     </option>

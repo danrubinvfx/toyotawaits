@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
-import { CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
+import { getRegionByCode } from '@/lib/data/vehicles';
 
 export interface UseEstimatorOptions {
   modelSlug: string;
@@ -134,9 +134,7 @@ export function useEstimator({
 
   // Multiplier Breakdown & Base P75 calculation
   const baseP75Days = BASE_MODEL_P75[modelSlug] ?? currentBenchmark?.p75_days ?? 450;
-  const provinceObj = CANADIAN_PROVINCES_LIST.find(
-    (p) => p.code.toLowerCase() === province?.toLowerCase()
-  );
+  const provinceObj = getRegionByCode(province);
   const provinceLabel = provinceObj ? provinceObj.name : province || 'regional';
   const trimLabel =
     trimName && trimName !== 'All Trims' && trimName !== 'all'

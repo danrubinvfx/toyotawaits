@@ -8,7 +8,7 @@
  */
 
 import { BASELINE_MODEL_BENCHMARKS, ModelWaitBenchmark } from '@/lib/db/stats';
-import { CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
+import { getRegionByCode } from '@/lib/data/vehicles';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
 
 /** Universal upper bound guardrail for calculated wait times */
@@ -265,9 +265,7 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
 
   const baseP75Days = BASE_MODEL_P75[modelSlug] ?? currentBenchmark?.p75_days ?? 382;
 
-  const provinceObj = CANADIAN_PROVINCES_LIST.find(
-    (p) => p.code.toLowerCase() === province?.toLowerCase()
-  );
+  const provinceObj = getRegionByCode(province);
   const provinceLabel = provinceObj ? provinceObj.name : province || 'regional';
   const trimLabel =
     trimName && trimName !== 'All Trims' && trimName !== 'all'

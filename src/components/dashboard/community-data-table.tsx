@@ -6,7 +6,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { CANADIAN_VEHICLE_CATALOG, CANADIAN_PROVINCES_LIST } from '@/lib/data/vehicles';
+import {
+  CANADIAN_VEHICLE_CATALOG,
+  CANADIAN_PROVINCES_LIST,
+  getRegionsForMarket,
+} from '@/lib/data/vehicles';
+import { useMarket } from '@/context/MarketContext';
 import {
   FileSpreadsheet,
   ArrowUpDown,
@@ -37,6 +42,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const [records, setRecords] = useState<CommunityRecord[]>(
     () => (initialRecords && initialRecords.length > 0 ? initialRecords : INITIAL_COMMUNITY_RECORDS)
   );
+  const { market } = useMarket();
   const [modelFilter, setModelFilter] = useState<string>('all');
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -48,6 +54,12 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 8;
+
+  // Reset province filter safely when market changes
+  React.useEffect(() => {
+    setProvinceFilter('all');
+    setCurrentPage(1);
+  }, [market]);
 
   // Debounce search query by 250ms
   React.useEffect(() => {
@@ -120,7 +132,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     for (const r of records) {
       if (r.status === 'cancelled' || (r as any).is_cancelled) continue;
       if (modelFilter !== 'all' && r.modelSlug !== modelFilter) continue;
-      if (provinceFilter !== 'all' && r.province !== provinceFilter) continue;
+      if (provinceFilter !== 'all' && r.province !== provinceFilter && (r as any).state !== provinceFilter) continue;
       all++;
       if (isHybrid(r)) hybrid++;
       else if (isPhev(r)) phev++;
@@ -138,7 +150,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
       .filter((r) => {
         if (r.status === 'cancelled' || (r as any).is_cancelled) return false;
         if (modelFilter !== 'all' && r.modelSlug !== modelFilter) return false;
-        if (provinceFilter !== 'all' && r.province !== provinceFilter) return false;
+        if (provinceFilter !== 'all' && r.province !== provinceFilter && (r as any).state !== provinceFilter) return false;
         if (statusFilter !== 'all' && r.status !== statusFilter) return false;
 
         const effectivePowertrain = powertrainFilter !== 'all'
@@ -164,7 +176,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           const city = (r.city || '').toLowerCase();
           const model = (r.model || '').toLowerCase();
           const trim = (r.trim || '').toLowerCase();
-          const prov = (r.province || '').toLowerCase();
+          const prov = (r.province || (r as any).state || '').toLowerCase();
 
           const matches =
             dealer.includes(q) ||
@@ -368,7 +380,11 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            placeholder="Search by dealer name, city, model, trim, or province (e.g. Richmond, XSE, Ontario)..."
+            placeholder={
+              market === 'US'
+                ? 'Search by dealer name, city, model, trim, or state (e.g. Seattle, XSE, California)...'
+                : 'Search by dealer name, city, model, trim, or province (e.g. Richmond, XSE, Ontario)...'
+            }
             className="pl-8 pr-8 h-9 text-xs bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800 placeholder:text-zinc-400 focus-visible:ring-amber-500"
           />
           {searchQuery && (
@@ -406,7 +422,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           </Select>
 
           <Select
-            aria-label="Filter deliveries by province or territory"
+            aria-label={market === 'US' ? 'Filter deliveries by state or region' : 'Filter deliveries by province or territory'}
             value={provinceFilter}
             onChange={(e) => {
               setProvinceFilter(e.target.value);
@@ -414,8 +430,10 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             }}
             className="text-xs h-9"
           >
-            <option value="all">All Canadian Provinces</option>
-            {CANADIAN_PROVINCES_LIST.map((p) => (
+            <option value="all">
+              {market === 'US' ? 'All US States' : 'All Canadian Provinces'}
+            </option>
+            {getRegionsForMarket(market).map((p) => (
               <option key={p.code} value={p.code}>
                 {p.name} ({p.code})
               </option>
@@ -483,7 +501,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
             <thead className="bg-zinc-100/70 text-zinc-600 dark:bg-zinc-900/80 dark:text-zinc-400 font-semibold border-b border-zinc-200 dark:border-zinc-800">
               <tr>
                 <th className="py-3 px-3 sm:px-4">Vehicle & Trim</th>
-                <th className="py-3 px-3 sm:px-4">Province / City</th>
+                <th className="py-3 px-3 sm:px-4">{market === 'US' ? 'State / City' : 'Province / City'}</th>
                 <th className="py-3 px-3 sm:px-4">Order Date</th>
                 <th className="py-3 px-3 sm:px-4">Status & Wait</th>
                 <th className="py-3 px-3 sm:px-4">Pricing</th>
@@ -493,7 +511,9 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               {paginatedRecords.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="py-12 text-center text-zinc-400 text-xs italic">
-                    Nothin&apos; but crickets and street sweepers in this province yet. Be the first to drop a dime.
+                    {market === 'US'
+                      ? "Nothin' but crickets and street sweepers in this state yet. Be the first to drop a dime."
+                      : "Nothin' but crickets and street sweepers in this province yet. Be the first to drop a dime."}
                   </td>
                 </tr>
               ) : (
@@ -512,7 +532,7 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
 
                     {/* Geography */}
                     <td className="py-3 px-3 sm:px-4">
-                      <span className="font-semibold text-zinc-900 dark:text-zinc-100">{r.province}</span>
+                      <span className="font-semibold text-zinc-900 dark:text-zinc-100">{r.province || (r as any).state}</span>
                       {r.city && <span className="text-zinc-500 text-xs block">{r.city}</span>}
                     </td>
 

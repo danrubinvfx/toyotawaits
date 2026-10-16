@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
+import { useMarket } from '@/context/MarketContext';
 
 interface HeaderSubmission {
   id: string;
@@ -37,23 +38,21 @@ interface HeaderProps {
   initialRegion?: 'CA' | 'US';
 }
 
-export function Header({ initialRegion = 'CA' }: HeaderProps = {}) {
-  const [region, setRegion] = useState<'CA' | 'US'>(initialRegion);
+export function Header({ initialRegion }: HeaderProps = {}) {
+  const { market: ctxMarket, setMarket: ctxSetMarket } = useMarket();
+  const [overrideMarket, setOverrideMarket] = useState<'CA' | 'US' | undefined>(initialRegion);
+
+  const market = overrideMarket ?? ctxMarket;
+  const setMarket = (newM: 'CA' | 'US') => {
+    setOverrideMarket(newM);
+    ctxSetMarket(newM);
+  };
+  const isUs = market === 'US';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [desktopModsOpen, setDesktopModsOpen] = useState(false);
   const [desktopGearOpen, setDesktopGearOpen] = useState(false);
   const [submission, setSubmission] = useState<HeaderSubmission | null>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (window.location.hostname.includes('toyotawaits.com')) {
-        setRegion('US');
-      }
-    }
-  }, []);
-
-  const isUs = region === 'US';
 
   useEffect(() => {
     const loadSubmission = () => {
@@ -376,32 +375,45 @@ export function Header({ initialRegion = 'CA' }: HeaderProps = {}) {
 
         {/* Action Button & Ko-fi Support */}
         <div className="flex items-center gap-2 shrink-0 ml-auto">
-          {/* Subtle Domain/Region Switcher */}
-          <div className="hidden sm:inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold shrink-0" data-testid="region-switcher-header">
-            <a
-              href="https://toyotawaits.ca"
+          {/* Compact Country / Market Switcher Toggle */}
+          <div
+            className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold shrink-0"
+            data-testid="region-switcher-header"
+            role="group"
+            aria-label="Country selection"
+          >
+            <button
+              type="button"
+              onClick={() => setMarket('CA')}
               className={cn(
-                'px-2 py-0.5 rounded text-[11px] transition-colors',
+                'px-1.5 sm:px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-medium transition-all cursor-pointer flex items-center gap-1 select-none',
                 !isUs
-                  ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                  ? 'bg-amber-500 text-black font-bold shadow-xs'
+                  : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
               )}
+              aria-pressed={!isUs}
               title="Switch to Canada (CAD)"
+              data-testid="market-toggle-ca"
             >
-              🇨🇦 CA (CAD)
-            </a>
-            <a
-              href="https://toyotawaits.com"
+              <span aria-hidden="true">🇨🇦</span>
+              <span className="tracking-tight">CA</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMarket('US')}
               className={cn(
-                'px-2 py-0.5 rounded text-[11px] transition-colors',
+                'px-1.5 sm:px-2 py-0.5 rounded-full text-[11px] sm:text-xs font-medium transition-all cursor-pointer flex items-center gap-1 select-none',
                 isUs
-                  ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                  ? 'bg-amber-500 text-black font-bold shadow-xs'
+                  : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100'
               )}
+              aria-pressed={isUs}
               title="Switch to United States (USD)"
+              data-testid="market-toggle-us"
             >
-              🇺🇸 US (USD)
-            </a>
+              <span aria-hidden="true">🇺🇸</span>
+              <span className="tracking-tight">US</span>
+            </button>
           </div>
 
           <div className="hidden sm:block shrink-0">
@@ -451,29 +463,40 @@ export function Header({ initialRegion = 'CA' }: HeaderProps = {}) {
             {/* Mobile Regional Switcher */}
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
               <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Market / Region</span>
-              <div className="inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold">
-                <a
-                  href="https://toyotawaits.ca"
+              <div
+                className="inline-flex items-center rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 p-0.5 text-xs font-semibold"
+                data-testid="region-switcher-mobile"
+                role="group"
+                aria-label="Mobile market selection"
+              >
+                <button
+                  type="button"
+                  onClick={() => setMarket('CA')}
                   className={cn(
-                    'px-2.5 py-1 rounded text-xs transition-colors',
+                    'px-2.5 py-1 rounded-full text-xs transition-colors cursor-pointer flex items-center gap-1',
                     !isUs
-                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs font-bold'
+                      ? 'bg-amber-500 text-black font-bold shadow-xs'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
                   )}
+                  aria-pressed={!isUs}
                 >
-                  🇨🇦 CA (CAD)
-                </a>
-                <a
-                  href="https://toyotawaits.com"
+                  <span aria-hidden="true">🇨🇦</span>
+                  <span>CA</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMarket('US')}
                   className={cn(
-                    'px-2.5 py-1 rounded text-xs transition-colors',
+                    'px-2.5 py-1 rounded-full text-xs transition-colors cursor-pointer flex items-center gap-1',
                     isUs
-                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-xs font-bold'
+                      ? 'bg-amber-500 text-black font-bold shadow-xs'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
                   )}
+                  aria-pressed={isUs}
                 >
-                  🇺🇸 US (USD)
-                </a>
+                  <span aria-hidden="true">🇺🇸</span>
+                  <span>US</span>
+                </button>
               </div>
             </div>
 

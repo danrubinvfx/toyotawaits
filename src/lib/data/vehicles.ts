@@ -255,21 +255,29 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
   },
 ];
 
-export const CANADIAN_PROVINCES_LIST = [
-  { code: 'AB', name: 'Alberta' },
-  { code: 'BC', name: 'British Columbia' },
-  { code: 'MB', name: 'Manitoba' },
-  { code: 'NB', name: 'New Brunswick' },
-  { code: 'NL', name: 'Newfoundland and Labrador' },
-  { code: 'NS', name: 'Nova Scotia' },
-  { code: 'NT', name: 'Northwest Territories' },
-  { code: 'NU', name: 'Nunavut' },
-  { code: 'ON', name: 'Ontario' },
-  { code: 'PE', name: 'Prince Edward Island' },
-  { code: 'QC', name: 'Quebec' },
-  { code: 'SK', name: 'Saskatchewan' },
-  { code: 'YT', name: 'Yukon' },
-] as const;
+import {
+  CANADIAN_PROVINCES_LIST,
+  US_STATES_LIST,
+  getRegionsForMarket,
+  getRegionLabel,
+  getDefaultRegion,
+  getRegionByCode,
+  isValidRegionForMarket,
+  type RegionOption,
+  type Market,
+} from '@/lib/constants/regions';
+
+export {
+  CANADIAN_PROVINCES_LIST,
+  US_STATES_LIST,
+  getRegionsForMarket,
+  getRegionLabel,
+  getDefaultRegion,
+  getRegionByCode,
+  isValidRegionForMarket,
+  type RegionOption,
+  type Market,
+};
 
 export function getModelBySlug(slug: string): CatalogModel | undefined {
   return CANADIAN_VEHICLE_CATALOG.find(
@@ -289,9 +297,7 @@ export function getPowertrainBySlug(
 }
 
 export function getProvinceByCode(code: string): { code: string; name: string } | undefined {
-  return CANADIAN_PROVINCES_LIST.find(
-    (p) => p.code.toLowerCase() === code.toLowerCase()
-  );
+  return getRegionByCode(code);
 }
 
 export function isRebateEligibleProvince(code: string): boolean {
@@ -299,4 +305,5 @@ export function isRebateEligibleProvince(code: string): boolean {
   // BC, QC, MB, NB, NS, PE, NL have active provincial or territorial EV/PHEV incentives
   return ['BC', 'QC', 'MB', 'NB', 'NS', 'PE', 'NL'].includes(upper);
 }
+
 
