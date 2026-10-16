@@ -15,6 +15,7 @@ import {
   BatteryCharging,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useMarket } from '@/context/MarketContext';
 import { VideoModal } from './video-modal';
 
 export interface ModCardItem {
@@ -47,7 +48,45 @@ export interface ModCardProps {
   isChecked?: boolean;
   onToggle?: (slug: string) => void;
   showCheckbox?: boolean;
+  isDragging?: boolean;
   className?: string;
+}
+
+/**
+ * Resolves the destination Amazon affiliate URL for a product,
+ * respecting the active country context (Amazon.ca vs Amazon.com).
+ */
+export function getAmazonAffiliateUrl(
+  item: ModCardItem,
+  isUs: boolean = false
+): string {
+  const rawUrl = item.destinationUrl || item.affiliateUrl || '';
+
+  if (rawUrl && rawUrl.includes('amazon.')) {
+    try {
+      const parsed = new URL(rawUrl);
+      parsed.hostname = isUs ? 'www.amazon.com' : 'www.amazon.ca';
+      return parsed.toString();
+    } catch {
+      return isUs
+        ? rawUrl.replace(/amazon\.ca/g, 'amazon.com')
+        : rawUrl.replace(/amazon\.com/g, 'amazon.ca');
+    }
+  }
+
+  // Fallback to ASIN if available
+  if (item.asin) {
+    const domain = isUs ? 'amazon.com' : 'amazon.ca';
+    return `https://www.${domain}/dp/${item.asin}?tag=toyotawaits-20`;
+  }
+
+  // Fallback to title search if available
+  if (item.title) {
+    const domain = isUs ? 'amazon.com' : 'amazon.ca';
+    return `https://www.${domain}/s?k=${encodeURIComponent(item.title)}&tag=toyotawaits-20`;
+  }
+
+  return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
 }
 
 /**
@@ -113,14 +152,25 @@ export function ModCard({
   isChecked = false,
   onToggle,
   showCheckbox = true,
+  isDragging = false,
   className,
 }: ModCardProps) {
   const [imgError, setImgError] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const { isUs } = useMarket();
+  const amazonAffiliateUrl = getAmazonAffiliateUrl(item, isUs);
+
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
+
+  const handleImageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (isDragging) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
 
   return (
     <div
@@ -156,32 +206,42 @@ export function ModCard({
 
       {/* Top Section: Media + Badges + Title + Savings Callout + Note */}
       <div className="flex-1 flex flex-col">
-        {/* Constrain image height (h-32 w-full aspect-video object-cover rounded-xl mb-2.5) */}
-        {showImage ? (
-          <div className="relative h-32 w-full aspect-video shrink-0 rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center shadow-xs mb-2.5">
-            <img
-              src={imageSource!}
-              alt={item.title}
-              loading="lazy"
-              draggable={false}
-              onError={() => setImgError(true)}
-              className={cn(
-                'w-full h-full object-cover transition-transform duration-300',
-                isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
-              )}
-            />
-          </div>
-        ) : (
-          <div
-            data-testid={`fallback-icon-${item.slug}`}
-            className="relative h-32 w-full aspect-video shrink-0 rounded-xl border border-neutral-800 bg-neutral-950/90 flex items-center justify-center text-amber-500/80 shadow-xs mb-2.5"
-            title={item.title}
-          >
-            {React.createElement(getThemedCategoryIcon(item.category, item.title), {
-              className: 'h-9 w-9 stroke-[1.5]',
-            })}
-          </div>
-        )}
+        {/* Constrain image height with clickable Amazon outbound affiliate link */}
+        <a
+          href={amazonAffiliateUrl}
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          aria-label={`View ${item.title} on Amazon`}
+          onClick={handleImageClick}
+          draggable={false}
+          className="cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block mb-2.5"
+        >
+          {showImage ? (
+            <div className="relative h-32 w-full aspect-video shrink-0 rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center shadow-xs">
+              <img
+                src={imageSource!}
+                alt={item.title}
+                loading="lazy"
+                draggable={false}
+                onError={() => setImgError(true)}
+                className={cn(
+                  'w-full h-full object-cover transition-transform duration-300',
+                  isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
+                )}
+              />
+            </div>
+          ) : (
+            <div
+              data-testid={`fallback-icon-${item.slug}`}
+              className="relative h-32 w-full aspect-video shrink-0 rounded-xl border border-neutral-800 bg-neutral-950/90 flex items-center justify-center text-amber-500/80 shadow-xs"
+              title={item.title}
+            >
+              {React.createElement(getThemedCategoryIcon(item.category, item.title), {
+                className: 'h-9 w-9 stroke-[1.5]',
+              })}
+            </div>
+          )}
+        </a>
 
         {/* Group badges into a single line (flex items-center gap-1.5 mb-2 overflow-hidden text-[11px]) */}
         {(item.badge || item.compatibility) && (
@@ -282,5 +342,9 @@ export function ModCard({
     </div>
   );
 }
+
+export const GearCard = ModCard;
+export type GearCardProps = ModCardProps;
+export type GearCardItem = ModCardItem;
 
 export default ModCard;

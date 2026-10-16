@@ -2,6 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ModCard, getThemedCategoryIcon } from '@/components/delivery-prep/mod-card';
+import { MarketProvider } from '@/context/MarketContext';
+import { GearCard } from '@/components/gear/GearCard';
 import { BatteryCharging, Luggage, Zap, Package, Layers, ShieldCheck } from 'lucide-react';
 
 describe('ModCard Component', () => {
@@ -110,4 +112,57 @@ describe('ModCard Component', () => {
     expect(getThemedCategoryIcon('Interior Protection', 'All-Weather Liners')).toBe(Layers);
     expect(getThemedCategoryIcon('Other', 'Generic Item')).toBe(ShieldCheck);
   });
+
+  it('wraps the product preview image in an Amazon affiliate anchor with required compliance attributes and classes', () => {
+    render(<ModCard item={sampleItem} />);
+
+    const imageLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    expect(imageLink).toBeInTheDocument();
+    expect(imageLink.getAttribute('href')).toContain('amazon.ca');
+    expect(imageLink.getAttribute('href')).toContain('B09GLVMB76');
+    expect(imageLink.getAttribute('target')).toBe('_blank');
+    expect(imageLink.getAttribute('rel')).toBe('noopener noreferrer nofollow');
+    expect(imageLink).toHaveClass('cursor-pointer');
+    expect(imageLink).toHaveClass('transition-opacity');
+    expect(imageLink).toHaveClass('hover:opacity-90');
+    expect(imageLink).toHaveClass('active:opacity-80');
+  });
+
+  it('prevents link navigation when user is dragging or swiping the carousel', () => {
+    render(<ModCard item={sampleItem} isDragging={true} />);
+
+    const imageLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+    imageLink.dispatchEvent(clickEvent);
+
+    expect(clickEvent.defaultPrevented).toBe(true);
+  });
+
+  it('respects country context for Canada (Amazon.ca) and United States (Amazon.com)', () => {
+    const itemWithDirectUrl = {
+      ...sampleItem,
+      destinationUrl: 'https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20',
+    };
+
+    // CA Default
+    const { unmount } = render(<ModCard item={itemWithDirectUrl} />);
+    const caLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    expect(caLink.getAttribute('href')).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
+    unmount();
+
+    // US Market via MarketProvider
+    render(
+      <MarketProvider initialMarket="US">
+        <ModCard item={itemWithDirectUrl} />
+      </MarketProvider>
+    );
+    const usLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    expect(usLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+  });
+
+  it('allows importing GearCard alias from @/components/gear/GearCard', () => {
+    render(<GearCard item={sampleItem} />);
+    expect(screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` })).toBeInTheDocument();
+  });
 });
+
