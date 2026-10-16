@@ -72,6 +72,9 @@ export async function GET(request: NextRequest) {
       'status',
       'pricing',
       'addons_cad',
+      'country',
+      'currency',
+      'adm_markup',
     ];
 
     const csvLines = [headers.join(',')];
@@ -92,6 +95,9 @@ export async function GET(request: NextRequest) {
           escapeCsvCell(r.status),
           escapeCsvCell(r.pricing),
           escapeCsvCell(r.addons_cad),
+          escapeCsvCell(r.country || r.country_code || (r.state ? 'US' : 'CA')),
+          escapeCsvCell(r.currency || ((r.country || r.country_code) === 'US' ? 'USD' : 'CAD')),
+          escapeCsvCell(r.adm_markup != null ? r.adm_markup : (r.dealer_markup_adm || '0.00')),
         ].join(',')
       );
     }

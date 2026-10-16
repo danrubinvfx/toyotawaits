@@ -115,7 +115,10 @@ export interface ExportRow {
   powertrain: string;
   trim: string;
   model_year: number;
+  country?: string;
   country_code?: string;
+  currency?: string;
+  adm_markup?: string | number;
   province: string;
   state?: string;
   dealership_city: string;
@@ -573,16 +576,18 @@ function seedInitialData() {
     const uuidId = `c1000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`;
     inMemorySubmissions.set(uuidId, {
       id: uuidId,
+      country: 'US',
       country_code: 'US',
       countryCode: 'US',
+      currency: 'USD',
       model_slug: r.modelSlug,
       model_name: r.model,
       powertrain_slug: r.powertrainSlug,
       powertrain_name: r.powertrain,
       trim_slug: r.trim.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       trim_name: r.trim,
-      province: r.province || r.state || 'CA',
-      state: r.state || 'CA',
+      province: r.province || r.state || 'WA',
+      state: r.state || r.province || 'WA',
       dealership_city: r.city,
       dealership_name: r.dealershipName || r.dealerName || '',
       model_year: r.modelYear,
@@ -590,8 +595,12 @@ function seedInitialData() {
       delivery_date: r.deliveryDate,
       wait_days: r.waitDays,
       status: r.status,
+      stage: r.stage || (r.status === 'delivered' ? 'delivered' : 'allocation_confirmed'),
+      current_stage: r.stage || (r.status === 'delivered' ? 'delivered' : 'allocation_confirmed'),
       pricing: r.pricing,
+      pricing_type: r.pricing === 'at_msrp' ? 'at_msrp' : 'markup',
       mandatory_addons_cad: r.addonsCad,
+      adm_markup: r.dealerMarkupAdm || 0,
       dealer_markup_adm: r.dealerMarkupAdm || 0,
       port_destination: r.portDestination || '',
       trade_in_required: false,
@@ -1410,27 +1419,36 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
             )
           : data;
 
-        return filteredData.map((item: any) => ({
-          id: item.id || '',
-          created_at: item.created_at || '',
-          model: item.vehicle_models?.name || 'RAV4',
-          powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
-          trim: item.vehicle_trims?.name || 'XLE AWD',
-          model_year: item.model_year,
-          country_code: item.country_code || (item.state ? 'US' : 'CA'),
-          province: item.province || item.state || '',
-          state: item.state || '',
-          dealership_city: item.dealership_city || '',
-          order_date: item.order_date,
-          delivery_date: item.delivery_date || '',
-          wait_days: item.wait_days != null ? String(item.wait_days) : '',
-          status: item.status,
-          pricing: item.pricing || 'undisclosed',
-          addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
-          dealer_markup_adm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '',
-          port_destination: item.port_destination || '',
-          submitted_at: item.created_at,
-        }));
+        return filteredData.map((item: any) => {
+          const isItemUs = item.country === 'US' || item.country_code === 'US' || Boolean(item.state);
+          const countryCode = isItemUs ? 'US' : 'CA';
+          const currency = isItemUs ? 'USD' : 'CAD';
+          const adm = item.adm_markup != null ? Number(item.adm_markup).toFixed(2) : (item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '0.00');
+          return {
+            id: item.id || '',
+            created_at: item.created_at || '',
+            model: item.vehicle_models?.name || 'RAV4',
+            powertrain: item.vehicle_powertrains?.name || 'Hybrid (HEV)',
+            trim: item.vehicle_trims?.name || 'XLE AWD',
+            model_year: item.model_year,
+            country: countryCode,
+            country_code: countryCode,
+            currency,
+            adm_markup: adm,
+            province: item.province || item.state || '',
+            state: item.state || '',
+            dealership_city: item.dealership_city || '',
+            order_date: item.order_date,
+            delivery_date: item.delivery_date || '',
+            wait_days: item.wait_days != null ? String(item.wait_days) : '',
+            status: item.status,
+            pricing: item.pricing || 'undisclosed',
+            addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
+            dealer_markup_adm: adm,
+            port_destination: item.port_destination || '',
+            submitted_at: item.created_at,
+          };
+        });
       }
     } catch (err) {
       console.warn('Supabase export query fallback to in-memory store:', err);
@@ -1465,6 +1483,11 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       if (item.status === 'cancelled' || item.is_cancelled === true) continue;
     }
 
+    const isItemUs = item.country === 'US' || item.country_code === 'US' || item.countryCode === 'US' || Boolean(item.state);
+    const countryCode = isItemUs ? 'US' : 'CA';
+    const currency = isItemUs ? 'USD' : 'CAD';
+    const adm = item.adm_markup != null ? Number(item.adm_markup).toFixed(2) : (item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '0.00');
+
     rows.push({
       id: item.id || '',
       created_at: item.created_at || '',
@@ -1472,7 +1495,10 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       powertrain: item.powertrain_name || 'HEV',
       trim: item.trim_name || 'XLE AWD',
       model_year: item.model_year,
-      country_code: item.country_code || (item.state ? 'US' : 'CA'),
+      country: countryCode,
+      country_code: countryCode,
+      currency,
+      adm_markup: adm,
       province: item.province || item.state || '',
       state: item.state || '',
       dealership_city: item.dealership_city || '',
@@ -1482,7 +1508,7 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       status: item.status,
       pricing: item.pricing || 'undisclosed',
       addons_cad: Number(item.mandatory_addons_cad || 0).toFixed(2),
-      dealer_markup_adm: item.dealer_markup_adm != null ? Number(item.dealer_markup_adm).toFixed(2) : '',
+      dealer_markup_adm: adm,
       port_destination: item.port_destination || '',
       submitted_at: item.created_at,
     });

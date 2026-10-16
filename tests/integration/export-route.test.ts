@@ -107,6 +107,66 @@ describe('GET /api/export', () => {
     }
   });
 
+  it('handles country, currency, and adm_markup columns cleanly without breaking column alignments', async () => {
+    const request = new NextRequest('http://localhost:3000/api/export?format=csv');
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    const csvText = await response.text();
+    const lines = csvText.trim().split(/\r?\n/).filter((l) => l.trim().length > 0);
+
+    const headerColumns = lines[0].replace(/^\uFEFF/, '').split(',');
+    expect(headerColumns).toEqual([
+      'id',
+      'created_at',
+      'order_date',
+      'delivered_date',
+      'model_year',
+      'model_name',
+      'trim_name',
+      'powertrain',
+      'province',
+      'wait_days',
+      'status',
+      'pricing',
+      'addons_cad',
+      'country',
+      'currency',
+      'adm_markup',
+    ]);
+
+    const dataLines = lines.slice(1);
+    expect(dataLines.length).toBeGreaterThan(0);
+
+    for (const line of dataLines) {
+      const columns = line.split(',');
+      expect(columns.length).toBe(16);
+      expect(['CA', 'US']).toContain(columns[13]);
+      expect(['CAD', 'USD']).toContain(columns[14]);
+      expect(Number(columns[15])).not.toBeNaN();
+    }
+  });
+
+  it('exports US market records with USD currency and ADM markup when country_code=US', async () => {
+    const request = new NextRequest('http://localhost:3000/api/export?format=csv&country_code=US');
+    const response = await GET(request);
+
+    expect(response.status).toBe(200);
+    const csvText = await response.text();
+    const lines = csvText.trim().split(/\r?\n/).filter((l) => l.trim().length > 0);
+
+    const dataLines = lines.slice(1);
+    expect(dataLines.length).toBeGreaterThan(0);
+
+    for (const line of dataLines) {
+      const columns = line.split(',');
+      expect(columns.length).toBe(16);
+      expect(columns[13]).toBe('US');
+      expect(columns[14]).toBe('USD');
+      expect(Number(columns[15])).toBeGreaterThanOrEqual(0);
+    }
+  });
+
   it('returns 400 Bad Request for unsupported export format', async () => {
     const request = new NextRequest('http://localhost:3000/api/export?format=json');
     const response = await GET(request);

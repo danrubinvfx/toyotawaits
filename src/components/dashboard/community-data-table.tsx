@@ -28,7 +28,7 @@ import {
   Info,
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
-import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
+import { CommunityRecord, INITIAL_COMMUNITY_RECORDS, INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { OrderStageIndicator } from '@/components/dashboard/order-stage-indicator';
 
 export type { CommunityRecord };
@@ -76,27 +76,30 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
     }
   }, [initialRecords]);
 
-  // Fetch freshest submissions on client mount (bypassed in test environment)
+  // Fetch freshest submissions on client mount and whenever active market switches
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'test') return;
     let isMounted = true;
     async function fetchSubmissions() {
       try {
-        const res = await fetch('/api/submissions', { cache: 'no-store' });
+        const res = await fetch(`/api/submissions?country=${market}`, { cache: 'no-store' });
         if (!res.ok) return;
         const json = await res.json();
         if (json.success && Array.isArray(json.data) && isMounted) {
           setRecords(json.data);
         }
       } catch {
-        // Silently retain current records on network error
+        // Fallback to initial local reference data if network fails
+        if (isMounted) {
+          setRecords(market === 'US' ? INITIAL_US_COMMUNITY_RECORDS : INITIAL_COMMUNITY_RECORDS);
+        }
       }
     }
     fetchSubmissions();
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [market]);
 
   // Calculate days waited so far for pending submissions
   const calculateDaysWaitedSoFar = (orderDateStr: string): number => {
@@ -227,8 +230,8 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           : 'all';
     const province = provinceFilter;
 
-    return `/api/export?format=csv${model !== 'all' ? `&model=${encodeURIComponent(model)}` : ''}${powertrain !== 'all' ? `&powertrain=${encodeURIComponent(powertrain)}` : ''}${status !== 'all' ? `&status=${encodeURIComponent(status)}` : ''}${province !== 'all' ? `&province=${encodeURIComponent(province)}` : ''}`;
-  }, [modelFilter, powertrainFilter, pillFilter, statusFilter, provinceFilter]);
+    return `/api/export?format=csv&country_code=${market}${model !== 'all' ? `&model=${encodeURIComponent(model)}` : ''}${powertrain !== 'all' ? `&powertrain=${encodeURIComponent(powertrain)}` : ''}${status !== 'all' ? `&status=${encodeURIComponent(status)}` : ''}${province !== 'all' ? `&province=${encodeURIComponent(province)}` : ''}`;
+  }, [market, modelFilter, powertrainFilter, pillFilter, statusFilter, provinceFilter]);
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 shadow-sm">
