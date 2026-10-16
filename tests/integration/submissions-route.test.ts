@@ -685,6 +685,40 @@ describe('PATCH /api/submissions/[id]', () => {
     expect(data.data.id).toBeDefined();
     expect(data.data.status).toBe('pending');
   });
+
+  it('handles US market submission with country, currency, adm_markup, and pricing_type', async () => {
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      country: 'US',
+      currency: 'USD',
+      province: 'WA',
+      adm_markup: 2500,
+      pricing_type: 'markup',
+      dealershipCity: 'Seattle',
+      modelYear: 2026,
+      orderDate: '2026-02-15',
+      status: 'pending',
+      stage: 'deposit_placed',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.99',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.id).toBeDefined();
+  });
 });
 
 describe('GET /api/submissions', () => {

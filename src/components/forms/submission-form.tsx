@@ -107,6 +107,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('undisclosed');
   const [mandatoryAddonsCad, setMandatoryAddonsCad] = useState<string>('');
+  const [usPricingType, setUsPricingType] = useState<'at_msrp' | 'markup' | 'mandatory_addons'>('at_msrp');
+  const [usAdmAmount, setUsAdmAmount] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [honeypot, setHoneypot] = useState<string>('');
 
@@ -157,6 +159,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setDeliveryDate('');
     setPricing('undisclosed');
     setMandatoryAddonsCad('');
+    setUsPricingType('at_msrp');
+    setUsAdmAmount('');
     setNotes('');
     setHoneypot('');
     setFieldErrors({});
@@ -228,6 +232,17 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     try {
       const currentTrim = currentTrims.find((t) => t.id === effectiveTrimId) || currentTrims[0];
 
+      const isUsMarket = market === 'US';
+      const resolvedPricingType = isUsMarket
+        ? usPricingType
+        : (pricing === 'above_msrp' ? 'markup' : pricing === 'below_msrp' ? 'discount' : pricing === 'at_msrp' ? 'at_msrp' : undefined);
+      const resolvedAdmMarkup = isUsMarket
+        ? (usPricingType === 'at_msrp' ? 0 : (Number(usAdmAmount) || 0))
+        : undefined;
+      const resolvedPricing = isUsMarket
+        ? (usPricingType === 'at_msrp' ? 'at_msrp' : 'above_msrp')
+        : pricing;
+
       const payload = {
         modelId: currentModel.id,
         modelSlug: currentModel.slug,
@@ -236,17 +251,24 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         powertrainSlug: currentPowertrain.slug,
         trimId: currentTrim.id,
         trimSlug: currentTrim.slug,
-        countryCode: market === 'US' ? 'US' : 'CA',
-        province: market === 'CA' ? province : undefined,
-        state: market === 'US' ? province : undefined,
+        country: isUsMarket ? 'US' : 'CA',
+        countryCode: isUsMarket ? 'US' : 'CA',
+        currency: isUsMarket ? 'USD' : 'CAD',
+        province: isUsMarket ? undefined : province,
+        state: isUsMarket ? province : undefined,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),
         orderDate,
         deliveryDate: stage === 'delivered' ? deliveryDate : undefined,
         status: stage === 'delivered' ? 'delivered' : 'pending',
         stage,
-        pricing,
-        mandatoryAddonsCad: Number(mandatoryAddonsCad) || 0,
+        pricing: resolvedPricing,
+        pricing_type: resolvedPricingType,
+        adm_markup: resolvedAdmMarkup,
+        dealerMarkupAdm: resolvedAdmMarkup,
+        mandatoryAddonsCad: isUsMarket
+          ? (usPricingType === 'mandatory_addons' ? (Number(usAdmAmount) || 0) : 0)
+          : (Number(mandatoryAddonsCad) || 0),
         tradeInRequired: false,
         notes: notes.trim() || undefined,
         turnstileToken: 'mock-valid-turnstile-token', // In test/dev environment fallback
@@ -751,63 +773,174 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
             </div>
 
             {/* 4. Transparency & Pricing (Optional) */}
-            <div className="rounded-lg border border-zinc-200 p-4 space-y-3 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40">
-              <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
-                Dealer Pricing Transparency (Optional)
-              </h4>
+            {market === 'US' ? (
+              <div className="rounded-lg border border-zinc-200 p-4 space-y-3 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                    Dealer Pricing (ADM)
+                  </h4>
+                  <span className="text-xs text-zinc-500">Optional · USD ($)</span>
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor={`${formId}-pricing`}>Pricing Status</Label>
-                  <Select
-                    id={`${formId}-pricing`}
-                    value={pricing}
-                    onChange={(e) => setPricing(e.target.value as any)}
-                  >
-                    <option value="undisclosed">Not Specified (Optional)</option>
-                    <option value="at_msrp">Exact MSRP (No Markup)</option>
-                    <option value="above_msrp">Above MSRP (Dealer Markup)</option>
-                    <option value="below_msrp">Below MSRP (Discounted)</option>
-                  </Select>
-                  {isHistorical && (
-                    <p className="text-[11px] text-zinc-500 mt-1">
-                      Pricing varies by model year.
-                    </p>
+                <div className="space-y-2">
+                  <Label>Dealer Pricing Option</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUsPricingType('at_msrp');
+                        setUsAdmAmount('');
+                      }}
+                      className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation transition-all ${
+                        usPricingType === 'at_msrp'
+                          ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
+                          : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
+                      }`}
+                    >
+                      <span className="text-xs font-bold">At MSRP ($0 markup)</span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+                        Exact sticker price with $0 dealer markup
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setUsPricingType('markup')}
+                      className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation transition-all ${
+                        usPricingType === 'markup'
+                          ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
+                          : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
+                      }`}
+                    >
+                      <span className="text-xs font-bold">Dealer Markup / ADM</span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+                        Adjusted dealer markup above MSRP
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setUsPricingType('mandatory_addons')}
+                      className={`flex flex-col items-start p-3 rounded-xl border text-left cursor-pointer select-none touch-manipulation transition-all ${
+                        usPricingType === 'mandatory_addons'
+                          ? 'border-amber-500 bg-amber-50/70 dark:bg-amber-950/40 text-amber-950 dark:text-amber-100 ring-1 ring-amber-500 shadow-xs'
+                          : 'border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300'
+                      }`}
+                    >
+                      <span className="text-xs font-bold">Mandatory Accessories / Packages</span>
+                      <span className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+                        Required dealer add-on equipment
+                      </span>
+                    </button>
+                  </div>
+                </div>
+
+                {usPricingType === 'markup' && (
+                  <div className="space-y-1.5 animate-in fade-in-50">
+                    <Label htmlFor={`${formId}-adm-markup`}>Dealer Markup / ADM Amount ($ USD)</Label>
+                    <Input
+                      id={`${formId}-adm-markup`}
+                      type="number"
+                      step="100"
+                      placeholder="e.g. 2500"
+                      value={usAdmAmount}
+                      onChange={(e) => setUsAdmAmount(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                {usPricingType === 'mandatory_addons' && (
+                  <div className="space-y-1.5 animate-in fade-in-50">
+                    <Label htmlFor={`${formId}-us-addons`}>Mandatory Accessories / Packages ($ USD)</Label>
+                    <Input
+                      id={`${formId}-us-addons`}
+                      type="number"
+                      min="0"
+                      step="50"
+                      placeholder="e.g. 1500"
+                      value={usAdmAmount}
+                      onChange={(e) => setUsAdmAmount(e.target.value)}
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1.5 pt-1">
+                  <Label htmlFor={`${formId}-notes`}>Notes / Experience (Max 280 chars)</Label>
+                  <Input
+                    id={`${formId}-notes`}
+                    placeholder="e.g. Dealer honored MSRP, no forced add-on packages."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    maxLength={280}
+                  />
+                  <p className="text-[11px] text-zinc-500 flex items-center gap-1">
+                    <ShieldAlert className="h-3 w-3 text-zinc-400" />
+                    Zero-PII Filter: VINs, emails, phone numbers, and postal codes are strictly rejected.
+                  </p>
+                  {fieldErrors['notes'] && (
+                    <p className="text-xs text-rose-600">{fieldErrors['notes'][0]}</p>
                   )}
                 </div>
+              </div>
+            ) : (
+              <div className="rounded-lg border border-zinc-200 p-4 space-y-3 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/40">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                  Dealer Pricing Transparency (Optional)
+                </h4>
 
-                <div className="space-y-1.5">
-                  <Label htmlFor={`${formId}-addons`}>Mandatory Add-ons (CAD $)</Label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`${formId}-pricing`}>Pricing Status</Label>
+                    <Select
+                      id={`${formId}-pricing`}
+                      value={pricing}
+                      onChange={(e) => setPricing(e.target.value as any)}
+                    >
+                      <option value="undisclosed">Not Specified (Optional)</option>
+                      <option value="at_msrp">Exact MSRP (No Markup)</option>
+                      <option value="above_msrp">Above MSRP (Dealer Markup)</option>
+                      <option value="below_msrp">Below MSRP (Discounted)</option>
+                    </Select>
+                    {isHistorical && (
+                      <p className="text-[11px] text-zinc-500 mt-1">
+                        Pricing varies by model year.
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor={`${formId}-addons`}>Mandatory Add-ons (CAD $)</Label>
+                    <Input
+                      id={`${formId}-addons`}
+                      type="number"
+                      min="0"
+                      step="50"
+                      placeholder="0"
+                      value={mandatoryAddonsCad}
+                      onChange={(e) => setMandatoryAddonsCad(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 pt-1">
+                  <Label htmlFor={`${formId}-notes`}>Notes / Experience (Max 280 chars)</Label>
                   <Input
-                    id={`${formId}-addons`}
-                    type="number"
-                    min="0"
-                    step="50"
-                    placeholder="0"
-                    value={mandatoryAddonsCad}
-                    onChange={(e) => setMandatoryAddonsCad(e.target.value)}
+                    id={`${formId}-notes`}
+                    placeholder="e.g. Dealer honored price, required no mandatory tint packages."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    maxLength={280}
                   />
+                  <p className="text-[11px] text-zinc-500 flex items-center gap-1">
+                    <ShieldAlert className="h-3 w-3 text-zinc-400" />
+                    Zero-PII Filter: VINs, emails, phone numbers, and postal codes are strictly rejected.
+                  </p>
+                  {fieldErrors['notes'] && (
+                    <p className="text-xs text-rose-600">{fieldErrors['notes'][0]}</p>
+                  )}
                 </div>
               </div>
-
-              <div className="space-y-1.5 pt-1">
-                <Label htmlFor={`${formId}-notes`}>Notes / Experience (Max 280 chars)</Label>
-                <Input
-                  id={`${formId}-notes`}
-                  placeholder="e.g. Dealer honored price, required no mandatory tint packages."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  maxLength={280}
-                />
-                <p className="text-[11px] text-zinc-500 flex items-center gap-1">
-                  <ShieldAlert className="h-3 w-3 text-zinc-400" />
-                  Zero-PII Filter: VINs, emails, phone numbers, and postal codes are strictly rejected.
-                </p>
-                {fieldErrors['notes'] && (
-                  <p className="text-xs text-rose-600">{fieldErrors['notes'][0]}</p>
-                )}
-              </div>
-            </div>
+            )}
 
             {/* Submit Action */}
             <Button
@@ -841,7 +974,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 Timeline Recorded Successfully!
               </DialogTitle>
               <DialogDescription className="text-center text-xs sm:text-sm text-neutral-400 mt-1 mb-4">
-                Thank you for contributing to the Canadian car buyer community.
+                Thank you for contributing to the {market === 'US' ? 'U.S.' : 'Canadian'} car buyer community.
                 {successModalData.waitDays != null && (
                   <span className="block font-semibold text-emerald-400 mt-1">
                     Total Wait: {successModalData.waitDays} days recorded.

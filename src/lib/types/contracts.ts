@@ -60,7 +60,14 @@ export type DbSubmissionStageEnum =
   | 'arrived_at_dealer'
   | 'delivered';
 
-export type PricingType = 'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed';
+export type PricingType =
+  | 'at_msrp'
+  | 'above_msrp'
+  | 'below_msrp'
+  | 'undisclosed'
+  | 'markup'
+  | 'discount'
+  | 'mandatory_addons';
 
 // ----------------------------------------------------------------------------
 // Relational Entity Interfaces
@@ -102,9 +109,11 @@ export interface Submission {
   modelId: string;
   powertrainId: string;
   trimId: string;
+  country?: CountryCode;
   countryCode?: CountryCode;
   country_code?: CountryCode;
-  province?: CanadianProvince | null;
+  currency?: 'CAD' | 'USD';
+  province?: CanadianProvince | string | null;
   state?: USState | string | null;
   dealershipCity?: string | null;
   dealershipName?: string | null;
@@ -117,7 +126,9 @@ export interface Submission {
   stageUpdatedAt?: string;
   waitDays?: number | null; // Database-generated calendar days
   pricing: PricingType;
+  pricing_type?: 'at_msrp' | 'markup' | 'discount' | 'mandatory_addons' | null;
   mandatoryAddonsCad: number;
+  adm_markup?: number | null;
   dealerMarkupAdm?: number | null;
   dealer_markup_adm?: number | null;
   portDestination?: string | null;

@@ -42,9 +42,11 @@ export interface SubmissionCreateData {
   model?: string;
   powertrain?: string;
   trim?: string;
+  country?: CountryCode;
   countryCode?: CountryCode;
   country_code?: CountryCode;
-  province?: CanadianProvince | null;
+  currency?: 'CAD' | 'USD';
+  province?: CanadianProvince | string | null;
   state?: USState | string | null;
   dealershipCity?: string | null;
   dealershipName?: string | null;
@@ -58,7 +60,9 @@ export interface SubmissionCreateData {
   lastNudgedAt?: string | null;
   cancelledAt?: string | null;
   pricing: PricingType;
+  pricing_type?: string | null;
   mandatoryAddonsCad: number;
+  adm_markup?: number | null;
   dealerMarkupAdm?: number | null;
   dealer_markup_adm?: number | null;
   portDestination?: string | null;
@@ -848,9 +852,12 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   const id = crypto.randomUUID();
   let waitDays: number | null = null;
   const editToken = data.editToken || crypto.randomUUID();
-  const countryCode: CountryCode = data.country_code || data.countryCode || 'CA';
-  const state = data.state || null;
-  const dealerMarkupAdm = data.dealer_markup_adm ?? data.dealerMarkupAdm ?? null;
+  const countryCode: CountryCode = data.country || data.country_code || data.countryCode || 'CA';
+  const currency = data.currency || (countryCode === 'US' ? 'USD' : 'CAD');
+  const admMarkup = data.adm_markup ?? data.dealer_markup_adm ?? data.dealerMarkupAdm ?? 0;
+  const pricingType = data.pricing_type || (data.pricing === 'above_msrp' ? 'markup' : data.pricing === 'below_msrp' ? 'discount' : (data.pricing || 'at_msrp'));
+  const state = data.state || (countryCode === 'US' && data.province ? String(data.province) : null);
+  const dealerMarkupAdm = data.dealer_markup_adm ?? data.dealerMarkupAdm ?? (admMarkup !== 0 ? admMarkup : null);
   const portDestination = data.port_destination ?? data.portDestination ?? null;
 
   if (data.status === 'delivered' && data.deliveryDate) {
@@ -880,37 +887,61 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         modelName: data.model,
       });
 
+      const baseRow: Record<string, any> = {
+        id,
+        country: countryCode,
+        country_code: countryCode,
+        currency,
+        model_id: resolved.modelId,
+        powertrain_id: resolved.powertrainId,
+        trim_id: resolved.trimId,
+        province: data.province || null,
+        state,
+        adm_markup: admMarkup,
+        dealer_markup_adm: dealerMarkupAdm,
+        pricing_type: pricingType,
+        port_destination: portDestination,
+        dealership_city: data.dealershipCity,
+        dealership_name: data.dealershipName,
+        model_year: data.modelYear,
+        order_date: data.orderDate,
+        delivery_date: data.deliveryDate,
+        status: data.status,
+        current_stage: resolvedDbCurrentStage,
+        stage: resolvedDbStage,
+        stage_updated_at: new Date().toISOString(),
+        pricing: data.pricing,
+        mandatory_addons_cad: data.mandatoryAddonsCad,
+        trade_in_required: data.tradeInRequired,
+        notes: data.notes,
+        edit_key_hash: data.editKeyHash,
+        edit_token: editToken,
+        is_flagged: data.isFlagged,
+      };
+
       let { data: inserted, error } = await supabase
         .from('submissions')
-        .insert({
-          id,
-          country_code: countryCode,
-          model_id: resolved.modelId,
-          powertrain_id: resolved.powertrainId,
-          trim_id: resolved.trimId,
-          province: data.province || null,
-          state,
-          dealer_markup_adm: dealerMarkupAdm,
-          port_destination: portDestination,
-          dealership_city: data.dealershipCity,
-          dealership_name: data.dealershipName,
-          model_year: data.modelYear,
-          order_date: data.orderDate,
-          delivery_date: data.deliveryDate,
-          status: data.status,
-          current_stage: resolvedDbCurrentStage,
-          stage: resolvedDbStage,
-          stage_updated_at: new Date().toISOString(),
-          pricing: data.pricing,
-          mandatory_addons_cad: data.mandatoryAddonsCad,
-          trade_in_required: data.tradeInRequired,
-          notes: data.notes,
-          edit_key_hash: data.editKeyHash,
-          edit_token: editToken,
-          is_flagged: data.isFlagged,
-        })
+        .insert(baseRow)
         .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
         .maybeSingle();
+
+      // If undefined column error (e.g. table has not yet applied new migration), retry without new columns
+      if (error && (error.code === '42703' || error.message?.includes('column'))) {
+        const fallbackRow = { ...baseRow };
+        delete fallbackRow.country;
+        delete fallbackRow.currency;
+        delete fallbackRow.adm_markup;
+        delete fallbackRow.pricing_type;
+        const retryCol = await supabase
+          .from('submissions')
+          .insert(fallbackRow)
+          .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
+          .maybeSingle();
+        if (!retryCol.error) {
+          inserted = retryCol.data;
+          error = null;
+        }
+      }
 
       // 1. If foreign key constraint failed, dynamically re-resolve DB IDs with fresh cache and retry
       if (error && (error.code === '23503' || error.message?.includes('foreign key'))) {
@@ -1022,8 +1053,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
         return {
           id: inserted?.id || id,
+          country: countryCode,
           countryCode,
           country_code: countryCode,
+          currency,
+          admMarkup,
+          adm_markup: admMarkup,
+          pricingType,
+          pricing_type: pricingType,
           state,
           dealerMarkupAdm,
           dealer_markup_adm: dealerMarkupAdm,
@@ -1106,11 +1143,17 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
   const record = {
     id,
+    country: countryCode,
     country_code: countryCode,
     countryCode,
+    currency,
     state,
+    adm_markup: admMarkup,
+    admMarkup,
     dealer_markup_adm: dealerMarkupAdm,
     dealerMarkupAdm,
+    pricing_type: pricingType,
+    pricingType,
     port_destination: portDestination,
     portDestination,
     model_id: data.modelId,
@@ -1155,8 +1198,14 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
 
   return {
     id,
+    country: countryCode,
     countryCode,
     country_code: countryCode,
+    currency,
+    admMarkup,
+    adm_markup: admMarkup,
+    pricingType,
+    pricing_type: pricingType,
     state,
     dealerMarkupAdm,
     dealer_markup_adm: dealerMarkupAdm,

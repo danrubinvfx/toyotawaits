@@ -97,22 +97,28 @@ export const submissionCreateSchema = z
     modelId: z.string().uuid({ message: 'Valid modelId UUID is required' }),
     powertrainId: z.string().uuid({ message: 'Valid powertrainId UUID is required' }),
     trimId: z.string().uuid({ message: 'Valid trimId UUID is required' }),
-    countryCode: countryCodeSchema.default('CA'),
+    country: countryCodeSchema.optional(),
+    countryCode: countryCodeSchema.optional(),
     country_code: countryCodeSchema.optional(),
-    province: canadianProvinceSchema.optional().nullable(),
+    currency: z.enum(['CAD', 'USD']).default('CAD'),
+    province: z.union([canadianProvinceSchema, usStateSchema]).optional().nullable(),
     state: usStateSchema.optional().nullable(),
+    adm_markup: z
+      .number()
+      .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
+      .optional()
+      .nullable(),
     dealerMarkupAdm: z
       .number()
-      .min(0, 'Dealer markup / ADM cannot be negative')
       .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
       .optional()
       .nullable(),
     dealer_markup_adm: z
       .number()
-      .min(0, 'Dealer markup / ADM cannot be negative')
       .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
       .optional()
       .nullable(),
+    pricing_type: z.enum(['at_msrp', 'markup', 'discount', 'mandatory_addons']).optional().nullable(),
     portDestination: z.string().trim().max(100).optional().nullable(),
     port_destination: z.string().trim().max(100).optional().nullable(),
     dealershipCity: z.string().trim().max(100).optional().nullable(),
@@ -138,7 +144,7 @@ export const submissionCreateSchema = z
       .nullable(),
     status: submissionStatusSchema.default('pending'),
     stage: submissionStageSchema.default('deposit_placed'),
-    pricing: pricingTypeSchema.default('undisclosed'),
+    pricing: z.union([pricingTypeSchema, z.enum(['at_msrp', 'markup', 'discount', 'mandatory_addons'])]).default('undisclosed'),
     mandatoryAddonsCad: z
       .number()
       .min(0, 'Mandatory add-ons cannot be negative')
@@ -152,9 +158,17 @@ export const submissionCreateSchema = z
   })
   .superRefine((data, ctx) => {
     // Validate regional partitioning
-    const activeCountry = data.country_code || data.countryCode || 'CA';
+    const activeCountry =
+      (data.country && data.country !== 'CA' ? data.country : undefined) ||
+      (data.country_code && data.country_code !== 'CA' ? data.country_code : undefined) ||
+      (data.countryCode && data.countryCode !== 'CA' ? data.countryCode : undefined) ||
+      data.country ||
+      data.country_code ||
+      data.countryCode ||
+      'CA';
+
     if (activeCountry === 'CA') {
-      if (!data.province) {
+      if (!data.province || !CANADIAN_PROVINCES.includes(data.province as any)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Province is required for Canadian submissions',
@@ -162,7 +176,8 @@ export const submissionCreateSchema = z
         });
       }
     } else if (activeCountry === 'US') {
-      if (!data.state) {
+      const stateVal = data.state || (data.province && US_STATES.includes(data.province as any) ? data.province : null);
+      if (!stateVal) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'State is required for U.S. submissions',

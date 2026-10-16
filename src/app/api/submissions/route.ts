@@ -224,39 +224,47 @@ export async function POST(request: NextRequest) {
     const editKeyHash = crypto.createHash('sha256').update(editKey).digest('hex');
     const editToken = crypto.randomUUID();
 
-    // 7. Persist Submission
-    const record = await insertSubmission({
-      modelId: validData.modelId,
-      modelSlug: (validData as any).modelSlug || body?.modelSlug,
-      powertrainId: validData.powertrainId,
-      powertrainSlug: (validData as any).powertrainSlug || body?.powertrainSlug,
-      trimId: validData.trimId,
-      trimSlug: (validData as any).trimSlug || body?.trimSlug,
-      model: (validData as any).model || body?.model,
-      countryCode: validData.countryCode,
-      country_code: validData.country_code,
-      province: validData.province,
-      state: validData.state,
-      dealerMarkupAdm: validData.dealerMarkupAdm,
-      dealer_markup_adm: validData.dealer_markup_adm,
-      portDestination: validData.portDestination,
-      port_destination: validData.port_destination,
-      dealershipCity: validData.dealershipCity,
-      dealershipName: validData.dealershipName,
-      modelYear: validData.modelYear,
-      orderDate: validData.orderDate,
-      deliveryDate: validData.deliveryDate,
-      status: validData.status,
-      currentStage: validData.stage,
-      stage: validData.stage,
-      pricing: validData.pricing,
-      mandatoryAddonsCad: validData.mandatoryAddonsCad,
-      tradeInRequired: validData.tradeInRequired,
-      notes: validData.notes,
-      editKeyHash,
-      editToken,
-      isFlagged: outlierResult.isFlagged,
-    });
+      const resolvedCountry = validData.country || validData.country_code || validData.countryCode || 'CA';
+      const resolvedCurrency = validData.currency || (resolvedCountry === 'US' ? 'USD' : 'CAD');
+      const resolvedAdm = validData.adm_markup ?? validData.dealer_markup_adm ?? validData.dealerMarkupAdm ?? null;
+      const resolvedPricingType = validData.pricing_type || (validData.pricing === 'above_msrp' ? 'markup' : validData.pricing === 'below_msrp' ? 'discount' : validData.pricing || 'at_msrp');
+
+      const record = await insertSubmission({
+        modelId: validData.modelId,
+        modelSlug: (validData as any).modelSlug || body?.modelSlug,
+        powertrainId: validData.powertrainId,
+        powertrainSlug: (validData as any).powertrainSlug || body?.powertrainSlug,
+        trimId: validData.trimId,
+        trimSlug: (validData as any).trimSlug || body?.trimSlug,
+        model: (validData as any).model || body?.model,
+        country: resolvedCountry,
+        countryCode: resolvedCountry,
+        country_code: resolvedCountry,
+        currency: resolvedCurrency,
+        province: validData.province,
+        state: validData.state || (resolvedCountry === 'US' ? validData.province : undefined),
+        adm_markup: resolvedAdm,
+        dealerMarkupAdm: resolvedAdm,
+        dealer_markup_adm: resolvedAdm,
+        pricing_type: resolvedPricingType,
+        pricing: validData.pricing,
+        portDestination: validData.portDestination,
+        port_destination: validData.port_destination,
+        dealershipCity: validData.dealershipCity,
+        dealershipName: validData.dealershipName,
+        modelYear: validData.modelYear,
+        orderDate: validData.orderDate,
+        deliveryDate: validData.deliveryDate,
+        status: validData.status,
+        currentStage: validData.stage,
+        stage: validData.stage,
+        mandatoryAddonsCad: validData.mandatoryAddonsCad,
+        tradeInRequired: validData.tradeInRequired,
+        notes: validData.notes,
+        editKeyHash,
+        editToken,
+        isFlagged: outlierResult.isFlagged,
+      });
 
     // 8. Consume rate limit only after successful persistence
     await consumeRateLimit(clientIp, 24 * 60 * 60 * 1000);

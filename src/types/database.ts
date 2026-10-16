@@ -82,13 +82,17 @@ export interface Database {
       submissions: {
         Row: {
           id: string;
+          country: string;
           country_code: CountryCode;
+          currency: string;
           model_id: string;
           powertrain_id: string;
           trim_id: string;
-          province: CanadianProvince | null;
+          province: CanadianProvince | string | null;
           state: string | null;
+          adm_markup: number | null;
           dealer_markup_adm: number | null;
+          pricing_type: string | null;
           port_destination: string | null;
           dealership_city: string | null;
           dealership_name: string | null;
