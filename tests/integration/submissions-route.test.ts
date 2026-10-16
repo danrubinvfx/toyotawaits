@@ -726,8 +726,15 @@ describe('GET /api/submissions', () => {
     const { GET } = await import('@/app/api/submissions/route');
     const response = await GET();
 
-    expect(response.status).toBe(200);
-    expect(response.headers.get('Cache-Control')).toContain('no-store');
+    expect(response.headers.get('Cache-Control')).toBe(
+      'public, s-maxage=60, stale-while-revalidate=600'
+    );
+    expect(response.headers.get('CDN-Cache-Control')).toBe(
+      'public, s-maxage=60, stale-while-revalidate=600'
+    );
+    expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
+      'public, s-maxage=60, stale-while-revalidate=600'
+    );
 
     const json = await response.json();
     expect(json.success).toBe(true);

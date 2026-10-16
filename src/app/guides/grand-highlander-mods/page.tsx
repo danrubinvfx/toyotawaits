@@ -17,6 +17,8 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Big Rig Comfort: Essential Grand Highlander Mods | ToyotaWaits.ca',
   description:

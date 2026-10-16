@@ -22,7 +22,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 1800;
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string }> = [];

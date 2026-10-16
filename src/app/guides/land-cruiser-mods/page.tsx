@@ -16,6 +16,8 @@ import {
   Snowflake,
 } from 'lucide-react';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Backroads & Borderlines: Land Cruiser 250 (1958) Mods | ToyotaWaits.ca',
   description:

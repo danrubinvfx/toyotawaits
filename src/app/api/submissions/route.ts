@@ -34,7 +34,9 @@ export async function GET(request?: NextRequest) {
       {
         status: 200,
         headers: {
-          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600',
+          'CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600',
+          'Vercel-CDN-Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600',
         },
       }
     );
@@ -280,8 +282,8 @@ export async function POST(request: NextRequest) {
       revalidatePath('/api/submissions');
       revalidatePath('/api/submissions/recent');
       revalidatePath('/api/ticker');
-      revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
+      revalidateTag('wait_stats', 'max');
       revalidateTag('stats', 'max');
       revalidateTag('recent_submissions', 'max');
       revalidateTag('ticker', 'max');

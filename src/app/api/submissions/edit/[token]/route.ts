@@ -226,8 +226,8 @@ export async function PATCH(
       revalidatePath('/api/submissions');
       revalidatePath('/api/submissions/recent');
       revalidatePath('/api/ticker');
-      revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
+      revalidateTag('wait_stats', 'max');
       revalidateTag('stats', 'max');
       revalidateTag('recent_submissions', 'max');
       revalidateTag('ticker', 'max');

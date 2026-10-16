@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { headers } from 'next/headers';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),

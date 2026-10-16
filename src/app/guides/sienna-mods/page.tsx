@@ -16,6 +16,8 @@ import {
   Sliders,
 } from 'lucide-react';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'The Road Dog Cruiser: Essential Toyota Sienna Mods & Upgrades | ToyotaWaits.ca',
   description:

@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { PopularGearCard } from '@/components/guides/popular-gear-card';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Toyota DIY Mod Guides & Delivery Prep Almanac | ToyotaWaits.ca',
   description:

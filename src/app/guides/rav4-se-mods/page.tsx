@@ -19,6 +19,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE | ToyotaWaits.ca',
   description:

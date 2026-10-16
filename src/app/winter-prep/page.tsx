@@ -4,6 +4,8 @@ import { WinterPrepView } from '@/components/winter-prep/winter-prep-view';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',

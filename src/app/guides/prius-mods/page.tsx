@@ -21,6 +21,8 @@ import {
   BatteryCharging,
 } from 'lucide-react';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods | ToyotaWaits.ca',
   description:

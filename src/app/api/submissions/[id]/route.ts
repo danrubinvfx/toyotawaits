@@ -108,8 +108,8 @@ export async function PATCH(
       revalidatePath('/api/stats');
       revalidatePath('/api/aggregate');
       revalidatePath('/api/submissions');
-      revalidateTag('wait_stats', 'max');
       revalidateTag('submissions', 'max');
+      revalidateTag('wait_stats', 'max');
       revalidateTag('stats', 'max');
     } catch (revalidateErr) {
       if (process.env.NODE_ENV !== 'test') {

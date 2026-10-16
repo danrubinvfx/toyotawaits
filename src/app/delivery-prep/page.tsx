@@ -7,6 +7,8 @@ import { PrintButton } from '@/components/delivery-prep/print-button';
 import { ShieldCheck, Car, KeyRound, Wrench } from 'lucide-react';
 import Link from 'next/link';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',

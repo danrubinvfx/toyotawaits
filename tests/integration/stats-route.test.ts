@@ -8,7 +8,14 @@ describe('GET /api/stats', () => {
 
     const cacheHeader = response.headers.get('Cache-Control');
     expect(cacheHeader).toContain('public');
-    expect(cacheHeader).toContain('s-maxage=3600');
+    expect(cacheHeader).toContain('s-maxage=60');
+    expect(cacheHeader).toContain('stale-while-revalidate=600');
+    expect(response.headers.get('CDN-Cache-Control')).toBe(
+      'public, s-maxage=60, stale-while-revalidate=600'
+    );
+    expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
+      'public, s-maxage=60, stale-while-revalidate=600'
+    );
 
     const json = await response.json();
     expect(json.success).toBe(true);

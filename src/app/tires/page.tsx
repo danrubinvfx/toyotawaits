@@ -4,6 +4,8 @@ import { TireCatalog } from '@/components/tires/tire-catalog';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Canadian Toyota Tire Guide: Winter & All-Weather Recommendations | ToyotaWaits.ca',
