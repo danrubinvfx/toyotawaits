@@ -187,7 +187,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: '3-Row Heavy Duty All-Weather Floor Liners (Grand Highlander)',
         benefit:
           'High-wall sidewall containment locking in salty meltwater while leaving 2nd row hybrid cooling ducts completely unobstructed.',
-        url: 'https://www.amazon.ca/dp/B0CM7R9W42?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=Toyota+Grand+Highlander+all+weather+floor+mats+3+row&tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },
@@ -267,7 +267,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'TuxMat Custom Floor Liners (Sienna 7/8 Passenger)',
         benefit:
           'Tailored rail-channel seals that keep corrosive slush out of Super-Long-Slide tracks while leaving front passenger battery vents free.',
-        url: 'https://www.amazon.ca/dp/B0CM7R9W42?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=TuxMat+Toyota+Sienna&tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },

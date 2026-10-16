@@ -156,5 +156,32 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
   });
+
+  it('redirects Dongar 10-pin harness, hybrid battery intake filter mesh, and door sill scuff plates to evergreen Amazon.ca search URLs', async () => {
+    const evergreenItems = [
+      {
+        slug: 'dongar-10pin-type-a',
+        expectedUrl: 'https://www.amazon.ca/s?k=Dongar+10-pin+type+A+mirror+dash+cam+adapter&tag=toyotawaits-20',
+      },
+      {
+        slug: 'hybrid-battery-filter-mesh',
+        expectedUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+hybrid+battery+intake+filter+mesh+G92DH-42010&tag=toyotawaits-20',
+      },
+      {
+        slug: 'door-sill-scuff-guards',
+        expectedUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+door+sill+protector+scuff+plate&tag=toyotawaits-20',
+      },
+    ];
+
+    for (const item of evergreenItems) {
+      const request = new NextRequest(`http://localhost:3000/out/${item.slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: item.slug }),
+      });
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get('Location')).toBe(item.expectedUrl);
+    }
+  });
 });
 

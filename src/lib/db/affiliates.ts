@@ -415,7 +415,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'dongar-10pin-type-a': {
     id: 'f1000021-0021-4021-8021-000000000021',
     slug: 'dongar-10pin-type-a',
-    destinationUrl: 'https://www.amazon.ca/dp/B07D888RZV?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Dongar+10-pin+type+A+mirror+dash+cam+adapter&tag=toyotawaits-20',
     title: '10-Pin Type A TSS Mirror Harness Adapter (Dongar Style)',
     category: 'electronics',
     clickCount: 0,
@@ -424,7 +424,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'dongar-12pin-type-b': {
     id: 'f1000022-0022-4022-8022-000000000022',
     slug: 'dongar-12pin-type-b',
-    destinationUrl: 'https://www.amazon.ca/dp/B09RRSC9XF?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Dongar+12-pin+type+B+Toyota+mirror+dash+cam+adapter&tag=toyotawaits-20',
     title: '12-Pin Type B TSS Mirror Harness Adapter (Dongar Style)',
     category: 'electronics',
     clickCount: 0,
@@ -433,7 +433,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'screen-protector-8inch': {
     id: 'f1000023-0023-4023-8023-000000000023',
     slug: 'screen-protector-8inch',
-    destinationUrl: 'https://www.amazon.ca/dp/B0892TYG6K?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+8+inch+screen+protector+anti+glare&tag=toyotawaits-20',
     title: '8-Inch Anti-Glare Touchscreen Protector',
     category: 'interior',
     clickCount: 0,
@@ -442,7 +442,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'screen-protector-12-3inch': {
     id: 'f1000024-0024-4024-8024-000000000024',
     slug: 'screen-protector-12-3inch',
-    destinationUrl: 'https://www.amazon.ca/dp/B0CDFXRPL7?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+12.3+inch+screen+protector+anti+glare&tag=toyotawaits-20',
     title: '10.5-Inch & 12.3-Inch Anti-Glare Display Protector',
     category: 'interior',
     clickCount: 0,
@@ -451,7 +451,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'hybrid-battery-filter-mesh': {
     id: 'f1000025-0025-4025-8025-000000000025',
     slug: 'hybrid-battery-filter-mesh',
-    destinationUrl: 'https://www.amazon.ca/dp/B0C39XQ7NV?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+hybrid+battery+intake+filter+mesh+G92DH-42010&tag=toyotawaits-20',
     title: 'Hybrid Battery Intake Pre-Filter Mesh',
     category: 'interior',
     clickCount: 0,
@@ -460,7 +460,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'door-sill-scuff-guards': {
     id: 'f1000026-0026-4026-8026-000000000026',
     slug: 'door-sill-scuff-guards',
-    destinationUrl: 'https://www.amazon.ca/dp/B08F9V3NZ8?tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+door+sill+protector+scuff+plate&tag=toyotawaits-20',
     title: 'Stainless Steel / ABS Door Sill Scuff Guards',
     category: 'interior',
     clickCount: 0,
@@ -616,6 +616,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
 
 function isLegacyPlaceholderUrl(url: string): boolean {
   return (
+    url.includes('amazon.ca/dp/') ||
     url.includes('B08XYZ1234') ||
     url.includes('B08XJBL34T') ||
     url.includes('B07TOYSPKR') ||
@@ -627,6 +628,13 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B07XYZ9999') ||
     url.includes('B09XYZG5G5') ||
     url.includes('B08927GR5Z') ||
+    url.includes('B07D888RZV') ||
+    url.includes('B09RRSC9XF') ||
+    url.includes('B0892TYG6K') ||
+    url.includes('B0CDFXRPL7') ||
+    url.includes('B0C39XQ7NV') ||
+    url.includes('B08F9V3NZ8') ||
+    url.includes('B0821M4Z9Z') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );
