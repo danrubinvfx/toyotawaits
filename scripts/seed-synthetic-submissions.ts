@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { createServerClient } from '../src/lib/supabase/server';
-import { CANADIAN_VEHICLE_CATALOG } from '../src/lib/data/vehicles';
 import { CanadianProvince } from '../src/lib/types/contracts';
 
 // Automatically load .env.production, .env.local, or .env if present
@@ -1104,13 +1103,7 @@ export async function runSyntheticSeed(recordsToSeed: SyntheticSeedRecord[] = AL
           created_at: submittedDate,
         };
 
-        // Ensure idempotent upsert by checking existing ID
-        const { data: existing } = await supabase
-          .from('submissions')
-          .select('id')
-          .eq('id', record.id)
-          .maybeSingle();
-
+        // Ensure idempotent upsert
         const { error } = await supabase
           .from('submissions')
           .upsert(insertPayload, { onConflict: 'id' });

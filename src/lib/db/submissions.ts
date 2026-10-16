@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
-import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult, RecentActivityItem } from '@/lib/types/contracts';
+import { CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult, RecentActivityItem } from '@/lib/types/contracts';
 
 export type { RecentActivityItem };
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
@@ -1102,8 +1102,6 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   }
 
   // In-memory fallback
-  const currentStage = resolvedDbStage;
-
   let memModelSlug = data.modelSlug || 'rav4';
   let memModelName = data.model || 'RAV4';
   let memPtSlug = data.powertrainSlug || 'hev';

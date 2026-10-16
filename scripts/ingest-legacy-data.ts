@@ -5,7 +5,6 @@ import { parse } from 'csv-parse/sync';
 import {
   CANADIAN_VEHICLE_CATALOG,
   getModelBySlug,
-  getPowertrainBySlug,
   CatalogModel,
   CatalogPowertrain,
   CatalogTrim,

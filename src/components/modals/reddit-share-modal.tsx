@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Copy, Check, MessageSquare, Share2 } from 'lucide-react';
+import { Copy, Check, MessageSquare } from 'lucide-react';
 import { formatRedditMarkdown, RedditShareParams } from '@/lib/utils/reddit-share';
 
 interface RedditShareModalProps {
