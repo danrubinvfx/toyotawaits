@@ -210,6 +210,9 @@ export interface RegionalWaitSummary {
     pending: number;
     stalePending?: number;
   };
+  delivered_count?: number;
+  waiting_count?: number;
+  delivered_median_days?: number | null;
   waitStats: PercentileStats | null;
   pricingInsights: {
     atMsrpPercent: number;

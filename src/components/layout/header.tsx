@@ -139,14 +139,14 @@ export function Header({ initialRegion = 'CA' }: HeaderProps = {}) {
                 {isUs ? '🇺🇸 USA' : '🇨🇦 Canada'}
               </span>
             </span>
-            <span className="text-[10px] font-medium text-zinc-500 italic truncate max-w-[240px] sm:max-w-none hidden sm:block">
+            <span className="text-[10px] font-medium text-zinc-500 italic truncate max-w-[240px] sm:max-w-none hidden xl:block">
               &ldquo;The piano has been drinking, and your Toyota is still on a boat.&rdquo;
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center space-x-6 text-sm font-medium text-zinc-600 dark:text-zinc-300">
+        <nav className="hidden lg:flex items-center space-x-2 xl:space-x-4 2xl:space-x-6 text-xs xl:text-sm font-medium whitespace-nowrap text-zinc-600 dark:text-zinc-300">
           <Link
             href="/#estimator"
             onClick={(e) => handleAnchorClick(e, 'estimator')}

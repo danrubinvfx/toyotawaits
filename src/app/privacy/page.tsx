@@ -18,9 +18,9 @@ import {
 } from 'lucide-react';
 
 export const metadata: Metadata = {
-  title: 'Zero-PII Privacy Charter & PIPEDA Compliance | ToyotaWaits.ca',
+  title: 'Privacy Charter & PIPEDA Compliance | ToyotaWaits.ca',
   description:
-    'Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for Notify Me delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.',
+    'Vehicle order timeline submissions are anonymous and never require personal identifiers. Optional email addresses provided for delivery notifications and status alerts are stored securely and never sold or shared.',
   alternates: {
     canonical: 'https://www.toyotawaits.ca/privacy',
   },
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
 
         <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
           <Badge className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 px-2.5">
-            <ShieldCheck className="h-3.5 w-3.5" /> Zero-PII Guaranteed
+            <ShieldCheck className="h-3.5 w-3.5" /> Privacy-First Architecture
           </Badge>
           <Badge variant="outline" className="border-zinc-300 text-zinc-700 dark:border-zinc-700 dark:text-zinc-300">
             PIPEDA Compliant
@@ -47,7 +47,8 @@ export default function PrivacyPage() {
         </h1>
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-2xl">
           At ToyotaWaits.ca, privacy is not a policy addendum—it is our core software architecture.
-          Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for &apos;Notify Me&apos; delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.
+          Order timeline submissions are anonymous and do not require personal identity documents or account registrations.
+          Optional email addresses are stored securely solely to deliver order milestone notifications and wait-time status alerts. We never sell, rent, or share personal data with third-party advertisers.
         </p>
       </div>
 
@@ -56,10 +57,10 @@ export default function PrivacyPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <EyeOff className="h-5 w-5 text-emerald-600" />
-            <CardTitle className="text-base font-bold">Zero PII Collected</CardTitle>
+            <CardTitle className="text-base font-bold">No Personal Identifiers</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
-            Order timeline submissions are 100% anonymous and never require personal identifiers. Optional &apos;Notify Me&apos; alert emails are stored in an isolated queue and can be deleted at any time.
+            Order timeline submissions are anonymous and never require government IDs or passwords. Optional email addresses are stored securely solely to deliver order milestone notifications and wait-time status alerts.
           </CardContent>
         </Card>
 
@@ -89,10 +90,10 @@ export default function PrivacyPage() {
         <section className="space-y-3">
           <h2 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
             <Lock className="h-5 w-5 text-red-600" />
-            1. Zero Personally Identifiable Information (Zero-PII)
+            1. Minimal Anonymous Data Collection
           </h2>
           <p>
-            When you submit a vehicle timeline on ToyotaWaits.ca, we collect only high-level aggregate metadata:
+            When you submit a vehicle timeline on ToyotaWaits.ca, we collect only high-level aggregate order details:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-zinc-600 dark:text-zinc-400">
             <li><strong>Vehicle configuration:</strong> Model (e.g. RAV4), Powertrain (e.g. PHEV), and Trim.</li>
@@ -133,7 +134,7 @@ export default function PrivacyPage() {
             3. Email Notifications &amp; Alert Data
           </h2>
           <p>
-            Order timeline submissions are 100% anonymous and collect no personal identifiers. Email addresses provided voluntarily for the optional &apos;Notify Me&apos; delivery alerts are stored in an isolated alert queue solely to deliver notifications, with 1-click unsubscribe and permanent deletion available at any time.
+            Optional email addresses are stored securely solely to deliver order milestone notifications and wait-time status alerts. We never sell, rent, or share personal data with third-party advertisers. You can unsubscribe or delete your notification preferences at any time with a single click.
           </p>
         </section>
 
@@ -174,7 +175,7 @@ export default function PrivacyPage() {
           </p>
           <p>
             Under PIPEDA Principle 4.4 (Limiting Collection), an organization may only collect personal information necessary for specified purposes.
-            Because ToyotaWaits.ca does not collect personal identifiers for vehicle order tracking, no personal order data can be intercepted, breached, or subpoenaed from our systems.
+            Because ToyotaWaits.ca does not collect personal identifiers for vehicle order tracking, vehicle tracking records remain decoupled from user identity, significantly minimizing personal data exposure risk.
           </p>
         </section>
       </div>

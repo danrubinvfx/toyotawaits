@@ -52,7 +52,7 @@ export default function Rav4SeModsGuidePage() {
             Skip 6–12 Months of Waiting
           </Badge>
           <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-xs">
-            Verified 2019–2026 RAV4 Prime / Hybrid
+            Verified: 2019–2025 | 2026: Pending Validation
           </Badge>
         </div>
 
@@ -121,7 +121,7 @@ export default function Rav4SeModsGuidePage() {
           priceEst="~$128 CAD"
           installEffort="20-min Install"
           integration="Direct Harness Tap"
-          fitmentBadge="Verified 2019–2026 RAV4"
+          fitmentBadge="Verified: 2019–2025 | 2026: Pending Validation"
           whyThisPick="The factory SE sound system uses cheap 2.5-inch paper-cone dash speakers that muffle podcasts and dialogue. High-sensitivity 3.5-inch JBL Club 3412Ts drop right into the factory corner dash sockets and plug directly into custom Red Wolf adapter harnesses—no wire cutting or soldering. As with any aftermarket electrical modification, follow the harness and speaker manufacturers' instructions; consult your dealer or Toyota warranty booklet if you have coverage questions."
           proTip="Use nylon trim pry tools along the outer windshield edge to pop dash grilles straight up without leaving indents on the soft dash vinyl. Point the speaker terminals towards the cabin to avoid interference with the defroster vent ducting."
           factoryIssue="The factory SE sound system relies on tiny 2.5-inch paper-cone dash tweeters that clip early and muffle high-frequency vocal clarity, requiring excessive volume."
@@ -166,7 +166,7 @@ export default function Rav4SeModsGuidePage() {
           priceEst="~$350–$700 CAD"
           installEffort="1.5-hr Install"
           integration="OEM Factory Look"
-          fitmentBadge="5th Gen (2019–2025) RAV4 · 6th Gen (2026+) Unconfirmed"
+          fitmentBadge="Verified: 2019–2025 | 2026: Pending Validation"
           whyThisPick="Why pay $4,800+ CAD more for the XSE trim just to get SofTex leather? Clazzio (perforated genuine leather inserts) and EKR (4-layer waterproof leatherette) are patterned for 5th Gen (2019–2025) RAV4 seats. 6th Gen (2026+) seat patterns are not yet confirmed — check the seller's listed model years before ordering. For seats with side airbags, follow the cover manufacturer's airbag-compatibility guidance and your Toyota owner's manual."
           proTip="Warm the covers indoors or under sunlight before installation to maximize leatherette flexibility. Sliding a thin plastic grocery bag over headrests helps the snug covers slide on without snagging."
           factoryIssue="Standard SE cloth seats readily soak up winter road salt, coffee spills, and pet hair, whereas factory SofTex requires jumping up to top-tier XSE packages with lengthy wait lists."
@@ -206,7 +206,7 @@ export default function Rav4SeModsGuidePage() {
           priceEst="~$210 CAD"
           installEffort="15-min Install"
           integration="OEM Factory Look"
-          fitmentBadge="Verified 2019–2026 RAV4"
+          fitmentBadge="Verified: 2019–2025 | 2026: Pending Validation"
           whyThisPick="FitcamX replaces the factory plastic rearview mirror shroud and taps directly into the Toyota Safety Sense (TSS) camera power harness with zero visible wires, no windshield suction cups, and no fuse box routing through the side curtain airbag."
           proTip="Tuck the pass-through Y-harness flat against the windshield glass before snapping the lower cowl into place. Make sure to format your high-endurance MicroSD card directly in the FitcamX smartphone app."
           factoryIssue="Traditional suction-cup dashcams clutter the windshield view and require tucking 10-foot cables along the A-pillar, where wires can dangerously cross the deployment path of side curtain airbags."

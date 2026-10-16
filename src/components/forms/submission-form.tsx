@@ -416,7 +416,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         <CardHeader className="space-y-1 bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-200 dark:border-zinc-800 rounded-t-xl">
           <div className="flex items-center justify-between">
             <Badge variant="outline" className="border-red-200 text-red-700 dark:border-red-900 dark:text-red-400">
-              🇨🇦 100% Anonymous & Zero-PII
+              🇨🇦 100% Anonymous &amp; Privacy-First
             </Badge>
             <span className="text-xs text-zinc-500">~60 Seconds</span>
           </div>

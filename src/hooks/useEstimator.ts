@@ -34,6 +34,7 @@ export interface EstimatorCalculationResult {
   daysAlreadyWaited: number;
   isHistoricalOrderDate: boolean;
   isLimitedRegionalData: boolean;
+  estimateType: 'empirical' | 'planning_benchmark';
   verifiedSampleSize: number;
   sampleBadgeText: string;
   carryoverNote: string | null;
@@ -47,16 +48,15 @@ export const CARRYOVER_ALLOCATION_NOTE =
 export const BASE_MODEL_P75: Record<string, number> = {
   sienna: 450,
   rav4: 382,
-  'grand-highlander': 380,
-  'prius-prime': 230,
-  prius: 120,
+  'grand-highlander': 320,
+  'prius-prime': 322,
+  prius: 146,
   'land-cruiser': 145,
   tacoma: 180,
 };
 
 export function useEstimator({
   modelSlug,
-  powertrainSlug: _powertrainSlug,
   trimSlug,
   trimName,
   province,
@@ -147,6 +147,11 @@ export function useEstimator({
       ? trimSlug
       : 'trim';
 
+  const isPlanningBenchmark = isLimitedRegionalData || !stats?.waitStats;
+  const estimateType: 'empirical' | 'planning_benchmark' = isPlanningBenchmark
+    ? 'planning_benchmark'
+    : 'empirical';
+
   const multiplierBreakdown =
     p75Days !== baseP75Days
       ? `Base P75: ${baseP75Days} days · Adjusted to ~${p75Days} days based on ${provinceLabel} regional allocation and ${trimLabel} demand factors.`
@@ -155,6 +160,8 @@ export function useEstimator({
   const sampleBadgeText =
     modelSlug === 'tacoma'
       ? '10 Historical Dealer Benchmarks (Community submissions opening soon).'
+      : isPlanningBenchmark
+      ? `Planning Benchmark (n=${verifiedSampleSize} reference baseline deliveries)`
       : `Based on ${verifiedSampleSize} verified deliveries`;
 
   return {
@@ -176,6 +183,7 @@ export function useEstimator({
     daysAlreadyWaited,
     isHistoricalOrderDate,
     isLimitedRegionalData,
+    estimateType,
     verifiedSampleSize,
     sampleBadgeText,
     carryoverNote,

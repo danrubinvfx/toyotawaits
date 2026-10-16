@@ -21,8 +21,10 @@ describe('GET /api/export', () => {
 
     const csvText = new TextDecoder('utf-8').decode(bytes.slice(3));
 
-    // Verify CSV Header line matching RFC 4180 format
-    expect(csvText).toContain('id,created_at,model,trim,province,wait_days,status');
+    // Verify CSV Header line matching RFC 4180 format with full audit schema
+    expect(csvText).toContain(
+      'id,created_at,order_date,delivered_date,model_year,model_name,trim_name,powertrain,province,wait_days,status,pricing,addons_cad'
+    );
     // Verify seeded data presence
     expect(csvText).toContain('RAV4');
     expect(csvText).toContain('delivered');
@@ -60,15 +62,17 @@ describe('GET /api/export', () => {
     expect(dataLines.length).toBeGreaterThan(0);
 
     for (const line of dataLines) {
-      // Row format: id,created_at,model,trim,province,wait_days,status
+      // Row format: id,created_at,order_date,delivered_date,model_year,model_name,trim_name,powertrain,province,wait_days,status,pricing,addons_cad
       const columns = line.split(',');
-      const statusVal = columns[6];
+      const powertrainVal = columns[7];
+      const statusVal = columns[10];
 
+      expect(powertrainVal).toContain('PHEV');
       expect(statusVal).toBe('pending');
     }
   });
 
-  it('filters by model, powertrain, status, and province correctly', async () => {
+  it('filters by model, powertrain, status, and province correctly and includes order_date, delivered_date, and powertrain', async () => {
     const request = new NextRequest(
       'http://localhost:3000/api/export?format=csv&model=RAV4&powertrain=phev&status=pending&province=BC'
     );
@@ -77,16 +81,27 @@ describe('GET /api/export', () => {
     expect(response.status).toBe(200);
     const csvText = await response.text();
     const lines = csvText.trim().split(/\r?\n/).filter((l) => l.trim().length > 0);
+    const headerColumns = lines[0].replace(/^\uFEFF/, '').split(',');
+    expect(headerColumns).toContain('order_date');
+    expect(headerColumns).toContain('delivered_date');
+    expect(headerColumns).toContain('powertrain');
+
     const dataLines = lines.slice(1);
     expect(dataLines.length).toBeGreaterThan(0);
 
     for (const line of dataLines) {
       const columns = line.split(',');
-      const modelVal = columns[2];
-      const provinceVal = columns[4];
-      const statusVal = columns[6];
+      const orderDateVal = columns[2];
+      const deliveredDateVal = columns[3];
+      const modelVal = columns[5];
+      const powertrainVal = columns[7];
+      const provinceVal = columns[8];
+      const statusVal = columns[10];
 
+      expect(orderDateVal).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(deliveredDateVal).toBe('');
       expect(modelVal).toBe('RAV4');
+      expect(powertrainVal).toContain('PHEV');
       expect(provinceVal).toBe('BC');
       expect(statusVal).toBe('pending');
     }

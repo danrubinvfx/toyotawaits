@@ -18,9 +18,9 @@ export const MAX_WAIT_TIME_DAYS = 420;
 export const BASE_MODEL_P75: Record<string, number> = {
   sienna: 450,
   rav4: 382,
-  'grand-highlander': 380,
-  'prius-prime': 230,
-  prius: 120,
+  'grand-highlander': 320,
+  'prius-prime': 322,
+  prius: 146,
   'land-cruiser': 145,
   tacoma: 180,
 };
@@ -130,6 +130,7 @@ export interface EstimatorResult {
   daysAlreadyWaited: number;
   isHistoricalOrderDate: boolean;
   isLimitedRegionalData: boolean;
+  estimateType: 'empirical' | 'planning_benchmark';
   verifiedSampleSize: number;
   sampleBadgeText: string;
   carryoverNote: string | null;
@@ -275,6 +276,11 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
       ? trimSlug.toUpperCase()
       : 'trim';
 
+  const isPlanningBenchmark = isLimitedRegionalData || !stats?.waitStats;
+  const estimateType: 'empirical' | 'planning_benchmark' = isPlanningBenchmark
+    ? 'planning_benchmark'
+    : 'empirical';
+
   const multiplierBreakdown =
     p75 !== baseP75Days
       ? `Base P75: ${baseP75Days} days · Adjusted to ~${p75} days based on ${provinceLabel} regional allocation and ${trimLabel} demand factors.`
@@ -283,6 +289,8 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
   const sampleBadgeText =
     modelSlug === 'tacoma'
       ? '10 Historical Dealer Benchmarks (Community submissions opening soon).'
+      : isPlanningBenchmark
+      ? `Planning Benchmark (n=${verifiedSampleSize} reference baseline deliveries)`
       : `Based on ${verifiedSampleSize} verified deliveries`;
 
   const exceedsCarryoverThreshold = p75 >= 400;
@@ -308,6 +316,7 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
     daysAlreadyWaited,
     isHistoricalOrderDate,
     isLimitedRegionalData,
+    estimateType,
     verifiedSampleSize,
     sampleBadgeText,
     carryoverNote,

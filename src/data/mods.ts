@@ -70,7 +70,7 @@ export const MODS_CONFIG: ModItem[] = [
     destinationUrl: 'https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20',
     affiliateUrl: '/out/fitcamx-rav4',
     badge: 'Recommended',
-    compatibility: 'TSS Mirror Plug & Play',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     youtubeVideoId: 'HrrClvzZpnI',
     videoTitle: 'Fitcamx Plug & Play Installation & Clarity',
   },
@@ -155,7 +155,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     categories: ['Electronics & Safety'],
     badge: 'Pro Tip',
-    compatibility: '10-Pin Tap: Auto-Dim Mirror (XSE/Limited/Platinum)',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     title: '10-Pin Type A TSS Mirror Harness Adapter (Dongar Style)',
     name: '10-Pin Type A TSS Mirror Harness Adapter',
     description:
@@ -178,7 +178,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Electronics & Safety',
     categories: ['Electronics & Safety'],
     badge: 'Pro Tip',
-    compatibility: '12-Pin/16-Pin TSS Tap: Safety Sense Shroud (Base/Manual Trims)',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     title: '12-Pin / 16-Pin Type B TSS Mirror Harness Adapter (Dongar Style)',
     name: '12-Pin / 16-Pin Type B TSS Mirror Harness Adapter',
     description:
@@ -293,7 +293,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Organization',
     categories: ['Organization'],
     badge: 'Pro Tip',
-    compatibility: 'Dual-Tier Armrest Mold',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     title: 'Drop-In Center Console Divider & Coin Tray (RAV4)',
     name: 'RAV4 Dual-Tier Console Organizer Tray',
     description:
@@ -389,7 +389,7 @@ export const MODS_CONFIG: ModItem[] = [
     category: 'Interior Protection',
     categories: ['Interior Protection'],
     badge: 'Essential',
-    compatibility: 'RAV4 Hybrid & Prime, Sienna Hybrid',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     title: 'Hybrid Battery Intake Pre-Filter Mesh',
     name: 'Hybrid Battery Intake Pre-Filter Mesh',
     description:
@@ -446,7 +446,7 @@ export const MODS_CONFIG: ModItem[] = [
     destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20',
     affiliateUrl: '/out/high-wall-floor-liners-rav4',
     badge: 'Essential',
-    compatibility: 'RAV4 Hybrid & Prime (Row 1, 2, and Trunk)',
+    compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
   },
   {
     id: 'prod-mats-3row',

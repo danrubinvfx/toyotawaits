@@ -81,6 +81,29 @@ describe('GET /api/aggregate', () => {
     );
   });
 
+  it('reconciles All Trims query across all trims under model and powertrain without locking to a default trim', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/aggregate?model=RAV4&powertrain=PHEV&province=BC&trim=all'
+    );
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.data.modelSlug).toBe('rav4');
+    expect(json.data.powertrainSlug).toBe('phev');
+    expect(json.data.province).toBe('BC');
+    expect(json.data.trimSlug).toBeNull();
+    expect(json.data.trimName).toBeNull();
+    expect(json.data.sampleCounts.delivered).toBe(3);
+    expect(json.data.sampleCounts.pending).toBe(5);
+    expect(json.data.sampleCounts.total).toBe(8);
+    expect(json.data.delivered_count).toBe(3);
+    expect(json.data.waiting_count).toBe(5);
+    expect(json.data.delivered_median_days).toBe(401);
+    expect(json.data.waitStats.median).toBe(401);
+  });
+
   it('rejects unlisted or mock models like Tacoma with 400 MODEL_NOT_TRACKED', async () => {
     const request = new NextRequest('http://localhost:3000/api/aggregate?model=tacoma');
     const response = await GET(request);

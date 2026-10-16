@@ -254,6 +254,7 @@ export type AggregateQueryParams = z.infer<typeof aggregateQuerySchema>;
 export const exportQuerySchema = z.object({
   model: z.string().max(50).optional(),
   powertrain: z.string().max(50).optional(),
+  trim: z.string().max(80).optional(),
   province: canadianProvinceSchema.optional(),
   state: usStateSchema.optional(),
   countryCode: countryCodeSchema.optional(),

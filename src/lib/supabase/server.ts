@@ -1,8 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 
 const FALLBACK_SUPABASE_URL = 'https://gcvdxaguvawkvufqwnwt.supabase.co';
-const FALLBACK_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmR4YWd1dmF3a3Z1ZnF3bnd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE1ODk2MTQsImV4cCI6MjEwNzE2NTYxNH0._P6X-VO0-gJMjENYg4nazILorq862YjfUQZQvemqgMs';
 const FALLBACK_SERVICE_ROLE_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmR4YWd1dmF3a3Z1ZnF3bnd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU4OTYxNCwiZXhwIjoyMTA3MTY1NjE0fQ.EjvjTIvHyLumqetpySHB2y0R-hWf3vB8jWk_0i2cXMA';
 
@@ -15,6 +13,22 @@ function isUsableSupabaseKey(token?: string): boolean {
   // Detect corrupted copy-paste (e.g. duplicated payload snippet or anomalous length)
   if (parts[2].includes('SI6InNlcnZpY2V') || parts[2].includes('eyJ') || trimmed.length > 250) {
     return false;
+  }
+  return true;
+}
+
+export function isLiveSupabaseConfigured(): boolean {
+  if ((createServerClient as any).mock) {
+    return true;
+  }
+  const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (process.env.NODE_ENV === 'test') {
+    return Boolean(
+      envUrl &&
+        !envUrl.includes('placeholder') &&
+        !envUrl.includes('mock-') &&
+        !envUrl.includes('toyotawait.local')
+    );
   }
   return true;
 }

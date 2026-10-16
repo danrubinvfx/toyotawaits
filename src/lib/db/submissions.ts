@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { Submission, CountryCode, USState, CanadianProvince, SubmissionStatus, SubmissionStage, DbSubmissionStageEnum, OrderStage, PricingType, NudgeAction, NudgeActionResult, RecentActivityItem } from '@/lib/types/contracts';
 
 export type { RecentActivityItem };
@@ -96,6 +96,7 @@ export interface SubmissionUpdateData {
 export interface ExportFilterParams {
   model?: string;
   powertrain?: string;
+  trim?: string;
   province?: CanadianProvince;
   state?: string;
   country_code?: CountryCode;
@@ -1293,13 +1294,13 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
 export async function getSubmissionsForExport(filters: ExportFilterParams): Promise<ExportRow[]> {
   const isUsFilter = filters.country_code === 'US' || filters.countryCode === 'US';
   const isCaFilter = filters.country_code === 'CA' || filters.countryCode === 'CA';
+  const normalizedTrim =
+    filters.trim && filters.trim.trim() !== '' && filters.trim.trim().toLowerCase() !== 'all'
+      ? filters.trim.trim().toLowerCase()
+      : undefined;
 
   // If Supabase PostgreSQL is live, query the complete unpaginated dataset from Supabase
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
-  ) {
+  if (isLiveSupabaseConfigured()) {
     try {
       const supabase = createServerClient();
       let query = supabase
@@ -1326,10 +1327,10 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
         `)
         .or('is_flagged.eq.false,is_flagged.is.null');
 
-      if (filters.model && filters.model !== 'all') {
+      if (filters.model && filters.model.toLowerCase() !== 'all') {
         query = query.eq('vehicle_models.slug', filters.model.toLowerCase());
       }
-      if (filters.powertrain && filters.powertrain !== 'all') {
+      if (filters.powertrain && filters.powertrain.toLowerCase() !== 'all') {
         query = query.eq('vehicle_powertrains.slug', filters.powertrain.toLowerCase());
       }
       if (filters.province) {
@@ -1352,7 +1353,15 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (!error && Array.isArray(data) && data.length > 0) {
-        return data.map((item: any) => ({
+        const filteredData = normalizedTrim
+          ? data.filter(
+              (item: any) =>
+                item.vehicle_trims?.slug?.toLowerCase() === normalizedTrim ||
+                item.vehicle_trims?.name?.toLowerCase() === normalizedTrim
+            )
+          : data;
+
+        return filteredData.map((item: any) => ({
           id: item.id || '',
           created_at: item.created_at || '',
           model: item.vehicle_models?.name || 'RAV4',
@@ -1385,8 +1394,15 @@ export async function getSubmissionsForExport(filters: ExportFilterParams): Prom
   for (const item of inMemorySubmissions.values()) {
     if (item.is_flagged) continue;
 
-    if (filters.model && filters.model !== 'all' && item.model_slug !== filters.model.toLowerCase()) continue;
-    if (filters.powertrain && filters.powertrain !== 'all' && item.powertrain_slug !== filters.powertrain.toLowerCase()) continue;
+    if (filters.model && filters.model.toLowerCase() !== 'all' && item.model_slug !== filters.model.toLowerCase()) continue;
+    if (filters.powertrain && filters.powertrain.toLowerCase() !== 'all' && item.powertrain_slug !== filters.powertrain.toLowerCase()) continue;
+    if (
+      normalizedTrim &&
+      item.trim_slug?.toLowerCase() !== normalizedTrim &&
+      item.trim_name?.toLowerCase() !== normalizedTrim
+    ) {
+      continue;
+    }
     if (filters.province && item.province !== filters.province) continue;
     if (filters.state && item.state !== filters.state) continue;
     if (isUsFilter) {
@@ -1438,11 +1454,7 @@ export async function getRecentActivity(limit = 10, countryCode?: CountryCode | 
   const isUs = countryCode === 'US';
   const effectiveLimit = Math.max(1, Math.min(limit, 50));
 
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
-  ) {
+  if (isLiveSupabaseConfigured()) {
     try {
       const supabase = createServerClient();
       let query = supabase
@@ -1601,11 +1613,7 @@ export async function getRecentActivity(limit = 10, countryCode?: CountryCode | 
 
 export async function getCommunitySubmissions(countryCode?: CountryCode | string): Promise<CommunityRecord[]> {
   const isUs = countryCode === 'US';
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder') &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
-  ) {
+  if (isLiveSupabaseConfigured()) {
     try {
       const supabase = createServerClient();
       let query = supabase

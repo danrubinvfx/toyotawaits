@@ -9,12 +9,35 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
+    const rawProvince = searchParams.get('province')?.trim();
+    const rawState = searchParams.get('state')?.trim();
+    const rawCountry = (
+      searchParams.get('country_code') ||
+      searchParams.get('countryCode') ||
+      searchParams.get('country')
+    )?.trim();
+    const rawTrim = searchParams.get('trim')?.trim();
+
     const queryParams = {
-      model: searchParams.get('model') || undefined,
-      powertrain: searchParams.get('powertrain') || undefined,
-      province: searchParams.get('province') || undefined,
-      trim: searchParams.get('trim') || undefined,
-      timeframe: searchParams.get('timeframe') || undefined,
+      model: searchParams.get('model')?.trim() || undefined,
+      powertrain: searchParams.get('powertrain')?.trim() || undefined,
+      province:
+        rawProvince && rawProvince.toLowerCase() !== 'all'
+          ? rawProvince.toUpperCase()
+          : undefined,
+      state:
+        rawState && rawState.toLowerCase() !== 'all'
+          ? rawState.toUpperCase()
+          : undefined,
+      country_code:
+        rawCountry && rawCountry.toLowerCase() !== 'all'
+          ? rawCountry.toUpperCase()
+          : undefined,
+      trim:
+        rawTrim && rawTrim.toLowerCase() !== 'all'
+          ? rawTrim
+          : undefined,
+      timeframe: searchParams.get('timeframe')?.trim() || undefined,
     };
 
     const validation = aggregateQuerySchema.safeParse(queryParams);

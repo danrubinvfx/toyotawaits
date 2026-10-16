@@ -20,6 +20,7 @@ import {
   X,
   Zap,
   Fuel,
+  Info,
 } from 'lucide-react';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { CommunityRecord, INITIAL_COMMUNITY_RECORDS } from '@/lib/data/community-records';
@@ -226,8 +227,12 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
               Community Submissions & Delivery Log
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm">
-              Real-world Canadian order records submitted by verified buyers. Free of PII, open for auditing.
+              Real-world Canadian order records submitted by verified buyers. Open for auditing.
             </CardDescription>
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1.5" data-testid="verification-duplicate-caption">
+              <Info className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+              <span>Entries are reviewed against standard dealer sheet patterns. Similar configurations ordered around the same allocation cycle represent distinct buyer queue positions.</span>
+            </p>
           </div>
 
           <a href={csvDownloadUrl} download>

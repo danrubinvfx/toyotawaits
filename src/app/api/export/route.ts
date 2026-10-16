@@ -16,16 +16,27 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
-    const rawModel = searchParams.get('model');
-    const rawPowertrain = searchParams.get('powertrain');
-    const rawProvince = searchParams.get('province');
-    const rawStatus = searchParams.get('status');
+    const rawModel = searchParams.get('model')?.trim();
+    const rawPowertrain = searchParams.get('powertrain')?.trim();
+    const rawTrim = searchParams.get('trim')?.trim();
+    const rawProvince = searchParams.get('province')?.trim();
+    const rawState = searchParams.get('state')?.trim();
+    const rawCountryCode = (
+      searchParams.get('country_code') || searchParams.get('countryCode')
+    )?.trim();
+    const rawStatus = searchParams.get('status')?.trim();
 
     const queryParams = {
-      model: rawModel && rawModel !== 'all' ? rawModel : undefined,
-      powertrain: rawPowertrain && rawPowertrain !== 'all' ? rawPowertrain : undefined,
-      province: rawProvince && rawProvince !== 'all' ? rawProvince : undefined,
-      status: rawStatus && rawStatus !== 'all' ? rawStatus : undefined,
+      model: rawModel && rawModel.toLowerCase() !== 'all' ? rawModel : undefined,
+      powertrain: rawPowertrain && rawPowertrain.toLowerCase() !== 'all' ? rawPowertrain : undefined,
+      trim: rawTrim && rawTrim.toLowerCase() !== 'all' ? rawTrim : undefined,
+      province: rawProvince && rawProvince.toLowerCase() !== 'all' ? rawProvince.toUpperCase() : undefined,
+      state: rawState && rawState.toLowerCase() !== 'all' ? rawState.toUpperCase() : undefined,
+      country_code:
+        rawCountryCode && rawCountryCode.toLowerCase() !== 'all'
+          ? rawCountryCode.toUpperCase()
+          : undefined,
+      status: rawStatus && rawStatus.toLowerCase() !== 'all' ? rawStatus.toLowerCase() : undefined,
       format: (searchParams.get('format') || 'csv') as 'csv',
     };
 
@@ -46,15 +57,21 @@ export async function GET(request: NextRequest) {
 
     const rows = await getSubmissionsForExport(validation.data);
 
-    // CSV Headers matching RFC 4180 format
+    // CSV Headers matching RFC 4180 format with full public audit schema
     const headers = [
       'id',
       'created_at',
-      'model',
-      'trim',
+      'order_date',
+      'delivered_date',
+      'model_year',
+      'model_name',
+      'trim_name',
+      'powertrain',
       'province',
       'wait_days',
       'status',
+      'pricing',
+      'addons_cad',
     ];
 
     const csvLines = [headers.join(',')];
@@ -64,11 +81,17 @@ export async function GET(request: NextRequest) {
         [
           escapeCsvCell(r.id),
           escapeCsvCell(r.created_at || r.submitted_at),
+          escapeCsvCell(r.order_date),
+          escapeCsvCell(r.delivery_date),
+          escapeCsvCell(r.model_year),
           escapeCsvCell(r.model),
           escapeCsvCell(r.trim),
+          escapeCsvCell(r.powertrain),
           escapeCsvCell(r.province),
           escapeCsvCell(r.wait_days),
           escapeCsvCell(r.status),
+          escapeCsvCell(r.pricing),
+          escapeCsvCell(r.addons_cad),
         ].join(',')
       );
     }

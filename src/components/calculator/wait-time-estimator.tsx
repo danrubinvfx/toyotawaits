@@ -378,6 +378,7 @@ export function WaitTimeEstimator({
       ? 'AWD'
       : 'trim';
 
+  const isPlanningBenchmark = isLimitedRegionalData || Boolean(stats?.isTrimFallback) || !stats?.waitStats;
   const multiplierBreakdown =
     p75Days !== baseP75Days
       ? `Base P75: ${baseP75Days} days · Adjusted to ~${p75Days} days based on ${provinceName} regional allocation and ${trimDisplayName} demand factors.`
@@ -496,8 +497,8 @@ export function WaitTimeEstimator({
           </div>
         )}
 
-        {/* Selector Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 sm:gap-4">
+        {/* Selector Grid - Adjusted for responsive desktop display (1024px-1280px) without label truncation */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 sm:gap-4">
           <div className="space-y-1.5">
             <Label htmlFor={`${compId}-model`}>Vehicle Model</Label>
             <Select
@@ -572,7 +573,7 @@ export function WaitTimeEstimator({
             </Select>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 sm:col-span-2 lg:col-span-1">
             <Label htmlFor={`${compId}-deposit-date`}>Deposit / Order Date</Label>
             <Input
               id={`${compId}-deposit-date`}
@@ -610,7 +611,7 @@ export function WaitTimeEstimator({
             {/* Primary KPI Banner - Centered Clean Layout */}
             <div className="flex flex-col items-center text-center space-y-3.5 pb-6 border-b border-zinc-100 dark:border-zinc-800">
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
-                Estimated Delivery Window in {province}
+                {isPlanningBenchmark ? 'Planning Benchmark Window' : 'Empirical Delivery Window'} in {province}
               </span>
 
               <div className="flex flex-wrap items-center justify-center gap-2">
@@ -623,6 +624,23 @@ export function WaitTimeEstimator({
                 >
                   Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                 </Badge>
+                {isPlanningBenchmark ? (
+                  <Badge
+                    variant="outline"
+                    data-testid="planning-benchmark-badge"
+                    className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
+                  >
+                    Planning Benchmark (n={verifiedSampleSize})
+                  </Badge>
+                ) : (
+                  <Badge
+                    variant="outline"
+                    data-testid="empirical-calculation-badge"
+                    className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold"
+                  >
+                    Empirical Calculation (n={verifiedSampleSize})
+                  </Badge>
+                )}
                 {isLimitedRegionalData && (
                   <Badge
                     variant="outline"
