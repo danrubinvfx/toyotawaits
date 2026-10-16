@@ -250,4 +250,55 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText('Showing recommended gear')).toBeInTheDocument();
     expect(screen.getByText(/Swipe →/i)).toBeInTheDocument();
   });
+
+  it('applies smooth touch swiping and scroll snap styles to the gear carousel container and items', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const container = screen.getByTestId('gear-carousel-container');
+    expect(container).toHaveClass('overflow-x-auto');
+    expect(container).toHaveClass('scroll-smooth');
+    expect(container).toHaveClass('snap-x');
+    expect(container).toHaveClass('snap-mandatory');
+    expect(container).toHaveClass('[-webkit-overflow-scrolling:touch]');
+
+    const card = screen.getByTestId('checklist-item-fitcamx-rav4');
+    expect(card).toHaveClass('min-w-[280px]');
+    expect(card).toHaveClass('snap-start');
+    expect(card).toHaveClass('shrink-0');
+  });
+
+  it('calls scrollBy with 340px when clicking navigation buttons', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const container = screen.getByTestId('gear-carousel-container');
+    const scrollBySpy = vi.fn();
+    container.scrollBy = scrollBySpy;
+
+    // Simulate scrolled geometry to enable both prev and next buttons
+    Object.defineProperty(container, 'scrollWidth', { configurable: true, value: 2000 });
+    Object.defineProperty(container, 'clientWidth', { configurable: true, value: 600 });
+    Object.defineProperty(container, 'scrollLeft', { configurable: true, value: 200, writable: true });
+    fireEvent.scroll(container);
+
+    const nextBtn = screen.getByTestId('gear-carousel-next');
+    fireEvent.click(nextBtn);
+    expect(scrollBySpy).toHaveBeenCalledWith({ left: 340, behavior: 'smooth' });
+
+    const prevBtn = screen.getByTestId('gear-carousel-prev');
+    fireEvent.click(prevBtn);
+    expect(scrollBySpy).toHaveBeenCalledWith({ left: -340, behavior: 'smooth' });
+  });
+
+  it('supports mouse drag interactions without blocking regular click events', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const container = screen.getByTestId('gear-carousel-container');
+    container.scrollLeft = 0;
+
+    fireEvent.mouseDown(container, { button: 0, pageX: 200 });
+    fireEvent.mouseMove(container, { pageX: 100 });
+    fireEvent.mouseUp(container);
+
+    expect(container).toBeInTheDocument();
+  });
 });

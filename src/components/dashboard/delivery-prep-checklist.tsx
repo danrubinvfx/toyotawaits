@@ -217,12 +217,18 @@ export function DeliveryPrepChecklist({
 
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+  const isMouseDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const isDraggingRef = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const checkScrollability = useCallback(() => {
     const el = carouselRef.current;
     if (!el) return;
     const { scrollLeft, scrollWidth, clientWidth } = el;
+    if (scrollWidth === 0) return;
     setCanScrollLeft(scrollLeft > 5);
     setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 5);
   }, []);
@@ -242,12 +248,56 @@ export function DeliveryPrepChecklist({
   const scrollByOneCard = (direction: 'left' | 'right') => {
     const el = carouselRef.current;
     if (!el) return;
-    const firstCard = el.querySelector<HTMLElement>('[data-testid^="checklist-item-"]');
-    const cardWidth = firstCard ? firstCard.offsetWidth + 12 : 280;
     el.scrollBy({
-      left: direction === 'left' ? -cardWidth : cardWidth,
+      left: direction === 'left' ? -340 : 340,
       behavior: 'smooth',
     });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return;
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('a') || target.closest('input')) {
+      return;
+    }
+    const el = carouselRef.current;
+    if (!el) return;
+    isMouseDownRef.current = true;
+    startXRef.current = e.pageX - el.offsetLeft;
+    scrollLeftRef.current = el.scrollLeft;
+    isDraggingRef.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isMouseDownRef.current) return;
+    const el = carouselRef.current;
+    if (!el) return;
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - startXRef.current) * 1.2;
+    if (Math.abs(walk) > 5) {
+      if (!isDraggingRef.current) {
+        isDraggingRef.current = true;
+        setIsDragging(true);
+      }
+      el.scrollLeft = scrollLeftRef.current - walk;
+    }
+  };
+
+  const handleMouseUpOrLeave = () => {
+    isMouseDownRef.current = false;
+    if (isDraggingRef.current) {
+      setTimeout(() => {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+      }, 50);
+    }
+  };
+
+  const handleClickCapture = (e: React.MouseEvent) => {
+    if (isDraggingRef.current) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   };
 
   // Filter items matching model and powertrain with deduplication by item.id and item.asin
@@ -456,7 +506,15 @@ export function DeliveryPrepChecklist({
             <div
               ref={carouselRef}
               data-testid="gear-carousel-container"
-              className="flex gap-3 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 px-1 scroll-smooth touch-pan-x"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUpOrLeave}
+              onMouseLeave={handleMouseUpOrLeave}
+              onClickCapture={handleClickCapture}
+              className={cn(
+                'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] touch-pan-x px-1',
+                isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+              )}
             >
               {filteredProducts.map((item) => (
                 <ModCard
@@ -465,6 +523,7 @@ export function DeliveryPrepChecklist({
                   isChecked={!!checkedItems[item.slug]}
                   onToggle={toggleItem}
                   showCheckbox={true}
+                  className="min-w-[280px] sm:min-w-[320px] md:min-w-[360px] shrink-0 snap-start"
                 />
               ))}
             </div>

@@ -106,7 +106,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'TuxMat Custom High-Wall Floor Liners (RAV4)',
         benefit:
           'Maximum edge-to-edge carpet and salt crust protection precision-cut to maintain 100% rear seat battery vent intake clearance.',
-        url: 'https://www.amazon.ca/dp/B0821M4Z9Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },
@@ -347,7 +347,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'Custom-Fit High-Wall All-Weather Floor Liners (Prius Prime)',
         benefit:
           'High dead-pedal and footwell barrier preventing white salt crust build-up while keeping rear seat cooling mesh clear.',
-        url: 'https://www.amazon.ca/dp/B0821M4Z9Z?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=TuxMat+Prius+Prime&tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },

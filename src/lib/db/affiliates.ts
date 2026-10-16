@@ -370,7 +370,7 @@ const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'high-wall-floor-liners-rav4': {
     id: 'f1000016-0016-4016-8016-000000000016',
     slug: 'high-wall-floor-liners-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+hybrid+all+weather+floor+mats+cargo+liner+tuxmat&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20',
     title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 Hybrid & Prime)',
     category: 'cabin_organization',
     clickCount: 0,
