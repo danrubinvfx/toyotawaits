@@ -230,7 +230,8 @@ export function CommunityDataTable({ initialRecords }: CommunityDataTableProps =
           : 'all';
     const province = provinceFilter;
 
-    return `/api/export?format=csv&country_code=${market}${model !== 'all' ? `&model=${encodeURIComponent(model)}` : ''}${powertrain !== 'all' ? `&powertrain=${encodeURIComponent(powertrain)}` : ''}${status !== 'all' ? `&status=${encodeURIComponent(status)}` : ''}${province !== 'all' ? `&province=${encodeURIComponent(province)}` : ''}`;
+    const countryParam = market === 'US' ? '&country_code=US' : '';
+    return `/api/export?format=csv${countryParam}${model !== 'all' ? `&model=${encodeURIComponent(model)}` : ''}${powertrain !== 'all' ? `&powertrain=${encodeURIComponent(powertrain)}` : ''}${status !== 'all' ? `&status=${encodeURIComponent(status)}` : ''}${province !== 'all' ? `&province=${encodeURIComponent(province)}` : ''}`;
   }, [market, modelFilter, powertrainFilter, pillFilter, statusFilter, provinceFilter]);
 
   return (
