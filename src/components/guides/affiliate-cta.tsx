@@ -1,7 +1,10 @@
+'use client';
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, ExternalLink } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useMarket } from '@/context/MarketContext';
 
 export interface AffiliateCTAProps {
   slug: string;
@@ -22,11 +25,32 @@ export function AffiliateCTA({
   size = 'default',
   isPrimary = false,
 }: AffiliateCTAProps) {
+  const { isUs } = useMarket();
   const chosenVariant = variant ?? (isPrimary ? 'amber' : 'outline');
   const isAmber = chosenVariant === 'amber';
   const isOutline = chosenVariant === 'outline';
 
-  const displayLabel = label.replace(/\s*↗$/, '');
+  let displayLabel = label.replace(/\s*↗$/, '');
+  if (isUs) {
+    displayLabel = displayLabel.replace(/Amazon\.ca/g, 'Amazon.com');
+  }
+
+  let href = slug.startsWith('http') ? slug : `/out/${slug}`;
+  if (href.startsWith('http') && href.includes('amazon.')) {
+    try {
+      const urlObj = new URL(href);
+      urlObj.hostname = isUs ? 'www.amazon.com' : 'www.amazon.ca';
+      const tag = isUs
+        ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
+        : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
+      urlObj.searchParams.set('tag', tag);
+      href = urlObj.toString();
+    } catch {
+      href = isUs
+        ? href.replace(/amazon\.ca/g, 'amazon.com')
+        : href.replace(/amazon\.com/g, 'amazon.ca');
+    }
+  }
 
   return (
     <Button
@@ -44,7 +68,7 @@ export function AffiliateCTA({
       )}
     >
       <a
-        href={slug.startsWith('http') ? slug : `/out/${slug}`}
+        href={href}
         target="_blank"
         rel="noopener noreferrer nofollow sponsored"
       >

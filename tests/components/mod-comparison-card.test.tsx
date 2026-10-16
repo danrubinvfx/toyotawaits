@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ModComparisonCard } from '@/components/guides/mod-comparison-card';
+import { MarketProvider } from '@/context/MarketContext';
 import { Volume2 } from 'lucide-react';
 
 describe('ModComparisonCard Component', () => {
@@ -97,6 +98,20 @@ describe('ModComparisonCard Component', () => {
 
     expect(
       screen.getByText(/As an Amazon Associate, toyotawaits\.ca earns from qualifying purchases at no extra cost to you\./i)
+    ).toBeDefined();
+  });
+
+  it('dynamically adapts CTA label and disclaimer to US market', () => {
+    render(
+      <MarketProvider initialMarket="US">
+        <ModComparisonCard {...defaultProps} />
+      </MarketProvider>
+    );
+
+    const primaryLink = screen.getByRole('link', { name: /Check Fitment on Amazon\.com/i });
+    expect(primaryLink).toBeDefined();
+    expect(
+      screen.getByText(/As an Amazon Associate, toyotawaits\.com earns from qualifying purchases at no extra cost to you\./i)
     ).toBeDefined();
   });
 });

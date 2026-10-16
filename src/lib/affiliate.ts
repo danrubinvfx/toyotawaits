@@ -1,17 +1,58 @@
 /**
  * ToyotaWaits Affiliate Link Helper & URL Builders
- * Tag: danrubin03-20
+ * Supports dynamic market routing (Canada amazon.ca vs US amazon.com)
+ * with associate tag attribution.
  */
 
-export const DEFAULT_AMAZON_AFFILIATE_TAG = 'danrubin03-20';
+export const DEFAULT_AMAZON_AFFILIATE_TAG = 'toyotawaits-20';
+
+export interface AffiliateParams {
+  query?: string;
+  asin?: string;
+  market?: 'CA' | 'US';
+}
 
 /**
- * Builds a search query affiliate link pointing directly to Amazon.ca
- * Structure: https://www.amazon.ca/s?k=${encodeURIComponent(query)}&tag=${tag}
+ * Builds a dynamically localized Amazon affiliate URL for either Canada (amazon.ca)
+ * or the United States (amazon.com), with proper associate attribution tags.
+ */
+export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateParams): string {
+  const isUS = market === 'US';
+  const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+  const tag = isUS
+    ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
+    : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
+
+  if (query) {
+    return `${domain}/s?k=${encodeURIComponent(query)}&tag=${tag}`;
+  }
+  if (asin) {
+    return `${domain}/dp/${asin}?tag=${tag}`;
+  }
+  return `${domain}/?tag=${tag}`;
+}
+
+/**
+ * Helper supporting both string query signatures and AffiliateParams objects
+ * for backwards compatibility across existing and new guide components.
  */
 export function buildAmazonAffiliateUrl(
-  query: string,
-  tag: string = DEFAULT_AMAZON_AFFILIATE_TAG
+  paramsOrQuery: AffiliateParams | string,
+  tagOrMarket?: string,
+  marketFallback: 'CA' | 'US' = 'CA'
 ): string {
-  return `https://www.amazon.ca/s?k=${encodeURIComponent(query)}&tag=${tag}`;
+  if (typeof paramsOrQuery === 'string') {
+    if (tagOrMarket === 'CA' || tagOrMarket === 'US') {
+      return getAmazonAffiliateUrl({ query: paramsOrQuery, market: tagOrMarket });
+    }
+    const isUS = marketFallback === 'US';
+    const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+    const tag =
+      tagOrMarket ||
+      (isUS
+        ? process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20'
+        : process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
+    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
+  }
+  return getAmazonAffiliateUrl(paramsOrQuery);
 }

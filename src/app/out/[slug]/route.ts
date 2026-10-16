@@ -52,21 +52,37 @@ export async function GET(
       });
     }
 
+    // Detect market context from URL param, cookie, or hostname
+    const searchParams = request.nextUrl.searchParams;
+    const marketParam = searchParams.get('market')?.toUpperCase();
+    const cookieMarket = request.cookies.get('toyotawaits_market')?.value?.toUpperCase();
+    const host = request.headers.get('host') || '';
+    const isUS = marketParam === 'US' || cookieMarket === 'US' || host.includes('toyotawaits.com');
+
     // 3. Safe Outbound Link Handler & Geolocation Strategy:
-    // Default to Amazon Canada (amazon.ca) with universal OneLink tagging
+    // Route to Amazon.com with US tag for US visitors, Amazon.ca with CA tag for CA visitors
     if (destinationUrl.includes('amazon.')) {
       try {
         const urlObj = new URL(destinationUrl);
-        if (!urlObj.hostname.includes('amazon.ca')) {
-          urlObj.hostname = 'www.amazon.ca';
+        urlObj.hostname = isUS ? 'www.amazon.com' : 'www.amazon.ca';
+
+        const hasCustomTag =
+          urlObj.searchParams.has('tag') &&
+          urlObj.searchParams.get('tag') !== 'toyotawaits-20';
+
+        const marketTag = isUS
+          ? process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
+            process.env.NEXT_PUBLIC_AMAZON_TAG ||
+            'toyotawaits-20'
+          : process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
+            process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
+            process.env.AMAZON_AFFILIATE_TAG ||
+            'toyotawaits-20';
+
+        if (isUS || !urlObj.searchParams.has('tag') || !hasCustomTag) {
+          urlObj.searchParams.set('tag', marketTag);
         }
-        const defaultTag =
-          process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
-          process.env.AMAZON_AFFILIATE_TAG ||
-          'toyotawaits-20';
-        if (!urlObj.searchParams.has('tag')) {
-          urlObj.searchParams.set('tag', defaultTag);
-        }
+
         destinationUrl = urlObj.toString();
       } catch {
         // preserve original URL if parsing fails

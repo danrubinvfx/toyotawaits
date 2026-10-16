@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModCard } from '@/components/delivery-prep/mod-card';
+import { useMarket } from '@/context/MarketContext';
 
 export interface ChecklistProduct {
   id: string;
@@ -154,6 +155,7 @@ export function DeliveryPrepChecklist({
   showUniversalGear,
   onToggleUniversalGear,
 }: DeliveryPrepChecklistProps) {
+  const { isUs } = useMarket();
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
@@ -550,7 +552,7 @@ export function DeliveryPrepChecklist({
         <div className="flex items-center gap-1.5 text-[11px] text-zinc-400">
           <ShieldCheck className="h-3.5 w-3.5 text-amber-500 shrink-0" />
           <span>
-            Community-vetted gear. Outbound links support ToyotaWaits.ca without tracking your personal data.
+            Community-vetted gear. Outbound links support {isUs ? 'ToyotaWaits.com' : 'ToyotaWaits.ca'} without tracking your personal data.
           </span>
         </div>
 

@@ -33,7 +33,7 @@ describe('ModCard Component', () => {
     expect(screen.getByText('Replaces factory mirror shroud cleanly.')).toBeDefined();
 
     const link = screen.getByRole('link', { name: /View on Amazon/i });
-    expect(link.getAttribute('href')).toBe('/out/sample-dashcam');
+    expect(link.getAttribute('href')).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toContain('noopener');
     expect(link.getAttribute('rel')).toContain('noreferrer');
@@ -146,8 +146,14 @@ describe('ModCard Component', () => {
 
     // CA Default
     const { unmount } = render(<ModCard item={itemWithDirectUrl} />);
-    const caLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
-    expect(caLink.getAttribute('href')).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
+    const caImageLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    const caButtonLink = screen.getByRole('link', { name: /View on Amazon/i });
+    expect(caImageLink.getAttribute('href')).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
+    expect(caButtonLink.getAttribute('href')).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
+    expect(caButtonLink.getAttribute('target')).toBe('_blank');
+    expect(caButtonLink.getAttribute('rel')).toContain('noopener');
+    expect(caButtonLink.getAttribute('rel')).toContain('noreferrer');
+    expect(caButtonLink.getAttribute('rel')).toContain('nofollow');
     unmount();
 
     // US Market via MarketProvider
@@ -156,8 +162,14 @@ describe('ModCard Component', () => {
         <ModCard item={itemWithDirectUrl} />
       </MarketProvider>
     );
-    const usLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
-    expect(usLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+    const usImageLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
+    const usButtonLink = screen.getByRole('link', { name: /View on Amazon/i });
+    expect(usImageLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+    expect(usButtonLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+    expect(usButtonLink.getAttribute('target')).toBe('_blank');
+    expect(usButtonLink.getAttribute('rel')).toContain('noopener');
+    expect(usButtonLink.getAttribute('rel')).toContain('noreferrer');
+    expect(usButtonLink.getAttribute('rel')).toContain('nofollow');
   });
 
   it('allows importing GearCard alias from @/components/gear/GearCard', () => {

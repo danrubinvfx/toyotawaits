@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
+import { MarketProvider } from '@/context/MarketContext';
 
 describe('DeliveryPrepChecklist Component', () => {
   beforeEach(() => {
@@ -139,19 +140,38 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText('Dual-Tier Armrest Mold')).toBeDefined();
   });
 
-  it('provides clean outbound redirect links routing strictly through /out/[slug]', () => {
+  it('provides clean outbound affiliate links routing dynamically to Amazon with required compliance attributes', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     const outboundLinks = screen.getAllByRole('link', { name: /View (on Amazon|Item)/i });
     expect(outboundLinks.length).toBeGreaterThan(0);
     for (const link of outboundLinks) {
       const href = link.getAttribute('href');
-      expect(href).toMatch(/^\/out\/[a-z0-9-]+$/);
+      expect(href).toContain('amazon.ca');
       expect(link.getAttribute('rel')).toContain('noopener');
       expect(link.getAttribute('rel')).toContain('noreferrer');
       expect(link.getAttribute('rel')).toContain('nofollow');
       expect(link.getAttribute('rel')).toContain('sponsored');
       expect(link.getAttribute('target')).toBe('_blank');
+    }
+  });
+
+  it('routes outbound links to Amazon.com when US market is selected', () => {
+    render(
+      <MarketProvider initialMarket="US">
+        <DeliveryPrepChecklist model="rav4" powertrain="hev" />
+      </MarketProvider>
+    );
+
+    const outboundLinks = screen.getAllByRole('link', { name: /View (on Amazon|Item)/i });
+    expect(outboundLinks.length).toBeGreaterThan(0);
+    for (const link of outboundLinks) {
+      const href = link.getAttribute('href');
+      expect(href).toContain('amazon.com');
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toContain('noopener');
+      expect(link.getAttribute('rel')).toContain('noreferrer');
+      expect(link.getAttribute('rel')).toContain('nofollow');
     }
   });
 

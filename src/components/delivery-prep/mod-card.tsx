@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
+import { getAmazonAffiliateUrl as getLibAffiliateUrl } from '@/lib/affiliate';
 import { VideoModal } from './video-modal';
 
 export interface ModCardItem {
@@ -60,12 +61,18 @@ export function getAmazonAffiliateUrl(
   item: ModCardItem,
   isUs: boolean = false
 ): string {
+  const market = isUs ? 'US' : 'CA';
+  const tag = isUs
+    ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
+    : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
+
   const rawUrl = item.destinationUrl || item.affiliateUrl || '';
 
   if (rawUrl && rawUrl.includes('amazon.')) {
     try {
       const parsed = new URL(rawUrl);
       parsed.hostname = isUs ? 'www.amazon.com' : 'www.amazon.ca';
+      parsed.searchParams.set('tag', tag);
       return parsed.toString();
     } catch {
       return isUs
@@ -76,14 +83,12 @@ export function getAmazonAffiliateUrl(
 
   // Fallback to ASIN if available
   if (item.asin) {
-    const domain = isUs ? 'amazon.com' : 'amazon.ca';
-    return `https://www.${domain}/dp/${item.asin}?tag=toyotawaits-20`;
+    return getLibAffiliateUrl({ asin: item.asin, market });
   }
 
   // Fallback to title search if available
   if (item.title) {
-    const domain = isUs ? 'amazon.com' : 'amazon.ca';
-    return `https://www.${domain}/s?k=${encodeURIComponent(item.title)}&tag=toyotawaits-20`;
+    return getLibAffiliateUrl({ query: item.title, market });
   }
 
   return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
@@ -305,7 +310,7 @@ export function ModCard({
           className="w-full text-xs h-8 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer font-medium"
         >
           <a
-            href={item.affiliateUrl || `/out/${item.slug}`}
+            href={amazonAffiliateUrl}
             target="_blank"
             rel="noopener noreferrer nofollow sponsored"
             draggable={false}

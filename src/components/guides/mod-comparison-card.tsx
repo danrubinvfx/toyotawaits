@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AffiliateCTA } from '@/components/guides/affiliate-cta';
+import { MarketAssociateDisclaimer } from '@/components/guides/market-associate-disclaimer';
 import {
   LucideIcon,
   CheckCircle2,
@@ -211,9 +212,7 @@ export function ModComparisonCard({
               ))}
           </div>
 
-          <p className="text-[11px] text-zinc-400 dark:text-zinc-500 italic">
-            Outbound links route through our privacy-safe proxy. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
-          </p>
+          <MarketAssociateDisclaimer />
         </div>
       </CardContent>
     </Card>

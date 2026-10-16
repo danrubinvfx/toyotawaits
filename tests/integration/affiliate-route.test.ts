@@ -183,5 +183,32 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Location')).toBe(item.expectedUrl);
     }
   });
+
+  it('routes to amazon.com when ?market=US parameter is present', async () => {
+    const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4?market=US');
+    const response = await GET(request, {
+      params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+    });
+
+    expect(response.status).toBe(307);
+    const location = response.headers.get('Location');
+    expect(location).toContain('amazon.com');
+    expect(location).toContain('tag=toyotawaits-20');
+  });
+
+  it('routes to amazon.com when toyotawaits_market=US cookie is present', async () => {
+    const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4', {
+      headers: {
+        cookie: 'toyotawaits_market=US',
+      },
+    });
+    const response = await GET(request, {
+      params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+    });
+
+    expect(response.status).toBe(307);
+    const location = response.headers.get('Location');
+    expect(location).toContain('amazon.com');
+  });
 });
 
