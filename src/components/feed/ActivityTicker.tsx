@@ -199,16 +199,16 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     return null;
   }
 
-  const renderItemContent = (item: AnyTickerItem, keyPrefix: string, index: number) => {
-    const key = `${keyPrefix}-${index}-${item.id || ''}`;
+  const renderTickerItem = (item: AnyTickerItem, prefix = 'item') => {
+    const key = `${prefix}-${item.id || ''}`;
 
     if (isNewsItem(item)) {
       const category = item.category || item.tag || 'MARKET_DATA';
       const headline = item.headline || item.title || 'Toyota News Alert';
 
       return (
-        <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
+        <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
             <span>📢</span>
             <span>{category}</span>
           </span>
@@ -235,8 +235,8 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 120;
 
       return (
-        <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
+        <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
             <span>🟢</span>
             <span>DELIVERED</span>
           </span>
@@ -257,8 +257,8 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     const action = formatActionDescription(item);
 
     return (
-      <div key={key} className="inline-flex items-center gap-2 shrink-0 px-2 py-0.5 text-xs sm:text-sm font-medium">
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 whitespace-nowrap">
+      <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 whitespace-nowrap">
           <span>⚡</span>
           <span>UPDATE</span>
         </span>
@@ -275,7 +275,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
 
   return (
     <div
-      className="group relative w-full border-b border-zinc-200/80 dark:border-white/10 bg-zinc-950/90 dark:bg-black/40 backdrop-blur-sm text-zinc-200 select-none overflow-hidden"
+      className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none"
       aria-live="polite"
       role="region"
       aria-label="Live Canadian Toyota order activity and news wire"
@@ -284,68 +284,56 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
     >
-      <div className="flex items-center">
-        {/* Left Anchor Pulse Badge */}
-        <div className="shrink-0 z-10 bg-zinc-950 dark:bg-zinc-950/95 pl-3 sm:pl-4 pr-3 py-2 border-r border-zinc-800 dark:border-white/10 flex items-center gap-1.5 shadow-md">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-          </span>
-          <span className="text-[11px] sm:text-xs font-bold text-zinc-300 uppercase tracking-wider whitespace-nowrap">
-            Live Pulse
-          </span>
+      {/* Explicit scoped CSS to ensure continuous rolling across all browsers and bundlers */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            @keyframes marquee {
+              0% {
+                transform: translate3d(0, 0, 0);
+              }
+              100% {
+                transform: translate3d(-50%, 0, 0);
+              }
+            }
+            .animate-marquee {
+              display: flex;
+              width: max-content;
+              animation: marquee 45s linear infinite;
+              will-change: transform;
+            }
+            .animate-marquee:hover {
+              animation-play-state: paused;
+            }
+          `,
+        }}
+      />
+
+      {prefersReducedMotion ? (
+        <div
+          tabIndex={0}
+          className="flex items-center overflow-x-auto no-scrollbar gap-8 px-4 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
+          aria-label="Scrollable list of recent community submissions and news"
+        >
+          {items.map((item, idx) => renderTickerItem(item, `red-${idx}`))}
         </div>
-
-        {/* Marquee Track with gradient edge masks */}
-        <div className="relative flex-1 overflow-hidden">
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-6 z-1 bg-gradient-to-r from-zinc-950/90 dark:from-black/40 to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 z-1 bg-gradient-to-l from-zinc-950/90 dark:from-black/40 to-transparent" />
-
-          {prefersReducedMotion ? (
-            <div
-              tabIndex={0}
-              className="flex items-center overflow-x-auto no-scrollbar py-2 px-3 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
-              aria-label="Scrollable list of recent community submissions and news"
-            >
-              {items.map((item, idx) => (
-                <React.Fragment key={`red-${idx}-${item.id || ''}`}>
-                  {renderItemContent(item, 'red', idx)}
-                  {idx < items.length - 1 && (
-                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          ) : (
-            <div
-              className="flex items-center animate-marquee hover:[animation-play-state:paused]"
-              style={{
-                animationPlayState: isHovered ? 'paused' : 'running',
-              }}
-            >
-              {/* Set 1: Original */}
-              <div className="flex items-center shrink-0">
-                {displayItems.map((item, idx) => (
-                  <React.Fragment key={`orig-${idx}-${item.id || ''}`}>
-                    {renderItemContent(item, 'orig', idx)}
-                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
-                  </React.Fragment>
-                ))}
-              </div>
-
-              {/* Set 2: Clone for seamless continuous rolling */}
-              <div className="flex items-center shrink-0" aria-hidden="true">
-                {displayItems.map((item, idx) => (
-                  <React.Fragment key={`clone-${idx}-${item.id || ''}`}>
-                    {renderItemContent(item, 'clone', idx)}
-                    <span className="text-zinc-600 px-2 select-none shrink-0">•</span>
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          )}
+      ) : (
+        <div
+          className="flex animate-marquee"
+          style={{
+            animationPlayState: isHovered ? 'paused' : 'running',
+          }}
+        >
+          {/* Set 1 */}
+          <div className="flex shrink-0 items-center gap-8 px-4">
+            {displayItems.map((item, idx) => renderTickerItem(item, `orig-${idx}`))}
+          </div>
+          {/* Set 2 (Clone for infinite loop) */}
+          <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden="true">
+            {displayItems.map((item, idx) => renderTickerItem(item, `clone-${idx}`))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
