@@ -126,7 +126,7 @@ export function ModCard({
     <div
       data-testid={`checklist-item-${item.slug}`}
       className={cn(
-        'relative min-w-[280px] sm:min-w-[320px] md:min-w-[360px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 flex flex-col justify-between transition-all duration-200',
+        'relative w-[260px] md:w-[280px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200',
         isChecked
           ? 'border-amber-500/40 bg-neutral-900/95 shadow-inner'
           : 'hover:border-neutral-700 hover:bg-neutral-900/90',
@@ -156,13 +156,14 @@ export function ModCard({
 
       {/* Top Section: Media + Badges + Title + Savings Callout + Note */}
       <div className="flex-1 flex flex-col">
-        {/* Constrain image height (h-36 w-full object-cover rounded-xl mb-3) */}
+        {/* Constrain image height (h-32 w-full aspect-video object-cover rounded-xl mb-2.5) */}
         {showImage ? (
-          <div className="relative h-36 w-full shrink-0 rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center shadow-xs mb-3">
+          <div className="relative h-32 w-full aspect-video shrink-0 rounded-xl overflow-hidden border border-neutral-800 bg-neutral-950 flex items-center justify-center shadow-xs mb-2.5">
             <img
               src={imageSource!}
               alt={item.title}
               loading="lazy"
+              draggable={false}
               onError={() => setImgError(true)}
               className={cn(
                 'w-full h-full object-cover transition-transform duration-300',
@@ -173,11 +174,11 @@ export function ModCard({
         ) : (
           <div
             data-testid={`fallback-icon-${item.slug}`}
-            className="relative h-36 w-full shrink-0 rounded-xl border border-neutral-800 bg-neutral-950/90 flex items-center justify-center text-amber-500/80 shadow-xs mb-3"
+            className="relative h-32 w-full aspect-video shrink-0 rounded-xl border border-neutral-800 bg-neutral-950/90 flex items-center justify-center text-amber-500/80 shadow-xs mb-2.5"
             title={item.title}
           >
             {React.createElement(getThemedCategoryIcon(item.category, item.title), {
-              className: 'h-10 w-10 stroke-[1.5]',
+              className: 'h-9 w-9 stroke-[1.5]',
             })}
           </div>
         )}
@@ -247,6 +248,7 @@ export function ModCard({
             href={item.affiliateUrl || `/out/${item.slug}`}
             target="_blank"
             rel="noopener noreferrer nofollow sponsored"
+            draggable={false}
           >
             <span>View on Amazon</span>
             <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />

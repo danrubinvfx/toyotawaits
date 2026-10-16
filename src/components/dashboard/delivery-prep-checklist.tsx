@@ -218,11 +218,10 @@ export function DeliveryPrepChecklist({
   const carouselRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
-  const isMouseDownRef = useRef(false);
-  const startXRef = useRef(0);
-  const scrollLeftRef = useRef(0);
-  const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeftState, setScrollLeftState] = useState(0);
+  const hasDraggedRef = useRef(false);
 
   const checkScrollability = useCallback(() => {
     const el = carouselRef.current;
@@ -249,54 +248,41 @@ export function DeliveryPrepChecklist({
     const el = carouselRef.current;
     if (!el) return;
     el.scrollBy({
-      left: direction === 'left' ? -340 : 340,
+      left: direction === 'left' ? -300 : 300,
       behavior: 'smooth',
     });
   };
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
-    const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('a') || target.closest('input')) {
-      return;
-    }
-    const el = carouselRef.current;
-    if (!el) return;
-    isMouseDownRef.current = true;
-    startXRef.current = e.pageX - el.offsetLeft;
-    scrollLeftRef.current = el.scrollLeft;
-    isDraggingRef.current = false;
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!carouselRef.current) return;
+    const pageX = e.pageX ?? e.clientX;
+    setIsDragging(true);
+    hasDraggedRef.current = false;
+    setStartX(pageX - carouselRef.current.offsetLeft);
+    setScrollLeftState(carouselRef.current.scrollLeft);
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isMouseDownRef.current) return;
-    const el = carouselRef.current;
-    if (!el) return;
-    const x = e.pageX - el.offsetLeft;
-    const walk = (x - startXRef.current) * 1.2;
-    if (Math.abs(walk) > 5) {
-      if (!isDraggingRef.current) {
-        isDraggingRef.current = true;
-        setIsDragging(true);
-      }
-      el.scrollLeft = scrollLeftRef.current - walk;
-    }
+  const handleMouseLeaveOrUp = () => {
+    setIsDragging(false);
   };
 
-  const handleMouseUpOrLeave = () => {
-    isMouseDownRef.current = false;
-    if (isDraggingRef.current) {
-      setTimeout(() => {
-        isDraggingRef.current = false;
-        setIsDragging(false);
-      }, 50);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !carouselRef.current) return;
+    e.preventDefault();
+    const pageX = e.pageX ?? e.clientX;
+    const x = pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 1.5; // Drag speed multiplier
+    if (Math.abs(x - startX) > 5) {
+      hasDraggedRef.current = true;
     }
+    carouselRef.current.scrollLeft = scrollLeftState - walk;
   };
 
   const handleClickCapture = (e: React.MouseEvent) => {
-    if (isDraggingRef.current) {
-      e.stopPropagation();
+    if (hasDraggedRef.current) {
       e.preventDefault();
+      e.stopPropagation();
+      hasDraggedRef.current = false;
     }
   };
 
@@ -508,12 +494,15 @@ export function DeliveryPrepChecklist({
               data-testid="gear-carousel-container"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUpOrLeave}
-              onMouseLeave={handleMouseUpOrLeave}
+              onMouseUp={handleMouseLeaveOrUp}
+              onMouseLeave={handleMouseLeaveOrUp}
               onClickCapture={handleClickCapture}
+              onDragStart={(e) => e.preventDefault()}
               className={cn(
-                'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] touch-pan-x px-1',
-                isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'
+                'flex gap-3 overflow-x-auto pb-4 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [-webkit-overflow-scrolling:touch] touch-pan-y cursor-grab active:cursor-grabbing select-none px-1',
+                isDragging
+                  ? 'cursor-grabbing scroll-auto snap-none'
+                  : 'scroll-smooth snap-x snap-mandatory'
               )}
             >
               {filteredProducts.map((item) => (
@@ -523,7 +512,7 @@ export function DeliveryPrepChecklist({
                   isChecked={!!checkedItems[item.slug]}
                   onToggle={toggleItem}
                   showCheckbox={true}
-                  className="min-w-[280px] sm:min-w-[320px] md:min-w-[360px] shrink-0 snap-start"
+                  className="w-[260px] md:w-[280px] shrink-0 snap-start"
                 />
               ))}
             </div>

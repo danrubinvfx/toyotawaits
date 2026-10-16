@@ -251,7 +251,7 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText(/Swipe →/i)).toBeInTheDocument();
   });
 
-  it('applies smooth touch swiping and scroll snap styles to the gear carousel container and items', () => {
+  it('applies smooth touch swiping and compact card dimensions to the gear carousel container and items', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     const container = screen.getByTestId('gear-carousel-container');
@@ -260,14 +260,18 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(container).toHaveClass('snap-x');
     expect(container).toHaveClass('snap-mandatory');
     expect(container).toHaveClass('[-webkit-overflow-scrolling:touch]');
+    expect(container).toHaveClass('cursor-grab');
+    expect(container).toHaveClass('active:cursor-grabbing');
+    expect(container).toHaveClass('select-none');
 
     const card = screen.getByTestId('checklist-item-fitcamx-rav4');
-    expect(card).toHaveClass('min-w-[280px]');
+    expect(card).toHaveClass('w-[260px]');
+    expect(card).toHaveClass('md:w-[280px]');
     expect(card).toHaveClass('snap-start');
     expect(card).toHaveClass('shrink-0');
   });
 
-  it('calls scrollBy with 340px when clicking navigation buttons', () => {
+  it('calls scrollBy with 300px when clicking navigation buttons', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     const container = screen.getByTestId('gear-carousel-container');
@@ -282,23 +286,25 @@ describe('DeliveryPrepChecklist Component', () => {
 
     const nextBtn = screen.getByTestId('gear-carousel-next');
     fireEvent.click(nextBtn);
-    expect(scrollBySpy).toHaveBeenCalledWith({ left: 340, behavior: 'smooth' });
+    expect(scrollBySpy).toHaveBeenCalledWith({ left: 300, behavior: 'smooth' });
 
     const prevBtn = screen.getByTestId('gear-carousel-prev');
     fireEvent.click(prevBtn);
-    expect(scrollBySpy).toHaveBeenCalledWith({ left: -340, behavior: 'smooth' });
+    expect(scrollBySpy).toHaveBeenCalledWith({ left: -300, behavior: 'smooth' });
   });
 
-  it('supports mouse drag interactions without blocking regular click events', () => {
+  it('supports mouse drag-to-scroll interactions and updates scrollLeft', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
 
     const container = screen.getByTestId('gear-carousel-container');
+    Object.defineProperty(container, 'offsetLeft', { configurable: true, value: 0 });
     container.scrollLeft = 0;
 
-    fireEvent.mouseDown(container, { button: 0, pageX: 200 });
-    fireEvent.mouseMove(container, { pageX: 100 });
-    fireEvent.mouseUp(container);
+    fireEvent.mouseDown(container, { pageX: 200, clientX: 200 });
+    fireEvent.mouseMove(container, { pageX: 100, clientX: 100 });
+    expect(container.scrollLeft).toBe(150);
 
+    fireEvent.mouseUp(container);
     expect(container).toBeInTheDocument();
   });
 });
