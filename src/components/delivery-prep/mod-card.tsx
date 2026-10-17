@@ -170,7 +170,7 @@ export function ModCard({
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
 
-  const handleImageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (isDragging) {
       e.preventDefault();
       e.stopPropagation();
@@ -181,12 +181,12 @@ export function ModCard({
     <div
       data-testid={`checklist-item-${item.slug}`}
       className={cn(
-        'relative w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200 touch-pan-y',
+        'relative w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 flex-shrink-0 snap-center bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200',
         isChecked
           ? 'border-amber-500/40 bg-neutral-900/95 shadow-inner'
           : 'hover:border-neutral-700 hover:bg-neutral-900/90',
         className
-      )}
+      ) + ' snap-start'}
     >
       {/* Top corner clickable checkbox */}
       {showCheckbox && onToggle && (
@@ -217,7 +217,7 @@ export function ModCard({
           target="_blank"
           rel="noopener noreferrer nofollow"
           aria-label={`View ${item.title} on Amazon`}
-          onClick={handleImageClick}
+          onClick={handleLinkClick}
           draggable={false}
           className="cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block mb-2.5"
         >
@@ -313,6 +313,7 @@ export function ModCard({
             href={amazonAffiliateUrl}
             target="_blank"
             rel="noopener noreferrer nofollow sponsored"
+            onClick={handleLinkClick}
             draggable={false}
           >
             <span>View on Amazon</span>

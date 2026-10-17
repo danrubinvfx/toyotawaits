@@ -404,7 +404,7 @@ export function DeliveryPrepChecklist({
       id="accessories"
       data-testid="delivery-prep-checklist"
       className={cn(
-        'border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs text-zinc-100 scroll-mt-24 touch-pan-y',
+        'border-zinc-800 bg-zinc-950/60 rounded-xl overflow-hidden shadow-xs text-zinc-100 scroll-mt-24',
         className
       )}
     >
@@ -442,8 +442,8 @@ export function DeliveryPrepChecklist({
 
         {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
         <div
-          style={{ WebkitOverflowScrolling: 'touch' }}
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-y touch-pan-x overscroll-x-contain py-2 mt-2.5 border-t border-zinc-800/50 print:hidden"
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'auto' }}
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-auto overscroll-x-contain py-2 mt-2.5 border-t border-zinc-800/50 print:hidden"
         >
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
@@ -483,7 +483,7 @@ export function DeliveryPrepChecklist({
             No accessories found matching this vehicle and filter criteria.
           </div>
         ) : (
-          <div className="relative group touch-pan-y">
+          <div className="relative group">
             {/* Desktop Prev Button */}
             <button
               type="button"
@@ -509,9 +509,14 @@ export function DeliveryPrepChecklist({
               onMouseLeave={handleMouseLeaveOrUp}
               onClickCapture={handleClickCapture}
               onDragStart={(e) => e.preventDefault()}
-              style={{ WebkitOverflowScrolling: 'touch' }}
+              style={{
+                WebkitOverflowScrolling: 'touch',
+                touchAction: 'auto',
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+              }}
               className={cn(
-                'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 touch-pan-y touch-pan-x overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] cursor-grab active:cursor-grabbing select-none px-1',
+                'flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth touch-auto touch-pan-x no-scrollbar overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] cursor-grab active:cursor-grabbing select-none px-1',
                 isDragging && 'cursor-grabbing scroll-auto snap-none'
               )}
             >
@@ -523,7 +528,7 @@ export function DeliveryPrepChecklist({
                   onToggle={toggleItem}
                   showCheckbox={true}
                   isDragging={isDragging}
-                  className="w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 snap-start touch-pan-y"
+                  className="w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 flex-shrink-0 snap-start snap-center"
                 />
               ))}
             </div>
