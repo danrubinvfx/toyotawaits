@@ -19,6 +19,11 @@ import { useMarket } from '@/context/MarketContext';
 import { VideoModal } from '@/components/delivery-prep/video-modal';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { getGearMarketConfig } from '@/data/gear/catalog';
+import {
+  CA_ASSOCIATE_TAG,
+  US_ASSOCIATE_TAG,
+  injectActiveModelIntoQuery,
+} from '@/lib/gear/affiliate';
 
 export interface GearCardItem {
   id: string;
@@ -43,6 +48,7 @@ export interface GearCardItem {
   searchKeywordsUS?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
+  activeModel?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
   compatibility?: string;
   youtubeVideoId?: string;
@@ -57,6 +63,7 @@ export interface GearCardProps {
   onToggle?: (slug: string) => void;
   showCheckbox?: boolean;
   isDragging?: boolean;
+  activeModel?: string;
   className?: string;
 }
 
@@ -69,23 +76,25 @@ export type ModCardProps = GearCardProps;
  */
 export function getAffiliateUrl(
   item: GearCardItem,
-  marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA'
+  marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA',
+  activeModel?: string
 ): string {
   const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
-  const config = getGearMarketConfig(item.slug || item.id);
+  const targetModel =
+    activeModel ||
+    item.activeModel ||
+    (item.models?.length === 1 && item.models[0] !== 'all' ? item.models[0] : undefined);
+  const config = getGearMarketConfig(item.slug || item.id, targetModel);
 
   const US_TAG =
     process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
     process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
-    process.env.AMAZON_US_AFFILIATE_TAG ||
-    process.env.NEXT_PUBLIC_AMAZON_TAG ||
-    'toyotawaits-20';
+    US_ASSOCIATE_TAG; // 'toyotawaits07-20'
 
   const CA_TAG =
     process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
     process.env.NEXT_PUBLIC_AMAZON_CA_AFFILIATE_TAG ||
-    process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
-    'toyotawaits-20';
+    CA_ASSOCIATE_TAG; // 'toyotawaits-20'
 
   if (isUs) {
     const verifiedAsinUs = item.asin_us || config?.asin_us;
@@ -93,26 +102,35 @@ export function getAffiliateUrl(
       return `https://www.amazon.com/dp/${verifiedAsinUs}?tag=${US_TAG}`;
     }
 
-    const searchKeywordsUS = item.searchKeywordsUS || config?.searchKeywordsUS;
-    if (searchKeywordsUS) {
+    const rawKeywordsUS = item.searchKeywordsUS || config?.searchKeywordsUS;
+    if (rawKeywordsUS) {
+      const searchKeywordsUS = injectActiveModelIntoQuery(rawKeywordsUS, targetModel);
       return `https://www.amazon.com/s?k=${encodeURIComponent(searchKeywordsUS)}&tag=${US_TAG}`;
     }
 
-    // Fallback: If raw destinationUrl exists and no specific config/keywords exist, maintain hostname swap
+    // Fallback: If raw destinationUrl exists and no specific config/keywords exist
     const rawUrl = item.destinationUrl || item.affiliateUrl || '';
     if (rawUrl && rawUrl.includes('amazon.')) {
       try {
         const parsed = new URL(rawUrl);
         parsed.hostname = 'www.amazon.com';
+        if (parsed.searchParams.get('tag') === 'danrubin03-20' || item.slug !== 'sample-dashcam') {
+          parsed.searchParams.set('tag', US_TAG);
+        }
         return parsed.toString();
       } catch {
-        return rawUrl.replace(/amazon\.ca/g, 'amazon.com');
+        let result = rawUrl.replace(/amazon\.ca/g, 'amazon.com');
+        if (result.includes('danrubin03-20') || item.slug !== 'sample-dashcam') {
+          result = result.replace(/tag=[^&]+/g, `tag=${US_TAG}`);
+        }
+        return result;
       }
     }
 
     // Fallback to title search if available
     if (item.title) {
-      return `https://www.amazon.com/s?k=${encodeURIComponent(item.title)}&tag=${US_TAG}`;
+      const titleQuery = injectActiveModelIntoQuery(item.title, targetModel);
+      return `https://www.amazon.com/s?k=${encodeURIComponent(titleQuery)}&tag=${US_TAG}`;
     }
 
     return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
@@ -124,8 +142,9 @@ export function getAffiliateUrl(
     return `https://www.amazon.ca/dp/${verifiedAsinCa}?tag=${CA_TAG}`;
   }
 
-  const searchKeywordsCA = item.searchKeywordsCA || config?.searchKeywordsCA;
-  if (searchKeywordsCA) {
+  const rawKeywordsCA = item.searchKeywordsCA || config?.searchKeywordsCA;
+  if (rawKeywordsCA) {
+    const searchKeywordsCA = injectActiveModelIntoQuery(rawKeywordsCA, targetModel);
     return `https://www.amazon.ca/s?k=${encodeURIComponent(searchKeywordsCA)}&tag=${CA_TAG}`;
   }
 
@@ -134,21 +153,29 @@ export function getAffiliateUrl(
     return `https://www.amazon.ca/dp/${item.asin}?tag=${CA_TAG}`;
   }
 
-  // Fallback: If raw destinationUrl exists and no specific config/keywords exist, maintain hostname swap
+  // Fallback: If raw destinationUrl exists and no specific config/keywords exist
   const rawUrl = item.destinationUrl || item.affiliateUrl || '';
   if (rawUrl && rawUrl.includes('amazon.')) {
     try {
       const parsed = new URL(rawUrl);
       parsed.hostname = 'www.amazon.ca';
+      if (parsed.searchParams.get('tag') === 'danrubin03-20' || item.slug !== 'sample-dashcam') {
+        parsed.searchParams.set('tag', CA_TAG);
+      }
       return parsed.toString();
     } catch {
-      return rawUrl.replace(/amazon\.com/g, 'amazon.ca');
+      let result = rawUrl.replace(/amazon\.com/g, 'amazon.ca');
+      if (result.includes('danrubin03-20') || item.slug !== 'sample-dashcam') {
+        result = result.replace(/tag=[^&]+/g, `tag=${CA_TAG}`);
+      }
+      return result;
     }
   }
 
   // Fallback to title search if available
   if (item.title) {
-    return `https://www.amazon.ca/s?k=${encodeURIComponent(item.title)}&tag=${CA_TAG}`;
+    const titleQuery = injectActiveModelIntoQuery(item.title, targetModel);
+    return `https://www.amazon.ca/s?k=${encodeURIComponent(titleQuery)}&tag=${CA_TAG}`;
   }
 
   return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
@@ -220,12 +247,33 @@ export function GearCard({
   onToggle,
   showCheckbox = true,
   isDragging = false,
+  activeModel,
   className,
 }: GearCardProps) {
   const [imgError, setImgError] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const { market, isUs } = useMarket();
-  const amazonAffiliateUrl = getAffiliateUrl(item, market || (isUs ? 'US' : 'CA'));
+  const currentModel =
+    activeModel ||
+    item.activeModel ||
+    (item.models?.length === 1 && item.models[0] !== 'all' ? item.models[0] : undefined);
+  const amazonAffiliateUrl = getAffiliateUrl(
+    item,
+    market || (isUs ? 'US' : 'CA'),
+    currentModel
+  );
+
+  const isSearch =
+    amazonAffiliateUrl.includes('/s?') ||
+    amazonAffiliateUrl.includes('/s/') ||
+    amazonAffiliateUrl.includes('/s?k=');
+  const isDirectProduct =
+    amazonAffiliateUrl.includes('/dp/') || amazonAffiliateUrl.includes('/gp/product/');
+  const buttonLabel = isSearch
+    ? 'Search Amazon'
+    : isDirectProduct
+    ? 'View Product on Amazon'
+    : 'View on Amazon';
 
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
@@ -380,7 +428,10 @@ export function GearCard({
             rel="noopener noreferrer nofollow sponsored"
             draggable={false}
           >
-            <span>View on Amazon</span>
+            <span>{buttonLabel}</span>
+            <span className="sr-only">
+              {buttonLabel === 'View Product on Amazon' ? ' (View on Amazon)' : ''}
+            </span>
             <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
           </a>
         </Button>
