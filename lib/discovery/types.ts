@@ -19,12 +19,15 @@ export enum NormalizedListingStatus {
   ADVERTISED_UNCONFIRMED = 'Advertised - availability unconfirmed',
   INCOMING_UNCONFIRMED = 'Incoming availability unconfirmed',
   RESERVED_SOLD = 'Reserved / sold',
+  NO_LONGER_OBSERVED = 'No longer observed / stale',
 }
 
 export type ListingStatus =
   | 'Advertised - availability unconfirmed'
   | 'Incoming availability unconfirmed'
-  | 'Reserved / sold';
+  | 'Reserved / sold'
+  | 'No longer observed / stale'
+  | 'No longer observed';
 
 /**
  * Ingestion Source entity representing an external dealer feed / provider.
@@ -101,6 +104,8 @@ export interface DealerListing {
   daysOnLot?: number | null;
   firstObservedAt: string;
   lastObservedAt: string;
+  lastSuccessfulCheck?: string | null;
+  consecutiveMissedSweeps?: number;
   createdAt: string;
   updatedAt: string;
 }

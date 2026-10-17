@@ -84,18 +84,22 @@ CREATE TABLE IF NOT EXISTS dealer_listings (
     current_status TEXT NOT NULL,
     raw_status TEXT,
     days_on_lot INTEGER DEFAULT 0,
+    consecutive_missed_sweeps INTEGER NOT NULL DEFAULT 0,
     first_observed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     last_observed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_successful_check TIMESTAMPTZ NOT NULL DEFAULT now(),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     -- Composite uniqueness per Master Plan Appendix A
     CONSTRAINT uq_dealer_listings_dealer_source UNIQUE (dealer_id, source_listing_id),
-    -- Strictly enforced normalized statuses per Master Plan V3.2 Page 3
+    -- Strictly enforced normalized statuses per Master Plan V3.2 Page 3 & Section 3
     CONSTRAINT dealer_listings_status_check CHECK (
         current_status IN (
             'Advertised - availability unconfirmed',
             'Incoming availability unconfirmed',
-            'Reserved / sold'
+            'Reserved / sold',
+            'No longer observed / stale',
+            'No longer observed'
         )
     )
 );
@@ -126,7 +130,9 @@ CREATE TABLE IF NOT EXISTS observations (
         normalized_status IN (
             'Advertised - availability unconfirmed',
             'Incoming availability unconfirmed',
-            'Reserved / sold'
+            'Reserved / sold',
+            'No longer observed / stale',
+            'No longer observed'
         )
     )
 );
@@ -148,14 +154,18 @@ CREATE TABLE IF NOT EXISTS status_events (
         previous_status IS NULL OR previous_status IN (
             'Advertised - availability unconfirmed',
             'Incoming availability unconfirmed',
-            'Reserved / sold'
+            'Reserved / sold',
+            'No longer observed / stale',
+            'No longer observed'
         )
     ),
     CONSTRAINT status_events_new_check CHECK (
         new_status IN (
             'Advertised - availability unconfirmed',
             'Incoming availability unconfirmed',
-            'Reserved / sold'
+            'Reserved / sold',
+            'No longer observed / stale',
+            'No longer observed'
         )
     )
 );
