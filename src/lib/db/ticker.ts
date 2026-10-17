@@ -44,16 +44,27 @@ export async function getNewsWireItems(limit = 10): Promise<NewsTickerItem[]> {
     }
 
     if (Array.isArray(data)) {
-      return data.map((item: any) => ({
-        id: `news-${item.id}`,
-        type: 'news' as const,
-        headline: item.headline,
-        title: item.headline || item.title || 'Toyota News Alert',
-        category: item.category || 'MARKET_DATA',
-        tag: item.category || 'MARKET_DATA',
-        url: item.url || null,
-        timestamp: item.created_at,
-      }));
+      return data
+        .filter((item: any) => {
+          const cat = String(item?.category || '').toLowerCase();
+          return (
+            cat !== 'delivery' &&
+            cat !== 'deliveries' &&
+            cat !== 'user_delivery' &&
+            item?.type !== 'delivery' &&
+            item?.isUserSubmission !== true
+          );
+        })
+        .map((item: any) => ({
+          id: `news-${item.id}`,
+          type: 'news' as const,
+          headline: item.headline,
+          title: item.headline || item.title || 'Toyota News Alert',
+          category: item.category || 'MARKET_DATA',
+          tag: item.category || 'MARKET_DATA',
+          url: item.url || null,
+          timestamp: item.created_at,
+        }));
     }
   } catch (err: any) {
     console.error('[Ticker] news_wire query error:', err?.message || String(err), err?.details);
@@ -169,17 +180,12 @@ export function interleaveFeeds(
 }
 
 /**
- * Fetches combined ticker items alternating between verified deliveries and news wire alerts
+ * Fetches curated editorial and press news articles for the public newswire feed,
+ * strictly excluding crowdsourced user delivery posts and order milestone updates.
  */
 export async function getTickerItems(
   limit = 10,
-  countryCode: CountryCode | string = 'CA'
-): Promise<TickerItem[]> {
-  const halfLimit = Math.max(1, Math.ceil(limit / 2));
-  const [news, deliveries] = await Promise.all([
-    getNewsWireItems(halfLimit),
-    getDeliveredMilestones(halfLimit, countryCode),
-  ]);
-
-  return interleaveFeeds(news, deliveries, limit);
+  _countryCode: CountryCode | string = 'CA'
+): Promise<NewsTickerItem[]> {
+  return getNewsWireItems(limit);
 }

@@ -17,11 +17,25 @@ export interface ActivityTickerProps {
 }
 
 export function isNewsItem(item: AnyTickerItem): item is NewsTickerItem {
+  if (!item) return false;
+  if (
+    item.type === 'delivery' ||
+    item.status === 'delivered' ||
+    item.lifecycle_status === 'delivered' ||
+    item.daysWaited != null ||
+    item.isUserSubmission === true
+  ) {
+    return false;
+  }
+  const cat = String(item.category || item.tag || '').toLowerCase();
+  if (cat === 'delivery' || cat === 'deliveries' || cat === 'user_delivery') {
+    return false;
+  }
   return Boolean(
-    item &&
-      (item.type === 'news' ||
-        'headline' in item ||
-        ('title' in item && !('model_name' in item)))
+    item.type === 'news' ||
+      item.type === 'article' ||
+      'headline' in item ||
+      ('title' in item && !('model_name' in item))
   );
 }
 
@@ -135,14 +149,16 @@ export function formatTickerSummary(item: AnyTickerItem): string {
 
 export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
   const { isUs } = useMarket();
-  const [items, setItems] = useState<AnyTickerItem[]>(initialData);
+  const [items, setItems] = useState<NewsTickerItem[]>(() =>
+    Array.isArray(initialData) ? initialData.filter(isNewsItem) : []
+  );
   const [isHovered, setIsHovered] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Sync if initialData changes
+  // Sync if initialData changes, strictly filtering to curated news articles
   useEffect(() => {
-    if (initialData && initialData.length > 0) {
-      setItems(initialData);
+    if (Array.isArray(initialData)) {
+      setItems(initialData.filter(isNewsItem));
     }
   }, [initialData]);
 
@@ -160,27 +176,22 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     return () => mediaQuery.removeEventListener?.('change', handler);
   }, []);
 
-  // Periodic silent background refresh from /api/ticker (with fallback to /api/submissions/recent)
+  // Periodic silent background refresh strictly from /api/ticker (curated news wire only)
   useEffect(() => {
     const fetchTicker = async () => {
       try {
         const res = await fetch('/api/ticker');
         if (res.ok) {
           const json = await res.json();
-          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-            setItems(json.data);
-            return;
-          }
-        }
-        const fallbackRes = await fetch('/api/submissions/recent');
-        if (fallbackRes.ok) {
-          const json = await fallbackRes.json();
-          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-            setItems(json.data);
+          if (json.success && Array.isArray(json.data)) {
+            const curatedNews = json.data.filter(isNewsItem);
+            if (curatedNews.length > 0) {
+              setItems(curatedNews);
+            }
           }
         }
       } catch {
-        // Silently retain current items on fetch failure
+        // Silently retain current news items on fetch failure
       }
     };
 
@@ -201,76 +212,30 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
     return null;
   }
 
-  const renderTickerItem = (item: AnyTickerItem, prefix = 'item') => {
+  const renderTickerItem = (item: NewsTickerItem, prefix = 'item') => {
     const key = `${prefix}-${item.id || ''}`;
-
-    if (isNewsItem(item)) {
-      const category = item.category || item.tag || 'MARKET_DATA';
-      const headline = item.headline || item.title || 'Toyota News Alert';
-
-      return (
-        <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
-            <span>📢</span>
-            <span>{category}</span>
-          </span>
-          {item.url ? (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-200 hover:text-white hover:underline transition-colors whitespace-nowrap inline-flex items-center gap-1 cursor-pointer"
-            >
-              <span>{headline}</span>
-              <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />
-            </a>
-          ) : (
-            <span className="text-zinc-200 whitespace-nowrap">{headline}</span>
-          )}
-        </div>
-      );
-    }
-
-    if (isDeliveryItem(item)) {
-      const prov = item.province || (item as any).state || 'CA';
-      const vehicle = formatVehicleDescription(item);
-      const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 120;
-
-      return (
-        <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 whitespace-nowrap">
-            <span>🟢</span>
-            <span>DELIVERED</span>
-          </span>
-          <span className="text-zinc-300 whitespace-nowrap">
-            <span className="font-semibold text-white">{prov}</span>
-            <span className="text-zinc-500 mx-1">•</span>
-            <span>{vehicle}</span>
-            <span className="text-zinc-500 mx-1.5">—</span>
-            <span className="font-semibold text-emerald-400">{days} days wait</span>
-          </span>
-        </div>
-      );
-    }
-
-    // Generic order lifecycle update
-    const prov = item.province || (item as any).state || 'CA';
-    const vehicle = formatVehicleDescription(item);
-    const action = formatActionDescription(item);
+    const category = item.category || item.tag || 'MARKET_DATA';
+    const headline = item.headline || item.title || 'Toyota News Alert';
 
     return (
       <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-sky-500/15 text-sky-400 border border-sky-500/30 whitespace-nowrap">
-          <span>⚡</span>
-          <span>UPDATE</span>
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
+          <span>📢</span>
+          <span>{category}</span>
         </span>
-        <span className="text-zinc-300 whitespace-nowrap">
-          <span className="font-semibold text-white">{prov}</span>
-          <span className="text-zinc-500 mx-1">•</span>
-          <span>{vehicle}</span>
-          <span className="text-zinc-500 mx-1.5">—</span>
-          <span className="font-semibold text-sky-400">{action}</span>
-        </span>
+        {item.url ? (
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-200 hover:text-white hover:underline transition-colors whitespace-nowrap inline-flex items-center gap-1 cursor-pointer"
+          >
+            <span>{headline}</span>
+            <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />
+          </a>
+        ) : (
+          <span className="text-zinc-200 whitespace-nowrap">{headline}</span>
+        )}
       </div>
     );
   };
@@ -280,7 +245,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none"
       aria-live="polite"
       role="region"
-      aria-label={isUs ? 'Live U.S. Toyota order activity and news wire' : 'Live Canadian Toyota order activity and news wire'}
+      aria-label={isUs ? 'Live U.S. Toyota news wire' : 'Live Canadian Toyota news wire'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
@@ -315,7 +280,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
         <div
           tabIndex={0}
           className="flex items-center overflow-x-auto no-scrollbar gap-8 px-4 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
-          aria-label="Scrollable list of recent community submissions and news"
+          aria-label="Scrollable list of curated Toyota news articles"
         >
           {items.map((item, idx) => renderTickerItem(item, `red-${idx}`))}
         </div>

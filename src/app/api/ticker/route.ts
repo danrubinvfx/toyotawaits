@@ -30,11 +30,18 @@ export async function GET(request?: NextRequest) {
     }
 
     const items = await getTickerItems(limit, countryCode);
+    const newsOnly = items.filter(
+      (item: any) =>
+        item &&
+        item.type === 'news' &&
+        String(item.category || '').toLowerCase() !== 'delivery' &&
+        item.isUserSubmission !== true
+    );
 
     return NextResponse.json<ApiResponse<TickerItem[]>>(
       {
         success: true,
-        data: items,
+        data: newsOnly,
       },
       {
         status: 200,
