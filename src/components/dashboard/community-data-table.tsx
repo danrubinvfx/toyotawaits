@@ -36,14 +36,15 @@ export const INITIAL_RECORDS: CommunityRecord[] = INITIAL_COMMUNITY_RECORDS;
 
 export interface CommunityDataTableProps {
   initialRecords?: CommunityRecord[];
+  initialModelFilter?: string;
 }
 
-export function CommunityDataTable({ initialRecords }: CommunityDataTableProps = {}) {
+export function CommunityDataTable({ initialRecords, initialModelFilter }: CommunityDataTableProps = {}) {
   const [records, setRecords] = useState<CommunityRecord[]>(
     () => (initialRecords && initialRecords.length > 0 ? initialRecords : INITIAL_COMMUNITY_RECORDS)
   );
   const { market } = useMarket();
-  const [modelFilter, setModelFilter] = useState<string>('all');
+  const [modelFilter, setModelFilter] = useState<string>(initialModelFilter || 'all');
   const [provinceFilter, setProvinceFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [powertrainFilter, setPowertrainFilter] = useState<string>('all');

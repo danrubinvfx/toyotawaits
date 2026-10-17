@@ -188,6 +188,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     });
 
+    dynamicRoutes.push({
+      url: `${baseUrl}/wait-times/${modelSlug}`,
+      lastModified: now,
+      changeFrequency: 'daily',
+      priority: 0.9,
+    });
+
     for (const powertrainSlug of powertrains) {
       dynamicRoutes.push({
         url: `${baseUrl}/${modelSlug}/${powertrainSlug}`,

@@ -533,7 +533,6 @@ export function DeliveryPrepChecklist({
                   onToggle={toggleItem}
                   showCheckbox={true}
                   isDragging={isDragging}
-                  className="w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 flex-shrink-0 snap-start snap-center"
                 />
               ))}
             </div>
