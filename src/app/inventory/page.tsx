@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { AlertTriangle, ShieldCheck, ArrowLeft, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Dealer Inventory Discovery (Pilot) | ToyotaWaits.ca',
@@ -91,7 +93,9 @@ export default function InventoryPage() {
         </header>
 
         {/* Interactive Explorer Client Component */}
-        <InventoryExplorer />
+        <Suspense fallback={<div className="h-64 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
+          <InventoryExplorer />
+        </Suspense>
 
         {/* Footer Disclaimer & CASL Notice */}
         <footer className="mt-12 pt-6 border-t border-zinc-800/80 text-xs text-zinc-500 space-y-2">

@@ -25,6 +25,7 @@ export interface IngestDealerListingsParams {
   parsedListings: ParsedVehicleListing[];
   sweepTimestamp?: string;
   supabaseClient?: any;
+  db?: any;
 }
 
 export interface IngestionSummary {
@@ -67,9 +68,10 @@ export async function ingestDealerListings(
     parsedListings,
     sweepTimestamp = new Date().toISOString(),
     supabaseClient,
+    db,
   } = params;
 
-  const supabase = supabaseClient || createServerClient();
+  const supabase = supabaseClient || db || createServerClient();
 
   const summary: IngestionSummary = {
     totalProcessed: 0,
