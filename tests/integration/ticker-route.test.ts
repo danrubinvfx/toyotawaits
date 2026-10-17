@@ -1,8 +1,46 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/ticker/route';
+import * as serverSupabase from '@/lib/supabase/server';
 
 describe('GET /api/ticker Endpoint', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+
+    const mockSelect = vi.fn().mockReturnThis();
+    const mockOrder = vi.fn().mockReturnThis();
+    const mockLimit = vi.fn().mockResolvedValue({
+      data: [
+        {
+          id: 101,
+          headline: 'Toyota Canada boosts PHEV allocations for Q4',
+          category: 'ALLOCATION_ALERT',
+          url: 'https://example.com/live-news',
+          created_at: '2026-10-15T10:00:00Z',
+        },
+      ],
+      error: null,
+    });
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === 'news_wire') {
+          return {
+            select: mockSelect,
+            order: mockOrder,
+            limit: mockLimit,
+          };
+        }
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          or: vi.fn().mockReturnThis(),
+          order: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockResolvedValue({ data: [], error: null }),
+        };
+      }),
+    } as any);
+  });
   it('returns 200 OK with alternating news and delivery items and required cache-control headers', async () => {
     const request = new NextRequest('http://localhost:3000/api/ticker');
     const response = await GET(request);

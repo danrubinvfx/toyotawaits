@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const FALLBACK_SUPABASE_URL = 'https://gcvdxaguvawkvufqwnwt.supabase.co';
 const FALLBACK_SERVICE_ROLE_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdmR4YWd1dmF3a3Z1ZnF3bnd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc5MTU4OTYxNCwiZXhwIjoyMTA3MTY1NjE0fQ.EjvjTIvHyLumqetpySHB2y0R-hWf3vB8jWk_0i2cXMA';
+  process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-role-key';
 
 function isUsableSupabaseKey(token?: string): boolean {
   if (!token || typeof token !== 'string') return false;
@@ -57,12 +57,13 @@ export function createServerClient() {
 
   let candidateKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!isUsableSupabaseKey(candidateKey)) {
-    candidateKey = FALLBACK_SERVICE_ROLE_KEY;
-  }
-  if (!isUsableSupabaseKey(candidateKey)) {
     candidateKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   }
-  const key: string = isUsableSupabaseKey(candidateKey) && candidateKey ? candidateKey : FALLBACK_SERVICE_ROLE_KEY;
+  const key: string =
+    (isUsableSupabaseKey(candidateKey) && candidateKey) ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    FALLBACK_SERVICE_ROLE_KEY;
 
   return createClient(supabaseUrl, key, {
     auth: {
