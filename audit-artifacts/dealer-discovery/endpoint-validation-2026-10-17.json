@@ -1,0 +1,431 @@
+{
+  "metadata": {
+    "generatedAt": "2026-10-17T18:24:11.538Z",
+    "script": "scripts/discovery/inspect-endpoints.ts",
+    "masterPlanVersion": "V3.2",
+    "sprint": "Sprint 1: Dealer Discovery & Endpoint Validation (Refined)",
+    "operatingLimits": {
+      "sequential": true,
+      "politeDelayMs": 1500,
+      "requestTimeoutMs": 6000,
+      "userAgent": "Mozilla/5.0 (compatible; ToyotaWaitsLocalAuditor/1.0; +https://toyotawaits.ca/source-register)"
+    },
+    "policyGuardrailCompliance": {
+      "bypassCaptchas": false,
+      "bypassAuth": false,
+      "coverageLimitationsAcknowledged": true
+    },
+    "targetsProbedCount": 5
+  },
+  "results": [
+    {
+      "probeId": "jp-inventory-page",
+      "dealerId": "jp-toyota-downtown",
+      "dealerName": "Jim Pattison Toyota Downtown",
+      "category": "convertus_html",
+      "targetUrl": "https://www.jptoyota-downtown.com/vehicles/new/",
+      "finalUrl": "https://www.jptoyota-downtown.com/vehicles/new/",
+      "httpStatus": 200,
+      "statusText": "OK",
+      "headers": {
+        "cache-control": "max-age=0",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Sat, 17 Oct 2026 18:24:04 GMT",
+        "expires": "Sat, 17 Oct 2026 18:24:03 GMT",
+        "link": "</wp-content/plugins/auth0/assets/css/main.css?ver=6.7.2>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/styles/global/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-platinum-jim-pattison/achilles/headers/desktop-templates/jp-header/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/headers/mobile-templates/mobile-header-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/functions-partials/dealertrack/assets/styles/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/slider/templates/slider-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/inventory-search/templates/inventory-search-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/model-overview/templates/model-overview-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/model-gallery/templates/model-gallery-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/model-features/templates/model-features-1/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/themes/convertus-platinum-jim-pattison/achilles/style/main.css?ver=1791936446>; rel=preload; as=style; nopush, </wp-content/mu-plugins/convertus-customizer/include/load-fonts.js?ver=1791936446>; rel=preload; as=script; nopush, <https://www.googletagmanager.com/gtag/js?id=UA-46898811-4>; rel=preload; as=script; nopush, <https://www.googletagmanager.com/gtm.js?id=GTM-N7P6LQK>; rel=preload; as=script; nopush, <https://www.googletagmanager.com/gtm.js?id=G-N907G4TXQN>; rel=preload; as=script; nopush, </wp-content/plugins/convertus-shift-digital-integration/js/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, <https://shop.jptoyota-downtown.com/integration/integration.js?ver=1791936446>; rel=preload; as=script; nopush, </wp-includes/js/jquery/jquery.min.js?ver=3.7.1>; rel=preload; as=script; nopush, </wp-content/themes/convertus-platinum-jim-pattison/achilles/plugin-themes/vms/srp/convertus-jp/main.css?ver=1791936446>; rel=preload; as=style; nopush, <https://unpkg.com/@optimizely/optimizely-sdk@5.3.5/dist/optimizely.browser.umd.min.js?ver=1.0.0>; rel=preload; as=script; nopush, </wp-content/mu-plugins/convertus-optimizely/js/init-optimizely-js-sdk.js?ver=1791936446>; rel=preload; as=script; nopush, </wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0>; rel=preload; as=script; nopush, </wp-content/plugins/contact-form-7/includes/js/index.js?ver=5.4.4>; rel=preload; as=script; nopush, <https://canada.digital-interview.com/en-ca/launcher/5e14d5dc-3f18-42ed-bac9-8ea30e0ec9bd>; rel=preload; as=script; nopush, </wp-content/themes/convertus-achilles/achilles/js/client.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, <https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.min.js?ver=2.6.10>; rel=preload; as=script; nopush, </wp-content/themes/convertus-platinum-jim-pattison/achilles/js/client.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, </wp-content/themes/convertus-achilles/achilles/functions-partials/dealertrack/assets/js/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, <https://www.google.com/recaptcha/api.js?render=6LfL76YUAAAAAC18E_a_gGs2qf0ON_kX21Kvha4n&ver=3.0>; rel=preload; as=script; nopush, </wp-content/plugins/contact-form-7/modules/recaptcha/index.js?ver=5.4.4>; rel=preload; as=script; nopush, </wp-content/plugins/convertus-google-maps/js/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, </wp-content/themes/convertus-achilles/achilles/js/page-specific/tab-header.js?ver=1.0.0>; rel=preload; as=script; nopush, </wp-content/themes/convertus-platinum-jim-pattison/achilles/plugin-themes/vms/srp/convertus-jp/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, <https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js?ver=1.0.0>; rel=preload; as=script; nopush, </wp-content/themes/convertus-achilles/achilles/widgets/slider/templates/slider-1/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush, </wp-content/mu-plugins/convertus-compare-vehicle/include/listener/main.convertus.min.js?ver=1791936446>; rel=preload; as=script; nopush",
+        "server": "Apache/2.4.69 ()",
+        "set-cookie": "AWSALBCORS=Y06/Vi8edUhhUjowXOWAaIeLj1XGF9QfEgVrFcJ8VGZ+blsM7HoGv+hqGDozuARivPkE9l4latUAGXvZtl8COfrkAyIHcxKSk55axIqrby8mcYRnHUsgTuY0Fa2q; Expires=Sat, 24 Oct 2026 18:24:03 GMT; Path=/; SameSite=None; Secure",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "transfer-encoding": "chunked",
+        "vary": "Accept-Encoding",
+        "via": "1.1 48e357a9c6dfc82d172c94f2bb89300e.cloudfront.net (CloudFront)",
+        "x-amz-cf-id": "B9grrcUfKYh-kOdmarno42WE5oJgDE2hHxII5fxdprTdc3vw7NW6dg==",
+        "x-amz-cf-pop": "YVR52-P1",
+        "x-cache": "Miss from cloudfront",
+        "x-hosted-by": "convertus.com",
+        "x-mod-pagespeed": "1.13.35.2-0",
+        "x-optimized-by": "Convertus"
+      },
+      "contentType": "text/html; charset=UTF-8",
+      "isJson": false,
+      "isCloudflareChallenge": false,
+      "requiresAuth": false,
+      "responseTimeMs": 1050,
+      "payloadSummary": {
+        "type": "html",
+        "rawSnippet": "<!doctype html> <html lang=\"en-CA\"> <head> <meta charset=\"UTF-8\"><script>(window.NREUM||(NREUM={})).init={privacy:{cookies_enabled:true},ajax:{deny_list:[\"bam.nr-data.net\"]},distributed_tracing:{enabled:true}};(window.NREUM||(NREUM={})).loader_config={agentID:\"1103207403\",accountID:\"2501190\",trustKe"
+      },
+      "architecturalFindings": {
+        "hostingPlatform": "Convertus (WordPress)",
+        "serverSideHydrationFound": false,
+        "discoveredEndpoints": [
+          "https://www.jptoyota-downtown.com/wp-admin/admin-ajax.php (action=vms_data)",
+          "https://www.jptoyota-downtown.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php",
+          "https://vms.prod.convertus.rocks/api/filtering/?cp=1250"
+        ],
+        "governanceStatus": "Active Convertus SRP with VMS PHP proxy fallback"
+      },
+      "gate1Evaluation": {
+        "verdict": "INCOMPATIBLE",
+        "vinEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected: no server-side vehicle records hydrated into DOM"
+        },
+        "modelTrimEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "statusEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "priceBreakdownEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "paginationEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "summary": "Client-rendered HTML shell; vehicle records are not hydrated in static DOM or dataLayer, but loaded asynchronously via client bundles."
+      },
+      "timestamp": "2026-10-17T18:24:03.056Z"
+    },
+    {
+      "probeId": "jp-convertus-vms-endpoint",
+      "dealerId": "jp-toyota-downtown",
+      "dealerName": "Jim Pattison Toyota Downtown",
+      "category": "convertus_api",
+      "targetUrl": "https://www.jptoyota-downtown.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1250%26ln%3Den%26sc%3Dnew",
+      "finalUrl": "https://www.jptoyota-downtown.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1250%26ln%3Den%26sc%3Dnew",
+      "httpStatus": 200,
+      "statusText": "OK",
+      "headers": {
+        "cache-control": "public, max-age=60",
+        "connection": "keep-alive",
+        "content-encoding": "gzip",
+        "content-length": "14938",
+        "content-type": "text/html; charset=UTF-8",
+        "date": "Sat, 17 Oct 2026 18:24:06 GMT",
+        "expires": "Sat, 17 Oct 2026 18:25:06 GMT",
+        "server": "Apache/2.4.69 ()",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "vary": "Accept-Encoding",
+        "via": "1.1 48e357a9c6dfc82d172c94f2bb89300e.cloudfront.net (CloudFront)",
+        "x-amz-cf-id": "VMwSRCwti-fG9rzeomKa9NuATobsRdUhJOZV2vpeXENX8MvQh40LYA==",
+        "x-amz-cf-pop": "YVR52-P1",
+        "x-cache": "Miss from cloudfront",
+        "x-hosted-by": "convertus.com",
+        "x-mod-pagespeed": "1.13.35.2-0",
+        "x-optimized-by": "Convertus"
+      },
+      "contentType": "text/html; charset=UTF-8",
+      "isJson": true,
+      "isCloudflareChallenge": false,
+      "requiresAuth": false,
+      "responseTimeMs": 171,
+      "payloadSummary": {
+        "type": "json_object",
+        "detectedItemCount": 30,
+        "sampleKeys": [
+          "filters",
+          "all_filters",
+          "summary",
+          "results"
+        ],
+        "rawSnippet": "{\"filters\":{\"yr\":\"\",\"mk\":\"\",\"md\":\"mk\",\"pr\":\"\",\"disc\":\"\",\"tgsc\":\"\",\"tgm\":\"\",\"tg\":\"\",\"tr\":\"md\",\"od\":\"\",\"bs\":\"\",\"tm\":\"\",\"dt\":\"\",\"cy\":\"\",\"ec\":\"\",\"mc\":\"\",\"ic\":\"\",\"pa\":\"\",\"ft\":\"\",\"eg\":\"\"},\"all_filters\":{\"yr\":\"\",\"mk\":\"\",\"md\":\"mk\",\"pr\":\"\",\"disc\":\"\",\"tgsc\":\"\",\"tgm\":\"\",\"tg\":\"\",\"tr\":\"md\",\"od\":\"\",\"bs\":\"\",\"tm\":\""
+      },
+      "architecturalFindings": {
+        "hostingPlatform": "Convertus VMS Proxy",
+        "governanceStatus": "Gate 1 Compliant Public Feed"
+      },
+      "gate1Evaluation": {
+        "verdict": "PASS",
+        "vinEvaluation": {
+          "supported": true,
+          "fieldsFound": [
+            "vin",
+            "stock_number"
+          ],
+          "notes": "Verified true 17-character VIN in 'vin' (\"JTDACAAJ0T3038212\") distinctly separated from stock_number (\"D-26136\")"
+        },
+        "modelTrimEvaluation": {
+          "supported": true,
+          "fieldsFound": [
+            "make",
+            "model",
+            "trim",
+            "model_code",
+            "package_code"
+          ],
+          "notes": "Comprehensive vehicle definition: make='Toyota', model='Crown Signia', trim='Limited', model_code='ACAAJC'"
+        },
+        "statusEvaluation": {
+          "supported": true,
+          "fieldsFound": [
+            "sale_class",
+            "in_transit",
+            "on_order",
+            "days_on_lot"
+          ],
+          "notes": "Explicit availability flags: sale_class='New', in_transit=0, on_order=0, days_on_lot=271. Zero inference required."
+        },
+        "priceBreakdownEvaluation": {
+          "supported": true,
+          "fieldsFound": [
+            "msrp",
+            "asking_price",
+            "sale_price",
+            "internet_price",
+            "initial_price",
+            "final_price",
+            "breakdown",
+            "finance",
+            "lease"
+          ],
+          "notes": "Granular pricing breakdown present: msrp=$61285, asking_price=$61957, internet_price=$61957, final_price=$61285"
+        },
+        "paginationEvaluation": {
+          "supported": true,
+          "fieldsFound": [
+            "summary.total_vehicles",
+            "filters",
+            "all_filters"
+          ],
+          "notes": "Pagination metadata validated: total_vehicles=42, multi-facet filter parameters supported"
+        },
+        "summary": "Fully satisfies Gate 1 Source Register requirements (true 17-char VIN, explicit status, MSRP breakdown, complete pagination)."
+      },
+      "timestamp": "2026-10-17T18:24:05.943Z"
+    },
+    {
+      "probeId": "openroad-inventory-html",
+      "dealerId": "openroad-toyota-richmond",
+      "dealerName": "OpenRoad Toyota Richmond",
+      "category": "openroad_html",
+      "targetUrl": "https://openroadtoyotarichmond.com/inventory?page=1&page_size=24&sort_by=recents&condition=new&init_ds=1",
+      "finalUrl": "https://openroadtoyotarichmond.com/inventory?page=1&page_size=24&sort_by=recents&condition=new&init_ds=1",
+      "httpStatus": 200,
+      "statusText": "OK",
+      "headers": {
+        "cache-control": "no-cache,no-store",
+        "connection": "keep-alive",
+        "content-encoding": "br",
+        "content-security-policy": "frame-ancestors 'self' https://openroadautogroup.com https://openroadaudi.com https://bentleyseattle.com https://openroadnorthwest.com https://lamborghiniseattle.com https://mclarenbellevue.com https://openroadautogroup.com https://thebmwstore.ca https://genesisrichmond.ca https://genesisvancouver.ca https://openroadhonda.ca https://openroadhyundaiboundary.com https://openroadhyundairichmond.com https://openroadinfiniti.ca https://jlrlangley.com https://openroadlexusportmoody.com https://openroadlexusrichmond.com https://openroadmazda.ca https://mercedes-benz-surrey.ca https://bmwlangley.com https://minilangley.ca https://minivancouver.ca https://openroadexotics.com https://openroadsubaruboundary.ca https://porschelangley.com https://porscherichmond.ca https://openroadtoyotaabbotsford.com https://openroadtoyotapeacearch.com https://openroadtoyotaportmoody.com https://openroadtoyotarichmond.com https://openroadvw.ca https://rollsroycevancouver.com https://openroadtoyota.ca https://openroadhyundai.com https://openroadlexus.ca https://openroadmercedes.ca https://subaruboundary.ca https://rrmcvancouver.com https://openroadlexus.com https://openroadhondabrampton.ca https://bramptoneasttoyota.ca https://openroadtoyota.com https://surreyhonda.com https://richmondhonda.com https://acurarichmond.com https://www.toyota-town.com https://www.lexusoflondon.com https://marketplacebyopenroad.oragdigital.com https://exosv2.darwinautomotive.com/ https://*.oragtech.com/",
+        "content-type": "text/html; charset=utf-8",
+        "cross-origin-embedder-policy": "unsafe-none",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-resource-policy": "same-site",
+        "date": "Sat, 17 Oct 2026 18:24:07 GMT",
+        "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "permissions-policy": "geolocation=(self \"https://www.plugshare.com\"), microphone=(self), camera=(self)",
+        "pragma": "no-cache",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "set-cookie": ".AspNetCore.Cookies=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; secure; samesite=lax; httponly",
+        "strict-transport-security": "max-age=63072000; includeSubDomains; preload",
+        "transfer-encoding": "chunked",
+        "vary": "Accept-Encoding",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN"
+      },
+      "contentType": "text/html; charset=utf-8",
+      "isJson": false,
+      "isCloudflareChallenge": false,
+      "requiresAuth": false,
+      "responseTimeMs": 183,
+      "payloadSummary": {
+        "type": "html",
+        "rawSnippet": " <!DOCTYPE html> <html lang=\"en\"> <head>     <meta charset=\"utf-8\" />     <noscript>         <meta http-equiv=\"refresh\" content=\"0; URL=/big_pipe/no-js?destination=%2Finventory\" />     </noscript>     <meta name=\"title\" content=\"New Cars for Sale in BC | OpenRoad Toyota Richmond\">     <link rel=\"sh"
+      },
+      "architecturalFindings": {
+        "hostingPlatform": "ASP.NET Core / React",
+        "serverSideHydrationFound": false,
+        "discoveredEndpoints": [
+          "https://inventory.oragdigital.com/inventory/search (buId=30)",
+          "https://openroadtoyotarichmond.com/dist/react/VLP.bundle.js"
+        ],
+        "governanceStatus": "Client-rendered React SPA; no server-side vehicle records"
+      },
+      "gate1Evaluation": {
+        "verdict": "INCOMPATIBLE",
+        "vinEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected: no server-side vehicle records hydrated into DOM"
+        },
+        "modelTrimEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "statusEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "priceBreakdownEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "paginationEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "HTML shell inspected"
+        },
+        "summary": "Client-rendered HTML shell; vehicle records are not hydrated in static DOM or dataLayer, but loaded asynchronously via client bundles."
+      },
+      "timestamp": "2026-10-17T18:24:07.628Z"
+    },
+    {
+      "probeId": "openroad-inventory-api",
+      "dealerId": "openroad-toyota-richmond",
+      "dealerName": "OpenRoad Toyota Richmond",
+      "category": "openroad_api",
+      "targetUrl": "https://inventory.oragdigital.com/inventory/search?startIndex=0&endIndex=5&sortCode=recent&searchPhrase=&businessUnitId=30&searchBusinessUnitId=30",
+      "finalUrl": "https://inventory.oragdigital.com/inventory/search?startIndex=0&endIndex=5&sortCode=recent&searchPhrase=&businessUnitId=30&searchBusinessUnitId=30",
+      "httpStatus": 401,
+      "statusText": "Unauthorized",
+      "headers": {
+        "connection": "keep-alive",
+        "content-type": "application/problem+json; charset=utf-8",
+        "date": "Sat, 17 Oct 2026 18:24:09 GMT",
+        "server": "Kestrel",
+        "transfer-encoding": "chunked"
+      },
+      "contentType": "application/problem+json; charset=utf-8",
+      "isJson": true,
+      "isCloudflareChallenge": false,
+      "requiresAuth": true,
+      "responseTimeMs": 87,
+      "payloadSummary": {
+        "type": "json_object",
+        "sampleKeys": [
+          "type",
+          "title",
+          "status",
+          "traceId"
+        ],
+        "rawSnippet": "{\"type\":\"https://tools.ietf.org/html/rfc9110#section-15.5.2\",\"title\":\"Unauthorized\",\"status\":401,\"traceId\":\"00-39d6f6ada0df3d661417734ccf6858d3-18a800a35f6eefe0-00\"}"
+      },
+      "architecturalFindings": {
+        "hostingPlatform": "ORAG Digital Inventory API",
+        "governanceStatus": "Protected by HTTP Basic Auth (Coverage Limitation)"
+      },
+      "gate1Evaluation": {
+        "verdict": "COVERAGE_LIMITATION",
+        "vinEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Access restricted: HTTP 401 Unauthorized without authentication"
+        },
+        "modelTrimEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Access restricted: HTTP 401 Unauthorized"
+        },
+        "statusEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Access restricted: HTTP 401 Unauthorized"
+        },
+        "priceBreakdownEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Access restricted: HTTP 401 Unauthorized"
+        },
+        "paginationEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Access restricted: HTTP 401 Unauthorized"
+        },
+        "summary": "Policy Guardrail Applied: Endpoint requires authentication credentials. ToyotaWaits will not inject credentials or bypass access controls. Flagged as COVERAGE LIMITATION."
+      },
+      "timestamp": "2026-10-17T18:24:09.331Z"
+    },
+    {
+      "probeId": "granville-api-cloudflare",
+      "dealerId": "granville-toyota",
+      "dealerName": "Granville Toyota",
+      "category": "generic_cloudflare",
+      "targetUrl": "https://www.granvilletoyota.com/api/inventory/?vehicle_type=new&limit=5",
+      "finalUrl": "https://www.granvilletoyota.com/api/inventory/?vehicle_type=new&limit=5",
+      "httpStatus": 403,
+      "statusText": "Forbidden",
+      "headers": {
+        "accept-ch": "Sec-CH-UA-Bitness, Sec-CH-UA-Arch, Sec-CH-UA-Full-Version, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Platform, Sec-CH-UA, UA-Bitness, UA-Arch, UA-Full-Version, UA-Mobile, UA-Model, UA-Platform-Version, UA-Platform, UA",
+        "alt-svc": "h3=\":443\"; ma=86400",
+        "cf-mitigated": "challenge",
+        "cf-ray": "a4c156b7af109264-YVR",
+        "connection": "close",
+        "content-encoding": "gzip",
+        "content-security-policy": "default-src 'none'; script-src 'nonce-6pkjJBn81IloAdMmSV1hKc' 'unsafe-eval' https://challenges.cloudflare.com; script-src-attr 'none'; style-src 'unsafe-inline'; img-src 'self' https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; frame-src 'self' https://challenges.cloudflare.com blob:; child-src 'self' https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri 'self'",
+        "content-type": "text/html; charset=UTF-8",
+        "critical-ch": "Sec-CH-UA-Bitness, Sec-CH-UA-Arch, Sec-CH-UA-Full-Version, Sec-CH-UA-Mobile, Sec-CH-UA-Model, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version-List, Sec-CH-UA-Platform, Sec-CH-UA, UA-Bitness, UA-Arch, UA-Full-Version, UA-Mobile, UA-Model, UA-Platform-Version, UA-Platform, UA",
+        "cross-origin-embedder-policy": "require-corp",
+        "cross-origin-opener-policy": "same-origin",
+        "cross-origin-resource-policy": "same-origin",
+        "date": "Sat, 17 Oct 2026 18:24:11 GMT",
+        "origin-agent-cluster": "?1",
+        "permissions-policy": "accelerometer=(),camera=(),clipboard-read=(),clipboard-write=(),geolocation=(),gyroscope=(),hid=(),magnetometer=(),microphone=(),payment=(),publickey-credentials-get=(),screen-wake-lock=(),serial=(),sync-xhr=(),usb=(),xr-spatial-tracking=*",
+        "referrer-policy": "same-origin",
+        "server": "cloudflare",
+        "server-timing": "chlray;desc=\"a4c156b7af109264\"",
+        "set-cookie": "__cf_bm=m8aya9uxQtwsljj83pSAlVJydr44cGeDfn9vPjbgWj8-1792261451.464334-1.0.1.1-VoWnP8_TZnuyCmN4satdwJZng_Wyk4BMshVP1yR158TJ_UGq68SL2JEJAT.bB1qws19MkmEIEnxAr1uSygc4Y5BQth4csaLLgiGMD96SPGrC_2l9EYJRDxB9Xj7co8QY; HttpOnly; SameSite=None; Secure; Path=/; Domain=www.granvilletoyota.com; Expires=Sat, 17 Oct 2026 18:54:11 GMT",
+        "transfer-encoding": "chunked",
+        "x-content-type-options": "nosniff",
+        "x-frame-options": "SAMEORIGIN"
+      },
+      "contentType": "text/html; charset=UTF-8",
+      "isJson": false,
+      "isCloudflareChallenge": true,
+      "requiresAuth": false,
+      "responseTimeMs": 608,
+      "payloadSummary": {
+        "type": "html",
+        "rawSnippet": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scal"
+      },
+      "architecturalFindings": {
+        "hostingPlatform": "Cloudflare WAF / Managed Challenge",
+        "governanceStatus": "Blocked by Cloudflare Bot Management (Coverage Limitation)"
+      },
+      "gate1Evaluation": {
+        "verdict": "COVERAGE_LIMITATION",
+        "vinEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Source protected by Cloudflare Managed Challenge"
+        },
+        "modelTrimEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Source protected by Cloudflare Managed Challenge"
+        },
+        "statusEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Source protected by Cloudflare Managed Challenge"
+        },
+        "priceBreakdownEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Source protected by Cloudflare Managed Challenge"
+        },
+        "paginationEvaluation": {
+          "supported": false,
+          "fieldsFound": [],
+          "notes": "Source protected by Cloudflare Managed Challenge"
+        },
+        "summary": "Policy Guardrail Applied (Master Plan V3.2 Page 2): Do not bypass authentication, CAPTCHAs, or access restrictions. Flagged as COVERAGE LIMITATION."
+      },
+      "timestamp": "2026-10-17T18:24:10.928Z"
+    }
+  ]
+}

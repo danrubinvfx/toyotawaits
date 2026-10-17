@@ -11,7 +11,8 @@
     "db:seed:legacy": "tsx scripts/ingest-legacy-data.ts",
     "db:migrate": "tsx scripts/apply-migrations.ts",
     "db:seed:synthetic": "tsx scripts/seed-synthetic-submissions.ts",
-    "db:cleanup": "tsx scripts/cleanup-duplicates.ts"
+    "db:cleanup": "tsx scripts/cleanup-duplicates.ts",
+    "audit:endpoints": "tsx scripts/discovery/inspect-endpoints.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.2.0",
