@@ -16,11 +16,42 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InventoryPage() {
+export interface InventoryPageProps {
+  searchParams?:
+    | Promise<{ [key: string]: string | string[] | undefined }>
+    | { [key: string]: string | string[] | undefined };
+}
+
+export default function InventoryPage({ searchParams }: InventoryPageProps = {}) {
+  // Extract preview query parameter from searchParams (supporting both sync and Promise)
+  let isPreviewParam = false;
+  if (searchParams) {
+    if (typeof (searchParams as any).then === 'function') {
+      try {
+        const resolved = React.use(
+          searchParams as Promise<{ [key: string]: string | string[] | undefined }>
+        );
+        isPreviewParam =
+          resolved?.preview === 'true' ||
+          (Array.isArray(resolved?.preview) && resolved.preview.includes('true'));
+      } catch {
+        // Fallback for environments where React.use is unavailable
+      }
+    } else {
+      const sp = searchParams as { [key: string]: string | string[] | undefined };
+      isPreviewParam =
+        sp?.preview === 'true' ||
+        (Array.isArray(sp?.preview) && sp.preview.includes('true'));
+    }
+  }
+
+  // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
   const isFeatureEnabled =
     process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY === 'true' ||
     process.env.ENABLE_INVENTORY_DISCOVERY === 'true' ||
-    process.env.NODE_ENV === 'test';
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ||
+    isPreviewParam;
 
   if (!isFeatureEnabled) {
     return (

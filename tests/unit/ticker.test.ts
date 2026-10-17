@@ -152,6 +152,28 @@ describe('Ticker Data Fetcher & Aggregator (Zero-PII & Live news_wire)', () => {
   });
 
   it('getTickerItems returns feed within specified limit and adheres to Zero-PII', async () => {
+    const mockRows = [
+      {
+        id: 101,
+        headline: 'Toyota Canada boosts PHEV allocations for Q4',
+        category: 'ALLOCATION_ALERT',
+        url: 'https://example.com/live-news',
+        created_at: '2026-10-15T10:00:00Z',
+      },
+    ];
+
+    const mockSelect = vi.fn().mockReturnThis();
+    const mockOrder = vi.fn().mockReturnThis();
+    const mockLimit = vi.fn().mockResolvedValue({ data: mockRows, error: null });
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        select: mockSelect,
+        order: mockOrder,
+        limit: mockLimit,
+      }),
+    } as any);
+
     const ticker = await getTickerItems(6);
     expect(ticker.length).toBeLessThanOrEqual(6);
     expect(ticker.length).toBeGreaterThan(0);

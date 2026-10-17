@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   VehicleListingCard,
   VehicleListingCardProps,
@@ -104,13 +105,67 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   },
 ];
 
+/**
+ * Checks if the inventory explorer should be enabled based on environment flags,
+ * Vercel preview deployment status, or URL query overrides.
+ */
+export function checkInventoryDiscoveryEnabled(
+  overrideParam?: boolean | string | null
+): boolean {
+  if (process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY === 'true') return true;
+  if (process.env.ENABLE_INVENTORY_DISCOVERY === 'true') return true;
+  if (
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
+  ) {
+    return true;
+  }
+  if (overrideParam === true || overrideParam === 'true') return true;
+  return false;
+}
+
 export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
+  previewOverride?: boolean;
 }
 
 export function InventoryExplorer({
   initialListings = INITIAL_SAMPLE_LISTINGS,
+  previewOverride,
 }: InventoryExplorerProps) {
+  let isPreviewQuery = false;
+  try {
+    const sp = useSearchParams();
+    if (sp?.get('preview') === 'true') {
+      isPreviewQuery = true;
+    }
+  } catch {
+    // Graceful fallback when rendered without Next.js Navigation context
+  }
+
+  const isEnabled = checkInventoryDiscoveryEnabled(
+    previewOverride !== undefined ? previewOverride : isPreviewQuery
+  );
+
+  if (!isEnabled) {
+    return (
+      <div
+        data-testid="inventory-disabled-screen"
+        className="max-w-md w-full mx-auto rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 text-center space-y-4 shadow-xl backdrop-blur-md"
+      >
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-950/80 text-amber-400 border border-amber-900/60">
+          <AlertCircle className="h-6 w-6" aria-hidden="true" />
+        </div>
+        <h2 className="text-xl font-bold text-white tracking-tight">
+          Inventory Discovery (Private Pilot)
+        </h2>
+        <p className="text-xs text-zinc-400 leading-relaxed">
+          The ToyotaWaits.ca public inventory explorer is currently in private trial mode under Master Plan V3.2. Automated polite sweeps are validating dealer endpoints.
+        </p>
+      </div>
+    );
+  }
+
   const [filters, setFilters] = useState<FilterState>({
     model: '',
     status: '',

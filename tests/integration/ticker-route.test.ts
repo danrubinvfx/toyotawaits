@@ -41,7 +41,7 @@ describe('GET /api/ticker Endpoint', () => {
       }),
     } as any);
   });
-  it('returns 200 OK with alternating news and delivery items and required cache-control headers', async () => {
+  it('returns 200 OK with curated news items and required cache-control headers', async () => {
     const request = new NextRequest('http://localhost:3000/api/ticker');
     const response = await GET(request);
 
@@ -57,8 +57,8 @@ describe('GET /api/ticker Endpoint', () => {
     expect(data.data.length).toBeGreaterThan(0);
 
     const types = data.data.map((item: any) => item.type);
-    expect(types).toContain('delivery');
     expect(types).toContain('news');
+    expect(types).not.toContain('delivery');
   });
 
   it('respects the limit query parameter', async () => {

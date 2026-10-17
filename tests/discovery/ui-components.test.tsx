@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import {
   VehicleListingCard,
@@ -289,6 +289,10 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
   // 4. InventoryExplorer Integration Tests
   // ===========================================================================
   describe('InventoryExplorer Integration', () => {
+    beforeEach(() => {
+      process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY = 'true';
+    });
+
     it('filters listings interactively by model', () => {
       render(<InventoryExplorer />);
 
@@ -323,9 +327,17 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
   // 5. Dedicated /inventory Route & Feature Flag Tests
   // ===========================================================================
   describe('/inventory Route Feature Flagging', () => {
-    const originalEnv = process.env;
+    const originalEnv = { ...process.env };
 
     beforeEach(() => {
+      process.env = { ...originalEnv };
+      delete process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY;
+      delete process.env.ENABLE_INVENTORY_DISCOVERY;
+      delete process.env.VERCEL_ENV;
+      delete process.env.NEXT_PUBLIC_VERCEL_ENV;
+    });
+
+    afterEach(() => {
       process.env = { ...originalEnv };
     });
 
@@ -340,12 +352,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       ).toBeInTheDocument();
     });
 
-    it('renders gated preview screen when feature flag is explicitly disabled', () => {
-      delete process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY;
-      delete process.env.ENABLE_INVENTORY_DISCOVERY;
-      // Temporarily override NODE_ENV for test
-      (process.env as any).NODE_ENV = 'production';
-
+    it('renders gated preview screen when feature flags and overrides are absent', () => {
       render(<InventoryPage />);
 
       expect(screen.getByTestId('inventory-disabled-screen')).toBeInTheDocument();
@@ -353,6 +360,22 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         screen.getByText(/Inventory Discovery \(Private Pilot\)/i)
       ).toBeInTheDocument();
       expect(screen.getByText(/Return to Wait Time Tracker/i)).toBeInTheDocument();
+    });
+
+    it('renders full inventory discovery interface when VERCEL_ENV === "preview"', () => {
+      process.env.VERCEL_ENV = 'preview';
+
+      render(<InventoryPage />);
+
+      expect(screen.getByTestId('inventory-page-main')).toBeInTheDocument();
+      expect(screen.getByText(/Toyota Public Inventory Explorer/i)).toBeInTheDocument();
+    });
+
+    it('renders full inventory discovery interface when URL query parameter ?preview=true is present', () => {
+      render(<InventoryPage searchParams={{ preview: 'true' }} />);
+
+      expect(screen.getByTestId('inventory-page-main')).toBeInTheDocument();
+      expect(screen.getByText(/Toyota Public Inventory Explorer/i)).toBeInTheDocument();
     });
   });
 });
