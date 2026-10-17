@@ -29,6 +29,7 @@ import { RedditShareModal } from '@/components/modals/reddit-share-modal';
 import { NotificationSubscriptionModal } from '@/components/modals/notification-subscription-modal';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS, getPowertrainBenchmark } from '@/lib/db/stats';
+import { US_NATIONAL_BENCHMARKS } from '@/lib/estimator/calculateWait';
 import { CARRYOVER_ALLOCATION_NOTE, BASE_MODEL_P75 } from '@/hooks/useEstimator';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
@@ -230,12 +231,20 @@ export function WaitTimeEstimator({
     let isCancelled = false;
     setIsLoading(true);
 
-    const query = new URLSearchParams({
+    const queryParams: Record<string, string> = {
       model: modelSlug,
       powertrain: powertrainSlug,
-      province,
       trim: trimSlug,
-    });
+    };
+    if (isUs) {
+      queryParams.state = province;
+      queryParams.country_code = 'US';
+    } else {
+      queryParams.province = province;
+      queryParams.country_code = 'CA';
+    }
+
+    const query = new URLSearchParams(queryParams);
 
     fetch(`/api/aggregate?${query.toString()}`)
       .then((res) => res.json())
@@ -253,7 +262,7 @@ export function WaitTimeEstimator({
     return () => {
       isCancelled = true;
     };
-  }, [modelSlug, powertrainSlug, province, trimSlug]);
+  }, [modelSlug, powertrainSlug, province, trimSlug, isUs]);
 
   // Calculate days already elapsed since deposit date
   const daysAlreadyWaited = useMemo(() => {
@@ -284,35 +293,65 @@ export function WaitTimeEstimator({
 
   const currentBenchmark = benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
   const activePowertrainBenchmark = getPowertrainBenchmark(modelSlug, powertrainSlug);
+  const usBenchmark = US_NATIONAL_BENCHMARKS[modelSlug] || US_NATIONAL_BENCHMARKS.rav4;
 
   // Small sample size handling (< 5):
-  // Restrict regional fallback pooling to the active powertrain (model === selectedModel AND powertrain === selectedPowertrain).
-  // If sample size for active powertrain is small (< 5), pool across all model powertrains.
   const regionalSampleCount =
     stats?.sampleCounts?.delivered ?? stats?.sampleCounts?.total ?? 0;
-  const isLimitedRegionalData = Boolean(stats && regionalSampleCount < 5);
+  const isBaselineFallback = Boolean(
+    stats?.isBaselineFallback || (isUs && (regionalSampleCount === 0 || !stats?.waitStats?.median))
+  );
+  const isLimitedRegionalData = Boolean(
+    isBaselineFallback || (stats && regionalSampleCount < 5)
+  );
 
   const isPowertrainSampleSufficient = Boolean(
     activePowertrainBenchmark && activePowertrainBenchmark.sample_size >= 5
   );
-  const isPooledAllPowertrains = isLimitedRegionalData && (!isPowertrainSampleSufficient || modelSlug === 'rav4');
+  const isPooledAllPowertrains = !isUs && isLimitedRegionalData && (!isPowertrainSampleSufficient || modelSlug === 'rav4');
 
-  const fallbackBenchmark =
-    isLimitedRegionalData && isPowertrainSampleSufficient && !isPooledAllPowertrains && activePowertrainBenchmark
-      ? activePowertrainBenchmark
-      : currentBenchmark;
+  const fallbackBenchmark = isUs
+    ? {
+        min_days: usBenchmark.min_days,
+        p25_days: usBenchmark.p25_days,
+        median_days: usBenchmark.median_days,
+        p75_days: usBenchmark.p75_days,
+        max_days: usBenchmark.p75_days + 30,
+        sample_size: usBenchmark.sample_size,
+      }
+    : isLimitedRegionalData && isPowertrainSampleSufficient && !isPooledAllPowertrains && activePowertrainBenchmark
+    ? activePowertrainBenchmark
+    : currentBenchmark;
 
-  const rawMedian = isLimitedRegionalData
-    ? fallbackBenchmark?.median_days ?? 375
-    : stats?.waitStats?.median ?? fallbackBenchmark?.median_days ?? 375;
+  let rawMedian: number;
+  let rawP25: number;
+  let rawP75: number;
 
-  const rawP25 = isLimitedRegionalData
-    ? fallbackBenchmark?.p25_days ?? 185
-    : stats?.waitStats?.p25 ?? fallbackBenchmark?.p25_days ?? 185;
-
-  const rawP75 = isLimitedRegionalData
-    ? fallbackBenchmark?.p75_days ?? 450
-    : stats?.waitStats?.p75 ?? fallbackBenchmark?.p75_days ?? 450;
+  if (isUs) {
+    if (!isBaselineFallback && stats?.waitStats?.median) {
+      rawMedian = stats.waitStats.median;
+      rawP25 = stats.waitStats.p25;
+      rawP75 = stats.waitStats.p75;
+    } else if (stats?.waitStats?.median && stats.waitStats.median > 0) {
+      rawMedian = stats.waitStats.median;
+      rawP25 = stats.waitStats.p25;
+      rawP75 = stats.waitStats.p75;
+    } else {
+      rawMedian = usBenchmark.median_days;
+      rawP25 = usBenchmark.p25_days;
+      rawP75 = usBenchmark.p75_days;
+    }
+  } else {
+    rawMedian = isLimitedRegionalData
+      ? fallbackBenchmark?.median_days ?? 375
+      : stats?.waitStats?.median ?? fallbackBenchmark?.median_days ?? 375;
+    rawP25 = isLimitedRegionalData
+      ? fallbackBenchmark?.p25_days ?? 185
+      : stats?.waitStats?.p25 ?? fallbackBenchmark?.p25_days ?? 185;
+    rawP75 = isLimitedRegionalData
+      ? fallbackBenchmark?.p75_days ?? 450
+      : stats?.waitStats?.p75 ?? fallbackBenchmark?.p75_days ?? 450;
+  }
 
   // True percentiles: Remove artificial 420-day ceiling clamping so high-wait vehicles
   // (e.g. Sienna P75 = 450-560 days) display their authentic empirical wait times.
@@ -324,7 +363,9 @@ export function WaitTimeEstimator({
   );
   const p25Days = Math.min(rawP25, medianDays);
 
-  const verifiedSampleSize = isLimitedRegionalData
+  const verifiedSampleSize = isBaselineFallback
+    ? (isUs ? usBenchmark.sample_size : (fallbackBenchmark?.sample_size ?? 10))
+    : isLimitedRegionalData
     ? (isPooledAllPowertrains
         ? (modelSlug === 'rav4' ? 14 : fallbackBenchmark?.sample_size ?? 10)
         : (fallbackBenchmark?.sample_size ?? 10))
@@ -334,7 +375,7 @@ export function WaitTimeEstimator({
   const conservativeDate = calculateProjectedDate(p75Days);
   const medianMonths = (medianDays / 30.4).toFixed(1);
   const minWaitMonths = Math.max(1, Math.round(p25Days / 30.4));
-  const maxWaitMonths = Math.max(2, Math.round(p75Days / 30.4));
+  const maxWaitMonths = Math.max(minWaitMonths + 1, Math.round(p75Days / 30.4));
 
   const modelPowertrainNamesSummary =
     modelSlug === 'rav4'
@@ -345,10 +386,11 @@ export function WaitTimeEstimator({
       ? 'Hybrid & PHEV'
       : currentModel.powertrains.map((p) => p.name.split(' ')[0]).join(' & ');
 
-  const regionalFallbackNotice =
-    isPooledAllPowertrains || !isPowertrainSampleSufficient || modelSlug === 'rav4'
-      ? `National baseline: Based on ${verifiedSampleSize} deliveries across all ${currentModel.name} powertrains (${modelPowertrainNamesSummary}).`
-      : `National baseline: Based on ${verifiedSampleSize} deliveries for ${currentModel.name} ${currentPowertrain.name} (limited regional data in ${province}).`;
+  const regionalFallbackNotice = isUs
+    ? `National US baseline: Based on reference deliveries across all US regions (limited regional data for ${province}).`
+    : isPooledAllPowertrains || !isPowertrainSampleSufficient || modelSlug === 'rav4'
+    ? `National baseline: Based on ${verifiedSampleSize} deliveries across all ${currentModel.name} powertrains (${modelPowertrainNamesSummary}).`
+    : `National baseline: Based on ${verifiedSampleSize} deliveries for ${currentModel.name} ${currentPowertrain.name} (limited regional data in ${province}).`;
 
   // Tom Waits Themed Wait Tier
   const getWaitTier = (days: number) => {
@@ -692,13 +734,13 @@ export function WaitTimeEstimator({
                     Empirical Calculation (n={verifiedSampleSize})
                   </Badge>
                 )}
-                {isLimitedRegionalData && (
+                {(isLimitedRegionalData || isBaselineFallback) && (
                   <Badge
                     variant="outline"
                     data-testid="regional-baseline-badge"
                     className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
                   >
-                    {isUs ? 'US national baseline' : 'National baseline'} · Limited regional data for {province}
+                    {isUs ? 'National US baseline' : 'National baseline'} · Limited regional data for {province}
                   </Badge>
                 )}
               </div>

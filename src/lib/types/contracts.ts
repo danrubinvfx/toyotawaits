@@ -214,7 +214,7 @@ export interface RegionalWaitSummary {
   powertrainName: string;
   trimSlug?: string | null;
   trimName?: string | null;
-  province: CanadianProvince | 'ALL';
+  province: CanadianProvince | 'ALL' | string;
   sampleCounts: {
     total: number;
     delivered: number;
@@ -233,7 +233,9 @@ export interface RegionalWaitSummary {
   confidenceRating: 'high' | 'medium' | 'low' | 'insufficient_data';
   latestSubmissionAt?: string | null;
   isTrimFallback?: boolean;
+  isBaselineFallback?: boolean;
   trimNote?: string | null;
+  state?: string;
 }
 
 // ----------------------------------------------------------------------------

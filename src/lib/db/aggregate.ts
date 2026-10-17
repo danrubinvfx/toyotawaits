@@ -1,6 +1,8 @@
 import { AggregateQueryParams } from '@/lib/validations/schemas';
 import { RegionalWaitSummary, PercentileStats, CanadianProvince } from '@/lib/types/contracts';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
+import { INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
+import { US_NATIONAL_BENCHMARKS } from '@/lib/estimator/calculateWait';
 
 // Helper function to calculate percentiles from a sorted array of numbers
 export function calculatePercentiles(sortedValues: number[]): PercentileStats | null {
@@ -177,7 +179,7 @@ export async function getAggregateStats(
 ): Promise<RegionalWaitSummary> {
   const modelSlug = params.model.trim().toLowerCase();
   const powertrainSlug = params.powertrain ? params.powertrain.trim().toLowerCase() : 'hev';
-  const rawProv = params.province ? params.province.trim().toUpperCase() : 'ALL';
+  const rawProv = (params.state || params.province || 'ALL').trim().toUpperCase();
   const province = (rawProv === 'ALL' || rawProv === '' ? 'ALL' : rawProv) as CanadianProvince | 'ALL';
   const isTrimSelected = Boolean(
     params.trim &&
@@ -185,7 +187,7 @@ export async function getAggregateStats(
       params.trim.trim().toLowerCase() !== 'all'
   );
   const trimSlug = isTrimSelected ? params.trim!.trim().toLowerCase() : null;
-  const isUs = params.country_code === 'US' || params.countryCode === 'US';
+  const isUs = params.country_code === 'US' || params.countryCode === 'US' || (Boolean(params.state) && !params.province);
 
   const powertrainDisplayName =
     powertrainSlug === 'phev'
@@ -252,8 +254,13 @@ export async function getAggregateStats(
         let matchedRows = provincialRows;
         let waitStats: PercentileStats | null = null;
         let isTrimFallback = false;
+        let isBaselineFallback = Boolean(isUs && province !== 'ALL' && provincialRows.length === 0);
         let trimNote: string | null = null;
         let resolvedTrimName: string | null = null;
+
+        if (isBaselineFallback) {
+          trimNote = `National US baseline · Limited regional data for ${province}`;
+        }
 
         if (isTrimSelected && trimSlug) {
           const trimRows = provincialRows.filter(
@@ -296,12 +303,17 @@ export async function getAggregateStats(
             isTrimFallback = false;
             trimNote = null;
           } else {
-            // Zero-delivery province: aggregate waitStats from deliveries across other provinces/trims
+            // Zero-delivery province/state: aggregate waitStats from deliveries across other provinces/trims
             const nationalDeliveredDays = extractDeliveredWaitDays(allRows);
             if (nationalDeliveredDays.length > 0) {
               waitStats = calculatePercentiles(nationalDeliveredDays);
               isTrimFallback = false;
-              trimNote = `National baseline: Based on ${nationalDeliveredDays.length} deliveries for ${powertrainDisplayName} (limited ${province} data).`;
+              if (isUs && province !== 'ALL') {
+                isBaselineFallback = true;
+                trimNote = `National US baseline · Limited regional data for ${province}`;
+              } else {
+                trimNote = `National baseline: Based on ${nationalDeliveredDays.length} deliveries for ${powertrainDisplayName} (limited ${province} data).`;
+              }
             }
           }
         }
@@ -311,16 +323,23 @@ export async function getAggregateStats(
         const total = delivered + pending;
 
         if (!waitStats) {
-          const fallback = resolveFallbackDataset(
-            modelSlug,
-            powertrainSlug,
-            province,
-            powertrainDisplayName
-          );
-          const sortedFallback = [...fallback.dataset].sort((a, b) => a - b);
-          waitStats = calculatePercentiles(sortedFallback);
-          if (!trimNote) {
-            trimNote = fallback.fallbackNote;
+          if (isUs) {
+            const usBench = US_NATIONAL_BENCHMARKS[modelSlug] || US_NATIONAL_BENCHMARKS.rav4;
+            waitStats = calculatePercentiles([usBench.p25_days, usBench.median_days, usBench.p75_days]);
+            isBaselineFallback = true;
+            trimNote = `National US baseline · Limited regional data for ${province}`;
+          } else {
+            const fallback = resolveFallbackDataset(
+              modelSlug,
+              powertrainSlug,
+              province,
+              powertrainDisplayName
+            );
+            const sortedFallback = [...fallback.dataset].sort((a, b) => a - b);
+            waitStats = calculatePercentiles(sortedFallback);
+            if (!trimNote) {
+              trimNote = fallback.fallbackNote;
+            }
           }
         }
 
@@ -362,9 +381,12 @@ export async function getAggregateStats(
             trimSlug,
             trimName: isTrimSelected ? resolvedTrimName : null,
             province,
-            sampleCounts: { total, delivered, pending },
-            delivered_count: delivered,
-            waiting_count: pending,
+            state: isUs && province !== 'ALL' ? province : undefined,
+            sampleCounts: isBaselineFallback
+              ? { total: 0, delivered: 0, pending: 0 }
+              : { total, delivered, pending },
+            delivered_count: isBaselineFallback ? 0 : delivered,
+            waiting_count: isBaselineFallback ? 0 : pending,
             delivered_median_days: waitStats ? waitStats.median : null,
             waitStats,
             pricingInsights: {
@@ -373,9 +395,10 @@ export async function getAggregateStats(
               avgAddonsCad,
             },
             confidenceRating:
-              delivered >= 30 ? 'high' : delivered >= 10 ? 'medium' : 'low',
+              isBaselineFallback ? 'low' : delivered >= 30 ? 'high' : delivered >= 10 ? 'medium' : 'low',
             latestSubmissionAt: latestSubmissionAt || new Date().toISOString(),
             isTrimFallback,
+            isBaselineFallback,
             trimNote,
           };
         }
@@ -389,41 +412,74 @@ export async function getAggregateStats(
   const lookupKey = `${modelSlug}-${powertrainSlug}-${province.toLowerCase()}`;
   let dataset: number[];
   let isTrimFallback = false;
+  let isBaselineFallback = false;
   let trimNote: string | null = null;
 
-  if (isTrimSelected && trimSlug) {
-    const trimLookupKey = `${modelSlug}-${powertrainSlug}-${province.toLowerCase()}-${trimSlug}`;
-    const trimData = TRIM_BASELINE_WAIT_DATA[trimLookupKey];
-    if (trimData && trimData.length >= 3) {
-      dataset = trimData;
-      isTrimFallback = false;
-      trimNote = null;
-    } else {
-      // Fewer than 3 submissions exist for this specific trim
-      isTrimFallback = true;
-      trimNote = `Displaying overall ${powertrainDisplayName} baseline due to limited trim-specific data.`;
-    }
-  }
-
-  if (!dataset!) {
-    const fallback = resolveFallbackDataset(
-      modelSlug,
-      powertrainSlug,
-      province,
-      powertrainDisplayName
+  if (isUs) {
+    const matchingUs = INITIAL_US_COMMUNITY_RECORDS.filter(
+      (r) => r.modelSlug === modelSlug && (!powertrainSlug || r.powertrainSlug === powertrainSlug)
     );
-    dataset = fallback.dataset;
-    if (!trimNote && fallback.fallbackNote) {
-      trimNote = fallback.fallbackNote;
+    const regionalUs =
+      province !== 'ALL'
+        ? matchingUs.filter((r) => (r.state || r.province)?.toUpperCase() === province)
+        : matchingUs;
+
+    const regionalDelivered = extractDeliveredWaitDays(regionalUs);
+    const nationalDelivered = extractDeliveredWaitDays(matchingUs);
+
+    if (province === 'ALL') {
+      dataset = nationalDelivered.length > 0 ? nationalDelivered : [45, 65, 90];
+      isBaselineFallback = false;
+    } else if (regionalDelivered.length > 0) {
+      dataset = regionalDelivered;
+      isBaselineFallback = false;
+    } else {
+      isBaselineFallback = true;
+      trimNote = `National US baseline · Limited regional data for ${province}`;
+      if (nationalDelivered.length > 0) {
+        dataset = nationalDelivered;
+      } else {
+        const usBench = US_NATIONAL_BENCHMARKS[modelSlug] || US_NATIONAL_BENCHMARKS.rav4;
+        dataset = [usBench.p25_days, usBench.median_days, usBench.p75_days];
+      }
+    }
+  } else {
+    if (isTrimSelected && trimSlug) {
+      const trimLookupKey = `${modelSlug}-${powertrainSlug}-${province.toLowerCase()}-${trimSlug}`;
+      const trimData = TRIM_BASELINE_WAIT_DATA[trimLookupKey];
+      if (trimData && trimData.length >= 3) {
+        dataset = trimData;
+        isTrimFallback = false;
+        trimNote = null;
+      } else {
+        // Fewer than 3 submissions exist for this specific trim
+        isTrimFallback = true;
+        trimNote = `Displaying overall ${powertrainDisplayName} baseline due to limited trim-specific data.`;
+      }
+    }
+
+    if (!dataset!) {
+      const fallback = resolveFallbackDataset(
+        modelSlug,
+        powertrainSlug,
+        province,
+        powertrainDisplayName
+      );
+      dataset = fallback.dataset;
+      if (!trimNote && fallback.fallbackNote) {
+        trimNote = fallback.fallbackNote;
+      }
     }
   }
 
-  const sorted = [...dataset].sort((a, b) => a - b);
+  const sorted = [...dataset!].sort((a, b) => a - b);
   const waitStats = calculatePercentiles(sorted);
 
-  const delivered = sorted.length;
+  const delivered = isBaselineFallback ? 0 : sorted.length;
   const pending =
-    !isTrimSelected && BASELINE_PENDING_COUNTS[lookupKey] !== undefined
+    isBaselineFallback
+      ? 0
+      : !isTrimSelected && BASELINE_PENDING_COUNTS[lookupKey] !== undefined
       ? BASELINE_PENDING_COUNTS[lookupKey]
       : Math.round(delivered * 0.35);
   const total = delivered + pending;
@@ -436,6 +492,7 @@ export async function getAggregateStats(
     trimSlug,
     trimName: trimSlug ? trimSlug.toUpperCase() : null,
     province,
+    state: isUs && province !== 'ALL' ? province : undefined,
     sampleCounts: {
       total,
       delivered,
@@ -450,9 +507,10 @@ export async function getAggregateStats(
       aboveMsrpPercent: 15,
       avgAddonsCad: 350.0,
     },
-    confidenceRating: delivered >= 20 ? 'high' : delivered >= 8 ? 'medium' : 'low',
+    confidenceRating: isBaselineFallback ? 'low' : delivered >= 20 ? 'high' : delivered >= 8 ? 'medium' : 'low',
     latestSubmissionAt: new Date().toISOString(),
     isTrimFallback,
+    isBaselineFallback,
     trimNote,
   };
 }

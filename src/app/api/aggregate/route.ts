@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { aggregateQuerySchema } from '@/lib/validations/schemas';
+import { aggregateQuerySchema, US_STATES, CANADIAN_PROVINCES } from '@/lib/validations/schemas';
 import { getAggregateStats } from '@/lib/db/aggregate';
 import { ApiResponse, RegionalWaitSummary } from '@/lib/types/contracts';
 import { ACTIVE_TRACKED_MODELS } from '@/lib/db/stats';
@@ -18,21 +18,42 @@ export async function GET(request: NextRequest) {
     )?.trim();
     const rawTrim = searchParams.get('trim')?.trim();
 
+    let normalizedProvince =
+      rawProvince && rawProvince.toLowerCase() !== 'all'
+        ? rawProvince.toUpperCase()
+        : undefined;
+    let normalizedState =
+      rawState && rawState.toLowerCase() !== 'all'
+        ? rawState.toUpperCase()
+        : undefined;
+    let normalizedCountry =
+      rawCountry && rawCountry.toLowerCase() !== 'all'
+        ? rawCountry.toUpperCase()
+        : undefined;
+
+    // Harmonize US State passed in province parameter or Canadian province passed in state parameter
+    if (normalizedProvince && (US_STATES as readonly string[]).includes(normalizedProvince)) {
+      normalizedState = normalizedState || normalizedProvince;
+      normalizedProvince = undefined;
+      normalizedCountry = normalizedCountry || 'US';
+    } else if (normalizedState && (CANADIAN_PROVINCES as readonly string[]).includes(normalizedState)) {
+      normalizedProvince = normalizedProvince || normalizedState;
+      normalizedState = undefined;
+      normalizedCountry = normalizedCountry || 'CA';
+    }
+
+    if (normalizedState && !normalizedCountry) {
+      normalizedCountry = 'US';
+    } else if (normalizedProvince && !normalizedCountry) {
+      normalizedCountry = 'CA';
+    }
+
     const queryParams = {
       model: searchParams.get('model')?.trim() || undefined,
       powertrain: searchParams.get('powertrain')?.trim() || undefined,
-      province:
-        rawProvince && rawProvince.toLowerCase() !== 'all'
-          ? rawProvince.toUpperCase()
-          : undefined,
-      state:
-        rawState && rawState.toLowerCase() !== 'all'
-          ? rawState.toUpperCase()
-          : undefined,
-      country_code:
-        rawCountry && rawCountry.toLowerCase() !== 'all'
-          ? rawCountry.toUpperCase()
-          : undefined,
+      province: normalizedProvince,
+      state: normalizedState,
+      country_code: normalizedCountry,
       trim:
         rawTrim && rawTrim.toLowerCase() !== 'all'
           ? rawTrim
