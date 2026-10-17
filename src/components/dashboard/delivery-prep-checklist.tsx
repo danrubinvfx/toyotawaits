@@ -533,6 +533,7 @@ export function DeliveryPrepChecklist({
                   onToggle={toggleItem}
                   showCheckbox={true}
                   isDragging={isDragging}
+                  activeModel={normalizedModel !== 'all' ? normalizedModel : undefined}
                 />
               ))}
             </div>

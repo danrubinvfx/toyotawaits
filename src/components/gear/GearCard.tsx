@@ -23,6 +23,8 @@ import {
   CA_ASSOCIATE_TAG,
   US_ASSOCIATE_TAG,
   injectActiveModelIntoQuery,
+  getAffiliateButtonLabel,
+  getImageLinkAriaLabel,
 } from '@/lib/gear/affiliate';
 
 export interface GearCardItem {
@@ -263,17 +265,8 @@ export function GearCard({
     currentModel
   );
 
-  const isSearch =
-    amazonAffiliateUrl.includes('/s?') ||
-    amazonAffiliateUrl.includes('/s/') ||
-    amazonAffiliateUrl.includes('/s?k=');
-  const isDirectProduct =
-    amazonAffiliateUrl.includes('/dp/') || amazonAffiliateUrl.includes('/gp/product/');
-  const buttonLabel = isSearch
-    ? 'Search Amazon'
-    : isDirectProduct
-    ? 'View Product on Amazon'
-    : 'View on Amazon';
+  const buttonLabel = getAffiliateButtonLabel(amazonAffiliateUrl);
+  const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
 
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
@@ -328,7 +321,7 @@ export function GearCard({
           href={amazonAffiliateUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
-          aria-label={`View ${item.title} on Amazon`}
+          aria-label={imageAriaLabel}
           onClick={handleImageClick}
           draggable={false}
           className="cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block mb-2"

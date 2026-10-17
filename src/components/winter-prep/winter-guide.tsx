@@ -18,6 +18,11 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getWinterPrepForModel, WinterRecommendedProduct } from '@/data/winter-prep';
+import { useMarket } from '@/context/MarketContext';
+import {
+  getAffiliateButtonLabel,
+  sanitizeAmazonAffiliateUrl,
+} from '@/lib/gear/affiliate';
 
 export interface WinterGuideProps {
   modelKey?: string;
@@ -35,6 +40,10 @@ function RecommendedGearModule({
   badgeVariant = 'amber',
   testId,
 }: RecommendedGearModuleProps) {
+  const { market, isUs } = useMarket();
+  const targetUrl = sanitizeAmazonAffiliateUrl(product.url, market || (isUs ? 'US' : 'CA'));
+  const buttonLabel = getAffiliateButtonLabel(targetUrl);
+
   const badgeColors = {
     amber: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
     emerald: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
@@ -81,11 +90,12 @@ function RecommendedGearModule({
         )}
       >
         <Link
-          href={product.url}
+          href={targetUrl}
           target="_blank"
           rel="noopener noreferrer nofollow sponsored"
         >
-          <span>View on Amazon.ca</span>
+          <span>{buttonLabel}</span>
+          <span className="sr-only"> (View on Amazon.ca)</span>
           <ExternalLink className="h-3.5 w-3.5 ml-auto shrink-0" />
         </Link>
       </Button>

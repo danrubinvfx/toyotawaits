@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Play, ExternalLink } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { getAffiliateButtonLabel, getImageLinkAriaLabel } from '@/lib/gear/affiliate';
 
 export interface PopularGearItem {
   title: string;
@@ -25,6 +26,9 @@ export function PopularGearCard({ item }: { item: PopularGearItem }) {
     asin: item.asin,
     market,
   });
+
+  const buttonLabel = getAffiliateButtonLabel(amazonUrl);
+  const ariaLabel = getImageLinkAriaLabel(item.title, amazonUrl);
 
   return (
     <Card className="border-zinc-200 dark:border-zinc-800 bg-zinc-900/40 p-4 space-y-3 flex flex-col justify-between">
@@ -58,8 +62,9 @@ export function PopularGearCard({ item }: { item: PopularGearItem }) {
           href={amazonUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
+          aria-label={ariaLabel}
         >
-          Check on {isUs ? 'Amazon.com' : 'Amazon.ca'} <ExternalLink className="h-3 w-3" />
+          <span>{buttonLabel}</span> <ExternalLink className="h-3 w-3" />
         </a>
       </Button>
     </Card>
