@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
   description:
-    'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+    'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
   keywords: [
     'toyota waits',
     'toyota wait tracker',
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
-      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
     url: 'https://www.toyotawaits.ca',
     siteName: 'ToyotaWaits',
     locale: 'en_CA',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
-      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more.',
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
     images: ['/og-image.png'],
   },
   verification: {

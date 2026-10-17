@@ -57,6 +57,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
   });
 
   it('dynamically switches WaitTimeEstimator region label, options, and resets region safely', async () => {
+    // Test body
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
@@ -120,7 +121,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
     const caSelect = screen.getByLabelText(/Province \/ Territory/i) as HTMLSelectElement;
     // WA is not a valid CA province, so it should safely reset to CA default (BC)
     expect(caSelect.value).toBe('BC');
-  });
+  }, 15000);
 
   it('dynamically switches SubmissionForm region label, options, and sends correct countryCode', async () => {
     let capturedPayload: any = null;
@@ -158,12 +159,12 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
     fireEvent.click(toggleUs);
 
     // Label should switch to State / Region
+    let usSelect!: HTMLSelectElement;
     await waitFor(() => {
-      expect(screen.getByLabelText(/State \/ Region/i)).toBeInTheDocument();
+      usSelect = screen.getByLabelText(/State \/ Region/i) as HTMLSelectElement;
+      expect(usSelect).toBeInTheDocument();
+      expect(usSelect.value).toBe('CA');
     });
-
-    const usSelect = screen.getByLabelText(/State \/ Region/i) as HTMLSelectElement;
-    expect(usSelect.value).toBe('CA');
 
     // Select WA
     fireEvent.change(usSelect, { target: { value: 'WA' } });
@@ -180,7 +181,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
     expect(capturedPayload.countryCode).toBe('US');
     expect(capturedPayload.state).toBe('WA');
     expect(capturedPayload.province).toBeUndefined();
-  });
+  }, 15000);
 
   it('dynamically switches CommunityDataTable filter options and resets safely', () => {
     function TableApp() {

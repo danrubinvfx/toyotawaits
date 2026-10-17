@@ -361,7 +361,9 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         province: submittedProvince,
       });
       setSuccessBanner(
-        'Submission received! Your timeline has been added to our Canadian database. Here are the updated wait-time estimates.'
+        isUsMarket
+          ? 'Submission received! Your timeline has been added to our U.S. database. Here are the updated wait-time estimates.'
+          : 'Submission received! Your timeline has been added to our Canadian database. Here are the updated wait-time estimates.'
       );
       resetFormFields();
       try {

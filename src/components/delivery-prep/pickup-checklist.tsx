@@ -30,9 +30,10 @@ export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
     badgeColor: 'border-red-500/30 text-red-400 bg-red-500/10',
     description: 'Verify final drive-away price matches your original signed vehicle order and MSRP agreement before handing over payment.',
     tips: [
-      'Check that documentation fees adhere strictly to provincial OMVIC/AMVIC/VSA guidelines.',
-      'Ensure dealer has not added mandatory protection packages (etching, tire warranty, nitrogen fill, paint guard).',
-      'For PHEV/Prime: verify remaining provincial clean-energy incentives (e.g. BC CleanBC, QC Roulez vert) where applicable, as federal programs and program funding pools adjust.',
+      'Canada: Check that documentation fees adhere strictly to provincial OMVIC/AMVIC/VSA all-in pricing rules and advertised price caps.',
+      'United States: Audit the purchase agreement against the Monroney window sticker; inspect dealer addendum stickers for mandatory ADM (Adjusted Dealer Markup), doc fee caps, and port-installed options (PIO) vs dealer add-ons.',
+      'Ensure dealer has not added mandatory protection packages (VIN etching, tire warranty, nitrogen fill, paint guard).',
+      'For PHEV/Prime/EV: verify applicable federal incentives and provincial/state clean-energy rebates (e.g. BC CleanBC, QC Roulez vert, or US Section 30D / 45W commercial EV lease credits) before settling.',
     ],
   },
   {
@@ -71,7 +72,7 @@ export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
     description: 'Verify high-voltage safety clearances and interior electrical systems before pulling onto the road.',
     tips: [
       'Verify the hybrid battery cooling air intake vent (located below rear passenger seat) has its factory filter screen seated and unobstructed.',
-      'Check odometer: Brand-new dealer arrivals typically show 5 to 30 km. If over 50 km, ask for explanation in writing.',
+      'Check odometer: Brand-new dealer arrivals typically show 5 to 30 km (3 to 20 miles). If over 50 km / 30 miles, ask for explanation in writing.',
       'Pair your smartphone with Toyota Multimedia (wireless Apple CarPlay / Android Auto). For clean recording, use an OEM-Style TSS Mirror Tap (Powers aftermarket dashcams from the Safety Sense mirror shroud without splicing).',
     ],
   },

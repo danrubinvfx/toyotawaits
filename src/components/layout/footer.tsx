@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { Shield, Lock, Heart, Globe } from 'lucide-react';
+import { Shield, Lock, Heart, Globe, Scale } from 'lucide-react';
 import { KofiCalloutCard } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
+import { useMarket } from '@/context/MarketContext';
 import type { CountryCode } from '@/lib/types/contracts';
 
 interface FooterProps {
@@ -12,18 +13,9 @@ interface FooterProps {
 }
 
 export function Footer({ initialRegion = 'CA' }: FooterProps) {
-  const [region, setRegion] = useState<CountryCode>(initialRegion);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const isUsHost = window.location.hostname.includes('toyotawaits.com');
-      if (isUsHost) {
-        setRegion('US');
-      }
-    }
-  }, []);
-
-  const isUs = region === 'US';
+  const { market, setMarket } = useMarket();
+  const currentRegion = (market as CountryCode) || initialRegion;
+  const isUs = currentRegion === 'US';
 
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 py-12 text-zinc-600 dark:text-zinc-400">
@@ -59,10 +51,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 Region:
               </span>
               <div className="inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100/90 dark:bg-zinc-900/90 p-0.5 text-xs font-semibold" data-testid="region-switcher-footer">
-                <a
-                  href="https://toyotawaits.ca"
+                <button
+                  type="button"
+                  onClick={() => setMarket('CA')}
                   className={cn(
-                    'px-2.5 py-1 rounded-md transition-colors',
+                    'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
                     !isUs
                       ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
@@ -70,11 +63,12 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                   title="Switch to Canada (CAD)"
                 >
                   🇨🇦 CA (CAD)
-                </a>
-                <a
-                  href="https://toyotawaits.com"
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMarket('US')}
                   className={cn(
-                    'px-2.5 py-1 rounded-md transition-colors',
+                    'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
                     isUs
                       ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
@@ -82,7 +76,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                   title="Switch to United States (USD)"
                 >
                   🇺🇸 US (USD)
-                </a>
+                </button>
               </div>
             </div>
 
@@ -184,6 +178,12 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                   Zero-PII Privacy Charter
                 </Link>
               </li>
+              <li>
+                <Link href="/legal" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
+                  <Scale className="h-3.5 w-3.5 text-zinc-400" />
+                  Legal &amp; Pricing Disclosures
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
@@ -196,7 +196,10 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
         {/* Disclaimer & Disclosure Section */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-500 space-y-3">
           <p className="leading-relaxed">
-            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or {isUs ? 'Toyota Motor Sales, U.S.A., Inc.' : 'Toyota Canada Inc.'} All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use.
+            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or {isUs ? 'Toyota Motor Sales, U.S.A., Inc.' : 'Toyota Canada Inc.'} All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use. For complete details, see our{' '}
+            <Link href="/legal" className="underline hover:text-amber-500">
+              Legal Terms &amp; Consumer Pricing Disclosures
+            </Link>.
           </p>
           <p className="leading-relaxed">
             <strong>Regulatory &amp; Affiliate Notice:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} participates in affiliate programs, including the Amazon Associates Program. As an Amazon Associate, we may earn commissions from qualifying purchases made through links on this site at no additional cost to you.

@@ -25,6 +25,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { headers } from 'next/headers';
+import { Hero } from '@/components/Hero';
 
 export const revalidate = 60;
 
@@ -83,26 +84,7 @@ export default async function HomePage() {
         <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-4 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white">
           <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6">
             {/* Tight Header */}
-            <div className="text-center space-y-2 max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
-                <Flame className="h-3.5 w-3.5 text-amber-400" />
-                <span>ToyotaWaits.ca</span>
-                <span className="text-zinc-600">•</span>
-                <span>Canadian Community Tracker</span>
-              </div>
-
-              <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
-                Canadian Toyota Wait Time Tracker
-              </h1>
-
-              <p className="text-xs text-neutral-400 font-medium tracking-wide">
-                Tracking real-world Canadian order timelines and dealer deliveries.
-              </p>
-
-              <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
-                Crowdsourced delivery timelines across Canada. Select your model to estimate your wait.
-              </p>
-            </div>
+            <Hero initialMarket={region} />
 
             {/* Estimator Container immediately below header */}
             <div className="mt-2">

@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import { ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -27,7 +28,7 @@ export function GuideDisclaimer({ className }: GuideDisclaimerProps) {
       <div className="space-y-2.5 leading-relaxed text-[11px] sm:text-xs">
         <p>
           <strong className="text-zinc-900 dark:text-zinc-200">Non-Affiliation Notice:</strong>{' '}
-          ToyotaWaits.ca is an independent, community-driven platform and is NOT affiliated with, sponsored by, authorized by, or endorsed by Toyota Canada Inc., Toyota Motor Corporation, or any affiliated dealership.
+          ToyotaWaits (toyotawaits.ca / toyotawaits.com) is an independent, community-driven platform and is NOT affiliated with, sponsored by, authorized by, or endorsed by Toyota Canada Inc., Toyota Motor Sales, U.S.A., Inc., Toyota Motor Corporation, or any affiliated dealership.
         </p>
         <p>
           <strong className="text-zinc-900 dark:text-zinc-200">DIY &amp; Safety Advisory:</strong>{' '}
@@ -35,7 +36,15 @@ export function GuideDisclaimer({ className }: GuideDisclaimerProps) {
         </p>
         <p>
           <strong className="text-zinc-900 dark:text-zinc-200">Pricing &amp; Timing Notice:</strong>{' '}
-          Wait-time estimates, pricing points, and provincial rebate figures reflect community-reported experiences and may differ by region, trim, and dealer allocation policies.
+          Wait-time estimates, pricing points, and provincial rebate figures reflect community-reported experiences (alongside US dealer markups and ADM) and may differ by market, region, trim, and dealer allocation policies.
+        </p>
+        <p className="pt-1">
+          <Link
+            href="/legal"
+            className="text-amber-600 dark:text-amber-400 font-medium underline hover:text-amber-500"
+          >
+            Read our complete Legal Disclaimers &amp; Pricing Policies →
+          </Link>
         </p>
       </div>
     </aside>

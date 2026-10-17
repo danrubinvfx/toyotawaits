@@ -80,6 +80,7 @@ export function WaitTimeEstimator({
   });
   const [trimSlug, setTrimSlug] = useState<string>(initialTrim);
   const { market } = useMarket();
+  const isUs = market === 'US';
   const [province, setProvince] = useState<string>(() => {
     if (initialProvince && isValidRegionForMarket(initialProvince, market)) {
       return initialProvince;
@@ -495,7 +496,7 @@ export function WaitTimeEstimator({
                   Submission received! Here are the updated wait-time estimates.
                 </p>
                 <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">
-                  Your delivery timeline has been incorporated into our crowdsourced Canadian database.
+                  Your delivery timeline has been incorporated into our crowdsourced {isUs ? 'U.S.' : 'Canadian'} database.
                 </p>
                 <p className="text-xs text-emerald-800 dark:text-emerald-200 mt-2">
                   Thanks for contributing to the community! If ToyotaWaits helps you navigate your wait, consider{' '}
@@ -671,7 +672,7 @@ export function WaitTimeEstimator({
                     data-testid="regional-baseline-badge"
                     className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
                   >
-                    National baseline · Limited regional data for {province}
+                    {isUs ? 'US national baseline' : 'National baseline'} · Limited regional data for {province}
                   </Badge>
                 )}
               </div>
@@ -729,7 +730,7 @@ export function WaitTimeEstimator({
                   <span data-testid="tacoma-benchmark-badge">
                     10 Historical Dealer Benchmarks (Community submissions opening soon).
                     <span data-testid="tacoma-methodology-note" className="block text-[10px] text-zinc-400 mt-0.5">
-                      Historical dealer benchmarks collected Q4 2024–Q1 2025 across Canadian dealerships (n=10). Median baseline calculation methodology excludes outlier custom factory orders.
+                      Historical dealer benchmarks collected Q4 2024–Q1 2025 across {isUs ? 'U.S.' : 'Canadian'} dealerships (n=10). Median baseline calculation methodology excludes outlier custom factory orders.
                     </span>
                   </span>
                 ) : (

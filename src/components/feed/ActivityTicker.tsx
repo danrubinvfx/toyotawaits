@@ -8,6 +8,7 @@ import {
   RecentActivityItem,
 } from '@/lib/types/contracts';
 import { ExternalLink } from 'lucide-react';
+import { useMarket } from '@/context/MarketContext';
 
 export type AnyTickerItem = TickerItem | RecentActivityItem | any;
 
@@ -133,6 +134,7 @@ export function formatTickerSummary(item: AnyTickerItem): string {
 }
 
 export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
+  const { isUs } = useMarket();
   const [items, setItems] = useState<AnyTickerItem[]>(initialData);
   const [isHovered, setIsHovered] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -278,7 +280,7 @@ export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
       className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none"
       aria-live="polite"
       role="region"
-      aria-label="Live Canadian Toyota order activity and news wire"
+      aria-label={isUs ? 'Live U.S. Toyota order activity and news wire' : 'Live Canadian Toyota order activity and news wire'}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
