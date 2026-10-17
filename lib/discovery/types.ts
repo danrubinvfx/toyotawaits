@@ -312,3 +312,49 @@ export interface AdapterParseResult {
   quarantined: QuarantinedRecord[];
   error?: string;
 }
+
+/**
+ * Telemetry log record for source endpoint health & reliability (Gate 2 Readiness).
+ */
+export interface SourceHealthLog {
+  id: string;
+  sourceId: string;
+  dealerId?: string | null;
+  checkTimestamp: string;
+  status: 'success' | 'failure' | 'degraded' | 'rate_limited' | 'timeout';
+  httpStatus?: number | null;
+  latencyMs?: number | null;
+  itemsObserved: number;
+  quarantinedItems: number;
+  errorMessage?: string | null;
+  createdAt: string;
+}
+
+/**
+ * Gate 2 Private Trial audit report metrics.
+ */
+export interface TrialReportMetrics {
+  generatedAt: string;
+  reportingWindowDays: number;
+  sourcesEvaluated: number;
+  uptimePercentage: number;
+  gate2UptimeTargetMet: boolean;
+  totalObservations: number;
+  uniqueVehiclesObserved: number;
+  statusTransitionsCount: number;
+  staleListingCount: number;
+  staleListingPercentage: number;
+  traceabilityScore: number;
+  gate2TraceabilityMet: boolean;
+  breakdownByStatus: Record<string, number>;
+  sourceHealthSummary: Array<{
+    sourceId: string;
+    sourceName: string;
+    dealerName: string;
+    totalChecks: number;
+    successfulChecks: number;
+    uptimePercentage: number;
+    lastStatus: string;
+    lastCheckedAt: string;
+  }>;
+}

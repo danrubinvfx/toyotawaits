@@ -359,3 +359,5 @@ export function parseConvertusPayload(input: any): AdapterParseResult {
     quarantined,
   };
 }
+
+export const parseConvertusVmsPayload = parseConvertusPayload;

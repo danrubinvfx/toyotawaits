@@ -194,6 +194,23 @@ CREATE TABLE IF NOT EXISTS alert_outbox (
 CREATE INDEX IF NOT EXISTS idx_alert_outbox_queue ON alert_outbox (status, claim_expires_at)
 WHERE status IN ('pending', 'claimed');
 
+-- 8. Source Health Logs Table (Gate 2 Telemetry & Audit Reliability)
+CREATE TABLE IF NOT EXISTS source_health_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source_id UUID REFERENCES sources(id) ON DELETE CASCADE,
+    dealer_id UUID REFERENCES dealers(id) ON DELETE SET NULL,
+    check_timestamp TIMESTAMPTZ NOT NULL DEFAULT now(),
+    status TEXT NOT NULL CHECK (status IN ('success', 'failure', 'degraded', 'rate_limited', 'timeout')),
+    http_status INTEGER,
+    latency_ms INTEGER,
+    items_observed INTEGER NOT NULL DEFAULT 0,
+    quarantined_items INTEGER NOT NULL DEFAULT 0,
+    error_message TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_source_health_logs_source ON source_health_logs (source_id, check_timestamp DESC);
+
 -- ============================================================================
 -- Row-Level Security (RLS) Configuration
 -- ============================================================================
@@ -205,6 +222,7 @@ ALTER TABLE dealer_listings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE observations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE status_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE alert_outbox ENABLE ROW LEVEL SECURITY;
+ALTER TABLE source_health_logs ENABLE ROW LEVEL SECURITY;
 
 -- Public Read Policies for verified inventory data
 CREATE POLICY "Public read access for sources" ON sources
@@ -225,6 +243,12 @@ CREATE POLICY "Public read access for observations" ON observations
 CREATE POLICY "Public read access for status events" ON status_events
     FOR SELECT TO anon, authenticated USING (true);
 
--- Alert Outbox is restricted to service_role worker tasks
+CREATE POLICY "Public read access for source health logs" ON source_health_logs
+    FOR SELECT TO anon, authenticated USING (true);
+
+-- Worker / Service role full access
 CREATE POLICY "Service role full access on alert_outbox" ON alert_outbox
+    FOR ALL TO service_role USING (true) WITH CHECK (true);
+
+CREATE POLICY "Service role full access on source_health_logs" ON source_health_logs
     FOR ALL TO service_role USING (true) WITH CHECK (true);

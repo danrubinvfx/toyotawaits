@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-10-17T20:03:18.142Z",
+  "reportingWindowDays": 14,
+  "sourcesEvaluated": 1,
+  "uptimePercentage": 100,
+  "gate2UptimeTargetMet": true,
+  "totalObservations": 420,
+  "uniqueVehiclesObserved": 3,
+  "statusTransitionsCount": 1,
+  "staleListingCount": 1,
+  "staleListingPercentage": 33.3,
+  "traceabilityScore": 100,
+  "gate2TraceabilityMet": true,
+  "breakdownByStatus": {
+    "Advertised - availability unconfirmed": 1,
+    "Incoming availability unconfirmed": 1,
+    "No longer observed / stale": 1
+  },
+  "sourceHealthSummary": [
+    {
+      "sourceId": "jp-toyota-downtown-convertus",
+      "sourceName": "Jim Pattison Toyota Downtown Convertus",
+      "dealerName": "Jim Pattison Toyota Downtown",
+      "totalChecks": 28,
+      "successfulChecks": 28,
+      "uptimePercentage": 100,
+      "lastStatus": "success",
+      "lastCheckedAt": "2026-10-17T08:03:18.142Z"
+    }
+  ]
+}

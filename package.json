@@ -13,7 +13,8 @@
     "db:seed:synthetic": "tsx scripts/seed-synthetic-submissions.ts",
     "db:cleanup": "tsx scripts/cleanup-duplicates.ts",
     "audit:endpoints": "tsx scripts/discovery/inspect-endpoints.ts",
-    "ingest:local": "tsx scripts/discovery/run-ingestion.ts"
+    "ingest:local": "tsx scripts/discovery/run-ingestion.ts",
+    "trial:report": "tsx scripts/discovery/generate-trial-report.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.2.0",
