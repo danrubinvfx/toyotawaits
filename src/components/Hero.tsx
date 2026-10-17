@@ -27,7 +27,7 @@ export function Hero({ initialMarket }: HeroProps) {
       {/* Main H1 Title */}
       <h1
         data-testid="hero-title"
-        className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight"
+        className="text-2xl sm:text-4xl font-extrabold tracking-tight text-center text-white leading-tight"
       >
         {copy.heroTitle}
       </h1>
