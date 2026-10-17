@@ -18,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 import { VideoModal } from '@/components/delivery-prep/video-modal';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { getGearMarketConfig } from '@/data/gear/catalog';
 
 export interface GearCardItem {
   id: string;
@@ -36,6 +37,10 @@ export interface GearCardItem {
   image?: string;
   imageSrc?: string;
   asin?: string;
+  asin_ca?: string;
+  asin_us?: string;
+  searchKeywordsCA?: string;
+  searchKeywordsUS?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
@@ -59,40 +64,97 @@ export type ModCardProps = GearCardProps;
 
 /**
  * Resolves the destination Amazon affiliate URL for a product,
- * respecting the active country context (Amazon.ca vs Amazon.com).
+ * respecting the active country context (Amazon.ca vs Amazon.com)
+ * with verified ASIN routing and resilient keyword search fallbacks.
  */
-export function getAmazonAffiliateUrl(
+export function getAffiliateUrl(
   item: GearCardItem,
-  isUs: boolean = false
+  marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA'
 ): string {
-  const rawUrl = item.destinationUrl || item.affiliateUrl || '';
+  const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
+  const config = getGearMarketConfig(item.slug || item.id);
 
+  const US_TAG =
+    process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
+    process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
+    process.env.AMAZON_US_AFFILIATE_TAG ||
+    process.env.NEXT_PUBLIC_AMAZON_TAG ||
+    'toyotawaits-20';
+
+  const CA_TAG =
+    process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
+    process.env.NEXT_PUBLIC_AMAZON_CA_AFFILIATE_TAG ||
+    process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
+    'toyotawaits-20';
+
+  if (isUs) {
+    const verifiedAsinUs = item.asin_us || config?.asin_us;
+    if (verifiedAsinUs) {
+      return `https://www.amazon.com/dp/${verifiedAsinUs}?tag=${US_TAG}`;
+    }
+
+    const searchKeywordsUS = item.searchKeywordsUS || config?.searchKeywordsUS;
+    if (searchKeywordsUS) {
+      return `https://www.amazon.com/s?k=${encodeURIComponent(searchKeywordsUS)}&tag=${US_TAG}`;
+    }
+
+    // Fallback: If raw destinationUrl exists and no specific config/keywords exist, maintain hostname swap
+    const rawUrl = item.destinationUrl || item.affiliateUrl || '';
+    if (rawUrl && rawUrl.includes('amazon.')) {
+      try {
+        const parsed = new URL(rawUrl);
+        parsed.hostname = 'www.amazon.com';
+        return parsed.toString();
+      } catch {
+        return rawUrl.replace(/amazon\.ca/g, 'amazon.com');
+      }
+    }
+
+    // Fallback to title search if available
+    if (item.title) {
+      return `https://www.amazon.com/s?k=${encodeURIComponent(item.title)}&tag=${US_TAG}`;
+    }
+
+    return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
+  }
+
+  // CA Market
+  const verifiedAsinCa = item.asin_ca || config?.asin_ca;
+  if (verifiedAsinCa) {
+    return `https://www.amazon.ca/dp/${verifiedAsinCa}?tag=${CA_TAG}`;
+  }
+
+  const searchKeywordsCA = item.searchKeywordsCA || config?.searchKeywordsCA;
+  if (searchKeywordsCA) {
+    return `https://www.amazon.ca/s?k=${encodeURIComponent(searchKeywordsCA)}&tag=${CA_TAG}`;
+  }
+
+  // Direct ASIN fallback if available
+  if (item.asin) {
+    return `https://www.amazon.ca/dp/${item.asin}?tag=${CA_TAG}`;
+  }
+
+  // Fallback: If raw destinationUrl exists and no specific config/keywords exist, maintain hostname swap
+  const rawUrl = item.destinationUrl || item.affiliateUrl || '';
   if (rawUrl && rawUrl.includes('amazon.')) {
     try {
       const parsed = new URL(rawUrl);
-      parsed.hostname = isUs ? 'www.amazon.com' : 'www.amazon.ca';
+      parsed.hostname = 'www.amazon.ca';
       return parsed.toString();
     } catch {
-      return isUs
-        ? rawUrl.replace(/amazon\.ca/g, 'amazon.com')
-        : rawUrl.replace(/amazon\.com/g, 'amazon.ca');
+      return rawUrl.replace(/amazon\.com/g, 'amazon.ca');
     }
-  }
-
-  // Fallback to ASIN if available
-  if (item.asin) {
-    const domain = isUs ? 'amazon.com' : 'amazon.ca';
-    return `https://www.${domain}/dp/${item.asin}?tag=toyotawaits-20`;
   }
 
   // Fallback to title search if available
   if (item.title) {
-    const domain = isUs ? 'amazon.com' : 'amazon.ca';
-    return `https://www.${domain}/s?k=${encodeURIComponent(item.title)}&tag=toyotawaits-20`;
+    return `https://www.amazon.ca/s?k=${encodeURIComponent(item.title)}&tag=${CA_TAG}`;
   }
 
   return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
 }
+
+export const getAmazonAffiliateUrl = getAffiliateUrl;
 
 /**
  * Returns a contextual Lucide icon when product images fail or are not supplied.
@@ -162,8 +224,8 @@ export function GearCard({
 }: GearCardProps) {
   const [imgError, setImgError] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const { isUs } = useMarket();
-  const amazonAffiliateUrl = getAmazonAffiliateUrl(item, isUs);
+  const { market, isUs } = useMarket();
+  const amazonAffiliateUrl = getAffiliateUrl(item, market || (isUs ? 'US' : 'CA'));
 
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
