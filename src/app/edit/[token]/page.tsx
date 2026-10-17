@@ -25,7 +25,6 @@ import {
   PlusCircle,
   Trash2,
 } from 'lucide-react';
-import { OrderStageIndicator } from '@/components/dashboard/order-stage-indicator';
 
 interface EditPageProps {
   params: Promise<{ token: string }>;
@@ -332,7 +331,6 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
 
   const isCancelledState = submission?.status === 'cancelled' || stage === 'cancelled' || status === 'cancelled';
   const displayStatus = isCancelledState ? 'cancelled' : (submission?.status || status);
-  const displayStage = isCancelledState ? 'cancelled' : (submission?.stage || stage);
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 sm:py-12 space-y-6">
@@ -419,14 +417,6 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
             </span>
           </div>
         </CardContent>
-
-        <div className="px-6 pb-4 pt-1 border-t border-zinc-100 dark:border-zinc-800/80">
-          <OrderStageIndicator
-            stage={displayStage}
-            status={displayStatus}
-            compact={false}
-          />
-        </div>
       </Card>
 
       {/* Save Success Banner */}

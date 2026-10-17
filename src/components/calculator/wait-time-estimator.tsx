@@ -553,7 +553,7 @@ export function WaitTimeEstimator({
               value={powertrainSlug}
               onChange={(e) => handlePowertrainChange(e.target.value)}
               disabled={currentPowertrains.length === 1}
-              className="py-2 px-3 text-sm rounded-lg font-medium"
+              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               {currentPowertrains.map((p) => (
                 <option key={p.slug} value={p.slug}>
@@ -584,7 +584,7 @@ export function WaitTimeEstimator({
               id={`${compId}-trim`}
               value={trimSlug}
               onChange={(e) => setTrimSlug(e.target.value)}
-              className="py-2 px-3 text-sm rounded-lg font-medium"
+              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               <option value="all">All Trims</option>
               {currentTrims.map((t) => (
@@ -607,7 +607,7 @@ export function WaitTimeEstimator({
               id={`${compId}-province`}
               value={province}
               onChange={(e) => setProvince(e.target.value)}
-              className="py-2 px-3 text-sm rounded-lg font-medium"
+              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               {getRegionsForMarket(market).map((p) => (
                 <option key={p.code} value={p.code}>
@@ -630,7 +630,7 @@ export function WaitTimeEstimator({
               type="date"
               value={depositDate}
               onChange={(e) => setDepositDate(e.target.value)}
-              className="py-2 px-3 text-sm rounded-lg"
+              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 flex items-center min-h-[44px] max-h-[44px] cursor-pointer"
               suppressHydrationWarning
             />
             {isHistoricalOrderDate && (
