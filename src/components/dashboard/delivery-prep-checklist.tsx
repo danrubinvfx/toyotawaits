@@ -257,9 +257,17 @@ export function DeliveryPrepChecklist({
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (e.button !== 0 || !carouselRef.current) return;
+    const nativeEvent = e.nativeEvent as unknown as {
+      sourceCapabilities?: { firesTouchEvents?: boolean };
+      pointerType?: string;
+    };
     if (
-      (e.nativeEvent as unknown as { sourceCapabilities?: { firesTouchEvents?: boolean } })
-        ?.sourceCapabilities?.firesTouchEvents
+      nativeEvent?.sourceCapabilities?.firesTouchEvents ||
+      (nativeEvent?.pointerType && nativeEvent.pointerType !== 'mouse') ||
+      (typeof window !== 'undefined' &&
+        'ontouchstart' in window &&
+        typeof window.matchMedia === 'function' &&
+        !window.matchMedia('(pointer: fine)').matches)
     ) {
       return;
     }
@@ -276,7 +284,6 @@ export function DeliveryPrepChecklist({
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !carouselRef.current) return;
-    e.preventDefault();
     const pageX = e.pageX ?? e.clientX;
     const x = pageX - carouselRef.current.offsetLeft;
     const walk = (x - startX) * 1.5; // Drag speed multiplier
@@ -508,15 +515,13 @@ export function DeliveryPrepChecklist({
               onMouseUp={handleMouseLeaveOrUp}
               onMouseLeave={handleMouseLeaveOrUp}
               onClickCapture={handleClickCapture}
-              onDragStart={(e) => e.preventDefault()}
               style={{
                 WebkitOverflowScrolling: 'touch',
-                touchAction: 'auto',
                 scrollbarWidth: 'none',
                 msOverflowStyle: 'none',
               }}
               className={cn(
-                'flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth touch-auto touch-pan-x no-scrollbar overscroll-x-contain [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch] cursor-grab active:cursor-grabbing select-none px-1',
+                'flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth px-4 py-2 touch-pan-x overscroll-x-contain [-webkit-overflow-scrolling:touch] cursor-grab active:cursor-grabbing select-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden',
                 isDragging && 'cursor-grabbing scroll-auto snap-none'
               )}
             >

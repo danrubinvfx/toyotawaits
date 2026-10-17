@@ -170,7 +170,7 @@ export function ModCard({
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
 
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleImageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (isDragging) {
       e.preventDefault();
       e.stopPropagation();
@@ -217,7 +217,7 @@ export function ModCard({
           target="_blank"
           rel="noopener noreferrer nofollow"
           aria-label={`View ${item.title} on Amazon`}
-          onClick={handleLinkClick}
+          onClick={handleImageClick}
           draggable={false}
           className="cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block mb-2.5"
         >
@@ -313,7 +313,6 @@ export function ModCard({
             href={amazonAffiliateUrl}
             target="_blank"
             rel="noopener noreferrer nofollow sponsored"
-            onClick={handleLinkClick}
             draggable={false}
           >
             <span>View on Amazon</span>
