@@ -175,12 +175,12 @@ CREATE INDEX IF NOT EXISTS idx_status_events_listing ON status_events (dealer_li
 -- 7. Alert Outbox Table (Worker Leases & Idempotent Delivery per Appendix A5)
 CREATE TABLE IF NOT EXISTS alert_outbox (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    delivery_key TEXT NOT NULL,
+    delivery_key TEXT NOT NULL UNIQUE,
     idempotency_key TEXT NOT NULL UNIQUE,
     recipient TEXT NOT NULL,
     channel TEXT NOT NULL CHECK (channel IN ('email', 'webhook')),
     payload JSONB NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'claimed', 'delivered', 'failed')),
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'claimed', 'delivered', 'sent', 'failed', 'suppressed', 'cancelled')),
     claim_token UUID,
     claim_expires_at TIMESTAMPTZ,
     attempts INTEGER NOT NULL DEFAULT 0,

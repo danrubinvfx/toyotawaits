@@ -149,6 +149,18 @@ export interface StatusEvent {
 }
 
 /**
+ * Outbox status types including worker claiming, sent, dead-letter and suppression states.
+ */
+export type AlertOutboxStatus =
+  | 'pending'
+  | 'claimed'
+  | 'delivered'
+  | 'sent'
+  | 'failed'
+  | 'suppressed'
+  | 'cancelled';
+
+/**
  * Alert Outbox entity supporting idempotent worker delivery and lease locking per Appendix A5.
  */
 export interface AlertOutboxItem {
@@ -158,7 +170,7 @@ export interface AlertOutboxItem {
   recipient: string;
   channel: 'email' | 'webhook';
   payload: Record<string, any>;
-  status: 'pending' | 'claimed' | 'delivered' | 'failed';
+  status: AlertOutboxStatus;
   claimToken?: string | null;
   claimExpiresAt?: string | null;
   attempts: number;
@@ -167,6 +179,61 @@ export interface AlertOutboxItem {
   deliveredAt?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Search criteria for matching public inventory listings to buyer subscriptions.
+ */
+export interface SearchCriteria {
+  make?: string;
+  model?: string;
+  trim?: string;
+  modelYear?: number;
+  province?: string;
+  city?: string;
+  dealerId?: string;
+  maxPrice?: number;
+  includeSold?: boolean;
+}
+
+/**
+ * Saved Search / Alert Subscription entity for matching transitions.
+ */
+export interface SavedSearch {
+  id: string;
+  userId?: string | null;
+  recipient: string;
+  channel?: 'email' | 'webhook';
+  hasConsent?: boolean;
+  isSuppressed?: boolean;
+  unsubscribeToken?: string;
+  budgetRemaining?: number;
+  criteria?: SearchCriteria;
+  includeSoldTransitions?: boolean;
+  createdAt?: string;
+}
+
+/**
+ * Formatted notification message ready for transmission.
+ */
+export interface FormattedNotification {
+  subject: string;
+  html: string;
+  text: string;
+  headers: Record<string, string>;
+}
+
+/**
+ * Email transmission provider contract.
+ */
+export interface EmailProvider {
+  sendEmail(params: {
+    to: string;
+    subject: string;
+    html: string;
+    text: string;
+    headers?: Record<string, string>;
+  }): Promise<{ success: boolean; messageId?: string; error?: string }>;
 }
 
 /**
