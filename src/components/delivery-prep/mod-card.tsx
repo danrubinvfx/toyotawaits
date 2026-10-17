@@ -181,7 +181,7 @@ export function ModCard({
     <div
       data-testid={`checklist-item-${item.slug}`}
       className={cn(
-        'relative w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200',
+        'relative w-[82vw] max-w-[300px] sm:w-[280px] shrink-0 snap-start bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200 touch-pan-y',
         isChecked
           ? 'border-amber-500/40 bg-neutral-900/95 shadow-inner'
           : 'hover:border-neutral-700 hover:bg-neutral-900/90',
