@@ -230,11 +230,8 @@ export function InventoryExplorer({
   }, [initialListings, filters]);
 
   return (
-    <div className="space-y-6" data-testid="inventory-explorer">
-      {/* Pilot Coverage Disclosure */}
-      <CoverageDisclosureBanner />
-
-      {/* Filter Bar */}
+    <div className="space-y-4 sm:space-y-6" data-testid="inventory-explorer">
+      {/* Search & Filter Bar (Elevated immediately below header) */}
       <InventoryFilterBar
         filters={filters}
         onFilterChange={setFilters}
@@ -242,6 +239,9 @@ export function InventoryExplorer({
         availableDealers={availableDealers}
         totalResults={filteredListings.length}
       />
+
+      {/* Pilot Coverage Disclosure (Positioned beneath filter bar) */}
+      <CoverageDisclosureBanner />
 
       {/* Listings Grid */}
       {filteredListings.length > 0 ? (

@@ -82,9 +82,9 @@ export function InventoryFilterBar({
     <section
       data-testid="inventory-filter-bar"
       aria-label="Filter inventory listings"
-      className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-4 shadow-sm backdrop-blur-sm"
+      className="rounded-xl border border-zinc-800 bg-zinc-900/90 px-4 py-2 sm:p-4 shadow-sm backdrop-blur-sm relative z-10"
     >
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-3 pb-3 border-b border-zinc-800/80">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 sm:mb-3 sm:pb-3 border-b border-zinc-800/80">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-red-400" aria-hidden="true" />
           <h2 className="text-sm font-semibold text-zinc-100">Filter Public Inventory</h2>

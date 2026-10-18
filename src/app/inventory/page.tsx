@@ -86,9 +86,9 @@ export default function InventoryPage({ searchParams }: InventoryPageProps = {})
   return (
     <main
       data-testid="inventory-page-main"
-      className="min-h-screen bg-zinc-950 text-zinc-100 py-8 px-4 sm:px-6 lg:px-8 selection:bg-red-500 selection:text-white"
+      className="min-h-screen bg-zinc-950 text-zinc-100 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-12 selection:bg-red-500 selection:text-white"
     >
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Navigation & Back Link */}
         <div className="flex items-center justify-between">
           <Link
@@ -107,7 +107,7 @@ export default function InventoryPage({ searchParams }: InventoryPageProps = {})
         </div>
 
         {/* Page Hero */}
-        <header className="space-y-3">
+        <header className="space-y-2 sm:space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/80 bg-amber-950/40 px-3 py-1 text-xs text-amber-300">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="font-semibold">
@@ -115,11 +115,16 @@ export default function InventoryPage({ searchParams }: InventoryPageProps = {})
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-tight">
             Toyota Public Inventory Explorer
           </h1>
-          <p className="text-sm text-zinc-400 max-w-3xl leading-relaxed">
-            Real-time public dealer inventory observed across validated dealer feeds. We enforce epistemic honesty: all listings reflect public website declarations. Availability and mandatory dealer fees must be verified directly with dealer staff.
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl leading-relaxed">
+            <span className="hidden sm:inline">
+              Real-time public dealer inventory observed across validated dealer feeds. We enforce epistemic honesty: all listings reflect public website declarations. Availability and mandatory dealer fees must be verified directly with dealer staff.
+            </span>
+            <span className="sm:hidden">
+              Real-time public dealer inventory observed across validated feeds. Physical availability and fees must be confirmed with dealer staff.
+            </span>
           </p>
         </header>
 
