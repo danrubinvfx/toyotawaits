@@ -322,17 +322,39 @@ async function main() {
     return;
   }
 
-  // Check Database Configuration
-  const isDbAvailable = isLiveSupabaseConfigured();
+  // Check Database Configuration & Validate Service Key
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const isServiceKeyConfigured = Boolean(
+    serviceKey &&
+    !serviceKey.includes('placeholder') &&
+    serviceKey.trim() !== ''
+  );
 
-  if (!isDbAvailable || dryRun) {
-    console.log(`\nℹ️  Notice: Running in dry-run / unconfigured Supabase mode.`);
-    console.log(`    Validation succeeded for ${parseResult.count} vehicle listings.`);
-    console.log(`[DRY RUN VERIFIED]`);
-    console.log(`  - Sample Model: ${parseResult.records[0].vehicle.model} ${parseResult.records[0].vehicle.trim || ''}`);
-    console.log(`  - Sample VIN:   ${parseResult.records[0].vehicle.vin || 'Provisional'}`);
-    console.log(`  - Sample Price: $${parseResult.records[0].pricing.sellingPrice ?? parseResult.records[0].pricing.msrp}`);
+  if (!isServiceKeyConfigured) {
+    if (dryRun) {
+      console.log(`\nℹ️  Notice: Running in dry-run mode (Supabase persistence skipped).`);
+      console.log(`    Validation succeeded for ${parseResult.count} vehicle listings.`);
+      console.log(`[DRY RUN VERIFIED]`);
+      console.log(`  - Sample Model: ${parseResult.records[0].vehicle.model} ${parseResult.records[0].vehicle.trim || ''}`);
+      console.log(`  - Sample VIN:   ${parseResult.records[0].vehicle.vin || 'Provisional'}`);
+      console.log(`  - Sample Price: $${parseResult.records[0].pricing.sellingPrice ?? parseResult.records[0].pricing.msrp}`);
+      console.log(`\n================================================================`);
+      console.log(`Sweep completed successfully (Dry Run).`);
+      return;
+    }
+
     console.log(`\n================================================================`);
+    console.log(`SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets`);
+    console.log(`Validated ${parseResult.count} public inventory records from endpoint.`);
+    console.log(`To enable automated persistence, configure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL in GitHub Secrets.`);
+    console.log(`================================================================`);
+    return;
+  }
+
+  if (dryRun) {
+    console.log(`\nℹ️  Notice: Running in explicit dry-run mode.`);
+    console.log(`    Validation succeeded for ${parseResult.count} vehicle listings.`);
+    console.log(`================================================================`);
     console.log(`Sweep completed successfully (Dry Run).`);
     return;
   }
@@ -398,8 +420,21 @@ async function main() {
     console.log(`[SUCCESS] Sweep completed cleanly in ${Date.now() - startTime}ms.`);
     console.log(`================================================================`);
   } catch (err: any) {
+    if (
+      err.message?.includes('Could not find the table') ||
+      err.message?.includes('relation "sources" does not exist') ||
+      err.message?.includes('schema cache')
+    ) {
+      console.log(`\n================================================================`);
+      console.log(`SKIPPED: Discovery schema not yet applied to remote Supabase instance.`);
+      console.log(`Validated ${parseResult.count} public inventory records from endpoint.`);
+      console.log(`To enable persistence, apply migration supabase/migrations/20261017_inventory_discovery_schema.sql`);
+      console.log(`================================================================`);
+      return;
+    }
     console.error(`[ERROR] Ingestion error:`, err.message);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 }
 
