@@ -64,30 +64,30 @@ export function buildAmazonAffiliateUrl(
 export const AFFILIATE_LINKS = {
   TORKLIFT:
     process.env.NEXT_PUBLIC_AFFILIATE_TORKLIFT ||
-    'https://torkliftcentral.com/x7422',
+    'https://torkliftcentral.com/2021-2027-toyota-sienna-featured-stainless-steel-rust-free-trailer-hitch-receiver',
   TORKLIFT_SEARCH:
     'https://torkliftcentral.com/catalogsearch/result/?q=sienna',
   AMAZON_CURT_HITCH:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_CURT_HITCH ||
-    getAmazonAffiliateUrl({ asin: 'B08Y5DCB2T', market: 'CA' }),
+    'https://www.amazon.com/dp/B0BJ5928HS',
   AMAZON_CURT_HITCH_SEARCH:
-    getAmazonAffiliateUrl({ query: 'Curt 13470 Sienna', market: 'CA' }),
+    'https://www.amazon.com/s?k=Curt+13470+Sienna',
   AMAZON_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_WIRING ||
-    getAmazonAffiliateUrl({ query: 'Curt 56456 Sienna', market: 'CA' }),
+    'https://www.amazon.com/s?k=CURT+56456',
   TEKONSHA_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_TEKONSHA_WIRING ||
-    getAmazonAffiliateUrl({ query: 'Tekonsha 118844', market: 'CA' }),
+    'https://www.amazon.com/s?k=Tekonsha+118844',
   BALL_MOUNT:
     process.env.NEXT_PUBLIC_AFFILIATE_BALL_MOUNT ||
-    getAmazonAffiliateUrl({ query: 'Curt 45036 Class 3 Ball Mount 2-Inch Rise', market: 'CA' }),
+    'https://www.amazon.com/s?k=Curt+45036+Class+3+Ball+Mount+2-Inch+Rise',
   ANTI_RATTLE_CLAMP:
     process.env.NEXT_PUBLIC_AFFILIATE_ANTI_RATTLE ||
-    getAmazonAffiliateUrl({ query: '2 inch anti rattle hitch clamp', market: 'CA' }),
+    'https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener',
   AIR_LIFT_1000:
     process.env.NEXT_PUBLIC_AFFILIATE_AIR_LIFT ||
-    getAmazonAffiliateUrl({ query: 'Air Lift 60858', market: 'CA' }),
+    'https://www.amazon.com/s?k=Air+Lift+60858',
   BRAKE_CONTROLLER:
     process.env.NEXT_PUBLIC_AFFILIATE_BRAKE_CONTROLLER ||
-    getAmazonAffiliateUrl({ query: 'CURT 51180 Echo Mobile Electric Trailer Brake Controller', market: 'CA' }),
+    'https://www.amazon.com/s?k=CURT+51180+Echo+Mobile+Electric+Trailer+Brake+Controller',
 } as const;

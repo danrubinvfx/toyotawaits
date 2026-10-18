@@ -190,9 +190,31 @@ export default function SiennaTrailerHitchGuidePage() {
               <tr>
                 <th className="p-3.5 sm:p-4">Spec / Feature</th>
                 <th className="p-3.5 sm:p-4 bg-amber-500/10 text-amber-900 dark:text-amber-200 font-bold">
-                  Torklift EcoHitch x7422s (Top Pick)
+                  <a
+                    href={AFFILIATE_LINKS.TORKLIFT}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                    className="inline-flex items-center gap-1 hover:underline"
+                  >
+                    Torklift EcoHitch x7422s <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <span className="block text-[10px] font-normal text-amber-700 dark:text-amber-300">
+                    (Top Pick)
+                  </span>
                 </th>
-                <th className="p-3.5 sm:p-4">Curt 13470 (Budget Pick)</th>
+                <th className="p-3.5 sm:p-4">
+                  <a
+                    href={AFFILIATE_LINKS.AMAZON_CURT_HITCH}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                    className="inline-flex items-center gap-1 text-zinc-900 dark:text-zinc-100 hover:underline"
+                  >
+                    Curt 13470 <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <span className="block text-[10px] font-normal text-zinc-500">
+                    (Budget Pick)
+                  </span>
+                </th>
                 <th className="p-3.5 sm:p-4 text-zinc-500">Toyota OEM (PK960-08R10)</th>
               </tr>
             </thead>
