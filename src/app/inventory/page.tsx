@@ -22,28 +22,33 @@ export interface InventoryPageProps {
     | { [key: string]: string | string[] | undefined };
 }
 
-export default function InventoryPage({ searchParams }: InventoryPageProps = {}) {
-  // Extract preview query parameter from searchParams (supporting both sync and Promise)
-  let isPreviewParam = false;
-  if (searchParams) {
-    if (typeof (searchParams as any).then === 'function') {
-      try {
-        const resolved = React.use(
-          searchParams as Promise<{ [key: string]: string | string[] | undefined }>
-        );
-        isPreviewParam =
-          resolved?.preview === 'true' ||
-          (Array.isArray(resolved?.preview) && resolved.preview.includes('true'));
-      } catch {
-        // Fallback for environments where React.use is unavailable
-      }
-    } else {
-      const sp = searchParams as { [key: string]: string | string[] | undefined };
-      isPreviewParam =
-        sp?.preview === 'true' ||
-        (Array.isArray(sp?.preview) && sp.preview.includes('true'));
-    }
+function parsePreviewParam(
+  searchParams?:
+    | Promise<{ [key: string]: string | string[] | undefined }>
+    | { [key: string]: string | string[] | undefined }
+): boolean {
+  if (!searchParams) return false;
+  if (typeof (searchParams as any).then !== 'function') {
+    const sp = searchParams as { [key: string]: string | string[] | undefined };
+    return (
+      sp?.preview === 'true' ||
+      (Array.isArray(sp?.preview) && sp.preview.includes('true'))
+    );
   }
+  const maybeObj = (searchParams as any).value ?? (searchParams as any)._value;
+  if (maybeObj) {
+    return (
+      maybeObj.preview === 'true' ||
+      (Array.isArray(maybeObj.preview) && maybeObj.preview.includes('true'))
+    );
+  }
+  return false;
+}
+
+export default function InventoryPage({ searchParams }: InventoryPageProps = {}) {
+  // Extract preview query parameter from searchParams
+  const isPreviewParam = parsePreviewParam(searchParams);
+
 
   // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
   const isFeatureEnabled =

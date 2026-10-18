@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-18T01:36:49.598Z",
+  "generatedAt": "2026-10-18T06:45:51.122Z",
   "reportingWindowDays": 14,
   "sourcesEvaluated": 1,
   "uptimePercentage": 100,
@@ -25,7 +25,7 @@
       "successfulChecks": 28,
       "uptimePercentage": 100,
       "lastStatus": "success",
-      "lastCheckedAt": "2026-10-17T13:36:49.598Z"
+      "lastCheckedAt": "2026-10-17T18:45:51.122Z"
     }
   ]
 }
