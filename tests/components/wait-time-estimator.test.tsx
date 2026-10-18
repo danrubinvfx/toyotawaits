@@ -852,4 +852,42 @@ describe('WaitTimeEstimator Component', () => {
       ).toBeInTheDocument();
     });
   });
+
+  it('renders Corolla variant toggle and switches between Corolla Sedan/Hatch and Corolla Cross', async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'corolla',
+            modelName: 'Corolla',
+            powertrainSlug: 'gas',
+            province: 'BC',
+            sampleCounts: { total: 5, delivered: 5, pending: 0 },
+            waitStats: { p25: 30, median: 60, p75: 90, mean: 60, min: 25, max: 110 },
+            pricingInsights: { atMsrpPercent: 100, aboveMsrpPercent: 0, avgAddonsCad: 0 },
+          },
+        }),
+      })
+    );
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="corolla" initialPowertrain="gas" initialProvince="BC" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('estimator-corolla-toggle')).toBeInTheDocument();
+    });
+
+    const sedanTab = screen.getByTestId('estimator-corolla-sedan-tab');
+    const crossTab = screen.getByTestId('estimator-corolla-cross-tab');
+    expect(sedanTab).toHaveAttribute('aria-selected', 'true');
+    expect(crossTab).toHaveAttribute('aria-selected', 'false');
+
+    // Toggle to Corolla Cross
+    fireEvent.click(crossTab);
+    expect(crossTab).toHaveAttribute('aria-selected', 'true');
+    expect(sedanTab).toHaveAttribute('aria-selected', 'false');
+  });
 });

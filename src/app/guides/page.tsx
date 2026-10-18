@@ -108,6 +108,20 @@ const MOD_GUIDES = [
     ],
     href: '/guides/prius-mods',
   },
+  {
+    slug: 'corolla-mods',
+    title: 'Must-Have Toyota Corolla & Corolla Cross Mods & Upgrades',
+    tagline: 'The 4-stage playbook: TuxMat liners, FitcamX 4K dashcam, 22mm sway bar, 3.5" tweeter swap, and intake.',
+    badge: '4-Stage Playbook',
+    model: 'Corolla & Corolla Cross',
+    highlights: [
+      'TuxMat / WeatherTech All-Weather Liners',
+      'FitcamX OEM-Integrated 4K Mirror Dashcam',
+      'JBL / Kicker 3.5" Dash Corner Tweeter Swap',
+      'TRD / Progress 22mm Rear Sway Bar',
+    ],
+    href: '/guides/corolla-mods',
+  },
 ];
 
 const PREP_GUIDES = [

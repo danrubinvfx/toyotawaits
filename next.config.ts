@@ -34,6 +34,8 @@ const nextConfig: NextConfig = {
       { source: '/mods/land-cruiser', destination: '/guides/land-cruiser-mods', permanent: false },
       { source: '/mods/prius', destination: '/guides/prius-mods', permanent: false },
       { source: '/mods/prius-prime', destination: '/guides/prius-mods', permanent: false },
+      { source: '/mods/corolla', destination: '/guides/corolla-mods', permanent: false },
+      { source: '/mods/corolla-cross', destination: '/guides/corolla-mods', permanent: false },
       { source: '/mods', destination: '/guides', permanent: false },
     ];
   },

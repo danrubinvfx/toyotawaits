@@ -84,13 +84,27 @@ export function StickyVehiclePills({
   }, []);
 
   const handlePillClick = (opt: QuickSelectModelOption) => {
-    setSelectedModel(opt.slug);
+    const targetSlug =
+      opt.slug === 'corolla'
+        ? selectedModel === 'corolla-cross'
+          ? 'corolla-cross'
+          : 'corolla'
+        : opt.slug;
+    setSelectedModel(targetSlug);
     if (onSelectModel) {
-      onSelectModel(opt.slug);
+      onSelectModel(targetSlug);
     }
     if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('model', targetSlug);
+      if (targetSlug === 'corolla') {
+        url.searchParams.set('variant', 'sedan');
+      } else {
+        url.searchParams.delete('variant');
+      }
+      window.history.replaceState({}, '', url.toString());
       window.dispatchEvent(
-        new CustomEvent('toyotawait:model-change', { detail: { model: opt.slug } })
+        new CustomEvent('toyotawait:model-change', { detail: { model: targetSlug } })
       );
     }
   };
@@ -182,6 +196,78 @@ export function StickyVehiclePills({
           <span>+ Add Delivery</span>
         </Link>
       </div>
+
+      {/* Secondary Sub-Selector for Corolla Variant */}
+      {(selectedModel === 'corolla' || selectedModel === 'corolla-cross') && (
+        <div
+          role="tablist"
+          aria-label="Corolla variant selector"
+          data-testid="corolla-subselector"
+          className="container mx-auto max-w-6xl flex items-center justify-center gap-2 pt-1.5 pb-0.5 border-t border-neutral-800/80 mt-1.5"
+        >
+          <span className="text-[11px] font-semibold text-neutral-400 mr-1 hidden sm:inline">
+            Body Style:
+          </span>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedModel === 'corolla'}
+            data-testid="sub-corolla-sedan"
+            onClick={() => {
+              setSelectedModel('corolla');
+              if (onSelectModel) onSelectModel('corolla');
+              if (typeof window !== 'undefined') {
+                const url = new URL(window.location.href);
+                url.searchParams.set('model', 'corolla');
+                url.searchParams.set('variant', 'sedan');
+                window.history.replaceState({}, '', url.toString());
+                window.dispatchEvent(
+                  new CustomEvent('toyotawait:model-change', {
+                    detail: { model: 'corolla', variant: 'sedan' },
+                  })
+                );
+              }
+            }}
+            className={cn(
+              'px-2.5 py-1 text-xs rounded-full transition-all cursor-pointer select-none font-medium',
+              selectedModel === 'corolla'
+                ? 'bg-amber-400/20 text-amber-300 border border-amber-400/60 shadow-xs'
+                : 'bg-neutral-900/80 text-neutral-400 hover:text-white border border-neutral-800'
+            )}
+          >
+            Corolla Sedan / Hatchback
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={selectedModel === 'corolla-cross'}
+            data-testid="sub-corolla-cross"
+            onClick={() => {
+              setSelectedModel('corolla-cross');
+              if (onSelectModel) onSelectModel('corolla-cross');
+              if (typeof window !== 'undefined') {
+                const url = new URL(window.location.href);
+                url.searchParams.set('model', 'corolla-cross');
+                url.searchParams.delete('variant');
+                window.history.replaceState({}, '', url.toString());
+                window.dispatchEvent(
+                  new CustomEvent('toyotawait:model-change', {
+                    detail: { model: 'corolla-cross' },
+                  })
+                );
+              }
+            }}
+            className={cn(
+              'px-2.5 py-1 text-xs rounded-full transition-all cursor-pointer select-none font-medium',
+              selectedModel === 'corolla-cross'
+                ? 'bg-amber-400/20 text-amber-300 border border-amber-400/60 shadow-xs'
+                : 'bg-neutral-900/80 text-neutral-400 hover:text-white border border-neutral-800'
+            )}
+          >
+            Corolla Cross
+          </button>
+        </div>
+      )}
     </div>
   );
 }

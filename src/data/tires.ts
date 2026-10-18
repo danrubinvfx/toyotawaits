@@ -5,13 +5,13 @@
  * Compliant with Amazon Associates Operating Agreement (no hardcoded static prices, statutory disclaimer).
  */
 
-export type TireCategory = 'Dedicated Winter' | 'All-Weather 3PMSF';
+export type TireCategory = 'Dedicated Winter' | 'All-Weather 3PMSF' | 'All-Season Highway';
 
 export interface TireItem {
   id: string;
   name: string;
   brand: string;
-  category: 'Dedicated Winter' | 'All-Weather 3PMSF';
+  category: 'Dedicated Winter' | 'All-Weather 3PMSF' | 'All-Season Highway';
   oemSize: string;
   bestFor: string;
   pros: string[];
@@ -54,6 +54,12 @@ export const TIRE_VEHICLE_OPTIONS: Array<{
     label: 'RAV4 (Hybrid / Prime)',
     name: 'Toyota RAV4',
     badge: 'Popular HEV/PHEV',
+  },
+  {
+    id: 'corolla',
+    label: 'Corolla',
+    name: 'Toyota Corolla & Corolla Cross',
+    badge: 'Sedan, Hatch & Cross',
   },
   {
     id: 'sienna',
@@ -648,6 +654,330 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         amazonUrl:
           'https://www.amazon.ca/s?k=Bridgestone+Blizzak+LT+265+70R18&tag=toyotawaits-20',
         searchQuery: 'Bridgestone Blizzak LT 265/70R18',
+      },
+    ],
+  },
+  corolla: {
+    modelId: 'corolla',
+    modelName: 'Toyota Corolla (Sedan, Hatchback & GR)',
+    label: 'Corolla (Sedan / Hatch / GR)',
+    badge: 'Compact & Performance',
+    yearRange: '2020–2026 (Gen 12)',
+    boltPattern: '5x100 (GR: 5x114.3)',
+    centerBore: '54.1 mm (GR: 60.1 mm)',
+    recommendedLoadIndex: '91–95 (SL/XL)',
+    factorySizes: [
+      '195/65R15 (Base L, LE, Hybrid LE)',
+      '205/55R16 (LE Upgrade, SE Hatch, XLE)',
+      '225/40R18 (SE Sedan, XSE Sedan, XSE Hatch, Nightshade)',
+      '235/40R18 (GR Corolla Core / Premium / Circuit)',
+    ],
+    downsizingTip:
+      'Downsizing from 18" (225/40R18) on SE/XSE to 16" (205/55R16) or 15" (195/65R15) wheels provides 20mm–25mm taller sidewall cushion against winter frost heaves and potholes, and saves ~$250–$400 per tire set.',
+    tires: [
+      {
+        id: 'corolla-blizzak-ws90',
+        name: 'Bridgestone Blizzak WS90',
+        brand: 'Bridgestone',
+        category: 'Dedicated Winter',
+        oemSize: '195/65R15',
+        badge: 'Deep Snow & Ice Grip',
+        loadIndex: '95',
+        speedRating: 'T',
+        oemFitment: 'Fits OEM 15" (195/65R15) & 16" (205/55R16)',
+        rating: 4.9,
+        bestFor:
+          'Deep unplowed city snow, black ice stopping, and harsh Canadian prairie winter storms on Corolla Sedan and Hybrid.',
+        pros: [
+          'NanoPro-Tech Multicell compound removes water film on ice for instant stopping grip',
+          'Deep zig-zag tread blocks bite through heavy slush ridges with zero hydroplaning',
+          'Outstanding fuel economy retention on Corolla Hybrid AWD',
+        ],
+        cons: [
+          'Multicell compound wears faster if driven in temperatures above +7°C',
+          'Slightly softer dry road turn-in response compared to all-season performance tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Bridgestone+Blizzak+WS90+195+65R15&tag=toyotawaits-20',
+        searchQuery: 'Bridgestone Blizzak WS90 195/65R15',
+      },
+      {
+        id: 'corolla-continental-viking7',
+        name: 'Continental VikingContact 7',
+        brand: 'Continental',
+        category: 'Dedicated Winter',
+        oemSize: '205/55R16',
+        badge: 'Quiet & Cold Traction',
+        loadIndex: '94',
+        speedRating: 'T',
+        oemFitment: 'Fits OEM 16" (205/55R16) & 18" (225/40R18)',
+        rating: 4.8,
+        bestFor:
+          'Whisper-quiet highway cruising, slush tracking, and sub-zero Arctic freeze flexibility.',
+        pros: [
+          'Nordic silica compound infused with canola oil stays pliable in -35°C deep freezes',
+          'Class-leading quiet cabin noise level with negligible tire hum at 110 km/h',
+          'Interlocking 3D sipes provide stable highway tracking without squirming',
+        ],
+        cons: [
+          'Slightly higher price point than entry-level winter tires',
+          'Directional tread requires front-to-back rotation only',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Continental+VikingContact+7+205+55R16&tag=toyotawaits-20',
+        searchQuery: 'Continental VikingContact 7 205/55R16',
+      },
+      {
+        id: 'corolla-nokian-hakka-r5',
+        name: 'Nokian Hakkapeliitta R5',
+        brand: 'Nokian',
+        category: 'Dedicated Winter',
+        oemSize: '195/65R15',
+        badge: 'Nordic Winter Master',
+        loadIndex: '95',
+        speedRating: 'R',
+        oemFitment: 'Fits OEM 15" (195/65R15) & 16" (205/55R16)',
+        rating: 4.9,
+        bestFor:
+          'Pure Nordic ice performance and ultra-low rolling resistance for maximum Corolla Hybrid efficiency.',
+        pros: [
+          'Arctic Grip Crystals embedded directly in the tread act like built-in microscopic studs',
+          'Extremely low rolling resistance minimizes winter fuel penalties on Corolla Hybrid',
+          'Superior lateral stability when navigating frozen mountain switchbacks',
+        ],
+        cons: [
+          'Limited availability at big-box retailers; best ordered early before winter rush',
+          'Premium upfront pricing',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Nokian+Hakkapeliitta+R5+195+65R15&tag=toyotawaits-20',
+        searchQuery: 'Nokian Hakkapeliitta R5 195/65R15',
+      },
+      {
+        id: 'corolla-crossclimate2',
+        name: 'Michelin CrossClimate 2',
+        brand: 'Michelin',
+        category: 'All-Weather 3PMSF',
+        oemSize: '205/55R16',
+        badge: 'Top Year-Round All-Weather',
+        loadIndex: '94',
+        speedRating: 'V',
+        oemFitment: 'Fits OEM 15" (195/65R15), 16" (205/55R16), & 18" (225/40R18)',
+        rating: 4.8,
+        bestFor:
+          'Certified 3PMSF severe snow legal four-season performance without seasonal tire swap hassle.',
+        pros: [
+          'Legally compliant with Quebec winter tire mandate and BC mountain pass regulations',
+          'V-Formation directional tread channels water, slush, and snow efficiently',
+          'Remarkable dry and wet braking performance rivaling dedicated summer tires',
+          'Long tread life backed by 100,000 km manufacturer warranty',
+        ],
+        cons: [
+          'Stiffer ride quality over rough frost heaves than soft Nordic winter tires',
+          'Directional pattern requires same-side rotation',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+CrossClimate+2+205+55R16&tag=toyotawaits-20',
+        searchQuery: 'Michelin CrossClimate 2 205/55R16',
+      },
+      {
+        id: 'corolla-michelin-defender2',
+        name: 'Michelin Defender 2',
+        brand: 'Michelin',
+        category: 'All-Season Highway',
+        oemSize: '195/65R15',
+        badge: '80,000-Mile Longevity',
+        loadIndex: '91',
+        speedRating: 'H',
+        oemFitment: 'Fits OEM 15" (195/65R15) & 16" (205/55R16)',
+        rating: 4.8,
+        bestFor:
+          'Maximum highway durability, plush road comfort, and whisper-quiet daily commuting.',
+        pros: [
+          'Locking 3D sipes provide outstanding wet braking and hydroplaning resistance',
+          'Extremely long tread life backed by 130,000 km warranty',
+          'Low rolling resistance optimizes highway fuel economy on Corolla Hybrid',
+        ],
+        cons: [
+          'Not 3PMSF certified; dedicated winter tires required for severe Canadian snow zones',
+          'Higher purchase price than budget all-season tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+Defender+2+195+65R15&tag=toyotawaits-20',
+        searchQuery: 'Michelin Defender 2 195/65R15',
+      },
+      {
+        id: 'corolla-continental-dws06',
+        name: 'Continental ExtremeContact DWS06 Plus',
+        brand: 'Continental',
+        category: 'All-Season Highway',
+        oemSize: '225/40R18',
+        badge: 'Ultra High Performance All-Season',
+        loadIndex: '92',
+        speedRating: 'Y',
+        oemFitment: 'Fits OEM 18" (225/40R18) & 18" (235/40R18)',
+        rating: 4.9,
+        bestFor:
+          'Aggressive cornering grip, sports sedan steering response, and wet weather confidence for Corolla SE, XSE, and GR Corolla.',
+        pros: [
+          'SportPlus Technology delivers razor-sharp turn-in and maximum dry lateral grip',
+          'Macro-blocks and high-angle sipes provide class-leading wet and slush braking',
+          'Tuned performance indicators (D-W-S) molded directly into tread indicate wear status',
+        ],
+        cons: [
+          'Slightly firmer road feel over coarse bumps due to low 40-series profile',
+          'Not intended for deep snow or glare ice conditions',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Continental+ExtremeContact+DWS06+Plus+225+40R18&tag=toyotawaits-20',
+        searchQuery: 'Continental ExtremeContact DWS06 Plus 225/40R18',
+      },
+    ],
+  },
+  'corolla-cross': {
+    modelId: 'corolla-cross',
+    modelName: 'Toyota Corolla Cross (FWD & AWD)',
+    label: 'Corolla Cross',
+    badge: 'Subcompact Crossover',
+    yearRange: '2022–2026',
+    boltPattern: '5x114.3',
+    centerBore: '60.1 mm',
+    recommendedLoadIndex: '99–102 (SL/XL)',
+    factorySizes: [
+      '215/65R17 (Cross L, LE FWD/AWD)',
+      '225/55R18 (Cross XLE, SE Hybrid, XSE Hybrid)',
+    ],
+    downsizingTip:
+      'Downsizing 18" factory wheels (225/55R18) on XLE and Hybrid SE/XSE to 17" rims (215/65R17) adds 12mm of protective sidewall cushion for rugged Canadian winter driving and saves ~$180–$250 per set of tires.',
+    tires: [
+      {
+        id: 'cross-crossclimate2-suv',
+        name: 'Michelin CrossClimate 2 SUV',
+        brand: 'Michelin',
+        category: 'All-Weather 3PMSF',
+        oemSize: '215/65R17',
+        badge: 'Top Year-Round Crossover',
+        loadIndex: '102',
+        speedRating: 'H',
+        oemFitment: 'Fits OEM 17" (215/65R17) & 18" (225/55R18)',
+        rating: 4.8,
+        bestFor:
+          'Severe snow certified (3PMSF) four-season crossover driving with zero seasonal tire swap hassle.',
+        pros: [
+          'Transport Canada 3PMSF certified severe snow rated for mountain highways and Quebec mandate',
+          'Rigid tread blocks resist uneven wear under Corolla Cross AWD torque distribution',
+          'Superb slush evacuation preventing dangerous highway hydroplaning',
+        ],
+        cons: [
+          'Directional V-grooves require same-side front-to-back rotation',
+          'Premium purchase cost compared to entry-level rubber',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+CrossClimate+2+SUV+215+65R17&tag=toyotawaits-20',
+        searchQuery: 'Michelin CrossClimate 2 SUV 215/65R17',
+      },
+      {
+        id: 'cross-blizzak-ws90',
+        name: 'Bridgestone Blizzak WS90',
+        brand: 'Bridgestone',
+        category: 'Dedicated Winter',
+        oemSize: '215/65R17',
+        badge: 'Deep Snow & Slush Traction',
+        loadIndex: '99',
+        speedRating: 'T',
+        oemFitment: 'Fits OEM 17" (215/65R17) & 18" (225/55R18)',
+        rating: 4.9,
+        bestFor:
+          'Heavy winter snowstorms, unplowed side streets, and sudden black ice stops across Canada.',
+        pros: [
+          'Multicell microscopic biting pores grip frozen surfaces like micro-suction cups',
+          '3D zig-zag siping creates massive mechanical traction when accelerating in deep snow',
+          'High lateral stiffness prevents crossover body float when driving through slush ridges',
+        ],
+        cons: [
+          'Rapid wear if left on in late spring above +7°C',
+          'Slightly higher rolling resistance than low-drag touring tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Bridgestone+Blizzak+WS90+215+65R17&tag=toyotawaits-20',
+        searchQuery: 'Bridgestone Blizzak WS90 215/65R17',
+      },
+      {
+        id: 'cross-nokian-hakka-r5-suv',
+        name: 'Nokian Hakkapeliitta R5 SUV',
+        brand: 'Nokian',
+        category: 'Dedicated Winter',
+        oemSize: '215/65R17',
+        badge: 'Nordic Arctic Grip',
+        loadIndex: '102',
+        speedRating: 'R',
+        oemFitment: 'Fits OEM 17" (215/65R17)',
+        rating: 4.9,
+        bestFor:
+          'Extreme Arctic conditions, mountain pass blizzards, and maximum hybrid AWD traction.',
+        pros: [
+          'Aramid Strong Sidewalls infused with Kevlar resist pothole pinch-flats and curb impacts',
+          'Arctic Grip Crystals microscopic particle compound for unmatched ice braking',
+          'Ultra-low rolling resistance preserves Corolla Cross Hybrid electric battery range',
+        ],
+        cons: [
+          'Higher price per corner than secondary tire brands',
+          'R-speed rating (170 km/h) requires adherence to winter speed limits',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Nokian+Hakkapeliitta+R5+SUV+215+65R17&tag=toyotawaits-20',
+        searchQuery: 'Nokian Hakkapeliitta R5 SUV 215/65R17',
+      },
+      {
+        id: 'cross-continental-viking7',
+        name: 'Continental VikingContact 7',
+        brand: 'Continental',
+        category: 'Dedicated Winter',
+        oemSize: '225/55R18',
+        badge: 'Whisper-Quiet Cold Compound',
+        loadIndex: '102',
+        speedRating: 'T',
+        oemFitment: 'Fits OEM 18" (225/55R18)',
+        rating: 4.8,
+        bestFor:
+          'Smooth and serene highway driving with exceptional wet slush evacuation and ice braking.',
+        pros: [
+          'Flexible active-grip silica matrix stays compliant in deep sub-zero temperatures',
+          'Exceptional steering feedback and lane-holding stability on frozen pavement',
+          'Very low road noise generation inside the Corolla Cross cabin',
+        ],
+        cons: [
+          'Directional tread limits rotation options',
+          'Slightly softer dry braking feel compared to all-season tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Continental+VikingContact+7+225+55R18&tag=toyotawaits-20',
+        searchQuery: 'Continental VikingContact 7 225/55R18',
+      },
+      {
+        id: 'cross-michelin-defender2',
+        name: 'Michelin Defender 2',
+        brand: 'Michelin',
+        category: 'All-Season Highway',
+        oemSize: '215/65R17',
+        badge: 'Quiet Highway Touring',
+        loadIndex: '99',
+        speedRating: 'H',
+        oemFitment: 'Fits OEM 17" (215/65R17) & 18" (225/55R18)',
+        rating: 4.8,
+        bestFor:
+          'Long-distance highway touring, minimal road noise, and ultra-durable tread life.',
+        pros: [
+          'EverTread compound engineered for heavy crossover loads and long highway life',
+          'Piano Acoustic Tuning tread pattern eliminates drone at high cruising speeds',
+          'Class-leading wet braking distance in heavy downpours',
+        ],
+        cons: [
+          'Not 3PMSF severe snow rated; dedicated winter tires required for Canadian winter laws',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+Defender+2+215+65R17&tag=toyotawaits-20',
+        searchQuery: 'Michelin Defender 2 215/65R17',
       },
     ],
   },

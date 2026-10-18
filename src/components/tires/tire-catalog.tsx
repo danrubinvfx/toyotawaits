@@ -48,6 +48,11 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
   const allWeatherCount = activeVehicle.tires.filter(
     (t) => t.category === 'All-Weather 3PMSF'
   ).length;
+  const allSeasonCount = activeVehicle.tires.filter(
+    (t) => t.category === 'All-Season Highway'
+  ).length;
+
+  const isCorollaFamily = selectedModel === 'corolla' || selectedModel === 'corolla-cross';
 
   return (
     <div className={cn('space-y-8 sm:space-y-10 pb-16', className)}>
@@ -116,7 +121,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
 
       {/* 2. Interactive Vehicle Selector (Horizontal Sticky Pills) */}
       <section className="sticky top-14 sm:top-16 z-30 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-y border-zinc-200 dark:border-zinc-800 py-3 shadow-xs">
-        <div className="container mx-auto max-w-5xl px-4 sm:px-6">
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6 space-y-2.5">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 shrink-0 text-xs font-bold text-zinc-500 uppercase tracking-wider hidden md:flex">
               <Car className="h-4 w-4 text-amber-500" />
@@ -130,7 +135,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
               className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 w-full md:w-auto"
             >
               {TIRE_VEHICLE_OPTIONS.map((option) => {
-                const isSelected = selectedModel === option.id;
+                const isSelected = selectedModel === option.id || (option.id === 'corolla' && isCorollaFamily);
                 return (
                   <button
                     key={option.id}
@@ -154,6 +159,56 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
               })}
             </div>
           </div>
+
+          {/* Secondary Sub-Selector for Corolla Variant */}
+          {isCorollaFamily && (
+            <div
+              role="tablist"
+              aria-label="Corolla tire variant selector"
+              data-testid="tire-corolla-subselector"
+              className="flex items-center gap-2 pt-2 border-t border-zinc-200 dark:border-zinc-800 w-full justify-center md:justify-start"
+            >
+              <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider hidden sm:inline">
+                Body Style:
+              </span>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={selectedModel === 'corolla'}
+                data-testid="tire-sub-corolla-sedan"
+                onClick={() => {
+                  setSelectedModel('corolla');
+                  setSelectedCategory('all');
+                }}
+                className={cn(
+                  'px-3 py-1 text-xs rounded-full transition-all cursor-pointer select-none font-bold',
+                  selectedModel === 'corolla'
+                    ? 'bg-amber-500 text-zinc-950 border border-amber-400 shadow-xs'
+                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-800'
+                )}
+              >
+                Corolla Sedan / Hatchback
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={selectedModel === 'corolla-cross'}
+                data-testid="tire-sub-corolla-cross"
+                onClick={() => {
+                  setSelectedModel('corolla-cross');
+                  setSelectedCategory('all');
+                }}
+                className={cn(
+                  'px-3 py-1 text-xs rounded-full transition-all cursor-pointer select-none font-bold',
+                  selectedModel === 'corolla-cross'
+                    ? 'bg-amber-500 text-zinc-950 border border-amber-400 shadow-xs'
+                    : 'bg-zinc-100 hover:bg-zinc-200 text-zinc-700 border-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-800'
+                )}
+              >
+                Corolla Cross
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -189,7 +244,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1.5 self-start sm:self-auto">
+            <div className="flex items-center gap-1.5 self-start sm:self-auto flex-wrap">
               <Button
                 size="sm"
                 variant={selectedCategory === 'all' ? 'default' : 'outline'}
@@ -231,6 +286,22 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
                 <Mountain className="h-3 w-3" />
                 All-Weather ({allWeatherCount})
               </Button>
+              {allSeasonCount > 0 && (
+                <Button
+                  size="sm"
+                  variant={selectedCategory === 'All-Season Highway' ? 'default' : 'outline'}
+                  onClick={() => setSelectedCategory('All-Season Highway')}
+                  className={cn(
+                    'h-7 text-xs px-2.5 rounded-lg cursor-pointer font-semibold gap-1',
+                    selectedCategory === 'All-Season Highway'
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-500'
+                      : 'text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                  )}
+                >
+                  <Sparkles className="h-3 w-3" />
+                  All-Season ({allSeasonCount})
+                </Button>
+              )}
             </div>
           </div>
 

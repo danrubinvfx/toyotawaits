@@ -25,6 +25,15 @@ export const VEHICLE_OPTIONS: VehicleOption[] = [
     powertrain: 'phev',
   },
   {
+    id: 'corolla',
+    label: 'Corolla',
+    name: 'Toyota Corolla',
+    subtitle: 'Sedan, Hatchback & Cross (HEV/Gas/GR)',
+    badge: 'Popular Family',
+    badgeColor: 'border-blue-500/30 text-blue-500 bg-blue-500/10',
+    powertrain: 'hev',
+  },
+  {
     id: 'grand-highlander',
     label: 'Grand Highlander',
     name: 'Toyota Grand Highlander',

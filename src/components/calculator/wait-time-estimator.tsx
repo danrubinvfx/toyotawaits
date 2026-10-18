@@ -43,8 +43,7 @@ export interface QuickSelectModelOption {
 
 export const QUICK_SELECT_MODELS: QuickSelectModelOption[] = [
   { label: 'RAV4', slug: 'rav4', matchSlugs: ['rav4'] },
-  { label: 'Corolla', slug: 'corolla', matchSlugs: ['corolla'] },
-  { label: 'Corolla Cross', slug: 'corolla-cross', matchSlugs: ['corolla-cross'] },
+  { label: 'Corolla', slug: 'corolla', matchSlugs: ['corolla', 'corolla-cross'] },
   { label: 'Sienna', slug: 'sienna', matchSlugs: ['sienna'] },
   { label: 'Grand Highlander', slug: 'grand-highlander', matchSlugs: ['grand-highlander'] },
   { label: 'Prius / Prime', slug: 'prius', matchSlugs: ['prius', 'prius-prime'] },
@@ -71,10 +70,22 @@ export function WaitTimeEstimator({
   const searchParams = useSearchParams();
   const isSubmittedParam = searchParams ? searchParams.get('submitted') === 'true' : false;
   const paramModel = searchParams ? searchParams.get('model') : null;
+  const paramVariant = searchParams ? searchParams.get('variant') : null;
   const paramProvince = searchParams ? searchParams.get('province') : null;
 
+  // Resolve initial model accounting for variant query param (e.g. ?model=corolla&variant=cross)
+  const resolvedInitialModel = useMemo(() => {
+    if (paramModel === 'corolla' && (paramVariant === 'cross' || paramVariant === 'corolla-cross')) {
+      return 'corolla-cross';
+    }
+    if (paramModel && CANADIAN_VEHICLE_CATALOG.some((m) => m.slug === paramModel)) {
+      return paramModel;
+    }
+    return initialModel;
+  }, [paramModel, paramVariant, initialModel]);
+
   // Inputs
-  const [modelSlug, setModelSlug] = useState<string>(initialModel);
+  const [modelSlug, setModelSlug] = useState<string>(resolvedInitialModel);
   const [powertrainSlug, setPowertrainSlug] = useState<string>(() => {
     const m = CANADIAN_VEHICLE_CATALOG.find((x) => x.slug === initialModel);
     if (m && m.powertrains.length > 0 && !m.powertrains.some((p) => p.slug === initialPowertrain)) {
@@ -589,6 +600,68 @@ export function WaitTimeEstimator({
             ))}
           </Select>
         </div>
+
+        {/* Corolla Family Variant Sub-Selector */}
+        {(modelSlug === 'corolla' || modelSlug === 'corolla-cross') && (
+          <div className="mb-3">
+            <div className="text-xs font-semibold text-neutral-300 mb-1.5 flex items-center gap-1.5">
+              <span>Corolla Body Style / Variant:</span>
+            </div>
+            <div
+              role="tablist"
+              aria-label="Corolla variant sub-selector"
+              data-testid="estimator-corolla-toggle"
+              className="inline-flex items-center rounded-lg bg-neutral-900/90 p-1 border border-neutral-800 text-xs gap-1"
+            >
+              <button
+                type="button"
+                role="tab"
+                aria-selected={modelSlug === 'corolla'}
+                data-testid="estimator-corolla-sedan-tab"
+                onClick={() => {
+                  handleModelChange('corolla');
+                  if (typeof window !== 'undefined') {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('model', 'corolla');
+                    url.searchParams.set('variant', 'sedan');
+                    window.history.replaceState({}, '', url.toString());
+                  }
+                }}
+                className={cn(
+                  'px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer',
+                  modelSlug === 'corolla'
+                    ? 'bg-amber-500 text-black font-semibold shadow-xs'
+                    : 'text-neutral-400 hover:text-white'
+                )}
+              >
+                Corolla Sedan / Hatchback
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={modelSlug === 'corolla-cross'}
+                data-testid="estimator-corolla-cross-tab"
+                onClick={() => {
+                  handleModelChange('corolla-cross');
+                  if (typeof window !== 'undefined') {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('model', 'corolla-cross');
+                    url.searchParams.delete('variant');
+                    window.history.replaceState({}, '', url.toString());
+                  }
+                }}
+                className={cn(
+                  'px-3 py-1.5 rounded-md font-medium transition-all cursor-pointer',
+                  modelSlug === 'corolla-cross'
+                    ? 'bg-amber-500 text-black font-semibold shadow-xs'
+                    : 'text-neutral-400 hover:text-white'
+                )}
+              >
+                Corolla Cross
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* 2-Column Responsive Grid Layout for Estimator Controls */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

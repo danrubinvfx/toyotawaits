@@ -31,6 +31,7 @@ describe('StickyVehiclePills Component', () => {
     render(<StickyVehiclePills initialModel="rav4" />);
 
     const rav4 = screen.getByTestId('quick-model-rav4');
+    const corolla = screen.getByTestId('quick-model-corolla');
     const sienna = screen.getByTestId('quick-model-sienna');
     const gh = screen.getByTestId('quick-model-grand-highlander');
     const prius = screen.getByTestId('quick-model-prius');
@@ -38,6 +39,7 @@ describe('StickyVehiclePills Component', () => {
     const tacoma = screen.getByTestId('quick-model-tacoma');
 
     expect(rav4).toBeInTheDocument();
+    expect(corolla).toBeInTheDocument();
     expect(sienna).toBeInTheDocument();
     expect(gh).toBeInTheDocument();
     expect(prius).toBeInTheDocument();
@@ -46,8 +48,34 @@ describe('StickyVehiclePills Component', () => {
 
     expect(rav4).toHaveAttribute('aria-selected', 'true');
     expect(rav4.className).toContain('bg-amber-500');
+    expect(corolla).toHaveAttribute('aria-selected', 'false');
     expect(sienna).toHaveAttribute('aria-selected', 'false');
     expect(sienna.className).toContain('bg-neutral-900');
+  });
+
+  it('renders Corolla subselector when Corolla is active and toggles variants', () => {
+    const onSelectModel = vi.fn();
+    render(<StickyVehiclePills initialModel="corolla" onSelectModel={onSelectModel} />);
+
+    // Subselector must be rendered
+    const subselector = screen.getByTestId('corolla-subselector');
+    expect(subselector).toBeInTheDocument();
+
+    const sedanBtn = screen.getByTestId('sub-corolla-sedan');
+    const crossBtn = screen.getByTestId('sub-corolla-cross');
+    expect(sedanBtn).toHaveAttribute('aria-selected', 'true');
+    expect(crossBtn).toHaveAttribute('aria-selected', 'false');
+
+    // Click Corolla Cross
+    fireEvent.click(crossBtn);
+    expect(onSelectModel).toHaveBeenCalledWith('corolla-cross');
+    expect(crossBtn).toHaveAttribute('aria-selected', 'true');
+    expect(sedanBtn).toHaveAttribute('aria-selected', 'false');
+
+    // Click Corolla Sedan back
+    fireEvent.click(sedanBtn);
+    expect(onSelectModel).toHaveBeenCalledWith('corolla');
+    expect(sedanBtn).toHaveAttribute('aria-selected', 'true');
   });
 
   it('dispatches toyotawait:model-change and calls onSelectModel when a pill is clicked', () => {

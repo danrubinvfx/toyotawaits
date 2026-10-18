@@ -24,6 +24,9 @@ export default async function ModelModsRedirectPage({
     case 'prius':
     case 'prius-prime':
       redirect('/guides/prius-mods');
+    case 'corolla':
+    case 'corolla-cross':
+      redirect('/guides/corolla-mods');
     default:
       redirect('/guides');
   }

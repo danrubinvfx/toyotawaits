@@ -165,7 +165,8 @@ export function DeliveryPrepChecklist({
     if (m.includes('sienna')) return 'sienna';
     if (m.includes('grand') || m.includes('highlander')) return 'grand-highlander';
     if (m.includes('land') || m.includes('cruiser') || m.includes('lc250') || m.includes('1958')) return 'land-cruiser';
-    if (m.includes('corolla') || m.includes('cross')) return 'corolla-cross';
+    if (m.includes('cross')) return 'corolla-cross';
+    if (m.includes('corolla')) return 'corolla';
     if (m.includes('prius')) return m.includes('prime') ? 'prius-prime' : 'prius';
     if (m.includes('tacoma')) return 'tacoma';
     if (m.includes('rav4') || m.includes('prime')) return 'rav4';
@@ -393,6 +394,8 @@ export function DeliveryPrepChecklist({
         return 'Land Cruiser 250';
       case 'corolla-cross':
         return 'Corolla Cross';
+      case 'corolla':
+        return 'Corolla';
       case 'prius-prime':
         return 'Prius Prime (PHEV)';
       case 'prius':
