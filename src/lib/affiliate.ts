@@ -56,3 +56,34 @@ export function buildAmazonAffiliateUrl(
   }
   return getAmazonAffiliateUrl(paramsOrQuery);
 }
+
+/**
+ * Shared affiliate link constants for accessories and guides.
+ * Centralized for easy updates and environment variable overrides.
+ */
+export const AFFILIATE_LINKS = {
+  TORKLIFT:
+    process.env.NEXT_PUBLIC_AFFILIATE_TORKLIFT ||
+    'https://torkliftcentral.com/x7422s-toyota-sienna-ecohitch?aff=toyotawaits',
+  AMAZON_CURT_HITCH:
+    process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_CURT_HITCH ||
+    getAmazonAffiliateUrl({ query: 'Curt 13470 Class 3 Trailer Hitch Toyota Sienna', market: 'CA' }),
+  AMAZON_WIRING:
+    process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_WIRING ||
+    getAmazonAffiliateUrl({ query: 'Curt 56456 Custom 4-Pin Trailer Wiring Harness Toyota Sienna', market: 'CA' }),
+  TEKONSHA_WIRING:
+    process.env.NEXT_PUBLIC_AFFILIATE_TEKONSHA_WIRING ||
+    getAmazonAffiliateUrl({ query: 'Tekonsha 118844 T-One Connector Toyota Sienna', market: 'CA' }),
+  BALL_MOUNT:
+    process.env.NEXT_PUBLIC_AFFILIATE_BALL_MOUNT ||
+    getAmazonAffiliateUrl({ query: 'Curt 45036 Class 3 Ball Mount 2-Inch Rise', market: 'CA' }),
+  ANTI_RATTLE_CLAMP:
+    process.env.NEXT_PUBLIC_AFFILIATE_ANTI_RATTLE ||
+    getAmazonAffiliateUrl({ query: 'MaxxHaul 50027 Heavy Duty Anti-Rattle Hitch Tightener', market: 'CA' }),
+  AIR_LIFT_1000:
+    process.env.NEXT_PUBLIC_AFFILIATE_AIR_LIFT ||
+    getAmazonAffiliateUrl({ query: 'Air Lift 1000 60860 Toyota Sienna', market: 'CA' }),
+  BRAKE_CONTROLLER:
+    process.env.NEXT_PUBLIC_AFFILIATE_BRAKE_CONTROLLER ||
+    getAmazonAffiliateUrl({ query: 'CURT 51180 Echo Mobile Electric Trailer Brake Controller', market: 'CA' }),
+} as const;

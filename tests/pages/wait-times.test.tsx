@@ -85,5 +85,15 @@ describe('Dedicated SEO Route: /wait-times/[slug]', () => {
     expect(faqPage.mainEntity.length).toBe(2);
     expect(faqPage.mainEntity[0].name).toContain('What is the average wait time for a Toyota Sienna in Canada?');
     expect(faqPage.mainEntity[1].name).toContain('Which Canadian province has the shortest wait time for the Sienna?');
+
+    // Verify Sienna Hitch Guide Banner
+    expect(screen.getByText('Planning Bike Racks or Towing?')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Waiting on your delivery\? Read our 2021\+ Toyota Sienna Trailer Hitch & Kick-Sensor Guide/i
+      )
+    ).toBeInTheDocument();
+    const hitchLink = screen.getByRole('link', { name: /View Sienna Hitch Guide ->/i });
+    expect(hitchLink).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
   });
 });

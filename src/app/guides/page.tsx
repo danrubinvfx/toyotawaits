@@ -65,6 +65,19 @@ const MOD_GUIDES = [
     href: '/guides/sienna-mods',
   },
   {
+    slug: 'toyota-sienna-trailer-hitch-guide',
+    title: '2021–2026 Toyota Sienna Trailer Hitch & Kick-Sensor Guide',
+    tagline: 'Torklift EcoHitch vs. Curt 13470: Ground clearance, kick-sensor relocation, and trailer wiring.',
+    badge: 'Hitch & Towing',
+    model: 'Toyota Sienna Hybrid',
+    highlights: [
+      'Torklift EcoHitch vs Curt 13470 comparison',
+      'Kick-sensor relocation & disable instructions',
+      'Plug-and-play 4-flat wiring harnesses',
+    ],
+    href: '/guides/toyota-sienna-trailer-hitch-guide',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',

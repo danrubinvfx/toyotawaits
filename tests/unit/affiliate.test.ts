@@ -3,6 +3,7 @@ import {
   getAmazonAffiliateUrl,
   buildAmazonAffiliateUrl,
   DEFAULT_AMAZON_AFFILIATE_TAG,
+  AFFILIATE_LINKS,
 } from '@/lib/affiliate';
 
 describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
@@ -92,6 +93,18 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
   describe('DEFAULT_AMAZON_AFFILIATE_TAG', () => {
     it('exports default associate tag', () => {
       expect(DEFAULT_AMAZON_AFFILIATE_TAG).toBe('toyotawaits-20');
+    });
+  });
+
+  describe('AFFILIATE_LINKS', () => {
+    it('exports centralized affiliate URL constants with default values', () => {
+      expect(AFFILIATE_LINKS.TORKLIFT).toContain('torkliftcentral.com');
+      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toContain('amazon.ca');
+      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toContain('13470');
+      expect(AFFILIATE_LINKS.AMAZON_WIRING).toContain('amazon.ca');
+      expect(AFFILIATE_LINKS.AMAZON_WIRING).toContain('56456');
+      expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toContain('amazon.ca');
+      expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toContain('118844');
     });
   });
 });

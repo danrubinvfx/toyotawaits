@@ -368,6 +368,32 @@ export default async function WaitTimesModelPage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* Sienna Trailer Hitch Guide Callout Banner */}
+      {slug === 'sienna' && (
+        <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-zinc-50 dark:from-amber-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 sm:p-8 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
+                  Sienna Accessory Guide
+                </Badge>
+                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Planning Bike Racks or Towing?
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Waiting on your delivery? Read our 2021+ Toyota Sienna Trailer Hitch &amp; Kick-Sensor Guide to pick the right receiver and wiring before taking delivery.
+                </p>
+              </div>
+              <Button asChild className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold shrink-0 shadow-sm">
+                <Link href="/guides/toyota-sienna-trailer-hitch-guide" className="gap-2">
+                  View Sienna Hitch Guide -&gt;
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Summary KPI Stats Card */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
