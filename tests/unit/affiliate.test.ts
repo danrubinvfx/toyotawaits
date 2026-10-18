@@ -98,13 +98,14 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
 
   describe('AFFILIATE_LINKS', () => {
     it('exports centralized affiliate URL constants with default values', () => {
-      expect(AFFILIATE_LINKS.TORKLIFT).toContain('torkliftcentral.com');
+      expect(AFFILIATE_LINKS.TORKLIFT).toBe('https://torkliftcentral.com/x7422');
       expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toContain('amazon.ca');
-      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toContain('13470');
+      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toContain('B08Y5DCB2T');
       expect(AFFILIATE_LINKS.AMAZON_WIRING).toContain('amazon.ca');
       expect(AFFILIATE_LINKS.AMAZON_WIRING).toContain('56456');
       expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toContain('amazon.ca');
       expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toContain('118844');
+      expect(AFFILIATE_LINKS.AIR_LIFT_1000).toContain('60858');
     });
   });
 });

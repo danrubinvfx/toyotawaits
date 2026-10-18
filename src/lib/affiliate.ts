@@ -64,25 +64,29 @@ export function buildAmazonAffiliateUrl(
 export const AFFILIATE_LINKS = {
   TORKLIFT:
     process.env.NEXT_PUBLIC_AFFILIATE_TORKLIFT ||
-    'https://torkliftcentral.com/x7422s-toyota-sienna-ecohitch?aff=toyotawaits',
+    'https://torkliftcentral.com/x7422',
+  TORKLIFT_SEARCH:
+    'https://torkliftcentral.com/catalogsearch/result/?q=sienna',
   AMAZON_CURT_HITCH:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_CURT_HITCH ||
-    getAmazonAffiliateUrl({ query: 'Curt 13470 Class 3 Trailer Hitch Toyota Sienna', market: 'CA' }),
+    getAmazonAffiliateUrl({ asin: 'B08Y5DCB2T', market: 'CA' }),
+  AMAZON_CURT_HITCH_SEARCH:
+    getAmazonAffiliateUrl({ query: 'Curt 13470 Sienna', market: 'CA' }),
   AMAZON_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_WIRING ||
-    getAmazonAffiliateUrl({ query: 'Curt 56456 Custom 4-Pin Trailer Wiring Harness Toyota Sienna', market: 'CA' }),
+    getAmazonAffiliateUrl({ query: 'Curt 56456 Sienna', market: 'CA' }),
   TEKONSHA_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_TEKONSHA_WIRING ||
-    getAmazonAffiliateUrl({ query: 'Tekonsha 118844 T-One Connector Toyota Sienna', market: 'CA' }),
+    getAmazonAffiliateUrl({ query: 'Tekonsha 118844', market: 'CA' }),
   BALL_MOUNT:
     process.env.NEXT_PUBLIC_AFFILIATE_BALL_MOUNT ||
     getAmazonAffiliateUrl({ query: 'Curt 45036 Class 3 Ball Mount 2-Inch Rise', market: 'CA' }),
   ANTI_RATTLE_CLAMP:
     process.env.NEXT_PUBLIC_AFFILIATE_ANTI_RATTLE ||
-    getAmazonAffiliateUrl({ query: 'MaxxHaul 50027 Heavy Duty Anti-Rattle Hitch Tightener', market: 'CA' }),
+    getAmazonAffiliateUrl({ query: '2 inch anti rattle hitch clamp', market: 'CA' }),
   AIR_LIFT_1000:
     process.env.NEXT_PUBLIC_AFFILIATE_AIR_LIFT ||
-    getAmazonAffiliateUrl({ query: 'Air Lift 1000 60860 Toyota Sienna', market: 'CA' }),
+    getAmazonAffiliateUrl({ query: 'Air Lift 60858', market: 'CA' }),
   BRAKE_CONTROLLER:
     process.env.NEXT_PUBLIC_AFFILIATE_BRAKE_CONTROLLER ||
     getAmazonAffiliateUrl({ query: 'CURT 51180 Echo Mobile Electric Trailer Brake Controller', market: 'CA' }),

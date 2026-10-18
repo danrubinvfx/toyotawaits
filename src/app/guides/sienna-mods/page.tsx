@@ -64,21 +64,6 @@ export default function SiennaModsGuidePage() {
         </span>
       </div>
 
-      {/* Pre-Flight Checklist */}
-      <ToolChecklist
-        timeEst="1.5 Hours Total"
-        difficulty="Moderate (Hand Tools)"
-        warrantyFriendly={true}
-        tools={[
-          'Nylon interior trim removal pry tool',
-          'T20 Torx driver (for mirror shroud)',
-          'Floor jack & jack stands (for rear air springs)',
-          'Flathead screwdriver or panel clip remover',
-          'Bicycle tire pump or 12V portable tire inflator',
-          'Zip ties & silicone spray lubricant',
-        ]}
-      />
-
       {/* Featured Hitch Guide Callout Banner */}
       <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-zinc-50 dark:from-amber-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 sm:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -100,6 +85,21 @@ export default function SiennaModsGuidePage() {
           </Button>
         </div>
       </div>
+
+      {/* Pre-Flight Checklist */}
+      <ToolChecklist
+        timeEst="1.5 Hours Total"
+        difficulty="Moderate (Hand Tools)"
+        warrantyFriendly={true}
+        tools={[
+          'Nylon interior trim removal pry tool',
+          'T20 Torx driver (for mirror shroud)',
+          'Floor jack & jack stands (for rear air springs)',
+          'Flathead screwdriver or panel clip remover',
+          'Bicycle tire pump or 12V portable tire inflator',
+          'Zip ties & silicone spray lubricant',
+        ]}
+      />
 
       {/* Upgrades Section */}
       <section className="space-y-6">
