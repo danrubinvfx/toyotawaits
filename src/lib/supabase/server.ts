@@ -42,6 +42,7 @@ export function createServerClient() {
       'mock-key';
     return createClient(testUrl, testKey, {
       auth: { persistSession: false, autoRefreshToken: false },
+      realtime: { autoRefreshToken: false },
       global: { fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }) },
     });
   }
@@ -68,6 +69,9 @@ export function createServerClient() {
   return createClient(supabaseUrl, key, {
     auth: {
       persistSession: false,
+      autoRefreshToken: false,
+    },
+    realtime: {
       autoRefreshToken: false,
     },
     global: {
