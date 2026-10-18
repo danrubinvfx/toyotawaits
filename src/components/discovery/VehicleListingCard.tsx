@@ -27,6 +27,71 @@ export interface VehicleListingCardProps {
   stockNumber?: string | null;
 }
 
+export function resolveVehicleListingUrl(props: {
+  vdpUrl?: string | null;
+  dealerName?: string;
+  dealerCity?: string | null;
+  dealerProvince?: string | null;
+  make?: string;
+  model?: string;
+  modelYear?: number;
+  vin?: string | null;
+  stockNumber?: string | null;
+}): string | null {
+  const { vdpUrl, vin, stockNumber } = props;
+
+  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown for pilot listings)
+  let baseDomain = 'https://www.jptoyota-downtown.com';
+  if (vdpUrl && (vdpUrl.startsWith('http://') || vdpUrl.startsWith('https://'))) {
+    try {
+      const parsed = new URL(vdpUrl);
+      baseDomain = parsed.origin;
+    } catch {
+      // retain fallback baseDomain
+    }
+  }
+
+  // Normalize common missing-hyphen domain typo
+  if (baseDomain.includes('jptoyotadowntown.com')) {
+    baseDomain = baseDomain.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+  }
+
+  if (vdpUrl && typeof vdpUrl === 'string') {
+    let clean = vdpUrl.trim();
+    if (clean.includes('jptoyotadowntown.com')) {
+      clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+    }
+
+    // Relative path: prepend dealer base domain
+    if (clean.startsWith('/')) {
+      return `${baseDomain}${clean}`;
+    }
+
+    // Intercept dead placeholder /new-vehicles/ URL that 404s
+    if (
+      clean.endsWith('/new-vehicles/') ||
+      clean.endsWith('/new-vehicles') ||
+      clean === baseDomain ||
+      clean === `${baseDomain}/`
+    ) {
+      const keyword = vin || stockNumber;
+      return keyword
+        ? `${baseDomain}/vehicles/new/?keyword=${encodeURIComponent(keyword.trim())}`
+        : `${baseDomain}/vehicles/new/`;
+    }
+
+    return clean;
+  }
+
+  // Fallback to public new inventory search page if direct VDP link is absent
+  const keyword = vin || stockNumber;
+  if (keyword) {
+    return `${baseDomain}/vehicles/new/?keyword=${encodeURIComponent(keyword.trim())}`;
+  }
+
+  return `${baseDomain}/vehicles/new/`;
+}
+
 export function VehicleListingCard({
   id,
   make,
@@ -58,6 +123,18 @@ export function VehicleListingCard({
   const formattedMsrp = msrp != null ? `$${msrp.toLocaleString('en-CA')}` : null;
   const formattedSellingPrice = sellingPrice != null ? `$${sellingPrice.toLocaleString('en-CA')}` : formattedMsrp;
   
+  const resolvedVdpUrl = resolveVehicleListingUrl({
+    vdpUrl,
+    dealerName,
+    dealerCity,
+    dealerProvince,
+    make,
+    model,
+    modelYear,
+    vin,
+    stockNumber,
+  });
+
   // Format check date if valid ISO
   let formattedCheckTime = lastChecked;
   try {
@@ -211,9 +288,9 @@ export function VehicleListingCard({
       </CardContent>
 
       <CardFooter className="p-4 pt-0">
-        {vdpUrl ? (
+        {resolvedVdpUrl ? (
           <a
-            href={vdpUrl}
+            href={resolvedVdpUrl}
             target="_blank"
             rel="noopener noreferrer"
             data-testid="dealer-vdp-link"

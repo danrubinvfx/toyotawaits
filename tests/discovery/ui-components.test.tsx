@@ -34,7 +34,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: '2026-10-17T11:00:00Z',
-    vdpUrl: 'https://www.jptoyotadowntown.com/inventory/new-rav4',
+    vdpUrl: 'https://www.jptoyota-downtown.com/inventory/new-rav4',
     msrp: 47550,
     sellingPrice: 48995,
     mandatoryFees: 895,
@@ -126,12 +126,42 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
     it('provides accessible canonical dealer VDP link opening in new tab', () => {
       render(<VehicleListingCard {...sampleCardProps} />);
       const link = screen.getByTestId('dealer-vdp-link');
-      expect(link).toHaveAttribute('href', 'https://www.jptoyotadowntown.com/inventory/new-rav4');
+      expect(link).toHaveAttribute('href', 'https://www.jptoyota-downtown.com/inventory/new-rav4');
       expect(link).toHaveAttribute('target', '_blank');
       expect(link).toHaveAttribute('rel', 'noopener noreferrer');
       expect(link).toHaveAttribute(
         'aria-label',
         'View public dealer listing for 2026 Toyota RAV4 Hybrid at Jim Pattison Toyota Downtown (opens in new tab)'
+      );
+    });
+
+    it('falls back to dealer inventory search URL when vdpUrl is dead /new-vehicles/ placeholder', () => {
+      render(
+        <VehicleListingCard
+          {...sampleCardProps}
+          vdpUrl="https://www.jptoyotadowntown.com/new-vehicles/"
+          vin="JTDACAAJ0T3038212"
+        />
+      );
+      const link = screen.getByTestId('dealer-vdp-link');
+      expect(link).toHaveAttribute(
+        'href',
+        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=JTDACAAJ0T3038212'
+      );
+    });
+
+    it('falls back to dealer inventory search URL when vdpUrl is omitted', () => {
+      render(
+        <VehicleListingCard
+          {...sampleCardProps}
+          vdpUrl={null}
+          stockNumber="T26-1044"
+        />
+      );
+      const link = screen.getByTestId('dealer-vdp-link');
+      expect(link).toHaveAttribute(
+        'href',
+        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=2T3P1RFV5TC123456'
       );
     });
   });
