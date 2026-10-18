@@ -129,13 +129,130 @@ export function normalizeConvertusStatus(raw: ConvertusRawVehicle): {
   return { normalized, rawStatusDescription };
 }
 
+export interface ConvertusAdapterOptions {
+  dealerBaseUrl?: string;
+  dealerCity?: string;
+  dealerProvince?: string;
+  searchPath?: string;
+}
+
+/**
+ * Normalizes dealer base URL by ensuring https protocol, trimming trailing slashes,
+ * and correcting known domain typos (e.g. missing hyphen on jptoyota-downtown).
+ */
+export function normalizeDealerBaseUrl(rawUrl?: string | null): string {
+  let url = String(rawUrl || 'https://www.jptoyota-downtown.com').trim();
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    url = `https://${url}`;
+  }
+  url = url.replace(/^http:\/\//i, 'https://');
+  url = url.replace(/\/+$/, '');
+  if (url.includes('jptoyotadowntown.com')) {
+    url = url.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+  }
+  return url;
+}
+
+/**
+ * Resolves or constructs the canonical VDP (or verified inventory search fallback) URL
+ * from a Convertus vehicle item.
+ *
+ * 1. Checks raw link fields (vdp_url, canonical_url, dealer_url, url, link).
+ * 2. If relative path (e.g. /vehicles/2026/toyota/...), prepends dealer base domain.
+ * 3. If payload lacks a direct VDP link, constructs canonical URL via Convertus standard VDP routing:
+ *    ${dealerBaseUrl}/vehicles/${year}/${make}/${model}/${city}/${province}/${vmsId}/?sale_class=${saleClass}
+ * 4. Fallback Handling: If direct VDP cannot be verified or lacks internal VMS ID,
+ *    falls back cleanly to dealer's public new inventory search page:
+ *    ${dealerBaseUrl}/vehicles/new/?keyword=${vin || stockNumber}
+ */
+export function constructConvertusVdpUrl(
+  raw: ConvertusRawVehicle,
+  options?: ConvertusAdapterOptions
+): string {
+  const dealerBaseUrl = normalizeDealerBaseUrl(
+    options?.dealerBaseUrl ||
+    raw.company_data?.company_web_address ||
+    raw.dealer_base_url ||
+    raw.company_web_address
+  );
+
+  // 1. Check raw link fields
+  const candidateLink =
+    raw.vdp_url ||
+    raw.canonical_url ||
+    raw.dealer_url ||
+    raw.url ||
+    raw.link;
+
+  if (candidateLink && typeof candidateLink === 'string') {
+    let link = candidateLink.trim();
+    if (link) {
+      if (link.includes('jptoyotadowntown.com')) {
+        link = link.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+      }
+
+      // If relative path (e.g. /vehicles/2026/toyota/...), prepend dealer base domain
+      if (link.startsWith('/')) {
+        return `${dealerBaseUrl}${link}`;
+      }
+
+      // If already absolute URL
+      if (link.startsWith('http://') || link.startsWith('https://')) {
+        // If it was pointed to dead /new-vehicles/ path without keyword, redirect to search fallback
+        if (link.endsWith('/new-vehicles/') || link.endsWith('/new-vehicles')) {
+          const kw = raw.vin || raw.stock_number;
+          return kw
+            ? `${dealerBaseUrl}/vehicles/new/?keyword=${encodeURIComponent(String(kw).trim())}`
+            : `${dealerBaseUrl}/vehicles/new/`;
+        }
+        return link;
+      }
+
+      return `${dealerBaseUrl}/${link.replace(/^\/+/, '')}`;
+    }
+  }
+
+  // 2. Construct canonical URL using Convertus standard VDP routing if VMS ID exists
+  const year = raw.year || new Date().getFullYear();
+  const make = raw.make || 'Toyota';
+  const model = raw.model;
+  const city = raw.company_data?.company_city || options?.dealerCity || 'Vancouver';
+  const province = raw.company_data?.company_province || options?.dealerProvince || 'BC';
+  const vmsId = raw.ad_id || raw.vehicle_id || raw.vms_id || raw.as24_vehicle_id;
+  const saleClass = raw.sale_class || 'New';
+
+  if (vmsId && model) {
+    const encYear = encodeURIComponent(String(year).trim());
+    const encMake = encodeURIComponent(String(make).trim());
+    const encModel = encodeURIComponent(String(model).trim());
+    const encCity = encodeURIComponent(String(city).trim());
+    const encProvince = encodeURIComponent(String(province).trim());
+    const encVmsId = encodeURIComponent(String(vmsId).trim());
+    const encSaleClass = encodeURIComponent(String(saleClass).trim());
+
+    return `${dealerBaseUrl}/vehicles/${encYear}/${encMake}/${encModel}/${encCity}/${encProvince}/${encVmsId}/?sale_class=${encSaleClass}`;
+  }
+
+  // 3. Fallback Handling:
+  // If direct vehicle detail page cannot be verified or is missing internal VMS ID,
+  // fall back cleanly to dealer's public new inventory search page
+  const keyword = raw.vin || raw.stock_number;
+  if (keyword) {
+    const encKw = encodeURIComponent(String(keyword).trim());
+    return `${dealerBaseUrl}/vehicles/new/?keyword=${encKw}`;
+  }
+
+  return `${dealerBaseUrl}/vehicles/new/`;
+}
+
 /**
  * Parses and validates a single Convertus raw vehicle record.
  * Quarantines if missing mandatory structural attributes (make or model).
  */
 export function parseConvertusRecord(
   raw: any,
-  index: number
+  index: number,
+  options?: ConvertusAdapterOptions
 ): { record?: ParsedVehicleListing; quarantine?: QuarantinedRecord } {
   const timestamp = new Date().toISOString();
 
@@ -232,7 +349,7 @@ export function parseConvertusRecord(
   ).trim();
 
   const stockNumber = raw.stock_number ? String(raw.stock_number).trim() : null;
-  const vdpUrl = raw.vdp_url ? String(raw.vdp_url).trim() : null;
+  const vdpUrl = constructConvertusVdpUrl(raw, options);
   const daysOnLot =
     raw.days_on_lot !== undefined && raw.days_on_lot !== null
       ? parseInt(String(raw.days_on_lot), 10)
@@ -287,7 +404,10 @@ export function parseConvertusRecord(
  * Accepts raw JSON string or parsed object from Convertus VMS endpoint.
  * Returns an AdapterParseResult with normalized records and quarantined items.
  */
-export function parseConvertusPayload(input: any): AdapterParseResult {
+export function parseConvertusPayload(
+  input: any,
+  options?: ConvertusAdapterOptions
+): AdapterParseResult {
   let data: any = input;
 
   if (typeof input === 'string') {
@@ -342,7 +462,7 @@ export function parseConvertusPayload(input: any): AdapterParseResult {
 
   for (let i = 0; i < rawItems.length; i++) {
     const item = rawItems[i];
-    const { record, quarantine } = parseConvertusRecord(item, i);
+    const { record, quarantine } = parseConvertusRecord(item, i, options);
     if (record) {
       records.push(record);
     }

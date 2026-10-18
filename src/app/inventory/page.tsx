@@ -16,11 +16,47 @@ export const metadata: Metadata = {
   },
 };
 
-export default function InventoryPage() {
+export interface InventoryPageProps {
+  searchParams?:
+    | Promise<{ [key: string]: string | string[] | undefined }>
+    | { [key: string]: string | string[] | undefined };
+}
+
+function parsePreviewParam(
+  searchParams?:
+    | Promise<{ [key: string]: string | string[] | undefined }>
+    | { [key: string]: string | string[] | undefined }
+): boolean {
+  if (!searchParams) return false;
+  if (typeof (searchParams as any).then !== 'function') {
+    const sp = searchParams as { [key: string]: string | string[] | undefined };
+    return (
+      sp?.preview === 'true' ||
+      (Array.isArray(sp?.preview) && sp.preview.includes('true'))
+    );
+  }
+  const maybeObj = (searchParams as any).value ?? (searchParams as any)._value;
+  if (maybeObj) {
+    return (
+      maybeObj.preview === 'true' ||
+      (Array.isArray(maybeObj.preview) && maybeObj.preview.includes('true'))
+    );
+  }
+  return false;
+}
+
+export default function InventoryPage({ searchParams }: InventoryPageProps = {}) {
+  // Extract preview query parameter from searchParams
+  const isPreviewParam = parsePreviewParam(searchParams);
+
+
+  // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
   const isFeatureEnabled =
     process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY === 'true' ||
     process.env.ENABLE_INVENTORY_DISCOVERY === 'true' ||
-    process.env.NODE_ENV === 'test';
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ||
+    isPreviewParam;
 
   if (!isFeatureEnabled) {
     return (
@@ -55,9 +91,9 @@ export default function InventoryPage() {
   return (
     <main
       data-testid="inventory-page-main"
-      className="min-h-screen bg-zinc-950 text-zinc-100 py-8 px-4 sm:px-6 lg:px-8 selection:bg-red-500 selection:text-white"
+      className="min-h-screen bg-zinc-950 text-zinc-100 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-12 selection:bg-red-500 selection:text-white"
     >
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Navigation & Back Link */}
         <div className="flex items-center justify-between">
           <Link
@@ -76,7 +112,7 @@ export default function InventoryPage() {
         </div>
 
         {/* Page Hero */}
-        <header className="space-y-3">
+        <header className="space-y-2 sm:space-y-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/80 bg-amber-950/40 px-3 py-1 text-xs text-amber-300">
             <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="font-semibold">
@@ -84,11 +120,16 @@ export default function InventoryPage() {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-tight">
             Toyota Public Inventory Explorer
           </h1>
-          <p className="text-sm text-zinc-400 max-w-3xl leading-relaxed">
-            Real-time public dealer inventory observed across validated dealer feeds. We enforce epistemic honesty: all listings reflect public website declarations. Availability and mandatory dealer fees must be verified directly with dealer staff.
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl leading-relaxed">
+            <span className="hidden sm:inline">
+              Real-time public dealer inventory observed across validated dealer feeds. We enforce epistemic honesty: all listings reflect public website declarations. Availability and mandatory dealer fees must be verified directly with dealer staff.
+            </span>
+            <span className="sm:hidden">
+              Real-time public dealer inventory observed across validated feeds. Physical availability and fees must be confirmed with dealer staff.
+            </span>
           </p>
         </header>
 

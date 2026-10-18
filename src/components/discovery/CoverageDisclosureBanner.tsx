@@ -9,15 +9,15 @@ export function CoverageDisclosureBanner() {
     <aside
       data-testid="coverage-disclosure-banner"
       aria-label="Pilot Inventory Coverage Disclosure and Limitations"
-      className="rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-950 p-4 shadow-sm"
+      className="rounded-xl border border-zinc-800 bg-gradient-to-r from-zinc-900 via-zinc-900 to-zinc-950 p-3 sm:p-4 shadow-sm"
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="rounded-lg bg-blue-950/70 p-2 text-blue-400 border border-blue-900/60 shrink-0 mt-0.5">
+          <div className="rounded-lg bg-blue-950/70 p-1.5 sm:p-2 text-blue-400 border border-blue-900/60 shrink-0 mt-0.5">
             <Info className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1">
+            <div className="flex flex-wrap items-center gap-2 mb-0.5 sm:mb-1">
               <h2 className="text-sm font-semibold text-zinc-100">
                 Pilot Discovery Scope: BC Lower Mainland
               </h2>
@@ -25,8 +25,13 @@ export function CoverageDisclosureBanner() {
                 Convertus Platform Pilot
               </Badge>
             </div>
-            <p className="text-xs text-zinc-400 leading-relaxed">
-              Public listings are monitored via polite, unauthenticated API feeds. In accordance with Master Plan V3.2 safeguards, we do not bypass CAPTCHAs or authenticated portals.
+            <p className="text-[11px] sm:text-xs text-zinc-400 leading-snug sm:leading-relaxed">
+              <span className="hidden sm:inline">
+                Public listings are monitored via polite, unauthenticated API feeds. In accordance with Master Plan V3.2 safeguards, we do not bypass CAPTCHAs or authenticated portals.
+              </span>
+              <span className="sm:hidden">
+                Monitored via polite, unauthenticated API feeds. CAPTCHAs are never bypassed.
+              </span>
             </p>
           </div>
         </div>

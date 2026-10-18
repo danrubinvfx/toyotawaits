@@ -9,8 +9,10 @@ import { describe, expect, it } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  constructConvertusVdpUrl,
   formatRawPrice,
   normalizeConvertusStatus,
+  normalizeDealerBaseUrl,
   parseConvertusPayload,
   parseConvertusRecord,
   parseNumericPrice,
@@ -296,6 +298,104 @@ describe('Convertus Ingestion Adapter', () => {
       expect(result.quarantined[0].reason).toContain('not a valid vehicle object');
       expect(result.quarantined[1].reason).toContain('Missing mandatory vehicle definition');
       expect(result.quarantined[2].reason).toContain('not a valid vehicle object');
+    });
+  });
+
+  describe('Canonical Dealer VDP URL Construction & Search Fallback Handling', () => {
+    it('prepends dealer base domain when Convertus payload provides a relative VDP path', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'RAV4',
+        year: 2026,
+        vin: 'JTDACAAJ0T3038212',
+        vdp_url: '/vehicles/2026/toyota/rav4/vancouver/bc/998877/?sale_class=New',
+        company_data: {
+          company_web_address: 'https://www.jptoyota-downtown.com/',
+        },
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/998877/?sale_class=New'
+      );
+    });
+
+    it('constructs standard Convertus VDP routing when direct VDP link is missing but VMS ID is present', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'Crown Signia',
+        year: 2026,
+        vin: 'JTDACAAJ0T3038212',
+        ad_id: '69116486',
+        sale_class: 'New',
+        company_data: {
+          company_city: 'Vancouver',
+          company_province: 'BC',
+          company_web_address: 'https://www.jptoyota-downtown.com',
+        },
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/Toyota/Crown%20Signia/Vancouver/BC/69116486/?sale_class=New'
+      );
+    });
+
+    it('falls back cleanly to public new inventory search page when internal VMS ID is missing', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'Sienna',
+        year: 2026,
+        vin: 'JTDACAAJ0T3038212',
+        company_data: {
+          company_web_address: 'https://www.jptoyota-downtown.com',
+        },
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=JTDACAAJ0T3038212'
+      );
+    });
+
+    it('falls back to stock number search when VIN is provisional and VMS ID is missing', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'Sienna',
+        year: 2026,
+        vin: null,
+        stock_number: 'SI-9944',
+        company_data: {
+          company_web_address: 'https://www.jptoyota-downtown.com',
+        },
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe('https://www.jptoyota-downtown.com/vehicles/new/?keyword=SI-9944');
+    });
+
+    it('corrects missing-hyphen domain typo and replaces dead /new-vehicles/ placeholder', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'Tacoma',
+        year: 2026,
+        vin: '3TYLB5EN8RT009988',
+        vdp_url: 'https://www.jptoyotadowntown.com/new-vehicles/',
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=3TYLB5EN8RT009988'
+      );
+    });
+
+    it('normalizes dealer base URL cleanly', () => {
+      expect(normalizeDealerBaseUrl('http://www.jptoyotadowntown.com/')).toBe(
+        'https://www.jptoyota-downtown.com'
+      );
+      expect(normalizeDealerBaseUrl('https://www.jptoyota-downtown.com///')).toBe(
+        'https://www.jptoyota-downtown.com'
+      );
     });
   });
 });

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   VehicleListingCard,
   VehicleListingCardProps,
@@ -26,7 +27,7 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date().toISOString(),
-    vdpUrl: 'https://www.jptoyotadowntown.com/new-vehicles/',
+    vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=JTDACAAJ0T3038212',
     msrp: 61285,
     sellingPrice: 63957,
     mandatoryFees: 895,
@@ -49,7 +50,7 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Incoming availability unconfirmed',
     lastChecked: new Date(Date.now() - 3600000).toISOString(),
-    vdpUrl: 'https://www.jptoyotadowntown.com/new-vehicles/',
+    vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=SI-9944',
     msrp: 68450,
     sellingPrice: 68450,
     mandatoryFees: null,
@@ -71,7 +72,7 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date(Date.now() - 7200000).toISOString(),
-    vdpUrl: 'https://www.jptoyotadowntown.com/new-vehicles/',
+    vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=4T1B11HK5SU112233',
     msrp: 66990,
     sellingPrice: 67885,
     mandatoryFees: 895,
@@ -93,7 +94,7 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Incoming availability unconfirmed',
     lastChecked: new Date(Date.now() - 10800000).toISOString(),
-    vdpUrl: 'https://www.jptoyotadowntown.com/new-vehicles/',
+    vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=3TYLB5EN8RT009988',
     msrp: 54200,
     sellingPrice: 54200,
     mandatoryFees: null,
@@ -104,13 +105,44 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   },
 ];
 
+/**
+ * Checks if the inventory explorer should be enabled based on environment flags,
+ * Vercel preview deployment status, or URL query overrides.
+ */
+export function checkInventoryDiscoveryEnabled(
+  overrideParam?: boolean | string | null
+): boolean {
+  if (process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY === 'true') return true;
+  if (process.env.ENABLE_INVENTORY_DISCOVERY === 'true') return true;
+  if (
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
+  ) {
+    return true;
+  }
+  if (overrideParam === true || overrideParam === 'true') return true;
+  return false;
+}
+
 export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
+  previewOverride?: boolean;
 }
 
 export function InventoryExplorer({
   initialListings = INITIAL_SAMPLE_LISTINGS,
+  previewOverride,
 }: InventoryExplorerProps) {
+  let isPreviewQuery = false;
+  try {
+    const sp = useSearchParams();
+    if (sp?.get('preview') === 'true') {
+      isPreviewQuery = true;
+    }
+  } catch {
+    // Graceful fallback when rendered without Next.js Navigation context
+  }
+
   const [filters, setFilters] = useState<FilterState>({
     model: '',
     status: '',
@@ -174,12 +206,32 @@ export function InventoryExplorer({
     });
   }, [initialListings, filters]);
 
-  return (
-    <div className="space-y-6" data-testid="inventory-explorer">
-      {/* Pilot Coverage Disclosure */}
-      <CoverageDisclosureBanner />
+  const isEnabled = checkInventoryDiscoveryEnabled(
+    previewOverride !== undefined ? previewOverride : isPreviewQuery
+  );
 
-      {/* Filter Bar */}
+  if (!isEnabled) {
+    return (
+      <div
+        data-testid="inventory-disabled-screen"
+        className="max-w-md w-full mx-auto rounded-2xl border border-zinc-800 bg-zinc-900/90 p-8 text-center space-y-4 shadow-xl backdrop-blur-md"
+      >
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-950/80 text-amber-400 border border-amber-900/60">
+          <AlertCircle className="h-6 w-6" aria-hidden="true" />
+        </div>
+        <h2 className="text-xl font-bold text-white tracking-tight">
+          Inventory Discovery (Private Pilot)
+        </h2>
+        <p className="text-xs text-zinc-400 leading-relaxed">
+          The ToyotaWaits.ca public inventory explorer is currently in private trial mode under Master Plan V3.2. Automated polite sweeps are validating dealer endpoints.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 sm:space-y-6" data-testid="inventory-explorer">
+      {/* Search & Filter Bar (Elevated immediately below header) */}
       <InventoryFilterBar
         filters={filters}
         onFilterChange={setFilters}
@@ -187,6 +239,9 @@ export function InventoryExplorer({
         availableDealers={availableDealers}
         totalResults={filteredListings.length}
       />
+
+      {/* Pilot Coverage Disclosure (Positioned beneath filter bar) */}
+      <CoverageDisclosureBanner />
 
       {/* Listings Grid */}
       {filteredListings.length > 0 ? (

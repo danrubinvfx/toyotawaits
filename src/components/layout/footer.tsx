@@ -158,6 +158,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href="/guides/toyota-sienna-trailer-hitch-guide" className="hover:text-amber-500 transition-colors">
+                  Sienna Hitch &amp; Tow Guide
+                </Link>
+              </li>
+              <li>
                 <Link href="/guides/grand-highlander-mods" className="hover:text-amber-500 transition-colors">
                   Grand Highlander Utility
                 </Link>
