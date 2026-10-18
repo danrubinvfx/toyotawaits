@@ -180,20 +180,16 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
     vi.useRealTimers();
   });
 
-  it('renders verified delivery items with DELIVERED badge and days waited', () => {
+  it('filters out delivery items to show curated news items exclusively', () => {
     render(<ActivityTicker initialData={mockTickerData} />);
 
-    // DELIVERED Badge
-    const deliveredBadges = screen.getAllByText(/DELIVERED/i);
-    expect(deliveredBadges.length).toBeGreaterThan(0);
+    // Delivery items are excluded per curated newswire requirements
+    const deliveredBadges = screen.queryAllByText(/DELIVERED/i);
+    expect(deliveredBadges.length).toBe(0);
 
-    // Content format: BC • 2026 RAV4 Plug-in Hybrid SE — 240 days wait
-    const bcDeliveries = screen.getAllByText('BC');
-    expect(bcDeliveries.length).toBeGreaterThan(0);
-    const rav4Matches = screen.getAllByText(/2026 RAV4 Plug-in Hybrid SE/);
-    expect(rav4Matches.length).toBeGreaterThan(0);
-    const waitDaysMatches = screen.getAllByText(/240 days wait/i);
-    expect(waitDaysMatches.length).toBeGreaterThan(0);
+    // News wire announcements are rendered
+    const alertBadges = screen.getAllByText(/ALLOCATION ALERT/i);
+    expect(alertBadges.length).toBeGreaterThan(0);
   });
 
   it('renders news wire items with category badge, headline, and external link in new tab', () => {
@@ -220,7 +216,7 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
   it('pauses marquee roll when hovered or focused', () => {
     const { container } = render(<ActivityTicker initialData={mockTickerData} />);
 
-    const region = screen.getByRole('region', { name: /Live Canadian Toyota order activity/i });
+    const region = screen.getByRole('region', { name: /Live Canadian Toyota (news wire|order activity)/i });
     const marqueeTrack = container.querySelector('.animate-marquee') as HTMLElement;
     expect(marqueeTrack).toBeInTheDocument();
     expect(marqueeTrack.style.animationPlayState).toBe('running');
@@ -255,12 +251,10 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
     // No animate-marquee class in reduced motion
     expect(container.querySelector('.animate-marquee')).toBeNull();
 
-    const scrollContainer = screen.getByLabelText(/Scrollable list of recent community submissions and news/i);
+    const scrollContainer = screen.getByLabelText(/Scrollable list of (curated Toyota news articles|recent community submissions)/i);
     expect(scrollContainer).toBeInTheDocument();
 
-    expect(screen.getByText(/240 days wait/i)).toBeInTheDocument();
     expect(screen.getByText(/Q4 Canadian Allocation Update/i)).toBeInTheDocument();
-    expect(screen.getByText(/142 days wait/i)).toBeInTheDocument();
   });
 
   it('returns null cleanly when no items are provided', () => {
