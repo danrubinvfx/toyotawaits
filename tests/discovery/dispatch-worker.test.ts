@@ -368,7 +368,7 @@ describe('Sprint 4: Outbox Enqueue, Lease Locking & Dispatch Worker', () => {
             vehicle: { make: 'Toyota', model: 'Grand Highlander', modelYear: 2026 },
             dealer: { name: 'Toyota Dealer' },
             status: 'Advertised - availability unconfirmed',
-            observedAt: '2026-10-17T11:00:00Z',
+            observedAt: new Date().toISOString(),
             unsubscribeToken: `token-${i}`,
           },
           status: 'pending',
