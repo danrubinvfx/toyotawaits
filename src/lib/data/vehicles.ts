@@ -253,6 +253,76 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
       },
     ],
   },
+  {
+    id: '10000000-0000-4000-8000-000000000008',
+    slug: 'corolla',
+    name: 'Corolla',
+    generationStartYear: 2020,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000080',
+        slug: 'gas',
+        name: 'Gasoline',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000101', slug: 'l', name: 'L', msrpCad: 23490 },
+          { id: '30000000-0000-4000-8000-000000000102', slug: 'le', name: 'LE', msrpCad: 24690 },
+          { id: '30000000-0000-4000-8000-000000000103', slug: 'se', name: 'SE', msrpCad: 26250 },
+          { id: '30000000-0000-4000-8000-000000000104', slug: 'xse', name: 'XSE', msrpCad: 31390 },
+          { id: '30000000-0000-4000-8000-000000000105', slug: 'hatchback-se', name: 'Hatchback SE', msrpCad: 24450 },
+          { id: '30000000-0000-4000-8000-000000000106', slug: 'hatchback-xse', name: 'Hatchback XSE', msrpCad: 30850 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000081',
+        slug: 'hev',
+        name: 'Hybrid (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000107', slug: 'le-awd', name: 'LE AWD', msrpCad: 26590 },
+          { id: '30000000-0000-4000-8000-000000000108', slug: 'se-awd', name: 'SE AWD', msrpCad: 30250 },
+          { id: '30000000-0000-4000-8000-000000000109', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 35250 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000082',
+        slug: 'gr',
+        name: 'GR Performance',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000110', slug: 'core', name: 'Core', msrpCad: 46850 },
+          { id: '30000000-0000-4000-8000-000000000111', slug: 'premium', name: 'Premium', msrpCad: 49490 },
+          { id: '30000000-0000-4000-8000-000000000112', slug: 'circuit-edition', name: 'Circuit Edition', msrpCad: 56590 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000009',
+    slug: 'corolla-cross',
+    name: 'Corolla Cross',
+    generationStartYear: 2022,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000090',
+        slug: 'gas',
+        name: 'Gasoline',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000120', slug: 'l-fwd', name: 'L FWD', msrpCad: 27250 },
+          { id: '30000000-0000-4000-8000-000000000121', slug: 'l-awd', name: 'L AWD', msrpCad: 29250 },
+          { id: '30000000-0000-4000-8000-000000000122', slug: 'le-fwd', name: 'LE FWD', msrpCad: 29290 },
+          { id: '30000000-0000-4000-8000-000000000123', slug: 'le-awd', name: 'LE AWD', msrpCad: 30790 },
+          { id: '30000000-0000-4000-8000-000000000124', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 34550 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000091',
+        slug: 'hev',
+        name: 'Hybrid (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000125', slug: 'se-awd', name: 'SE AWD', msrpCad: 34190 },
+          { id: '30000000-0000-4000-8000-000000000126', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 37550 },
+        ],
+      },
+    ],
+  },
 ];
 
 import {

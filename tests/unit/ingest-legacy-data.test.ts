@@ -100,7 +100,7 @@ sienna,hev,"XSE AWD (7-Passenger)",ON,"Toronto, East",Ken Shaw Toyota,2024-01-10
 
     it('returns null for nonexistent model or powertrain', () => {
       const warningSpy = vi.fn();
-      const resolved = resolveVehicleIdentifiers('corolla', 'hev', 'LE', warningSpy);
+      const resolved = resolveVehicleIdentifiers('nonexistent-model', 'hev', 'LE', warningSpy);
       expect(resolved).toBeNull();
       expect(warningSpy).toHaveBeenCalledWith(expect.stringContaining('Unable to resolve vehicle model'));
     });

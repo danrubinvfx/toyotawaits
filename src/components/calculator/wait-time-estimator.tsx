@@ -31,6 +31,7 @@ import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/cal
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS, getPowertrainBenchmark } from '@/lib/db/stats';
 import { US_NATIONAL_BENCHMARKS } from '@/lib/estimator/calculateWait';
 import { CARRYOVER_ALLOCATION_NOTE, BASE_MODEL_P75 } from '@/hooks/useEstimator';
+import { getModelCeiling } from '@/lib/estimator';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +43,8 @@ export interface QuickSelectModelOption {
 
 export const QUICK_SELECT_MODELS: QuickSelectModelOption[] = [
   { label: 'RAV4', slug: 'rav4', matchSlugs: ['rav4'] },
+  { label: 'Corolla', slug: 'corolla', matchSlugs: ['corolla'] },
+  { label: 'Corolla Cross', slug: 'corolla-cross', matchSlugs: ['corolla-cross'] },
   { label: 'Sienna', slug: 'sienna', matchSlugs: ['sienna'] },
   { label: 'Grand Highlander', slug: 'grand-highlander', matchSlugs: ['grand-highlander'] },
   { label: 'Prius / Prime', slug: 'prius', matchSlugs: ['prius', 'prius-prime'] },
@@ -353,10 +356,13 @@ export function WaitTimeEstimator({
       : stats?.waitStats?.p75 ?? fallbackBenchmark?.p75_days ?? 450;
   }
 
-  // True percentiles: Remove artificial 420-day ceiling clamping so high-wait vehicles
-  // (e.g. Sienna P75 = 450-560 days) display their authentic empirical wait times.
+  // True percentiles: strictly clamped by model-specific ceilings
+  const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
   const empiricalMax = stats?.waitStats?.max ?? fallbackBenchmark?.max_days ?? 999;
-  const p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax);
+  let p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax);
+  if (specificCeiling !== null) {
+    p75Days = Math.min(specificCeiling, p75Days);
+  }
   const medianDays = Math.min(
     isLimitedRegionalData ? rawMedian : Math.min(rawMedian, empiricalMax),
     p75Days
@@ -384,6 +390,10 @@ export function WaitTimeEstimator({
       ? 'Hybrid & Hybrid MAX'
       : modelSlug === 'prius' || modelSlug === 'prius-prime'
       ? 'Hybrid & PHEV'
+      : modelSlug === 'corolla'
+      ? 'Gas, Hybrid & GR'
+      : modelSlug === 'corolla-cross'
+      ? 'Gas & Hybrid'
       : currentModel.powertrains.map((p) => p.name.split(' ')[0]).join(' & ');
 
   const regionalFallbackNotice = isUs

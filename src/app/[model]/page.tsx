@@ -16,7 +16,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   return CANADIAN_VEHICLE_CATALOG.map((m) => ({ model: m.slug }));

@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS } from '@/lib/db/stats';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
 import { getRegionByCode } from '@/lib/data/vehicles';
+import { getModelCeiling } from '@/lib/estimator';
 
 export interface UseEstimatorOptions {
   modelSlug: string;
@@ -53,10 +54,13 @@ export const BASE_MODEL_P75: Record<string, number> = {
   prius: 146,
   'land-cruiser': 145,
   tacoma: 180,
+  corolla: 165,
+  'corolla-cross': 270,
 };
 
 export function useEstimator({
   modelSlug,
+  powertrainSlug,
   trimSlug,
   trimName,
   province,
@@ -110,9 +114,12 @@ export function useEstimator({
     ? currentBenchmark?.p75_days ?? 450
     : stats?.waitStats?.p75 ?? currentBenchmark?.p75_days ?? 450;
 
-  // True percentiles: Remove artificial 420-day ceiling clamping so high-wait vehicles
-  // (e.g. Sienna P75 = 450-560 days) display their authentic empirical wait times.
-  const p75Days = rawP75;
+  // True percentiles: strictly bounded by model ceiling
+  const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
+  let p75Days = rawP75;
+  if (specificCeiling !== null) {
+    p75Days = Math.min(specificCeiling, p75Days);
+  }
   const medianDays = Math.min(rawMedian, p75Days);
   const p25Days = Math.min(rawP25, medianDays);
 

@@ -167,6 +167,51 @@ describe('Estimator Math Clamping & Multiplier Guardrails (src/lib/estimator.ts)
       expect(result.p25).toBe(420);
     });
 
+    it('clamps Corolla Gas to a maximum ceiling of 120 days regardless of multipliers', () => {
+      const result = calculateEstimatedWaitTime({
+        modelSlug: 'corolla',
+        powertrainSlug: 'gas',
+        trimSlug: 'xse',
+        province: 'BC',
+        depositDate: '2026-01-15',
+      });
+
+      expect(result.p75).toBeLessThanOrEqual(120);
+      expect(result.p50).toBeLessThanOrEqual(120);
+      expect(result.p25).toBeLessThanOrEqual(result.p50);
+      expect(result.p50).toBeLessThanOrEqual(result.p75);
+    });
+
+    it('clamps Corolla Hybrid to a maximum ceiling of 240 days regardless of multipliers', () => {
+      const result = calculateEstimatedWaitTime({
+        modelSlug: 'corolla',
+        powertrainSlug: 'hev',
+        trimSlug: 'xse-awd',
+        province: 'BC',
+        depositDate: '2026-01-15',
+      });
+
+      expect(result.p75).toBeLessThanOrEqual(240);
+      expect(result.p50).toBeLessThanOrEqual(240);
+      expect(result.p25).toBeLessThanOrEqual(result.p50);
+      expect(result.p50).toBeLessThanOrEqual(result.p75);
+    });
+
+    it('clamps Corolla Cross Hybrid to a maximum ceiling of 400 days regardless of multipliers', () => {
+      const result = calculateEstimatedWaitTime({
+        modelSlug: 'corolla-cross',
+        powertrainSlug: 'hev',
+        trimSlug: 'xse-awd',
+        province: 'QC',
+        depositDate: '2026-01-15',
+      });
+
+      expect(result.p75).toBeLessThanOrEqual(400);
+      expect(result.p50).toBeLessThanOrEqual(400);
+      expect(result.p25).toBeLessThanOrEqual(result.p50);
+      expect(result.p50).toBeLessThanOrEqual(result.p75);
+    });
+
     it('confirms wait-time outputs are clamped at or below 420 days for ALL vehicle models, trims, and provinces', () => {
       const trimsToTest = [
         ...Object.keys(TRIM_MULTIPLIERS),

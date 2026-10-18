@@ -7,7 +7,7 @@
  * into out-years (2028+).
  */
 
-import { BASELINE_MODEL_BENCHMARKS, ModelWaitBenchmark } from '@/lib/db/stats';
+import { BASELINE_MODEL_BENCHMARKS, ModelWaitBenchmark, getPowertrainBenchmark } from '@/lib/db/stats';
 import { getRegionByCode } from '@/lib/data/vehicles';
 import { RegionalWaitSummary } from '@/lib/types/contracts';
 
@@ -23,6 +23,8 @@ export const BASE_MODEL_P75: Record<string, number> = {
   prius: 146,
   'land-cruiser': 145,
   tacoma: 180,
+  corolla: 165,
+  'corolla-cross': 270,
 };
 
 /** Provincial demand & EV/PHEV rebate multipliers */
@@ -75,6 +77,29 @@ export const MODEL_TRIM_MULTIPLIERS: Record<string, Record<string, number>> = {
     xse: 1.05,
     se: 0.85,
   },
+  corolla: {
+    l: 0.90,
+    le: 1.00,
+    se: 1.05,
+    xse: 1.10,
+    'hatchback-se': 1.02,
+    'hatchback-xse': 1.08,
+    'le-awd': 1.00,
+    'se-awd': 1.08,
+    'xse-awd': 1.12,
+    core: 1.00,
+    premium: 1.08,
+    'circuit-edition': 1.15,
+  },
+  'corolla-cross': {
+    'l-fwd': 0.92,
+    'l-awd': 0.95,
+    'le-fwd': 1.00,
+    'le-awd': 1.05,
+    'xle-awd': 1.10,
+    'se-awd': 1.08,
+    'xse-awd': 1.15,
+  },
 };
 
 /** Common trim-level allocation demand multipliers fallback */
@@ -89,12 +114,22 @@ export const TRIM_MULTIPLIERS: Record<string, number> = {
   'xse-premium': 1.15,
   xse: 1.05,
   se: 0.85,
+  core: 1.00,
+  premium: 1.08,
+  'circuit-edition': 1.15,
+  'hatchback-se': 1.02,
+  'hatchback-xse': 1.08,
+  'l-fwd': 0.92,
+  'l-awd': 0.95,
+  'le-fwd': 1.00,
 
   // Baseline averages across multi-model trims
   'limited-awd': 1.12,
   'xse-awd': 1.08,
   'xle-awd': 1.00,
   'le-awd': 0.85,
+  le: 1.00,
+  l: 0.90,
 };
 
 export interface EstimatorOptions {
@@ -169,10 +204,58 @@ export function getTrimMultiplier(trimSlug?: string, modelSlug?: string): number
 }
 
 /**
+ * Strict ceiling clamping per model and powertrain specifications:
+ * - Corolla Gas: max ceiling 120 days.
+ * - Corolla Hybrid: max ceiling 240 days.
+ * - Corolla Cross Hybrid: max ceiling 400 days.
+ */
+export function getModelCeiling(modelSlug?: string, powertrainSlug?: string, trimSlug?: string): number | null {
+  const m = modelSlug?.toLowerCase();
+  const p = powertrainSlug?.toLowerCase();
+  const t = trimSlug?.toLowerCase();
+
+  if (m === 'corolla') {
+    const isGas =
+      p === 'gas' ||
+      ['l', 'le', 'se', 'xse', 'hatchback-se', 'hatchback-xse'].includes(t || '');
+    if (isGas) return 120;
+
+    const isHev =
+      p === 'hev' ||
+      ['le-awd', 'se-awd', 'xse-awd'].includes(t || '');
+    if (isHev) return 240;
+
+    const isGr =
+      p === 'gr' ||
+      ['core', 'premium', 'circuit-edition'].includes(t || '');
+    if (isGr) return 360;
+
+    return 240;
+  }
+
+  if (m === 'corolla-cross') {
+    const isHev =
+      p === 'hev' ||
+      ['se-awd', 'xse-awd'].includes(t || '');
+    if (isHev) return 400;
+
+    const isGas =
+      p === 'gas' ||
+      ['l-fwd', 'l-awd', 'le-fwd', 'le-awd', 'xle-awd'].includes(t || '');
+    if (isGas) return 180;
+
+    return 400;
+  }
+
+  return null;
+}
+
+/**
  * Core estimation function implementing multipliers and bounding guardrails.
  */
 export function calculateEstimatedWaitTime(options: EstimatorOptions): EstimatorResult {
   const modelSlug = (options.modelSlug || options.model || 'rav4').toLowerCase();
+  const powertrainSlug = (options.powertrainSlug || options.powertrain || '').toLowerCase();
   const trimSlug = (options.trimSlug || options.trim || '').toLowerCase();
   const trimName = options.trimName;
   const province = options.province?.toUpperCase();
@@ -205,7 +288,8 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
   const trimMult = getTrimMultiplier(trimSlug, modelSlug);
   const combinedMultiplier = provMultiplier * trimMult;
 
-  const currentBenchmark = benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
+  const activePowertrainBenchmark = getPowertrainBenchmark(modelSlug, powertrainSlug);
+  const currentBenchmark = activePowertrainBenchmark || benchmarks[modelSlug] || BASELINE_MODEL_BENCHMARKS[modelSlug];
 
   // Raw percentiles from stats or benchmark
   const regionalSampleCount = stats?.sampleCounts?.delivered ?? stats?.sampleCounts?.total ?? 0;
@@ -231,15 +315,17 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
   }
 
   // HARD BOUNDING GUARDRAILS:
-  // Clamp maximum calculated wait time to realistic upper bounds (hard cap at 420 days).
+  // Clamp maximum calculated wait time to realistic upper bounds (hard cap per model ceiling).
   // Ensures projections do not compound into impossible out-years (e.g. 2028+).
-  const p75 = clampWaitDays(rawP75, MAX_WAIT_TIME_DAYS);
-  const p50 = clampWaitDays(Math.min(rawMedian, p75), MAX_WAIT_TIME_DAYS);
-  const p25 = clampWaitDays(Math.min(rawP25, p50), MAX_WAIT_TIME_DAYS);
+  const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
+  const maxCeiling = specificCeiling !== null ? specificCeiling : MAX_WAIT_TIME_DAYS;
+  const p75 = clampWaitDays(rawP75, maxCeiling);
+  const p50 = clampWaitDays(Math.min(rawMedian, p75), maxCeiling);
+  const p25 = clampWaitDays(Math.min(rawP25, p50), maxCeiling);
 
   // Projected arrival dates using bounded days
   const calculateProjectedDate = (daysOffset: number): string => {
-    const cappedOffset = clampWaitDays(daysOffset, MAX_WAIT_TIME_DAYS);
+    const cappedOffset = clampWaitDays(daysOffset, maxCeiling);
     const base = depositDateStr
       ? new Date(depositDateStr + (depositDateStr.includes('T') ? '' : 'T00:00:00'))
       : todayDate;

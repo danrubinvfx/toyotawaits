@@ -2,6 +2,7 @@ import { ModelWaitBenchmark, BASELINE_MODEL_BENCHMARKS, getPowertrainBenchmark }
 import { RegionalWaitSummary } from '@/lib/types/contracts';
 import { CommunityRecord } from '@/lib/data/community-records';
 import { US_STATES } from '@/lib/validations/schemas';
+import { getModelCeiling } from '@/lib/estimator';
 
 export interface CalculateWaitOptions {
   modelSlug?: string;
@@ -59,6 +60,8 @@ export const US_NATIONAL_BENCHMARKS: Record<
   'prius-prime': { min_days: 30, p25_days: 45, median_days: 65, p75_days: 90, sample_size: 12 },
   tacoma: { min_days: 40, p25_days: 60, median_days: 90, p75_days: 120, sample_size: 10 },
   'land-cruiser': { min_days: 45, p25_days: 60, median_days: 90, p75_days: 130, sample_size: 10 },
+  corolla: { min_days: 20, p25_days: 30, median_days: 50, p75_days: 75, sample_size: 15 },
+  'corolla-cross': { min_days: 30, p25_days: 45, median_days: 70, p75_days: 100, sample_size: 12 },
 };
 
 export function calculateWait(options: CalculateWaitOptions): CalculateWaitResult {
@@ -99,12 +102,16 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
     return !isNaN(year) && year < 2026;
   })();
 
+  const trimSlug = (options.trimSlug || options.trim || '').toLowerCase();
+  const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
+
   const calculateProjectedDate = (daysOffset: number): string => {
+    const cappedOffset = specificCeiling !== null ? Math.min(specificCeiling, daysOffset) : daysOffset;
     const base = depositDateStr
       ? new Date(depositDateStr + (depositDateStr.includes('T') ? '' : 'T00:00:00'))
       : todayDate;
     const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
-    const target = new Date(baseTime + daysOffset * 24 * 60 * 60 * 1000);
+    const target = new Date(baseTime + cappedOffset * 24 * 60 * 60 * 1000);
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',
@@ -178,10 +185,13 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
     }
   }
 
-  // Ensure percentiles are authentic and NEVER zero
-  const p25Days = Math.max(30, rawP25 || 45);
-  const medianDays = Math.max(p25Days, rawMedian || 65);
-  const p75Days = Math.max(medianDays, rawP75 || 90);
+  // Ensure percentiles are authentic and strictly bounded by model ceiling
+  let p75Days = Math.max(30, rawP75 || 90);
+  if (specificCeiling !== null) {
+    p75Days = Math.min(specificCeiling, p75Days);
+  }
+  const medianDays = Math.min(p75Days, Math.max(30, rawMedian || 65));
+  const p25Days = Math.min(medianDays, Math.max(30, rawP25 || 45));
 
   // Months calculated safely (never 0)
   const medianMonths = (medianDays / 30.4).toFixed(1);

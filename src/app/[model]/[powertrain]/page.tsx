@@ -22,7 +22,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string }> = [];

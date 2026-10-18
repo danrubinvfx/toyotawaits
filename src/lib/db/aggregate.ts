@@ -65,6 +65,16 @@ const BASELINE_WAIT_DATA: Record<string, number[]> = {
   'prius-hev-on': [85, 95, 104, 120, 135],
   'prius-prime-phev-qc': [180, 210, 240, 270],
   'prius-phev-qc': [180, 210, 240, 270],
+  // Corolla Lineup
+  'corolla-gas-on': [30, 45, 60, 75, 90],
+  'corolla-gas-bc': [35, 50, 65, 80, 95],
+  'corolla-hev-on': [120, 140, 165, 185, 210],
+  'corolla-hev-bc': [130, 150, 175, 195, 225],
+  'corolla-gr-on': [180, 210, 240, 280, 330],
+  'corolla-cross-gas-on': [60, 75, 90, 110, 135],
+  'corolla-cross-gas-bc': [65, 80, 95, 120, 140],
+  'corolla-cross-hev-on': [210, 240, 270, 310, 360],
+  'corolla-cross-hev-bc': [220, 250, 285, 330, 380],
 };
 
 const BASELINE_PENDING_COUNTS: Record<string, number> = {

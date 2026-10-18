@@ -31,7 +31,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 // Generate static params for common deep-link target paths (Reddit top targets)
 export async function generateStaticParams() {
