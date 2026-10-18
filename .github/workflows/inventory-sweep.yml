@@ -1,0 +1,55 @@
+name: Automated Dealer Inventory Sweep
+
+on:
+  schedule:
+    # Daily at 10:00 UTC (~2:00 AM PST / 3:00 AM PDT off-peak window)
+    - cron: '0 10 * * *'
+  workflow_dispatch:
+    inputs:
+      dealer:
+        description: 'Target dealer code to sweep'
+        required: false
+        default: 'jptoyota-downtown'
+        type: string
+      dry_run:
+        description: 'Dry run (validate network & parser without writing to Supabase)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: inventory-sweep
+  cancel-in-progress: false
+
+jobs:
+  sweep-inventory:
+    name: Polite Dealer Inventory Sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      CI: true
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Execute Polite Inventory Sweep
+        run: |
+          DEALER="${{ inputs.dealer || 'jptoyota-downtown' }}"
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            npm run sweep:dealer -- --dealer="$DEALER" --dry-run
+          else
+            npm run sweep:dealer -- --dealer="$DEALER"
+          fi
