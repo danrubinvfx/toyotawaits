@@ -67,6 +67,42 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByText('Stock #T26-1044')).toBeInTheDocument();
     });
 
+    it('enforces typographic title hierarchy: model over trim on separate line', () => {
+      render(
+        <VehicleListingCard
+          {...sampleCardProps}
+          make="Toyota"
+          model="RAV4 Hybrid"
+          trim="XSE Technology Package AWD"
+          modelYear={2026}
+        />
+      );
+
+      const heading = screen.getByRole('heading', { level: 3 });
+      expect(heading).toHaveTextContent('2026 Toyota RAV4 Hybrid');
+      expect(heading).toHaveClass('text-lg', 'font-bold', 'text-white', 'tracking-tight');
+
+      const secondary = screen.getByText('XSE Technology Package AWD');
+      expect(secondary).toHaveClass('text-sm', 'font-medium', 'text-neutral-400');
+    });
+
+    it('prevents redundant string concatenations if drivetrain or hybrid is already in model', () => {
+      render(
+        <VehicleListingCard
+          {...sampleCardProps}
+          make="Toyota"
+          model="RAV4 Hybrid"
+          trim="Hybrid XSE AWD"
+          driveTrain="All Wheel Drive"
+        />
+      );
+
+      // Model already has Hybrid, trim starts with Hybrid -> strips redundant "Hybrid"
+      // Trim already has AWD -> All Wheel Drive is not duplicated
+      expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('2026 Toyota RAV4 Hybrid');
+      expect(screen.getByText('XSE AWD')).toBeInTheDocument();
+    });
+
     it('displays exact "Advertised - availability unconfirmed" status badge', () => {
       render(<VehicleListingCard {...sampleCardProps} />);
       const badge = screen.getByTestId('status-badge');

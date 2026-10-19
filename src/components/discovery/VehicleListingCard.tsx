@@ -23,8 +23,88 @@ export interface VehicleListingCardProps {
   mandatoryFees?: number | null;
   hasUnverifiedFees?: boolean;
   powertrain?: string | null;
+  driveTrain?: string | null;
+  packageCode?: string | null;
   exteriorColor?: string | null;
   stockNumber?: string | null;
+}
+
+export function formatVehicleCardTitles(props: {
+  modelYear: number;
+  make: string;
+  model: string;
+  trim?: string | null;
+  driveTrain?: string | null;
+  powertrain?: string | null;
+}): {
+  primaryTitle: string;
+  secondaryTitle: string | null;
+} {
+  const { modelYear, make, model, trim, driveTrain } = props;
+
+  const cleanMake = (make || 'Toyota').trim();
+  let cleanModel = (model || '').trim();
+
+  // If model name starts with make (e.g. "Toyota RAV4"), remove redundant make
+  if (cleanModel.toLowerCase().startsWith(cleanMake.toLowerCase() + ' ')) {
+    cleanModel = cleanModel.slice(cleanMake.length).trim();
+  }
+
+  const primaryTitle = `${modelYear} ${cleanMake} ${cleanModel}`;
+
+  // Secondary title consists of Trim, Package, Drivetrain
+  const secondaryParts: string[] = [];
+
+  if (trim && trim.trim()) {
+    let cleanTrim = trim.trim();
+    // If trim starts with the model name (e.g. "RAV4 XSE"), remove redundant model prefix
+    if (cleanTrim.toLowerCase().startsWith(cleanModel.toLowerCase() + ' ')) {
+      cleanTrim = cleanTrim.slice(cleanModel.length).trim();
+    }
+    // If model already contains "Hybrid" and trim starts with "Hybrid ", prevent redundant "Hybrid"
+    if (cleanModel.toLowerCase().includes('hybrid') && cleanTrim.toLowerCase().startsWith('hybrid ')) {
+      cleanTrim = cleanTrim.slice(7).trim();
+    }
+    if (cleanTrim) {
+      secondaryParts.push(cleanTrim);
+    }
+  }
+
+  // Drivetrain deduplication
+  const dtCandidate = driveTrain?.trim() || '';
+  if (dtCandidate) {
+    const dtLower = dtCandidate.toLowerCase();
+    const modelLower = cleanModel.toLowerCase();
+    const trimCombinedLower = secondaryParts.join(' ').toLowerCase();
+
+    // Check if drivetrain is already declared in model or trim
+    const isAwd = dtLower.includes('awd') || dtLower.includes('all wheel') || dtLower.includes('e-awd');
+    const is4wd = dtLower.includes('4wd') || dtLower.includes('4x4') || dtLower.includes('four wheel');
+    const isFwd = dtLower.includes('fwd') || dtLower.includes('front wheel');
+    const isRwd = dtLower.includes('rwd') || dtLower.includes('rear wheel');
+
+    const alreadyInModel =
+      modelLower.includes(dtLower) ||
+      (isAwd && (modelLower.includes('awd') || modelLower.includes('e-awd'))) ||
+      (is4wd && (modelLower.includes('4wd') || modelLower.includes('4x4'))) ||
+      (isFwd && modelLower.includes('fwd')) ||
+      (isRwd && modelLower.includes('rwd'));
+
+    const alreadyInTrim =
+      trimCombinedLower.includes(dtLower) ||
+      (isAwd && (trimCombinedLower.includes('awd') || trimCombinedLower.includes('e-awd'))) ||
+      (is4wd && (trimCombinedLower.includes('4wd') || trimCombinedLower.includes('4x4'))) ||
+      (isFwd && trimCombinedLower.includes('fwd')) ||
+      (isRwd && trimCombinedLower.includes('rwd'));
+
+    if (!alreadyInModel && !alreadyInTrim) {
+      secondaryParts.push(dtCandidate);
+    }
+  }
+
+  const secondaryTitle = secondaryParts.length > 0 ? secondaryParts.join(' ') : null;
+
+  return { primaryTitle, secondaryTitle };
 }
 
 export function resolveVehicleListingUrl(props: {
@@ -112,9 +192,19 @@ export function VehicleListingCard({
   mandatoryFees,
   hasUnverifiedFees,
   powertrain,
+  driveTrain,
   exteriorColor,
   stockNumber,
 }: VehicleListingCardProps) {
+  const { primaryTitle, secondaryTitle } = formatVehicleCardTitles({
+    modelYear,
+    make,
+    model,
+    trim,
+    driveTrain,
+    powertrain,
+  });
+
   const isIncoming = status.toLowerCase().includes('incoming');
   const isSoldOrStale =
     status.toLowerCase().includes('sold') || status.toLowerCase().includes('stale') || status.toLowerCase().includes('no longer');
@@ -155,7 +245,7 @@ export function VehicleListingCard({
   return (
     <article
       data-testid={`listing-card-${id}`}
-      aria-label={`${modelYear} ${make} ${model} ${trim || ''} at ${dealerName}`}
+      aria-label={`${primaryTitle} ${secondaryTitle || ''} at ${dealerName}`}
       className="flex flex-col h-full rounded-xl border border-zinc-800 bg-zinc-900/80 shadow-md backdrop-blur-sm transition-all hover:border-zinc-700"
     >
       <CardHeader className="p-3.5 sm:p-4 pb-1.5 sm:pb-2">
@@ -199,11 +289,17 @@ export function VehicleListingCard({
         </div>
 
         {/* Title & Dealer Location */}
-        <div className="space-y-0.5">
-          <h3 className="text-base font-semibold text-zinc-100 tracking-tight leading-snug">
-            {modelYear} {make} {model}
-            {trim && <span className="text-red-400 font-semibold ml-1.5">{trim}</span>}
-          </h3>
+        <div className="space-y-1">
+          <div>
+            <h3 className="text-lg font-bold text-white tracking-tight leading-snug">
+              {primaryTitle}
+            </h3>
+            {secondaryTitle && (
+              <p className="text-sm font-medium text-neutral-400 leading-snug break-words">
+                {secondaryTitle}
+              </p>
+            )}
+          </div>
           <p className="text-xs text-zinc-400 flex items-center gap-1">
             <span>{dealerName}</span>
             {regionDisplay && <span className="text-zinc-500 font-normal">({regionDisplay})</span>}

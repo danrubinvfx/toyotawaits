@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   VehicleListingCard,
@@ -143,6 +143,34 @@ export function InventoryExplorer({
     // Graceful fallback when rendered without Next.js Navigation context
   }
 
+  const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
+
+  // Sync state if initialListings changes (e.g. tests or SSR)
+  useEffect(() => {
+    setListings(initialListings);
+  }, [initialListings]);
+
+  // Client-side hydration from /api/inventory to display live observed inventory
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    let isMounted = true;
+    fetch('/api/inventory')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data && Array.isArray(data.listings) && data.listings.length > 0) {
+          setListings(data.listings);
+        }
+      })
+      .catch(() => {
+        // Retain initial fallback listings
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const [filters, setFilters] = useState<FilterState>({
     model: '',
     status: '',
@@ -154,18 +182,18 @@ export function InventoryExplorer({
 
   const availableModels = useMemo(() => {
     const set = new Set<string>();
-    initialListings.forEach((item) => set.add(item.model));
+    listings.forEach((item) => set.add(item.model));
     return Array.from(set).sort();
-  }, [initialListings]);
+  }, [listings]);
 
   const availableDealers = useMemo(() => {
     const set = new Set<string>();
-    initialListings.forEach((item) => set.add(item.dealerName));
+    listings.forEach((item) => set.add(item.dealerName));
     return Array.from(set).sort();
-  }, [initialListings]);
+  }, [listings]);
 
   const filteredListings = useMemo(() => {
-    return initialListings.filter((item) => {
+    return listings.filter((item) => {
       // Model facet
       if (filters.model && item.model.toLowerCase() !== filters.model.toLowerCase()) {
         return false;
@@ -204,7 +232,7 @@ export function InventoryExplorer({
 
       return true;
     });
-  }, [initialListings, filters]);
+  }, [listings, filters]);
 
   const isEnabled = checkInventoryDiscoveryEnabled(
     previewOverride !== undefined ? previewOverride : isPreviewQuery

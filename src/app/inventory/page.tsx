@@ -16,10 +16,13 @@ export const metadata: Metadata = {
   },
 };
 
+import { VehicleListingCardProps } from '@/components/discovery/VehicleListingCard';
+
 export interface InventoryPageProps {
   searchParams?:
     | Promise<{ [key: string]: string | string[] | undefined }>
     | { [key: string]: string | string[] | undefined };
+  initialListings?: VehicleListingCardProps[];
 }
 
 function parsePreviewParam(
@@ -45,7 +48,7 @@ function parsePreviewParam(
   return false;
 }
 
-export default function InventoryPage({ searchParams }: InventoryPageProps = {}) {
+export default function InventoryPage({ searchParams, initialListings }: InventoryPageProps = {}) {
   // Extract preview query parameter from searchParams
   const isPreviewParam = parsePreviewParam(searchParams);
 
@@ -135,7 +138,7 @@ export default function InventoryPage({ searchParams }: InventoryPageProps = {})
 
         {/* Interactive Explorer Client Component */}
         <Suspense fallback={<div className="h-64 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
-          <InventoryExplorer />
+          <InventoryExplorer initialListings={initialListings} />
         </Suspense>
 
         {/* Footer Disclaimer & CASL Notice */}

@@ -50,7 +50,7 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     platform: 'convertus',
     baseUrl: 'https://www.jptoyota-downtown.com',
     endpointUrl:
-      'https://www.jptoyota-downtown.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1250%26ln%3Den%26sc%3Dnew',
+      'https://www.jptoyota-downtown.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1250%26ln%3Den%26sc%3Dnew%26pc%3D100',
     address: '1290 Burrard Street',
     city: 'Vancouver',
     province: 'BC',
@@ -59,6 +59,34 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     websiteUrl: 'https://www.jptoyota-downtown.com/',
   },
 ];
+
+/**
+ * Builds a parameterized Convertus VMS proxy URL with explicit page limit and page index.
+ */
+export function buildConvertusPageUrl(rawUrl: string, page: number = 1, limit: number = 100): string {
+  try {
+    const urlObj = new URL(rawUrl);
+    const endpointParam = urlObj.searchParams.get('endpoint');
+    if (endpointParam) {
+      const innerUrl = new URL(endpointParam);
+      innerUrl.searchParams.set('pc', String(limit));
+      innerUrl.searchParams.set('pg', String(page));
+      urlObj.searchParams.set('endpoint', innerUrl.toString());
+      return urlObj.toString();
+    }
+  } catch {
+    // URL parsing fallback
+  }
+
+  let modified = rawUrl;
+  if (!modified.includes('pc%3D') && !modified.includes('pc=')) {
+    modified += (modified.includes('?') ? '&' : '?') + 'pc=' + limit;
+  }
+  if (!modified.includes('pg%3D') && !modified.includes('pg=')) {
+    modified += '&pg=' + page;
+  }
+  return modified;
+}
 
 // Automatically load environment files if present
 function loadEnv() {
@@ -299,9 +327,51 @@ async function main() {
     rawPayload = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
   } else {
     try {
-      const fetchResult = await fetchWithRetry(dealerConfig.endpointUrl, DEFAULT_TIMEOUT_MS);
+      const initialUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, 1, 100);
+      const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
       rawPayload = fetchResult.body;
       console.log(`[HTTP] Feed successfully retrieved in ${Date.now() - startTime}ms.`);
+
+      // Handle multi-page pagination loops if total inventory exceeds page capacity
+      const totalVehicles = rawPayload?.summary?.total_vehicles;
+      if (
+        totalVehicles &&
+        Array.isArray(rawPayload.results) &&
+        rawPayload.results.length < totalVehicles
+      ) {
+        console.log(
+          `[PAGINATION] Total vehicles reported (${totalVehicles}) exceeds initial page count (${rawPayload.results.length}). Fetching subsequent pages...`
+        );
+        let currentPage = 2;
+        const maxPages = 10;
+        while (rawPayload.results.length < totalVehicles && currentPage <= maxPages) {
+          await new Promise((r) => setTimeout(r, 1500)); // Polite delay per Master Plan V3.2
+          const nextUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, currentPage, 100);
+          try {
+            const nextResult = await fetchWithRetry(nextUrl, DEFAULT_TIMEOUT_MS);
+            const nextItems = nextResult.body?.results;
+            if (Array.isArray(nextItems) && nextItems.length > 0) {
+              const existingIds = new Set(
+                rawPayload.results.map((x: any) => x.ad_id || x.vehicle_id || x.vin || x.stock_number)
+              );
+              const newItems = nextItems.filter(
+                (x: any) => !existingIds.has(x.ad_id || x.vehicle_id || x.vin || x.stock_number)
+              );
+              if (newItems.length === 0) break;
+              rawPayload.results.push(...newItems);
+              console.log(
+                `[PAGINATION] Page ${currentPage} fetched ${newItems.length} new items (Total collected: ${rawPayload.results.length}/${totalVehicles})`
+              );
+            } else {
+              break;
+            }
+          } catch (err: any) {
+            console.warn(`[PAGINATION] Failed to fetch page ${currentPage}: ${err.message}. Proceeding with partial.`);
+            break;
+          }
+          currentPage++;
+        }
+      }
     } catch (err: any) {
       console.error(`[CIRCUIT BREAKER] Fatal network failure during dealer sweep:`, err.message);
       // Gracefully exit with non-zero code to fail GitHub Actions step without corrupting data

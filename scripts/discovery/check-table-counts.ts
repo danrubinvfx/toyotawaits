@@ -76,6 +76,32 @@ async function main() {
     }
   }
 
+  // Check statuses in dealer_listings
+  const { data: dlList } = await supabase.from('dealer_listings').select('current_status');
+  if (dlList) {
+    const counts: Record<string, number> = {};
+    for (const item of dlList) {
+      counts[item.current_status] = (counts[item.current_status] || 0) + 1;
+    }
+    console.log('\ndealer_listings current_status distribution:');
+    for (const [st, c] of Object.entries(counts)) {
+      console.log(`  - ${st}: ${c}`);
+    }
+  }
+
+  // Check statuses in discovery_listings if any
+  const { data: discList } = await supabase.from('discovery_listings').select('status');
+  if (discList && discList.length > 0) {
+    const counts: Record<string, number> = {};
+    for (const item of discList) {
+      counts[item.status] = (counts[item.status] || 0) + 1;
+    }
+    console.log('\ndiscovery_listings status distribution:');
+    for (const [st, c] of Object.entries(counts)) {
+      console.log(`  - ${st}: ${c}`);
+    }
+  }
+
   console.log('='.repeat(65));
   process.exit(0);
 }

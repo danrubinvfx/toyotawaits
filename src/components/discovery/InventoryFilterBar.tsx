@@ -153,6 +153,7 @@ export function InventoryFilterBar({
             <option value="Advertised - availability unconfirmed">Advertised - availability unconfirmed</option>
             <option value="Incoming availability unconfirmed">Incoming availability unconfirmed</option>
             <option value="Reserved / sold">Reserved / sold</option>
+            <option value="No longer observed / stale">No longer observed / stale</option>
           </select>
         </div>
 
