@@ -20,6 +20,7 @@ import {
   Snowflake,
   Disc3,
   CheckCircle2,
+  Calculator,
 } from 'lucide-react';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
@@ -162,6 +163,20 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           >
             <BarChart3 className="h-4 w-4 text-zinc-400" />
             Analytics
+          </Link>
+
+          {/* Calculator Desktop Link */}
+          <Link
+            href="/calculator"
+            className={cn(
+              'hover:text-red-600 dark:hover:text-red-400 transition-colors flex items-center gap-1.5 py-1',
+              pathname.startsWith('/calculator')
+                ? 'text-red-600 dark:text-red-400 font-bold'
+                : 'text-zinc-600 dark:text-zinc-300'
+            )}
+          >
+            <Calculator className="h-4 w-4 text-red-500" />
+            <span>Calculator</span>
           </Link>
 
           {/* Winter Prep Desktop Link */}
@@ -546,6 +561,33 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Savings Calculator Mobile Link */}
+                <Link
+                  href="/calculator"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname.startsWith('/calculator')
+                      ? 'bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-600 dark:text-red-400">
+                      <Calculator className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-red-500 transition-colors">
+                        Savings &amp; Payback Calculator
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Gas vs. Hybrid fuel savings &amp; break-even
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
                 {/* Winter Prep Guide */}

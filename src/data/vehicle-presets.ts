@@ -251,6 +251,51 @@ export const VEHICLE_PRESETS: VehiclePresetRecord[] = [
       status: 'VERIFIED',
     },
   },
+  {
+    id: '2025-toyota-grand-highlander-hybrid',
+    name: '2025 Toyota Grand Highlander Hybrid AWD',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 300,
+    identity: {
+      make: 'Toyota',
+      model: 'Grand Highlander',
+      year: 2025,
+      trim: 'XLE AWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Grand Highlander',
+        year: 2025,
+        trim: 'XLE AWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 7.0,
+      cityL100km: 6.6,
+      highwayL100km: 7.4,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Grand Highlander',
+        year: 2025,
+        trim: 'XLE AWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 54050,
+      freightPdiCad: 1930,
+      sourceUrl: 'https://www.toyota.ca/toyota/en/vehicles/grand-highlander/overview',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+  },
 
   // -------------------------------------------------------------------------
   // Illustrative Trade-in Archetypes

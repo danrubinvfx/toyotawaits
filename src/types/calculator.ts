@@ -155,6 +155,10 @@ export interface CashFlowPoint {
   refCumulativeCost: number;
   targetCumulativeCost: number;
   netAdvantageTarget: number; // refCumulativeCost - targetCumulativeCost (positive = target ahead)
+  refPurchaseOutlay?: number;
+  targetPurchaseOutlay?: number;
+  refEnergyCost?: number;
+  targetEnergyCost?: number;
   event?: string;
   isStepPoint?: boolean;
 }

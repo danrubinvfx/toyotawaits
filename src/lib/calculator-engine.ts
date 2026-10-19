@@ -265,32 +265,40 @@ export function evaluateSimplePayback(
 }
 
 /**
- * Calculates cumulative cost for a scenario at day t.
+ * Calculates cumulative cost and breakdown for a scenario at day t.
  * Supports pre-delivery waiting energy cost and an exact vertical delivery step at deliveryWaitDays.
  */
-function getScenarioCumulativeCost(
+function getScenarioCostBreakdown(
   scenario: CashFlowScenario,
   t: number,
   isPostDeliveryOnStepDay: boolean
-): number {
+): { total: number; outlay: number; energy: number } {
   const waitDays = scenario.deliveryWaitDays;
   const waitingAnnualCost = scenario.waitingAnnualEnergyCost ?? scenario.annualEnergyCost;
   const upfront = scenario.upfrontOutlay;
   const postDeliveryAnnualCost = scenario.annualEnergyCost;
 
   if (t < waitDays) {
-    return (t / 365) * waitingAnnualCost;
+    const energy = (t / 365) * waitingAnnualCost;
+    return { total: energy, outlay: 0, energy };
   }
 
   if (t === waitDays) {
-    const preDeliveryAccrual = (waitDays / 365) * waitingAnnualCost;
-    return isPostDeliveryOnStepDay ? preDeliveryAccrual + upfront : preDeliveryAccrual;
+    const energy = (waitDays / 365) * waitingAnnualCost;
+    return isPostDeliveryOnStepDay
+      ? { total: energy + upfront, outlay: upfront, energy }
+      : { total: energy, outlay: 0, energy };
   }
 
   // t > waitDays
   const preDeliveryAccrual = (waitDays / 365) * waitingAnnualCost;
   const postDeliveryAccrual = ((t - waitDays) / 365) * postDeliveryAnnualCost;
-  return preDeliveryAccrual + upfront + postDeliveryAccrual;
+  const energy = preDeliveryAccrual + postDeliveryAccrual;
+  return {
+    total: energy + upfront,
+    outlay: upfront,
+    energy,
+  };
 }
 
 /**
@@ -303,12 +311,14 @@ function getScenarioCumulativeCost(
  *
  * @param refScenario Reference vehicle scenario
  * @param targetScenario Target vehicle scenario
- * @param horizonYears Number of years to project (e.g. 10 or 15)
+ * @param horizonYears Number of years to project (e.g. 7 or 15)
+ * @param options Optional sampling configuration (e.g. monthlySampling)
  */
 export function evaluateCashFlowTimeline(
   refScenario: CashFlowScenario,
   targetScenario: CashFlowScenario,
-  horizonYears: number
+  horizonYears: number,
+  options?: { monthlySampling?: boolean }
 ): CashFlowTimelineResult & { postDeliveryRecoveryYears?: number | null } {
   assertFiniteNonNegative('horizonYears', horizonYears);
   if (horizonYears <= 0) {
@@ -345,6 +355,17 @@ export function evaluateCashFlowTimeline(
     }
   }
 
+  // Optionally add monthly milestone days
+  if (options?.monthlySampling) {
+    const totalMonths = horizonYears * 12;
+    for (let m = 1; m <= totalMonths; m++) {
+      const day = Math.round((m * 365) / 12);
+      if (day <= horizonDays) {
+        eventDaysSet.add(day);
+      }
+    }
+  }
+
   const sortedDays = Array.from(eventDaysSet).sort((a, b) => a - b);
   const points: CashFlowPoint[] = [];
 
@@ -354,39 +375,51 @@ export function evaluateCashFlowTimeline(
 
     if (isRefDeliveryDay || isTargetDeliveryDay) {
       // 1. Point immediately BEFORE delivery step
-      const refPre = getScenarioCumulativeCost(refScenario, day, false);
-      const targetPre = getScenarioCumulativeCost(targetScenario, day, false);
+      const refPre = getScenarioCostBreakdown(refScenario, day, false);
+      const targetPre = getScenarioCostBreakdown(targetScenario, day, false);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refPre + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetPre + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refPre - targetPre + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refPre.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetPre.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refPre.total - targetPre.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refPre.outlay,
+        targetPurchaseOutlay: targetPre.outlay,
+        refEnergyCost: Math.round((refPre.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetPre.energy + Number.EPSILON) * 100) / 100,
         event: 'DELIVERY_PENDING',
         isStepPoint: true,
       });
 
       // 2. Point immediately AFTER delivery step
-      const refPost = getScenarioCumulativeCost(refScenario, day, true);
-      const targetPost = getScenarioCumulativeCost(targetScenario, day, true);
+      const refPost = getScenarioCostBreakdown(refScenario, day, true);
+      const targetPost = getScenarioCostBreakdown(targetScenario, day, true);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refPost + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetPost + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refPost - targetPost + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refPost.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetPost.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refPost.total - targetPost.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refPost.outlay,
+        targetPurchaseOutlay: targetPost.outlay,
+        refEnergyCost: Math.round((refPost.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetPost.energy + Number.EPSILON) * 100) / 100,
         event: 'DELIVERY_OUTLAY',
         isStepPoint: true,
       });
     } else {
-      const refCost = getScenarioCumulativeCost(refScenario, day, true);
-      const targetCost = getScenarioCumulativeCost(targetScenario, day, true);
+      const refCost = getScenarioCostBreakdown(refScenario, day, true);
+      const targetCost = getScenarioCostBreakdown(targetScenario, day, true);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refCost + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetCost + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refCost - targetCost + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refCost.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetCost.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refCost.total - targetCost.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refCost.outlay,
+        targetPurchaseOutlay: targetCost.outlay,
+        refEnergyCost: Math.round((refCost.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetCost.energy + Number.EPSILON) * 100) / 100,
         event: day % 365 === 0 ? `YEAR_${day / 365}` : undefined,
       });
     }
@@ -395,8 +428,8 @@ export function evaluateCashFlowTimeline(
   // Calculate post-delivery recovery time if target vehicle was delivered with a deficit
   let postDeliveryRecoveryYears: number | null = null;
   const targetDeliveryDay = targetScenario.deliveryWaitDays;
-  const refCostAtTargetDelivery = getScenarioCumulativeCost(refScenario, targetDeliveryDay, true);
-  const targetCostAtTargetDelivery = getScenarioCumulativeCost(targetScenario, targetDeliveryDay, true);
+  const refCostAtTargetDelivery = getScenarioCostBreakdown(refScenario, targetDeliveryDay, true).total;
+  const targetCostAtTargetDelivery = getScenarioCostBreakdown(targetScenario, targetDeliveryDay, true).total;
   const deficitAtDelivery = targetCostAtTargetDelivery - refCostAtTargetDelivery;
 
   const postDeliveryAnnualSavings = refScenario.annualEnergyCost - targetScenario.annualEnergyCost;
@@ -404,13 +437,18 @@ export function evaluateCashFlowTimeline(
     postDeliveryRecoveryYears = Math.round((deficitAtDelivery / postDeliveryAnnualSavings) * 1000) / 1000;
   }
 
-  // Find crossover (break-even) day if cumulative cost lines cross
+  // Find crossover (break-even) day if cumulative cost lines cross after all purchases are completed
   let crossoverDay: number | null = null;
   let crossoverYear: number | null = null;
+  const maxDeliveryDay = Math.max(refScenario.deliveryWaitDays, targetScenario.deliveryWaitDays);
 
   for (let i = 0; i < points.length - 1; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];
+
+    if (p1.day < maxDeliveryDay) {
+      continue;
+    }
 
     if (p1.day > 0 && p1.netAdvantageTarget === 0) {
       crossoverDay = p1.day;

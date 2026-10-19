@@ -346,19 +346,23 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
   });
 
   describe('Page & Verification Gates: CalculatorPage', () => {
-    it('renders server component page with metadata and canonical URL', () => {
+    it('renders server component page with metadata and canonical URL', async () => {
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
       expect(metadata.title).toContain('Toyota Fuel & Energy Savings Calculator');
 
-      render(<CalculatorPage />);
+      await act(async () => {
+        render(<CalculatorPage />);
+      });
 
       expect(screen.getByRole('heading', { level: 1, name: /Canadian Toyota Energy Savings Calculator/i })).toBeInTheDocument();
       expect(screen.getByText(/Calculation Methodology & Evidence Provenance/i)).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: /Canadian Annual Energy Benchmark Table/i })).toBeInTheDocument();
     });
 
-    it('verifies that full VehicleSavingsCalculator renders with zero missing controls', () => {
-      render(<VehicleSavingsCalculator />);
+    it('verifies that full VehicleSavingsCalculator renders with zero missing controls', async () => {
+      await act(async () => {
+        render(<VehicleSavingsCalculator />);
+      });
 
       // Reset button
       expect(screen.getByRole('button', { name: /Reset Defaults/i })).toBeInTheDocument();
@@ -372,29 +376,35 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
       expect(screen.getByText('Energy-Cost Savings')).toBeInTheDocument();
     });
 
-    it('Gate 1: verifies responsive layout compatibility across 320px, 375px, 768px, and 1440px', () => {
+    it('Gate 1: verifies responsive layout compatibility across 320px, 375px, 768px, and 1440px', async () => {
       const viewports = [320, 375, 768, 1440];
 
       for (const width of viewports) {
         window.innerWidth = width;
-        const { container } = render(<CalculatorPage />);
+        let containerElem: HTMLElement;
+        await act(async () => {
+          const { container } = render(<CalculatorPage />);
+          containerElem = container;
+        });
 
         // Verify main container has responsive padding and max-w constraint
-        const main = container.querySelector('main');
+        const main = containerElem!.querySelector('main');
         expect(main).toBeInTheDocument();
         expect(main?.className).toContain('min-h-screen');
 
-        const wrapper = container.querySelector('.max-w-6xl');
+        const wrapper = containerElem!.querySelector('.max-w-6xl');
         expect(wrapper).toBeInTheDocument();
 
         // Verify benchmark table has overflow-x-auto to prevent horizontal page blowouts on 320px/375px
-        const tableWrapper = container.querySelector('.overflow-x-auto');
+        const tableWrapper = containerElem!.querySelector('.overflow-x-auto');
         expect(tableWrapper).toBeInTheDocument();
       }
     });
 
-    it('Gate 2: confirms keyboard navigation and screen-reader label compliance for all slider/input pairs', () => {
-      render(<VehicleSavingsCalculator />);
+    it('Gate 2: confirms keyboard navigation and screen-reader label compliance for all slider/input pairs', async () => {
+      await act(async () => {
+        render(<VehicleSavingsCalculator />);
+      });
 
       // Verify every number input has an accessible name
       const annualKmInput = screen.getByLabelText(/Annual driving distance in kilometers/i);

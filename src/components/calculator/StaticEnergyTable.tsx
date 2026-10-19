@@ -54,6 +54,27 @@ export function StaticEnergyTable() {
       cost25k: calculateAnnualGasCost(25000, 13.5, gasPrice),
     },
 
+    {
+      name: 'Minivan Gas V6 (e.g. 2018 Sienna/Caravan/Odyssey)',
+      category: 'Trade-in Baseline',
+      powertrain: 'GAS',
+      combinedRating: '11.2 L/100km',
+      status: 'HISTORICAL',
+      cost15k: calculateAnnualGasCost(15000, 11.2, gasPrice),
+      cost20k: calculateAnnualGasCost(20000, 11.2, gasPrice),
+      cost25k: calculateAnnualGasCost(25000, 11.2, gasPrice),
+    },
+    {
+      name: '3-Row Midsize SUV Gas V6 (e.g. 2018 Highlander/Explorer)',
+      category: 'Trade-in Baseline',
+      powertrain: 'GAS',
+      combinedRating: '11.5 L/100km',
+      status: 'HISTORICAL',
+      cost15k: calculateAnnualGasCost(15000, 11.5, gasPrice),
+      cost20k: calculateAnnualGasCost(20000, 11.5, gasPrice),
+      cost25k: calculateAnnualGasCost(25000, 11.5, gasPrice),
+    },
+
     // 2026 Models
     {
       name: '2026 Toyota RAV4 Hybrid AWD',
@@ -106,6 +127,16 @@ export function StaticEnergyTable() {
       cost15k: calculateAnnualGasCost(15000, 6.6, gasPrice),
       cost20k: calculateAnnualGasCost(20000, 6.6, gasPrice),
       cost25k: calculateAnnualGasCost(25000, 6.6, gasPrice),
+    },
+    {
+      name: '2025 Toyota Grand Highlander Hybrid AWD',
+      category: 'Toyota Hybrid',
+      powertrain: 'HEV',
+      combinedRating: '7.0 L/100km',
+      status: 'VERIFIED',
+      cost15k: calculateAnnualGasCost(15000, 7.0, gasPrice),
+      cost20k: calculateAnnualGasCost(20000, 7.0, gasPrice),
+      cost25k: calculateAnnualGasCost(25000, 7.0, gasPrice),
     },
   ];
 
