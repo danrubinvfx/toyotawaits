@@ -1,0 +1,355 @@
+/**
+ * ToyotaWaits.ca - Vehicle Presets & Archetypes
+ * Specification Reference: Master Plan v3.1 (19 October 2026) - Stage 1 (Evidence & Engine)
+ * Includes official provenance metadata for Canadian vehicles and trade-in archetypes.
+ */
+
+import { VehiclePresetRecord } from '@/types/calculator';
+
+const DATASET_VERSION = '2026.10-v3.1';
+const VERIFIED_DATE = '2026-10-19';
+
+export const VEHICLE_PRESETS: VehiclePresetRecord[] = [
+  // -------------------------------------------------------------------------
+  // 2026 Toyota Vehicles (Provisional announcements)
+  // -------------------------------------------------------------------------
+  {
+    id: '2026-toyota-rav4-hybrid',
+    name: '2026 Toyota RAV4 Hybrid AWD',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 180,
+    identity: {
+      make: 'Toyota',
+      model: 'RAV4 Hybrid',
+      year: 2026,
+      trim: 'LE AWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'RAV4 Hybrid',
+        year: 2026,
+        trim: 'LE AWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 5.8,
+      cityL100km: 5.6,
+      highwayL100km: 6.0,
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-rav4-pricing-specifications',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'PROVISIONAL',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'RAV4 Hybrid',
+        year: 2026,
+        trim: 'LE AWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 37500,
+      freightPdiCad: 1930,
+      dealerAdminFeeCad: 499,
+      estimatedDeliveryDays: 180,
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-rav4-pricing-specifications',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'PROVISIONAL',
+    },
+    notes: 'Provisional specifications based on Toyota Canada preliminary announcements.',
+  },
+  {
+    id: '2026-toyota-rav4-phev',
+    name: '2026 Toyota RAV4 PHEV (Prime AWD)',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 365,
+    identity: {
+      make: 'Toyota',
+      model: 'RAV4 PHEV',
+      year: 2026,
+      trim: 'SE AWD',
+      powertrain: 'PHEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'RAV4 PHEV',
+        year: 2026,
+        trim: 'SE AWD',
+        powertrain: 'PHEV',
+      },
+      electricRangeKm: 80,
+      wallKwhPer100km: 21.5,
+      batterySideKwhPer100km: 18.1,
+      gasModeL100km: 6.0,
+      combinedL100km: 6.0,
+      electricityMeasurementBasis: 'WALL_TO_WHEEL',
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-rav4-phev-pricing-specifications',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'PROVISIONAL',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'RAV4 PHEV',
+        year: 2026,
+        trim: 'SE AWD',
+        powertrain: 'PHEV',
+      },
+      msrpCad: 48750,
+      freightPdiCad: 1930,
+      dealerAdminFeeCad: 499,
+      estimatedDeliveryDays: 365,
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-rav4-phev-pricing-specifications',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'PROVISIONAL',
+    },
+    notes: 'Provisional 80 km EV range & 21.5 kWh/100km wall-to-wheel based on Toyota Canada announcement.',
+  },
+
+  // -------------------------------------------------------------------------
+  // 2025 Verified Production Toyota Models
+  // -------------------------------------------------------------------------
+  {
+    id: '2025-toyota-prius-hybrid',
+    name: '2025 Toyota Prius Hybrid AWD',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 240,
+    identity: {
+      make: 'Toyota',
+      model: 'Prius',
+      year: 2025,
+      trim: 'XLE AWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Prius',
+        year: 2025,
+        trim: 'XLE AWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 4.8,
+      cityL100km: 4.8,
+      highwayL100km: 4.7,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Prius',
+        year: 2025,
+        trim: 'XLE AWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 37990,
+      freightPdiCad: 1860,
+      sourceUrl: 'https://www.toyota.ca/toyota/en/vehicles/prius/overview',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+  },
+  {
+    id: '2025-toyota-camry-hybrid',
+    name: '2025 Toyota Camry Hybrid',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 120,
+    identity: {
+      make: 'Toyota',
+      model: 'Camry',
+      year: 2025,
+      trim: 'SE FWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Camry',
+        year: 2025,
+        trim: 'SE FWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 4.6,
+      cityL100km: 4.5,
+      highwayL100km: 4.6,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Camry',
+        year: 2025,
+        trim: 'SE FWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 34300,
+      freightPdiCad: 1860,
+      sourceUrl: 'https://www.toyota.ca/toyota/en/vehicles/camry/overview',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+  },
+  {
+    id: '2025-toyota-sienna-hybrid',
+    name: '2025 Toyota Sienna Hybrid',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 450,
+    identity: {
+      make: 'Toyota',
+      model: 'Sienna',
+      year: 2025,
+      trim: 'LE AWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Sienna',
+        year: 2025,
+        trim: 'LE AWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 6.6,
+      cityL100km: 6.8,
+      highwayL100km: 6.6,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Sienna',
+        year: 2025,
+        trim: 'LE AWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 45950,
+      freightPdiCad: 1930,
+      sourceUrl: 'https://www.toyota.ca/toyota/en/vehicles/sienna/overview',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // Illustrative Trade-in Archetypes
+  // -------------------------------------------------------------------------
+  {
+    id: 'archetype-compact-crossover-awd',
+    name: 'Trade-in Archetype: Compact Crossover AWD',
+    category: 'TRADE_IN_ARCHETYPE',
+    isTradeInArchetype: true,
+    identity: {
+      make: 'Illustrative Archetype',
+      model: 'Compact Crossover AWD',
+      year: 2018,
+      trim: 'Standard AWD',
+      powertrain: 'GAS',
+    },
+    consumption: {
+      identity: {
+        make: 'Illustrative Archetype',
+        model: 'Compact Crossover AWD',
+        year: 2018,
+        trim: 'Standard AWD',
+        powertrain: 'GAS',
+      },
+      combinedL100km: 9.5,
+      cityL100km: 10.5,
+      highwayL100km: 8.3,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'HISTORICAL',
+    },
+    notes: 'Representative 2.0L-2.5L gas non-hybrid AWD compact crossover (e.g. 2016-2020 RAV4 Gas, CR-V, Rogue).',
+  },
+  {
+    id: 'archetype-sedan-gas',
+    name: 'Trade-in Archetype: Sedan',
+    category: 'TRADE_IN_ARCHETYPE',
+    isTradeInArchetype: true,
+    identity: {
+      make: 'Illustrative Archetype',
+      model: 'Compact / Midsize Sedan',
+      year: 2017,
+      trim: 'Standard FWD',
+      powertrain: 'GAS',
+    },
+    consumption: {
+      identity: {
+        make: 'Illustrative Archetype',
+        model: 'Compact / Midsize Sedan',
+        year: 2017,
+        trim: 'Standard FWD',
+        powertrain: 'GAS',
+      },
+      combinedL100km: 8.2,
+      cityL100km: 9.2,
+      highwayL100km: 6.9,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'HISTORICAL',
+    },
+    notes: 'Representative 4-cylinder gas sedan (e.g. 2015-2019 Corolla, Civic, Camry Gas).',
+  },
+  {
+    id: 'archetype-truck-gas',
+    name: 'Trade-in Archetype: Full-Size Truck',
+    category: 'TRADE_IN_ARCHETYPE',
+    isTradeInArchetype: true,
+    identity: {
+      make: 'Illustrative Archetype',
+      model: 'Full-Size Truck',
+      year: 2018,
+      trim: '4x4 V6/V8',
+      powertrain: 'GAS',
+    },
+    consumption: {
+      identity: {
+        make: 'Illustrative Archetype',
+        model: 'Full-Size Truck',
+        year: 2018,
+        trim: '4x4 V6/V8',
+        powertrain: 'GAS',
+      },
+      combinedL100km: 13.5,
+      cityL100km: 15.2,
+      highwayL100km: 11.5,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'HISTORICAL',
+    },
+    notes: 'Representative half-ton pickup truck (e.g. F-150, Silverado, Tundra V8/V6 gas).',
+  },
+];
+
+export const NEW_VEHICLE_PRESETS = VEHICLE_PRESETS.filter((p) => !p.isTradeInArchetype);
+export const TRADE_IN_ARCHETYPES = VEHICLE_PRESETS.filter((p) => p.isTradeInArchetype);
+
+export function getVehiclePresetById(id: string): VehiclePresetRecord | undefined {
+  return VEHICLE_PRESETS.find((p) => p.id === id);
+}

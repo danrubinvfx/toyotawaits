@@ -4,6 +4,7 @@ import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
 } from '@/lib/data/vehicles';
+import { getAllModelConfigs } from '@/lib/data/model-registry';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://toyotawaits.ca';
@@ -130,6 +131,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const ptSet = modelPowertrainsMap.get(slug)!;
     for (const pt of model.powertrains) {
       ptSet.add(pt.slug.toLowerCase());
+    }
+  }
+
+  for (const config of getAllModelConfigs()) {
+    if (!modelPowertrainsMap.has(config.slug)) {
+      modelPowertrainsMap.set(config.slug, new Set(['hev']));
     }
   }
 

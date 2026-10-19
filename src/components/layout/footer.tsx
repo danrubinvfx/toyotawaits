@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Shield, Lock, Heart, Globe, Scale } from 'lucide-react';
 import { KofiCalloutCard } from '@/components/common/kofi-button';
+import { ModelDirectory } from '@/components/ModelDirectory';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 import type { CountryCode } from '@/lib/types/contracts';
@@ -192,6 +193,9 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
             </ul>
           </div>
         </div>
+
+        {/* Canadian Toyota Model Trackers Directory */}
+        <ModelDirectory />
 
         {/* Ko-fi Community Callout Card */}
         <div className="mb-8">
