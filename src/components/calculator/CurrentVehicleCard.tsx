@@ -25,11 +25,11 @@ export function CurrentVehicleCard({
   );
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-4">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
+      <CardHeader className="p-3 sm:p-4 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="text-xl font-bold flex items-center gap-2">
-            <Car className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
+          <CardTitle className="text-base font-bold flex items-center gap-2">
+            <Car className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
             Current Vehicle Baseline
           </CardTitle>
           <Badge variant="outline" className="text-xs font-mono font-medium">
@@ -38,12 +38,12 @@ export function CurrentVehicleCard({
               : `${currentVehicle.customL100km.toFixed(1)} L/100km`}
           </Badge>
         </div>
-        <CardDescription>
-          Choose a typical Canadian vehicle archetype or enter your actual measured fuel economy.
+        <CardDescription className="text-xs">
+          Choose a typical archetype or enter measured fuel consumption.
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-5">
+      <CardContent className="p-3 sm:p-4 space-y-3.5">
         {/* Mode Toggle Buttons (min 44px height) */}
         <div
           role="tablist"
@@ -55,13 +55,13 @@ export function CurrentVehicleCard({
             role="tab"
             aria-selected={currentVehicle.mode === 'ARCHETYPE'}
             onClick={() => onChange({ mode: 'ARCHETYPE' })}
-            className={`min-h-[44px] px-3 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+            className={`min-h-[44px] px-3 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
               currentVehicle.mode === 'ARCHETYPE'
-                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
                 : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
             }`}
           >
-            <Car className="w-4 h-4" />
+            <Car className="w-3.5 h-3.5" />
             Select Archetype
           </button>
           <button
@@ -69,24 +69,24 @@ export function CurrentVehicleCard({
             role="tab"
             aria-selected={currentVehicle.mode === 'CUSTOM'}
             onClick={() => onChange({ mode: 'CUSTOM' })}
-            className={`min-h-[44px] px-3 py-2 text-sm font-medium rounded-md transition-all flex items-center justify-center gap-2 ${
+            className={`min-h-[44px] px-3 py-1.5 text-xs font-semibold rounded-md transition-all flex items-center justify-center gap-1.5 ${
               currentVehicle.mode === 'CUSTOM'
-                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-sm'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs'
                 : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100'
             }`}
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <SlidersHorizontal className="w-3.5 h-3.5" />
             Custom L/100km
           </button>
         </div>
 
         {/* Tab 1: Archetype Selector */}
         {currentVehicle.mode === 'ARCHETYPE' && (
-          <div className="space-y-3">
+          <div className="space-y-2">
             <Label className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-semibold">
               Select Vehicle Archetype
             </Label>
-            <div className="grid gap-2.5" role="radiogroup" aria-label="Vehicle archetype choices">
+            <div className="grid gap-2" role="radiogroup" aria-label="Vehicle archetype choices">
               {TRADE_IN_ARCHETYPES.map((archetype) => {
                 const isSelected = currentVehicle.archetypeId === archetype.id;
                 return (
@@ -96,25 +96,25 @@ export function CurrentVehicleCard({
                     role="radio"
                     aria-checked={isSelected}
                     onClick={() => onChange({ archetypeId: archetype.id })}
-                    className={`min-h-[44px] w-full text-left p-3.5 rounded-lg border transition-all flex items-center justify-between gap-4 cursor-pointer ${
+                    className={`min-h-[44px] w-full text-left p-2.5 sm:p-3 rounded-lg border transition-all flex items-center justify-between gap-3 cursor-pointer ${
                       isSelected
                         ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-50/80 dark:bg-zinc-800/60 ring-1 ring-zinc-900 dark:ring-zinc-100'
                         : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-600'
                     }`}
                   >
                     <div className="space-y-0.5">
-                      <div className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">
+                      <div className="font-semibold text-xs text-zinc-900 dark:text-zinc-100">
                         {archetype.name.replace('Trade-in Archetype: ', '')}
                       </div>
-                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                      <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate max-w-[180px] sm:max-w-none">
                         {archetype.notes}
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="inline-block font-mono text-base font-bold text-zinc-900 dark:text-zinc-100">
+                      <span className="inline-block font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100">
                         {archetype.consumption.combinedL100km}
                       </span>
-                      <span className="text-xs text-zinc-500 dark:text-zinc-400 block">L/100km</span>
+                      <span className="text-[10px] text-zinc-500 dark:text-zinc-400 block">L/100km</span>
                     </div>
                   </button>
                 );
@@ -155,7 +155,7 @@ export function CurrentVehicleCard({
                       onChange({ customL100km: val });
                     }
                   }}
-                  className="min-h-[44px] text-right font-mono font-semibold"
+                  className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
                 />
               </div>
             </div>

@@ -55,33 +55,19 @@ export function PurchaseOutlayCard({
   const vehicleBWaitId = useId();
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
-      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
-              <Scale className="w-5 h-5 text-red-600 dark:text-red-500" />
-            </div>
-            <div>
-              <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                Purchase Outlay & Comparison Mode
-              </CardTitle>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                Choose how purchase outlays are factored into your payback evaluation
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 3-Way Mode Switcher */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-4 pt-1">
+    <div className={`space-y-3 ${className ?? ''}`}>
+      {/* Compact Segmented Pill Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-1.5 bg-zinc-100 dark:bg-zinc-800/80 rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 w-full" role="tablist" aria-label="Comparison modes">
           <button
             type="button"
+            role="tab"
+            aria-selected={comparisonMode === 'ENERGY_COMPARISON'}
             onClick={() => onComparisonModeChange('ENERGY_COMPARISON')}
             className={`min-h-[44px] px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
               comparisonMode === 'ENERGY_COMPARISON'
                 ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-xs'
-                : 'bg-zinc-50 dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-transparent hover:bg-zinc-200/60 dark:hover:bg-zinc-700/60'
             }`}
           >
             <Layers className="w-4 h-4 shrink-0" />
@@ -90,11 +76,13 @@ export function PurchaseOutlayCard({
 
           <button
             type="button"
+            role="tab"
+            aria-selected={comparisonMode === 'KEEP_VS_REPLACE'}
             onClick={() => onComparisonModeChange('KEEP_VS_REPLACE')}
             className={`min-h-[44px] px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
               comparisonMode === 'KEEP_VS_REPLACE'
                 ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-xs'
-                : 'bg-zinc-50 dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-transparent hover:bg-zinc-200/60 dark:hover:bg-zinc-700/60'
             }`}
           >
             <Car className="w-4 h-4 shrink-0" />
@@ -103,32 +91,43 @@ export function PurchaseOutlayCard({
 
           <button
             type="button"
+            role="tab"
+            aria-selected={comparisonMode === 'NEW_A_VS_NEW_B'}
             onClick={() => onComparisonModeChange('NEW_A_VS_NEW_B')}
             className={`min-h-[44px] px-3 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 border transition-all cursor-pointer ${
               comparisonMode === 'NEW_A_VS_NEW_B'
                 ? 'bg-zinc-900 text-white border-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 dark:border-zinc-100 shadow-xs'
-                : 'bg-zinc-50 dark:bg-zinc-800/40 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                : 'bg-transparent text-zinc-700 dark:text-zinc-300 border-transparent hover:bg-zinc-200/60 dark:hover:bg-zinc-700/60'
             }`}
           >
             <ArrowRightLeft className="w-4 h-4 shrink-0" />
             <span>3. New A vs. New B</span>
           </button>
         </div>
-      </CardHeader>
+      </div>
 
-      <CardContent className="pt-4 space-y-6">
-        {/* Mode 1 Description */}
-        {comparisonMode === 'ENERGY_COMPARISON' && (
-          <div className="p-4 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800/80 text-sm text-zinc-600 dark:text-zinc-400">
-            <p className="font-medium text-zinc-900 dark:text-zinc-200 mb-1">
+      {/* Subtle 1-Line Scope Disclosure */}
+      <div className="flex items-center gap-2 px-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+        <AlertCircle className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+        <p className="truncate">
+          <strong>Scope Disclosure:</strong> Models net vehicle purchase cash outlay and energy spending only. Excludes financing interest, insurance differences, future depreciation, and maintenance.
+        </p>
+      </div>
+
+      {/* Mode 1 Description Banner */}
+      {comparisonMode === 'ENERGY_COMPARISON' && (
+        <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800/80 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between gap-4">
+          <div>
+            <span className="font-semibold text-zinc-900 dark:text-zinc-200 mr-2">
               Mode 1: Energy-Cost Comparison Only
-            </p>
-            <p className="text-xs leading-relaxed">
-              Calculates ongoing fuel and electricity spending without factoring in purchase outlays or vehicle trade-ins.
-              Switch to <strong>Keep vs. Replace</strong> or <strong>New A vs. New B</strong> above to unlock upfront payback period calculations and 7-year cash flow projections.
-            </p>
+            </span>
+            <span>Compares operational fuel and electricity spend without upfront vehicle purchase outlays.</span>
           </div>
-        )}
+          <span className="hidden md:inline-block text-[11px] text-zinc-400 shrink-0">
+            Switch to Mode 2 or 3 to factor in vehicle prices & payback.
+          </span>
+        </div>
+      )}
 
         {/* Mode 2: Keep Current vs. Replace with Target */}
         {comparisonMode === 'KEEP_VS_REPLACE' && (
@@ -450,14 +449,6 @@ export function PurchaseOutlayCard({
           </div>
         )}
 
-        {/* Prominent Statutory Disclosure Notice */}
-        <div className="flex items-start gap-2.5 p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500 dark:text-zinc-400">
-          <AlertCircle className="w-4 h-4 text-zinc-400 dark:text-zinc-500 shrink-0 mt-0.5" />
-          <p className="leading-relaxed">
-            <strong>Scope Disclosure:</strong> Models net vehicle purchase cash outlay and energy spending only. Excludes financing interest, insurance differences, future depreciation, and maintenance.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

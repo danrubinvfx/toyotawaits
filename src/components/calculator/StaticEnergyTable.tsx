@@ -87,7 +87,7 @@ export function StaticEnergyTable() {
       cost25k: calculateAnnualGasCost(25000, 5.8, gasPrice),
     },
     {
-      name: '2026 Toyota RAV4 PHEV AWD (Prime)',
+      name: '2026 Toyota RAV4 PHEV AWD',
       category: 'Toyota PHEV',
       powertrain: 'PHEV',
       combinedRating: '80 km EV • 21.5 kWh • 6.0 L',

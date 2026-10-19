@@ -63,7 +63,7 @@ export const VEHICLE_PRESETS: VehiclePresetRecord[] = [
   },
   {
     id: '2026-toyota-rav4-phev',
-    name: '2026 Toyota RAV4 PHEV (Prime AWD)',
+    name: '2026 Toyota RAV4 PHEV AWD',
     category: 'NEW_VEHICLE',
     isTradeInArchetype: false,
     typicalWaitDays: 365,

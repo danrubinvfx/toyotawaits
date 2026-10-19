@@ -134,17 +134,17 @@ export function PaybackChart({
 
   return (
     <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
-      <CardHeader className="pb-3 border-b border-zinc-100 dark:border-zinc-800/60">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <CardHeader className="p-3 sm:px-4 sm:py-3 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div className="flex items-center gap-2">
-            <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
-              <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-500" />
+            <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
+              <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-500" />
             </div>
             <div>
-              <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              <CardTitle className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
                 7-Year Cumulative Cash Flow Advantage
               </CardTitle>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
                 Discrete daily energy accrual with vertical delivery steps. No curve smoothing.
               </p>
             </div>
@@ -152,12 +152,12 @@ export function PaybackChart({
 
           <div>
             {isRecovered ? (
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-200 dark:border-green-800 flex items-center gap-1.5">
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-200 dark:border-green-800 flex items-center gap-1.5 text-xs py-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>Recovered at Year {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
               </Badge>
             ) : (
-              <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
+              <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-400 flex items-center gap-1.5 text-xs py-0.5">
                 <ShieldAlert className="w-3.5 h-3.5" />
                 <span>Not recovered within 7-year horizon</span>
               </Badge>
@@ -166,11 +166,11 @@ export function PaybackChart({
         </div>
       </CardHeader>
 
-      <CardContent className="pt-4 space-y-4">
+      <CardContent className="p-3 sm:p-4 pt-2.5 space-y-2.5">
         {/* Chart View */}
-        <div className="w-full h-[320px] rounded-lg bg-zinc-950 border border-zinc-800 p-2 pt-4">
+        <div className="w-full h-[260px] sm:h-[280px] rounded-lg bg-zinc-950 border border-zinc-800 p-1.5 sm:p-2 pt-2 sm:pt-3">
           {isMounted ? (
-            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 280 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 260 }}>
               <LineChart
                 data={points}
                 margin={{ top: 10, right: 20, left: 10, bottom: 5 }}

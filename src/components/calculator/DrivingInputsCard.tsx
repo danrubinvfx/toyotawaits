@@ -34,27 +34,27 @@ export function DrivingInputsCard({
   };
 
   return (
-    <Card className={className}>
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-bold flex items-center gap-2">
-          <Gauge className="w-5 h-5 text-red-600 dark:text-red-500" />
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
+      <CardHeader className="p-3 sm:p-4 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+        <CardTitle className="text-base font-bold flex items-center gap-2">
+          <Gauge className="w-4 h-4 text-red-600 dark:text-red-500" />
           Driving & Utility Inputs
         </CardTitle>
-        <CardDescription>
-          Adjust your annual mileage, local gas price, and electricity rate.
+        <CardDescription className="text-xs">
+          Adjust annual mileage, fuel price, and electricity rate.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-3 sm:p-4 space-y-4">
         {/* 1. Annual Kilometers */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between gap-4">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between gap-3">
             <Label
               htmlFor="annual-km-input"
-              className="font-medium text-sm text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
+              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
             >
-              Annual Driving Distance (km)
+              Annual Distance (km)
             </Label>
-            <div className="w-36">
+            <div className="w-32">
               <Input
                 id="annual-km-input"
                 aria-label="Annual driving distance in kilometers"
@@ -64,7 +64,7 @@ export function DrivingInputsCard({
                 step={500}
                 value={inputs.annualKm}
                 onChange={(e) => handleAnnualKmChange(Number(e.target.value))}
-                className="min-h-[44px] text-right font-mono font-semibold"
+                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
               />
             </div>
           </div>
@@ -108,16 +108,16 @@ export function DrivingInputsCard({
         </div>
 
         {/* 2. Gasoline Price */}
-        <div className="space-y-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-          <div className="flex items-center justify-between gap-4">
+        <div className="space-y-2 pt-2.5 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-between gap-3">
             <Label
               htmlFor="gas-price-input"
-              className="font-medium text-sm text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
+              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
             >
-              <Fuel className="w-4 h-4 text-amber-600 dark:text-amber-500" />
-              Gasoline Price ($ CAD / L)
+              <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500" />
+              Gasoline Price ($/L)
             </Label>
-            <div className="w-36">
+            <div className="w-32">
               <Input
                 id="gas-price-input"
                 aria-label="Gasoline price in Canadian dollars per litre"
@@ -127,12 +127,12 @@ export function DrivingInputsCard({
                 step={0.01}
                 value={inputs.gasPricePerL}
                 onChange={(e) => handleGasPriceChange(Number(e.target.value))}
-                className="min-h-[44px] text-right font-mono font-semibold"
+                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
               />
             </div>
           </div>
 
-          <div className="pt-1">
+          <div className="pt-0.5">
             <input
               id="gas-price-slider"
               aria-label="Gasoline price slider"
@@ -144,7 +144,7 @@ export function DrivingInputsCard({
               onChange={(e) => handleGasPriceChange(Number(e.target.value))}
               className="w-full min-h-[44px] accent-amber-600 cursor-pointer"
             />
-            <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
+            <div className="flex justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
               <span>$1.20/L</span>
               <span>$1.75/L</span>
               <span>$2.50/L</span>
@@ -152,35 +152,35 @@ export function DrivingInputsCard({
           </div>
 
           {/* Quick-select chips */}
-          <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Quick gas price presets">
+          <div className="flex flex-wrap gap-1.5 pt-0.5" role="group" aria-label="Quick gas price presets">
             {[1.65, 1.75, 1.85, 1.95].map((price) => (
               <button
                 key={price}
                 type="button"
                 onClick={() => handleGasPriceChange(price)}
-                className={`min-h-[44px] px-3 py-2 text-xs rounded-md border font-medium transition-colors ${
+                className={`min-h-[44px] px-2.5 py-1 text-xs rounded-md border font-medium transition-colors ${
                   inputs.gasPricePerL === price
                     ? 'border-amber-600 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:border-amber-500 dark:text-amber-300'
                     : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800'
                 }`}
               >
-                ${price.toFixed(2)} / L
+                ${price.toFixed(2)}/L
               </button>
             ))}
           </div>
         </div>
 
         {/* 3. Electricity Rate */}
-        <div className="space-y-3 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-          <div className="flex items-center justify-between gap-4">
+        <div className="space-y-2 pt-2.5 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-between gap-3">
             <Label
               htmlFor="electricity-rate-input"
-              className="font-medium text-sm text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
+              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
             >
-              <Zap className="w-4 h-4 text-emerald-600 dark:text-emerald-500" />
-              Electricity Rate ($ CAD / kWh)
+              <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500" />
+              Electricity Rate ($/kWh)
             </Label>
-            <div className="w-36">
+            <div className="w-32">
               <Input
                 id="electricity-rate-input"
                 aria-label="Electricity rate in Canadian dollars per kilowatt hour"
@@ -190,7 +190,7 @@ export function DrivingInputsCard({
                 step={0.005}
                 value={inputs.electricityRatePerKwh}
                 onChange={(e) => handleElectricityRateChange(Number(e.target.value))}
-                className="min-h-[44px] text-right font-mono font-semibold"
+                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
               />
             </div>
           </div>
