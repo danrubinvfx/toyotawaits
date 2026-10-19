@@ -11,7 +11,7 @@ export interface AffiliateRecord {
 }
 
 // Fallback registry matching 004_seed_canadian_data.sql and 006_se_mods_affiliates.sql
-const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
+export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'tuxmat-rav4': {
     id: 'f1111111-1111-4111-8111-111111111111',
     slug: 'tuxmat-rav4',
