@@ -49,6 +49,7 @@ export const QUICK_SELECT_MODELS: QuickSelectModelOption[] = [
   { label: 'Prius / Prime', slug: 'prius', matchSlugs: ['prius', 'prius-prime'] },
   { label: 'Land Cruiser 250', slug: 'land-cruiser', matchSlugs: ['land-cruiser'] },
   { label: 'Tacoma', slug: 'tacoma', matchSlugs: ['tacoma'] },
+  { label: 'Sequoia', slug: 'sequoia', matchSlugs: ['sequoia'] },
 ];
 
 export interface WaitTimeEstimatorProps {
@@ -405,6 +406,8 @@ export function WaitTimeEstimator({
       ? 'Gas, Hybrid & GR'
       : modelSlug === 'corolla-cross'
       ? 'Gas & Hybrid'
+      : modelSlug === 'sequoia'
+      ? 'i-FORCE MAX Hybrid'
       : currentModel.powertrains.map((p) => p.name.split(' ')[0]).join(' & ');
 
   const regionalFallbackNotice = isUs

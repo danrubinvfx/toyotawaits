@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
       medianDays = 120;
     } else if (modelSlug === 'prius' || modelSlug === 'prius-prime') {
       medianDays = powertrainSlug === 'phev' ? 181 : 104;
+    } else if (modelSlug === 'sequoia') {
+      medianDays = provinceCode === 'BC' || provinceCode === 'ON' ? 260 : 210;
     }
 
     const months = (medianDays / 30.4).toFixed(1);

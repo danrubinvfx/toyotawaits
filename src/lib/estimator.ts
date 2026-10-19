@@ -25,6 +25,7 @@ export const BASE_MODEL_P75: Record<string, number> = {
   tacoma: 180,
   corolla: 165,
   'corolla-cross': 270,
+  sequoia: 240,
 };
 
 /** Provincial demand & EV/PHEV rebate multipliers */
@@ -99,6 +100,13 @@ export const MODEL_TRIM_MULTIPLIERS: Record<string, Record<string, number>> = {
     'xle-awd': 1.10,
     'se-awd': 1.08,
     'xse-awd': 1.15,
+  },
+  sequoia: {
+    'sr5-trd-off-road': 0.85,
+    'limited-nightshade': 0.95,
+    platinum: 1.05,
+    'trd-pro': 1.25,
+    capstone: 1.10,
   },
 };
 
@@ -245,6 +253,12 @@ export function getModelCeiling(modelSlug?: string, powertrainSlug?: string, tri
     if (isGas) return 180;
 
     return 400;
+  }
+
+  if (m === 'sequoia') {
+    const isTrdPro = t === 'trd-pro' || t?.includes('trd-pro');
+    if (isTrdPro) return 420;
+    return 330;
   }
 
   return null;

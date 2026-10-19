@@ -33,6 +33,7 @@ export const KNOWN_MODEL_NAMES: Record<string, string> = {
   camry: 'Camry',
   tacoma: 'Tacoma',
   tundra: 'Tundra',
+  sequoia: 'Sequoia',
 };
 
 /**

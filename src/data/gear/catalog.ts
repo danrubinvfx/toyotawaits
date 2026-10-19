@@ -514,6 +514,13 @@ export function getGearMarketConfig(
           searchKeywordsUS: 'Toyota Grand Highlander 2024-2025 all weather floor mats liners',
         };
       }
+      if (cleanModel === 'sequoia') {
+        return {
+          ...config,
+          searchKeywordsCA: 'Toyota Sequoia 2023-2026 all weather floor mats liners 3 row',
+          searchKeywordsUS: 'Toyota Sequoia 2023-2026 all weather floor mats liners 3 row',
+        };
+      }
     }
 
     return {

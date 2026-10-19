@@ -56,6 +56,7 @@ export const BASE_MODEL_P75: Record<string, number> = {
   tacoma: 180,
   corolla: 165,
   'corolla-cross': 270,
+  sequoia: 240,
 };
 
 export function useEstimator({

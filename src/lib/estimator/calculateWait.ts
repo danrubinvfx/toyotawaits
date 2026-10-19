@@ -62,6 +62,7 @@ export const US_NATIONAL_BENCHMARKS: Record<
   'land-cruiser': { min_days: 45, p25_days: 60, median_days: 90, p75_days: 130, sample_size: 10 },
   corolla: { min_days: 20, p25_days: 30, median_days: 50, p75_days: 75, sample_size: 15 },
   'corolla-cross': { min_days: 30, p25_days: 45, median_days: 70, p75_days: 100, sample_size: 12 },
+  sequoia: { min_days: 45, p25_days: 60, median_days: 90, p75_days: 135, sample_size: 10 },
 };
 
 export function calculateWait(options: CalculateWaitOptions): CalculateWaitResult {

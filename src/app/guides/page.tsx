@@ -122,6 +122,20 @@ const MOD_GUIDES = [
     ],
     href: '/guides/corolla-mods',
   },
+  {
+    slug: 'sequoia-mods',
+    title: 'Must-Have Toyota Sequoia (XK80) Mods & Practical Upgrades',
+    tagline: 'Solving the hybrid battery cargo hump, 3-inch preload leveling, 35-inch clearances, and towing stability.',
+    badge: 'Full-Size 4WD Playbook',
+    model: 'Toyota Sequoia (XK80)',
+    highlights: [
+      'Aftermarket Cargo Leveling Drawers & Shelves',
+      'Westcott Designs 3"/1" Preload Collar Lift',
+      'FitcamX OEM 4K Integrated Dashcam',
+      'Heavy-Duty Rear Sway Bar & Towing Coils',
+    ],
+    href: '/guides/sequoia-mods',
+  },
 ];
 
 const PREP_GUIDES = [

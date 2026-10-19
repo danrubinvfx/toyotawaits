@@ -85,6 +85,12 @@ export const TIRE_VEHICLE_OPTIONS: Array<{
     name: 'Toyota Land Cruiser',
     badge: 'Heritage 4WD',
   },
+  {
+    id: 'sequoia',
+    label: 'Sequoia',
+    name: 'Toyota Sequoia (i-FORCE MAX)',
+    badge: 'Full-Size 4WD SUV',
+  },
 ];
 
 export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
@@ -978,6 +984,202 @@ export const TIRE_CATALOG_DATA: Record<string, ModelTireConfig> = {
         amazonUrl:
           'https://www.amazon.ca/s?k=Michelin+Defender+2+215+65R17&tag=toyotawaits-20',
         searchQuery: 'Michelin Defender 2 215/65R17',
+      },
+    ],
+  },
+  sequoia: {
+    modelId: 'sequoia',
+    modelName: 'Toyota Sequoia (3rd Gen XK80)',
+    label: 'Sequoia (i-FORCE MAX)',
+    badge: 'Full-Size 3-Row 4WD',
+    yearRange: '2023–2026+',
+    boltPattern: '6x139.7 (6x5.5")',
+    centerBore: '95.1 mm',
+    recommendedLoadIndex: '114–116 (Extra Load / Light Truck LT)',
+    factorySizes: [
+      '265/70R18 (SR5 TRD Off-Road - High sidewall 18" setup; ideal for off-road and winter)',
+      '265/60R20 (Limited, Platinum - Standard 20" luxury/highway fitment)',
+      '285/65R18 (TRD Pro - Aggressive Falken Wildpeak 33" factory setup on BBS forged wheels)',
+      '265/50R22 (Capstone - 22" street profile luxury fitment)',
+    ],
+    downsizingTip:
+      'For Canadian winter conditions, owners of Platinum (20") and Capstone (22") trims frequently downsize to 18-inch wheels with 265/70R18 tires. The taller sidewall provides vastly superior pothole resilience, deeper snow bite, and saves $300–$600 per set of rubber.',
+    tires: [
+      {
+        id: 'sequoia-nokian-hakka-r5-suv',
+        name: 'Nokian Hakkapeliitta R5 SUV',
+        brand: 'Nokian',
+        category: 'Dedicated Winter',
+        oemSize: '265/70R18',
+        badge: 'Ultimate Arctic Ice Grip',
+        loadIndex: '116',
+        speedRating: 'R',
+        oemFitment: 'Fits OEM 18" (265/70R18) & downsized winter setups',
+        rating: 4.9,
+        bestFor:
+          'Severe Canadian highway ice, freezing rain, and heavy-duty winter towing.',
+        pros: [
+          'Aramid Strong Sidewalls prevent rock punctures and rim pinches on 6,000+ lb full-size SUVs',
+          'Arctic Grip Crystals act like built-in studs on polished glare ice without asphalt noise',
+          'Exceptional low rolling resistance preserving hybrid battery fuel economy',
+        ],
+        cons: [
+          'Premium price point reflecting Nordic winter engineering',
+          'Tread compound softens prematurely if run above +7°C in spring',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Nokian+Hakkapeliitta+R5+SUV+265+70R18&tag=toyotawaits-20',
+        searchQuery: 'Nokian Hakkapeliitta R5 SUV 265/70R18',
+      },
+      {
+        id: 'sequoia-michelin-xice-snow-suv',
+        name: 'Michelin X-Ice Snow SUV',
+        brand: 'Michelin',
+        category: 'Dedicated Winter',
+        oemSize: '265/60R20',
+        badge: 'Top Pick for 20" OEM Wheels',
+        loadIndex: '115',
+        speedRating: 'T',
+        oemFitment: 'Fits Limited & Platinum 20" factory wheels (265/60R20)',
+        rating: 4.8,
+        bestFor:
+          'Long-distance Canadian winter highway driving, slush braking, and long tread life.',
+        pros: [
+          'FleX-Ice 2.0 full-silica compound stays flexible in extreme -40°C prairie cold',
+          'V-shaped aggressive tread channels evacuate thick slush without hydroplaning',
+          'Up to 1 additional winter season of tread life compared to conventional winter tires',
+        ],
+        cons: [
+          'Direct fit on 20" wheels costs more than downsizing to 18" wheel packages',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+X-Ice+Snow+SUV+265+60R20&tag=toyotawaits-20',
+        searchQuery: 'Michelin X-Ice Snow SUV 265/60R20',
+      },
+      {
+        id: 'sequoia-bridgestone-blizzak-dmv2',
+        name: 'Bridgestone Blizzak DM-V2',
+        brand: 'Bridgestone',
+        category: 'Dedicated Winter',
+        oemSize: '265/70R18',
+        badge: 'Deep Snow & Slush Bite',
+        loadIndex: '116',
+        speedRating: 'R',
+        oemFitment: 'Fits OEM 18" (265/70R18) & downsized winter rims',
+        rating: 4.8,
+        bestFor:
+          'Deep unplowed snow, steep cottage road access, and northern mountain passes.',
+        pros: [
+          'Multi-Cell microscopic porous compound removes surface water film on ice instantly',
+          '3D zigzag sipes create thousands of biting edges for heavy SUV stopping power',
+          'Exceptional traction on packed snow and rutted ice',
+        ],
+        cons: [
+          'Top 55% of tread is the proprietary Multi-Cell compound; slightly faster wear in warm dry spring temps',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Bridgestone+Blizzak+DM-V2+265+70R18&tag=toyotawaits-20',
+        searchQuery: 'Bridgestone Blizzak DM-V2 265/70R18',
+      },
+      {
+        id: 'sequoia-goodyear-duratrac-rt',
+        name: 'Goodyear Wrangler DuraTrac RT',
+        brand: 'Goodyear',
+        category: 'All-Weather 3PMSF',
+        oemSize: '265/70R18',
+        badge: 'Rugged Commercial Traction',
+        loadIndex: '116',
+        speedRating: 'S',
+        oemFitment: 'Fits 18" (265/70R18) & 33" TRD Pro setups (285/65R18)',
+        rating: 4.7,
+        bestFor:
+          'Year-round backcountry trails, logging roads, and certified 3PMSF severe winter conditions.',
+        pros: [
+          'Severe Snow certified (3PMSF) meeting all BC and Quebec provincial winter mandates',
+          'Self-cleaning shoulder blocks dig through deep mud, heavy slush, and unplowed drifts',
+          'Tough Kevlar-reinforced sidewall provides cut-and-chip resistance on sharp shale',
+        ],
+        cons: [
+          'Slightly higher audible tread hum on dry asphalt than mild all-weather tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Goodyear+Wrangler+DuraTrac+RT+265+70R18&tag=toyotawaits-20',
+        searchQuery: 'Goodyear Wrangler DuraTrac RT 265/70R18',
+      },
+      {
+        id: 'sequoia-michelin-defender-ltx-ms2',
+        name: 'Michelin Defender LTX M/S2',
+        brand: 'Michelin',
+        category: 'All-Season Highway',
+        oemSize: '265/60R20',
+        badge: 'Top Pick for Heavy Towing & Highway',
+        loadIndex: '115',
+        speedRating: 'H',
+        oemFitment: 'Fits OEM 20" (265/60R20), 18" (265/70R18) & 22" (265/50R22)',
+        rating: 4.9,
+        bestFor:
+          'Cross-country highway touring, heavy travel trailer towing, and 100,000+ km longevity.',
+        pros: [
+          'Evertread 2.0 compound handles the massive 583 lb-ft torque of the i-FORCE MAX hybrid',
+          'Best-in-class wet stopping distance and heavy rain hydroplaning resistance',
+          'Remarkably silent ride eliminating highway fatigue on long drives',
+        ],
+        cons: [
+          'Not 3PMSF severe snow rated; dedicated winter tires required for Canadian winter laws',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Michelin+Defender+LTX+MS2+265+60R20&tag=toyotawaits-20',
+        searchQuery: 'Michelin Defender LTX MS2 265/60R20',
+      },
+      {
+        id: 'sequoia-bfg-ko3',
+        name: 'BFGoodrich All-Terrain T/A KO3',
+        brand: 'BFGoodrich',
+        category: 'All-Weather 3PMSF',
+        oemSize: '285/65R18',
+        badge: 'The Gold Standard All-Terrain',
+        loadIndex: '125',
+        speedRating: 'S',
+        oemFitment: 'OEM size on TRD Pro (285/65R18) & upgrade for 18" rims',
+        rating: 4.8,
+        bestFor:
+          'Aggressive off-road overland expeditions, rock crawling, and year-round 3PMSF winter driving.',
+        pros: [
+          'Next-generation CoreGard technology with race-proven bruise-resistant sidewall rubber',
+          'Optimized serrated shoulder lugs improve soft snow and mud traction',
+          'Severe Snow certified (3PMSF) for legal year-round driving across BC mountain highways',
+        ],
+        cons: [
+          'E-load rating gives a firmer ride over potholes than soft highway tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=BFGoodrich+All-Terrain+TA+KO3+285+65R18&tag=toyotawaits-20',
+        searchQuery: 'BFGoodrich All-Terrain TA KO3 285/65R18',
+      },
+      {
+        id: 'sequoia-falken-wildpeak-at4w',
+        name: 'Falken Wildpeak A/T4W',
+        brand: 'Falken',
+        category: 'All-Weather 3PMSF',
+        oemSize: '265/70R18',
+        badge: 'Heavy-Duty Towing All-Terrain',
+        loadIndex: '116',
+        speedRating: 'T',
+        oemFitment: 'Fits 18" (265/70R18) & 20" (265/60R20)',
+        rating: 4.8,
+        bestFor:
+          'Heavy towing stability, deep snow traction, and year-round Canadian weather versatility.',
+        pros: [
+          'DURASPEC 3-ply sidewall technology for exceptional puncture and heavy-load resistance',
+          '3PMSF severe snow certified with full-depth 3D canyon sipes',
+          'Rigid tread pattern prevents squirm and wandering when towing heavy trailers',
+        ],
+        cons: [
+          'Heavier unsprung weight compared to standard highway touring tires',
+        ],
+        amazonUrl:
+          'https://www.amazon.ca/s?k=Falken+Wildpeak+AT4W+265+70R18&tag=toyotawaits-20',
+        searchQuery: 'Falken Wildpeak AT4W 265/70R18',
       },
     ],
   },

@@ -13,6 +13,7 @@ export const SUPPORTED_MODELS = [
   'tacoma',
   'corolla',
   'corolla-cross',
+  'sequoia',
 ] as const;
 
 export type SupportedModel = (typeof SUPPORTED_MODELS)[number];
@@ -101,7 +102,32 @@ export const COROLLA_CROSS_CONFIG: ModelLineupConfig = {
   },
 };
 
+export const SEQUOIA_CONFIG: ModelLineupConfig = {
+  slug: 'sequoia',
+  name: 'Toyota Sequoia',
+  generationStartYear: 2023,
+  powertrains: {
+    hev: {
+      powertrain: 'hev',
+      name: 'i-FORCE MAX Twin-Turbo V6 Hybrid',
+      trims: [
+        'SR5 TRD Off-Road',
+        'Limited Nightshade',
+        'Platinum',
+        'TRD Pro',
+        'Capstone',
+      ],
+      defaultBaselineDays: 240,
+      p25Days: 180,
+      p75Days: 330,
+      baseMsrpCad: 84940,
+      maxCeilingDays: 420,
+    },
+  },
+};
+
 export const MODEL_CONFIGURATIONS: Record<string, ModelLineupConfig> = {
   corolla: COROLLA_CONFIG,
   'corolla-cross': COROLLA_CROSS_CONFIG,
+  sequoia: SEQUOIA_CONFIG,
 };

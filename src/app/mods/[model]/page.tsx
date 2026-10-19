@@ -27,6 +27,8 @@ export default async function ModelModsRedirectPage({
     case 'corolla':
     case 'corolla-cross':
       redirect('/guides/corolla-mods');
+    case 'sequoia':
+      redirect('/guides/sequoia-mods');
     default:
       redirect('/guides');
   }

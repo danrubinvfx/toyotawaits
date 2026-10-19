@@ -87,6 +87,15 @@ export const VEHICLE_OPTIONS: VehicleOption[] = [
     badgeColor: 'border-orange-500/30 text-orange-500 bg-orange-500/10',
     powertrain: 'hev',
   },
+  {
+    id: 'sequoia',
+    label: 'Sequoia',
+    name: 'Toyota Sequoia',
+    subtitle: 'i-FORCE MAX Twin-Turbo V6 Hybrid (4WD)',
+    badge: 'Full-Size 3-Row SUV',
+    badgeColor: 'border-amber-500/30 text-amber-500 bg-amber-500/10',
+    powertrain: 'hev',
+  },
 ];
 
 export interface BenchmarkFeedProps {

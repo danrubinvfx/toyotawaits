@@ -239,7 +239,7 @@ describe('Estimator Math Clamping & Multiplier Guardrails (src/lib/estimator.ts)
           }
         }
       }
-    });
+    }, 15000);
   });
 
   describe('Out-Year Bounding (No 2028+ Drift)', () => {

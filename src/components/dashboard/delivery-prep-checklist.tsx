@@ -169,6 +169,7 @@ export function DeliveryPrepChecklist({
     if (m.includes('corolla')) return 'corolla';
     if (m.includes('prius')) return m.includes('prime') ? 'prius-prime' : 'prius';
     if (m.includes('tacoma')) return 'tacoma';
+    if (m.includes('sequoia')) return 'sequoia';
     if (m.includes('rav4') || m.includes('prime')) return 'rav4';
     return m || 'all';
   }, [model]);
@@ -402,6 +403,8 @@ export function DeliveryPrepChecklist({
         return 'Toyota Prius';
       case 'tacoma':
         return 'Tacoma';
+      case 'sequoia':
+        return 'Sequoia';
       case 'rav4':
         return normalizedPowertrain === 'phev' ? 'RAV4 Prime (PHEV)' : 'RAV4 (Hybrid/Prime)';
       default:

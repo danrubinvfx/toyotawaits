@@ -94,6 +94,16 @@ export const BASELINE_MODEL_BENCHMARKS: Record<string, ModelWaitBenchmark> = {
     max_days: 400,
     mean_days: 165.0,
   },
+  sequoia: {
+    model: 'sequoia',
+    sample_size: 15,
+    min_days: 90,
+    p25_days: 180,
+    median_days: 240,
+    p75_days: 330,
+    max_days: 420,
+    mean_days: 255.0,
+  },
 };
 
 export const ACTIVE_TRACKED_MODELS = [
@@ -105,6 +115,7 @@ export const ACTIVE_TRACKED_MODELS = [
   'land-cruiser',
   'corolla',
   'corolla-cross',
+  'sequoia',
 ] as const;
 
 export type ActiveTrackedModel = (typeof ACTIVE_TRACKED_MODELS)[number];
@@ -278,6 +289,18 @@ export const BASELINE_POWERTRAIN_BENCHMARKS: Record<string, PowertrainWaitBenchm
     p75_days: 360,
     max_days: 400,
     mean_days: 278.0,
+  },
+  'sequoia-hev': {
+    model: 'sequoia',
+    powertrain: 'hev',
+    powertrainName: 'i-FORCE MAX Hybrid',
+    sample_size: 15,
+    min_days: 90,
+    p25_days: 180,
+    median_days: 240,
+    p75_days: 330,
+    max_days: 420,
+    mean_days: 255.0,
   },
 };
 

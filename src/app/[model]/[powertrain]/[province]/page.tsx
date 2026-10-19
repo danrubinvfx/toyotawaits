@@ -80,6 +80,8 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     medianDays = 120;
   } else if (model.slug === 'prius' || model.slug === 'prius-prime') {
     medianDays = powertrain.slug === 'phev' ? 181 : 104;
+  } else if (model.slug === 'sequoia') {
+    medianDays = ['BC', 'ON'].includes(province.code) ? 260 : 210;
   }
 
   const months = (medianDays / 30.4).toFixed(1);
@@ -182,6 +184,11 @@ export default async function ProvincialVehiclePage({ params }: RouteProps) {
       p75Days = 145;
       sampleCount = 35;
     }
+  } else if (model.slug === 'sequoia') {
+    medianDays = ['BC', 'ON'].includes(province.code) ? 260 : 210;
+    p25Days = 180;
+    p75Days = 330;
+    sampleCount = 28;
   }
 
   const medianMonths = (medianDays / 30.4).toFixed(1);

@@ -323,6 +323,26 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
       },
     ],
   },
+  {
+    id: '10000000-0000-4000-8000-000000000010',
+    slug: 'sequoia',
+    name: 'Sequoia',
+    generationStartYear: 2023,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000100',
+        slug: 'hev',
+        name: 'i-FORCE MAX Twin-Turbo V6 Hybrid',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000130', slug: 'sr5-trd-off-road', name: 'SR5 TRD Off-Road', msrpCad: 84940 },
+          { id: '30000000-0000-4000-8000-000000000131', slug: 'limited-nightshade', name: 'Limited Nightshade', msrpCad: 88270 },
+          { id: '30000000-0000-4000-8000-000000000132', slug: 'platinum', name: 'Platinum', msrpCad: 99250 },
+          { id: '30000000-0000-4000-8000-000000000133', slug: 'trd-pro', name: 'TRD Pro', msrpCad: 100508 },
+          { id: '30000000-0000-4000-8000-000000000134', slug: 'capstone', name: 'Capstone', msrpCad: 102562 },
+        ],
+      },
+    ],
+  },
 ];
 
 import {

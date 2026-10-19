@@ -75,6 +75,9 @@ const BASELINE_WAIT_DATA: Record<string, number[]> = {
   'corolla-cross-gas-bc': [65, 80, 95, 120, 140],
   'corolla-cross-hev-on': [210, 240, 270, 310, 360],
   'corolla-cross-hev-bc': [220, 250, 285, 330, 380],
+  // Sequoia Lineup
+  'sequoia-hev-on': [180, 210, 240, 280, 330],
+  'sequoia-hev-bc': [190, 220, 255, 300, 350],
 };
 
 const BASELINE_PENDING_COUNTS: Record<string, number> = {
@@ -141,6 +144,14 @@ const TRIM_BASELINE_WAIT_DATA: Record<string, number[]> = {
   // Prius Prime / Prius PHEV QC
   'prius-prime-phev-qc-xse': [240], // 1 submission (< 3) -> fallback note
   'prius-phev-qc-xse': [240],
+
+  // Sequoia HEV Trims
+  'sequoia-hev-on-sr5-trd-off-road': [120, 150, 180, 210, 240],
+  'sequoia-hev-on-limited-nightshade': [130, 160, 180, 220, 250],
+  'sequoia-hev-on-platinum': [180, 210, 240, 270, 330],
+  'sequoia-hev-on-trd-pro': [240, 280, 330, 380, 420],
+  'sequoia-hev-on-capstone': [180, 210, 240, 280, 330],
+  'sequoia-hev-bc-trd-pro': [250, 300, 350, 400],
 };
 
 function resolveFallbackDataset(
