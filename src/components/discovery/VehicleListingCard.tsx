@@ -120,8 +120,11 @@ export function resolveVehicleListingUrl(props: {
 }): string | null {
   const { vdpUrl, vin, stockNumber } = props;
 
-  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown for pilot listings)
-  let baseDomain = 'https://www.jptoyota-downtown.com';
+  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown or Surrey)
+  const isSurrey =
+    props.dealerName?.toLowerCase().includes('surrey') ||
+    props.dealerCity?.toLowerCase().includes('surrey');
+  let baseDomain = isSurrey ? 'https://www.jptoyota-surrey.com' : 'https://www.jptoyota-downtown.com';
   if (vdpUrl && (vdpUrl.startsWith('http://') || vdpUrl.startsWith('https://'))) {
     try {
       const parsed = new URL(vdpUrl);
@@ -131,15 +134,21 @@ export function resolveVehicleListingUrl(props: {
     }
   }
 
-  // Normalize common missing-hyphen domain typo
+  // Normalize common missing-hyphen domain typos
   if (baseDomain.includes('jptoyotadowntown.com')) {
     baseDomain = baseDomain.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+  }
+  if (baseDomain.includes('jptoyotasurrey.com')) {
+    baseDomain = baseDomain.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
   }
 
   if (vdpUrl && typeof vdpUrl === 'string') {
     let clean = vdpUrl.trim();
     if (clean.includes('jptoyotadowntown.com')) {
       clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+    }
+    if (clean.includes('jptoyotasurrey.com')) {
+      clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
     }
 
     // Relative path: prepend dealer base domain

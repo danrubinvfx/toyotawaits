@@ -6,7 +6,10 @@
  *
  * Usage:
  *   npx tsx scripts/discovery/sweep-dealer.ts --dealer=jptoyota-downtown
- *   npm run sweep:dealer -- --dealer=jptoyota-downtown
+ *   npx tsx scripts/discovery/sweep-dealer.ts --dealer=jptoyota-surrey
+ *   npx tsx scripts/discovery/sweep-dealer.ts --all
+ *   npm run sweep:dealer -- --dealer=jptoyota-surrey
+ *   npm run sweep:all
  *   npm run sweep:dealer -- --help
  */
 
@@ -15,14 +18,15 @@ import * as path from 'path';
 import { parseConvertusPayload } from '../../lib/discovery/adapters/convertus';
 import { ingestDealerListings } from '../../lib/discovery/services/ingestion-service';
 import { evaluateSweepStaleness } from '../../lib/discovery/services/staleness-service';
-import { createServerClient, isLiveSupabaseConfigured } from '../../src/lib/supabase/server';
+import { createServerClient } from '../../src/lib/supabase/server';
 
 // Polite operating safeguards per Master Plan V3.2
 export const USER_AGENT_AUDITOR =
   'Mozilla/5.0 (compatible; ToyotaWaitsLocalAuditor/1.0; +https://toyotawaits.ca/source-register)';
-export const DEFAULT_TIMEOUT_MS = 6000;
+export const DEFAULT_TIMEOUT_MS = 8000;
 export const MAX_RETRIES = 2;
 export const INITIAL_BACKOFF_MS = 1000;
+export const POLITE_DEALER_COOLDOWN_MS = 4000;
 
 // Registered dealer configurations
 export interface RegisteredDealerSource {
@@ -58,7 +62,37 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 687-6044',
     websiteUrl: 'https://www.jptoyota-downtown.com/',
   },
+  {
+    dealerCode: 'jptoyota-surrey',
+    aliases: ['jp-toyota-surrey', 'jptoyota-surrey', 'jim-pattison-toyota-surrey'],
+    dealerName: 'Jim Pattison Toyota Surrey',
+    sourceCode: 'jp-toyota-surrey-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.jptoyota-surrey.com',
+    endpointUrl:
+      'https://www.jptoyota-surrey.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1249%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    address: '15389 Guildford Drive',
+    city: 'Surrey',
+    province: 'BC',
+    postalCode: 'V3R 0H9',
+    phone: '(604) 495-4100',
+    websiteUrl: 'https://www.jptoyota-surrey.com/',
+  },
 ];
+
+export interface DealerSweepExecutionResult {
+  dealerCode: string;
+  dealerName: string;
+  success: boolean;
+  totalParsed: number;
+  quarantinedCount: number;
+  listingsCreated: number;
+  listingsUpdated: number;
+  observationsStored: number;
+  durationMs: number;
+  errorMessage?: string;
+  skippedReason?: string;
+}
 
 /**
  * Builds a parameterized Convertus VMS proxy URL with explicit page limit and page index.
@@ -127,16 +161,19 @@ Automated polite sweep runner for Canadian Toyota dealer public inventory.
 Usage:
   npx tsx scripts/discovery/sweep-dealer.ts [options]
   npm run sweep:dealer -- [options]
+  npm run sweep:all
 
 Options:
-  --dealer=<code|alias>  Specify target dealer (default: jptoyota-downtown)
-                         Supported: jptoyota-downtown, jp-toyota-downtown
-  --dry-run              Execute sweep, parse and validate without persisting to Supabase
-  --fixture              Use local offline fixture instead of fetching live endpoint
-  --help, -h             Show this help screen and exit
+  --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
+                             Supported: jptoyota-downtown, jptoyota-surrey, all
+  --all                      Sweep all registered active pilot dealers sequentially
+  --dry-run                  Execute sweep, parse and validate without persisting to Supabase
+  --fixture                  Use local offline fixture instead of fetching live endpoint
+  --help, -h                 Show this help screen and exit
 
 Operating Safeguards:
   - User-Agent disclosure: ${USER_AGENT_AUDITOR}
+  - Polite Cooldown: ${POLITE_DEALER_COOLDOWN_MS}ms between distinct dealership requests
   - Request timeout: ${DEFAULT_TIMEOUT_MS}ms
   - Retries: Up to ${MAX_RETRIES} attempts with exponential backoff on transient errors
   - Circuit Breaker: Immediate exit on HTTP 429 rate-limiting
@@ -144,7 +181,7 @@ Operating Safeguards:
 `);
 }
 
-function resolveDealer(dealerArg: string): RegisteredDealerSource | null {
+export function resolveDealer(dealerArg: string): RegisteredDealerSource | null {
   const normalized = dealerArg.toLowerCase().trim();
   for (const dealer of REGISTERED_DEALERS) {
     if (dealer.dealerCode === normalized || dealer.aliases.includes(normalized)) {
@@ -154,7 +191,7 @@ function resolveDealer(dealerArg: string): RegisteredDealerSource | null {
   return null;
 }
 
-async function seedReferenceEntities(supabase: any, dealerConfig: RegisteredDealerSource) {
+export async function seedReferenceEntities(supabase: any, dealerConfig: RegisteredDealerSource) {
   // 1. Ensure Ingestion Source exists
   let sourceId: string;
   const { data: existingSource } = await supabase
@@ -230,7 +267,7 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      console.log(`[HTTP] Fetching ${url} (Attempt ${attempt}/${MAX_RETRIES + 1})...`);
+      console.log(`  [HTTP] Fetching ${url} (Attempt ${attempt}/${MAX_RETRIES + 1})...`);
       const res = await fetch(url, {
         headers: {
           'User-Agent': USER_AGENT_AUDITOR,
@@ -243,8 +280,8 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
       httpStatus = res.status;
 
       if (res.status === 429) {
-        console.error(`[CIRCUIT BREAKER] HTTP 429 Rate Limited. Aborting sweep immediately.`);
-        process.exit(1);
+        console.error(`  [CIRCUIT BREAKER] HTTP 429 Rate Limited. Aborting request immediately.`);
+        throw new Error(`HTTP 429: Too Many Requests (Rate limited)`);
       }
 
       if (!res.ok) {
@@ -264,7 +301,7 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
 
       if (attempt <= MAX_RETRIES && isTransient) {
         const delay = INITIAL_BACKOFF_MS * Math.pow(2, attempt - 1);
-        console.warn(`[RETRY] Transient failure (${err.message}). Retrying in ${delay}ms...`);
+        console.warn(`  [RETRY] Transient failure (${err.message}). Retrying in ${delay}ms...`);
         await new Promise((r) => setTimeout(r, delay));
       } else {
         break;
@@ -272,67 +309,52 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
     }
   }
 
-  throw new Error(`Sweep failed after ${attempt} attempts: ${lastError?.message || 'Unknown error'}`);
+  throw new Error(`Fetch failed after ${attempt} attempts: ${lastError?.message || 'Unknown error'}`);
 }
 
-async function main() {
-  loadEnv();
-
-  const args = process.argv.slice(2);
-
-  if (args.includes('--help') || args.includes('-h')) {
-    printHelp();
-    return;
+/**
+ * Sweeps a single dealership in an isolated execution block.
+ * Ensures an error at one store does not halt multi-store runs.
+ */
+export async function sweepSingleDealer(
+  dealerConfig: RegisteredDealerSource,
+  options: {
+    dryRun: boolean;
+    useFixture: boolean;
+    supabase?: any;
+    isServiceKeyConfigured: boolean;
   }
-
-  const dryRun = args.includes('--dry-run');
-  const useFixture = args.includes('--fixture');
-
-  let dealerArg = 'jptoyota-downtown';
-  for (const arg of args) {
-    if (arg.startsWith('--dealer=')) {
-      dealerArg = arg.split('=')[1];
-    }
-  }
-
-  const dealerConfig = resolveDealer(dealerArg);
-  if (!dealerConfig) {
-    console.error(`[ERROR] Unknown dealer code: "${dealerArg}"`);
-    console.error(`Supported dealers: ${REGISTERED_DEALERS.map((d) => d.dealerCode).join(', ')}`);
-    process.exitCode = 1;
-    return;
-  }
-
+): Promise<DealerSweepResult> {
+  const { dryRun, useFixture, supabase, isServiceKeyConfigured } = options;
   const startTime = Date.now();
   const sweepTimestamp = new Date().toISOString();
 
-  console.log(`================================================================`);
-  console.log(`ToyotaWaits.ca Phase 3 Automated Inventory Sweep Runner`);
+  console.log(`\n----------------------------------------------------------------`);
   console.log(`Target Dealer: ${dealerConfig.dealerName} (${dealerConfig.dealerCode})`);
   console.log(`Platform:      ${dealerConfig.platform.toUpperCase()}`);
   console.log(`Timestamp:     ${sweepTimestamp}`);
-  console.log(`Mode:          ${useFixture ? 'OFFLINE FIXTURE' : dryRun ? 'DRY RUN (Network Check)' : 'LIVE INGESTION'}`);
-  console.log(`================================================================\n`);
+  console.log(`Mode:          ${useFixture ? 'OFFLINE FIXTURE' : dryRun ? 'DRY RUN' : 'LIVE INGESTION'}`);
+  console.log(`----------------------------------------------------------------`);
 
   let rawPayload: any;
 
-  if (useFixture) {
-    const fixturePath = path.resolve(
-      process.cwd(),
-      'audit-artifacts',
-      'dealer-discovery',
-      'convertus-vms-sample.json'
-    );
-    console.log(`[FIXTURE] Loading fixture: ${fixturePath}`);
-    rawPayload = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
-  } else {
-    try {
+  try {
+    if (useFixture) {
+      const fixturePath = path.resolve(
+        process.cwd(),
+        'audit-artifacts',
+        'dealer-discovery',
+        'convertus-vms-sample.json'
+      );
+      console.log(`  [FIXTURE] Loading fixture: ${fixturePath}`);
+      rawPayload = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
+    } else {
       const initialUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, 1, 100);
       const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
       rawPayload = fetchResult.body;
-      console.log(`[HTTP] Feed successfully retrieved in ${Date.now() - startTime}ms.`);
+      console.log(`  [HTTP] Feed successfully retrieved in ${Date.now() - startTime}ms.`);
 
-      // Handle multi-page pagination loops if total inventory exceeds page capacity
+      // Multi-page pagination loops if total inventory exceeds page capacity
       const totalVehicles = rawPayload?.summary?.total_vehicles;
       if (
         totalVehicles &&
@@ -340,7 +362,7 @@ async function main() {
         rawPayload.results.length < totalVehicles
       ) {
         console.log(
-          `[PAGINATION] Total vehicles reported (${totalVehicles}) exceeds initial page count (${rawPayload.results.length}). Fetching subsequent pages...`
+          `  [PAGINATION] Total vehicles reported (${totalVehicles}) exceeds initial page count (${rawPayload.results.length}). Fetching subsequent pages...`
         );
         let currentPage = 2;
         const maxPages = 10;
@@ -360,85 +382,71 @@ async function main() {
               if (newItems.length === 0) break;
               rawPayload.results.push(...newItems);
               console.log(
-                `[PAGINATION] Page ${currentPage} fetched ${newItems.length} new items (Total collected: ${rawPayload.results.length}/${totalVehicles})`
+                `  [PAGINATION] Page ${currentPage} fetched ${newItems.length} new items (Total: ${rawPayload.results.length}/${totalVehicles})`
               );
             } else {
               break;
             }
           } catch (err: any) {
-            console.warn(`[PAGINATION] Failed to fetch page ${currentPage}: ${err.message}. Proceeding with partial.`);
+            console.warn(`  [PAGINATION] Failed to fetch page ${currentPage}: ${err.message}. Proceeding with partial.`);
             break;
           }
           currentPage++;
         }
       }
-    } catch (err: any) {
-      console.error(`[CIRCUIT BREAKER] Fatal network failure during dealer sweep:`, err.message);
-      // Gracefully exit with non-zero code to fail GitHub Actions step without corrupting data
-      process.exitCode = 1;
-      return;
-    }
-  }
-
-  // Parse & Normalize
-  console.log(`[ADAPTER] Parsing payload via Convertus VMS Adapter...`);
-  const parseResult = parseConvertusPayload(rawPayload);
-  console.log(`  -> Validated Vehicles: ${parseResult.count} / ${parseResult.totalInPayload}`);
-  console.log(`  -> Quarantined Items:  ${parseResult.quarantined.length}`);
-
-  if (!parseResult.success || parseResult.records.length === 0) {
-    console.error(`[ERROR] Parsing failed or zero valid vehicles found. Aborting ingestion.`);
-    process.exitCode = 1;
-    return;
-  }
-
-  // Check Database Configuration & Validate Service Key
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const isServiceKeyConfigured = Boolean(
-    serviceKey &&
-    !serviceKey.includes('placeholder') &&
-    serviceKey.trim() !== ''
-  );
-
-  if (!isServiceKeyConfigured) {
-    if (dryRun) {
-      console.log(`\nℹ️  Notice: Running in dry-run mode (Supabase persistence skipped).`);
-      console.log(`    Validation succeeded for ${parseResult.count} vehicle listings.`);
-      console.log(`[DRY RUN VERIFIED]`);
-      console.log(`  - Sample Model: ${parseResult.records[0].vehicle.model} ${parseResult.records[0].vehicle.trim || ''}`);
-      console.log(`  - Sample VIN:   ${parseResult.records[0].vehicle.vin || 'Provisional'}`);
-      console.log(`  - Sample Price: $${parseResult.records[0].pricing.sellingPrice ?? parseResult.records[0].pricing.msrp}`);
-      console.log(`\n================================================================`);
-      console.log(`Sweep completed successfully (Dry Run).`);
-      return;
     }
 
-    console.log(`\n================================================================`);
-    console.log(`SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets`);
-    console.log(`Validated ${parseResult.count} public inventory records from endpoint.`);
-    console.log(`To enable automated persistence, configure SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL in GitHub Secrets.`);
-    console.log(`================================================================`);
-    return;
-  }
+    // Parse & Normalize
+    console.log(`  [ADAPTER] Parsing payload via Convertus VMS Adapter...`);
+    const parseResult = parseConvertusPayload(rawPayload, {
+      dealerBaseUrl: dealerConfig.baseUrl,
+      dealerCity: dealerConfig.city,
+      dealerProvince: dealerConfig.province,
+    });
+    console.log(`  -> Validated Vehicles: ${parseResult.count} / ${parseResult.totalInPayload}`);
+    console.log(`  -> Quarantined Items:  ${parseResult.quarantined.length}`);
 
-  if (dryRun) {
-    console.log(`\nℹ️  Notice: Running in explicit dry-run mode.`);
-    console.log(`    Validation succeeded for ${parseResult.count} vehicle listings.`);
-    console.log(`================================================================`);
-    console.log(`Sweep completed successfully (Dry Run).`);
-    return;
-  }
+    if (!parseResult.success || parseResult.records.length === 0) {
+      console.warn(`  [WARN] Zero valid vehicles parsed for ${dealerConfig.dealerName}.`);
+      return {
+        dealerCode: dealerConfig.dealerCode,
+        dealerName: dealerConfig.dealerName,
+        success: false,
+        totalParsed: 0,
+        quarantinedCount: parseResult.quarantined.length,
+        listingsCreated: 0,
+        listingsUpdated: 0,
+        observationsStored: 0,
+        durationMs: Date.now() - startTime,
+        errorMessage: 'Zero valid vehicles found in feed',
+      };
+    }
 
-  // Connect & Ingest to Supabase
-  const supabase = createServerClient();
+    if (!isServiceKeyConfigured || dryRun) {
+      console.log(`  [DRY RUN / SKIPPED PERSISTENCE] Validated ${parseResult.count} listings.`);
+      return {
+        dealerCode: dealerConfig.dealerCode,
+        dealerName: dealerConfig.dealerName,
+        success: true,
+        totalParsed: parseResult.count,
+        quarantinedCount: parseResult.quarantined.length,
+        listingsCreated: 0,
+        listingsUpdated: 0,
+        observationsStored: 0,
+        durationMs: Date.now() - startTime,
+        skippedReason: !isServiceKeyConfigured
+          ? 'SUPABASE_SERVICE_ROLE_KEY not configured'
+          : 'Dry run requested',
+      };
+    }
 
-  try {
-    console.log(`[DB] Seeding or resolving source and dealer records...`);
+    // Connect & Ingest to Supabase
+    console.log(`  [DB] Seeding or resolving source and dealer records...`);
     const { sourceId, dealerId } = await seedReferenceEntities(supabase, dealerConfig);
     console.log(`  -> Source ID: ${sourceId}`);
     console.log(`  -> Dealer ID: ${dealerId}`);
 
-    console.log(`[INGEST] Ingesting ${parseResult.records.length} parsed listings...`);
+    console.log(`  [INGEST] Ingesting ${parseResult.records.length} parsed listings...`);
     const ingestSummary = await ingestDealerListings({
       dealerId,
       sourceId,
@@ -447,13 +455,13 @@ async function main() {
       supabaseClient: supabase,
     });
 
-    console.log(`  -> Listings Created:             ${ingestSummary.listingsCreated}`);
-    console.log(`  -> Listings Updated:             ${ingestSummary.listingsUpdated}`);
-    console.log(`  -> Status Transitions Detected:  ${ingestSummary.statusTransitionsDetected}`);
-    console.log(`  -> Observations Persisted:       ${ingestSummary.observationsStored}`);
+    console.log(`  -> Listings Created:            ${ingestSummary.listingsCreated}`);
+    console.log(`  -> Listings Updated:            ${ingestSummary.listingsUpdated}`);
+    console.log(`  -> Status Transitions Detected: ${ingestSummary.statusTransitionsDetected}`);
+    console.log(`  -> Observations Persisted:      ${ingestSummary.observationsStored}`);
 
     // Staleness Evaluation (enforcing 2-sweep safeguard)
-    console.log(`[STALENESS] Evaluating missed listings against 2-sweep safeguard...`);
+    console.log(`  [STALENESS] Evaluating missed listings against 2-sweep safeguard...`);
     const activeIds = parseResult.records.map((r) => r.listing.sourceListingId);
     const stalenessSummary = await evaluateSweepStaleness({
       dealerId,
@@ -481,30 +489,165 @@ async function main() {
         error_message: null,
         created_at: sweepTimestamp,
       });
-      console.log(`[TELEMETRY] Health log successfully registered in source_health_logs.`);
+      console.log(`  [TELEMETRY] Health log successfully registered.`);
     } catch {
       // Telemetry error does not abort sweep
     }
 
-    console.log(`\n================================================================`);
-    console.log(`[SUCCESS] Sweep completed cleanly in ${Date.now() - startTime}ms.`);
-    console.log(`================================================================`);
+    console.log(`  [SUCCESS] Dealer sweep finished cleanly in ${Date.now() - startTime}ms.`);
+
+    return {
+      dealerCode: dealerConfig.dealerCode,
+      dealerName: dealerConfig.dealerName,
+      success: true,
+      totalParsed: parseResult.count,
+      quarantinedCount: parseResult.quarantined.length,
+      listingsCreated: ingestSummary.listingsCreated,
+      listingsUpdated: ingestSummary.listingsUpdated,
+      observationsStored: ingestSummary.observationsStored,
+      durationMs: Date.now() - startTime,
+    };
   } catch (err: any) {
-    if (
-      err.message?.includes('Could not find the table') ||
-      err.message?.includes('relation "sources" does not exist') ||
-      err.message?.includes('schema cache')
-    ) {
-      console.log(`\n================================================================`);
-      console.log(`SKIPPED: Discovery schema not yet applied to remote Supabase instance.`);
-      console.log(`Validated ${parseResult.count} public inventory records from endpoint.`);
-      console.log(`To enable persistence, apply migration supabase/migrations/20261017_inventory_discovery_schema.sql`);
-      console.log(`================================================================`);
+    console.error(`  [ERROR] Sweep failed for ${dealerConfig.dealerName}:`, err.message);
+    return {
+      dealerCode: dealerConfig.dealerCode,
+      dealerName: dealerConfig.dealerName,
+      success: false,
+      totalParsed: 0,
+      quarantinedCount: 0,
+      listingsCreated: 0,
+      listingsUpdated: 0,
+      observationsStored: 0,
+      durationMs: Date.now() - startTime,
+      errorMessage: err.message,
+    };
+  }
+}
+
+export type DealerSweepResult = DealerSweepExecutionResult;
+
+async function main() {
+  loadEnv();
+
+  const args = process.argv.slice(2);
+
+  if (args.includes('--help') || args.includes('-h')) {
+    printHelp();
+    return;
+  }
+
+  const dryRun = args.includes('--dry-run');
+  const useFixture = args.includes('--fixture');
+  const isAll = args.includes('--all');
+
+  let dealerArg = isAll ? 'all' : 'jptoyota-downtown';
+  for (const arg of args) {
+    if (arg.startsWith('--dealer=')) {
+      dealerArg = arg.split('=')[1];
+    }
+  }
+
+  const runAllDealers = isAll || dealerArg.toLowerCase() === 'all';
+
+  let targetDealers: RegisteredDealerSource[] = [];
+
+  if (runAllDealers) {
+    targetDealers = REGISTERED_DEALERS;
+  } else {
+    const single = resolveDealer(dealerArg);
+    if (!single) {
+      console.error(`[ERROR] Unknown dealer code: "${dealerArg}"`);
+      console.error(`Supported dealers: ${REGISTERED_DEALERS.map((d) => d.dealerCode).join(', ')}, all`);
+      process.exitCode = 1;
       return;
     }
-    console.error(`[ERROR] Ingestion error:`, err.message);
-    process.exitCode = 1;
+    targetDealers = [single];
+  }
+
+  const overallStartTime = Date.now();
+
+  console.log(`================================================================`);
+  console.log(`ToyotaWaits.ca Phase 3 Multi-Dealer Inventory Sweep Runner`);
+  console.log(`Dealers Targeted: ${targetDealers.map((d) => d.dealerName).join(', ')}`);
+  console.log(`Mode:             ${useFixture ? 'OFFLINE FIXTURE' : dryRun ? 'DRY RUN' : 'LIVE INGESTION'}`);
+  console.log(`================================================================`);
+
+  // Validate service role key
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const isServiceKeyConfigured = Boolean(
+    serviceKey &&
+    !serviceKey.includes('placeholder') &&
+    serviceKey.trim() !== ''
+  );
+
+  const supabase = isServiceKeyConfigured && !dryRun ? createServerClient() : null;
+
+  const results: DealerSweepResult[] = [];
+
+  for (let i = 0; i < targetDealers.length; i++) {
+    const dealer = targetDealers[i];
+
+    // Execute isolated sweep
+    const result = await sweepSingleDealer(dealer, {
+      dryRun,
+      useFixture,
+      supabase,
+      isServiceKeyConfigured,
+    });
+    results.push(result);
+
+    // Polite delay between distinct dealerships
+    if (i < targetDealers.length - 1) {
+      console.log(`\n[POLITE COOLDOWN] Waiting ${POLITE_DEALER_COOLDOWN_MS}ms before next dealership sweep...`);
+      await new Promise((r) => setTimeout(r, POLITE_DEALER_COOLDOWN_MS));
+    }
+  }
+
+  const totalTime = Date.now() - overallStartTime;
+
+  // Print Overall Execution Summary
+  console.log(`\n================================================================`);
+  console.log(`MULTI-DEALER SWEEP EXECUTION SUMMARY (${totalTime}ms)`);
+  console.log(`================================================================`);
+  let totalValidUnits = 0;
+  let totalObservations = 0;
+  let totalQuarantined = 0;
+  let hasFailure = false;
+
+  for (const r of results) {
+    totalValidUnits += r.totalParsed;
+    totalObservations += r.observationsStored;
+    totalQuarantined += r.quarantinedCount;
+    if (!r.success) hasFailure = true;
+
+    const statusLabel = r.success
+      ? r.skippedReason
+        ? `SKIPPED (${r.skippedReason})`
+        : 'SUCCESS'
+      : `FAILED (${r.errorMessage})`;
+
+    console.log(`  * ${r.dealerName}:`);
+    console.log(`      Status:               ${statusLabel}`);
+    console.log(`      Valid Listings:       ${r.totalParsed}`);
+    console.log(`      Quarantined:          ${r.quarantinedCount}`);
+    console.log(`      Observations Stored:  ${r.observationsStored}`);
+    console.log(`      Duration:             ${r.durationMs}ms`);
+  }
+
+  console.log(`----------------------------------------------------------------`);
+  console.log(`Total Observed Units Across Dealers: ${totalValidUnits}`);
+  console.log(`Total Observations Stored:           ${totalObservations}`);
+  console.log(`Total Quarantined Across Stores:     ${totalQuarantined}`);
+  console.log(`================================================================\n`);
+
+  if (!isServiceKeyConfigured && !dryRun) {
+    console.log(`SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets`);
+    console.log(`Validated ${totalValidUnits} total public inventory records across ${targetDealers.length} dealers.`);
     return;
+  }
+
+  if (hasFailure && !runAllDealers) {
+    process.exitCode = 1;
   }
 }
 

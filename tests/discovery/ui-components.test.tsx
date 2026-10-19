@@ -376,6 +376,22 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
+    it('dynamically populates both Downtown and Surrey in dealership dropdown and filters listings', () => {
+      render(<InventoryExplorer />);
+
+      const dealerSelect = screen.getByTestId('filter-dealer-select');
+      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Downtown' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Surrey' })).toBeInTheDocument();
+
+      // Filter by Surrey
+      fireEvent.change(dealerSelect, {
+        target: { value: 'Jim Pattison Toyota Surrey' },
+      });
+
+      expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
+    });
+
     it('displays empty state when no listings match active filter criteria', () => {
       render(<InventoryExplorer />);
 

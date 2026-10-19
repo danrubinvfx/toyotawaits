@@ -15,7 +15,8 @@
     "audit:endpoints": "tsx scripts/discovery/inspect-endpoints.ts",
     "ingest:local": "tsx scripts/discovery/run-ingestion.ts",
     "trial:report": "tsx scripts/discovery/generate-trial-report.ts",
-    "sweep:dealer": "tsx scripts/discovery/sweep-dealer.ts"
+    "sweep:dealer": "tsx scripts/discovery/sweep-dealer.ts",
+    "sweep:all": "tsx scripts/discovery/sweep-dealer.ts --all"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.2.0",

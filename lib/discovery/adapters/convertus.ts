@@ -150,6 +150,9 @@ export function normalizeDealerBaseUrl(rawUrl?: string | null): string {
   if (url.includes('jptoyotadowntown.com')) {
     url = url.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
   }
+  if (url.includes('jptoyotasurrey.com')) {
+    url = url.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+  }
   return url;
 }
 
@@ -189,6 +192,9 @@ export function constructConvertusVdpUrl(
     if (link) {
       if (link.includes('jptoyotadowntown.com')) {
         link = link.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+      }
+      if (link.includes('jptoyotasurrey.com')) {
+        link = link.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
       }
 
       // If relative path (e.g. /vehicles/2026/toyota/...), prepend dealer base domain

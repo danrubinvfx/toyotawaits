@@ -396,6 +396,24 @@ describe('Convertus Ingestion Adapter', () => {
       expect(normalizeDealerBaseUrl('https://www.jptoyota-downtown.com///')).toBe(
         'https://www.jptoyota-downtown.com'
       );
+      expect(normalizeDealerBaseUrl('http://www.jptoyotasurrey.com/')).toBe(
+        'https://www.jptoyota-surrey.com'
+      );
+    });
+
+    it('corrects missing-hyphen domain typo for Surrey VDP URLs', () => {
+      const mockRecord = {
+        make: 'Toyota',
+        model: 'RAV4',
+        year: 2026,
+        vin: '2T36CRAVXTW109453',
+        vdp_url: 'https://www.jptoyotasurrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New',
+      };
+
+      const url = constructConvertusVdpUrl(mockRecord);
+      expect(url).toBe(
+        'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New'
+      );
     });
   });
 });

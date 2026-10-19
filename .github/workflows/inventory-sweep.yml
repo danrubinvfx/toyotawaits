@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       dealer:
-        description: 'Target dealer code to sweep'
+        description: 'Target dealer code to sweep ("all", "jptoyota-downtown", "jptoyota-surrey")'
         required: false
-        default: 'jptoyota-downtown'
+        default: 'all'
         type: string
       dry_run:
         description: 'Dry run (validate network & parser without writing to Supabase)'
@@ -50,9 +50,17 @@ jobs:
             echo "SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets"
             exit 0
           fi
-          DEALER="${{ inputs.dealer || 'jptoyota-downtown' }}"
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            npm run sweep:dealer -- --dealer="$DEALER" --dry-run
+          DEALER="${{ inputs.dealer || 'all' }}"
+          if [ "$DEALER" = "all" ]; then
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              npm run sweep:all -- --dry-run
+            else
+              npm run sweep:all
+            fi
           else
-            npm run sweep:dealer -- --dealer="$DEALER"
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              npm run sweep:dealer -- --dealer="$DEALER" --dry-run
+            else
+              npm run sweep:dealer -- --dealer="$DEALER"
+            fi
           fi
