@@ -1,0 +1,156 @@
+import { CA_ASSOCIATE_TAG } from '@/lib/gear/affiliate';
+
+export interface AccessoryItem {
+  id: string;
+  title: string;
+  category: 'protection' | 'tech' | 'comfort' | 'care';
+  description: string;
+  estimatedPriceCad: string;
+  url: string;
+  applicableModels: string[];
+  badge?: string;
+}
+
+function buildAmazonCaSearchUrl(keywords: string): string {
+  const query = encodeURIComponent(keywords.trim());
+  return `https://www.amazon.ca/s?k=${query}&tag=${CA_ASSOCIATE_TAG}`;
+}
+
+export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
+  {
+    id: 'all-weather-floor-liners',
+    title: 'Custom-Fit All-Weather Floor Liners & Cargo Mat',
+    category: 'protection',
+    description: 'High-wall laser-measured TPE rubber floor liners engineered to trap Canadian slush, winter salt, and rain while guarding factory carpets.',
+    estimatedPriceCad: '$120 – $189 CAD',
+    url: buildAmazonCaSearchUrl('Toyota all weather floor mats liners TPE'),
+    applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Corolla Cross', 'universal'],
+    badge: 'Essential',
+  },
+  {
+    id: '4k-front-rear-dash-cam',
+    title: 'Front & Rear 4K Dash Cam with Parking Surveillance',
+    category: 'tech',
+    description: 'Ultra HD dual-recording dash cam with G-sensor impact detection, night vision, and continuous 24/7 parking mode surveillance.',
+    estimatedPriceCad: '$169 – $289 CAD',
+    url: buildAmazonCaSearchUrl('4K front and rear dash cam parking mode surveillance'),
+    applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla'],
+    badge: 'Top Pick',
+  },
+  {
+    id: 'infotainment-screen-protector',
+    title: '9H Tempered Glass Infotainment Screen Protector',
+    category: 'protection',
+    description: 'Anti-glare, fingerprint-resistant 9H hardness tempered glass shield preventing scratches and sun glare on the center multimedia touchscreen.',
+    estimatedPriceCad: '$19 – $29 CAD',
+    url: buildAmazonCaSearchUrl('Toyota navigation screen protector tempered glass 9H'),
+    applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Prius'],
+    badge: 'Community Favorite',
+  },
+  {
+    id: 'rfid-faraday-key-fob-pouch',
+    title: 'Heavy-Duty RFID Faraday Key Fob Signal Blocker',
+    category: 'protection',
+    description: 'Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key while parked at home or work.',
+    estimatedPriceCad: '$14 – $24 CAD',
+    url: buildAmazonCaSearchUrl('faraday bag key fob protector RFID signal blocker car theft'),
+    applicableModels: ['universal'],
+    badge: 'Essential',
+  },
+  {
+    id: 'ceramic-interior-leather-protection',
+    title: 'Ceramic Interior & SofTex Leather Protection Kit',
+    category: 'care',
+    description: 'Hydrophobic UV-blocking barrier coating for SofTex synthetic and genuine leather seats, shielding against blue jean dye and winter salt crust.',
+    estimatedPriceCad: '$28 – $45 CAD',
+    url: buildAmazonCaSearchUrl('ceramic interior protectant spray leather softex UV protection'),
+    applicableModels: ['universal'],
+    badge: 'Top Pick',
+  },
+  {
+    id: 'fast-usbc-pd-car-charger',
+    title: 'Dual-Port 65W Fast USB-C PD Car Charger',
+    category: 'tech',
+    description: 'High-speed compact metal 12V adapter with 65W Power Delivery to fast-charge laptops, tablets, and phones simultaneously without clutter.',
+    estimatedPriceCad: '$19 – $32 CAD',
+    url: buildAmazonCaSearchUrl('65W fast USB-C PD car charger metal compact dual port'),
+    applicableModels: ['universal'],
+    badge: 'Community Favorite',
+  },
+  {
+    id: 'center-console-organizer-tray',
+    title: 'Drop-In Center Console Divider & Organizer Tray',
+    category: 'comfort',
+    description: 'Custom-fit organizer tray that divides deep center armrest bins into convenient dual tiers with non-slip mats and coin storage.',
+    estimatedPriceCad: '$18 – $29 CAD',
+    url: buildAmazonCaSearchUrl('Toyota center console organizer tray armrest divider'),
+    applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'universal'],
+    badge: 'Top Pick',
+  },
+];
+
+/**
+ * Normalizes vehicle model input (e.g. "rav4" -> "RAV4", "grand-highlander" -> "Grand Highlander")
+ */
+function normalizeModelName(model?: string | null): string {
+  if (!model) return '';
+  const clean = model.trim().toLowerCase();
+  if (clean === 'rav4' || clean.includes('rav4')) return 'RAV4';
+  if (clean === 'sienna' || clean.includes('sienna')) return 'Sienna';
+  if (clean === 'grand-highlander' || clean.includes('grand highlander')) return 'Grand Highlander';
+  if (clean === 'highlander' || clean.includes('highlander')) return 'Highlander';
+  if (clean === 'tacoma' || clean.includes('tacoma')) return 'Tacoma';
+  if (clean === 'tundra' || clean.includes('tundra')) return 'Tundra';
+  if (clean === 'camry' || clean.includes('camry')) return 'Camry';
+  if (clean === 'corolla-cross' || clean.includes('corolla cross')) return 'Corolla Cross';
+  if (clean === 'corolla' || clean.includes('corolla')) return 'Corolla';
+  if (clean === 'prius' || clean.includes('prius')) return 'Prius';
+  if (clean === 'land-cruiser' || clean.includes('land cruiser')) return 'Land Cruiser';
+  if (clean === 'sequoia' || clean.includes('sequoia')) return 'Sequoia';
+  return model.trim();
+}
+
+/**
+ * Returns curated delivery-day gear, tailoring queries and links to the vehicle model when available.
+ */
+export function getAccessoriesForModel(modelName?: string | null): AccessoryItem[] {
+  const normalized = normalizeModelName(modelName);
+
+  if (!normalized) {
+    // Return universal essentials
+    return ESSENTIAL_ACCESSORIES.filter(
+      (item) => item.applicableModels.includes('universal')
+    ).slice(0, 6);
+  }
+
+  // Filter items that match the model or are universal
+  const matching = ESSENTIAL_ACCESSORIES.filter((item) => {
+    if (item.applicableModels.includes('universal')) return true;
+    return item.applicableModels.some(
+      (m) => m.toLowerCase() === normalized.toLowerCase() || normalized.toLowerCase().includes(m.toLowerCase())
+    );
+  });
+
+  // Dynamically tailor search queries for model-specific items
+  return matching.map((item) => {
+    if (item.id === 'all-weather-floor-liners') {
+      return {
+        ...item,
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized} all weather floor mats liners TPE`),
+      };
+    }
+    if (item.id === 'infotainment-screen-protector') {
+      return {
+        ...item,
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized} screen protector tempered glass 9H`),
+      };
+    }
+    if (item.id === 'center-console-organizer-tray') {
+      return {
+        ...item,
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized} center console organizer tray`),
+      };
+    }
+    return item;
+  }).slice(0, 6);
+}

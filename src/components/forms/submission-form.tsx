@@ -28,6 +28,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
+import { WhileYouWaitGear } from '@/components/submission/WhileYouWaitGear';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
 
@@ -126,6 +127,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     status: string;
     waitDays?: number | null;
     modelSlug?: string;
+    modelName?: string;
     province?: string;
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
@@ -358,6 +360,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
       setSuccessModalData({
         ...result.data,
         modelSlug: submittedModelSlug,
+        modelName: currentModel.name,
         province: submittedProvince,
       });
       setSuccessBanner(
@@ -967,7 +970,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
       {/* Success Modal with Secret Edit Key */}
       {successModalData && (
         <Dialog open={true} onOpenChange={(open) => { if (!open) handleDoneAndViewEstimates(); }}>
-          <DialogContent className="w-[calc(100vw-2rem)] max-w-lg mx-auto p-4 sm:p-6 overflow-hidden overflow-x-hidden bg-zinc-950 border-zinc-800 text-zinc-100">
+          <DialogContent className="w-[calc(100vw-2rem)] max-w-lg sm:max-w-2xl mx-auto p-4 sm:p-6 max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-800 text-zinc-100">
             <DialogHeader className="text-center sm:text-center">
               <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <CheckCircle2 className="h-6 w-6" />
@@ -1043,6 +1046,11 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                   Keep this key if you want to update your status from another computer or browser later. No login or password needed!
                 </p>
               </div>
+
+              {/* While You Wait Essential Delivery Day Gear */}
+              <WhileYouWaitGear
+                modelName={successModalData.modelName || currentModel.name || selectedModelSlug}
+              />
 
               {/* Discrete Ko-fi Support Note */}
               <div className="pt-2 text-center border-t border-zinc-800/80">
