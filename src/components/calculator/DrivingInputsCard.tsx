@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Gauge, Fuel, Zap } from 'lucide-react';
@@ -34,27 +34,38 @@ export function DrivingInputsCard({
   };
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
-      <CardHeader className="p-3 sm:p-4 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
-        <CardTitle className="text-base font-bold flex items-center gap-2">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+        <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
           <Gauge className="w-4 h-4 text-red-600 dark:text-red-500" />
           Driving & Utility Inputs
         </CardTitle>
-        <CardDescription className="text-xs">
-          Adjust annual mileage, fuel price, and electricity rate.
-        </CardDescription>
       </CardHeader>
-      <CardContent className="p-3 sm:p-4 space-y-4">
-        {/* 1. Annual Kilometers */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between gap-3">
-            <Label
-              htmlFor="annual-km-input"
-              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
-            >
-              Annual Distance (km)
-            </Label>
-            <div className="w-32">
+
+      <CardContent className="p-0 pt-3 space-y-3">
+        {/* 1. Distance */}
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 w-24 shrink-0">
+              <Gauge className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
+              <Label htmlFor="annual-km-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
+                Distance
+              </Label>
+            </div>
+            <div className="flex-1 px-1">
+              <input
+                id="annual-km-slider"
+                aria-label="Annual driving distance slider"
+                type="range"
+                min={5000}
+                max={50000}
+                step={1000}
+                value={inputs.annualKm}
+                onChange={(e) => handleAnnualKmChange(Number(e.target.value))}
+                className="w-full h-1.5 accent-red-600 cursor-pointer"
+              />
+            </div>
+            <div className="w-20 shrink-0">
               <Input
                 id="annual-km-input"
                 aria-label="Annual driving distance in kilometers"
@@ -64,60 +75,59 @@ export function DrivingInputsCard({
                 step={500}
                 value={inputs.annualKm}
                 onChange={(e) => handleAnnualKmChange(Number(e.target.value))}
-                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
+                className="w-20 h-8 min-h-[44px] sm:min-h-0 text-sm text-right font-mono font-semibold px-2 py-1"
               />
             </div>
           </div>
 
-          <div className="pt-1">
-            <input
-              id="annual-km-slider"
-              aria-label="Annual driving distance slider"
-              type="range"
-              min={5000}
-              max={50000}
-              step={1000}
-              value={inputs.annualKm}
-              onChange={(e) => handleAnnualKmChange(Number(e.target.value))}
-              className="w-full min-h-[44px] accent-red-600 cursor-pointer"
-            />
-            <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-              <span>5,000 km</span>
-              <span>20,000 km (Avg)</span>
-              <span>50,000 km</span>
-            </div>
-          </div>
-
-          {/* Quick-select chips */}
-          <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Quick distance presets">
-            {[15000, 20000, 25000, 30000].map((km) => (
+          {/* Micro-pills */}
+          <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Quick distance presets">
+            {[
+              { label: '15k', val: 15000, aria: '15,000 km' },
+              { label: '20k', val: 20000, aria: '20,000 km' },
+              { label: '25k', val: 25000, aria: '25,000 km' },
+              { label: '30k', val: 30000, aria: '30,000 km' },
+            ].map((item) => (
               <button
-                key={km}
+                key={item.label}
                 type="button"
-                onClick={() => handleAnnualKmChange(km)}
-                className={`min-h-[44px] px-3 py-2 text-xs rounded-md border font-medium transition-colors ${
-                  inputs.annualKm === km
-                    ? 'border-red-600 bg-red-50 text-red-700 dark:bg-red-950/40 dark:border-red-500 dark:text-red-400'
-                    : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                aria-label={item.aria}
+                onClick={() => handleAnnualKmChange(item.val)}
+                className={`text-xs py-0.5 px-2 rounded-full border transition-colors cursor-pointer ${
+                  inputs.annualKm === item.val
+                    ? 'border-red-600 bg-red-500/10 text-red-600 dark:text-red-400 font-semibold'
+                    : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400'
                 }`}
               >
-                {km.toLocaleString()} km
+                {item.label}
               </button>
             ))}
           </div>
         </div>
 
-        {/* 2. Gasoline Price */}
-        <div className="space-y-2 pt-2.5 border-t border-zinc-100 dark:border-zinc-800">
-          <div className="flex items-center justify-between gap-3">
-            <Label
-              htmlFor="gas-price-input"
-              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
-            >
-              <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500" />
-              Gasoline Price ($/L)
-            </Label>
-            <div className="w-32">
+        {/* 2. Gas Price */}
+        <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 w-24 shrink-0">
+              <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500 shrink-0" />
+              <Label htmlFor="gas-price-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
+                Gas Price
+              </Label>
+            </div>
+            <div className="flex-1 px-1">
+              <input
+                id="gas-price-slider"
+                aria-label="Gasoline price slider"
+                type="range"
+                min={1.2}
+                max={2.5}
+                step={0.01}
+                value={inputs.gasPricePerL}
+                onChange={(e) => handleGasPriceChange(Number(e.target.value))}
+                className="w-full h-1.5 accent-amber-600 cursor-pointer"
+              />
+            </div>
+            <div className="w-20 shrink-0">
               <Input
                 id="gas-price-input"
                 aria-label="Gasoline price in Canadian dollars per litre"
@@ -127,60 +137,54 @@ export function DrivingInputsCard({
                 step={0.01}
                 value={inputs.gasPricePerL}
                 onChange={(e) => handleGasPriceChange(Number(e.target.value))}
-                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
+                className="w-20 h-8 min-h-[44px] sm:min-h-0 text-sm text-right font-mono font-semibold px-2 py-1"
               />
             </div>
           </div>
 
-          <div className="pt-0.5">
-            <input
-              id="gas-price-slider"
-              aria-label="Gasoline price slider"
-              type="range"
-              min={1.2}
-              max={2.5}
-              step={0.01}
-              value={inputs.gasPricePerL}
-              onChange={(e) => handleGasPriceChange(Number(e.target.value))}
-              className="w-full min-h-[44px] accent-amber-600 cursor-pointer"
-            />
-            <div className="flex justify-between text-[11px] text-zinc-500 dark:text-zinc-400">
-              <span>$1.20/L</span>
-              <span>$1.75/L</span>
-              <span>$2.50/L</span>
-            </div>
-          </div>
-
-          {/* Quick-select chips */}
-          <div className="flex flex-wrap gap-1.5 pt-0.5" role="group" aria-label="Quick gas price presets">
+          {/* Micro-pills */}
+          <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Quick gas price presets">
             {[1.65, 1.75, 1.85, 1.95].map((price) => (
               <button
                 key={price}
                 type="button"
+                aria-label={`$${price.toFixed(2)} / L`}
                 onClick={() => handleGasPriceChange(price)}
-                className={`min-h-[44px] px-2.5 py-1 text-xs rounded-md border font-medium transition-colors ${
+                className={`text-xs py-0.5 px-2 rounded-full border transition-colors cursor-pointer ${
                   inputs.gasPricePerL === price
-                    ? 'border-amber-600 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:border-amber-500 dark:text-amber-300'
-                    : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    ? 'border-amber-600 bg-amber-500/10 text-amber-600 dark:text-amber-400 font-semibold'
+                    : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400'
                 }`}
               >
-                ${price.toFixed(2)}/L
+                ${price.toFixed(2)}
               </button>
             ))}
           </div>
         </div>
 
-        {/* 3. Electricity Rate */}
-        <div className="space-y-2 pt-2.5 border-t border-zinc-100 dark:border-zinc-800">
-          <div className="flex items-center justify-between gap-3">
-            <Label
-              htmlFor="electricity-rate-input"
-              className="font-medium text-xs text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5"
-            >
-              <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500" />
-              Electricity Rate ($/kWh)
-            </Label>
-            <div className="w-32">
+        {/* 3. Power Rate */}
+        <div className="space-y-1 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 w-24 shrink-0">
+              <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500 shrink-0" />
+              <Label htmlFor="electricity-rate-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
+                Power Rate
+              </Label>
+            </div>
+            <div className="flex-1 px-1">
+              <input
+                id="electricity-rate-slider"
+                aria-label="Electricity rate slider"
+                type="range"
+                min={0.06}
+                max={0.3}
+                step={0.01}
+                value={inputs.electricityRatePerKwh}
+                onChange={(e) => handleElectricityRateChange(Number(e.target.value))}
+                className="w-full h-1.5 accent-emerald-600 cursor-pointer"
+              />
+            </div>
+            <div className="w-20 shrink-0">
               <Input
                 id="electricity-rate-input"
                 aria-label="Electricity rate in Canadian dollars per kilowatt hour"
@@ -190,32 +194,13 @@ export function DrivingInputsCard({
                 step={0.005}
                 value={inputs.electricityRatePerKwh}
                 onChange={(e) => handleElectricityRateChange(Number(e.target.value))}
-                className="h-9 min-h-[44px] text-sm text-right font-mono font-semibold"
+                className="w-20 h-8 min-h-[44px] sm:min-h-0 text-sm text-right font-mono font-semibold px-2 py-1"
               />
             </div>
           </div>
 
-          <div className="pt-1">
-            <input
-              id="electricity-rate-slider"
-              aria-label="Electricity rate slider"
-              type="range"
-              min={0.06}
-              max={0.3}
-              step={0.01}
-              value={inputs.electricityRatePerKwh}
-              onChange={(e) => handleElectricityRateChange(Number(e.target.value))}
-              className="w-full min-h-[44px] accent-emerald-600 cursor-pointer"
-            />
-            <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-              <span>$0.06/kWh (QC)</span>
-              <span>$0.14/kWh (BC/ON)</span>
-              <span>$0.30/kWh</span>
-            </div>
-          </div>
-
-          {/* Quick province chips */}
-          <div className="flex flex-wrap gap-2 pt-1" role="group" aria-label="Provincial electricity rate presets">
+          {/* Micro-pills */}
+          <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Provincial electricity rate presets">
             {[
               { label: 'QC ($0.08)', rate: 0.08 },
               { label: 'BC ($0.14)', rate: 0.14 },
@@ -225,11 +210,12 @@ export function DrivingInputsCard({
               <button
                 key={prov.label}
                 type="button"
+                aria-label={prov.label}
                 onClick={() => handleElectricityRateChange(prov.rate)}
-                className={`min-h-[44px] px-3 py-2 text-xs rounded-md border font-medium transition-colors ${
+                className={`text-xs py-0.5 px-2 rounded-full border transition-colors cursor-pointer ${
                   inputs.electricityRatePerKwh === prov.rate
-                    ? 'border-emerald-600 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:border-emerald-500 dark:text-emerald-300'
-                    : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    ? 'border-emerald-600 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold'
+                    : 'border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 text-zinc-600 dark:text-zinc-400'
                 }`}
               >
                 {prov.label}
