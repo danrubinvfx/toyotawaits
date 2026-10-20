@@ -406,6 +406,14 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
         render(<VehicleSavingsCalculator />);
       });
 
+      // Default HEV hides power rate
+      expect(screen.queryByLabelText(/Electricity rate in Canadian dollars per kilowatt hour/i)).not.toBeInTheDocument();
+
+      // Switch to PHEV to reveal electricity rate controls
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: /PHEV/i }));
+      });
+
       // Verify every number input has an accessible name
       const annualKmInput = screen.getByLabelText(/Annual driving distance in kilometers/i);
       const gasPriceInput = screen.getByLabelText(/Gasoline price in Canadian dollars per litre/i);

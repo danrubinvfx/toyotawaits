@@ -99,6 +99,16 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
           </div>
         </div>
 
+        {/* 5-Year Engagement Stat */}
+        {isPositiveSavings && (
+          <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
+            <span className="font-medium">5-Year Gas Money Kept in Your Pocket:</span>
+            <span className="font-mono font-bold text-sm">
+              ${Math.round(results.annualSavings * 5).toLocaleString()} CAD
+            </span>
+          </div>
+        )}
+
         {/* Itemized Energy Breakdown */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">

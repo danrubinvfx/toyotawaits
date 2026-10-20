@@ -14,7 +14,7 @@ import { PurchaseOutlayCard } from './PurchaseOutlayCard';
 import { PaybackSummaryCard } from './PaybackSummaryCard';
 import { PaybackChart } from './PaybackChart';
 import { AccessibleChartTable } from './AccessibleChartTable';
-import { RotateCcw, TrendingUp } from 'lucide-react';
+import { RotateCcw, TrendingUp, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getVehiclePresetById } from '@/data/vehicle-presets';
 
@@ -51,8 +51,10 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       ? getVehiclePresetById(mode3Outlay.vehicleBPresetId)?.name ?? 'Vehicle B'
       : targetPreset?.name ?? 'Target Vehicle';
 
+  const isTargetPhev = targetVehicle.powertrain === 'PHEV';
+
   return (
-    <div className="w-full space-y-4">
+    <div className="w-full space-y-6">
       {/* Top Controls Bar */}
       <div className="flex items-center justify-between gap-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
         <div>
@@ -75,20 +77,8 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </Button>
       </div>
 
-      {/* 1. Compact Mode Switcher & Scope Disclosure */}
-      <PurchaseOutlayCard
-        comparisonMode={comparisonMode}
-        onComparisonModeChange={setComparisonMode}
-        mode2Outlay={mode2Outlay}
-        onMode2OutlayChange={setMode2Outlay}
-        mode3Outlay={mode3Outlay}
-        onMode3OutlayChange={setMode3Outlay}
-        calculatedNetOutlay={results.calculatedNetOutlay ?? 0}
-        effectiveNetOutlay={results.effectiveNetOutlay ?? 0}
-      />
-
       {comparisonMode !== 'ENERGY_COMPARISON' && (
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-red-600 dark:text-red-500" />
           <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
             Payback Analysis & 7-Year Timeline
@@ -96,11 +86,10 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
       )}
 
-      {/* 2. Main Grid: Desktop 12-Column (Left 8 cols / Right 4 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-        {/* Left Section (8 cols): Chart + Accessible Table + 3-Column Input Strip */}
-        <div className="lg:col-span-8 flex flex-col gap-4">
-          {/* Interactive Chart */}
+      {/* Step 1: Top Hero Section - Money-Over-Time Graph (Left) & High-Impact Savings Card (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
+        {/* Left Column (65% on Desktop): Interactive Recharts money-over-time graph */}
+        <div className="lg:col-span-7 xl:col-span-8 space-y-3">
           {results.timelineResult ? (
             <PaybackChart
               timeline={results.timelineResult}
@@ -120,59 +109,12 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               targetVehicleName={targetVehicleName}
             />
           )}
-
-          {/* 3-Column Input Strip (Directly Under Chart) */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-              Driving & Vehicle Parameters
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
-              {/* Col 1: Driving Distance & Rates */}
-              <DrivingInputsCard
-                inputs={drivingInputs}
-                onChange={setDrivingInputs}
-              />
-
-              {/* Col 2: Baseline Current Vehicle */}
-              {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
-                <CurrentVehicleCard
-                  currentVehicle={currentVehicle}
-                  onChange={setCurrentVehicle}
-                />
-              ) : (
-                <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
-                    Vehicle A Configured Above
-                  </span>
-                  In New A vs. New B mode, Vehicle A serves as the baseline reference and is selected in the comparison bar above.
-                </div>
-              )}
-
-              {/* Col 3: Target Toyota Vehicle */}
-              {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
-                <TargetVehicleCard
-                  targetVehicle={targetVehicle}
-                  onChange={setTargetVehicle}
-                />
-              ) : (
-                <div className="p-3.5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
-                  <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
-                    Vehicle B Configured Above
-                  </span>
-                  In New A vs. New B mode, Vehicle B serves as the comparison target and is selected in the comparison bar above.
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
-        {/* Right Section (4 cols): Compact Results + Payback Summary + Collapsible Scope + Wait Card */}
-        <div className="lg:col-span-4 flex flex-col gap-3">
-          {/* Primary Energy Spend & Savings */}
+        {/* Right Column (35% on Desktop): High-Impact Savings Card + Payback Summary */}
+        <div className="lg:col-span-5 xl:col-span-4 space-y-3">
           <EnergyResultsCard results={results} />
 
-          {/* Payback Summary when Mode 2 or 3 is active */}
           {comparisonMode !== 'ENERGY_COMPARISON' && results.paybackResult && (
             <PaybackSummaryCard
               payback={results.paybackResult}
@@ -180,9 +122,104 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               waitDays={waitDays}
             />
           )}
+        </div>
+      </div>
+
+      {/* Step 2: Streamlined 3-Step Input Cockpit (Directly Under Graph) */}
+      <div className="space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          Driving & Vehicle Parameters
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 items-start">
+          {/* 1. Target Toyota Selection */}
+          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
+            <TargetVehicleCard
+              targetVehicle={targetVehicle}
+              onChange={setTargetVehicle}
+            />
+          ) : (
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
+                Vehicle B Configured Below
+              </span>
+              In New A vs. New B mode, Vehicle B serves as the comparison target and is selected in the comparison drawer below.
+            </div>
+          )}
+
+          {/* 2. Your Current Ride Baseline */}
+          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
+            <CurrentVehicleCard
+              currentVehicle={currentVehicle}
+              onChange={setCurrentVehicle}
+            />
+          ) : (
+            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
+                Vehicle A Configured Below
+              </span>
+              In New A vs. New B mode, Vehicle A serves as the baseline reference and is selected in the comparison drawer below.
+            </div>
+          )}
+
+          {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs!) */}
+          <DrivingInputsCard
+            inputs={drivingInputs}
+            onChange={setDrivingInputs}
+            isPhev={isTargetPhev}
+          />
+        </div>
+      </div>
+
+      {/* Wait Opportunity Card */}
+      <div className="pt-2">
+        <WaitOpportunityCard
+          annualCostCurrent={results.currentAnnualCost}
+          annualCostTarget={results.targetAnnualCost}
+          initialWaitDays={waitDays}
+          onWaitDaysChange={setWaitDays}
+          targetModelSlug={
+            targetVehicle.presetId.includes('rav4')
+              ? 'rav4'
+              : targetVehicle.presetId.includes('prius')
+              ? 'prius'
+              : targetVehicle.presetId.includes('camry')
+              ? 'camry'
+              : targetVehicle.presetId.includes('sienna')
+              ? 'sienna'
+              : 'rav4'
+          }
+          targetPowertrain={targetVehicle.powertrain.toLowerCase()}
+          province="BC"
+        />
+      </div>
+
+      {/* Step 3: Collapsed Comparison Drawer (Keep vs. Replace / New A vs. B) & Scope Notice at Bottom */}
+      <details
+        className="mt-8 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 bg-zinc-50/50 dark:bg-zinc-900/30"
+        open={comparisonMode !== 'ENERGY_COMPARISON'}
+      >
+        <summary className="cursor-pointer font-medium text-sm text-zinc-700 dark:text-zinc-300 flex items-center justify-between select-none">
+          <span className="flex items-center gap-2">
+            <Car className="w-4 h-4 text-zinc-500" />
+            <span>🚗 Factor in Vehicle Purchase Price & Trade-in (Keep vs. Replace / New A vs. B)</span>
+          </span>
+          <span className="text-zinc-500 group-open:rotate-180 transition-transform">▾</span>
+        </summary>
+        <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
+          <PurchaseOutlayCard
+            comparisonMode={comparisonMode}
+            onComparisonModeChange={setComparisonMode}
+            mode2Outlay={mode2Outlay}
+            onMode2OutlayChange={setMode2Outlay}
+            mode3Outlay={mode3Outlay}
+            onMode3OutlayChange={setMode3Outlay}
+            calculatedNetOutlay={results.calculatedNetOutlay ?? 0}
+            effectiveNetOutlay={results.effectiveNetOutlay ?? 0}
+          />
 
           {/* Collapsible Scope Disclosure */}
-          <details className="group text-xs text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 bg-zinc-50/50 dark:bg-zinc-900/40">
+          <details className="group text-xs text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 rounded-lg p-2.5 bg-zinc-100/50 dark:bg-zinc-900/40">
             <summary className="cursor-pointer select-none font-medium text-zinc-700 dark:text-zinc-300 flex items-center justify-between">
               <span>Methodology & Scope Exclusions</span>
               <span className="text-zinc-500 group-open:rotate-180 transition-transform">▾</span>
@@ -191,29 +228,8 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               Models direct fuel & wall-to-wheel electricity consumption only. Excludes vehicle purchase cost, provincial/federal taxes, insurance premiums, maintenance, and wait-time depreciation.
             </p>
           </details>
-
-          {/* Estimated Extra Energy Cost While Waiting */}
-          <WaitOpportunityCard
-            annualCostCurrent={results.currentAnnualCost}
-            annualCostTarget={results.targetAnnualCost}
-            initialWaitDays={waitDays}
-            onWaitDaysChange={setWaitDays}
-            targetModelSlug={
-              targetVehicle.presetId.includes('rav4')
-                ? 'rav4'
-                : targetVehicle.presetId.includes('prius')
-                ? 'prius'
-                : targetVehicle.presetId.includes('camry')
-                ? 'camry'
-                : targetVehicle.presetId.includes('sienna')
-                ? 'sienna'
-                : 'rav4'
-            }
-            targetPowertrain={targetVehicle.powertrain.toLowerCase()}
-            province="BC"
-          />
         </div>
-      </div>
+      </details>
     </div>
   );
 }
