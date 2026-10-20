@@ -114,4 +114,67 @@ describe('ModComparisonCard Component', () => {
       screen.getByText(/As an Amazon Associate, toyotawaits\.com earns from qualifying purchases at no extra cost to you\./i)
     ).toBeDefined();
   });
+
+  it('renders pro-tip open by default and walkthrough/comparison closed by default', () => {
+    const { container } = render(<ModComparisonCard {...defaultProps} />);
+
+    const detailsElements = container.querySelectorAll('details');
+    expect(detailsElements.length).toBe(3);
+
+    // Pro-Tip details is open by default
+    const proTipDetails = Array.from(detailsElements).find((el) =>
+      el.textContent?.includes("Installer's Pro-Tip")
+    );
+    expect(proTipDetails).toBeDefined();
+    expect(proTipDetails?.hasAttribute('open')).toBe(true);
+
+    // Why Upgrade comparison details is closed by default
+    const comparisonDetails = Array.from(detailsElements).find((el) =>
+      el.textContent?.includes('Why Upgrade? (Factory Flaw vs Solution)')
+    );
+    expect(comparisonDetails).toBeDefined();
+    expect(comparisonDetails?.hasAttribute('open')).toBe(false);
+
+    // Installation walkthrough details is closed by default with step count
+    const walkthroughDetails = Array.from(detailsElements).find((el) =>
+      el.textContent?.includes('Installation Walkthrough (3 Steps)')
+    );
+    expect(walkthroughDetails).toBeDefined();
+    expect(walkthroughDetails?.hasAttribute('open')).toBe(false);
+  });
+
+  it('renders gracefully without empty detail boxes when optional sections are omitted', () => {
+    const { container } = render(
+      <ModComparisonCard
+        title="Minimal Mod"
+        priceEst="~$50 CAD"
+      />
+    );
+
+    const detailsElements = container.querySelectorAll('details');
+    expect(detailsElements.length).toBe(0);
+    expect(screen.queryByText(/Installer's Pro-Tip/i)).toBeNull();
+    expect(screen.queryByText(/Why Upgrade/i)).toBeNull();
+    expect(screen.queryByText(/Installation Walkthrough/i)).toBeNull();
+  });
+
+  it('supports new prop aliases (factoryOmission, communitySolution, installationSteps)', () => {
+    render(
+      <ModComparisonCard
+        title="Modern Props Card"
+        priceEst="~$199 CAD"
+        proTip="Always disconnect negative battery terminal first."
+        factoryOmission="Thin uninsulated steel floor pan."
+        communitySolution="80-mil butyl sound deadening matting."
+        installationSteps={['Clean surface with IPA', 'Roll out butyl mat']}
+      />
+    );
+
+    expect(screen.getByText("Always disconnect negative battery terminal first.")).toBeDefined();
+    expect(screen.getByText("Thin uninsulated steel floor pan.")).toBeDefined();
+    expect(screen.getByText("80-mil butyl sound deadening matting.")).toBeDefined();
+    expect(screen.getByText("Installation Walkthrough (2 Steps)")).toBeDefined();
+    expect(screen.getByText("Clean surface with IPA")).toBeDefined();
+    expect(screen.getByText("Roll out butyl mat")).toBeDefined();
+  });
 });

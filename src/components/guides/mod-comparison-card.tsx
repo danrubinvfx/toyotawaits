@@ -37,10 +37,13 @@ export interface ModComparisonCardProps {
   whyThisPick?: string;
   proTip?: string;
 
-  // Problem vs Community Solution
-  factoryIssue: string;
-  solution: string;
-  steps: string[];
+  // Problem vs Community Solution (supports both legacy and new schema)
+  factoryIssue?: string;
+  factoryOmission?: string;
+  solution?: string;
+  communitySolution?: string;
+  steps?: string[];
+  installationSteps?: string[];
 
   // High-Intent Outbound CTAs
   affiliateSlug?: string;
@@ -62,14 +65,23 @@ export function ModComparisonCard({
   whyThisPick,
   proTip,
   factoryIssue,
+  factoryOmission,
   solution,
+  communitySolution,
   steps,
+  installationSteps,
   affiliateSlug,
   affiliateLabel,
   affiliateSublabel,
   ctaLabel,
   secondaryActions,
 }: ModComparisonCardProps) {
+  // Normalize legacy vs new prop conventions
+  const activeProTip = proTip || whyThisPick;
+  const activeOmission = factoryOmission || factoryIssue;
+  const activeSolution = communitySolution || solution;
+  const activeSteps = installationSteps || steps || [];
+
   // Format high-intent CTA label
   const primaryButtonLabel =
     ctaLabel ||
@@ -132,59 +144,87 @@ export function ModComparisonCard({
         )}
       </CardHeader>
 
-      <CardContent className="p-5 sm:p-6 space-y-6">
-        {/* Prominent "Why this pick" / Wirecutter Callout */}
-        {(whyThisPick || proTip) && (
-          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 p-4 sm:p-4.5 space-y-1.5">
-            <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-amber-700 dark:text-amber-400">
-              <Lightbulb className="h-4 w-4 text-amber-500 shrink-0" />
-              <span>{proTip ? "Installer's Pro-Tip" : 'Why This Pick'}</span>
+      <CardContent className="p-5 sm:p-6 space-y-4">
+        {/* A. Installer's Pro-Tip (Open by Default) */}
+        {(proTip || whyThisPick) && (
+          <details open className="group border border-amber-900/40 bg-amber-950/10 rounded-lg p-3 transition-all">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-400 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+              <div className="flex items-center gap-2">
+                <span>💡</span>
+                <span>Installer&apos;s Pro-Tip</span>
+              </div>
+              <span className="text-amber-500/60 text-xs transition-transform duration-200 group-open:rotate-180">
+                ▼
+              </span>
+            </summary>
+            <div className="mt-2 text-xs md:text-sm text-neutral-300 leading-relaxed pl-6 border-t border-amber-900/30 pt-2 space-y-1.5">
+              {whyThisPick && <p>{whyThisPick}</p>}
+              {proTip && proTip !== whyThisPick && (
+                <p className={whyThisPick ? "text-amber-200/90 font-medium" : ""}>
+                  {proTip}
+                </p>
+              )}
             </div>
-            <p className="text-xs sm:text-sm text-zinc-800 dark:text-zinc-200 leading-relaxed font-medium">
-              {whyThisPick || proTip}
-            </p>
-          </div>
+          </details>
         )}
 
-        {/* The Factory Problem vs The Community Solution */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-lg border border-rose-500/25 bg-rose-500/5 p-4 space-y-1.5">
-            <div className="flex items-center gap-1.5 font-bold text-xs text-rose-700 dark:text-rose-400">
-              <AlertCircle className="h-4 w-4 shrink-0 text-rose-600" />
-              The Factory Omission
+        {/* B. Why Upgrade? / Problem vs Solution (Closed by Default) */}
+        {(activeOmission || activeSolution) && (
+          <details className="group border border-neutral-800 rounded-lg bg-neutral-900/40 p-3 transition-colors hover:border-neutral-700">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-xs font-semibold uppercase tracking-wider text-neutral-400 [&::-webkit-details-marker]:hidden">
+              <span>Why Upgrade? (Factory Flaw vs Solution)</span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-neutral-500 font-normal group-open:hidden">Show comparison</span>
+                <span className="text-xs text-neutral-500 font-normal hidden group-open:inline">Hide</span>
+                <span className="text-neutral-500 transition-transform duration-200 group-open:rotate-180 text-[10px]">
+                  ▼
+                </span>
+              </div>
+            </summary>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 pt-3 border-t border-neutral-800 text-xs md:text-sm">
+              {activeOmission && (
+                <div className="p-3 rounded bg-red-950/20 border border-red-900/30 text-neutral-300">
+                  <span className="text-red-400 font-semibold block mb-1">The Factory Omission</span>
+                  {activeOmission}
+                </div>
+              )}
+              {activeSolution && (
+                <div className="p-3 rounded bg-emerald-950/20 border border-emerald-900/30 text-neutral-300">
+                  <span className="text-emerald-400 font-semibold block mb-1">The Community Solution</span>
+                  {activeSolution}
+                </div>
+              )}
             </div>
-            <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-              {factoryIssue}
-            </p>
-          </div>
+          </details>
+        )}
 
-          <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/5 p-4 space-y-1.5">
-            <div className="flex items-center gap-1.5 font-bold text-xs text-emerald-700 dark:text-emerald-400">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-              The Community Solution
-            </div>
-            <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-              {solution}
-            </p>
-          </div>
-        </div>
-
-        {/* Step-by-Step Installation Walkthrough */}
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
-            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
-              Installation Walkthrough:
-            </h4>
-          </div>
-          <ol className="list-decimal list-inside space-y-2 text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 pl-1">
-            {steps.map((step, idx) => (
-              <li key={idx} className="leading-relaxed">
-                {step}
-              </li>
-            ))}
-          </ol>
-        </div>
+        {/* C. Installation Walkthrough (Closed by Default) */}
+        {activeSteps && activeSteps.length > 0 && (
+          <details className="group border border-neutral-800 rounded-lg bg-neutral-900/30 p-3 transition-colors hover:border-neutral-700">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-neutral-200 text-sm font-medium [&::-webkit-details-marker]:hidden">
+              <div className="flex items-center gap-2">
+                <span>🔧</span>
+                <span className="font-semibold uppercase tracking-wide text-xs text-neutral-300">
+                  Installation Walkthrough ({activeSteps.length} Steps)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-neutral-500 group-open:hidden">Show Steps</span>
+                <span className="text-xs text-neutral-500 hidden group-open:inline">Hide Steps</span>
+                <span className="text-neutral-500 transition-transform duration-200 group-open:rotate-180 text-[10px]">
+                  ▼
+                </span>
+              </div>
+            </summary>
+            <ol className="mt-3 space-y-2 text-xs md:text-sm text-neutral-400 list-decimal list-inside pl-1 border-t border-neutral-800 pt-3">
+              {activeSteps.map((step, idx) => (
+                <li key={idx} className="leading-relaxed">
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </details>
+        )}
 
         {/* High-Intent Outbound Action CTAs */}
         <div className="pt-2 border-t border-zinc-100 dark:border-zinc-900 space-y-3">
