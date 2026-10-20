@@ -80,6 +80,13 @@ export default async function HomePage() {
       <StickyVehiclePills />
 
       <div className="space-y-6 sm:space-y-8">
+        {/* Active Order Stepper: Compact Pull-Down Banner / Drawer for returning users */}
+        <section className="container mx-auto max-w-6xl px-4 sm:px-6 empty:hidden">
+          <React.Suspense fallback={null}>
+            <ActiveOrderStepper />
+          </React.Suspense>
+        </section>
+
         {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
         <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-4 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white">
           <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6">
@@ -191,10 +198,6 @@ export default async function HomePage() {
         {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
         <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6 scroll-mt-20">
           <div id="analytics" className="scroll-mt-24" />
-          {/* Active Order Stepper (for returning users with edit keys) */}
-          <React.Suspense fallback={<div className="h-32 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-            <ActiveOrderStepper />
-          </React.Suspense>
 
           <div className="space-y-4">
             <div>

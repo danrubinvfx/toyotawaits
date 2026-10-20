@@ -14,10 +14,14 @@ import {
   Share2,
   Sparkles,
   ChevronRight,
+  ChevronDown,
+  X,
   AlertCircle,
   ClipboardCheck,
+  Edit3,
 } from 'lucide-react';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
@@ -91,15 +95,34 @@ interface LocalSubmission {
   status: string;
 }
 
-export function ActiveOrderStepper() {
+export interface ActiveOrderStepperProps {
+  defaultExpanded?: boolean;
+  className?: string;
+}
+
+export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderStepperProps = {}) {
   const [localOrder, setLocalOrder] = useState<LocalSubmission | null>(null);
   const [selectedStep, setSelectedStep] = useState<SubmissionStage>('deposit_placed');
   const [updatingStage, setUpdatingStage] = useState<SubmissionStage | null>(null);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [updateError, setUpdateError] = useState<string | null>(null);
+  const [isExpanded, setIsExpanded] = useState<boolean>(defaultExpanded ?? false);
+  const [isDismissed, setIsDismissed] = useState<boolean>(false);
 
   useEffect(() => {
     try {
+      const dismissedStored = localStorage.getItem('toyotawait_tracker_dismissed');
+      if (dismissedStored === 'true') {
+        setIsDismissed(true);
+      }
+
+      const collapsedPref = localStorage.getItem('toyotawait_tracker_collapsed');
+      if (collapsedPref !== null) {
+        setIsExpanded(collapsedPref === 'false');
+      } else if (defaultExpanded !== undefined) {
+        setIsExpanded(defaultExpanded);
+      }
+
       // Check for saved local submission in browser
       const saved =
         localStorage.getItem('toyotawait_pending_submission') ||
@@ -129,9 +152,35 @@ export function ActiveOrderStepper() {
     } catch {
       // Ignore parse errors from localStorage
     }
-  }, []);
+  }, [defaultExpanded]);
 
-  if (!localOrder || localOrder.status === 'cancelled' || (localOrder.currentStage as string) === 'cancelled') {
+  const handleToggleExpanded = () => {
+    setIsExpanded((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('toyotawait_tracker_collapsed', next ? 'false' : 'true');
+      } catch {
+        // Ignore localStorage errors
+      }
+      return next;
+    });
+  };
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    try {
+      localStorage.setItem('toyotawait_tracker_dismissed', 'true');
+    } catch {
+      // Ignore localStorage errors
+    }
+  };
+
+  if (
+    isDismissed ||
+    !localOrder ||
+    localOrder.status === 'cancelled' ||
+    (localOrder.currentStage as string) === 'cancelled'
+  ) {
     return null;
   }
 
@@ -203,188 +252,262 @@ export function ActiveOrderStepper() {
     downloadCalendarEvent(ics, `toyota-checkin-${localOrder.modelName.toLowerCase()}.ics`);
   };
 
+  const trimLabel = localOrder.trimName ? ` ${localOrder.trimName}` : '';
+  const orderTitle = `Your ${localOrder.modelName}${trimLabel} Order`;
+  const stepLabel = `Step ${activeIndex + 1}: ${STAGES[activeIndex].label}`;
+  const editUrl = `/edit/${localOrder.id || localOrder.editKey}?key=${encodeURIComponent(localOrder.editKey)}`;
+
   return (
-    <>
-      <Card className="border-amber-500/40 bg-zinc-950 text-zinc-100 shadow-xl overflow-hidden relative">
-        <div className="pointer-events-none absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600" />
-        
-        <CardHeader className="p-4 sm:p-6 pb-3 space-y-2 relative z-10">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Badge className="bg-amber-500 text-zinc-950 font-bold hover:bg-amber-400 gap-1 text-xs">
-                <Sparkles className="h-3 w-3" /> Saved Anonymous Queue Order
-              </Badge>
-              <span className="text-xs text-zinc-400 font-mono">
-                Key: ••••••••{localOrder.editKey.slice(-4)}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDownloadCalendar}
-                className="h-8 text-xs border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900 gap-1.5"
-              >
-                <Calendar className="h-3.5 w-3.5 text-amber-400" />
-                Calendar Check-in (.ics)
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsShareModalOpen(true)}
-                className="h-8 text-xs border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900 gap-1.5"
-              >
-                <Share2 className="h-3.5 w-3.5 text-amber-400" />
-                Share to Reddit
-              </Button>
-            </div>
+    <div
+      data-testid="active-order-tracker"
+      className={cn('w-full transition-all', className)}
+    >
+      {/* Collapsed state (default): A single-line compact pill or mini-banner */}
+      <div
+        data-testid="active-order-banner"
+        className="w-full flex items-center justify-between gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-amber-500/40 bg-zinc-950/95 text-zinc-100 shadow-md backdrop-blur-sm"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-base shrink-0" aria-hidden="true">
+            📦
+          </span>
+          <div className="truncate text-xs sm:text-sm font-medium">
+            <span className="text-white font-semibold">{orderTitle}</span>{' '}
+            <span className="text-zinc-400 font-normal">({stepLabel})</span>
           </div>
+        </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
-            <div>
-              <CardTitle className="text-xl sm:text-2xl font-black text-white">
-                {localOrder.modelName} {localOrder.powertrainName} {localOrder.trimName}
-              </CardTitle>
-              <p className="text-xs text-zinc-400">
-                Ordered in <strong className="text-zinc-200">{localOrder.province}</strong> on {localOrder.orderDate} • Active Milestone: <span className="text-amber-400 font-semibold">{STAGES[activeIndex].themeTitle}</span>
+        <div className="flex items-center gap-1.5 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            data-testid="toggle-order-status"
+            onClick={handleToggleExpanded}
+            className="h-7 px-2.5 text-xs border-amber-500/40 text-amber-400 hover:text-amber-300 hover:bg-amber-950/30 gap-1 font-medium select-none"
+            aria-expanded={isExpanded}
+          >
+            <span>{isExpanded ? 'Hide Status' : 'View Status'}</span>
+            <ChevronDown
+              className={cn(
+                'h-3.5 w-3.5 transition-transform duration-200',
+                isExpanded && 'rotate-180'
+              )}
+            />
+          </Button>
+          <button
+            type="button"
+            data-testid="dismiss-order-banner"
+            onClick={handleDismiss}
+            className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors select-none"
+            title="Dismiss"
+            aria-label="Dismiss order tracking banner"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Expanded state: Drawer containing milestone stepper and full details */}
+      <div
+        data-testid="active-order-drawer"
+        className={cn(
+          'transition-all duration-300 ease-in-out',
+          isExpanded ? 'mt-3 block opacity-100' : 'hidden opacity-0'
+        )}
+      >
+        <Card className="border-amber-500/40 bg-zinc-950 text-zinc-100 shadow-xl overflow-hidden relative">
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600" />
+          
+          <CardHeader className="p-4 sm:p-6 pb-3 space-y-2 relative z-10">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-amber-500 text-zinc-950 font-bold hover:bg-amber-400 gap-1 text-xs">
+                  <Sparkles className="h-3 w-3" /> Saved Anonymous Queue Order
+                </Badge>
+                <span className="text-xs text-zinc-400 font-mono">
+                  Key: ••••••••{localOrder.editKey.slice(-4)}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-xs border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900 gap-1.5"
+                >
+                  <Link href={editUrl}>
+                    <Edit3 className="h-3.5 w-3.5 text-amber-400" />
+                    Edit Order
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadCalendar}
+                  className="h-8 text-xs border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900 gap-1.5"
+                >
+                  <Calendar className="h-3.5 w-3.5 text-amber-400" />
+                  Calendar Check-in (.ics)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsShareModalOpen(true)}
+                  className="h-8 text-xs border-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-900 gap-1.5"
+                >
+                  <Share2 className="h-3.5 w-3.5 text-amber-400" />
+                  Share to Reddit
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1">
+              <div>
+                <CardTitle className="text-xl sm:text-2xl font-black text-white">
+                  {localOrder.modelName} {localOrder.powertrainName} {localOrder.trimName}
+                </CardTitle>
+                <p className="text-xs text-zinc-400">
+                  Ordered in <strong className="text-zinc-200">{localOrder.province}</strong> on {localOrder.orderDate} • Active Milestone: <span className="text-amber-400 font-semibold">{STAGES[activeIndex].themeTitle}</span>
+                </p>
+              </div>
+
+              <Badge variant="outline" className="border-amber-500/40 text-amber-400 text-xs self-start sm:self-auto py-1 px-3">
+                {STAGES[activeIndex].label}
+              </Badge>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-4 sm:p-6 pt-2 space-y-5 relative z-10">
+            {/* 5-Step Visual Stepper */}
+            <div className="relative z-10">
+              <div className="pointer-events-none hidden md:block absolute top-1/2 left-6 right-6 -translate-y-1/2 h-0.5 bg-zinc-800 z-0" />
+              <div
+                className="pointer-events-none hidden md:block absolute top-1/2 left-6 -translate-y-1/2 h-0.5 bg-amber-500 transition-all duration-500 z-0"
+                style={{ width: `${(activeIndex / (STAGES.length - 1)) * 100}%` }}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-2 relative z-10">
+                {STAGES.map((step, idx) => {
+                  const isCompleted = idx < activeIndex;
+                  const isCurrent = idx === activeIndex;
+
+                  return (
+                    <button
+                      key={step.key}
+                      type="button"
+                      data-testid={`milestone-step-${step.key}`}
+                      aria-pressed={isCurrent}
+                      onClick={() => handleAdvanceStage(step.key)}
+                      className={`w-full text-left rounded-xl p-3 border cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all flex flex-col justify-between relative z-10 ${
+                        isCurrent
+                          ? 'bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/40 shadow-md shadow-amber-500/10'
+                          : isCompleted
+                          ? 'bg-zinc-900/90 border-emerald-900/60 hover:border-zinc-700'
+                          : 'bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 opacity-75'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full pb-1.5">
+                        <span
+                          className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
+                            isCurrent ? 'text-amber-400' : 'text-zinc-500'
+                          }`}
+                        >
+                          Step 0{idx + 1}
+                        </span>
+                        {isCompleted ? (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                        ) : isCurrent ? (
+                          <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                        ) : (
+                          <span className="h-2 w-2 rounded-full bg-zinc-700" />
+                        )}
+                      </div>
+
+                      <div className="space-y-0.5 w-full">
+                        <div className="text-xs font-bold text-white leading-tight">
+                          {step.label}
+                        </div>
+                        <div className="text-[10px] text-amber-400/90 font-medium italic">
+                          &ldquo;{step.themeTitle}&rdquo;
+                        </div>
+                      </div>
+
+                      <div className="text-[10px] text-zinc-400 leading-tight pt-2 border-t border-zinc-800/60 mt-2 w-full">
+                        {step.description}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Selected Milestone Guidance & Details Panel */}
+            <div
+              data-testid="active-milestone-details"
+              className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 sm:p-4 space-y-1.5 relative z-10"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    Step 0{activeIndex + 1} Active
+                  </span>
+                  <span className="text-xs sm:text-sm font-bold text-white">
+                    {STAGES[activeIndex].label}
+                  </span>
+                </div>
+                <span className="text-[11px] text-amber-400 font-medium italic">
+                  &ldquo;{STAGES[activeIndex].themeTitle}&rdquo;
+                </span>
+              </div>
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                {STAGES[activeIndex].guidance}
               </p>
             </div>
 
-            <Badge variant="outline" className="border-amber-500/40 text-amber-400 text-xs self-start sm:self-auto py-1 px-3">
-              {STAGES[activeIndex].label}
-            </Badge>
-          </div>
-        </CardHeader>
-
-        <CardContent className="p-4 sm:p-6 pt-2 space-y-5 relative z-10">
-          {/* 5-Step Visual Stepper */}
-          <div className="relative z-10">
-            <div className="pointer-events-none hidden md:block absolute top-1/2 left-6 right-6 -translate-y-1/2 h-0.5 bg-zinc-800 z-0" />
-            <div
-              className="pointer-events-none hidden md:block absolute top-1/2 left-6 -translate-y-1/2 h-0.5 bg-amber-500 transition-all duration-500 z-0"
-              style={{ width: `${(activeIndex / (STAGES.length - 1)) * 100}%` }}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 md:gap-2 relative z-10">
-              {STAGES.map((step, idx) => {
-                const isCompleted = idx < activeIndex;
-                const isCurrent = idx === activeIndex;
-
-                return (
-                  <button
-                    key={step.key}
-                    type="button"
-                    data-testid={`milestone-step-${step.key}`}
-                    aria-pressed={isCurrent}
-                    onClick={() => handleAdvanceStage(step.key)}
-                    className={`w-full text-left rounded-xl p-3 border cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all flex flex-col justify-between relative z-10 ${
-                      isCurrent
-                        ? 'bg-amber-950/30 border-amber-500 ring-1 ring-amber-500/40 shadow-md shadow-amber-500/10'
-                        : isCompleted
-                        ? 'bg-zinc-900/90 border-emerald-900/60 hover:border-zinc-700'
-                        : 'bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 opacity-75'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full pb-1.5">
-                      <span
-                        className={`text-[10px] font-mono font-bold uppercase tracking-wider ${
-                          isCurrent ? 'text-amber-400' : 'text-zinc-500'
-                        }`}
-                      >
-                        Step 0{idx + 1}
-                      </span>
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                      ) : isCurrent ? (
-                        <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                      ) : (
-                        <span className="h-2 w-2 rounded-full bg-zinc-700" />
-                      )}
-                    </div>
-
-                    <div className="space-y-0.5 w-full">
-                      <div className="text-xs font-bold text-white leading-tight">
-                        {step.label}
-                      </div>
-                      <div className="text-[10px] text-amber-400/90 font-medium italic">
-                        &ldquo;{step.themeTitle}&rdquo;
-                      </div>
-                    </div>
-
-                    <div className="text-[10px] text-zinc-400 leading-tight pt-2 border-t border-zinc-800/60 mt-2 w-full">
-                      {step.description}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Selected Milestone Guidance & Details Panel */}
-          <div
-            data-testid="active-milestone-details"
-            className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 sm:p-4 space-y-1.5 relative z-10"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Step 0{activeIndex + 1} Active
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-white">
-                  {STAGES[activeIndex].label}
-                </span>
+            {updateError && (
+              <div className="p-3 rounded-lg bg-red-950/40 border border-red-800/60 text-xs text-red-300 flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+                <span>{updateError}</span>
               </div>
-              <span className="text-[11px] text-amber-400 font-medium italic">
-                &ldquo;{STAGES[activeIndex].themeTitle}&rdquo;
-              </span>
-            </div>
-            <p className="text-xs text-zinc-300 leading-relaxed">
-              {STAGES[activeIndex].guidance}
-            </p>
-          </div>
-
-          {updateError && (
-            <div className="p-3 rounded-lg bg-red-950/40 border border-red-800/60 text-xs text-red-300 flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-              <span>{updateError}</span>
-            </div>
-          )}
-
-          {/* Quick Advancement Action Bar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-zinc-800/80 text-xs text-zinc-400 relative z-10">
-            <span>
-              Tap or click any stage above to view milestone guidance and update your order in real time.
-            </span>
-
-            {activeIndex < STAGES.length - 1 && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => handleAdvanceStage(STAGES[activeIndex + 1].key)}
-                disabled={updatingStage !== null}
-                className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1 text-xs cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all"
-              >
-                Advance to {STAGES[activeIndex + 1].label}
-                <ChevronRight className="h-3.5 w-3.5" />
-              </Button>
             )}
-          </div>
-        </CardContent>
-      </Card>
 
-      <div className="mt-4 flex justify-end">
-        <Button
-          asChild
-          variant="outline"
-          size="sm"
-          className="text-xs border-amber-500/30 bg-amber-500/5 text-amber-400 hover:bg-amber-500/10 gap-1.5"
-        >
-          <Link href="#gear">
-            <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
-            <span>Delivery Day Prep &amp; Essential Gear</span>
-          </Link>
-        </Button>
+            {/* Quick Advancement Action Bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-zinc-800/80 text-xs text-zinc-400 relative z-10">
+              <span>
+                Tap or click any stage above to view milestone guidance and update your order in real time.
+              </span>
+
+              {activeIndex < STAGES.length - 1 && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleAdvanceStage(STAGES[activeIndex + 1].key)}
+                  disabled={updatingStage !== null}
+                  className="w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold gap-1 text-xs cursor-pointer select-none touch-manipulation active:scale-[0.99] transition-all"
+                >
+                  Advance to {STAGES[activeIndex + 1].label}
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="mt-4 flex justify-end">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="text-xs border-amber-500/30 bg-amber-500/5 text-amber-400 hover:bg-amber-500/10 gap-1.5"
+          >
+            <Link href="#gear">
+              <ClipboardCheck className="h-3.5 w-3.5 text-amber-500" />
+              <span>Delivery Day Prep &amp; Essential Gear</span>
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <RedditShareModal
@@ -400,6 +523,6 @@ export function ActiveOrderStepper() {
           status: localOrder.status as any,
         }}
       />
-    </>
+    </div>
   );
 }

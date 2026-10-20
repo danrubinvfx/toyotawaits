@@ -127,6 +127,96 @@ describe('OrderStageIndicator Component', () => {
       expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Step 04 Active');
       expect(screen.getByTestId('active-milestone-details')).toHaveTextContent('Arrived at Dealer');
     });
+
+    it('renders compact pull-down banner by default and expands/collapses drawer on toggle', () => {
+      localStorage.setItem(
+        'toyotawait_pending_submission',
+        JSON.stringify({
+          id: 'test-sienna-456',
+          editKey: 'secret-key-sienna',
+          modelName: 'Sienna',
+          powertrainName: 'Hybrid',
+          trimName: 'XSE AWD',
+          province: 'ON',
+          orderDate: '2026-02-01',
+          currentStage: 'allocation_confirmed',
+          status: 'pending',
+        })
+      );
+
+      render(<ActiveOrderStepper />);
+
+      // Compact banner verification
+      const banner = screen.getByTestId('active-order-banner');
+      expect(banner).toBeInTheDocument();
+      expect(banner).toHaveTextContent('Your Sienna XSE AWD Order');
+      expect(banner).toHaveTextContent('(Step 2: Allocation Confirmed)');
+
+      // Toggle button default state
+      const toggleBtn = screen.getByTestId('toggle-order-status');
+      expect(toggleBtn).toHaveTextContent('View Status');
+      expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
+
+      // Drawer is collapsed by default
+      const drawer = screen.getByTestId('active-order-drawer');
+      expect(drawer.className).toContain('hidden');
+
+      // Expand drawer
+      fireEvent.click(toggleBtn);
+      expect(toggleBtn).toHaveTextContent('Hide Status');
+      expect(toggleBtn).toHaveAttribute('aria-expanded', 'true');
+      expect(drawer.className).toContain('block');
+      expect(localStorage.getItem('toyotawait_tracker_collapsed')).toBe('false');
+
+      // Check for Edit Order link and action buttons
+      const editLink = screen.getByRole('link', { name: /Edit Order/i });
+      expect(editLink).toBeInTheDocument();
+      expect(editLink).toHaveAttribute(
+        'href',
+        '/edit/test-sienna-456?key=secret-key-sienna'
+      );
+      expect(screen.getByText('Calendar Check-in (.ics)')).toBeInTheDocument();
+      expect(screen.getByText('Share to Reddit')).toBeInTheDocument();
+
+      // Collapse drawer again
+      fireEvent.click(toggleBtn);
+      expect(toggleBtn).toHaveTextContent('View Status');
+      expect(drawer.className).toContain('hidden');
+      expect(localStorage.getItem('toyotawait_tracker_collapsed')).toBe('true');
+    });
+
+    it('dismisses banner and persists dismissal in localStorage', () => {
+      localStorage.setItem(
+        'toyotawait_pending_submission',
+        JSON.stringify({
+          id: 'test-rav4-789',
+          editKey: 'secret-key-rav4',
+          modelName: 'RAV4',
+          powertrainName: 'Prime',
+          trimName: 'XSE AWD',
+          province: 'BC',
+          orderDate: '2026-01-20',
+          currentStage: 'deposit_placed',
+          status: 'pending',
+        })
+      );
+
+      const { unmount } = render(<ActiveOrderStepper />);
+
+      expect(screen.getByTestId('active-order-tracker')).toBeInTheDocument();
+
+      const dismissBtn = screen.getByTestId('dismiss-order-banner');
+      fireEvent.click(dismissBtn);
+
+      expect(screen.queryByTestId('active-order-tracker')).not.toBeInTheDocument();
+      expect(localStorage.getItem('toyotawait_tracker_dismissed')).toBe('true');
+
+      unmount();
+
+      // Re-rendering respects persisted dismissal
+      render(<ActiveOrderStepper />);
+      expect(screen.queryByTestId('active-order-tracker')).not.toBeInTheDocument();
+    });
   });
 
   describe('OrderStageBadge rendering', () => {
