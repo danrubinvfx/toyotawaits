@@ -36,15 +36,15 @@ export function DrivingInputsCard({
   };
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-4 ${className ?? ''}`}>
-      <CardHeader className="p-0 pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
-        <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-          <Gauge className="w-4 h-4 text-red-600 dark:text-red-500" />
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+        <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
+          <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-500" />
           Driving & Utility Inputs
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="p-0 pt-3 space-y-3">
+      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-3">
         {/* 1. Distance */}
         <div className="space-y-1">
           <div className="flex items-center gap-2">

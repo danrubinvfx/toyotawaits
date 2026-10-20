@@ -30,10 +30,10 @@ export function CurrentVehicleCard({
       : currentVehicle.customL100km;
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-4 ${className ?? ''}`}>
-      <CardHeader className="p-0 pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
+          <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
             <Car className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
             Current Vehicle Baseline
           </CardTitle>
@@ -43,7 +43,7 @@ export function CurrentVehicleCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 pt-3 space-y-3">
+      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-3">
         {/* Compact Mode Toggle Tabs */}
         <div
           role="tablist"
@@ -80,12 +80,18 @@ export function CurrentVehicleCard({
           </button>
         </div>
 
-        {/* Option 1: Compact Archetype List */}
+        {/* Option 1: Segmented Archetype Chips (2-column micro-grid) */}
         {currentVehicle.mode === 'ARCHETYPE' && (
-          <div className="space-y-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
+          <div className="grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
             {TRADE_IN_ARCHETYPES.map((archetype) => {
               const isSelected = currentVehicle.archetypeId === archetype.id;
               const cleanName = archetype.name.replace('Trade-in Archetype: ', '');
+              const shortLabel = cleanName
+                .replace('Compact Crossover AWD', 'Crossover')
+                .replace('Mid-Size Sedan', 'Sedan')
+                .replace('Full-Size Truck', 'Truck')
+                .replace('Minivan', 'Minivan');
+
               return (
                 <button
                   key={archetype.id}
@@ -94,17 +100,18 @@ export function CurrentVehicleCard({
                   aria-checked={isSelected}
                   aria-label={`${cleanName} (${archetype.consumption.combinedL100km} L/100km)`}
                   onClick={() => onChange({ archetypeId: archetype.id })}
-                  className={`w-full text-left py-1.5 px-2.5 rounded-lg border transition-all flex items-center justify-between gap-2 cursor-pointer ${
+                  className={`text-left py-1 px-2 rounded-md border transition-all flex items-center justify-between gap-1 cursor-pointer ${
                     isSelected
-                      ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-50 dark:bg-zinc-800/80 ring-1 ring-zinc-900 dark:ring-zinc-100'
-                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                      ? 'border-zinc-900 dark:border-zinc-100 bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-900 dark:ring-zinc-100 font-semibold text-zinc-900 dark:text-zinc-100'
+                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
-                  <span className="font-semibold text-xs text-zinc-900 dark:text-zinc-100 truncate">
-                    {cleanName}
+                  <span className="text-xs truncate">
+                    <span className="sm:hidden">{shortLabel}</span>
+                    <span className="hidden sm:inline">{cleanName}</span>
                   </span>
-                  <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300 shrink-0">
-                    {archetype.consumption.combinedL100km} L/100km
+                  <span className="font-mono text-[11px] font-bold text-zinc-600 dark:text-zinc-400 shrink-0">
+                    {archetype.consumption.combinedL100km}L
                   </span>
                 </button>
               );

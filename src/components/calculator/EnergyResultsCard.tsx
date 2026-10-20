@@ -37,36 +37,38 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
   return (
     <Card className={`border-2 border-red-500/20 dark:border-red-500/30 overflow-hidden shadow-lg ${className ?? ''}`}>
       {/* Top Banner: Strict label & Dense Layout */}
-      <div className="bg-gradient-to-r from-red-600 to-rose-700 dark:from-red-700 dark:to-rose-800 px-3 sm:px-4 py-2 sm:py-3 text-white">
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-red-100">
-            Energy-Cost Savings
-          </span>
-          <Badge variant="secondary" className="bg-white/20 text-white hover:bg-white/30 text-[9px] sm:text-[10px] px-1.5 py-0.5">
-            Annual Projection
-          </Badge>
-        </div>
-
-        {/* Primary Savings Number */}
-        <div className="mt-1 sm:mt-2 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5 sm:gap-1">
-          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
-            {isPositiveSavings ? (
-              <span>${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
-            ) : (
-              <span>-${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
-            )}
-            <span className="text-xs sm:text-sm font-normal text-red-100 ml-1">/ yr</span>
+      <div className="bg-red-600 dark:bg-red-700 px-3 sm:px-4 py-1.5 sm:py-3 text-white">
+        <div className="flex flex-col gap-0.5 sm:gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-red-100">
+              Energy-Cost Savings
+            </span>
+            <Badge variant="secondary" className="hidden sm:inline-flex bg-white/20 text-white hover:bg-white/30 text-[9px] sm:text-[10px] px-1.5 py-0.5">
+              Annual Projection
+            </Badge>
           </div>
 
-          <div className="text-[11px] sm:text-xs text-red-100 flex items-center gap-1.5 flex-wrap">
-            <span>
-              {isPositiveSavings ? '+' : '-'}
-              ${Math.abs(results.monthlySavings).toFixed(0)} CAD / month
-            </span>
-            <span>•</span>
-            <span className="font-semibold underline decoration-white/40 underline-offset-2">
-              {results.savingsPercent.toFixed(1)}% {isPositiveSavings ? 'reduction' : 'increase'} in energy spend
-            </span>
+          {/* Primary Savings Number */}
+          <div className="flex items-baseline justify-between gap-1 flex-wrap sm:flex-nowrap">
+            <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
+              {isPositiveSavings ? (
+                <span>${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
+              ) : (
+                <span>-${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
+              )}
+              <span className="text-xs sm:text-sm font-normal text-red-100 ml-1">/ yr</span>
+            </div>
+
+            <div className="text-[11px] sm:text-xs text-red-100 flex items-center gap-1.5 flex-wrap">
+              <span>
+                {isPositiveSavings ? '+' : '-'}
+                ${Math.abs(results.monthlySavings).toFixed(0)} CAD / month
+              </span>
+              <span>•</span>
+              <span className="font-semibold underline decoration-white/40 underline-offset-2">
+                {results.savingsPercent.toFixed(1)}% {isPositiveSavings ? 'reduction' : 'increase'} in energy spend
+              </span>
+            </div>
           </div>
         </div>
       </div>

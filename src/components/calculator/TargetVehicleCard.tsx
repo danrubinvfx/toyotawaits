@@ -95,11 +95,11 @@ export function TargetVehicleCard({
     : `${selectedPreset.consumption.combinedL100km} L/100km`;
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-4 ${className ?? ''}`}>
-      <CardHeader className="p-0 pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-            <Sparkles className="w-4 h-4 text-red-600 dark:text-red-500" />
+          <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-500" />
             Target Toyota Vehicle
           </CardTitle>
           <Badge
@@ -113,7 +113,7 @@ export function TargetVehicleCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 pt-3 space-y-2.5">
+      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-2.5">
         {/* 1. Horizontal Model Selector Tab/Pill Row */}
         <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Toyota models">
           {MODEL_FAMILIES.map((family) => {
