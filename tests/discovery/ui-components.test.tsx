@@ -87,6 +87,17 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(secondary).toHaveClass('text-sm', 'font-medium', 'text-neutral-400');
     });
 
+    it('renders subtle calculated distance badge alongside dealership name when distanceKm is provided', () => {
+      render(<VehicleListingCard {...sampleCardProps} distanceKm={8.4} />);
+
+      const badge = screen.getByTestId('distance-badge');
+      expect(badge).toBeInTheDocument();
+      expect(badge).toHaveTextContent('(8.4 km away)');
+      expect(badge).toHaveClass('text-xs', 'text-sky-400/90', 'font-medium');
+      expect(screen.getByText('Jim Pattison Toyota Downtown')).toBeInTheDocument();
+      expect(screen.getByText('Vancouver')).toBeInTheDocument();
+    });
+
     it('prevents redundant string concatenations if drivetrain or hybrid is already in model', () => {
       render(
         <VehicleListingCard
@@ -212,6 +223,10 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       status: '',
       dealer: '',
       location: '',
+      userLocation: '',
+      userCoordinates: null,
+      maxDistance: '',
+      sortNearest: false,
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -332,6 +347,70 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
       expect(tray.className).toContain('hidden');
     });
+
+    it('renders User Location presets, Near Me GPS button, distance radius filter, and sort toggle', () => {
+      const onFilterChange = vi.fn();
+      render(
+        <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
+      );
+
+      expect(screen.getByTestId('gps-location-btn')).toBeInTheDocument();
+      expect(screen.getByTestId('filter-max-distance-select')).toBeInTheDocument();
+      expect(screen.getByTestId('filter-sort-nearest-toggle')).toBeInTheDocument();
+
+      const locationSelect = screen.getByTestId('filter-location-select');
+      expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Burnaby' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Richmond' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Coquitlam / Tri-Cities' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Pitt Meadows (West Coast)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Langley' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Abbotsford' })).toBeInTheDocument();
+    });
+
+    it('triggers onFilterChange with coordinates when municipality preset is selected', () => {
+      const onFilterChange = vi.fn();
+      render(
+        <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
+      );
+
+      fireEvent.change(screen.getByTestId('filter-location-select'), {
+        target: { value: 'Burnaby' },
+      });
+
+      expect(onFilterChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          location: 'Burnaby',
+          userLocation: 'Burnaby',
+          userCoordinates: { lat: 49.2488, lng: -122.9805 },
+          sortNearest: true,
+        })
+      );
+    });
+
+    it('triggers onFilterChange when max distance radius or sort toggle changes', () => {
+      const onFilterChange = vi.fn();
+      render(
+        <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
+      );
+
+      fireEvent.change(screen.getByTestId('filter-max-distance-select'), {
+        target: { value: '15' },
+      });
+      expect(onFilterChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          maxDistance: '15',
+        })
+      );
+
+      fireEvent.click(screen.getByTestId('filter-sort-nearest-toggle'));
+      expect(onFilterChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sortNearest: true,
+        })
+      );
+    });
   });
 
   // ===========================================================================
@@ -404,44 +483,62 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
-    it('dynamically populates Downtown, Surrey, and Pitt Meadows location options and filters listings by region', () => {
+    it('supports proximity filtering and distance calculation when municipality is selected', () => {
       render(<InventoryExplorer />);
 
       const locationSelect = screen.getByTestId('filter-location-select');
       expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Burnaby' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Pitt Meadows (West Coast)' })).toBeInTheDocument();
 
-      // Filter by Surrey
+      // Pick "Burnaby"
+      fireEvent.change(locationSelect, {
+        target: { value: 'Burnaby' },
+      });
+
+      // All listings should have distance badges relative to Burnaby
+      // Downtown (~8.0 km), Surrey (~14.4 km), Pitt Meadows (~21.4 km)
+      expect(screen.getAllByText(/\(8 km away\)|\(8\.0 km away\)/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/\(14\.4 km away\)/i).length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/\(21\.4 km away\)/i).length).toBeGreaterThan(0);
+
+      // Verify proximity sorting: cards for Downtown appear before Surrey, which appear before Pitt Meadows
+      const allCards = screen.getAllByTestId(/^listing-card-/);
+      const cardIds = allCards.map((c) => c.getAttribute('data-testid'));
+      const downtownIdx = cardIds.findIndex((id) => id?.includes('jp-rav4-xse-01'));
+      const surreyIdx = cardIds.findIndex((id) => id?.includes('jp-surrey-rav4-01'));
+      const pittMeadowsIdx = cardIds.findIndex((id) => id?.includes('wc-toyota-prius-01'));
+      expect(downtownIdx).toBeLessThan(surreyIdx);
+      expect(surreyIdx).toBeLessThan(pittMeadowsIdx);
+
+      // Now pick "Surrey"
       fireEvent.change(locationSelect, {
         target: { value: 'Surrey' },
       });
 
+      // Relative to Surrey: Surrey dealer is ~3.4 km, Pitt Meadows is ~12.2 km, Downtown is ~19.3 km
+      expect(screen.getAllByText(/\(3\.4 km away\)/i).length).toBeGreaterThan(0);
+
+      // Verify proximity sorting from Surrey: Surrey first, Pitt Meadows second, Downtown third
+      const allCardsSurrey = screen.getAllByTestId(/^listing-card-/);
+      const cardIdsSurrey = allCardsSurrey.map((c) => c.getAttribute('data-testid'));
+      const surreyIdx2 = cardIdsSurrey.findIndex((id) => id?.includes('jp-surrey-rav4-01'));
+      const pittMeadowsIdx2 = cardIdsSurrey.findIndex((id) => id?.includes('wc-toyota-prius-01'));
+      const downtownIdx2 = cardIdsSurrey.findIndex((id) => id?.includes('jp-rav4-xse-01'));
+      expect(surreyIdx2).toBeLessThan(pittMeadowsIdx2);
+      expect(pittMeadowsIdx2).toBeLessThan(downtownIdx2);
+
+      // Now apply Max Distance "Within 15 km"
+      fireEvent.change(screen.getByTestId('filter-max-distance-select'), {
+        target: { value: '15' },
+      });
+
+      // Surrey (3.4 km) and Pitt Meadows (12.2 km) are within 15 km
       expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
-      expect(screen.getByTestId('listing-card-jp-surrey-sienna-02')).toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-jp-grand-highlander-03')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-wc-toyota-prius-01')).not.toBeInTheDocument();
-
-      // Filter by Pitt Meadows
-      fireEvent.change(locationSelect, {
-        target: { value: 'Pitt Meadows' },
-      });
-
       expect(screen.getByTestId('listing-card-wc-toyota-prius-01')).toBeInTheDocument();
+      // Downtown (19.3 km) is excluded (> 15 km)
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-jp-surrey-rav4-01')).not.toBeInTheDocument();
-
-      // Filter by Vancouver
-      fireEvent.change(locationSelect, {
-        target: { value: 'Vancouver' },
-      });
-
-      expect(screen.getByTestId('listing-card-jp-rav4-xse-01')).toBeInTheDocument();
-      expect(screen.getByTestId('listing-card-jp-sienna-ltd-02')).toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-jp-surrey-rav4-01')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-jp-surrey-sienna-02')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('listing-card-wc-toyota-prius-01')).not.toBeInTheDocument();
     });
 
     it('displays empty state when no listings match active filter criteria', () => {

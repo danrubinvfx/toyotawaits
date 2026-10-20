@@ -27,6 +27,7 @@ export interface VehicleListingCardProps {
   packageCode?: string | null;
   exteriorColor?: string | null;
   stockNumber?: string | null;
+  distanceKm?: number | null;
 }
 
 export function formatVehicleCardTitles(props: {
@@ -211,6 +212,7 @@ export function VehicleListingCard({
   driveTrain,
   exteriorColor,
   stockNumber,
+  distanceKm,
 }: VehicleListingCardProps) {
   const { primaryTitle, secondaryTitle } = formatVehicleCardTitles({
     modelYear,
@@ -327,12 +329,25 @@ export function VehicleListingCard({
               </p>
             )}
           </div>
-          <p className="text-xs text-zinc-400 flex items-center gap-1">
+          <p className="text-xs text-zinc-400 flex flex-wrap items-center gap-1">
             <span>{dealerName}</span>
-            {regionDisplay && (
-              <span className="text-zinc-500 font-normal" data-testid="dealer-location-display">
-                ({regionDisplay})
-              </span>
+            {distanceKm != null ? (
+              <>
+                <span className="text-zinc-600">•</span>
+                {resolvedCity && <span className="text-zinc-400">{resolvedCity}</span>}
+                <span
+                  data-testid="distance-badge"
+                  className="text-xs text-sky-400/90 font-medium whitespace-nowrap"
+                >
+                  ({distanceKm} km away)
+                </span>
+              </>
+            ) : (
+              regionDisplay && (
+                <span className="text-zinc-500 font-normal" data-testid="dealer-location-display">
+                  ({regionDisplay})
+                </span>
+              )
             )}
           </p>
         </div>

@@ -13,6 +13,8 @@ import {
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
 import { getAccessoriesForModel } from '@/data/accessories';
+import { getDealerCoordinates } from '@/config/dealers';
+import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
 import { Car, AlertCircle, Sparkles } from 'lucide-react';
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
@@ -314,8 +316,37 @@ export function InventoryExplorer({
     return Array.from(set).sort();
   }, [listings]);
 
+  const userCoordinates = useMemo(() => {
+    if (filters.userCoordinates) return filters.userCoordinates;
+    if (filters.location) {
+      return getPresetCoordinates(filters.location);
+    }
+    return null;
+  }, [filters.userCoordinates, filters.location]);
+
   const filteredListings = useMemo(() => {
-    return listings.filter((item) => {
+    // 1. Calculate distance for each listing if user location coordinates are present
+    const withDistance = listings.map((item) => {
+      let distanceKm: number | null = null;
+      if (userCoordinates) {
+        const dealerCoords = getDealerCoordinates(item.dealerName, item.dealerCity);
+        if (dealerCoords) {
+          distanceKm = calculateDistanceKm(
+            userCoordinates.lat,
+            userCoordinates.lng,
+            dealerCoords.lat,
+            dealerCoords.lng
+          );
+        }
+      }
+      return {
+        ...item,
+        distanceKm,
+      };
+    });
+
+    // 2. Filter listings based on active facets
+    const filtered = withDistance.filter((item) => {
       // Model facet
       if (filters.model) {
         const filterModel = filters.model.toLowerCase().trim();
@@ -370,21 +401,21 @@ export function InventoryExplorer({
         return false;
       }
 
-      // Location / Region facet (with dealer name backwards compatibility)
-      const locationQuery = (filters.location || filters.dealer || '').toLowerCase().trim();
-      if (locationQuery) {
-        const itemCity = (item.dealerCity || '').toLowerCase();
-        const itemName = (item.dealerName || '').toLowerCase();
-
-        const matchesCity = itemCity === locationQuery || itemCity.includes(locationQuery);
-        const matchesName = itemName.includes(locationQuery);
-        const matchesMetro =
-          (locationQuery === 'vancouver' && (itemName.includes('downtown') || itemCity.includes('vancouver'))) ||
-          (locationQuery === 'surrey' && (itemName.includes('surrey') || itemCity.includes('surrey'))) ||
-          (locationQuery.includes('pitt') && (itemName.includes('west coast') || itemCity.includes('pitt')));
-
-        if (!matchesCity && !matchesName && !matchesMetro) {
+      // Explicit Dealer facet (if separate from location preset)
+      if (filters.dealer && filters.dealer !== filters.location && !userCoordinates) {
+        const dQuery = filters.dealer.toLowerCase().trim();
+        if (!item.dealerName.toLowerCase().includes(dQuery)) {
           return false;
+        }
+      }
+
+      // Max Distance radius filter
+      if (filters.maxDistance) {
+        const maxDist = parseFloat(filters.maxDistance);
+        if (!isNaN(maxDist)) {
+          if (item.distanceKm == null || item.distanceKm > maxDist) {
+            return false;
+          }
         }
       }
 
@@ -411,7 +442,19 @@ export function InventoryExplorer({
 
       return true;
     });
-  }, [listings, filters]);
+
+    // 3. Proximity Sort: when sortNearest is active (or enabled when user location is chosen)
+    const shouldSortNearest = filters.sortNearest ?? Boolean(userCoordinates);
+    if (shouldSortNearest && userCoordinates) {
+      filtered.sort((a, b) => {
+        const distA = a.distanceKm != null ? a.distanceKm : Infinity;
+        const distB = b.distanceKm != null ? b.distanceKm : Infinity;
+        return distA - distB;
+      });
+    }
+
+    return filtered;
+  }, [listings, filters, userCoordinates]);
 
   const [fetchedGearCounts, setFetchedGearCounts] = useState<Record<string, number>>({});
 

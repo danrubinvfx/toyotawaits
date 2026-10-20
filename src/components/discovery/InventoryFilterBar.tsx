@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getPresetCoordinates } from '@/lib/geo/distance';
 
 export interface LocationOption {
   value: string;
@@ -15,6 +16,10 @@ export interface FilterState {
   minPrice: string;
   maxPrice: string;
   search: string;
+  userLocation?: string;
+  userCoordinates?: { lat: number; lng: number } | null;
+  maxDistance?: string; // e.g. "", "15", "30", "50"
+  sortNearest?: boolean;
 }
 
 export interface InventoryFilterBarProps {
@@ -39,10 +44,16 @@ const DEFAULT_MODELS = [
   'Corolla Cross Hybrid',
 ];
 
-const DEFAULT_LOCATIONS: LocationOption[] = [
+const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
+  { value: '', label: 'All Locations' },
   { value: 'Vancouver', label: 'Vancouver (Downtown)' },
+  { value: 'Burnaby', label: 'Burnaby' },
   { value: 'Surrey', label: 'Surrey (Guildford)' },
+  { value: 'Richmond', label: 'Richmond' },
+  { value: 'Coquitlam', label: 'Coquitlam / Tri-Cities' },
   { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' },
+  { value: 'Langley', label: 'Langley' },
+  { value: 'Abbotsford', label: 'Abbotsford' },
 ];
 
 export function InventoryFilterBar({
@@ -54,25 +65,31 @@ export function InventoryFilterBar({
   totalResults,
 }: InventoryFilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
 
-  const rawLocations = (
-    availableLocations && availableLocations.length > 0
-      ? availableLocations
-      : availableDealers && availableDealers.length > 0
-      ? availableDealers.map((d) => {
-          if (d.toLowerCase().includes('surrey')) {
-            return { value: 'Surrey', label: 'Surrey (Guildford)' };
-          }
-          if (d.toLowerCase().includes('west coast') || d.toLowerCase().includes('pitt meadows')) {
-            return { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' };
-          }
-          if (d.toLowerCase().includes('downtown') || d.toLowerCase().includes('vancouver')) {
-            return { value: 'Vancouver', label: 'Vancouver (Downtown)' };
-          }
-          return { value: d, label: d };
-        })
-      : DEFAULT_LOCATIONS
-  ).map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
+  // Combine default municipality presets with any runtime observed locations
+  const rawLocations: LocationOption[] = [...DEFAULT_MUNICIPALITY_LOCATIONS];
+  if (availableLocations && availableLocations.length > 0) {
+    for (const loc of availableLocations) {
+      if (typeof loc === 'string') {
+        rawLocations.push({ value: loc, label: loc });
+      } else {
+        rawLocations.push(loc);
+      }
+    }
+  } else if (availableDealers && availableDealers.length > 0) {
+    for (const d of availableDealers) {
+      if (d.toLowerCase().includes('surrey')) {
+        rawLocations.push({ value: 'Surrey', label: 'Surrey (Guildford)' });
+      } else if (d.toLowerCase().includes('west coast') || d.toLowerCase().includes('pitt meadows')) {
+        rawLocations.push({ value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' });
+      } else if (d.toLowerCase().includes('downtown') || d.toLowerCase().includes('vancouver')) {
+        rawLocations.push({ value: 'Vancouver', label: 'Vancouver (Downtown)' });
+      } else {
+        rawLocations.push({ value: d, label: d });
+      }
+    }
+  }
 
   const uniqueLocations: LocationOption[] = [];
   const seenValues = new Set<string>();
@@ -93,11 +110,59 @@ export function InventoryFilterBar({
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
-    onFilterChange({ ...filters, location: val, dealer: val });
+    const coords = val ? getPresetCoordinates(val) : null;
+    onFilterChange({
+      ...filters,
+      location: val,
+      userLocation: val,
+      userCoordinates: coords,
+      dealer: val,
+      sortNearest: Boolean(val) ? true : (filters.sortNearest ?? false),
+    });
   };
 
-  const handleDealerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    handleLocationChange(e);
+  const handleMaxDistanceChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onFilterChange({
+      ...filters,
+      maxDistance: e.target.value,
+    });
+  };
+
+  const handleSortNearestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onFilterChange({
+      ...filters,
+      sortNearest: e.target.checked,
+    });
+  };
+
+  const handleGpsLocation = () => {
+    if (typeof window === 'undefined' || !navigator?.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setIsLocating(false);
+        const coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        onFilterChange({
+          ...filters,
+          location: 'Near Me (GPS)',
+          userLocation: 'Near Me (GPS)',
+          userCoordinates: coords,
+          sortNearest: true,
+        });
+      },
+      (error) => {
+        setIsLocating(false);
+        console.warn('Geolocation lookup failed:', error);
+        alert('Unable to retrieve your current location. Please select a municipality preset.');
+      },
+      { timeout: 10000, enableHighAccuracy: false }
+    );
   };
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,6 +183,10 @@ export function InventoryFilterBar({
       status: '',
       dealer: '',
       location: '',
+      userLocation: '',
+      userCoordinates: null,
+      maxDistance: '',
+      sortNearest: false,
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -127,7 +196,8 @@ export function InventoryFilterBar({
   const activeFacetCount = [
     Boolean(filters.model),
     Boolean(filters.status),
-    Boolean(filters.location || filters.dealer),
+    Boolean(filters.location || filters.dealer || filters.userCoordinates),
+    Boolean(filters.maxDistance),
     Boolean(filters.minPrice || filters.maxPrice),
   ].filter(Boolean).length;
 
@@ -136,6 +206,8 @@ export function InventoryFilterBar({
       filters.status ||
       filters.location ||
       filters.dealer ||
+      filters.userCoordinates ||
+      filters.maxDistance ||
       filters.minPrice ||
       filters.maxPrice ||
       filters.search
@@ -246,26 +318,72 @@ export function InventoryFilterBar({
             </select>
           </div>
 
-          {/* Column 2: Location / Region */}
-          <div className="space-y-1">
-            <label htmlFor="filter-location" className="text-[11px] font-medium text-zinc-400 block">
-              Location / Region
-            </label>
+          {/* Column 2: User Location & Distance */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label htmlFor="filter-location" className="text-[11px] font-medium text-zinc-400 block">
+                User Location
+              </label>
+              <button
+                type="button"
+                data-testid="gps-location-btn"
+                onClick={handleGpsLocation}
+                disabled={isLocating}
+                className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:text-sky-300 font-medium transition-colors"
+                title="Use current GPS location"
+              >
+                <Navigation className="h-2.5 w-2.5" aria-hidden="true" />
+                <span>{isLocating ? 'Locating...' : 'Near Me (GPS)'}</span>
+              </button>
+            </div>
             <select
               id="filter-location"
               data-testid="filter-location-select"
               aria-label="Filter by location"
-              value={filters.location || filters.dealer || ''}
+              value={filters.location || ''}
               onChange={handleLocationChange}
               className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             >
-              <option value="">All Locations</option>
+              {filters.location === 'Near Me (GPS)' && (
+                <option value="Near Me (GPS)">📍 Near Me (GPS)</option>
+              )}
               {uniqueLocations.map((loc) => (
-                <option key={loc.value} value={loc.value}>
+                <option key={loc.value || 'all'} value={loc.value}>
                   {loc.label}
                 </option>
               ))}
             </select>
+
+            {/* Radius & Proximity Sort Controls */}
+            <div className="flex items-center justify-between gap-1.5 pt-0.5">
+              <select
+                id="filter-max-distance"
+                data-testid="filter-max-distance-select"
+                aria-label="Filter by maximum distance"
+                value={filters.maxDistance || ''}
+                onChange={handleMaxDistanceChange}
+                className="w-1/2 rounded border border-zinc-800 bg-zinc-950 px-1.5 py-1 text-[11px] text-zinc-300 focus:border-red-500 focus:outline-none"
+              >
+                <option value="">Any distance</option>
+                <option value="15">Within 15 km</option>
+                <option value="30">Within 30 km</option>
+                <option value="50">Within 50 km</option>
+              </select>
+              <label
+                htmlFor="filter-sort-nearest"
+                className="flex items-center gap-1 text-[10px] text-zinc-400 cursor-pointer select-none whitespace-nowrap"
+              >
+                <input
+                  type="checkbox"
+                  id="filter-sort-nearest"
+                  data-testid="filter-sort-nearest-toggle"
+                  checked={filters.sortNearest ?? false}
+                  onChange={handleSortNearestChange}
+                  className="rounded border-zinc-700 bg-zinc-950 text-red-600 focus:ring-0 h-3 w-3"
+                />
+                <span>Sort nearest</span>
+              </label>
+            </div>
           </div>
 
           {/* Column 3: Status */}
