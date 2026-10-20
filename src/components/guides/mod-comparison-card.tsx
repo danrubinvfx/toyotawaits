@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AffiliateCTA } from '@/components/guides/affiliate-cta';
@@ -76,6 +78,16 @@ export function ModComparisonCard({
   ctaLabel,
   secondaryActions,
 }: ModComparisonCardProps) {
+  // Track desktop breakpoint (>= 768px) to collapse all accordions on mobile viewports
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkWidth = () => setIsDesktop(window.innerWidth >= 768);
+    checkWidth();
+    window.addEventListener('resize', checkWidth);
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
+
   // Normalize legacy vs new prop conventions
   const activeProTip = proTip || whyThisPick;
   const activeOmission = factoryOmission || factoryIssue;
@@ -145,17 +157,25 @@ export function ModComparisonCard({
       </CardHeader>
 
       <CardContent className="p-5 sm:p-6 space-y-4">
-        {/* A. Installer's Pro-Tip (Open by Default) */}
+        {/* A. Responsive Pro-Tip (Closed on Mobile, Open on Desktop) */}
         {(proTip || whyThisPick) && (
-          <details open className="group border border-amber-900/40 bg-amber-950/10 rounded-lg p-3 transition-all">
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-400 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+          <details
+            key={isDesktop ? 'desktop-open' : 'mobile-closed'}
+            open={isDesktop}
+            className="group border border-amber-900/40 bg-amber-950/10 rounded-lg p-3 transition-all"
+          >
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-400 text-sm font-semibold [&::-webkit-details-marker]:hidden min-h-[40px]">
               <div className="flex items-center gap-2">
                 <span>💡</span>
                 <span>Installer&apos;s Pro-Tip</span>
               </div>
-              <span className="text-amber-500/60 text-xs transition-transform duration-200 group-open:rotate-180">
-                ▼
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-amber-500/70 font-normal group-open:hidden">Show tip</span>
+                <span className="text-xs text-amber-500/70 font-normal hidden group-open:inline">Hide</span>
+                <span className="text-amber-500/60 text-xs transition-transform duration-200 group-open:rotate-180">
+                  ▼
+                </span>
+              </div>
             </summary>
             <div className="mt-2 text-xs md:text-sm text-neutral-300 leading-relaxed pl-6 border-t border-amber-900/30 pt-2 space-y-1.5">
               {whyThisPick && <p>{whyThisPick}</p>}
@@ -168,13 +188,16 @@ export function ModComparisonCard({
           </details>
         )}
 
-        {/* B. Why Upgrade? / Problem vs Solution (Closed by Default) */}
+        {/* B. Factory Problem vs. Solution (Closed by Default) */}
         {(activeOmission || activeSolution) && (
           <details className="group border border-neutral-800 rounded-lg bg-neutral-900/40 p-3 transition-colors hover:border-neutral-700">
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-xs font-semibold uppercase tracking-wider text-neutral-400 [&::-webkit-details-marker]:hidden">
-              <span>Why Upgrade? (Factory Flaw vs Solution)</span>
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-xs font-semibold uppercase tracking-wider text-neutral-400 [&::-webkit-details-marker]:hidden min-h-[40px]">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-neutral-500 font-normal group-open:hidden">Show comparison</span>
+                <span>⚖️</span>
+                <span>Factory Problem vs. Solution</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-neutral-500 font-normal group-open:hidden">Compare</span>
                 <span className="text-xs text-neutral-500 font-normal hidden group-open:inline">Hide</span>
                 <span className="text-neutral-500 transition-transform duration-200 group-open:rotate-180 text-[10px]">
                   ▼
@@ -201,7 +224,7 @@ export function ModComparisonCard({
         {/* C. Installation Walkthrough (Closed by Default) */}
         {activeSteps && activeSteps.length > 0 && (
           <details className="group border border-neutral-800 rounded-lg bg-neutral-900/30 p-3 transition-colors hover:border-neutral-700">
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-neutral-200 text-sm font-medium [&::-webkit-details-marker]:hidden">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-neutral-200 text-sm font-medium [&::-webkit-details-marker]:hidden min-h-[40px]">
               <div className="flex items-center gap-2">
                 <span>🔧</span>
                 <span className="font-semibold uppercase tracking-wide text-xs text-neutral-300">
@@ -210,7 +233,7 @@ export function ModComparisonCard({
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-xs text-neutral-500 group-open:hidden">Show Steps</span>
-                <span className="text-xs text-neutral-500 hidden group-open:inline">Hide Steps</span>
+                <span className="text-xs text-neutral-500 hidden group-open:inline">Hide</span>
                 <span className="text-neutral-500 transition-transform duration-200 group-open:rotate-180 text-[10px]">
                   ▼
                 </span>

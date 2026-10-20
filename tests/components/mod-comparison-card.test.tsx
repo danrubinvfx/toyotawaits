@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import { ModComparisonCard } from '@/components/guides/mod-comparison-card';
 import { MarketProvider } from '@/context/MarketContext';
 import { Volume2 } from 'lucide-react';
@@ -115,22 +115,23 @@ describe('ModComparisonCard Component', () => {
     ).toBeDefined();
   });
 
-  it('renders pro-tip open by default and walkthrough/comparison closed by default', () => {
+  it('renders pro-tip open on desktop and walkthrough/comparison closed by default', () => {
+    // In JSDOM default window.innerWidth is 1024 (desktop)
     const { container } = render(<ModComparisonCard {...defaultProps} />);
 
     const detailsElements = container.querySelectorAll('details');
     expect(detailsElements.length).toBe(3);
 
-    // Pro-Tip details is open by default
+    // Pro-Tip details is open by default on desktop
     const proTipDetails = Array.from(detailsElements).find((el) =>
       el.textContent?.includes("Installer's Pro-Tip")
     );
     expect(proTipDetails).toBeDefined();
     expect(proTipDetails?.hasAttribute('open')).toBe(true);
 
-    // Why Upgrade comparison details is closed by default
+    // Factory Problem vs Solution comparison details is closed by default
     const comparisonDetails = Array.from(detailsElements).find((el) =>
-      el.textContent?.includes('Why Upgrade? (Factory Flaw vs Solution)')
+      el.textContent?.includes('Factory Problem vs. Solution')
     );
     expect(comparisonDetails).toBeDefined();
     expect(comparisonDetails?.hasAttribute('open')).toBe(false);
@@ -141,6 +142,30 @@ describe('ModComparisonCard Component', () => {
     );
     expect(walkthroughDetails).toBeDefined();
     expect(walkthroughDetails?.hasAttribute('open')).toBe(false);
+  });
+
+  it('collapses every accordion including pro-tip on mobile viewports (< 768px)', () => {
+    // Simulate mobile viewport (e.g. iPhone width 390px)
+    act(() => {
+      window.innerWidth = 390;
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    const { container } = render(<ModComparisonCard {...defaultProps} />);
+
+    const detailsElements = container.querySelectorAll('details');
+    expect(detailsElements.length).toBe(3);
+
+    // Every section including Pro-Tip must be closed on mobile
+    detailsElements.forEach((el) => {
+      expect(el.hasAttribute('open')).toBe(false);
+    });
+
+    // Reset back to desktop default for subsequent tests
+    act(() => {
+      window.innerWidth = 1024;
+      window.dispatchEvent(new Event('resize'));
+    });
   });
 
   it('renders gracefully without empty detail boxes when optional sections are omitted', () => {
