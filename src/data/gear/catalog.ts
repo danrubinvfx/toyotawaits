@@ -478,6 +478,79 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Corolla Cross (2022–2026)',
     whyBuy: 'Contoured mud flaps shielding rocker cladding and lower painted doors from gravel blast.',
   },
+
+  // ==========================================
+  // RAV4 Stealth "OEM+" Audio Package
+  // ==========================================
+  'beat-sonic-ena-3t3': {
+    slug: 'beat-sonic-ena-3t3',
+    title: 'Beat-Sonic ENA-3T3 Micro Power Amplifier Kit (RAV4 Non-JBL)',
+    searchKeywordsCA: 'Beat-Sonic ENA-3T3 micro power amplifier Toyota',
+    searchKeywordsUS: 'Beat-Sonic ENA-3T3 micro power amplifier Toyota',
+    compatibility: '2019–2026 Toyota RAV4 (Non-JBL 8" and 10.5" Multimedia Screens)',
+    whyBuy: 'Plug-and-play inline T-harness micro-amp boosting power without cutting wires or triggering hybrid battery drain codes. Dedicated RCA subwoofer pre-out.',
+    badge: 'Recommended',
+  },
+  'alpine-pwe-s800': {
+    slug: 'alpine-pwe-s800',
+    title: 'Alpine PWE-S800 8" Compact Powered Subwoofer (Under-Seat)',
+    searchKeywordsCA: 'Alpine PWE-S8 compact powered subwoofer',
+    searchKeywordsUS: 'Alpine PWE-S8 compact powered subwoofer',
+    compatibility: 'Universal under-seat fitment (compatible with RAV4 hybrid battery clearances)',
+    whyBuy: '240W peak / 120W RMS shallow cast-aluminum sub fitting flat under front passenger seat. Preserves 100% trunk space.',
+    badge: 'Recommended',
+  },
+  'alpine-pwe-s8': {
+    slug: 'alpine-pwe-s8',
+    title: 'Alpine PWE-S8 8" Compact Powered Subwoofer (Under-Seat)',
+    searchKeywordsCA: 'Alpine PWE-S8 compact powered subwoofer',
+    searchKeywordsUS: 'Alpine PWE-S8 compact powered subwoofer',
+    compatibility: 'Universal under-seat fitment (compatible with RAV4 hybrid battery clearances)',
+    whyBuy: '120W RMS shallow cast-aluminum sub fitting flat under front passenger seat.',
+    badge: 'Recommended',
+  },
+  'dash-speakers-rav4': {
+    slug: 'dash-speakers-rav4',
+    title: 'Cerwin-Vega V3 3.5" / Kicker KSC350 Coaxial Dash Speakers',
+    searchKeywordsCA: 'Kicker KSC350 3.5 coaxial speakers',
+    searchKeywordsUS: 'Kicker KSC350 3.5 coaxial speakers',
+    compatibility: '2019–2026 Toyota RAV4 Left & Right Dash Corners',
+    whyBuy: 'Drop-in 3.5" coaxial upgrade replacing factory paper cones. Brings vocals up to ear level in 15 minutes.',
+    badge: 'Recommended',
+  },
+  'metra-72-8110-harness': {
+    slug: 'metra-72-8110-harness',
+    title: 'Metra 72-8110 Toyota Speaker Harness Adapters (Pair)',
+    searchKeywordsCA: 'Metra 72-8110 Toyota speaker harness',
+    searchKeywordsUS: 'Metra 72-8110 Toyota speaker harness',
+    compatibility: 'Toyota Dash Speaker Plugs',
+    whyBuy: 'Plug-and-play adapter harness for clean, solder-free dash speaker installation.',
+  },
+  'kicker-cs-door-speakers-rav4': {
+    slug: 'kicker-cs-door-speakers-rav4',
+    title: 'Kicker CS Series 6.5" Door Speakers (Front & Rear Upgrade)',
+    searchKeywordsCA: 'Kicker CS Series 6.5 inch speakers CSC65',
+    searchKeywordsUS: 'Kicker CS Series 6.5 inch speakers CSC65',
+    compatibility: '2019–2026 Toyota RAV4 Front & Rear Doors',
+    whyBuy: 'Replaces weak factory paper cones with punchy mid-bass coaxial drivers.',
+    badge: 'Recommended',
+  },
+  'metra-82-8148-brackets': {
+    slug: 'metra-82-8148-brackets',
+    title: 'Metra 82-8148 6.5" Toyota Door Speaker Mounting Brackets',
+    searchKeywordsCA: 'Metra 82-8148 speaker mounting brackets Toyota',
+    searchKeywordsUS: 'Metra 82-8148 speaker mounting brackets Toyota',
+    compatibility: 'Toyota Front & Rear Door Speaker Cutouts',
+    whyBuy: 'Precision bracket matching factory door rivet holes and sealing moisture barrier.',
+  },
+  'metra-72-8104-harness': {
+    slug: 'metra-72-8104-harness',
+    title: 'Metra 72-8104 Toyota Door Speaker Harness Leads (Pair)',
+    searchKeywordsCA: 'Metra 72-8104 speaker wiring harness Toyota',
+    searchKeywordsUS: 'Metra 72-8104 speaker wiring harness Toyota',
+    compatibility: 'Toyota Door Speaker Harness Connectors',
+    whyBuy: 'Solderless plug-and-play leads clicking into factory door speaker wiring.',
+  },
 };
 
 /**

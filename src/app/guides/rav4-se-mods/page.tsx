@@ -17,6 +17,8 @@ import {
   ShieldCheck,
   CheckCircle2,
   ExternalLink,
+  Sparkles,
+  Zap,
 } from 'lucide-react';
 
 export const revalidate = 60;
@@ -108,49 +110,198 @@ export default function Rav4SeModsGuidePage() {
         </Card>
       </section>
 
-      {/* 2. Mod 1: The 20-Minute Dash Speaker Swap */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-          <Volume2 className="h-5 w-5 text-amber-500" />
-          2. The 20-Minute Dash Speaker Swap (Near-JBL Clarity)
-        </h2>
+      {/* 2. Audio: Stealth "OEM+" Audio Overhaul (Non-JBL Fix) */}
+      <section className="space-y-6">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold">
+              Non-JBL Audio Overhaul Blueprint
+            </Badge>
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-xs">
+              Zero Wire Splicing • 100% Trunk Space Preserved
+            </Badge>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+            <Volume2 className="h-6 w-6 text-amber-500 shrink-0" />
+            Audio: Stealth &ldquo;OEM+&rdquo; Audio Overhaul (Non-JBL Fix)
+          </h2>
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
+            The factory non-JBL sound system in the 2019–2026 RAV4 is notoriously weak, using paper-cone drivers with quarter-sized magnets powered by low head-unit wattage that distorts easily. You can achieve studio-grade sound without splicing factory wires, tripping hybrid battery sensors, or giving up a single square inch of trunk cargo floor or spare tire space.
+          </p>
+        </div>
 
-        <ModComparisonCard
-          stepNumber={1}
-          title="JBL Club 3412T Dash Tweeter & Harness Upgrade"
-          categoryBadge="Sound & Acoustics"
-          icon={Volume2}
-          priceEst="~$128 CAD"
-          installEffort="20-min Install"
-          integration="Direct Harness Tap"
-          fitmentBadge="Verified: 2019–2025 | 2026: Pending Validation"
-          whyThisPick="The factory SE sound system uses cheap 2.5-inch paper-cone dash speakers that muffle podcasts and dialogue. High-sensitivity 3.5-inch JBL Club 3412Ts drop right into the factory corner dash sockets and plug directly into custom Red Wolf adapter harnesses—no wire cutting or soldering. As with any aftermarket electrical modification, follow the harness and speaker manufacturers' instructions; consult your dealer or Toyota warranty booklet if you have coverage questions."
-          proTip="Use nylon trim pry tools along the outer windshield edge to pop dash grilles straight up without leaving indents on the soft dash vinyl. Point the speaker terminals towards the cabin to avoid interference with the defroster vent ducting."
-          factoryIssue="The factory SE sound system relies on tiny 2.5-inch paper-cone dash tweeters that clip early and muffle high-frequency vocal clarity, requiring excessive volume."
-          solution="Drop-in 3.5-inch 2-way coaxial JBL Club drivers paired with plug-and-play Toyota adapter harnesses. Delivers concert-grade treble and spacious soundstage without splicing factory wiring."
-          steps={[
-            'Pry Corner Grilles: Insert a nylon pry tool along the dash corner grilles and gently pop the retaining clips upwards.',
-            'Remove Factory Bolts: Remove the two 10mm (or 8mm) bolts holding each factory paper speaker.',
-            'Unclip Factory Connector: Disconnect the factory wiring plug from the paper speaker cone.',
-            'Attach Harness: Click the Red Wolf / Metra harness into the factory vehicle plug, then slide the spade connectors onto the JBL Club terminals.',
-            'Fasten & Snap Down: Re-fasten the two mounting bolts and press the speaker grille flush until clips click home.',
-          ]}
-          affiliateSlug="jbl-club-dash-speakers"
-          ctaLabel="Check Fitment on Amazon.ca ↗"
-          affiliateSublabel="JBL Club 3412T 3.5-inch 2-Way Coaxial Pair (~$95 CAD)"
-          secondaryActions={[
-            {
-              slug: 'toyota-speaker-harness',
-              label: 'View Exact Part Listing ↗',
-              sublabel: 'Red Wolf Plug & Play Harness (~$18 CAD)',
-            },
-            {
-              slug: 'trim-removal-tools',
-              label: 'Check Fitment on Amazon.ca ↗',
-              sublabel: 'Nylon Dash Pry Tool Set (~$15 CAD)',
-            },
-          ]}
-        />
+        {/* The 4-Piece Plug-and-Play Formula Overview Banner */}
+        <Card className="border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20">
+          <CardContent className="p-5 sm:p-6 space-y-3">
+            <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-amber-500" />
+              The 4-Piece Plug-and-Play Formula
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1 text-xs">
+              <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold text-amber-400">1. Clean Inline Power</span>
+                <p className="text-zinc-300 font-semibold">Beat-Sonic ENA-3T3 Micro-Amp</p>
+                <p className="text-zinc-500 text-[11px]">50W x 4 inline amp + built-in RCA sub pre-out behind glovebox.</p>
+              </div>
+              <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold text-amber-400">2. Stage 1 Clarity</span>
+                <p className="text-zinc-300 font-semibold">3.5&quot; Dash Speaker Swap</p>
+                <p className="text-zinc-500 text-[11px]">Cerwin-Vega V3 or Kicker KSC350 + Metra 72-8110 harnesses.</p>
+              </div>
+              <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold text-amber-400">3. Stage 2 Mid-Bass</span>
+                <p className="text-zinc-300 font-semibold">6.5&quot; Door Speaker Swap</p>
+                <p className="text-zinc-500 text-[11px]">Kicker CS Series 6.5&quot; + Metra 82-8148 brackets &amp; 72-8104 leads.</p>
+              </div>
+              <div className="bg-zinc-900/60 p-3 rounded-lg border border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold text-amber-400">4. Stealth Low-End</span>
+                <p className="text-zinc-300 font-semibold">Alpine PWE-S800 Powered Sub</p>
+                <p className="text-zinc-500 text-[11px]">120W RMS shallow sub flat under front passenger seat frame.</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Detail Cards for each of the 4 Formula Components */}
+        <div className="space-y-6">
+          {/* Component 1: Clean Inline Power */}
+          <ModComparisonCard
+            stepNumber={1}
+            title="1. Clean Inline Power: Beat-Sonic ENA-3T3 Micro Power Amplifier Kit"
+            categoryBadge="Amplifiers & Power"
+            icon={Zap}
+            priceEst="~$380 CAD"
+            installEffort="45-min Plug & Play"
+            integration="Factory Inline T-Harness"
+            fitmentBadge="2019–2026 Non-JBL (8-inch & 10.5-inch Screens)"
+            whyThisPick="The Beat-Sonic ENA-3T3 micro power amp is the cornerstone of the non-JBL stealth overhaul. It connects inline directly behind the factory multimedia touchscreen with a custom Toyota T-harness—zero wire splicing, zero tapping into fuse boxes, and zero risk of tripping 12V hybrid battery drain codes. Crucially, it includes an integrated RCA subwoofer preamp output, which completely eliminates the need for an external Line Output Converter (LOC)."
+            proTip="Mount the compact micro-amp module behind the lower glovebox or behind the radio bracket using heavy-duty 3M VHB automotive tape and zip-ties. Pre-set gain dials to ~50% before re-assembling the dash trim."
+            factoryIssue="Factory non-JBL head units output only ~12-15W RMS per channel with high distortion levels at highway listening volumes, starving aftermarket speakers of dynamics."
+            solution="Micro-sized 50W x 4 class-D amplifier with plug-and-play Toyota T-harness. Boosts output cleanly across all 4 channels and provides a clean RCA low-level subwoofer pre-out."
+            steps={[
+              'Remove the lower passenger dash trim and unclip the glovebox dampener arm to lower the glovebox.',
+              'Unclip the center multimedia touchscreen bezel and remove the four 10mm head-unit mounting bolts.',
+              'Pull the touchscreen forward and disconnect the factory 28-pin/10-pin audio harness plugs.',
+              'Click the Beat-Sonic T-harness between the factory vehicle plugs and the touchscreen receptacles.',
+              'Route the dedicated RCA subwoofer preamp cable down towards the passenger seat well.',
+              'Secure the micro-amp behind the dash frame using automotive zip ties and test audio playback before snapping trim back.',
+            ]}
+            affiliateSlug="beat-sonic-ena-3t3"
+            ctaLabel="View on Beat-Sonic USA ↗"
+            affiliateSublabel="Beat-Sonic ENA-3T3 Plug & Play Kit (~$380 CAD)"
+          />
+
+          {/* Component 2: Stage 1 Vocal & Treble Clarity (3.5" Dash Swap) */}
+          <ModComparisonCard
+            stepNumber={2}
+            title="2. Stage 1 Vocal & Treble Clarity: 3.5&quot; Dash Corner Speaker Swap"
+            categoryBadge="High-Frequency Clarity"
+            icon={Volume2}
+            priceEst="~$95–$128 CAD"
+            installEffort="15-min Solder-Free Swap"
+            integration="Direct Harness Adapter"
+            fitmentBadge="2019–2026 Left & Right Dash Corners"
+            whyThisPick="Factory dash locations house fragile 2.5-inch paper tweeters that swallow podcast dialogue and high-frequency sparkle. Swapping in high-efficiency 3.5-inch coaxial drivers (Cerwin-Vega V3 or Kicker KSC350) paired with Metra 72-8110 harnesses raises the entire soundstage to ear level in fifteen minutes without cutting any wires."
+            proTip="Use plastic nylon pry tools along the windshield edge to pop corner grilles straight up. Point speaker terminals towards the cabin so they do not press against the defroster air duct underneath."
+            factoryIssue="The factory SE / LE paper dash cones muffle vocals and distort when turned up over road noise on the highway."
+            solution="High-sensitivity 3.5-inch 2-way coaxial drivers (Cerwin-Vega V3 or Kicker KSC350) with Metra 72-8110 harnesses. Solder-free swap that delivers crystal-clear dialogue and crisp acoustic highs."
+            steps={[
+              'Insert a nylon trim pry tool along the outer edge of each corner dash grille and gently pop the retaining clips upwards.',
+              'Remove the two 10mm (or 8mm) factory hex screws securing each paper speaker cone.',
+              'Disconnect the factory electrical connector from the OEM speaker.',
+              'Plug the Metra 72-8110 adapter harness into the factory vehicle connector, then slide the spade connectors onto the new speaker terminals.',
+              'Screw down the new 3.5\" speaker with factory hardware and snap the protective grille flush.',
+            ]}
+            affiliateSlug="dash-speakers-rav4"
+            ctaLabel="Check Fitment on Amazon.ca ↗"
+            affiliateSublabel={'Cerwin-Vega V3 3.5" / Kicker KSC350 Pair (~$95 CAD)'}
+            secondaryActions={[
+              {
+                slug: 'metra-72-8110-harness',
+                label: 'View Exact Part Listing ↗',
+                sublabel: 'Metra 72-8110 Harness Adapters (~$18 CAD)',
+              },
+              {
+                slug: 'trim-removal-tools',
+                label: 'Check Fitment on Amazon.ca ↗',
+                sublabel: 'Nylon Dash Pry Tool Set (~$15 CAD)',
+              },
+            ]}
+          />
+
+          {/* Component 3: Stage 2 Mid-Bass Punch (6.5" Door Speakers) */}
+          <ModComparisonCard
+            stepNumber={3}
+            title="3. Stage 2 Mid-Bass Punch: Kicker CS Series 6.5&quot; Door Speakers (Front & Rear)"
+            categoryBadge="Mid-Bass & Dynamics"
+            icon={Volume2}
+            priceEst="~$149 CAD"
+            installEffort="1-hr Install"
+            integration="Bracket & Harness Adapters"
+            fitmentBadge="2019–2026 Front & Rear Door Panels"
+            whyThisPick="Factory door drivers use flimsy paper diaphragms with tiny quarter-sized magnets that bottom out when bass kicks in. Replacing all four doors with Kicker CS Series 6.5-inch coaxial drivers on Metra 82-8148 mounting brackets delivers tight, punchy mid-bass while sealing firmly against the factory door weather barrier."
+            proTip="Apply a 10-inch strip of sound deadening mat (butyl damping) around the inner sheet metal behind each speaker bracket to stop panel rattles and maximize door mid-bass resonance."
+            factoryIssue="Factory door speakers have virtually no excursion, rattling the plastic door cards and producing muddy, hollow mid-bass."
+            solution="Rigid polypropylene Kicker CS Series 6.5-inch drivers mounted on Metra 82-8148 adapter brackets with Metra 72-8104 plug-and-play wiring leads."
+            steps={[
+              'Remove the door panel trim screws hidden behind the interior door handle cup and armrest grab handle.',
+              'Pry along the bottom and side edges of the door card to release the plastic retaining clips, then unhook the door lock and latch cables.',
+              'Drill out the three aluminum factory rivets holding the OEM speaker cone using a 3/16" drill bit.',
+              'Bolt the Metra 82-8148 speaker adapter bracket firmly into the factory rivet holes.',
+              'Click the Metra 72-8104 harness into the vehicle speaker plug and slide terminals onto the Kicker CS driver.',
+              'Fasten the speaker into the bracket, test audio, and snap the interior door card back onto the frame.',
+            ]}
+            affiliateSlug="kicker-cs-door-speakers-rav4"
+            ctaLabel="Check Fitment on Amazon.ca ↗"
+            affiliateSublabel={'Kicker CS Series 6.5" 2-Way Drivers (~$149 CAD)'}
+            secondaryActions={[
+              {
+                slug: 'metra-82-8148-brackets',
+                label: 'View Exact Part Listing ↗',
+                sublabel: 'Metra 82-8148 Door Brackets (~$24 CAD)',
+              },
+              {
+                slug: 'metra-72-8104-harness',
+                label: 'View Exact Part Listing ↗',
+                sublabel: 'Metra 72-8104 Wiring Leads (~$16 CAD)',
+              },
+            ]}
+          />
+
+          {/* Component 4: Stealth Low-End (Under-Seat Powered Sub) */}
+          <ModComparisonCard
+            stepNumber={4}
+            title="4. Stealth Low-End: Alpine PWE-S800 8&quot; Compact Under-Seat Powered Subwoofer"
+            categoryBadge="Subwoofers & Deep Bass"
+            icon={Volume2}
+            priceEst="~$399 CAD"
+            installEffort="45-min Under-Seat Fit"
+            integration="Direct RCA Sub Pre-Out Tap"
+            fitmentBadge="Flat Under Front Passenger Seat (Hybrid Safe)"
+            whyThisPick="Traditional trunk subwoofers sacrifice stroller or camping cargo space and risk hitting high-voltage hybrid wiring. The Alpine PWE-S800 (or PWE-S8) packs 120W RMS in a shallow 3-inch cast-aluminum enclosure that slides completely flat under the front passenger seat frame. It connects directly to the Beat-Sonic amp RCA pre-out, giving you chest-thumping bass while keeping 100% of your trunk floor and spare tire well empty."
+            proTip="Route the RCA cables down the center console tunnel beneath the passenger carpeting. Connect the 12V constant wire with an inline fuse to the 12V auxiliary battery, and secure the chassis ground to the bare metal front seat bracket bolt."
+            factoryIssue="RAV4s without the factory JBL package have zero dedicated subwoofer, leaving kick drums and deep acoustic notes completely absent."
+            solution="Shallow cast-aluminum 8-inch powered sub (120W RMS / 240W peak) fitting underneath the front passenger seat frame, wired directly to the Beat-Sonic amplifier RCA output."
+            steps={[
+              'Slide the front passenger seat all the way forward and tilt it up to expose the floor cavity beneath the seat rail.',
+              'Verify clearance above the rear passenger floor air duct (the 3-inch shallow Alpine enclosure clears with room to spare).',
+              'Route the shielded RCA audio cable from the Beat-Sonic amp down the passenger console trim to the sub location.',
+              'Connect the sub remote turn-on lead and 12V auxiliary power wire with the supplied inline 15A fuse.',
+              'Fasten the sub chassis to the carpet using the included heavy-duty hook-and-loop mounting brackets to prevent sliding.',
+              'Tune the low-pass filter (LPF) to ~80Hz and adjust the wired bass remote knob from the driver cockpit.',
+            ]}
+            affiliateSlug="alpine-pwe-s800"
+            ctaLabel="Check Fitment on Amazon.ca ↗"
+            affiliateSublabel={'Alpine PWE-S800 / PWE-S8 8" Powered Sub (~$399 CAD)'}
+            secondaryActions={[
+              {
+                slug: 'beat-sonic-ena-3t3',
+                label: 'View Beat-Sonic Amp ↗',
+                sublabel: 'ENA-3T3 Micro Power Amp w/ Sub Out',
+              },
+            ]}
+          />
+        </div>
       </section>
 
       {/* 3. Mod 2: Custom Leather Upholstery */}
@@ -257,10 +408,21 @@ export default function Rav4SeModsGuidePage() {
               </thead>
               <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-zinc-600 dark:text-zinc-400">
                 <tr>
-                  <td className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">Dash &amp; Front Audio</td>
-                  <td className="py-3 px-4">Factory JBL (Bundled in XSE)</td>
-                  <td className="py-3 px-4">JBL Club 3412T + Harness ($128 CAD)</td>
-                  <td className="py-3 px-4 text-emerald-600 font-bold">Included in $128</td>
+                  <td className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">
+                    Stealth &ldquo;OEM+&rdquo; Audio Package
+                    <span className="block text-[11px] font-normal text-zinc-500">
+                      Beat-Sonic Amp + 3.5&quot; Dash + 6.5&quot; Doors + Alpine Sub
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">Factory JBL (Bundled in XSE/Tech)</td>
+                  <td className="py-3 px-4">~$1,023 CAD (Full 4-Piece Package)</td>
+                  <td className="py-3 px-4 text-emerald-600 font-bold">Studio Sound + 100% Trunk Space</td>
+                </tr>
+                <tr>
+                  <td className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">Stage 1 Dash Audio Only</td>
+                  <td className="py-3 px-4">Factory JBL (Bundled)</td>
+                  <td className="py-3 px-4">3.5&quot; Coaxial + Metra Harness ($113 CAD)</td>
+                  <td className="py-3 px-4 text-emerald-600 font-bold">Included in $113</td>
                 </tr>
                 <tr>
                   <td className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">Leather / SofTex Seats</td>
@@ -277,8 +439,8 @@ export default function Rav4SeModsGuidePage() {
                 <tr>
                   <td className="py-3 px-4 font-semibold text-zinc-900 dark:text-zinc-100">MSRP Trim Difference</td>
                   <td className="py-3 px-4 text-rose-500 font-bold">+$4,800 to +$8,200 CAD</td>
-                  <td className="py-3 px-4 text-emerald-500 font-bold">$888 CAD total parts</td>
-                  <td className="py-3 px-4 text-emerald-600 font-extrabold">&gt; $3,900 CAD saved</td>
+                  <td className="py-3 px-4 text-emerald-500 font-bold">~$1,783 CAD complete spec</td>
+                  <td className="py-3 px-4 text-emerald-600 font-extrabold">&gt; $3,000 to $6,400 CAD saved</td>
                 </tr>
                 <tr className="bg-amber-500/5 dark:bg-amber-950/20">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Delivery Wait Time</td>

@@ -11,6 +11,7 @@ export type ModCategory =
   | 'Interior Protection'
   | 'Cargo & Utility'
   | 'Electronics & Safety'
+  | 'Audio & Electronics'
   | 'Organization'
   | 'Battery & Emergency'
   | 'Winter Prep';
@@ -27,9 +28,11 @@ export interface ModItem {
     | 'Interior Protection'
     | 'Cargo & Utility'
     | 'Electronics & Safety'
+    | 'Audio & Electronics'
     | 'Organization'
     | 'Battery & Emergency';
   categories?: ModCategory[];
+  subCategory?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick';
   compatibility: string;
   amazonCaAsinOrUrl: string;
@@ -44,9 +47,147 @@ export interface ModItem {
   affiliateUrl?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  accessories?: {
+    name: string;
+    partNumber?: string;
+    description: string;
+    storeUrl: string;
+    slug: string;
+    priceEstCad?: string;
+  }[];
 }
 
 export const MODS_CONFIG: ModItem[] = [
+  // 0. Audio & Electronics: Stealth "OEM+" Audio Package (Non-JBL Overhaul)
+  {
+    id: 'prod-beat-sonic-ena-3t3',
+    slug: 'beat-sonic-ena-3t3',
+    models: ['rav4'],
+    powertrains: ['gas', 'hybrid', 'hev', 'phev'],
+    category: 'Audio & Electronics',
+    categories: ['Audio & Electronics'],
+    subCategory: 'Amplifiers',
+    title: 'Beat-Sonic ENA-3T3 Micro Power Amplifier Kit (RAV4 Non-JBL)',
+    name: 'Beat-Sonic ENA-3T3 Micro Power Amplifier Kit',
+    description:
+      'Plug-and-play inline T-harness micro-amp (50W x 4) that mounts behind the head unit/glovebox. Zero factory wire splicing; includes dedicated RCA subwoofer preamp output.',
+    whyBuy:
+      'Plugs directly inline behind factory touchscreen with vehicle-specific T-harness. Boosts power cleanly without cutting factory wiring or throwing hybrid battery drain codes, and includes RCA subwoofer output.',
+    utilityNote:
+      'Plugs directly inline behind factory touchscreen with vehicle-specific T-harness. Boosts power cleanly without cutting factory wiring or throwing hybrid battery drain codes, and includes RCA subwoofer output.',
+    priceEst: 'Clean 50W x 4 inline amp + RCA sub out',
+    priceEstCad: '~$380 CAD',
+    image: '/images/accessories/dashcam-rav4.png',
+    amazonCaAsinOrUrl: 'https://www.beatsonicusa.com/products/ena-3t3',
+    destinationUrl: 'https://www.beatsonicusa.com/products/ena-3t3',
+    affiliateUrl: '/out/beat-sonic-ena-3t3',
+    badge: 'Recommended',
+    compatibility: '2019–2026 Toyota RAV4 (Non-JBL 8" and 10.5" multimedia screens)',
+  },
+  {
+    id: 'prod-alpine-pwe-s800',
+    slug: 'alpine-pwe-s800',
+    models: ['rav4'],
+    powertrains: ['gas', 'hybrid', 'hev', 'phev'],
+    category: 'Audio & Electronics',
+    categories: ['Audio & Electronics'],
+    subCategory: 'Subwoofers',
+    title: 'Alpine PWE-S800 8" Compact Powered Subwoofer (120W RMS Under-Seat)',
+    name: 'Alpine PWE-S800 / PWE-S8 8" Compact Powered Subwoofer',
+    description:
+      '240W peak / 120W RMS shallow cast-aluminum powered sub designed to fit completely flat under the front passenger seat frame.',
+    whyBuy:
+      'Fits completely flat under passenger seat, preserving 100% trunk floor and spare tire well. Plugs directly into Beat-Sonic RCA preamp output without tripping hybrid sensors.',
+    utilityNote:
+      'Fits completely flat under passenger seat, preserving 100% trunk floor and spare tire well. Plugs directly into Beat-Sonic RCA preamp output without tripping hybrid sensors.',
+    priceEst: '120W RMS shallow cast-aluminum bass',
+    priceEstCad: '~$399 CAD',
+    image: '/images/accessories/j1772-charger-lock.png',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/s?k=Alpine+PWE-S8+compact+powered+subwoofer&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Alpine+PWE-S8+compact+powered+subwoofer&tag=toyotawaits-20',
+    affiliateUrl: '/out/alpine-pwe-s800',
+    badge: 'Recommended',
+    compatibility: 'Universal under-seat fitment (compatible with RAV4 hybrid battery clearances)',
+  },
+  {
+    id: 'prod-dash-speakers-cerwin-kicker',
+    slug: 'dash-speakers-rav4',
+    models: ['rav4'],
+    powertrains: ['gas', 'hybrid', 'hev', 'phev'],
+    category: 'Audio & Electronics',
+    categories: ['Audio & Electronics'],
+    subCategory: 'Speakers',
+    title: 'Cerwin-Vega V3 3.5" / Kicker KSC350 3.5" Coaxial Dash Speakers',
+    name: 'Cerwin-Vega V3 3.5" (or Kicker KSC350) Dash Corner Speakers',
+    description:
+      '3.5" coaxial dash speaker upgrade to replace factory paper-cone dash speakers.',
+    whyBuy:
+      'Drop-in replacement for factory paper cones in left and right dash corners. Pair with Metra 72-8110 harnesses for a 15-minute solder-free swap.',
+    utilityNote:
+      'Drop-in replacement for factory paper cones in left and right dash corners. Pair with Metra 72-8110 harnesses for a 15-minute solder-free swap.',
+    priceEst: 'Concert-grade vocal and treble clarity',
+    priceEstCad: '~$95 CAD',
+    image: '/images/accessories/dongar-10pin-type-a.png',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/s?k=Kicker+KSC350+3.5+coaxial+speakers&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Kicker+KSC350+3.5+coaxial+speakers&tag=toyotawaits-20',
+    affiliateUrl: '/out/dash-speakers-rav4',
+    badge: 'Recommended',
+    compatibility: '2019–2026 Toyota RAV4 (Left & Right Dash Corners)',
+    accessories: [
+      {
+        name: 'Metra 72-8110 Toyota Speaker Wiring Harness',
+        partNumber: 'Metra 72-8110',
+        description: 'Plug-and-play Toyota dash speaker wiring harness adapters (pair) for solder-free connection.',
+        storeUrl: 'https://www.amazon.ca/s?k=Metra+72-8110+Toyota+speaker+harness&tag=toyotawaits-20',
+        slug: 'metra-72-8110-harness',
+        priceEstCad: '~$18 CAD',
+      },
+    ],
+  },
+  {
+    id: 'prod-kicker-cs-door-speakers-rav4',
+    slug: 'kicker-cs-door-speakers-rav4',
+    models: ['rav4'],
+    powertrains: ['gas', 'hybrid', 'hev', 'phev'],
+    category: 'Audio & Electronics',
+    categories: ['Audio & Electronics'],
+    subCategory: 'Speakers',
+    title: 'Kicker CS Series 6.5" Door Speakers (Front & Rear Upgrade)',
+    name: 'Kicker CS Series 6.5" Door Speakers (Front & Rear)',
+    description:
+      '6.5" coaxial door speakers to replace factory low-power magnet drivers.',
+    whyBuy:
+      'Replaces weak factory paper-cone door speakers with rich mid-bass drivers. Mounts cleanly using Metra 82-8148 brackets and Metra 72-8104 harness leads.',
+    utilityNote:
+      'Replaces weak factory paper-cone door speakers with rich mid-bass drivers. Mounts cleanly using Metra 82-8148 brackets and Metra 72-8104 harness leads.',
+    priceEst: 'High-power mid-bass driver replacement',
+    priceEstCad: '~$149 CAD',
+    image: '/images/accessories/dongar-12pin-type-b.png',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/s?k=Kicker+CS+Series+6.5+inch+speakers+CSC65&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Kicker+CS+Series+6.5+inch+speakers+CSC65&tag=toyotawaits-20',
+    affiliateUrl: '/out/kicker-cs-door-speakers-rav4',
+    badge: 'Recommended',
+    compatibility: '2019–2026 Toyota RAV4 (Front & Rear Doors)',
+    accessories: [
+      {
+        name: 'Metra 82-8148 6.5" Toyota Door Speaker Mounting Brackets',
+        partNumber: 'Metra 82-8148',
+        description: 'Custom brackets matching Toyota factory door rivet holes and sealing moisture barrier.',
+        storeUrl: 'https://www.amazon.ca/s?k=Metra+82-8148+speaker+mounting+brackets+Toyota&tag=toyotawaits-20',
+        slug: 'metra-82-8148-brackets',
+        priceEstCad: '~$24 CAD',
+      },
+      {
+        name: 'Metra 72-8104 Toyota Door Speaker Harness Leads',
+        partNumber: 'Metra 72-8104',
+        description: 'Direct plug-in wiring harness leads for Toyota door speaker connectors.',
+        storeUrl: 'https://www.amazon.ca/s?k=Metra+72-8104+speaker+wiring+harness+Toyota&tag=toyotawaits-20',
+        slug: 'metra-72-8104-harness',
+        priceEstCad: '~$16 CAD',
+      },
+    ],
+  },
+
   // 1. Electronics & Safety: Integrated Dashcams
   {
     id: 'prod-fitcamx-rav4',
