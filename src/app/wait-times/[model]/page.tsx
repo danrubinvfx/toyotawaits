@@ -439,6 +439,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         '@type': 'Dataset',
         name: `${modelConfig.name} Wait Times in Canada (2026 Tracker)`,
         description: `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`,
+        license: 'https://creativecommons.org/licenses/by-nc/4.0/',
         spatialCoverage: 'Canada',
         dateModified: latestSubmissionDate,
         creator: {

@@ -39,61 +39,58 @@ export function InventoryGearCard({
     <article
       data-testid="inventory-gear-card"
       aria-label={`Delivery Day Gear: ${item.title}`}
-      className={`rounded-xl border border-amber-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/20 p-3 sm:p-3.5 shadow-sm transition-all hover:border-amber-500/50 md:col-span-2 xl:col-span-3 ${className}`}
+      className={`rounded-xl border border-amber-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/20 p-3.5 shadow-sm transition-all hover:border-amber-500/50 flex flex-col gap-2 md:col-span-2 xl:col-span-3 ${className}`}
     >
-      <div className="flex flex-row items-center justify-between gap-3">
-        {/* Left: Hook Badge, Bold Title & Punchy Benefit Hook */}
-        <div className="min-w-0 flex-1 space-y-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-              <span>⚡</span>
-              <span className="truncate">Delivery Day Essential • {targetModel}</span>
+      {/* 1. Clear Header Row: Category/Model Badge + Price */}
+      <div className="flex items-center justify-between gap-2 border-b border-zinc-800/60 pb-1.5">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-[11px] font-bold tracking-wide uppercase text-amber-400 flex items-center gap-1 truncate">
+            <span>⚡</span>
+            <span>DELIVERY ESSENTIAL • {targetModel.toUpperCase()}</span>
+          </span>
+          {item.badge && (
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 text-[10px] font-semibold border border-amber-500/25 shrink-0">
+              {item.badge}
             </span>
-            {item.badge && (
-              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] font-semibold border border-amber-500/30">
-                {item.badge}
-              </span>
-            )}
-          </div>
+          )}
+        </div>
 
-          <h4 className="text-sm font-bold text-white line-clamp-1 leading-snug">
+        <span className="text-xs font-semibold text-amber-200/90 whitespace-nowrap shrink-0">
+          {item.estimatedPriceCad}
+        </span>
+      </div>
+
+      {/* 2. Content & Action Row: Title/Benefit + Action Button */}
+      <div className="flex items-center justify-between gap-3 pt-0.5">
+        {/* Left Column: Product Identity & Description */}
+        <div className="flex-1 min-w-0">
+          <h4 className="text-sm font-bold text-white leading-tight break-words line-clamp-2">
             {item.title}
           </h4>
-
-          <p className="text-xs text-neutral-300 line-clamp-1 leading-snug">
+          <p className="text-xs text-neutral-400 leading-snug line-clamp-1 mt-0.5">
             {benefitSubline}
           </p>
         </div>
 
-        {/* Right: Price, High-Conversion CTA Button & Micro-disclosure */}
-        <div className="flex flex-col items-end justify-center shrink-0 space-y-1.5 pl-1">
-          <div className="flex items-center gap-1.5">
-            {item.badge && (
-              <span className="sm:hidden inline-flex items-center px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 text-[10px] font-semibold border border-amber-500/30">
-                {item.badge}
-              </span>
-            )}
-            <span className="text-xs font-semibold text-amber-300 whitespace-nowrap">
-              {item.estimatedPriceCad}
-            </span>
-          </div>
-
+        {/* Right Column: High-Conversion CTA Button */}
+        <div className="flex-shrink-0">
           <a
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
             data-testid="gear-strip-action-btn"
             aria-label={`Check price for ${item.title} on Amazon (opens in new tab)`}
-            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 font-bold text-xs shadow-md transition-all whitespace-nowrap"
+            className="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 font-bold text-xs shadow inline-flex items-center gap-1.5 whitespace-nowrap transition-all"
           >
             <span>Check Price</span>
             <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           </a>
-
-          <span className="text-[10px] text-neutral-500/70 whitespace-nowrap text-right">
-            Verified affiliate gear
-          </span>
         </div>
+      </div>
+
+      {/* 3. Footer Micro-Disclosure */}
+      <div className="text-[10px] text-zinc-500 tracking-tight">
+        Verified Amazon affiliate link
       </div>
     </article>
   );
