@@ -116,16 +116,23 @@ export function PurchaseOutlayCard({
 
       {/* Mode 1 Description Banner */}
       {comparisonMode === 'ENERGY_COMPARISON' && (
-        <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800/80 text-xs text-zinc-600 dark:text-zinc-400 flex items-center justify-between gap-4">
+        <div className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/80 dark:border-zinc-800/80 text-xs text-zinc-600 dark:text-zinc-400 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <div>
-            <span className="font-semibold text-zinc-900 dark:text-zinc-200 mr-2">
+            <span className="font-semibold text-zinc-900 dark:text-zinc-200 mr-1.5">
               Mode 1: Energy-Cost Comparison Only
             </span>
-            <span>Compares operational fuel and electricity spend without upfront vehicle purchase outlays.</span>
+            <span>Compares fuel & electricity spend without upfront vehicle purchase outlays.</span>
           </div>
-          <span className="hidden md:inline-block text-[11px] text-zinc-400 shrink-0">
-            Switch to Mode 2 or 3 to factor in vehicle prices & payback.
-          </span>
+          <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-1 shrink-0">
+            <span>Want to see how long it takes to recover the purchase price difference?</span>
+            <button
+              type="button"
+              onClick={() => onComparisonModeChange('KEEP_VS_REPLACE')}
+              className="text-red-600 dark:text-red-400 font-medium hover:underline cursor-pointer"
+            >
+              Select Keep vs. Replace
+            </button>
+          </div>
         </div>
       )}
 
