@@ -94,55 +94,52 @@ export default function InventoryPage({ searchParams, initialListings }: Invento
   return (
     <main
       data-testid="inventory-page-main"
-      className="min-h-screen bg-zinc-950 text-zinc-100 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 pb-24 sm:pb-12 selection:bg-red-500 selection:text-white"
+      className="min-h-screen bg-zinc-950 text-zinc-100 py-3 sm:py-5 px-3 sm:px-6 lg:px-8 pb-16 sm:pb-12 selection:bg-red-500 selection:text-white"
     >
-      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Navigation & Back Link */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-400 hover:text-white transition"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Back to Wait-Time Tracker</span>
-          </Link>
-          <Badge
-            variant="outline"
-            className="bg-red-950/50 text-red-400 border-red-800 text-[11px] font-mono"
-          >
-            Master Plan V3.2 Pilot
-          </Badge>
-        </div>
+      <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
+        {/* Compact Single-Unit Header */}
+        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2.5 sm:pb-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition shrink-0"
+              aria-label="Back to wait-time tracker"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              <span className="hidden sm:inline">Back to Tracker</span>
+              <span className="sm:hidden">Tracker</span>
+            </Link>
 
-        {/* Page Hero */}
-        <header className="space-y-2 sm:space-y-3">
-          <div className="inline-flex items-center gap-2 rounded-full border border-amber-800/80 bg-amber-950/40 px-3 py-1 text-xs text-amber-300">
-            <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="font-semibold">
-              Public Observation Feed — Physical Availability NOT Confirmed With Dealer
+            <span className="text-zinc-700 hidden sm:inline" aria-hidden="true">•</span>
+
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">
+              Toyota Public Inventory
+            </h1>
+
+            <span
+              data-testid="unconfirmed-feed-badge"
+              className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-amber-400/90 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded-full"
+            >
+              <AlertTriangle className="h-3 w-3 shrink-0 text-amber-400" aria-hidden="true" />
+              <span>Unconfirmed Dealer Feed</span>
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white leading-tight">
-            Toyota Public Inventory Explorer
-          </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl leading-relaxed">
-            <span className="hidden sm:inline">
-              Real-time public dealer inventory observed across validated dealer feeds. We enforce epistemic honesty: all listings reflect public website declarations. Availability and mandatory dealer fees must be verified directly with dealer staff.
-            </span>
-            <span className="sm:hidden">
-              Real-time public dealer inventory observed across validated feeds. Physical availability and fees must be confirmed with dealer staff.
-            </span>
-          </p>
+          <Badge
+            variant="outline"
+            className="bg-red-950/50 text-red-400 border-red-800 text-[10px] font-mono hidden sm:inline-flex"
+          >
+            Pilot
+          </Badge>
         </header>
 
         {/* Interactive Explorer Client Component */}
-        <Suspense fallback={<div className="h-64 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
+        <Suspense fallback={<div className="h-48 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
           <InventoryExplorer initialListings={initialListings} />
         </Suspense>
 
-        {/* Footer Disclaimer & CASL Notice */}
-        <footer className="mt-12 pt-6 border-t border-zinc-800/80 text-xs text-zinc-500 space-y-2">
+        {/* Footer Disclaimer & Transparency Notice */}
+        <footer className="mt-8 pt-4 border-t border-zinc-800/80 text-[11px] text-zinc-500 space-y-1.5">
           <p>
             <strong>Epistemic Honesty Guarantee:</strong> ToyotaWaits.ca is an independent community tracker. We do not sell vehicles, receive allocation kickbacks, or synthesize unconfirmed vehicle data.
           </p>

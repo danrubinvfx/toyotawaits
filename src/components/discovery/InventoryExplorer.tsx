@@ -302,7 +302,7 @@ export function InventoryExplorer({
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6" data-testid="inventory-explorer">
+    <div className="space-y-3 sm:space-y-4" data-testid="inventory-explorer">
       {/* Search & Filter Bar (Elevated immediately below header) */}
       <InventoryFilterBar
         filters={filters}
@@ -312,15 +312,12 @@ export function InventoryExplorer({
         totalResults={filteredListings.length}
       />
 
-      {/* Pilot Coverage Disclosure (Positioned beneath filter bar) */}
-      <CoverageDisclosureBanner />
-
-      {/* Listings Grid */}
+      {/* Listings Grid (Rendered immediately below filter bar for mobile visibility above the fold) */}
       {filteredListings.length > 0 ? (
         <section
           data-testid="listings-grid"
           aria-label="Observed inventory listings"
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
         >
           {filteredListings.map((listing) => (
             <VehicleListingCard key={listing.id} {...listing} />
@@ -340,6 +337,9 @@ export function InventoryExplorer({
           </p>
         </div>
       )}
+
+      {/* Pilot Coverage Disclosure (Positioned beneath listings grid) */}
+      <CoverageDisclosureBanner />
     </div>
   );
 }

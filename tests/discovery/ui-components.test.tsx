@@ -306,6 +306,30 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(onFilterChange).toHaveBeenCalledWith(defaultFilters);
     });
+
+    it('supports toggling mobile filter tray expansion', () => {
+      const onFilterChange = vi.fn();
+      render(
+        <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
+      );
+
+      const toggleBtn = screen.getByTestId('toggle-filters-btn');
+      const tray = screen.getByTestId('collapsible-filter-tray');
+
+      // Initially collapsed on mobile
+      expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
+      expect(tray.className).toContain('hidden');
+
+      // Tap to expand
+      fireEvent.click(toggleBtn);
+      expect(toggleBtn).toHaveAttribute('aria-expanded', 'true');
+      expect(tray.className).toContain('block');
+
+      // Tap to collapse
+      fireEvent.click(toggleBtn);
+      expect(toggleBtn).toHaveAttribute('aria-expanded', 'false');
+      expect(tray.className).toContain('hidden');
+    });
   });
 
   // ===========================================================================
@@ -428,10 +452,9 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       render(<InventoryPage />);
 
       expect(screen.getByTestId('inventory-page-main')).toBeInTheDocument();
-      expect(screen.getByText(/Toyota Public Inventory Explorer/i)).toBeInTheDocument();
-      expect(
-        screen.getByText(/Public Observation Feed — Physical Availability NOT Confirmed With Dealer/i)
-      ).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /Toyota Public Inventory/i })).toBeInTheDocument();
+      expect(screen.getByTestId('unconfirmed-feed-badge')).toBeInTheDocument();
+      expect(screen.getByText(/Unconfirmed Dealer Feed/i)).toBeInTheDocument();
     });
 
     it('renders gated preview screen when feature flags and overrides are absent', () => {
@@ -450,14 +473,14 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       render(<InventoryPage />);
 
       expect(screen.getByTestId('inventory-page-main')).toBeInTheDocument();
-      expect(screen.getByText(/Toyota Public Inventory Explorer/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /Toyota Public Inventory/i })).toBeInTheDocument();
     });
 
     it('renders full inventory discovery interface when URL query parameter ?preview=true is present', () => {
       render(<InventoryPage searchParams={{ preview: 'true' }} />);
 
       expect(screen.getByTestId('inventory-page-main')).toBeInTheDocument();
-      expect(screen.getByText(/Toyota Public Inventory Explorer/i)).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /Toyota Public Inventory/i })).toBeInTheDocument();
     });
   });
 });
