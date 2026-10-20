@@ -15,7 +15,7 @@ export default function robots(): MetadataRoute.Robots {
         '/unsubscribe/',
       ],
     },
-    sitemap: 'https://toyotawaits.ca/sitemap.xml',
+    sitemap: 'https://www.toyotawaits.ca/sitemap.xml',
   };
 }
 

@@ -38,6 +38,7 @@ const nextConfig: NextConfig = {
       { source: '/mods/corolla-cross', destination: '/guides/corolla-mods', permanent: false },
       { source: '/mods/sequoia', destination: '/guides/sequoia-mods', permanent: false },
       { source: '/mods', destination: '/guides', permanent: false },
+      { source: '/estimator', destination: '/#estimator', permanent: false },
     ];
   },
 };

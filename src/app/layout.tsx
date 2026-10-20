@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -18,6 +18,16 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
+  ],
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
@@ -31,6 +41,9 @@ export const metadata: Metadata = {
     'toyota allocation canada',
     'rav4 prime wait time',
   ],
+  alternates: {
+    canonical: 'https://www.toyotawaits.ca',
+  },
   openGraph: {
     title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
     description:
@@ -56,7 +69,10 @@ export const metadata: Metadata = {
     images: ['/og-image.png'],
   },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '3gM-Rt6pfp2XODYUowsn5BNJt0CIfuxUoY-9ugCPK_E',
+    google:
+      process.env.GOOGLE_SITE_VERIFICATION ||
+      process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
+      '3gM-Rt6pfp2XODYUowsn5BNJt0CIfuxUoY-9ugCPK_E',
   },
 };
 
@@ -70,14 +86,24 @@ export const jsonLd = {
       url: 'https://www.toyotawaits.ca',
       applicationCategory: 'AutomotiveApplication',
       operatingSystem: 'All',
-      description: 'Community wait time tracker for Canadian Toyota allocations.',
+      description:
+        'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for Canada.',
+    },
+    {
+      '@type': 'AutoDealer',
+      '@id': 'https://www.toyotawaits.ca/#autodealer',
+      name: 'Toyota Dealer Network - Metro Vancouver & Canada',
+      url: 'https://www.toyotawaits.ca/inventory',
+      description:
+        'Public observed inventory and factory allocation tracking for Canadian Toyota dealerships.',
     },
     {
       '@type': 'Organization',
       '@id': 'https://www.toyotawaits.ca/#organization',
       name: 'ToyotaWaits',
       url: 'https://www.toyotawaits.ca',
-      description: 'Community wait time tracker for Canadian Toyota allocations.',
+      description:
+        'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for Canada.',
     },
   ],
 };
@@ -89,7 +115,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="en-CA"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
     >
       {/* overflow-x-clip (not hidden): clips sideways wobble without creating a scroll container, which would break position: sticky */}

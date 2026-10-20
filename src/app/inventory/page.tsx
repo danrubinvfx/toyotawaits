@@ -8,11 +8,36 @@ import { Badge } from '@/components/ui/badge';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Dealer Inventory Discovery (Pilot) | ToyotaWaits.ca',
+  metadataBase: new URL('https://www.toyotawaits.ca'),
+  title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
   description:
-    'Polite, unauthenticated public inventory discovery pilot for Canadian Toyota dealerships. Transparent pricing and availability evidence without web scraping bypasses.',
+    'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+  keywords: [
+    'toyota inventory vancouver',
+    'toyota inventory bc',
+    'toyota lower mainland inventory',
+    'toyota in transit vancouver',
+    'surrey toyota inventory',
+    'pitt meadows toyota inventory',
+    'skip the wait toyota canada',
+  ],
   alternates: {
-    canonical: 'https://toyotawaits.ca/inventory',
+    canonical: 'https://www.toyotawaits.ca/inventory',
+  },
+  openGraph: {
+    title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
+    description:
+      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+    url: 'https://www.toyotawaits.ca/inventory',
+    siteName: 'ToyotaWaits',
+    locale: 'en_CA',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
+    description:
+      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
   },
 };
 
@@ -116,6 +141,19 @@ export default function InventoryPage({ searchParams, initialListings }: Invento
       data-testid="inventory-page-main"
       className="min-h-screen bg-zinc-950 text-zinc-100 py-3 sm:py-5 px-3 sm:px-6 lg:px-8 pb-16 sm:pb-12 selection:bg-red-500 selection:text-white"
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'AutoDealer',
+            name: 'Toyota Public Inventory Explorer',
+            url: 'https://www.toyotawaits.ca/inventory',
+            description:
+              'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+          }),
+        }}
+      />
       <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
         {/* Compact Single-Unit Header */}
         <header className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2.5 sm:pb-3">

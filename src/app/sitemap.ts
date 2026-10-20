@@ -7,7 +7,7 @@ import {
 import { getAllModelConfigs } from '@/lib/data/model-registry';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://toyotawaits.ca';
+  const baseUrl = 'https://www.toyotawaits.ca';
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -16,6 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: now,
       changeFrequency: 'daily',
       priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/inventory`,
+      lastModified: now,
+      changeFrequency: 'hourly',
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/submit`,

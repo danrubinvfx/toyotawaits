@@ -3,46 +3,55 @@ import sitemap from '@/app/sitemap';
 import robots from '@/app/robots';
 import { metadata as layoutMetadata, jsonLd } from '@/app/layout';
 import { metadata as homeMetadata } from '@/app/page';
+import { metadata as inventoryMetadata } from '@/app/inventory/page';
 
 describe('Technical SEO & Discovery Configuration', () => {
   it('generates a valid sitemap with required URLs, priorities, and change frequencies', async () => {
     const sitemapEntries = await sitemap();
 
-    // Required 1: https://toyotawaits.ca (priority 1.0, daily)
-    const rootEntry = sitemapEntries.find((e) => e.url === 'https://toyotawaits.ca');
+    // Required 1: https://www.toyotawaits.ca (priority 1.0, daily)
+    const rootEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca');
     expect(rootEntry).toBeDefined();
     expect(rootEntry?.priority).toBe(1.0);
     expect(rootEntry?.changeFrequency).toBe('daily');
 
-    // Required 2: https://toyotawaits.ca/submit (priority 0.8, weekly)
-    const submitEntry = sitemapEntries.find((e) => e.url === 'https://toyotawaits.ca/submit');
+    // Required Inventory: https://www.toyotawaits.ca/inventory (priority 0.9, hourly)
+    const inventoryEntry = sitemapEntries.find(
+      (e) => e.url === 'https://www.toyotawaits.ca/inventory'
+    );
+    expect(inventoryEntry).toBeDefined();
+    expect(inventoryEntry?.priority).toBe(0.9);
+    expect(inventoryEntry?.changeFrequency).toBe('hourly');
+
+    // Required 2: https://www.toyotawaits.ca/submit (priority 0.8, weekly)
+    const submitEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/submit');
     expect(submitEntry).toBeDefined();
     expect(submitEntry?.priority).toBe(0.8);
     expect(submitEntry?.changeFrequency).toBe('weekly');
 
-    // Required 3: https://toyotawaits.ca/guides/rav4-se-mods (priority 0.8, monthly)
+    // Required 3: https://www.toyotawaits.ca/guides/rav4-se-mods (priority 0.8, monthly)
     const guideEntry = sitemapEntries.find(
-      (e) => e.url === 'https://toyotawaits.ca/guides/rav4-se-mods'
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/rav4-se-mods'
     );
     expect(guideEntry).toBeDefined();
     expect(guideEntry?.priority).toBe(0.8);
     expect(guideEntry?.changeFrequency).toBe('monthly');
 
-    // Prius Mods Guide: https://toyotawaits.ca/guides/prius-mods (priority 0.8, weekly)
+    // Prius Mods Guide: https://www.toyotawaits.ca/guides/prius-mods (priority 0.8, weekly)
     const priusGuideEntry = sitemapEntries.find(
-      (e) => e.url === 'https://toyotawaits.ca/guides/prius-mods'
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/prius-mods'
     );
     expect(priusGuideEntry).toBeDefined();
     expect(priusGuideEntry?.priority).toBe(0.8);
     expect(priusGuideEntry?.changeFrequency).toBe('weekly');
 
     // Dynamic vehicle model and province routes (priority 0.7 - 0.9)
-    const siennaEntry = sitemapEntries.find((e) => e.url === 'https://toyotawaits.ca/sienna');
+    const siennaEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/sienna');
     expect(siennaEntry).toBeDefined();
     expect(siennaEntry?.priority).toBe(0.9);
 
     const rav4HevBcEntry = sitemapEntries.find(
-      (e) => e.url === 'https://toyotawaits.ca/rav4/hev/bc'
+      (e) => e.url === 'https://www.toyotawaits.ca/rav4/hev/bc'
     );
     expect(rav4HevBcEntry).toBeDefined();
     expect(rav4HevBcEntry?.priority).toBe(0.7);
@@ -53,9 +62,10 @@ describe('Technical SEO & Discovery Configuration', () => {
     process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://mock-failing-supabase.local';
     try {
       const entries = await sitemap();
-      expect(entries.some((e) => e.url === 'https://toyotawaits.ca')).toBe(true);
-      expect(entries.some((e) => e.url === 'https://toyotawaits.ca/submit')).toBe(true);
-      expect(entries.some((e) => e.url === 'https://toyotawaits.ca/rav4')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/inventory')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/submit')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/rav4')).toBe(true);
     } finally {
       process.env.NEXT_PUBLIC_SUPABASE_URL = prevEnv;
     }
@@ -64,7 +74,7 @@ describe('Technical SEO & Discovery Configuration', () => {
   it('generates a valid robots.txt disallowing /api/ and internal paths and pointing to sitemap.xml', () => {
     const robotsConfig = robots();
 
-    expect(robotsConfig.sitemap).toBe('https://toyotawaits.ca/sitemap.xml');
+    expect(robotsConfig.sitemap).toBe('https://www.toyotawaits.ca/sitemap.xml');
 
     const rules = Array.isArray(robotsConfig.rules)
       ? robotsConfig.rules[0]
@@ -106,15 +116,27 @@ describe('Technical SEO & Discovery Configuration', () => {
 
   it('exports home page metadata consistent with root metadata', () => {
     expect(homeMetadata.title).toBe(
-      'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker'
+      'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator'
     );
     expect(homeMetadata.description).toContain(
-      'Crowdsourced Canadian Toyota delivery timelines'
+      'Track real crowd-sourced Toyota wait times'
     );
     expect(homeMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca');
   });
 
-  it('defines valid Schema.org WebApplication and Organization JSON-LD entities', () => {
+  it('exports inventory page metadata matching Lower Mainland discovery specs', () => {
+    expect(inventoryMetadata.title).toBe(
+      'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC'
+    );
+    expect(inventoryMetadata.description).toBe(
+      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.'
+    );
+    expect(inventoryMetadata.alternates?.canonical).toBe(
+      'https://www.toyotawaits.ca/inventory'
+    );
+  });
+
+  it('defines valid Schema.org WebApplication, AutoDealer, and Organization JSON-LD entities', () => {
     expect(jsonLd['@context']).toBe('https://schema.org');
     const webApp = jsonLd['@graph'].find((e) => e['@type'] === 'WebApplication');
     expect(webApp).toBeDefined();
@@ -123,15 +145,19 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(webApp?.applicationCategory).toBe('AutomotiveApplication');
     expect(webApp?.operatingSystem).toBe('All');
     expect(webApp?.description).toBe(
-      'Community wait time tracker for Canadian Toyota allocations.'
+      'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for Canada.'
     );
+
+    const autoDealer = jsonLd['@graph'].find((e) => e['@type'] === 'AutoDealer');
+    expect(autoDealer).toBeDefined();
+    expect(autoDealer?.url).toBe('https://www.toyotawaits.ca/inventory');
 
     const org = jsonLd['@graph'].find((e) => e['@type'] === 'Organization');
     expect(org).toBeDefined();
     expect(org?.name).toBe('ToyotaWaits');
     expect(org?.url).toBe('https://www.toyotawaits.ca');
     expect(org?.description).toBe(
-      'Community wait time tracker for Canadian Toyota allocations.'
+      'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for Canada.'
     );
   });
 });
