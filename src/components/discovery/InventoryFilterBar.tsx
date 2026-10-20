@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
+export interface LocationOption {
+  value: string;
+  label: string;
+}
+
 export interface FilterState {
   model: string;
   status: string;
-  dealer: string;
+  dealer?: string;
+  location?: string;
   minPrice: string;
   maxPrice: string;
   search: string;
@@ -15,6 +21,7 @@ export interface InventoryFilterBarProps {
   filters: FilterState;
   onFilterChange: (newFilters: FilterState) => void;
   availableModels?: string[];
+  availableLocations?: (LocationOption | string)[];
   availableDealers?: string[];
   totalResults?: number;
 }
@@ -32,14 +39,45 @@ const DEFAULT_MODELS = [
   'Corolla Cross Hybrid',
 ];
 
+const DEFAULT_LOCATIONS: LocationOption[] = [
+  { value: 'Vancouver', label: 'Vancouver (Downtown)' },
+  { value: 'Surrey', label: 'Surrey (Guildford)' },
+];
+
 export function InventoryFilterBar({
   filters,
   onFilterChange,
   availableModels = DEFAULT_MODELS,
-  availableDealers = ['Jim Pattison Toyota Downtown', 'OpenRoad Toyota Richmond', 'Granville Toyota'],
+  availableLocations,
+  availableDealers,
   totalResults,
 }: InventoryFilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const rawLocations = (
+    availableLocations && availableLocations.length > 0
+      ? availableLocations
+      : availableDealers && availableDealers.length > 0
+      ? availableDealers.map((d) => {
+          if (d.toLowerCase().includes('surrey')) {
+            return { value: 'Surrey', label: 'Surrey (Guildford)' };
+          }
+          if (d.toLowerCase().includes('downtown') || d.toLowerCase().includes('vancouver')) {
+            return { value: 'Vancouver', label: 'Vancouver (Downtown)' };
+          }
+          return { value: d, label: d };
+        })
+      : DEFAULT_LOCATIONS
+  ).map((item) => (typeof item === 'string' ? { value: item, label: item } : item));
+
+  const uniqueLocations: LocationOption[] = [];
+  const seenValues = new Set<string>();
+  for (const loc of rawLocations) {
+    if (!seenValues.has(loc.value)) {
+      seenValues.add(loc.value);
+      uniqueLocations.push(loc);
+    }
+  }
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ ...filters, model: e.target.value });
@@ -49,8 +87,13 @@ export function InventoryFilterBar({
     onFilterChange({ ...filters, status: e.target.value });
   };
 
+  const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    onFilterChange({ ...filters, location: val, dealer: val });
+  };
+
   const handleDealerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onFilterChange({ ...filters, dealer: e.target.value });
+    handleLocationChange(e);
   };
 
   const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +113,7 @@ export function InventoryFilterBar({
       model: '',
       status: '',
       dealer: '',
+      location: '',
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -79,12 +123,18 @@ export function InventoryFilterBar({
   const activeFacetCount = [
     Boolean(filters.model),
     Boolean(filters.status),
-    Boolean(filters.dealer),
+    Boolean(filters.location || filters.dealer),
     Boolean(filters.minPrice || filters.maxPrice),
   ].filter(Boolean).length;
 
   const hasActiveFilters = Boolean(
-    filters.model || filters.status || filters.dealer || filters.minPrice || filters.maxPrice || filters.search
+    filters.model ||
+      filters.status ||
+      filters.location ||
+      filters.dealer ||
+      filters.minPrice ||
+      filters.maxPrice ||
+      filters.search
   );
 
   return (
@@ -192,23 +242,23 @@ export function InventoryFilterBar({
             </select>
           </div>
 
-          {/* Column 2: Dealership */}
+          {/* Column 2: Location / Region */}
           <div className="space-y-1">
-            <label htmlFor="filter-dealer" className="text-[11px] font-medium text-zinc-400 block">
-              Dealership
+            <label htmlFor="filter-location" className="text-[11px] font-medium text-zinc-400 block">
+              Location / Region
             </label>
             <select
-              id="filter-dealer"
-              data-testid="filter-dealer-select"
-              aria-label="Filter by dealership"
-              value={filters.dealer}
-              onChange={handleDealerChange}
+              id="filter-location"
+              data-testid="filter-location-select"
+              aria-label="Filter by location"
+              value={filters.location || filters.dealer || ''}
+              onChange={handleLocationChange}
               className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             >
-              <option value="">All Dealerships</option>
-              {availableDealers.map((d) => (
-                <option key={d} value={d}>
-                  {d}
+              <option value="">All Locations</option>
+              {uniqueLocations.map((loc) => (
+                <option key={loc.value} value={loc.value}>
+                  {loc.label}
                 </option>
               ))}
             </select>

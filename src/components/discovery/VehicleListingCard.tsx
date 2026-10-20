@@ -218,7 +218,16 @@ export function VehicleListingCard({
   const isSoldOrStale =
     status.toLowerCase().includes('sold') || status.toLowerCase().includes('stale') || status.toLowerCase().includes('no longer');
 
-  const regionDisplay = [dealerCity, dealerProvince].filter(Boolean).join(', ');
+  let resolvedCity = dealerCity;
+  const resolvedProvince = dealerProvince || 'BC';
+  if (!resolvedCity && dealerName) {
+    if (dealerName.toLowerCase().includes('surrey')) {
+      resolvedCity = 'Surrey';
+    } else if (dealerName.toLowerCase().includes('downtown') || dealerName.toLowerCase().includes('vancouver')) {
+      resolvedCity = 'Vancouver';
+    }
+  }
+  const regionDisplay = [resolvedCity, resolvedProvince].filter(Boolean).join(', ');
   const formattedMsrp = msrp != null ? `$${msrp.toLocaleString('en-CA')}` : null;
   const formattedSellingPrice = sellingPrice != null ? `$${sellingPrice.toLocaleString('en-CA')}` : formattedMsrp;
   
@@ -311,7 +320,11 @@ export function VehicleListingCard({
           </div>
           <p className="text-xs text-zinc-400 flex items-center gap-1">
             <span>{dealerName}</span>
-            {regionDisplay && <span className="text-zinc-500 font-normal">({regionDisplay})</span>}
+            {regionDisplay && (
+              <span className="text-zinc-500 font-normal" data-testid="dealer-location-display">
+                ({regionDisplay})
+              </span>
+            )}
           </p>
         </div>
       </CardHeader>

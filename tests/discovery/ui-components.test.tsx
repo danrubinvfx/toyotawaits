@@ -211,6 +211,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       model: '',
       status: '',
       dealer: '',
+      location: '',
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -238,9 +239,9 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         'aria-label',
         'Filter by observed status'
       );
-      expect(screen.getByTestId('filter-dealer-select')).toHaveAttribute(
+      expect(screen.getByTestId('filter-location-select')).toHaveAttribute(
         'aria-label',
-        'Filter by dealership'
+        'Filter by location'
       );
       expect(screen.getByTestId('filter-min-price-input')).toHaveAttribute(
         'aria-label',
@@ -401,20 +402,32 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
-    it('dynamically populates both Downtown and Surrey in dealership dropdown and filters listings', () => {
+    it('dynamically populates both Downtown and Surrey location options and filters listings by region', () => {
       render(<InventoryExplorer />);
 
-      const dealerSelect = screen.getByTestId('filter-dealer-select');
-      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Downtown' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Surrey' })).toBeInTheDocument();
+      const locationSelect = screen.getByTestId('filter-location-select');
+      expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
 
       // Filter by Surrey
-      fireEvent.change(dealerSelect, {
-        target: { value: 'Jim Pattison Toyota Surrey' },
+      fireEvent.change(locationSelect, {
+        target: { value: 'Surrey' },
       });
 
       expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-jp-surrey-sienna-02')).toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-grand-highlander-03')).not.toBeInTheDocument();
+
+      // Filter by Vancouver
+      fireEvent.change(locationSelect, {
+        target: { value: 'Vancouver' },
+      });
+
+      expect(screen.getByTestId('listing-card-jp-rav4-xse-01')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-jp-sienna-ltd-02')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-surrey-rav4-01')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-surrey-sienna-02')).not.toBeInTheDocument();
     });
 
     it('displays empty state when no listings match active filter criteria', () => {
@@ -429,19 +442,20 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByText(/No matching listings observed/i)).toBeInTheDocument();
     });
 
-    it('interleaves delivery day gear strips every 4 vehicle listings', () => {
+    it('interleaves delivery day gear strips every 2 vehicle listings', () => {
       render(<InventoryExplorer />);
 
       // Initial sample listings has 6 listings: item 0, 1, 2, 3, 4, 5
-      // A gear card should be interleaved after item 3 (index 3)
+      // Gear cards should be interleaved after item 1, 3, 5 (Math.floor(6 / 2) = 3)
       const gearCards = screen.getAllByTestId('inventory-gear-card');
-      expect(gearCards.length).toBe(1); // floor(6 / 4) = 1
+      expect(gearCards.length).toBe(3); // floor(6 / 2) = 3
 
-      // Verify outbound link uses toyotawaits-20
-      const link = screen.getByTestId('gear-strip-action-btn');
-      expect(link.getAttribute('href')).toContain('tag=toyotawaits-20');
-      expect(link).toHaveAttribute('target', '_blank');
-      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+      // Verify outbound links use toyotawaits-20
+      const links = screen.getAllByTestId('gear-strip-action-btn');
+      expect(links.length).toBe(3);
+      expect(links[0].getAttribute('href')).toContain('tag=toyotawaits-20');
+      expect(links[0]).toHaveAttribute('target', '_blank');
+      expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
     it('updates gear card model context when model filter is selected', () => {

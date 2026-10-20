@@ -221,6 +221,7 @@ export function InventoryExplorer({
     model: '',
     status: '',
     dealer: '',
+    location: '',
     minPrice: '',
     maxPrice: '',
     search: '',
@@ -230,6 +231,32 @@ export function InventoryExplorer({
     const set = new Set<string>();
     listings.forEach((item) => set.add(item.model));
     return Array.from(set).sort();
+  }, [listings]);
+
+  const availableLocations = useMemo(() => {
+    const locMap = new Map<string, string>();
+    listings.forEach((item) => {
+      const city =
+        item.dealerCity ||
+        (item.dealerName.toLowerCase().includes('surrey') ? 'Surrey' : 'Vancouver');
+
+      if (city.toLowerCase() === 'vancouver') {
+        locMap.set('Vancouver', 'Vancouver (Downtown)');
+      } else if (city.toLowerCase() === 'surrey') {
+        locMap.set('Surrey', 'Surrey (Guildford)');
+      } else {
+        locMap.set(city, city);
+      }
+    });
+
+    if (locMap.size === 0) {
+      locMap.set('Vancouver', 'Vancouver (Downtown)');
+      locMap.set('Surrey', 'Surrey (Guildford)');
+    }
+
+    return Array.from(locMap.entries())
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
   }, [listings]);
 
   const availableDealers = useMemo(() => {
@@ -250,9 +277,21 @@ export function InventoryExplorer({
         return false;
       }
 
-      // Dealer facet
-      if (filters.dealer && item.dealerName.toLowerCase() !== filters.dealer.toLowerCase()) {
-        return false;
+      // Location / Region facet (with dealer name backwards compatibility)
+      const locationQuery = (filters.location || filters.dealer || '').toLowerCase().trim();
+      if (locationQuery) {
+        const itemCity = (item.dealerCity || '').toLowerCase();
+        const itemName = (item.dealerName || '').toLowerCase();
+
+        const matchesCity = itemCity === locationQuery || itemCity.includes(locationQuery);
+        const matchesName = itemName.includes(locationQuery);
+        const matchesMetro =
+          (locationQuery === 'vancouver' && (itemName.includes('downtown') || itemCity.includes('vancouver'))) ||
+          (locationQuery === 'surrey' && (itemName.includes('surrey') || itemCity.includes('surrey')));
+
+        if (!matchesCity && !matchesName && !matchesMetro) {
+          return false;
+        }
       }
 
       // Min Price
@@ -314,6 +353,7 @@ export function InventoryExplorer({
         filters={filters}
         onFilterChange={setFilters}
         availableModels={availableModels}
+        availableLocations={availableLocations}
         availableDealers={availableDealers}
         totalResults={filteredListings.length}
       />
@@ -326,9 +366,9 @@ export function InventoryExplorer({
           className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
         >
           {filteredListings.map((listing, index) => {
-            const shouldInsertGear = (index + 1) % 4 === 0 && gearItems.length > 0;
+            const shouldInsertGear = (index + 1) % 2 === 0 && gearItems.length > 0;
             const gearItem = shouldInsertGear
-              ? gearItems[Math.floor(index / 4) % gearItems.length]
+              ? gearItems[Math.floor(index / 2) % gearItems.length]
               : null;
 
             return (
