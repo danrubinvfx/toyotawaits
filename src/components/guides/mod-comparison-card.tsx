@@ -1,10 +1,9 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AffiliateCTA } from '@/components/guides/affiliate-cta';
 import { MarketAssociateDisclaimer } from '@/components/guides/market-associate-disclaimer';
+import { ResponsiveDetails } from '@/components/guides/responsive-details';
 import {
   LucideIcon,
   CheckCircle2,
@@ -78,15 +77,6 @@ export function ModComparisonCard({
   ctaLabel,
   secondaryActions,
 }: ModComparisonCardProps) {
-  // Track desktop breakpoint (>= 768px) to collapse all accordions on mobile viewports
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const checkWidth = () => setIsDesktop(window.innerWidth >= 768);
-    checkWidth();
-    window.addEventListener('resize', checkWidth);
-    return () => window.removeEventListener('resize', checkWidth);
-  }, []);
 
   // Normalize legacy vs new prop conventions
   const activeProTip = proTip || whyThisPick;
@@ -159,9 +149,8 @@ export function ModComparisonCard({
       <CardContent className="p-5 sm:p-6 space-y-4">
         {/* A. Responsive Pro-Tip (Closed on Mobile, Open on Desktop) */}
         {(proTip || whyThisPick) && (
-          <details
-            key={isDesktop ? 'desktop-open' : 'mobile-closed'}
-            open={isDesktop}
+          <ResponsiveDetails
+            defaultOpenDesktop={true}
             className="group border border-amber-900/40 bg-amber-950/10 rounded-lg p-3 transition-all"
           >
             <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-400 text-sm font-semibold [&::-webkit-details-marker]:hidden min-h-[40px]">
@@ -185,7 +174,7 @@ export function ModComparisonCard({
                 </p>
               )}
             </div>
-          </details>
+          </ResponsiveDetails>
         )}
 
         {/* B. Factory Problem vs. Solution (Closed by Default) */}
