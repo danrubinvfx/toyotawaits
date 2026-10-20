@@ -486,6 +486,26 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         expect(screen.getByText(/DELIVERY ESSENTIAL • RAV4 HYBRID/i)).toBeInTheDocument();
       }
     });
+
+    it('initializes with model pre-filtered when initialModel prop is provided', () => {
+      render(<InventoryExplorer initialModel="RAV4 Plug-in Hybrid" />);
+
+      // Pre-filtered: RAV4 Plug-in Hybrid is visible, others are filtered out
+      expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-sienna-ltd-02')).not.toBeInTheDocument();
+
+      const modelSelect = screen.getByTestId('filter-model-select') as HTMLSelectElement;
+      expect(modelSelect.value).toBe('RAV4 Plug-in Hybrid');
+    });
+
+    it('pre-filters inventory from URL searchParams in InventoryPage', () => {
+      process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY = 'true';
+      render(<InventoryPage searchParams={{ model: 'RAV4 Plug-in Hybrid' }} />);
+
+      expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-sienna-ltd-02')).not.toBeInTheDocument();
+    });
   });
 
   // ===========================================================================

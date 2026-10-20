@@ -48,9 +48,29 @@ function parsePreviewParam(
   return false;
 }
 
+function parseModelParam(
+  searchParams?:
+    | Promise<{ [key: string]: string | string[] | undefined }>
+    | { [key: string]: string | string[] | undefined }
+): string | undefined {
+  if (!searchParams) return undefined;
+  if (typeof (searchParams as any).then !== 'function') {
+    const sp = searchParams as { [key: string]: string | string[] | undefined };
+    if (typeof sp?.model === 'string') return sp.model;
+    if (Array.isArray(sp?.model) && sp.model.length > 0) return sp.model[0];
+  }
+  const maybeObj = (searchParams as any).value ?? (searchParams as any)._value;
+  if (maybeObj) {
+    if (typeof maybeObj.model === 'string') return maybeObj.model;
+    if (Array.isArray(maybeObj.model) && maybeObj.model.length > 0) return maybeObj.model[0];
+  }
+  return undefined;
+}
+
 export default function InventoryPage({ searchParams, initialListings }: InventoryPageProps = {}) {
-  // Extract preview query parameter from searchParams
+  // Extract preview query parameter and initial model filter from searchParams
   const isPreviewParam = parsePreviewParam(searchParams);
+  const initialModel = parseModelParam(searchParams);
 
 
   // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
@@ -135,7 +155,7 @@ export default function InventoryPage({ searchParams, initialListings }: Invento
 
         {/* Interactive Explorer Client Component */}
         <Suspense fallback={<div className="h-48 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
-          <InventoryExplorer initialListings={initialListings} />
+          <InventoryExplorer initialListings={initialListings} initialModel={initialModel} />
         </Suspense>
 
         {/* Footer Disclaimer & Transparency Notice */}

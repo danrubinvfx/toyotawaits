@@ -108,8 +108,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   {
     id: 'jp-surrey-rav4-01',
     make: 'Toyota',
-    model: 'RAV4',
-    trim: 'Hybrid XLE AWD',
+    model: 'RAV4 Plug-in Hybrid',
+    trim: 'SE AWD',
     modelYear: 2026,
     vin: '2T36CRAVXTW109453',
     isProvisionalVin: false,
@@ -119,11 +119,11 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date().toISOString(),
     vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New',
-    msrp: 46447,
-    sellingPrice: 46447,
+    msrp: 48750,
+    sellingPrice: 48750,
     mandatoryFees: null,
     hasUnverifiedFees: true,
-    powertrain: 'Hybrid 2.5L 4-Cyl AWD',
+    powertrain: 'Plug-in Hybrid 2.5L 4-Cyl AWD',
     exteriorColor: 'Storm Cloud',
     stockNumber: 'N109453',
   },
@@ -195,17 +195,25 @@ export function checkInventoryDiscoveryEnabled(
 export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
   previewOverride?: boolean;
+  initialModel?: string;
 }
 
 export function InventoryExplorer({
   initialListings = INITIAL_SAMPLE_LISTINGS,
   previewOverride,
+  initialModel,
 }: InventoryExplorerProps) {
   let isPreviewQuery = false;
+  let queryModel = initialModel || '';
+
   try {
     const sp = useSearchParams();
     if (sp?.get('preview') === 'true') {
       isPreviewQuery = true;
+    }
+    const paramModel = sp?.get('model');
+    if (paramModel && !queryModel) {
+      queryModel = paramModel.trim();
     }
   } catch {
     // Graceful fallback when rendered without Next.js Navigation context
@@ -240,7 +248,7 @@ export function InventoryExplorer({
   }, []);
 
   const [filters, setFilters] = useState<FilterState>({
-    model: '',
+    model: queryModel || '',
     status: '',
     dealer: '',
     location: '',
@@ -249,11 +257,21 @@ export function InventoryExplorer({
     search: '',
   });
 
+  // Keep filter in sync if queryModel or searchParams update
+  useEffect(() => {
+    if (queryModel && filters.model !== queryModel) {
+      setFilters((prev) => ({ ...prev, model: queryModel }));
+    }
+  }, [queryModel]);
+
   const availableModels = useMemo(() => {
     const set = new Set<string>();
     listings.forEach((item) => set.add(item.model));
+    if (filters.model) {
+      set.add(filters.model);
+    }
     return Array.from(set).sort();
-  }, [listings]);
+  }, [listings, filters.model]);
 
   const availableLocations = useMemo(() => {
     const locMap = new Map<string, string>();
@@ -297,8 +315,52 @@ export function InventoryExplorer({
   const filteredListings = useMemo(() => {
     return listings.filter((item) => {
       // Model facet
-      if (filters.model && item.model.toLowerCase() !== filters.model.toLowerCase()) {
-        return false;
+      if (filters.model) {
+        const filterModel = filters.model.toLowerCase().trim();
+        const itemModel = item.model.toLowerCase().trim();
+        const itemPowertrain = (item.powertrain || '').toLowerCase().trim();
+        const itemTrim = (item.trim || '').toLowerCase().trim();
+
+        const matchesExact = itemModel === filterModel;
+        const isTargetPhev =
+          filterModel.includes('plug-in') ||
+          filterModel.includes('prime') ||
+          filterModel.includes('phev');
+        const isItemPhev =
+          itemModel.includes('prime') ||
+          itemModel.includes('plug-in') ||
+          itemPowertrain.includes('plug-in') ||
+          itemTrim.includes('prime');
+
+        let matchesModel = matchesExact;
+        if (!matchesModel) {
+          if (isTargetPhev) {
+            matchesModel =
+              (filterModel.includes('rav4') && itemModel.includes('rav4') && isItemPhev) ||
+              (filterModel.includes('prius') && itemModel.includes('prius') && isItemPhev) ||
+              (isItemPhev && itemModel.includes(filterModel));
+          } else {
+            const isTargetHev = filterModel.includes('hybrid') || filterModel.includes('hev');
+            const isItemHev =
+              itemModel.includes('hybrid') ||
+              itemPowertrain.includes('hybrid') ||
+              itemTrim.includes('hybrid');
+            if (isTargetHev) {
+              matchesModel =
+                itemModel === filterModel ||
+                (itemModel.includes(filterModel) && !isItemPhev) ||
+                (filterModel.split(' ')[0] === itemModel.split(' ')[0] && isItemHev && !isItemPhev);
+            } else {
+              matchesModel =
+                itemModel === filterModel ||
+                (!isItemPhev && !isItemHev && (itemModel.includes(filterModel) || filterModel.includes(itemModel)));
+            }
+          }
+        }
+
+        if (!matchesModel) {
+          return false;
+        }
       }
 
       // Status facet

@@ -34,6 +34,8 @@ import { CARRYOVER_ALLOCATION_NOTE, BASE_MODEL_P75 } from '@/hooks/useEstimator'
 import { getModelCeiling } from '@/lib/estimator';
 import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { getEstimatorInventoryModelName, getActiveInventoryCountByModel } from '@/lib/inventory/counts';
+import { INITIAL_SAMPLE_LISTINGS } from '@/components/discovery/InventoryExplorer';
 
 export interface QuickSelectModelOption {
   label: string;
@@ -122,6 +124,32 @@ export function WaitTimeEstimator({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
   const [isNotifyModalOpen, setIsNotifyModalOpen] = useState<boolean>(false);
+
+  // Active inventory lookup state
+  const [inventoryCounts, setInventoryCounts] = useState<Record<string, number>>(() => {
+    const initial: Record<string, number> = {};
+    INITIAL_SAMPLE_LISTINGS.forEach((l) => {
+      if (l.model) {
+        initial[l.model] = (initial[l.model] || 0) + 1;
+      }
+    });
+    return initial;
+  });
+
+  useEffect(() => {
+    let isCancelled = false;
+    fetch('/api/inventory?summary=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!isCancelled && data && typeof data.countsByModel === 'object') {
+          setInventoryCounts(data.countsByModel);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   // Handle post-submission deep-link, parameter sync, and confirmation banner
   useEffect(() => {
@@ -294,6 +322,15 @@ export function WaitTimeEstimator({
     const year = base.getFullYear();
     return !isNaN(year) && year < 2026;
   }, [depositDate]);
+
+  // Contextual inventory model mapping and active count lookup
+  const inventoryModelName = useMemo(() => {
+    return getEstimatorInventoryModelName(modelSlug, powertrainSlug);
+  }, [modelSlug, powertrainSlug]);
+
+  const activeInventoryCount = useMemo(() => {
+    return getActiveInventoryCountByModel(inventoryModelName, inventoryCounts);
+  }, [inventoryModelName, inventoryCounts]);
 
   // Projected Date Calculations: arrival window calculated directly without artificial 420-day clamping
   const calculateProjectedDate = (daysOffset: number): string => {
@@ -1000,6 +1037,44 @@ export function WaitTimeEstimator({
                   Planning your build? Browse popular community accessories &amp; mods &rarr;
                 </Link>
               </div>
+
+              {/* Contextual Public Inventory Callout (Skip the wait?) */}
+              {activeInventoryCount > 0 ? (
+                <div
+                  data-testid="estimator-inventory-callout"
+                  className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 flex items-center justify-between gap-3 shadow-xs"
+                >
+                  <div className="space-y-0.5 min-w-0">
+                    <div className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                      <Zap className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                      <span>Skip the wait?</span>
+                    </div>
+                    <p className="text-sm text-neutral-300">
+                      We observed {activeInventoryCount} matching {activeInventoryCount === 1 ? 'unit' : 'units'} in recent dealer feeds.
+                    </p>
+                  </div>
+                  <Link
+                    href={`/inventory?model=${encodeURIComponent(inventoryModelName)}`}
+                    data-testid="estimator-view-stock-btn"
+                    className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1 shadow-sm shrink-0 transition-colors"
+                  >
+                    View Live Stock ↗
+                  </Link>
+                </div>
+              ) : (
+                <div
+                  data-testid="estimator-inventory-zero-callout"
+                  className="flex items-center justify-end pt-0.5"
+                >
+                  <Link
+                    href="/inventory"
+                    data-testid="estimator-browse-all-inventory-link"
+                    className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
+                  >
+                    Browse all observed dealer inventory ↗
+                  </Link>
+                </div>
+              )}
             </div>
 
             {/* Secondary Metrics & Notification Chips */}

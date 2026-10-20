@@ -890,4 +890,78 @@ describe('WaitTimeEstimator Component', () => {
     expect(crossTab).toHaveAttribute('aria-selected', 'true');
     expect(sedanTab).toHaveAttribute('aria-selected', 'false');
   });
+
+  it('renders prominent "Skip the wait?" inventory callout when matching dealer stock exists', async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'rav4',
+            modelName: 'RAV4',
+            powertrainSlug: 'phev',
+            powertrainName: 'Plug-in Hybrid (PHEV)',
+            province: 'BC',
+            sampleCounts: { total: 10, delivered: 8, pending: 2 },
+            waitStats: { p25: 200, median: 250, p75: 300, mean: 250, min: 150, max: 350 },
+          },
+          countsByModel: {
+            'RAV4 Plug-in Hybrid': 3,
+            'Sienna': 5,
+          },
+        }),
+      })
+    );
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="rav4" initialPowertrain="phev" initialProvince="BC" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('estimator-inventory-callout')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Skip the wait\?/i)).toBeInTheDocument();
+    expect(screen.getByText(/We observed 3 matching units in recent dealer feeds\./i)).toBeInTheDocument();
+
+    const stockBtn = screen.getByTestId('estimator-view-stock-btn');
+    expect(stockBtn).toHaveTextContent(/View Live Stock ↗/i);
+    expect(stockBtn).toHaveAttribute('href', '/inventory?model=RAV4%20Plug-in%20Hybrid');
+  });
+
+  it('renders subtle "Browse all observed dealer inventory" link when model inventory count is zero', async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'sequoia',
+            modelName: 'Sequoia',
+            powertrainSlug: 'hev',
+            province: 'BC',
+            sampleCounts: { total: 4, delivered: 4, pending: 0 },
+            waitStats: { p25: 120, median: 150, p75: 200, mean: 155, min: 90, max: 240 },
+          },
+          countsByModel: {
+            'RAV4 Plug-in Hybrid': 2,
+          },
+        }),
+      })
+    );
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="sequoia" initialPowertrain="hev" initialProvince="BC" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('estimator-inventory-zero-callout')).toBeInTheDocument();
+    });
+
+    const link = screen.getByTestId('estimator-browse-all-inventory-link');
+    expect(link).toHaveTextContent(/Browse all observed dealer inventory ↗/i);
+    expect(link).toHaveAttribute('href', '/inventory');
+  });
 });
+

@@ -5,12 +5,34 @@ import { VehicleListingCardProps } from '@/components/discovery/VehicleListingCa
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request?: Request) {
+  let isSummary = false;
+  if (request) {
+    try {
+      const url = new URL(request.url);
+      isSummary = url.searchParams.get('summary') === 'true';
+    } catch {
+      // Ignored in non-standard request context
+    }
+  }
+
+  const getFallbackCounts = () => {
+    const counts: Record<string, number> = {};
+    INITIAL_SAMPLE_LISTINGS.forEach((item) => {
+      if (item.model) {
+        counts[item.model] = (counts[item.model] || 0) + 1;
+      }
+    });
+    return counts;
+  };
+
   if (!isLiveSupabaseConfigured()) {
+    const countsByModel = getFallbackCounts();
     return NextResponse.json({
       success: true,
       count: INITIAL_SAMPLE_LISTINGS.length,
-      listings: INITIAL_SAMPLE_LISTINGS,
+      countsByModel,
+      ...(isSummary ? {} : { listings: INITIAL_SAMPLE_LISTINGS }),
       source: 'sample_fallback',
     });
   }
@@ -52,10 +74,12 @@ export async function GET() {
       .order('last_observed_at', { ascending: false });
 
     if (error || !data || data.length === 0) {
+      const countsByModel = getFallbackCounts();
       return NextResponse.json({
         success: true,
         count: INITIAL_SAMPLE_LISTINGS.length,
-        listings: INITIAL_SAMPLE_LISTINGS,
+        countsByModel,
+        ...(isSummary ? {} : { listings: INITIAL_SAMPLE_LISTINGS }),
         source: 'sample_fallback',
       });
     }
@@ -103,17 +127,27 @@ export async function GET() {
       };
     });
 
+    const countsByModel: Record<string, number> = {};
+    mappedListings.forEach((item) => {
+      if (item.model) {
+        countsByModel[item.model] = (countsByModel[item.model] || 0) + 1;
+      }
+    });
+
     return NextResponse.json({
       success: true,
       count: mappedListings.length,
-      listings: mappedListings,
+      countsByModel,
+      ...(isSummary ? {} : { listings: mappedListings }),
       source: 'supabase_dealer_listings',
     });
   } catch {
+    const countsByModel = getFallbackCounts();
     return NextResponse.json({
       success: true,
       count: INITIAL_SAMPLE_LISTINGS.length,
-      listings: INITIAL_SAMPLE_LISTINGS,
+      countsByModel,
+      ...(isSummary ? {} : { listings: INITIAL_SAMPLE_LISTINGS }),
       source: 'sample_fallback_catch',
     });
   }
