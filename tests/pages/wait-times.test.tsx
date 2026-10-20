@@ -96,6 +96,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     const dataset = json['@graph'].find((e: any) => e['@type'] === 'Dataset');
     expect(dataset).toBeDefined();
     expect(dataset.name).toBe('Toyota Sienna Wait Times in Canada (2026 Tracker)');
+    expect(dataset.license).toBe('https://creativecommons.org/licenses/by-nc/4.0/');
     expect(dataset.spatialCoverage).toBe('Canada');
 
     const faqPage = json['@graph'].find((e: any) => e['@type'] === 'FAQPage');
