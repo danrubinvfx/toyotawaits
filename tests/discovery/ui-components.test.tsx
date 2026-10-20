@@ -469,7 +469,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       // Filtered to RAV4 listings
       const gearCard = screen.queryByTestId('inventory-gear-card');
       if (gearCard) {
-        expect(screen.getByText(/Delivery Day Prep • RAV4 Hybrid/i)).toBeInTheDocument();
+        expect(screen.getByText(/Delivery Day Essential • RAV4 Hybrid/i)).toBeInTheDocument();
       }
     });
   });
@@ -499,13 +499,17 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         screen.getByText('Custom-Fit All-Weather Floor Liners & Cargo Mat')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Delivery Day Prep • RAV4 Hybrid')
+        screen.getByText(/Delivery Day Essential • RAV4 Hybrid/i)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Complete front, rear & trunk spill protection tailored for Canadian winters.')
       ).toBeInTheDocument();
       expect(screen.getAllByText('$120 – $189 CAD').length).toBeGreaterThan(0);
-      expect(screen.getByText('Affiliate link supports hosting')).toBeInTheDocument();
-      expect(screen.getByText('Essential')).toBeInTheDocument();
+      expect(screen.getByText('Verified affiliate gear')).toBeInTheDocument();
+      expect(screen.getAllByText('Essential').length).toBeGreaterThan(0);
 
       const actionBtn = screen.getByTestId('gear-strip-action-btn');
+      expect(actionBtn).toHaveTextContent(/Check Price/i);
       expect(actionBtn).toHaveAttribute(
         'href',
         'https://www.amazon.ca/s?k=Toyota+floor+mats&tag=toyotawaits-20'
@@ -518,7 +522,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       render(<InventoryGearCard item={sampleAccessory} />);
 
       expect(
-        screen.getByText('Delivery Day Prep • Universal Essential')
+        screen.getByText(/Delivery Day Essential • Universal/i)
       ).toBeInTheDocument();
     });
   });
