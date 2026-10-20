@@ -54,14 +54,14 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
   const isTargetPhev = targetVehicle.powertrain === 'PHEV';
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-4 sm:space-y-6">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between gap-4 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
         <div>
-          <span className="text-xs uppercase font-bold tracking-wider text-red-600 dark:text-red-500">
-            Interactive Calculator (Stage 4 Payback & Timeline)
+          <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-red-600 dark:text-red-500 block">
+            Interactive Calculator
           </span>
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 leading-tight">
             Configure Your Vehicle Comparison
           </h2>
         </div>
@@ -70,7 +70,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           variant="ghost"
           size="sm"
           onClick={resetToDefaults}
-          className="min-h-[44px] px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer"
+          className="min-h-[44px] px-2.5 sm:px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Reset Defaults</span>
@@ -87,9 +87,9 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       )}
 
       {/* Step 1: Top Hero Section - Money-Over-Time Graph (Left) & High-Impact Savings Card (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-4 lg:gap-5 items-start">
         {/* Left Column (65% on Desktop): Interactive Recharts money-over-time graph */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-3">
+        <div className="lg:col-span-7 xl:col-span-8 space-y-2 sm:space-y-3">
           {results.timelineResult ? (
             <PaybackChart
               timeline={results.timelineResult}
@@ -112,7 +112,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
 
         {/* Right Column (35% on Desktop): High-Impact Savings Card + Payback Summary */}
-        <div className="lg:col-span-5 xl:col-span-4 space-y-3">
+        <div className="lg:col-span-5 xl:col-span-4 space-y-2 sm:space-y-3">
           <EnergyResultsCard results={results} />
 
           {comparisonMode !== 'ENERGY_COMPARISON' && results.paybackResult && (
@@ -126,12 +126,12 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       </div>
 
       {/* Step 2: Streamlined 3-Step Input Cockpit (Directly Under Graph) */}
-      <div className="space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+      <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
         <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
           Driving & Vehicle Parameters
         </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3.5 items-start">
           {/* 1. Target Toyota Selection */}
           {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
             <TargetVehicleCard

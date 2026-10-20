@@ -134,52 +134,59 @@ export function PaybackChart({
 
   return (
     <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
-      <CardHeader className="p-3 sm:px-4 sm:py-3 pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
-              <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-500" />
+      <CardHeader className="px-2.5 py-1.5 sm:px-4 sm:py-3 pb-1.5 sm:pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+        <div className="flex items-center justify-between gap-1.5">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="p-1 sm:p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shrink-0">
+              <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 dark:text-green-500" />
             </div>
             <div>
-              <CardTitle className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                7-Year Cumulative Cash Flow Advantage
+              <CardTitle className="text-xs sm:text-base font-semibold text-zinc-900 dark:text-zinc-100 leading-tight">
+                <span className="hidden sm:inline">7-Year Cumulative Cash Flow Advantage</span>
+                <span className="sm:hidden">Cash Flow Over Time</span>
               </CardTitle>
-              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+              <p className="hidden sm:block text-[11px] text-zinc-500 dark:text-zinc-400">
                 Discrete daily energy accrual with vertical delivery steps. No curve smoothing.
               </p>
             </div>
           </div>
 
-          <div>
+          <div className="shrink-0">
             {isRecovered ? (
-              <Badge className="bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-200 dark:border-green-800 flex items-center gap-1.5 text-xs py-0.5">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Recovered at Year {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-200 dark:border-green-800 flex items-center gap-1 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2.5">
+                <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>
+                  <span className="hidden sm:inline">Recovered at Year {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
+                  <span className="sm:hidden">Recovered Yr {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
+                </span>
               </Badge>
             ) : (
-              <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-400 flex items-center gap-1.5 text-xs py-0.5">
-                <ShieldAlert className="w-3.5 h-3.5" />
-                <span>Not recovered within 7-year horizon</span>
+              <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-400 flex items-center gap-1 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2.5">
+                <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                <span>
+                  <span className="hidden sm:inline">Not recovered within 7-year horizon</span>
+                  <span className="sm:hidden">No Recovery (7y)</span>
+                </span>
               </Badge>
             )}
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="p-3 sm:p-4 pt-2.5 space-y-2.5">
+      <CardContent className="p-1.5 sm:p-4 pt-1 sm:pt-2.5 space-y-1.5 sm:space-y-2.5">
         {/* Chart View */}
-        <div className="w-full h-[260px] sm:h-[280px] rounded-lg bg-zinc-950 border border-zinc-800 p-1.5 sm:p-2 pt-2 sm:pt-3">
+        <div className="w-full h-[155px] sm:h-[260px] rounded-lg bg-zinc-950 border border-zinc-800 p-1 sm:p-2 pt-1.5 sm:pt-3">
           {isMounted ? (
-            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 260 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 155 }}>
               <LineChart
                 data={points}
-                margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
+                margin={{ top: 8, right: 12, left: -10, bottom: 0 }}
               >
                 <CartesianGrid stroke="#27272a" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="year"
                   stroke="#71717a"
-                  fontSize={11}
+                  fontSize={10}
                   tickFormatter={formatXAxis}
                   type="number"
                   domain={[0, 7]}
@@ -187,7 +194,7 @@ export function PaybackChart({
                 />
                 <YAxis
                   stroke="#71717a"
-                  fontSize={11}
+                  fontSize={10}
                   tickFormatter={formatYAxis}
                 />
                 <Tooltip
@@ -207,7 +214,7 @@ export function PaybackChart({
                     value: 'Break-Even ($0)',
                     fill: '#ef4444',
                     position: 'insideTopLeft',
-                    fontSize: 10,
+                    fontSize: 9,
                     fontWeight: 600,
                   }}
                 />
@@ -215,9 +222,9 @@ export function PaybackChart({
                   type="linear"
                   dataKey="netAdvantageTarget"
                   stroke="#22c55e"
-                  strokeWidth={2.5}
+                  strokeWidth={2}
                   dot={false}
-                  activeDot={{ r: 5, fill: '#22c55e' }}
+                  activeDot={{ r: 4, fill: '#22c55e' }}
                   isAnimationActive={false}
                 />
               </LineChart>
@@ -229,8 +236,8 @@ export function PaybackChart({
           )}
         </div>
 
-        {/* Legend & Microcopy */}
-        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400 px-1">
+        {/* Legend & Microcopy (hidden on mobile, visible on sm and up) */}
+        <div className="hidden sm:flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500 dark:text-zinc-400 px-1">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-1 bg-[#22c55e] rounded-full inline-block" />
