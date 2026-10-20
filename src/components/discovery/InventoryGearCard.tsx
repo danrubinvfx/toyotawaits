@@ -3,6 +3,7 @@
 import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import { AccessoryItem } from '@/data/accessories';
+import { trackAffiliateClick } from '@/lib/gear';
 
 export interface InventoryGearCardProps {
   item: AccessoryItem;
@@ -80,6 +81,14 @@ export function InventoryGearCard({
             rel="noopener noreferrer"
             data-testid="gear-strip-action-btn"
             aria-label={`Check price for ${item.title} on Amazon (opens in new tab)`}
+            onClick={() => {
+              trackAffiliateClick({
+                accessory_id: item.id,
+                placement: 'inventory_feed',
+                model_context: modelContext || null,
+                target_url: item.url,
+              });
+            }}
             className="px-3.5 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 active:scale-95 text-zinc-950 font-bold text-xs shadow inline-flex items-center gap-1.5 whitespace-nowrap transition-all"
           >
             <span>Check Price</span>

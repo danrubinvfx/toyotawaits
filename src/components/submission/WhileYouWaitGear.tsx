@@ -5,6 +5,7 @@ import { ExternalLink, Shield, Cpu, Sparkles, ShieldCheck } from 'lucide-react';
 import { getAccessoriesForModel, AccessoryItem } from '@/data/accessories';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { trackAffiliateClick } from '@/lib/gear';
 
 export interface WhileYouWaitGearProps {
   modelName?: string | null;
@@ -126,6 +127,14 @@ export function WhileYouWaitGear({ modelName, className = '' }: WhileYouWaitGear
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`View ${item.title} on Amazon`}
+                    onClick={() => {
+                      trackAffiliateClick({
+                        accessory_id: item.id,
+                        placement: 'submission_modal',
+                        model_context: modelName || null,
+                        target_url: item.url,
+                      });
+                    }}
                   >
                     <span>View on Amazon</span>
                     <ExternalLink className="h-3 w-3 opacity-70" />

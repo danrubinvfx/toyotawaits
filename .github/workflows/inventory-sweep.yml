@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       dealer:
-        description: 'Target dealer code to sweep ("all", "jptoyota-downtown", "jptoyota-surrey")'
+        description: 'Target dealer code to sweep ("all", "jptoyota-downtown", "jptoyota-surrey", "westcoast-toyota")'
         required: false
         default: 'all'
         type: string

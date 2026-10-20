@@ -120,11 +120,18 @@ export function resolveVehicleListingUrl(props: {
 }): string | null {
   const { vdpUrl, vin, stockNumber } = props;
 
-  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown or Surrey)
+  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown, Surrey, or West Coast)
   const isSurrey =
     props.dealerName?.toLowerCase().includes('surrey') ||
     props.dealerCity?.toLowerCase().includes('surrey');
-  let baseDomain = isSurrey ? 'https://www.jptoyota-surrey.com' : 'https://www.jptoyota-downtown.com';
+  const isWestCoast =
+    props.dealerName?.toLowerCase().includes('west coast') ||
+    props.dealerCity?.toLowerCase().includes('pitt meadows');
+  let baseDomain = isWestCoast
+    ? 'https://www.westcoasttoyota.com'
+    : isSurrey
+    ? 'https://www.jptoyota-surrey.com'
+    : 'https://www.jptoyota-downtown.com';
   if (vdpUrl && (vdpUrl.startsWith('http://') || vdpUrl.startsWith('https://'))) {
     try {
       const parsed = new URL(vdpUrl);
@@ -223,6 +230,8 @@ export function VehicleListingCard({
   if (!resolvedCity && dealerName) {
     if (dealerName.toLowerCase().includes('surrey')) {
       resolvedCity = 'Surrey';
+    } else if (dealerName.toLowerCase().includes('west coast') || dealerName.toLowerCase().includes('pitt meadows')) {
+      resolvedCity = 'Pitt Meadows';
     } else if (dealerName.toLowerCase().includes('downtown') || dealerName.toLowerCase().includes('vancouver')) {
       resolvedCity = 'Vancouver';
     }

@@ -78,6 +78,22 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 495-4100',
     websiteUrl: 'https://www.jptoyota-surrey.com/',
   },
+  {
+    dealerCode: 'westcoast-toyota',
+    aliases: ['west-coast-toyota', 'westcoast-toyota', 'westcoasttoyota'],
+    dealerName: 'West Coast Toyota',
+    sourceCode: 'westcoast-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.westcoasttoyota.com',
+    endpointUrl:
+      'https://www.westcoasttoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1218%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    address: '19950 Lougheed Hwy',
+    city: 'Pitt Meadows',
+    province: 'BC',
+    postalCode: 'V3Y 2S9',
+    phone: '(604) 465-9146',
+    websiteUrl: 'https://www.westcoasttoyota.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {

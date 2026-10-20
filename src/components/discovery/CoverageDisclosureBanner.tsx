@@ -57,7 +57,7 @@ export function CoverageDisclosureBanner() {
         <div
           id="coverage-details-panel"
           data-testid="coverage-details-panel"
-          className="mt-4 pt-4 border-t border-zinc-800/80 grid grid-cols-1 md:grid-cols-3 gap-3"
+          className="mt-4 pt-4 border-t border-zinc-800/80 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
         >
           {/* Jim Pattison Toyota Downtown */}
           <div className="rounded-lg bg-zinc-950/80 p-3 border border-zinc-800 space-y-1.5">
@@ -69,6 +69,32 @@ export function CoverageDisclosureBanner() {
             </div>
             <p className="text-[11px] text-zinc-400 leading-tight">
               Platform: Convertus VMS. True 17-char VINs and price transparency verified.
+            </p>
+          </div>
+
+          {/* Jim Pattison Toyota Surrey */}
+          <div className="rounded-lg bg-zinc-950/80 p-3 border border-zinc-800 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-200">Jim Pattison Surrey</span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/80">
+                <ShieldCheck className="h-3 w-3" /> Gate 1 PASS
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400 leading-tight">
+              Platform: Convertus VMS. Multi-store Surrey feed with 17-char VIN tracking.
+            </p>
+          </div>
+
+          {/* West Coast Toyota */}
+          <div className="rounded-lg bg-zinc-950/80 p-3 border border-zinc-800 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-zinc-200">West Coast Toyota</span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-800/80">
+                <ShieldCheck className="h-3 w-3" /> Gate 1 PASS
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-400 leading-tight">
+              Platform: Convertus VMS. Pitt Meadows dealer coverage with verified inventory.
             </p>
           </div>
 

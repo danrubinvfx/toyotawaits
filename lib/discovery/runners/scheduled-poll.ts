@@ -69,6 +69,15 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.jptoyota-surrey.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1249%26ln%3Den%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-westcoast-convertus',
+    sourceCode: 'westcoast-toyota-convertus',
+    dealerId: 'dealer-westcoast-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.westcoasttoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1218%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**

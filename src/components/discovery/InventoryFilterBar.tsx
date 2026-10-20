@@ -42,6 +42,7 @@ const DEFAULT_MODELS = [
 const DEFAULT_LOCATIONS: LocationOption[] = [
   { value: 'Vancouver', label: 'Vancouver (Downtown)' },
   { value: 'Surrey', label: 'Surrey (Guildford)' },
+  { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' },
 ];
 
 export function InventoryFilterBar({
@@ -61,6 +62,9 @@ export function InventoryFilterBar({
       ? availableDealers.map((d) => {
           if (d.toLowerCase().includes('surrey')) {
             return { value: 'Surrey', label: 'Surrey (Guildford)' };
+          }
+          if (d.toLowerCase().includes('west coast') || d.toLowerCase().includes('pitt meadows')) {
+            return { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' };
           }
           if (d.toLowerCase().includes('downtown') || d.toLowerCase().includes('vancouver')) {
             return { value: 'Vancouver', label: 'Vancouver (Downtown)' };

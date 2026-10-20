@@ -362,10 +362,12 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       // Details panel open
       expect(screen.getByTestId('coverage-details-panel')).toBeInTheDocument();
 
-      // Jim Pattison Downtown: Gate 1 PASS
+      // Pilot dealers: Gate 1 PASS
       expect(screen.getByText('Jim Pattison Downtown')).toBeInTheDocument();
-      expect(screen.getByText('Gate 1 PASS')).toBeInTheDocument();
-      expect(screen.getByText(/Convertus VMS/i)).toBeInTheDocument();
+      expect(screen.getByText('Jim Pattison Surrey')).toBeInTheDocument();
+      expect(screen.getByText('West Coast Toyota')).toBeInTheDocument();
+      expect(screen.getAllByText('Gate 1 PASS').length).toBe(3);
+      expect(screen.getAllByText(/Convertus VMS/i).length).toBe(3);
 
       // OpenRoad Richmond: Limitation
       expect(screen.getByText('OpenRoad Richmond')).toBeInTheDocument();
@@ -388,7 +390,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
     it('filters listings interactively by model', () => {
       render(<InventoryExplorer />);
 
-      // Initially renders RAV4, Sienna, Grand Highlander, Tacoma cards
+      // Initially renders RAV4, Sienna, Grand Highlander, Tacoma, Prius Prime cards
       expect(screen.getByTestId('listing-card-jp-rav4-xse-01')).toBeInTheDocument();
       expect(screen.getByTestId('listing-card-jp-sienna-ltd-02')).toBeInTheDocument();
 
@@ -402,12 +404,13 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
-    it('dynamically populates both Downtown and Surrey location options and filters listings by region', () => {
+    it('dynamically populates Downtown, Surrey, and Pitt Meadows location options and filters listings by region', () => {
       render(<InventoryExplorer />);
 
       const locationSelect = screen.getByTestId('filter-location-select');
       expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Pitt Meadows (West Coast)' })).toBeInTheDocument();
 
       // Filter by Surrey
       fireEvent.change(locationSelect, {
@@ -418,6 +421,16 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('listing-card-jp-surrey-sienna-02')).toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-grand-highlander-03')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-wc-toyota-prius-01')).not.toBeInTheDocument();
+
+      // Filter by Pitt Meadows
+      fireEvent.change(locationSelect, {
+        target: { value: 'Pitt Meadows' },
+      });
+
+      expect(screen.getByTestId('listing-card-wc-toyota-prius-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-jp-surrey-rav4-01')).not.toBeInTheDocument();
 
       // Filter by Vancouver
       fireEvent.change(locationSelect, {
@@ -428,6 +441,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('listing-card-jp-sienna-ltd-02')).toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-surrey-rav4-01')).not.toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-surrey-sienna-02')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-wc-toyota-prius-01')).not.toBeInTheDocument();
     });
 
     it('displays empty state when no listings match active filter criteria', () => {

@@ -149,6 +149,28 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     exteriorColor: 'White',
     stockNumber: 'N289848',
   },
+  {
+    id: 'wc-toyota-prius-01',
+    make: 'Toyota',
+    model: 'Prius Prime',
+    trim: 'SE AWD',
+    modelYear: 2026,
+    vin: 'JTDACACU3V3084482',
+    isProvisionalVin: false,
+    dealerName: 'West Coast Toyota',
+    dealerCity: 'Pitt Meadows',
+    dealerProvince: 'BC',
+    status: 'Advertised - availability unconfirmed',
+    lastChecked: new Date(Date.now() - 3600000).toISOString(),
+    vdpUrl: 'https://www.westcoasttoyota.com/vehicles/2026/Toyota/Prius%20Prime/Pitt%20Meadows/BC/71882001/?sale_class=New',
+    msrp: 42150,
+    sellingPrice: 42150,
+    mandatoryFees: null,
+    hasUnverifiedFees: true,
+    powertrain: 'Plug-in Hybrid 2.0L 4-Cyl',
+    exteriorColor: 'Guardian Gray',
+    stockNumber: 'W10844',
+  },
 ];
 
 /**
@@ -238,12 +260,18 @@ export function InventoryExplorer({
     listings.forEach((item) => {
       const city =
         item.dealerCity ||
-        (item.dealerName.toLowerCase().includes('surrey') ? 'Surrey' : 'Vancouver');
+        (item.dealerName.toLowerCase().includes('surrey')
+          ? 'Surrey'
+          : item.dealerName.toLowerCase().includes('west coast')
+          ? 'Pitt Meadows'
+          : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
         locMap.set('Vancouver', 'Vancouver (Downtown)');
       } else if (city.toLowerCase() === 'surrey') {
         locMap.set('Surrey', 'Surrey (Guildford)');
+      } else if (city.toLowerCase() === 'pitt meadows' || city.toLowerCase().includes('pitt')) {
+        locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
       } else {
         locMap.set(city, city);
       }
@@ -252,6 +280,7 @@ export function InventoryExplorer({
     if (locMap.size === 0) {
       locMap.set('Vancouver', 'Vancouver (Downtown)');
       locMap.set('Surrey', 'Surrey (Guildford)');
+      locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
     }
 
     return Array.from(locMap.entries())
@@ -287,7 +316,8 @@ export function InventoryExplorer({
         const matchesName = itemName.includes(locationQuery);
         const matchesMetro =
           (locationQuery === 'vancouver' && (itemName.includes('downtown') || itemCity.includes('vancouver'))) ||
-          (locationQuery === 'surrey' && (itemName.includes('surrey') || itemCity.includes('surrey')));
+          (locationQuery === 'surrey' && (itemName.includes('surrey') || itemCity.includes('surrey'))) ||
+          (locationQuery.includes('pitt') && (itemName.includes('west coast') || itemCity.includes('pitt')));
 
         if (!matchesCity && !matchesName && !matchesMetro) {
           return false;
