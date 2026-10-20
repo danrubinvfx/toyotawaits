@@ -11,6 +11,8 @@ import {
   FilterState,
 } from './InventoryFilterBar';
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
+import { InventoryGearCard } from './InventoryGearCard';
+import { getAccessoriesForModel } from '@/data/accessories';
 import { Car, AlertCircle, Sparkles } from 'lucide-react';
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
@@ -278,6 +280,10 @@ export function InventoryExplorer({
     });
   }, [listings, filters]);
 
+  const gearItems = useMemo(() => {
+    return getAccessoriesForModel(filters.model || undefined);
+  }, [filters.model]);
+
   const isEnabled = checkInventoryDiscoveryEnabled(
     previewOverride !== undefined ? previewOverride : isPreviewQuery
   );
@@ -319,9 +325,25 @@ export function InventoryExplorer({
           aria-label="Observed inventory listings"
           className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
         >
-          {filteredListings.map((listing) => (
-            <VehicleListingCard key={listing.id} {...listing} />
-          ))}
+          {filteredListings.map((listing, index) => {
+            const shouldInsertGear = (index + 1) % 4 === 0 && gearItems.length > 0;
+            const gearItem = shouldInsertGear
+              ? gearItems[Math.floor(index / 4) % gearItems.length]
+              : null;
+
+            return (
+              <React.Fragment key={listing.id}>
+                <VehicleListingCard {...listing} />
+                {shouldInsertGear && gearItem && (
+                  <InventoryGearCard
+                    key={`gear-strip-${gearItem.id}-${index}`}
+                    item={gearItem}
+                    modelContext={filters.model || undefined}
+                  />
+                )}
+              </React.Fragment>
+            );
+          })}
         </section>
       ) : (
         <div

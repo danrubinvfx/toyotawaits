@@ -18,6 +18,7 @@ import {
 } from '@/components/discovery/InventoryFilterBar';
 import { CoverageDisclosureBanner } from '@/components/discovery/CoverageDisclosureBanner';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
+import { InventoryGearCard } from '@/components/discovery/InventoryGearCard';
 import InventoryPage from '@/app/inventory/page';
 
 describe('Sprint 5: Discovery UI Components & Search Integration', () => {
@@ -426,6 +427,85 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(screen.getByTestId('no-results-message')).toBeInTheDocument();
       expect(screen.getByText(/No matching listings observed/i)).toBeInTheDocument();
+    });
+
+    it('interleaves delivery day gear strips every 4 vehicle listings', () => {
+      render(<InventoryExplorer />);
+
+      // Initial sample listings has 6 listings: item 0, 1, 2, 3, 4, 5
+      // A gear card should be interleaved after item 3 (index 3)
+      const gearCards = screen.getAllByTestId('inventory-gear-card');
+      expect(gearCards.length).toBe(1); // floor(6 / 4) = 1
+
+      // Verify outbound link uses toyotawaits-20
+      const link = screen.getByTestId('gear-strip-action-btn');
+      expect(link.getAttribute('href')).toContain('tag=toyotawaits-20');
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('updates gear card model context when model filter is selected', () => {
+      render(<InventoryExplorer />);
+
+      // Select 'RAV4'
+      fireEvent.change(screen.getByTestId('filter-model-select'), {
+        target: { value: 'RAV4 Hybrid' },
+      });
+
+      // Filtered to RAV4 listings
+      const gearCard = screen.queryByTestId('inventory-gear-card');
+      if (gearCard) {
+        expect(screen.getByText(/Delivery Day Prep • RAV4 Hybrid/i)).toBeInTheDocument();
+      }
+    });
+  });
+
+  // ===========================================================================
+  // 4b. InventoryGearCard Unit Tests
+  // ===========================================================================
+  describe('InventoryGearCard Unit Tests', () => {
+    const sampleAccessory = {
+      id: 'all-weather-floor-liners',
+      title: 'Custom-Fit All-Weather Floor Liners & Cargo Mat',
+      category: 'protection' as const,
+      description: 'High-wall laser-measured TPE rubber floor liners.',
+      estimatedPriceCad: '$120 – $189 CAD',
+      url: 'https://www.amazon.ca/s?k=Toyota+floor+mats&tag=toyotawaits-20',
+      applicableModels: ['RAV4', 'universal'],
+      badge: 'Essential',
+    };
+
+    it('renders compact gear strip with title, model context subtitle, price, and affiliate action', () => {
+      render(
+        <InventoryGearCard item={sampleAccessory} modelContext="RAV4 Hybrid" />
+      );
+
+      expect(screen.getByTestId('inventory-gear-card')).toBeInTheDocument();
+      expect(
+        screen.getByText('Custom-Fit All-Weather Floor Liners & Cargo Mat')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Delivery Day Prep • RAV4 Hybrid')
+      ).toBeInTheDocument();
+      expect(screen.getAllByText('$120 – $189 CAD').length).toBeGreaterThan(0);
+      expect(screen.getByText('Affiliate link supports hosting')).toBeInTheDocument();
+      expect(screen.getByText('Essential')).toBeInTheDocument();
+
+      const actionBtn = screen.getByTestId('gear-strip-action-btn');
+      expect(actionBtn).toHaveAttribute(
+        'href',
+        'https://www.amazon.ca/s?k=Toyota+floor+mats&tag=toyotawaits-20'
+      );
+      expect(actionBtn).toHaveAttribute('target', '_blank');
+      expect(actionBtn).toHaveAttribute('rel', 'noopener noreferrer');
+    });
+
+    it('renders fallback universal subtitle when modelContext is omitted', () => {
+      render(<InventoryGearCard item={sampleAccessory} />);
+
+      expect(
+        screen.getByText('Delivery Day Prep • Universal Essential')
+      ).toBeInTheDocument();
     });
   });
 
