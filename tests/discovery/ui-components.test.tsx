@@ -472,6 +472,30 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
+    it('injects top-ranked gear items into interleaved strips in popularity order', () => {
+      const simulatedCounts = {
+        'infotainment-screen-protector': 120, // Rank 1
+        'center-console-organizer-tray': 80,  // Rank 2
+        '4k-front-rear-dash-cam': 40,         // Rank 3
+      };
+
+      render(<InventoryExplorer popularityCounts={simulatedCounts} />);
+
+      const gearCards = screen.getAllByTestId('inventory-gear-card');
+      expect(gearCards.length).toBe(3);
+
+      // Strip 1 gets Rank 1: Infotainment Screen Protector with '🔥 Most Popular'
+      expect(gearCards[0]).toHaveTextContent('9H Tempered Glass Infotainment Screen Protector');
+      expect(gearCards[0]).toHaveTextContent('🔥 Most Popular');
+
+      // Strip 2 gets Rank 2: Center Console Organizer Tray with 'Community Top Pick'
+      expect(gearCards[1]).toHaveTextContent('Drop-In Center Console Divider & Organizer Tray');
+      expect(gearCards[1]).toHaveTextContent('Community Top Pick');
+
+      // Strip 3 gets Rank 3: 4K Dash Cam
+      expect(gearCards[2]).toHaveTextContent('Front & Rear 4K Dash Cam with Parking Surveillance');
+    });
+
     it('updates gear card model context when model filter is selected', () => {
       render(<InventoryExplorer />);
 

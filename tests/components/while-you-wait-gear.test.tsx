@@ -88,5 +88,44 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       expect(screen.getAllByText('Protection').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Tech').length).toBeGreaterThan(0);
     });
+
+    it('dynamically ranks accessories by 30-day click counts and assigns enhanced badges', () => {
+      const simulatedCounts = {
+        '4k-front-rear-dash-cam': 50,
+        'center-console-organizer-tray': 30,
+        'all-weather-floor-liners': 10,
+      };
+
+      const sorted = getAccessoriesForModel('RAV4', simulatedCounts);
+
+      // Slot 0: 4k-front-rear-dash-cam with '🔥 Most Popular'
+      expect(sorted[0].id).toBe('4k-front-rear-dash-cam');
+      expect(sorted[0].badge).toBe('🔥 Most Popular');
+
+      // Slot 1: center-console-organizer-tray with 'Community Top Pick'
+      expect(sorted[1].id).toBe('center-console-organizer-tray');
+      expect(sorted[1].badge).toBe('Community Top Pick');
+
+      // Slot 2: all-weather-floor-liners
+      expect(sorted[2].id).toBe('all-weather-floor-liners');
+    });
+
+    it('renders the top 2 popularity-ranked accessories at the start of the grid in WhileYouWaitGear', () => {
+      const simulatedCounts = {
+        'infotainment-screen-protector': 99,
+        'rfid-faraday-key-fob-pouch': 75,
+      };
+
+      const { container } = render(
+        <WhileYouWaitGear modelName="universal" popularityCounts={simulatedCounts} />
+      );
+
+      const titles = container.querySelectorAll('h5');
+      expect(titles[0]).toHaveTextContent('9H Tempered Glass Infotainment Screen Protector');
+      expect(titles[1]).toHaveTextContent('Heavy-Duty RFID Faraday Key Fob Signal Blocker');
+
+      expect(screen.getByText('🔥 Most Popular')).toBeInTheDocument();
+      expect(screen.getByText('Community Top Pick')).toBeInTheDocument();
+    });
   });
 });

@@ -111,46 +111,104 @@ function normalizeModelName(model?: string | null): string {
 }
 
 /**
- * Returns curated delivery-day gear, tailoring queries and links to the vehicle model when available.
+ * Sorts accessory items by recent 30-day click telemetry, enhancing badges for the top 2 clicked items.
+ * 1. Primary: Sort descending by recent click count.
+ * 2. Secondary / Fallback: Preserve original curated order.
+ * 3. Badge Enhancement: Top 1 gets '🔥 Most Popular', Top 2 gets 'Community Top Pick' (when clicks > 0).
  */
-export function getAccessoriesForModel(modelName?: string | null): AccessoryItem[] {
-  const normalized = normalizeModelName(modelName);
-
-  if (!normalized) {
-    // Return universal essentials
-    return ESSENTIAL_ACCESSORIES.filter(
-      (item) => item.applicableModels.includes('universal')
-    ).slice(0, 6);
+export function sortAccessoriesByPopularity(
+  items: AccessoryItem[],
+  clickCounts?: Record<string, number>
+): AccessoryItem[] {
+  if (!clickCounts || Object.keys(clickCounts).length === 0) {
+    return items;
   }
 
-  // Filter items that match the model or are universal
-  const matching = ESSENTIAL_ACCESSORIES.filter((item) => {
-    if (item.applicableModels.includes('universal')) return true;
-    return item.applicableModels.some(
-      (m) => m.toLowerCase() === normalized.toLowerCase() || normalized.toLowerCase().includes(m.toLowerCase())
-    );
+  const withIndex = items.map((item, originalIndex) => ({
+    item,
+    originalIndex,
+    clicks: clickCounts[item.id] ?? 0,
+  }));
+
+  withIndex.sort((a, b) => {
+    if (b.clicks !== a.clicks) {
+      return b.clicks - a.clicks;
+    }
+    return a.originalIndex - b.originalIndex;
   });
 
+  return withIndex.map(({ item, clicks }, rank) => {
+    if (clicks > 0) {
+      if (rank === 0) {
+        return {
+          ...item,
+          badge: '🔥 Most Popular',
+        };
+      }
+      if (rank === 1) {
+        return {
+          ...item,
+          badge: 'Community Top Pick',
+        };
+      }
+    }
+    return item;
+  });
+}
+
+/**
+ * Returns curated delivery-day gear, tailoring queries and links to the vehicle model when available.
+ * Supports optional 30-day telemetry click weighting for dynamic popularity ranking.
+ */
+export function getAccessoriesForModel(
+  modelName?: string | null,
+  clickCounts?: Record<string, number>
+): AccessoryItem[] {
+  const normalized = normalizeModelName(modelName);
+
+  let matching: AccessoryItem[];
+  if (!normalized) {
+    // Return universal essentials
+    matching = ESSENTIAL_ACCESSORIES.filter((item) =>
+      item.applicableModels.includes('universal')
+    );
+  } else {
+    // Filter items that match the model or are universal
+    matching = ESSENTIAL_ACCESSORIES.filter((item) => {
+      if (item.applicableModels.includes('universal')) return true;
+      return item.applicableModels.some(
+        (m) =>
+          m.toLowerCase() === normalized.toLowerCase() ||
+          normalized.toLowerCase().includes(m.toLowerCase())
+      );
+    });
+  }
+
   // Dynamically tailor search queries for model-specific items
-  return matching.map((item) => {
+  const tailored = matching.map((item) => {
     if (item.id === 'all-weather-floor-liners') {
       return {
         ...item,
-        url: buildAmazonCaSearchUrl(`Toyota ${normalized} all weather floor mats liners TPE`),
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized || 'universal'} all weather floor mats liners TPE`),
       };
     }
     if (item.id === 'infotainment-screen-protector') {
       return {
         ...item,
-        url: buildAmazonCaSearchUrl(`Toyota ${normalized} screen protector tempered glass 9H`),
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized || 'universal'} screen protector tempered glass 9H`),
       };
     }
     if (item.id === 'center-console-organizer-tray') {
       return {
         ...item,
-        url: buildAmazonCaSearchUrl(`Toyota ${normalized} center console organizer tray`),
+        url: buildAmazonCaSearchUrl(`Toyota ${normalized || 'universal'} center console organizer tray`),
       };
     }
     return item;
-  }).slice(0, 6);
+  });
+
+  // Dynamically sort by popularity weights when available
+  const sorted = sortAccessoriesByPopularity(tailored, clickCounts);
+
+  return sorted.slice(0, 6);
 }

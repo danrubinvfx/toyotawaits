@@ -196,12 +196,14 @@ export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
   previewOverride?: boolean;
   initialModel?: string;
+  popularityCounts?: Record<string, number>;
 }
 
 export function InventoryExplorer({
   initialListings = INITIAL_SAMPLE_LISTINGS,
   previewOverride,
   initialModel,
+  popularityCounts,
 }: InventoryExplorerProps) {
   let isPreviewQuery = false;
   let queryModel = initialModel || '';
@@ -411,9 +413,28 @@ export function InventoryExplorer({
     });
   }, [listings, filters]);
 
+  const [fetchedGearCounts, setFetchedGearCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (popularityCounts) return;
+    let isMounted = true;
+    fetch('/api/accessories/popular')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.counts && typeof data.counts === 'object') {
+          setFetchedGearCounts(data.counts);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [popularityCounts]);
+
+  const effectiveGearCounts = popularityCounts || fetchedGearCounts;
   const gearItems = useMemo(() => {
-    return getAccessoriesForModel(filters.model || undefined);
-  }, [filters.model]);
+    return getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
+  }, [filters.model, effectiveGearCounts]);
 
   const isEnabled = checkInventoryDiscoveryEnabled(
     previewOverride !== undefined ? previewOverride : isPreviewQuery

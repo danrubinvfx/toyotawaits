@@ -10,6 +10,7 @@ import { trackAffiliateClick } from '@/lib/gear';
 export interface WhileYouWaitGearProps {
   modelName?: string | null;
   className?: string;
+  popularityCounts?: Record<string, number>;
 }
 
 const CATEGORY_META: Record<
@@ -38,8 +39,27 @@ const CATEGORY_META: Record<
   },
 };
 
-export function WhileYouWaitGear({ modelName, className = '' }: WhileYouWaitGearProps) {
-  const accessories = React.useMemo(() => getAccessoriesForModel(modelName), [modelName]);
+export function WhileYouWaitGear({ modelName, className = '', popularityCounts }: WhileYouWaitGearProps) {
+  const [fetchedCounts, setFetchedCounts] = React.useState<Record<string, number>>({});
+
+  React.useEffect(() => {
+    if (popularityCounts) return;
+    let isMounted = true;
+    fetch('/api/accessories/popular')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (isMounted && data?.counts && typeof data.counts === 'object') {
+          setFetchedCounts(data.counts);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, [popularityCounts]);
+
+  const effectiveCounts = popularityCounts || fetchedCounts;
+  const accessories = React.useMemo(() => getAccessoriesForModel(modelName, effectiveCounts), [modelName, effectiveCounts]);
 
   if (!accessories || accessories.length === 0) {
     return null;
@@ -92,7 +112,13 @@ export function WhileYouWaitGear({ modelName, className = '' }: WhileYouWaitGear
                   {item.badge && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] font-medium py-0 px-1.5 border-zinc-700 text-zinc-300 bg-zinc-900/80"
+                      className={`text-[9px] font-medium py-0 px-1.5 ${
+                        item.badge.includes('🔥')
+                          ? 'border-amber-500/50 text-amber-300 bg-amber-950/60 font-semibold'
+                          : item.badge === 'Community Top Pick'
+                          ? 'border-emerald-500/50 text-emerald-300 bg-emerald-950/60 font-semibold'
+                          : 'border-zinc-700 text-zinc-300 bg-zinc-900/80'
+                      }`}
                     >
                       {item.badge}
                     </Badge>
