@@ -220,7 +220,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
   describe('InventoryFilterBar', () => {
     const defaultFilters: FilterState = {
       model: '',
-      status: '',
+      status: 'advertised',
       dealer: '',
       location: '',
       userLocation: '',

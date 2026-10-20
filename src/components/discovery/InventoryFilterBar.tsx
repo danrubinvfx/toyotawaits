@@ -180,7 +180,7 @@ export function InventoryFilterBar({
   const handleReset = () => {
     onFilterChange({
       model: '',
-      status: '',
+      status: 'advertised',
       dealer: '',
       location: '',
       userLocation: '',
@@ -195,7 +195,7 @@ export function InventoryFilterBar({
 
   const activeFacetCount = [
     Boolean(filters.model),
-    Boolean(filters.status),
+    Boolean(filters.status && filters.status !== 'advertised'),
     Boolean(filters.location || filters.dealer || filters.userCoordinates),
     Boolean(filters.maxDistance),
     Boolean(filters.minPrice || filters.maxPrice),
@@ -203,7 +203,7 @@ export function InventoryFilterBar({
 
   const hasActiveFilters = Boolean(
     filters.model ||
-      filters.status ||
+      (filters.status && filters.status !== 'advertised') ||
       filters.location ||
       filters.dealer ||
       filters.userCoordinates ||
@@ -395,11 +395,12 @@ export function InventoryFilterBar({
               id="filter-status"
               data-testid="filter-status-select"
               aria-label="Filter by observed status"
-              value={filters.status}
+              value={filters.status ?? 'advertised'}
               onChange={handleStatusChange}
               className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             >
-              <option value="">All Statuses</option>
+              <option value="advertised">Active / Verified Live</option>
+              <option value="all">All Statuses</option>
               <option value="Advertised - availability unconfirmed">Advertised - availability unconfirmed</option>
               <option value="Incoming availability unconfirmed">Incoming availability unconfirmed</option>
               <option value="Reserved / sold">Reserved / sold</option>

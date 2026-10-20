@@ -6,8 +6,9 @@
  *
  * Staleness Safeguard (Master Plan V3.2 Page 3 & Appendix A):
  * - Never mark a listing as removed or stale from a single partial/failed sweep.
- * - A listing is transitioned to 'No longer observed / stale' only after TWO consecutive
- *   verified sweeps that miss the vehicle.
+ * - A listing is transitioned to 'No longer observed / stale' (or 'stale') after missed sweeps,
+ *   updating stale_at = NOW().
+ * - If last_observed_at < NOW() - INTERVAL '48 hours', the listing is marked 'removed'.
  */
 
 import { createServerClient } from '../../../src/lib/supabase/server';
@@ -24,13 +25,15 @@ export interface StalenessSummary {
   totalActiveEvaluated: number;
   missedOnceCount: number;
   staleTransitionsCount: number;
+  removedTransitionsCount?: number;
   stillActiveCount: number;
   statusEventsLogged: number;
   errors: string[];
 }
 
 /**
- * Evaluates active listings against a completed sweep to enforce the 2-sweep staleness safeguard.
+ * Evaluates active listings against a completed sweep to enforce the 2-sweep staleness safeguard
+ * and the 48-hour hard cutoff rule.
  */
 export async function evaluateSweepStaleness(
   params: EvaluateStalenessParams
@@ -53,19 +56,19 @@ export async function evaluateSweepStaleness(
     totalActiveEvaluated: 0,
     missedOnceCount: 0,
     staleTransitionsCount: 0,
+    removedTransitionsCount: 0,
     stillActiveCount: 0,
     statusEventsLogged: 0,
     errors: [],
   };
 
   try {
-    // Select all dealer listings that are not already marked 'No longer observed / stale'
+    // Select all dealer listings that are not already marked 'removed'
     const { data: listings, error: fetchError } = await supabase
       .from('dealer_listings')
-      .select('id, source_listing_id, current_status, consecutive_missed_sweeps')
+      .select('id, source_listing_id, current_status, consecutive_missed_sweeps, last_observed_at, created_at')
       .eq('dealer_id', dealerId)
-      .neq('current_status', NormalizedListingStatus.NO_LONGER_OBSERVED)
-      .neq('current_status', 'No longer observed');
+      .neq('current_status', 'removed');
 
     if (fetchError) {
       throw new Error(`Failed to fetch active dealer listings: ${fetchError.message}`);
@@ -83,11 +86,16 @@ export async function evaluateSweepStaleness(
       if (isPresentInSweep) {
         // Vehicle was observed in this sweep
         summary.stillActiveCount++;
-        if ((listing.consecutive_missed_sweeps || 0) > 0) {
+        if (
+          (listing.consecutive_missed_sweeps || 0) > 0 ||
+          listing.current_status === NormalizedListingStatus.NO_LONGER_OBSERVED ||
+          listing.current_status === 'stale'
+        ) {
           const { error: resetError } = await supabase
             .from('dealer_listings')
             .update({
               consecutive_missed_sweeps: 0,
+              stale_at: null,
               last_successful_check: sweepTimestamp,
               updated_at: sweepTimestamp,
             })
@@ -102,9 +110,57 @@ export async function evaluateSweepStaleness(
       } else {
         // Vehicle was missed in this sweep
         const newMissCount = (listing.consecutive_missed_sweeps || 0) + 1;
+        const lastObsMs = new Date(listing.last_observed_at || listing.created_at || sweepTimestamp).getTime();
+        const sweepMs = new Date(sweepTimestamp).getTime();
+        const isExpired48h = !isNaN(lastObsMs) && sweepMs - lastObsMs >= 48 * 3600 * 1000;
 
-        if (newMissCount >= 2) {
-          // 2-SWEEP RULE SATISFIED: Transition to 'No longer observed / stale'
+        if (isExpired48h) {
+          // 48-HOUR EXPIRATION: Transition to 'removed'
+          const previousStatus = listing.current_status;
+          const newStatus = 'removed';
+
+          const { error: eventError } = await supabase.from('status_events').insert({
+            dealer_listing_id: listing.id,
+            observation_id: null,
+            previous_status: previousStatus,
+            new_status: newStatus,
+            transition_reason: `Listing last observed >48 hours ago (${listing.last_observed_at}); transitioned to 'removed'`,
+            evidence_payload: {
+              consecutive_missed_sweeps: newMissCount,
+              last_observed_at: listing.last_observed_at,
+              source_listing_id: listing.source_listing_id,
+            },
+            event_timestamp: sweepTimestamp,
+            created_at: sweepTimestamp,
+          });
+
+          if (eventError) {
+            summary.errors.push(
+              `Failed to log status event for expired listing ${listing.id}: ${eventError.message}`
+            );
+          } else {
+            summary.statusEventsLogged++;
+          }
+
+          const { error: updateError } = await supabase
+            .from('dealer_listings')
+            .update({
+              current_status: newStatus,
+              consecutive_missed_sweeps: newMissCount,
+              last_successful_check: sweepTimestamp,
+              updated_at: sweepTimestamp,
+            })
+            .eq('id', listing.id);
+
+          if (updateError) {
+            summary.errors.push(
+              `Failed to transition listing ${listing.id} to removed: ${updateError.message}`
+            );
+          } else {
+            summary.removedTransitionsCount = (summary.removedTransitionsCount || 0) + 1;
+          }
+        } else if (newMissCount >= 2) {
+          // 2-SWEEP RULE SATISFIED: Transition to 'No longer observed / stale' and set stale_at
           const previousStatus = listing.current_status as NormalizedListingStatus;
           const newStatus = NormalizedListingStatus.NO_LONGER_OBSERVED;
 
@@ -131,11 +187,12 @@ export async function evaluateSweepStaleness(
             summary.statusEventsLogged++;
           }
 
-          // 2. Update listing status
+          // 2. Update listing status and stale_at timestamp
           const { error: updateError } = await supabase
             .from('dealer_listings')
             .update({
               current_status: newStatus,
+              stale_at: sweepTimestamp,
               consecutive_missed_sweeps: newMissCount,
               last_successful_check: sweepTimestamp,
               updated_at: sweepTimestamp,

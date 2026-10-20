@@ -489,6 +489,7 @@ export async function sweepSingleDealer(
     console.log(`  -> Active Evaluated:      ${stalenessSummary.totalActiveEvaluated}`);
     console.log(`  -> Missed Once (Pending): ${stalenessSummary.missedOnceCount}`);
     console.log(`  -> Marked Stale:          ${stalenessSummary.staleTransitionsCount}`);
+    console.log(`  -> Removed (48h Expired): ${stalenessSummary.removedTransitionsCount || 0}`);
 
     // Telemetry Logging
     try {

@@ -23,13 +23,14 @@ describe('GET /api/inventory Endpoint', () => {
   it('queries dealer_listings from Supabase and formats records with pricing when configured', async () => {
     vi.spyOn(serverSupabase, 'isLiveSupabaseConfigured').mockReturnValue(true);
 
+    const recentTimestamp = new Date().toISOString();
     const mockData = [
       {
         id: 'mock-listing-01',
         stock_number: 'STK-9901',
         vdp_url: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/v123/',
         current_status: 'Advertised - availability unconfirmed',
-        last_observed_at: '2026-10-18T20:00:00Z',
+        last_observed_at: recentTimestamp,
         vehicle: {
           make: 'Toyota',
           model: 'RAV4 Hybrid',
@@ -52,7 +53,7 @@ describe('GET /api/inventory Endpoint', () => {
             selling_price: 48995,
             mandatory_fees: 895,
             has_unverified_fees: false,
-            observed_at: '2026-10-18T20:00:00Z',
+            observed_at: recentTimestamp,
           },
         ],
       },

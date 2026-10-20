@@ -1,7 +1,7 @@
 import React from 'react';
-import { ExternalLink, AlertTriangle, Clock, ShieldAlert, CheckCircle2, DollarSign } from 'lucide-react';
+import { ExternalLink, AlertTriangle, Clock, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 
 export interface VehicleListingCardProps {
   id: string;
@@ -256,9 +256,12 @@ export function VehicleListingCard({
 
   // Format check date if valid ISO
   let formattedCheckTime = lastChecked;
+  const now = Date.now();
+  let hoursSinceCheck: number | null = null;
   try {
     const d = new Date(lastChecked);
     if (!isNaN(d.getTime())) {
+      hoursSinceCheck = Math.floor((now - d.getTime()) / (3600 * 1000));
       formattedCheckTime = d.toLocaleDateString('en-CA', {
         month: 'short',
         day: 'numeric',
@@ -270,6 +273,7 @@ export function VehicleListingCard({
   } catch {
     // Keep original string if date parsing fails
   }
+  const isNearingExpiration = hoursSinceCheck != null && hoursSinceCheck > 24;
 
   return (
     <article
@@ -308,13 +312,23 @@ export function VehicleListingCard({
             </Badge>
           )}
 
-          <div
-            className="flex items-center gap-1 text-[11px] text-zinc-400 font-mono shrink-0"
-            title={`Last verified on dealer feed: ${lastChecked}`}
-          >
-            <Clock className="h-3 w-3 text-zinc-500" aria-hidden="true" />
-            <time dateTime={lastChecked}>{formattedCheckTime}</time>
-          </div>
+          {isNearingExpiration ? (
+            <span
+              data-testid="staleness-warning-badge"
+              className="text-[11px] text-amber-500/80 font-medium whitespace-nowrap flex items-center gap-1"
+              title={`Last verified on dealer feed: ${lastChecked}`}
+            >
+              ⚠️ Last confirmed {hoursSinceCheck}h ago
+            </span>
+          ) : (
+            <div
+              className="flex items-center gap-1 text-[11px] text-zinc-400 font-mono shrink-0"
+              title={`Last verified on dealer feed: ${lastChecked}`}
+            >
+              <Clock className="h-3 w-3 text-zinc-500" aria-hidden="true" />
+              <time dateTime={lastChecked}>{formattedCheckTime}</time>
+            </div>
+          )}
         </div>
 
         {/* Title & Dealer Location */}

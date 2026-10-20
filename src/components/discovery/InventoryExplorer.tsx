@@ -15,7 +15,7 @@ import { InventoryGearCard } from './InventoryGearCard';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { getDealerCoordinates } from '@/config/dealers';
 import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
-import { Car, AlertCircle, Sparkles } from 'lucide-react';
+import { Car, AlertCircle } from 'lucide-react';
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   {
@@ -173,6 +173,28 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     exteriorColor: 'Guardian Gray',
     stockNumber: 'W10844',
   },
+  {
+    id: 'jp-corolla-stale-01',
+    make: 'Toyota',
+    model: 'Corolla',
+    trim: 'LE FWD',
+    modelYear: 2026,
+    vin: '2T1BURHE7TC998877',
+    isProvisionalVin: false,
+    dealerName: 'Jim Pattison Toyota Downtown',
+    dealerCity: 'Vancouver',
+    dealerProvince: 'BC',
+    status: 'No longer observed / stale',
+    lastChecked: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
+    vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=2T1BURHE7TC998877',
+    msrp: 26500,
+    sellingPrice: 26500,
+    mandatoryFees: null,
+    hasUnverifiedFees: true,
+    powertrain: 'Gas 2.0L 4-Cyl',
+    exteriorColor: 'Classic Silver',
+    stockNumber: 'STALE-99',
+  },
 ];
 
 /**
@@ -224,6 +246,7 @@ export function InventoryExplorer({
   }
 
   const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
+  const [currentTime] = useState(() => Date.now());
 
   // Sync state if initialListings changes (e.g. tests or SSR)
   useEffect(() => {
@@ -253,7 +276,7 @@ export function InventoryExplorer({
 
   const [filters, setFilters] = useState<FilterState>({
     model: queryModel || '',
-    status: '',
+    status: 'advertised',
     dealer: '',
     location: '',
     minPrice: '',
@@ -396,9 +419,29 @@ export function InventoryExplorer({
         }
       }
 
-      // Status facet
-      if (filters.status && item.status.toLowerCase() !== filters.status.toLowerCase()) {
-        return false;
+      // Status facet: Default state is "Active / Verified Live" ('advertised')
+      const statusFilter = (filters.status ?? 'advertised').toLowerCase().trim();
+      if (statusFilter === 'advertised' || statusFilter === 'active') {
+        const itemStatus = item.status.toLowerCase();
+        // Exclude stale, no longer observed, removed, quarantined, sold
+        if (
+          itemStatus.includes('stale') ||
+          itemStatus.includes('no longer') ||
+          itemStatus.includes('removed') ||
+          itemStatus.includes('quarantined') ||
+          itemStatus.includes('sold')
+        ) {
+          return false;
+        }
+        // Exclude anything older than 48 hours
+        const checkTime = new Date(item.lastChecked).getTime();
+        if (!isNaN(checkTime) && currentTime - checkTime > 48 * 3600 * 1000) {
+          return false;
+        }
+      } else if (statusFilter !== 'all' && statusFilter !== '') {
+        if (item.status.toLowerCase() !== filters.status.toLowerCase()) {
+          return false;
+        }
       }
 
       // Explicit Dealer facet (if separate from location preset)
@@ -454,7 +497,7 @@ export function InventoryExplorer({
     }
 
     return filtered;
-  }, [listings, filters, userCoordinates]);
+  }, [listings, filters, userCoordinates, currentTime]);
 
   const [fetchedGearCounts, setFetchedGearCounts] = useState<Record<string, number>>({});
 
