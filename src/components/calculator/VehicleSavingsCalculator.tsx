@@ -9,7 +9,6 @@ import { DrivingInputsCard } from './DrivingInputsCard';
 import { CurrentVehicleCard } from './CurrentVehicleCard';
 import { TargetVehicleCard } from './TargetVehicleCard';
 import { EnergyResultsCard } from './EnergyResultsCard';
-import { WaitOpportunityCard } from './WaitOpportunityCard';
 import { PurchaseOutlayCard } from './PurchaseOutlayCard';
 import { PaybackSummaryCard } from './PaybackSummaryCard';
 import { PaybackChart } from './PaybackChart';
@@ -35,7 +34,6 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
     mode3Outlay,
     setMode3Outlay,
     waitDays,
-    setWaitDays,
     unitSystem,
     setUnitSystem,
     resetToDefaults,
@@ -117,7 +115,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
 
       {/* Main 2-Column Desktop Grid (Left: Visuals & Projections, Right: Inputs) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-        {/* Left Column (7 cols): Interactive Graph on top, Projections & Wait Opportunity underneath */}
+        {/* Left Column (7 cols): Interactive Graph on top, Annual Projections underneath */}
         <div className="lg:col-span-7 flex flex-col gap-4">
           {results.timelineResult ? (
             <PaybackChart
@@ -152,27 +150,6 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               waitDays={waitDays}
             />
           )}
-
-          {/* Wait Opportunity Card placed directly beneath energy results */}
-          <WaitOpportunityCard
-            annualCostCurrent={results.currentAnnualCost}
-            annualCostTarget={results.targetAnnualCost}
-            initialWaitDays={waitDays}
-            onWaitDaysChange={setWaitDays}
-            targetModelSlug={
-              targetVehicle.presetId.includes('rav4')
-                ? 'rav4'
-                : targetVehicle.presetId.includes('prius')
-                ? 'prius'
-                : targetVehicle.presetId.includes('camry')
-                ? 'camry'
-                : targetVehicle.presetId.includes('sienna')
-                ? 'sienna'
-                : 'rav4'
-            }
-            targetPowertrain={targetVehicle.powertrain.toLowerCase()}
-            province="BC"
-          />
         </div>
 
         {/* Right Column (5 cols): User inputs stacked cleanly (Target Toyota -> Current Baseline -> Driving Inputs) */}

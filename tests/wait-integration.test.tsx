@@ -389,7 +389,7 @@ describe('Stage 3: Wait Integration & Section 6 Evidence Contract', () => {
   });
 
   describe('6. VehicleSavingsCalculator Integration', () => {
-    it('places WaitOpportunityCard directly beneath energy results and does not block on network failure', async () => {
+    it('omits WaitOpportunityCard from the primary view and renders energy results without network', async () => {
       // Simulate network failure
       const originalFetch = window.fetch;
       window.fetch = vi.fn().mockRejectedValue(new Error('Network offline'));
@@ -401,13 +401,11 @@ describe('Stage 3: Wait Integration & Section 6 Evidence Contract', () => {
       // Core energy results remain fully rendered and interactive
       expect(screen.getByText('Energy-Cost Savings')).toBeInTheDocument();
 
-      // Wait opportunity card is present directly below
+      // Wait opportunity card and its wait-days slider are no longer on the primary view
       expect(
-        screen.getByText('Estimated Extra Energy Cost While Waiting')
-      ).toBeInTheDocument();
-
-      // Manual controls work normally
-      expect(screen.getByLabelText(/Delivery wait time in days/i)).toBeInTheDocument();
+        screen.queryByText('Estimated Extra Energy Cost While Waiting')
+      ).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(/Delivery wait time in days/i)).not.toBeInTheDocument();
 
       window.fetch = originalFetch;
     });

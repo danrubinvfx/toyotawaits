@@ -277,7 +277,7 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
       expect(screen.queryByLabelText(/Electric driving share slider/i)).not.toBeInTheDocument();
     });
 
-    it('supports direct selection via estimator-style vehicle pills', () => {
+    it('supports direct selection via vehicle pulldown menu', () => {
       const mockChange = vi.fn();
       render(
         <TargetVehicleCard
@@ -286,13 +286,15 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
         />
       );
 
-      // Verify pill options are present
-      expect(screen.getByRole('tab', { name: 'RAV4' })).toBeInTheDocument();
-      expect(screen.getByRole('tab', { name: 'RAV4 PHEV' })).toBeInTheDocument();
-      expect(screen.getByRole('tab', { name: 'Crown Signia' })).toBeInTheDocument();
+      const select = screen.getByLabelText('Select Target Toyota');
+      expect(select.tagName).toBe('SELECT');
+      expect(screen.getByRole('option', { name: /RAV4 PHEV AWD/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /Grand Highlander Hybrid AWD/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /Crown Signia/i })).toBeInTheDocument();
+      expect(screen.queryByRole('tab')).not.toBeInTheDocument();
 
-      // Click RAV4 PHEV
-      fireEvent.click(screen.getByRole('tab', { name: 'RAV4 PHEV' }));
+      // Select RAV4 PHEV
+      fireEvent.change(select, { target: { value: '2026-toyota-rav4-phev' } });
       expect(mockChange).toHaveBeenCalledWith(
         expect.objectContaining({
           presetId: '2026-toyota-rav4-phev',
@@ -302,8 +304,8 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
         })
       );
 
-      // Click Crown Signia
-      fireEvent.click(screen.getByRole('tab', { name: 'Crown Signia' }));
+      // Select Crown Signia
+      fireEvent.change(select, { target: { value: '2025-toyota-crown-signia-hybrid' } });
       expect(mockChange).toHaveBeenCalledWith(
         expect.objectContaining({
           presetId: '2025-toyota-crown-signia-hybrid',
@@ -449,7 +451,9 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
 
       // Switch to PHEV to reveal electricity rate controls
       await act(async () => {
-        fireEvent.click(screen.getByRole('tab', { name: /PHEV/i }));
+        fireEvent.change(screen.getByLabelText('Select Target Toyota'), {
+          target: { value: '2026-toyota-rav4-phev' },
+        });
       });
 
       // Verify every number input has an accessible name

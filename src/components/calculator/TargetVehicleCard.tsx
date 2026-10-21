@@ -17,21 +17,32 @@ export interface TargetVehicleCardProps {
   className?: string;
 }
 
-interface TargetVehiclePill {
-  label: string;
+interface TargetVehicleOption {
   presetId: string;
   powertrain: 'HEV' | 'PHEV';
 }
 
-const VEHICLE_PILLS: TargetVehiclePill[] = [
-  { label: 'RAV4', presetId: '2026-toyota-rav4-hybrid', powertrain: 'HEV' },
-  { label: 'RAV4 PHEV', presetId: '2026-toyota-rav4-phev', powertrain: 'PHEV' },
-  { label: 'Camry', presetId: '2025-toyota-camry-hybrid', powertrain: 'HEV' },
-  { label: 'Prius', presetId: '2025-toyota-prius-hybrid', powertrain: 'HEV' },
-  { label: 'Sienna', presetId: '2025-toyota-sienna-hybrid', powertrain: 'HEV' },
-  { label: 'Grand Highlander', presetId: '2025-toyota-grand-highlander-hybrid', powertrain: 'HEV' },
-  { label: 'Crown Signia', presetId: '2025-toyota-crown-signia-hybrid', powertrain: 'HEV' },
+const VEHICLE_OPTIONS: TargetVehicleOption[] = [
+  { presetId: '2026-toyota-rav4-hybrid', powertrain: 'HEV' },
+  { presetId: '2026-toyota-rav4-phev', powertrain: 'PHEV' },
+  { presetId: '2025-toyota-camry-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-prius-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-sienna-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-grand-highlander-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-crown-signia-hybrid', powertrain: 'HEV' },
 ];
+
+/** Builds the dropdown label, e.g. "2026 Toyota RAV4 Hybrid AWD (5.8 L/100km / 40 MPG)". */
+function buildOptionLabel(option: TargetVehicleOption): string {
+  const preset = getVehiclePresetById(option.presetId);
+  if (!preset) return option.presetId;
+  const c = preset.consumption;
+  const spec =
+    option.powertrain === 'PHEV'
+      ? `${c.electricRangeKm} km EV / ${c.gasModeL100km} L/100km / ${c.mpge ?? c.combinedMpg} MPGe`
+      : `${c.combinedL100km} L/100km / ${c.combinedMpg} MPG`;
+  return `${preset.name} (${spec})`;
+}
 
 export function TargetVehicleCard({
   targetVehicle,
@@ -44,17 +55,19 @@ export function TargetVehicleCard({
 
   const isPhev = targetVehicle.powertrain === 'PHEV';
 
-  const handlePillSelect = (pill: TargetVehiclePill) => {
-    if (pill.powertrain === 'PHEV') {
+  const handleVehicleSelect = (presetId: string) => {
+    const option = VEHICLE_OPTIONS.find((o) => o.presetId === presetId);
+    if (!option) return;
+    if (option.powertrain === 'PHEV') {
       onChange({
-        presetId: pill.presetId,
+        presetId: option.presetId,
         powertrain: 'PHEV',
         hasChargingAccess: true,
         electricShare: 0.65,
       });
     } else {
       onChange({
-        presetId: pill.presetId,
+        presetId: option.presetId,
         powertrain: 'HEV',
       });
     }
@@ -112,37 +125,32 @@ export function TargetVehicleCard({
       </CardHeader>
 
       <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-2.5">
-        {/* Estimator-Style Horizontal Scrollable Vehicle Pill Bar */}
-        <div
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 touch-pan-x"
-          role="tablist"
-          aria-label="Toyota models"
-        >
-          {VEHICLE_PILLS.map((pill) => {
-            const isSelected = targetVehicle.presetId === pill.presetId;
-            return (
-              <button
-                key={pill.presetId}
-                type="button"
-                role="tab"
-                aria-selected={isSelected}
-                onClick={() => handlePillSelect(pill)}
-                className={`shrink-0 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap ${
-                  isSelected
-                    ? 'bg-red-600 text-white shadow-xs border border-red-600'
-                    : 'bg-zinc-100 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
-                }`}
-              >
-                {pill.label}
-              </button>
-            );
-          })}
+        {/* Vehicle Pulldown Selector */}
+        <div className="relative">
+          <label htmlFor="target-vehicle-select" className="sr-only">
+            Select Target Toyota
+          </label>
+          <select
+            id="target-vehicle-select"
+            value={targetVehicle.presetId}
+            onChange={(e) => handleVehicleSelect(e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-10 truncate"
+          >
+            {VEHICLE_OPTIONS.map((option) => (
+              <option key={option.presetId} value={option.presetId}>
+                {buildOptionLabel(option)}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400">
+            ▾
+          </div>
         </div>
 
-        {/* 3. Active Vehicle Rating & MSRP Summary Pill */}
+        {/* Compact Spec Summary Badge (consumption, EV range if PHEV, MSRP) */}
         <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 text-xs">
-          <span className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
-            {selectedPreset.name}
+          <span className="font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide text-[10px]">
+            {isPhev ? 'Plug-in Hybrid' : 'Hybrid'}
           </span>
           <span className="font-mono text-zinc-600 dark:text-zinc-400 shrink-0 font-medium">
             {ratingSummary} • {msrpDisplay}
