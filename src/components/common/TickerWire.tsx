@@ -12,7 +12,7 @@ export interface TickerWireProps {
 
 const DEFAULT_BADGES: Record<TickerItemType, string> = {
   news: '[🗞️ UPDATE]',
-  inventory: '[🟢 LIVE LOT]',
+  inventory: 'LIVE LOT',
   delivery: '[📦 DELIVERED]',
   gear: '[⚡ GEAR PICK]',
 };
@@ -242,11 +242,17 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
         data-ticker-type={item.type}
         className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium"
       >
-        <span
-          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap ${badgeColorClass}`}
-        >
-          <span>{item.badge}</span>
-        </span>
+        {item.type === 'inventory' ? (
+          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            {item.badge}
+          </span>
+        ) : (
+          <span
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border whitespace-nowrap ${badgeColorClass}`}
+          >
+            <span>{item.badge}</span>
+          </span>
+        )}
         {item.linkUrl ? (
           <a
             href={item.linkUrl}

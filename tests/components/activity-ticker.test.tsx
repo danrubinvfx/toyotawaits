@@ -119,9 +119,9 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
     {
       id: 'inv-1',
       type: 'inventory',
-      badge: '[🟢 LIVE LOT]',
+      badge: 'LIVE LOT',
       badgeColor: TICKER_BADGE_COLORS.inventory,
-      text: '2026 RAV4 Hybrid XSE Technology Package AWD (Wind Chill Pearl / Black Roof) observed at Jim Pattison Toyota Downtown (Vancouver)',
+      text: '2026 RAV4 HEV XSE • JP Toyota Downtown (Vancouver)',
       linkUrl: '/inventory?q=JTDACAAJ0T3038212',
       isExternal: false,
     },
@@ -161,13 +161,13 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
 
     // Verify all 4 stream badges render
     expect(screen.getAllByText('[🗞️ UPDATE]').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('[🟢 LIVE LOT]').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('LIVE LOT').length).toBeGreaterThan(0);
     expect(screen.getAllByText('[📦 DELIVERED]').length).toBeGreaterThan(0);
     expect(screen.getAllByText('[⚡ GEAR PICK]').length).toBeGreaterThan(0);
 
     // Verify inventory link points to /inventory?q={vin}
     const inventoryLinks = screen.getAllByRole('link', {
-      name: /2026 RAV4 Hybrid XSE Technology Package AWD/i,
+      name: /2026 RAV4 HEV XSE/i,
     });
     expect(inventoryLinks[0]).toHaveAttribute('href', '/inventory?q=JTDACAAJ0T3038212');
 

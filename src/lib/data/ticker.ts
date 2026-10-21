@@ -149,39 +149,182 @@ function matchesTargetInventoryModel(modelName?: string | null): boolean {
   return TARGET_INVENTORY_MODELS.some((target) => normalized.includes(target));
 }
 
-function isTransitStatus(status?: string | null): boolean {
-  const normalized = String(status ?? '').toLowerCase();
-  return (
-    normalized.includes('transit') ||
-    normalized.includes('incoming') ||
-    normalized.includes('allocated') ||
-    normalized.includes('pipeline')
-  );
-}
-
 function isStaleListing(status?: string | null): boolean {
   const normalized = String(status ?? '').toLowerCase();
   return normalized.includes('stale') || normalized.includes('no longer observed') || normalized.includes('sold');
 }
 
+const KNOWN_DEALER_SHORT_NAMES: Record<string, string> = {
+  'jim pattison toyota downtown': 'JP Toyota Downtown',
+  'jim pattison toyota surrey': 'JP Toyota Surrey',
+  'jim pattison toyota northshore': 'JP Toyota North Shore',
+  'jim pattison toyota north shore': 'JP Toyota North Shore',
+  'jim pattison toyota victoria': 'JP Toyota Victoria',
+  'jim pattison toyota duncan': 'JP Toyota Duncan',
+  'openroad toyota richmond': 'OpenRoad Toyota',
+  'openroad toyota port moody': 'OpenRoad Toyota',
+  'destination toyota burnaby': 'Destination Toyota',
+  'granville toyota vancouver': 'Granville Toyota',
+  'langley toyota': 'Langley Toyota',
+  'peace arch toyota': 'Peace Arch Toyota',
+  'west coast toyota': 'West Coast Toyota',
+  'regency toyota': 'Regency Toyota',
+  'regency toyota vancouver': 'Regency Toyota',
+  'sunrise toyota': 'Sunrise Toyota',
+  'sunrise toyota abbotsford': 'Sunrise Toyota',
+  'valley toyota': 'Valley Toyota',
+  'valley toyota chilliwack': 'Valley Toyota',
+  'squamish toyota': 'Squamish Toyota',
+  'westminster toyota': 'Westminster Toyota',
+};
+
+export function normalizeLiveLotModelAndTrim(
+  rawModel?: string | null,
+  rawTrim?: string | null
+): { model: string; trim: string } {
+  let model = String(rawModel ?? 'RAV4')
+    .trim()
+    .replace(/^Toyota\s+/i, '')
+    .replace(/\s*\([^)]*\)/g, '')
+    .trim();
+
+  if (!model) model = 'RAV4';
+
+  // Normalize Plug-In Hybrid / Prime -> PHEV
+  model = model
+    .replace(/\bPlug-?In\s+Hybrid\b/gi, 'PHEV')
+    .replace(/\b(Prius|RAV4)\s+Prime\b/gi, '$1 PHEV');
+
+  let trim = String(rawTrim ?? '')
+    .trim()
+    .replace(/\s*\([^)]*\)/g, '')
+    .replace(/\s*[-–•]?\s*\$[\d,]+.*$/i, '')
+    .replace(/\bwith\s+.*rebate.*$/i, '')
+    .replace(/\brebate.*$/i, '')
+    .trim();
+
+  // Strip duplicate model prefix from trim if present
+  const baseModelName = model.replace(/\b(PHEV|HEV|Hybrid)\b/gi, '').trim();
+  if (baseModelName && trim.toLowerCase().startsWith(baseModelName.toLowerCase())) {
+    trim = trim.slice(baseModelName.length).trim();
+  }
+
+  // Extract PHEV / Hybrid hints from trim before simplifying
+  if (/\bPlug-?In\s+Hybrid\b/i.test(trim)) {
+    if (!/\bPHEV\b/i.test(model)) {
+      model = `${baseModelName} PHEV`.trim();
+    }
+    trim = trim.replace(/\bPlug-?In\s+Hybrid\b/gi, '').trim();
+  }
+
+  // Normalize "Limited MAX" / "Hybrid MAX" -> "Max"
+  if (/\b(?:Limited\s+|Hybrid\s+)?MAX\b/i.test(trim)) {
+    trim = 'Max';
+  } else {
+    // Strip verbose package / cab / drivetrain descriptors when core trim exists
+    const stripped = trim
+      .replace(/\b(Technology|Upgrade|Standard|Convenience|Weather|Premium|Audio)\s+Package\b/gi, '')
+      .replace(/\b[78]-Passenger\b/gi, '')
+      .replace(/\b(Double\s+Cab|CrewMax|Access\s+Cab|Long\s+Bed|Short\s+Bed)\b/gi, '')
+      .replace(/\b(4x4|4WD|AWD|FWD|2WD)\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (stripped.length > 0) {
+      trim = stripped;
+    }
+  }
+
+  if (!trim) {
+    trim = 'AWD';
+  }
+
+  // Abbreviate "Hybrid" -> "HEV" or omit if trim/model implies it
+  if (/\bHybrid\b/i.test(model)) {
+    const trimImpliesHybrid =
+      /\b(Max|PHEV|HEV|Hybrid)\b/i.test(trim) ||
+      /\b(Crown\s+Signia|Sienna|Prius|Camry)\b/i.test(model);
+
+    if (trimImpliesHybrid) {
+      model = model.replace(/\s*\bHybrid\b/gi, '').trim();
+    } else {
+      model = model.replace(/\bHybrid\b/gi, 'HEV').trim();
+    }
+  }
+
+  // Deduplicate PHEV/HEV if present in both model and trim
+  if (/\bPHEV\b/i.test(model)) {
+    trim = trim.replace(/\bPHEV\b/gi, '').trim() || trim;
+  }
+  if (/\bHEV\b/i.test(model)) {
+    trim = trim.replace(/\b(HEV|Hybrid)\b/gi, '').trim() || trim;
+  }
+
+  return {
+    model: model.replace(/\s+/g, ' ').trim(),
+    trim: trim.replace(/\s+/g, ' ').trim(),
+  };
+}
+
+export function normalizeLiveLotDealer(
+  rawDealer?: string | null,
+  rawCity?: string | null
+): string {
+  const original = String(rawDealer ?? 'Toyota Dealer').trim() || 'Toyota Dealer';
+  const city = String(rawCity ?? '').trim();
+  const lower = original.toLowerCase();
+
+  if (KNOWN_DEALER_SHORT_NAMES[lower]) {
+    return KNOWN_DEALER_SHORT_NAMES[lower];
+  }
+
+  let concise = original.replace(/\bJim\s+Pattison\b/gi, 'JP');
+
+  if (city && concise.toLowerCase().endsWith(` ${city.toLowerCase()}`)) {
+    const withoutCity = concise.slice(0, concise.length - city.length).trim();
+    if (withoutCity.length > 0) {
+      concise = withoutCity;
+    }
+  }
+
+  if (original.length > 40 || concise.length > 40) {
+    concise = concise.replace(/\bToyota\b/gi, '').replace(/\s+/g, ' ').trim() || concise;
+  }
+
+  return concise.replace(/\s+/g, ' ').trim();
+}
+
+export function formatLiveLotDescriptor(listing: Record<string, any>): string {
+  const year = listing?.year ?? listing?.model_year ?? 2026;
+  const { model, trim } = normalizeLiveLotModelAndTrim(listing?.model, listing?.trim);
+  const dealerCity = String(listing?.dealer_city ?? 'BC').trim() || 'BC';
+  let dealerName = normalizeLiveLotDealer(listing?.dealer_name, dealerCity);
+
+  const vehiclePart = `${year} ${model}${trim ? ` ${trim}` : ''}`.trim();
+  const candidate = `${vehiclePart} • ${dealerName} (${dealerCity})`;
+
+  if (candidate.length > 68 && /\bToyota\b/i.test(dealerName) && dealerName.toLowerCase() !== 'toyota dealer') {
+    const shorterDealer = dealerName.replace(/\bToyota\b/gi, '').replace(/\s+/g, ' ').trim();
+    if (shorterDealer.length > 0) {
+      dealerName = shorterDealer;
+    }
+  }
+
+  return `${vehiclePart} • ${dealerName} (${dealerCity})`;
+}
+
 function formatInventoryRowToTickerItem(listing: Record<string, any>, idx: number): TickerItem | null {
   if (!listing || typeof listing !== 'object') return null;
 
-  const year = listing?.year ?? listing?.model_year ?? 2026;
   const model = String(listing?.model ?? 'RAV4').trim() || 'RAV4';
-  const trim = String(listing?.trim ?? 'AWD').trim() || 'AWD';
-  const color = String(listing?.exterior_color ?? 'Standard').trim() || 'Standard';
-  const dealerName = String(listing?.dealer_name ?? 'Toyota Dealer').trim() || 'Toyota Dealer';
-  const dealerCity = String(listing?.dealer_city ?? 'BC').trim() || 'BC';
   const vin = String(listing?.vin ?? listing?.provisional_id ?? listing?.stock_number ?? model).trim() || model;
-  const inTransit = isTransitStatus(listing?.status);
 
   return {
     id: `inv-${listing?.id ?? idx}`,
     type: 'inventory',
-    badge: inTransit ? '[🚢 IN TRANSIT]' : '[🟢 LIVE LOT]',
+    badge: 'LIVE LOT',
     badgeColor: TICKER_BADGE_COLORS.inventory,
-    text: `${year} ${model} ${trim} (${color}) observed at ${dealerName} (${dealerCity})`,
+    text: formatLiveLotDescriptor(listing),
     linkUrl: `/inventory?q=${encodeURIComponent(vin)}`,
     isExternal: false,
   };

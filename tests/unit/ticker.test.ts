@@ -13,6 +13,7 @@ import {
   getGearTickerItems,
   interleaveTickerStreams,
   getAggregatedTickerItems,
+  formatLiveLotDescriptor,
 } from '@/lib/data/ticker';
 import { TICKER_BADGE_COLORS } from '@/types/ticker';
 import { NewsTickerItem, DeliveryTickerItem } from '@/lib/types/contracts';
@@ -115,14 +116,60 @@ describe('Ticker Data Fetcher & 4-Stream Aggregator', () => {
     }
   });
 
+  it('normalizes live lot descriptors into concise vehicle and dealer strings', () => {
+    expect(
+      formatLiveLotDescriptor({
+        year: 2026,
+        model: 'Toyota RAV4 Plug-In Hybrid',
+        trim: 'SE',
+        exterior_color: 'Wind Chill Pearl',
+        dealer_name: 'West Coast Toyota',
+        dealer_city: 'Pitt Meadows',
+      })
+    ).toBe('2026 RAV4 PHEV SE • West Coast Toyota (Pitt Meadows)');
+
+    expect(
+      formatLiveLotDescriptor({
+        year: 2026,
+        model: 'Crown Signia',
+        trim: 'Limited',
+        exterior_color: 'Storm Cloud',
+        dealer_name: 'Jim Pattison Toyota Downtown',
+        dealer_city: 'Vancouver',
+      })
+    ).toBe('2026 Crown Signia Limited • JP Toyota Downtown (Vancouver)');
+
+    expect(
+      formatLiveLotDescriptor({
+        year: 2027,
+        model: 'Prius Plug-In Hybrid',
+        trim: 'XSE',
+        exterior_color: 'Guardian Gray',
+        dealer_name: 'Regency Toyota',
+        dealer_city: 'Vancouver',
+      })
+    ).toBe('2027 Prius PHEV XSE • Regency Toyota (Vancouver)');
+
+    expect(
+      formatLiveLotDescriptor({
+        year: 2026,
+        model: 'Grand Highlander Hybrid',
+        trim: 'Limited MAX AWD',
+        exterior_color: 'Storm Cloud',
+        dealer_name: 'OpenRoad Toyota Richmond',
+        dealer_city: 'Richmond',
+      })
+    ).toBe('2026 Grand Highlander Max • OpenRoad Toyota (Richmond)');
+  });
+
   it('formats all 4 ticker streams (news, inventory, delivery, gear) with exact badges, colors, and URLs', async () => {
     const inventoryItems = await getInventoryTickerItems(5);
     expect(inventoryItems.length).toBe(5);
     for (const item of inventoryItems) {
       expect(item.type).toBe('inventory');
-      expect(['[🟢 LIVE LOT]', '[🚢 IN TRANSIT]']).toContain(item.badge);
+      expect(item.badge).toBe('LIVE LOT');
       expect(item.badgeColor).toBe(TICKER_BADGE_COLORS.inventory);
-      expect(item.text).toMatch(/observed at .+ \(.+\)/);
+      expect(item.text).toMatch(/^\d{4}\s+.+\s+•\s+.+\s+\(.+\)$/);
       expect(item.linkUrl).toMatch(/^\/inventory\?q=/);
     }
 
