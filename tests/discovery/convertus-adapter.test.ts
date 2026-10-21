@@ -502,5 +502,48 @@ describe('Convertus Ingestion Adapter', () => {
       expect(res.imageUrl).toBe('https://media.toyota.ca/vehicles/rav4.jpg');
       expect(res.hasRealPhoto).toBe(true);
     });
+
+    it('extracts primary image from raw.images array of objects with url or src', () => {
+      const item = {
+        images: [
+          { url: 'https://media.assets.convertus.rocks/vehicles/tacoma-1.jpg' },
+          { src: 'https://media.assets.convertus.rocks/vehicles/tacoma-2.jpg' },
+        ],
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBe('https://media.assets.convertus.rocks/vehicles/tacoma-1.jpg');
+      expect(res.hasRealPhoto).toBe(true);
+      expect(res.imageSource).toBe('feed');
+    });
+
+    it('extracts primary image from raw.thumbnail and raw.media_urls', () => {
+      const itemThumbnail = {
+        thumbnail: 'https://www.westcoasttoyota.com/media/thumb.jpg',
+      };
+      const resThumbnail = extractPrimaryImage(itemThumbnail);
+      expect(resThumbnail.imageUrl).toBe('https://www.westcoasttoyota.com/media/thumb.jpg');
+      expect(resThumbnail.hasRealPhoto).toBe(true);
+
+      const itemMedia = {
+        media_urls: ['https://pictures.dealerprocess.com/inventory/sienna.jpg'],
+      };
+      const resMedia = extractPrimaryImage(itemMedia);
+      expect(resMedia.imageUrl).toBe('https://pictures.dealerprocess.com/inventory/sienna.jpg');
+      expect(resMedia.hasRealPhoto).toBe(true);
+    });
+
+    it('resolves relative URLs using dealer base domain', () => {
+      const item = {
+        images: ['/wp-content/uploads/2026/02/crown-signia.jpg'],
+      };
+      const res = extractPrimaryImage(item, {
+        dealerBaseUrl: 'https://www.westcoasttoyota.com',
+      });
+      expect(res.imageUrl).toBe(
+        'https://www.westcoasttoyota.com/wp-content/uploads/2026/02/crown-signia.jpg'
+      );
+      expect(res.hasRealPhoto).toBe(true);
+      expect(res.imageSource).toBe('feed');
+    });
   });
 });
