@@ -190,7 +190,7 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Plug-in Hybrid 2.0L 4-Cyl',
     exteriorColor: 'Guardian Gray',
     stockNumber: 'W10844',
-    imageUrl: 'https://pictures.dealerprocess.ca/inventory/2026-prius-prime-se.jpg',
+    imageUrl: 'https://prod.pictures.autoscout24.net/listing-images/3802a880-08d5-4298-8edd-d837c0798a09_e6ef2092-9b54-4a0b-80e4-bf25b0858e1c.jpg/1024x786.webp',
     hasRealPhoto: true,
     imageSource: 'dealer_feed',
   },
