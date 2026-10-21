@@ -13,11 +13,11 @@ export interface InventoryGearCardProps {
 
 const BENEFIT_HOOK_MAP: Record<string, string> = {
   'all-weather-floor-liners':
-    'Complete front, rear & trunk spill protection tailored for Canadian winters.',
+    'Laser-fit floor & trunk spill protection for Canadian winters',
   '4k-front-rear-dash-cam':
-    'OEM-fit 4K dual recording with stealth plug-and-play harness.',
+    'OEM-integrated rearview mirror power tap with zero visible wiring',
   'infotainment-screen-protector':
-    'Anti-glare 9H tempered glass to stop fingerprints & micro-scratches.',
+    '9H tempered glass to reduce fingerprint smudges & glare',
   'rfid-faraday-key-fob-pouch':
     'Stops keyless relay theft signals right out of the showroom.',
   'ceramic-interior-leather-protection':
@@ -25,7 +25,7 @@ const BENEFIT_HOOK_MAP: Record<string, string> = {
   'fast-usbc-pd-car-charger':
     'Dual 65W fast charging for phones, tablets & laptops on the go.',
   'center-console-organizer-tray':
-    'Custom dual-tier drop-in tray to organize everyday cabin clutter.',
+    'Drop-in dual tray with OEM-style USB-C fast charging',
 };
 
 export function InventoryGearCard({
@@ -44,14 +44,12 @@ export function InventoryGearCard({
       {/* 1. Clear Header Row: Category/Model Badge + Price */}
       <div className="flex items-center justify-between gap-2 border-b border-zinc-800/60 pb-1.5">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-[11px] font-bold tracking-wide uppercase text-amber-400 flex items-center gap-1 truncate">
-            <span>⚡</span>
-            <span>
-              {modelContext
-                ? `DELIVERY ESSENTIAL • ${modelContext.toUpperCase()}`
-                : 'DELIVERY ESSENTIAL'}
+          <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">GEAR PICK</span>
+          {modelContext && (
+            <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400 truncate">
+              {modelContext}
             </span>
-          </span>
+          )}
           {item.badge && item.badge.toLowerCase() !== 'essential' && (
             <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 text-[10px] font-semibold border border-amber-500/25 shrink-0">
               {item.badge}
@@ -68,10 +66,10 @@ export function InventoryGearCard({
       <div className="flex items-center justify-between gap-3 pt-0.5">
         {/* Left Column: Product Identity & Description */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-bold text-white leading-tight break-words line-clamp-2">
+          <h4 className="text-sm font-semibold text-white tracking-tight truncate">
             {item.title}
           </h4>
-          <p className="text-xs text-neutral-400 leading-snug line-clamp-1 mt-0.5">
+          <p className="text-xs text-neutral-400 line-clamp-1">
             {benefitSubline}
           </p>
         </div>

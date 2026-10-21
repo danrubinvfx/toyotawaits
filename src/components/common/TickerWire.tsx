@@ -63,6 +63,7 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
       type,
       badge: raw.badge || DEFAULT_BADGES[type],
       badgeColor: resolveBadgeColor(raw.badgeColor, type),
+      title: typeof raw.title === 'string' && raw.title.trim().length > 0 ? raw.title.trim() : undefined,
       text: raw.text,
       linkUrl: raw.linkUrl || '/',
       isExternal,
@@ -221,6 +222,19 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
     if (!item || typeof item !== 'object') return null;
     const key = `${prefix}-${item.id || ''}`;
     const badgeColorClass = resolveBadgeColor(item.badgeColor, item.type);
+    const hasDistinctTitle = Boolean(item.title && !item.text.includes(item.title));
+
+    const itemContent = hasDistinctTitle ? (
+      <>
+        <span className="font-semibold text-white">{item.title}</span>
+        <span className="text-zinc-500 mx-1" aria-hidden="true">
+          —
+        </span>
+        <span className="text-zinc-300">{item.text}</span>
+      </>
+    ) : (
+      <span>{item.text}</span>
+    );
 
     return (
       <div
@@ -241,11 +255,11 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
             onClick={() => handleItemClick(item)}
             className="text-zinc-200 hover:text-white hover:underline transition-colors whitespace-nowrap inline-flex items-center gap-1 cursor-pointer"
           >
-            <span>{item.text}</span>
+            {itemContent}
             {item.isExternal && <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />}
           </a>
         ) : (
-          <span className="text-zinc-200 whitespace-nowrap">{item.text}</span>
+          <span className="text-zinc-200 whitespace-nowrap">{itemContent}</span>
         )}
       </div>
     );

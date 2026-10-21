@@ -22,7 +22,8 @@ export const DEFAULT_STATIC_TICKER_ITEMS: TickerItem[] = [
     type: 'gear',
     badge: '[⚡ GEAR PICK]',
     badgeColor: TICKER_BADGE_COLORS.gear,
-    text: 'Custom-fit all-weather rubber floor liners & trunk mats for Canadian winter',
+    title: 'TPE All-Weather Floor & Cargo Liners',
+    text: 'Laser-fit floor & trunk spill protection for Canadian winters',
     linkUrl:
       'https://www.amazon.ca/s?k=Toyota+custom+fit+all+weather+rubber+floor+liners+trunk+mat+TPE&tag=toyotawaits-20',
     isExternal: true,
@@ -394,7 +395,7 @@ export async function getNewsTickerItems(limit = 3): Promise<TickerItem[]> {
  * 4. Essential Gear Highlights Stream:
  * Pulls 2-3 top-performing seasonal essentials from `src/config/gear.ts`.
  */
-export function getGearTickerItems(limit = 3): TickerItem[] {
+export function getGearTickerItems(limit = 4): TickerItem[] {
   const effectiveLimit = Math.max(1, Math.min(limit, 10));
   try {
     const picks = Array.isArray(SEASONAL_TICKER_GEAR_PICKS) ? SEASONAL_TICKER_GEAR_PICKS : [];
@@ -407,7 +408,8 @@ export function getGearTickerItems(limit = 3): TickerItem[] {
           type: 'gear',
           badge: pick?.badge || '[⚡ GEAR PICK]',
           badgeColor: TICKER_BADGE_COLORS.gear,
-          text: String(pick?.text ?? 'Custom-fit all-weather rubber floor liners & trunk spill mats'),
+          title: pick?.title ? String(pick.title) : 'TPE All-Weather Floor & Cargo Liners',
+          text: String(pick?.text ?? 'Laser-fit floor & trunk spill protection for Canadian winters'),
           linkUrl: String(pick?.linkUrl ?? 'https://www.amazon.ca/s?k=Toyota+accessories&tag=toyotawaits-20'),
           isExternal: true,
           accessoryId: pick?.accessoryId,
@@ -564,7 +566,7 @@ export async function getAggregatedTickerItems(
     const news = Array.isArray(newsData) ? newsData.filter(Boolean) : [];
     const inventory = Array.isArray(inventoryData) ? inventoryData.filter(Boolean) : [];
     const delivery = Array.isArray(deliveryData) ? deliveryData.filter(Boolean) : [];
-    const gear = getGearTickerItems(3).filter(Boolean);
+    const gear = getGearTickerItems(4).filter(Boolean);
 
     const interleaved = interleaveTickerStreams(
       {

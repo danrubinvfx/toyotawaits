@@ -782,15 +782,15 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(gearCards.length).toBe(3);
 
       // Strip 1 gets Rank 1: Infotainment Screen Protector with '🔥 Most Popular'
-      expect(gearCards[0]).toHaveTextContent('9H Tempered Glass Infotainment Screen Protector');
+      expect(gearCards[0]).toHaveTextContent('Anti-Glare Screen Protector (10.5" / 12.3")');
       expect(gearCards[0]).toHaveTextContent('🔥 Most Popular');
 
       // Strip 2 gets Rank 2: Center Console Organizer Tray with 'Community Top Pick'
-      expect(gearCards[1]).toHaveTextContent('Drop-In Center Console Divider & Organizer Tray');
+      expect(gearCards[1]).toHaveTextContent('Center Console Organizer & Fast Charger');
       expect(gearCards[1]).toHaveTextContent('Community Top Pick');
 
       // Strip 3 gets Rank 3: 4K Dash Cam
-      expect(gearCards[2]).toHaveTextContent('Front & Rear 4K Dash Cam with Parking Surveillance');
+      expect(gearCards[2]).toHaveTextContent('Plug-and-Play FitcamX 4K Dash Cam');
     });
 
     it('updates gear card model context when model filter is selected', () => {
@@ -804,7 +804,8 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       // Filtered to RAV4 listings
       const gearCard = screen.queryByTestId('inventory-gear-card');
       if (gearCard) {
-        expect(screen.getByText(/DELIVERY ESSENTIAL • RAV4 HYBRID/i)).toBeInTheDocument();
+        expect(gearCard).toHaveTextContent(/GEAR PICK/i);
+        expect(gearCard).toHaveTextContent(/RAV4 Hybrid/i);
       }
     });
 
@@ -961,9 +962,9 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
   describe('InventoryGearCard Unit Tests', () => {
     const sampleAccessory = {
       id: 'all-weather-floor-liners',
-      title: 'Custom-Fit All-Weather Floor Liners & Cargo Mat',
+      title: 'TPE All-Weather Floor & Cargo Liners',
       category: 'protection' as const,
-      description: 'High-wall laser-measured TPE rubber floor liners.',
+      description: 'Laser-fit floor & trunk spill protection for Canadian winters',
       estimatedPriceCad: '$120 – $189 CAD',
       url: 'https://www.amazon.ca/s?k=Toyota+floor+mats&tag=toyotawaits-20',
       applicableModels: ['RAV4', 'universal'],
@@ -977,13 +978,16 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(screen.getByTestId('inventory-gear-card')).toBeInTheDocument();
       expect(
-        screen.getByText('Custom-Fit All-Weather Floor Liners & Cargo Mat')
+        screen.getByText('TPE All-Weather Floor & Cargo Liners')
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/DELIVERY ESSENTIAL • RAV4 HYBRID/i)
+        screen.getByText('GEAR PICK')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Complete front, rear & trunk spill protection tailored for Canadian winters.')
+        screen.getByText('RAV4 Hybrid')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Laser-fit floor & trunk spill protection for Canadian winters')
       ).toBeInTheDocument();
       expect(screen.getAllByText('$120 – $189 CAD').length).toBeGreaterThan(0);
       expect(screen.getByText('Verified Amazon affiliate link')).toBeInTheDocument();
@@ -1003,7 +1007,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       render(<InventoryGearCard item={sampleAccessory} />);
 
       expect(
-        screen.getByText(/DELIVERY ESSENTIAL/i)
+        screen.getByText('GEAR PICK')
       ).toBeInTheDocument();
       expect(screen.queryByText(/UNIVERSAL/i)).not.toBeInTheDocument();
     });

@@ -5,6 +5,7 @@ export interface TickerItem {
   type: TickerItemType;
   badge: string;
   badgeColor: string; // Tailwind color classes for bg/border/text
+  title?: string;
   text: string;
   linkUrl: string;
   isExternal?: boolean;

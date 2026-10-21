@@ -121,7 +121,7 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       );
 
       const titles = container.querySelectorAll('h5');
-      expect(titles[0]).toHaveTextContent('9H Tempered Glass Infotainment Screen Protector');
+      expect(titles[0]).toHaveTextContent('Anti-Glare Screen Protector (10.5" / 12.3")');
       expect(titles[1]).toHaveTextContent('Heavy-Duty RFID Faraday Key Fob Signal Blocker');
 
       expect(screen.getByText('🔥 Most Popular')).toBeInTheDocument();
