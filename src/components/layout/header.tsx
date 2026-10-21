@@ -49,10 +49,38 @@ export function Header({ initialRegion }: HeaderProps = {}) {
   };
   const isUs = market === 'US';
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [desktopModsOpen, setDesktopModsOpen] = useState(false);
-  const [desktopGearOpen, setDesktopGearOpen] = useState(false);
+  const [desktopGuidesOpen, setDesktopGuidesOpen] = useState(false);
+  const [desktopToolsOpen, setDesktopToolsOpen] = useState(false);
+  const guidesDropdownRef = React.useRef<HTMLDivElement>(null);
+  const toolsDropdownRef = React.useRef<HTMLDivElement>(null);
   const [submission, setSubmission] = useState<HeaderSubmission | null>(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (guidesDropdownRef.current && !guidesDropdownRef.current.contains(target)) {
+        setDesktopGuidesOpen(false);
+      }
+      if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(target)) {
+        setDesktopToolsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setDesktopGuidesOpen(false);
+        setDesktopToolsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     const loadSubmission = () => {
@@ -152,225 +180,211 @@ export function Header({ initialRegion }: HeaderProps = {}) {
             className="hover:text-amber-500 transition-colors flex items-center gap-1.5"
           >
             <Clock className="h-4 w-4 text-zinc-400" />
-            Wait Estimator
+            <span>Estimator</span>
           </Link>
 
-          <Link
-            href="/#community-log"
-            onClick={(e) => handleAnchorClick(e, 'community-log')}
-            className="hover:text-amber-500 transition-colors flex items-center gap-1.5"
-          >
-            <BarChart3 className="h-4 w-4 text-zinc-400" />
-            Analytics
-          </Link>
-
-          {/* Winter Prep Desktop Link */}
-          <Link
-            href="/winter-prep"
-            className={cn(
-              'hover:text-cyan-400 transition-colors flex items-center gap-1.5 py-1',
-              pathname === '/winter-prep'
-                ? 'text-cyan-400 font-bold'
-                : 'text-zinc-600 dark:text-zinc-300'
-            )}
-          >
-            <Snowflake className="h-4 w-4 text-cyan-400" />
-            <span>Winter Prep ❄️</span>
-          </Link>
-
-          {/* Tire Guide Desktop Link */}
-          <Link
-            href="/tires"
-            className={cn(
-              'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1',
-              pathname === '/tires'
-                ? 'text-amber-500 font-bold'
-                : 'text-zinc-600 dark:text-zinc-300'
-            )}
-          >
-            <Disc3 className="h-4 w-4 text-zinc-400" />
-            <span>Tires 🛞</span>
-          </Link>
-
-          {/* Pickup Checklist Desktop Link */}
-          <Link
-            href="/delivery-prep"
-            className={cn(
-              'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1',
-              pathname === '/delivery-prep'
-                ? 'text-amber-500 font-bold'
-                : 'text-zinc-600 dark:text-zinc-300'
-            )}
-          >
-            <ClipboardCheck className="h-4 w-4 text-zinc-400" />
-            Pickup Checklist
-          </Link>
-
-          {/* Desktop Mod Guides Dropdown */}
+          {/* Desktop Guides Dropdown */}
           <div
+            ref={guidesDropdownRef}
             className="relative"
-            onMouseEnter={() => setDesktopModsOpen(true)}
-            onMouseLeave={() => setDesktopModsOpen(false)}
+            onMouseEnter={() => setDesktopGuidesOpen(true)}
+            onMouseLeave={() => setDesktopGuidesOpen(false)}
           >
-            <Link
-              href="/guides"
-              className="hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1"
+            <button
+              type="button"
+              onClick={() => {
+                setDesktopGuidesOpen((prev) => !prev);
+                setDesktopToolsOpen(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setDesktopGuidesOpen((prev) => !prev);
+                  setDesktopToolsOpen(false);
+                }
+              }}
+              aria-expanded={desktopGuidesOpen}
+              aria-haspopup="true"
+              className={cn(
+                'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md px-1',
+                (pathname.startsWith('/guides') || pathname === '/winter-prep') && 'text-amber-500 font-semibold'
+              )}
             >
               <Wrench className="h-4 w-4 text-zinc-400" />
-              Mod Guides
-              <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
-            </Link>
-            {desktopModsOpen && (
-              <div className="absolute top-full left-0 w-72 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 shadow-xl z-50">
+              <span>Guides</span>
+              <ChevronDown className={cn('h-3.5 w-3.5 text-zinc-400 transition-transform duration-200', desktopGuidesOpen && 'rotate-180')} />
+            </button>
+
+            {desktopGuidesOpen && (
+              <div className="absolute top-full left-0 w-80 rounded-xl border border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                 <Link
-                  href="/guides/rav4-se-mods"
-                  onClick={() => setDesktopModsOpen(false)}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                  href="/guides"
+                  onClick={() => setDesktopGuidesOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
                 >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">RAV4 Prime: SE → XSE</p>
-                  <p className="text-[11px] text-zinc-500">Dash speakers, leather &amp; skip wait</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <Wrench className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Mod Guides</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">All model build and install guides</p>
+                    </div>
+                  </div>
                 </Link>
+
                 <Link
-                  href="/guides/sienna-mods"
-                  onClick={() => setDesktopModsOpen(false)}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                  href="/winter-prep"
+                  onClick={() => setDesktopGuidesOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
                 >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Sienna: Road-Trip Mods</p>
-                  <p className="text-[11px] text-zinc-500">Air Lift springs, bridge tray &amp; LEDs</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-cyan-500/10 text-cyan-400 shrink-0">
+                      <Snowflake className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Winter Prep ❄️</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Canadian winter setups &amp; rust prevention</p>
+                    </div>
+                  </div>
                 </Link>
+
                 <Link
-                  href="/guides/grand-highlander-mods"
-                  onClick={() => setDesktopModsOpen(false)}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                  href="/#gear"
+                  onClick={(e) => {
+                    setDesktopGuidesOpen(false);
+                    handleAnchorClick(e, 'gear');
+                  }}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
                 >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Grand Highlander Upgrades</p>
-                  <p className="text-[11px] text-zinc-500">Cargo lamps &amp; wireless charger mat</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <ShoppingBag className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Gear &amp; Accessories</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Floor liners, dash cams, utility gear</p>
+                    </div>
+                  </div>
                 </Link>
-                <Link
-                  href="/guides/land-cruiser-mods"
-                  onClick={() => setDesktopModsOpen(false)}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Land Cruiser 250 (1958)</p>
-                  <p className="text-[11px] text-zinc-500">Audio overhaul &amp; rock sliders</p>
-                </Link>
-                <Link
-                  href="/guides/prius-mods"
-                  onClick={() => setDesktopModsOpen(false)}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Toyota Prius &amp; Prime</p>
-                  <p className="text-[11px] text-zinc-500">OEM mirror dashcam, mud flaps &amp; floor liners</p>
-                </Link>
-                <div className="pt-1 mt-1 border-t border-zinc-100 dark:border-zinc-800">
+
+                <div className="pt-1.5 mt-1 border-t border-zinc-100 dark:border-neutral-800">
                   <Link
                     href="/guides"
-                    onClick={() => setDesktopModsOpen(false)}
-                    className="block p-1.5 text-center text-xs font-semibold text-amber-500 hover:underline"
+                    onClick={() => setDesktopGuidesOpen(false)}
+                    className="flex items-center justify-between p-1.5 px-2 text-xs font-semibold text-amber-500 hover:underline"
                   >
-                    View All Guides &amp; Almanac →
+                    <span>All Vehicle Almanac &amp; Guides</span>
+                    <ChevronRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Desktop Gear & Products Dropdown */}
+          {/* Desktop Tools Dropdown */}
           <div
+            ref={toolsDropdownRef}
             className="relative"
-            onMouseEnter={() => setDesktopGearOpen(true)}
-            onMouseLeave={() => setDesktopGearOpen(false)}
+            onMouseEnter={() => setDesktopToolsOpen(true)}
+            onMouseLeave={() => setDesktopToolsOpen(false)}
           >
-            <Link
-              href="/#gear"
-              onClick={(e) => handleAnchorClick(e, 'gear')}
-              className="hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1"
+            <button
+              type="button"
+              onClick={() => {
+                setDesktopToolsOpen((prev) => !prev);
+                setDesktopGuidesOpen(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setDesktopToolsOpen((prev) => !prev);
+                  setDesktopGuidesOpen(false);
+                }
+              }}
+              aria-expanded={desktopToolsOpen}
+              aria-haspopup="true"
+              className={cn(
+                'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md px-1',
+                (pathname === '/tires' || pathname === '/delivery-prep') && 'text-amber-500 font-semibold'
+              )}
             >
-              <ShoppingBag className="h-4 w-4 text-zinc-400" />
-              Gear &amp; Prep
-              <ChevronDown className="h-3.5 w-3.5 text-zinc-400" />
-            </Link>
-            {desktopGearOpen && (
-              <div className="absolute top-full left-0 w-80 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-2 shadow-xl z-50">
+              <BarChart3 className="h-4 w-4 text-zinc-400" />
+              <span>Tools</span>
+              <ChevronDown className={cn('h-3.5 w-3.5 text-zinc-400 transition-transform duration-200', desktopToolsOpen && 'rotate-180')} />
+            </button>
+
+            {desktopToolsOpen && (
+              <div className="absolute top-full left-0 w-80 rounded-xl border border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                <Link
+                  href="/#community-log"
+                  onClick={(e) => {
+                    setDesktopToolsOpen(false);
+                    handleAnchorClick(e, 'community-log');
+                  }}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <BarChart3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Analytics &amp; Wait Trends</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Wait times, provincial allocation trends &amp; logs</p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/tires"
+                  onClick={() => setDesktopToolsOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <Disc3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Tire Finder &amp; Sizing 🛞</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">OEM sizes, 3PMSF winter rubber &amp; wheel downsizing</p>
+                    </div>
+                  </div>
+                </Link>
+
                 <Link
                   href="/delivery-prep"
-                  onClick={() => setDesktopGearOpen(false)}
-                  className="block p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/15 transition-colors mb-1"
+                  onClick={() => setDesktopToolsOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
                 >
-                  <p className="text-xs font-bold text-amber-500">📋 Pickup Day Checklist</p>
-                  <p className="text-[11px] text-zinc-400">PDI inspection, bill of sale &amp; key fobs</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <ClipboardCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Delivery Pickup Checklist</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">PDI inspection, bill of sale &amp; key fobs</p>
+                    </div>
+                  </div>
                 </Link>
+
                 <Link
-                  href="/#gear"
-                  onClick={(e) => {
-                    setDesktopGearOpen(false);
-                    handleAnchorClick(e, 'gear');
-                  }}
-                  className="block p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors mb-1"
+                  href="/api/export"
+                  onClick={() => setDesktopToolsOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
                 >
-                  <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Delivery Day Prep Gear</p>
-                  <p className="text-[11px] text-zinc-400">Curated accessories &amp; drop-in armor</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-zinc-500/10 text-zinc-400 shrink-0">
+                      <FileSpreadsheet className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Export Raw Data (CSV)</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Open community dataset (RFC 4180)</p>
+                    </div>
+                  </div>
                 </Link>
-                <a
-                  href="/out/fitcamx-rav4"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setDesktopGearOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">FitcamX 4K Dashcam</p>
-                    <p className="text-[11px] text-zinc-500">OEM mirror tap • Saves ~$350+ vs dealer</p>
-                  </div>
-                  <ExternalLink className="h-3 w-3 text-zinc-400" />
-                </a>
-                <a
-                  href="/out/noco-gb40-jump-pack"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setDesktopGearOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">NOCO Boost GB40 Jump Pack</p>
-                    <p className="text-[11px] text-zinc-500">12V lithium rescue • Essential Roadside</p>
-                  </div>
-                  <ExternalLink className="h-3 w-3 text-zinc-400" />
-                </a>
-                <a
-                  href="/out/screen-protector-rav4"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setDesktopGearOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Matte 9H Screen Protector</p>
-                    <p className="text-[11px] text-zinc-500">Anti-glare tempered • Scratch Shield</p>
-                  </div>
-                  <ExternalLink className="h-3 w-3 text-zinc-400" />
-                </a>
-                <a
-                  href="/out/console-tray-rav4"
-                  target="_blank"
-                  rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setDesktopGearOpen(false)}
-                  className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                >
-                  <div>
-                    <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Console Organizer Tray</p>
-                    <p className="text-[11px] text-zinc-500">Dual-tier storage • Laser Fit</p>
-                  </div>
-                  <ExternalLink className="h-3 w-3 text-zinc-400" />
-                </a>
               </div>
             )}
           </div>
-
-          <Link href="/api/export" className="hover:text-amber-500 transition-colors flex items-center gap-1.5">
-            <FileSpreadsheet className="h-4 w-4 text-zinc-400" />
-            Export CSV
-          </Link>
         </nav>
 
         {/* Action Button & Ko-fi Support */}
@@ -417,7 +431,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           </div>
 
           <div className="hidden sm:block shrink-0">
-            <KofiHeaderPill />
+            <KofiHeaderPill label="Support ☕" />
           </div>
           {submission ? (
             <Link
@@ -500,10 +514,10 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
-            {/* 1. Core Wait-Time Trackers */}
+            {/* 1. Estimator */}
             <div className="space-y-1.5">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
-                Wait-Time Tracking
+                Estimator
               </span>
               <div className="grid grid-cols-1 gap-1">
                 <Link
@@ -526,28 +540,26 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
                 </Link>
+              </div>
+            </div>
 
+            {/* 2. Guides Section */}
+            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
+                  <Wrench className="h-3 w-3 text-amber-500" />
+                  Guides &amp; Accessories
+                </span>
                 <Link
-                  href="/#community-log"
-                  onClick={(e) => handleAnchorClick(e, 'community-log')}
-                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
+                  href="/guides"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-[11px] font-semibold text-amber-500 hover:underline"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <BarChart3 className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Provincial Analytics
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        Quebec &amp; BC allocation trends
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                  View All Guides →
                 </Link>
+              </div>
 
+              <div className="grid grid-cols-1 gap-1">
                 {/* Winter Prep Guide */}
                 <Link
                   href="/winter-prep"
@@ -556,7 +568,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
                     pathname === '/winter-prep'
                       ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -575,79 +587,12 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
-                {/* Tire Guide */}
-                <Link
-                  href="/tires"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname === '/tires'
-                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <Disc3 className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Tire Guide &amp; Reviews 🛞
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        OEM sizes, 3PMSF winter rubber &amp; wheel downsizing
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-
-                {/* Dealership Pickup Checklist */}
-                <Link
-                  href="/delivery-prep"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname === '/delivery-prep'
-                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <ClipboardCheck className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Pickup Checklist
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        Bill of sale, key fobs &amp; PDI spacer inspection
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-              </div>
-            </div>
-
-            {/* 2. DIY Mod Guides (Mods Section) */}
-            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-zinc-800/80">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
-                  <Wrench className="h-3 w-3 text-amber-500" />
-                  DIY Mod Guides
-                </span>
-                <Link
-                  href="/guides"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-[11px] font-semibold text-amber-500 hover:underline"
-                >
-                  View All Guides →
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-1 gap-1">
+                {/* Subheading: DIY Mod Guides */}
+                <div className="pt-2 px-1">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                    DIY Mod Guides
+                  </span>
+                </div>
                 <Link
                   href="/guides/rav4-se-mods"
                   onClick={() => setMobileMenuOpen(false)}
@@ -874,8 +819,113 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
+            {/* 3. Tools Section */}
+            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+                Tools
+              </span>
+              <div className="grid grid-cols-1 gap-1">
+                <Link
+                  href="/#community-log"
+                  onClick={(e) => handleAnchorClick(e, 'community-log')}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <BarChart3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Analytics &amp; Wait Trends
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Quebec &amp; BC allocation trends
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Tire Guide */}
+                <Link
+                  href="/tires"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/tires'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <Disc3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Tire Guide &amp; Reviews 🛞
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        OEM sizes, 3PMSF winter rubber &amp; wheel downsizing
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Dealership Pickup Checklist */}
+                <Link
+                  href="/delivery-prep"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/delivery-prep'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <ClipboardCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Pickup Checklist
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Bill of sale, key fobs &amp; PDI spacer inspection
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Export Raw Data */}
+                <Link
+                  href="/api/export"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-zinc-100 dark:bg-neutral-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
+                      <FileSpreadsheet className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Export Raw Data (CSV)
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        RFC 4180 open community dataset
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+              </div>
+            </div>
+
             {/* 4. Community Action & Open Data */}
-            <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800/80 space-y-2">
+            <div className="pt-2 border-t border-zinc-200 dark:border-neutral-800/80 space-y-2">
               {submission ? (
                 <div className="space-y-2">
                   <Link

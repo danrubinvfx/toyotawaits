@@ -22,6 +22,10 @@ CREATE INDEX IF NOT EXISTS idx_telemetry_affiliate_clicks_accessory
 -- Row Level Security
 ALTER TABLE telemetry_affiliate_clicks ENABLE ROW LEVEL SECURITY;
 
+-- Explicit Data API & Role Grants (Mandatory for Supabase post-October 30)
+GRANT SELECT, INSERT ON TABLE public.telemetry_affiliate_clicks TO anon, authenticated;
+GRANT ALL ON TABLE public.telemetry_affiliate_clicks TO service_role;
+
 -- Allow anonymous client-side logging
 CREATE POLICY "Allow anon insert to telemetry_affiliate_clicks"
     ON telemetry_affiliate_clicks
@@ -35,3 +39,4 @@ CREATE POLICY "Allow service role read telemetry_affiliate_clicks"
     FOR SELECT
     TO service_role
     USING (true);
+

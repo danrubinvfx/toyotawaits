@@ -35,6 +35,7 @@ BEGIN
         SELECT 1 FROM information_schema.columns 
         WHERE table_name = 'submissions' AND column_name = 'province' AND udt_name = 'canadian_province'
     ) THEN
+        DROP MATERIALIZED VIEW IF EXISTS mv_model_wait_summary CASCADE;
         ALTER TABLE submissions ALTER COLUMN province TYPE VARCHAR(2) USING province::text;
     END IF;
 

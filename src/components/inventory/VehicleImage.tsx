@@ -48,9 +48,11 @@ export function VehicleImage({
   const factoryTrimUrl = `/assets/models/${modelYear}/${trimSlug}.webp`;
   const silhouetteUrl = '/assets/placeholder-silhouette.svg';
 
-  // Determine starting tier: Tier 1 if verified real lot photo is provided, otherwise Tier 2
+  // Determine starting tier: Tier 1 if lot photo URL is provided and valid, otherwise Tier 2
   const initialTier: 1 | 2 | 3 =
-    hasRealPhoto && imageUrl && (imageUrl.startsWith('http://') || imageUrl.startsWith('https://'))
+    imageUrl &&
+    (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) &&
+    hasRealPhoto !== false
       ? 1
       : 2;
 
@@ -99,6 +101,7 @@ export function VehicleImage({
         src={resolvedSrc}
         alt={alt}
         fill
+        unoptimized
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
         priority={priority}
         className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"

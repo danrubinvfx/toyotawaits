@@ -75,3 +75,15 @@ export function createServerClient() {
     },
   });
 }
+
+export function createAdminClient() {
+  return createServerClient();
+}
+
+export const supabaseAdmin: ReturnType<typeof createServerClient> = new Proxy({} as any, {
+  get(_target, prop) {
+    const client = createServerClient() as any;
+    const val = client[prop];
+    return typeof val === 'function' ? val.bind(client) : val;
+  },
+});

@@ -63,6 +63,13 @@ export interface ConvertusRawVehicle {
     title?: string;
     pre_tax?: boolean;
   }> | null;
+  images?: any;
+  image?: any;
+  photos?: any;
+  photo?: any;
+  thumbnail?: any;
+  media_urls?: any;
+  placeholder_image?: boolean;
   [key: string]: any;
 }
 

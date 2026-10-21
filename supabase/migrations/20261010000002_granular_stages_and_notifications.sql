@@ -65,6 +65,10 @@ ON notification_requests (lower(email), lower(model), upper(province));
 -- RLS policies for notification_requests
 ALTER TABLE notification_requests ENABLE ROW LEVEL SECURITY;
 
+-- Explicit Data API & Role Grants (Mandatory for Supabase post-October 30)
+GRANT INSERT ON TABLE public.notification_requests TO anon, authenticated;
+GRANT ALL ON TABLE public.notification_requests TO service_role;
+
 DO $$
 BEGIN
     DROP POLICY IF EXISTS "Allow public insert to notification_requests" ON notification_requests;

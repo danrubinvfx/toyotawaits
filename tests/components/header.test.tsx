@@ -20,17 +20,29 @@ describe('Header Component', () => {
     expect(screen.getByText(/ToyotaWaits/i)).toBeInTheDocument();
     expect(screen.getByText(/🇨🇦 Canada/i)).toBeInTheDocument();
 
-    // Winter Prep desktop nav link
+    // Estimator direct nav link
+    const estimatorDesktop = screen.getByRole('link', { name: /Estimator/i });
+    expect(estimatorDesktop).toBeInTheDocument();
+    expect(estimatorDesktop).toHaveAttribute('href', '/#estimator');
+
+    // Guides & Tools dropdown buttons
+    const guidesButton = screen.getByRole('button', { name: /Guides/i });
+    expect(guidesButton).toBeInTheDocument();
+    const toolsButton = screen.getByRole('button', { name: /Tools/i });
+    expect(toolsButton).toBeInTheDocument();
+
+    // Opening Guides dropdown reveals Winter Prep, Mod Guides, Gear
+    fireEvent.click(guidesButton);
     const winterPrepDesktop = screen.getByRole('link', { name: /Winter Prep ❄️/i });
     expect(winterPrepDesktop).toBeInTheDocument();
     expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
 
-    // Tires desktop nav link
-    const tiresDesktop = screen.getByRole('link', { name: /Tires 🛞/i });
+    // Opening Tools dropdown reveals Tires and Pickup Checklist
+    fireEvent.click(toolsButton);
+    const tiresDesktop = screen.getByRole('link', { name: /Tire Finder & Sizing/i });
     expect(tiresDesktop).toBeInTheDocument();
     expect(tiresDesktop).toHaveAttribute('href', '/tires');
 
-    // Pickup Checklist desktop nav link
     const pickupDesktop = screen.getByRole('link', { name: /Pickup Checklist/i });
     expect(pickupDesktop).toBeInTheDocument();
     expect(pickupDesktop).toHaveAttribute('href', '/delivery-prep');
@@ -137,7 +149,7 @@ describe('Header Component', () => {
 
   it('smoothly scrolls to target anchor when anchor link is clicked while on home page', () => {
     const mockSection = document.createElement('div');
-    mockSection.id = 'gear';
+    mockSection.id = 'estimator';
     const scrollMock = vi.fn();
     mockSection.scrollIntoView = scrollMock;
     document.body.appendChild(mockSection);
@@ -147,8 +159,8 @@ describe('Header Component', () => {
     const toggleButton = screen.getByTestId('mobile-menu-toggle');
     fireEvent.click(toggleButton);
 
-    const prepLink = screen.getByText(/Delivery Day Prep Checklist/i);
-    fireEvent.click(prepLink);
+    const estimatorLink = screen.getByText(/Wait-Time Estimator/i);
+    fireEvent.click(estimatorLink);
 
     expect(scrollMock).toHaveBeenCalledWith({
       behavior: 'smooth',
@@ -160,6 +172,9 @@ describe('Header Component', () => {
 
   it('renders Pickup Checklist link pointing to /delivery-prep', () => {
     render(<Header />);
+
+    const toolsButton = screen.getByRole('button', { name: /Tools/i });
+    fireEvent.click(toolsButton);
 
     const pickupLink = screen.getByRole('link', { name: /Pickup Checklist/i });
     expect(pickupLink).toBeInTheDocument();

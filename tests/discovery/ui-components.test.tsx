@@ -661,7 +661,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       ).toBeInTheDocument();
       expect(screen.getAllByText('$120 – $189 CAD').length).toBeGreaterThan(0);
       expect(screen.getByText('Verified Amazon affiliate link')).toBeInTheDocument();
-      expect(screen.getAllByText('Essential').length).toBeGreaterThan(0);
+      expect(screen.queryByText('Essential')).not.toBeInTheDocument();
 
       const actionBtn = screen.getByTestId('gear-strip-action-btn');
       expect(actionBtn).toHaveTextContent(/Check Price/i);
@@ -673,12 +673,13 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(actionBtn).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
-    it('renders fallback universal subtitle when modelContext is omitted', () => {
+    it('renders clean tag without model subtitle when modelContext is omitted', () => {
       render(<InventoryGearCard item={sampleAccessory} />);
 
       expect(
-        screen.getByText(/DELIVERY ESSENTIAL • UNIVERSAL/i)
+        screen.getByText(/DELIVERY ESSENTIAL/i)
       ).toBeInTheDocument();
+      expect(screen.queryByText(/UNIVERSAL/i)).not.toBeInTheDocument();
     });
   });
 

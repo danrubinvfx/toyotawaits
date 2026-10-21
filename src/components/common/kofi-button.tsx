@@ -6,13 +6,14 @@ export const KOFI_URL = 'https://ko-fi.com/toyotawaits';
 
 export interface KofiHeaderPillProps {
   className?: string;
+  label?: string;
 }
 
 /**
- * Desktop & Tablet Header Navigation Pill: "Support Tracker ☕"
+ * Desktop & Tablet Header Navigation Pill: "Support Tracker ☕" or custom label e.g. "Support ☕"
  * Placed beside "Submit Wait Time" button in header navigation.
  */
-export function KofiHeaderPill({ className }: KofiHeaderPillProps) {
+export function KofiHeaderPill({ className, label = 'Support Tracker ☕' }: KofiHeaderPillProps) {
   return (
     <a
       href={KOFI_URL}
@@ -24,7 +25,7 @@ export function KofiHeaderPill({ className }: KofiHeaderPillProps) {
         className
       )}
     >
-      <span>Support Tracker ☕</span>
+      <span>{label}</span>
     </a>
   );
 }

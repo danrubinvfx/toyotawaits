@@ -10,6 +10,20 @@ ALTER TABLE vehicle_trims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE affiliate_links ENABLE ROW LEVEL SECURITY;
 
+-- Explicit Data API & Role Grants (Mandatory for Supabase post-October 30)
+GRANT USAGE ON SCHEMA public TO anon, authenticated;
+GRANT SELECT ON TABLE public.vehicle_models TO anon, authenticated;
+GRANT SELECT ON TABLE public.vehicle_powertrains TO anon, authenticated;
+GRANT SELECT ON TABLE public.vehicle_trims TO anon, authenticated;
+GRANT SELECT, INSERT ON TABLE public.submissions TO anon, authenticated;
+GRANT SELECT ON TABLE public.affiliate_links TO anon, authenticated;
+
+GRANT ALL ON TABLE public.vehicle_models TO service_role;
+GRANT ALL ON TABLE public.vehicle_powertrains TO service_role;
+GRANT ALL ON TABLE public.vehicle_trims TO service_role;
+GRANT ALL ON TABLE public.submissions TO service_role;
+GRANT ALL ON TABLE public.affiliate_links TO service_role;
+
 -- 1. Reference Data: Public Read-Only Access
 CREATE POLICY "Public can view active models"
     ON vehicle_models FOR SELECT

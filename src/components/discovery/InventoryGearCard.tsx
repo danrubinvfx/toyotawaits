@@ -33,23 +33,26 @@ export function InventoryGearCard({
   modelContext,
   className = '',
 }: InventoryGearCardProps) {
-  const targetModel = modelContext ? modelContext : 'Universal Essential';
   const benefitSubline = BENEFIT_HOOK_MAP[item.id] || item.description;
 
   return (
     <article
       data-testid="inventory-gear-card"
       aria-label={`Delivery Day Gear: ${item.title}`}
-      className={`rounded-xl border border-amber-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/20 p-3.5 shadow-sm transition-all hover:border-amber-500/50 flex flex-col gap-2 md:col-span-2 xl:col-span-3 ${className}`}
+      className={`col-span-full w-full rounded-xl border border-amber-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-amber-950/20 p-3.5 shadow-sm transition-all hover:border-amber-500/50 flex flex-col gap-2 ${className}`}
     >
       {/* 1. Clear Header Row: Category/Model Badge + Price */}
       <div className="flex items-center justify-between gap-2 border-b border-zinc-800/60 pb-1.5">
         <div className="flex items-center gap-1.5 min-w-0">
           <span className="text-[11px] font-bold tracking-wide uppercase text-amber-400 flex items-center gap-1 truncate">
             <span>⚡</span>
-            <span>DELIVERY ESSENTIAL • {targetModel.toUpperCase()}</span>
+            <span>
+              {modelContext
+                ? `DELIVERY ESSENTIAL • ${modelContext.toUpperCase()}`
+                : 'DELIVERY ESSENTIAL'}
+            </span>
           </span>
-          {item.badge && (
+          {item.badge && item.badge.toLowerCase() !== 'essential' && (
             <span className="inline-flex items-center px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 text-[10px] font-semibold border border-amber-500/25 shrink-0">
               {item.badge}
             </span>

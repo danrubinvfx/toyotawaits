@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'media.assets.convertus.rocks',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.convertus.rocks',
+      },
+      {
+        protocol: 'https',
         hostname: '**.convertus.com',
       },
       {
@@ -35,15 +43,23 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: '**.toyota.ca',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.toyota.com',
+      },
+      {
+        protocol: 'https',
         hostname: '**.dealerprocess.ca',
       },
       {
         protocol: 'https',
-        hostname: 'prod.pictures.autoscout24.net',
+        hostname: '**.dealerprocess.com',
       },
       {
         protocol: 'https',
-        hostname: '**.convertus.rocks',
+        hostname: 'prod.pictures.autoscout24.net',
       },
     ],
   },

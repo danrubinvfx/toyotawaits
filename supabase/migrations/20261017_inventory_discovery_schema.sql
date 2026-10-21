@@ -212,7 +212,7 @@ CREATE TABLE IF NOT EXISTS source_health_logs (
 CREATE INDEX IF NOT EXISTS idx_source_health_logs_source ON source_health_logs (source_id, check_timestamp DESC);
 
 -- ============================================================================
--- Row-Level Security (RLS) Configuration
+-- Row-Level Security (RLS) Configuration & Data API Grants
 -- ============================================================================
 
 ALTER TABLE sources ENABLE ROW LEVEL SECURITY;
@@ -223,6 +223,24 @@ ALTER TABLE observations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE status_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE alert_outbox ENABLE ROW LEVEL SECURITY;
 ALTER TABLE source_health_logs ENABLE ROW LEVEL SECURITY;
+
+-- Explicit Data API & Role Grants (Mandatory for Supabase post-October 30)
+GRANT SELECT ON TABLE public.sources TO anon, authenticated;
+GRANT SELECT ON TABLE public.dealers TO anon, authenticated;
+GRANT SELECT ON TABLE public.vehicles TO anon, authenticated;
+GRANT SELECT ON TABLE public.dealer_listings TO anon, authenticated;
+GRANT SELECT ON TABLE public.observations TO anon, authenticated;
+GRANT SELECT ON TABLE public.status_events TO anon, authenticated;
+GRANT SELECT ON TABLE public.source_health_logs TO anon, authenticated;
+
+GRANT ALL ON TABLE public.sources TO service_role;
+GRANT ALL ON TABLE public.dealers TO service_role;
+GRANT ALL ON TABLE public.vehicles TO service_role;
+GRANT ALL ON TABLE public.dealer_listings TO service_role;
+GRANT ALL ON TABLE public.observations TO service_role;
+GRANT ALL ON TABLE public.status_events TO service_role;
+GRANT ALL ON TABLE public.alert_outbox TO service_role;
+GRANT ALL ON TABLE public.source_health_logs TO service_role;
 
 -- Public Read Policies for verified inventory data
 CREATE POLICY "Public read access for sources" ON sources
@@ -252,3 +270,4 @@ CREATE POLICY "Service role full access on alert_outbox" ON alert_outbox
 
 CREATE POLICY "Service role full access on source_health_logs" ON source_health_logs
     FOR ALL TO service_role USING (true) WITH CHECK (true);
+
