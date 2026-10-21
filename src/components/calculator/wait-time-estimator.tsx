@@ -1038,42 +1038,44 @@ export function WaitTimeEstimator({
                 </Link>
               </div>
 
-              {/* Contextual Public Inventory Callout (Skip the wait?) */}
-              {activeInventoryCount > 0 ? (
-                <div
-                  data-testid="estimator-inventory-callout"
-                  className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 flex items-center justify-between gap-3 shadow-xs"
-                >
-                  <div className="space-y-0.5 min-w-0">
-                    <div className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-sky-400 shrink-0" />
-                      <span>Skip the wait?</span>
+              {/* Contextual Public Inventory Callout (Skip the wait?) - Only shown for Canadian market */}
+              {!isUs && (
+                activeInventoryCount > 0 ? (
+                  <div
+                    data-testid="estimator-inventory-callout"
+                    className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 flex items-center justify-between gap-3 shadow-xs"
+                  >
+                    <div className="space-y-0.5 min-w-0">
+                      <div className="text-xs font-bold uppercase tracking-wider text-sky-400 flex items-center gap-1.5">
+                        <Zap className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                        <span>Skip the wait?</span>
+                      </div>
+                      <p className="text-sm text-neutral-300">
+                        We observed {activeInventoryCount} matching {activeInventoryCount === 1 ? 'unit' : 'units'} in recent dealer feeds.
+                      </p>
                     </div>
-                    <p className="text-sm text-neutral-300">
-                      We observed {activeInventoryCount} matching {activeInventoryCount === 1 ? 'unit' : 'units'} in recent dealer feeds.
-                    </p>
+                    <Link
+                      href={`/inventory?model=${encodeURIComponent(inventoryModelName)}`}
+                      data-testid="estimator-view-stock-btn"
+                      className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1 shadow-sm shrink-0 transition-colors"
+                    >
+                      View Live Stock ↗
+                    </Link>
                   </div>
-                  <Link
-                    href={`/inventory?model=${encodeURIComponent(inventoryModelName)}`}
-                    data-testid="estimator-view-stock-btn"
-                    className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1 shadow-sm shrink-0 transition-colors"
+                ) : (
+                  <div
+                    data-testid="estimator-inventory-zero-callout"
+                    className="flex items-center justify-end pt-0.5"
                   >
-                    View Live Stock ↗
-                  </Link>
-                </div>
-              ) : (
-                <div
-                  data-testid="estimator-inventory-zero-callout"
-                  className="flex items-center justify-end pt-0.5"
-                >
-                  <Link
-                    href="/inventory"
-                    data-testid="estimator-browse-all-inventory-link"
-                    className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
-                  >
-                    Browse all observed dealer inventory ↗
-                  </Link>
-                </div>
+                    <Link
+                      href="/inventory"
+                      data-testid="estimator-browse-all-inventory-link"
+                      className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
+                    >
+                      Browse all observed dealer inventory ↗
+                    </Link>
+                  </div>
+                )
               )}
             </div>
 

@@ -265,4 +265,21 @@ describe('Header Component', () => {
     const innerWrapper = headerElem?.firstElementChild;
     expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden', 'px-3', 'py-2.5', 'flex', 'items-center', 'justify-between');
   });
+
+  it('renders Live Inventory navigation item in desktop nav and mobile drawer', () => {
+    render(<Header />);
+
+    const desktopInventoryLink = screen.getByTestId('desktop-nav-inventory');
+    expect(desktopInventoryLink).toBeInTheDocument();
+    expect(desktopInventoryLink).toHaveAttribute('href', '/inventory');
+    expect(desktopInventoryLink).toHaveTextContent(/Live Inventory/i);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    const mobileInventoryLink = screen.getByTestId('mobile-nav-inventory');
+    expect(mobileInventoryLink).toBeInTheDocument();
+    expect(mobileInventoryLink).toHaveAttribute('href', '/inventory');
+    expect(mobileInventoryLink).toHaveTextContent(/Live Inventory/i);
+  });
 });

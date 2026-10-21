@@ -183,6 +183,18 @@ export function Header({ initialRegion }: HeaderProps = {}) {
             <span>Estimator</span>
           </Link>
 
+          <Link
+            href="/inventory"
+            data-testid="desktop-nav-inventory"
+            className={cn(
+              'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 px-1 rounded-md',
+              pathname === '/inventory' && 'text-amber-500 font-semibold'
+            )}
+          >
+            <Car className="h-4 w-4 text-zinc-400" />
+            <span>Live Inventory</span>
+          </Link>
+
           {/* Desktop Guides Dropdown */}
           <div
             ref={guidesDropdownRef}
@@ -535,6 +547,42 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                       </p>
                       <p className="text-[11px] text-zinc-500">
                         Arrival window &amp; delivery estimates
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Live Inventory (Prominently featured) */}
+            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+                Dealer Inventory
+              </span>
+              <div className="grid grid-cols-1 gap-1">
+                <Link
+                  href="/inventory"
+                  data-testid="mobile-nav-inventory"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/inventory'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <Car className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors flex items-center gap-1.5">
+                        <span>Live Inventory</span>
+                        <span className="text-xs">🇨🇦</span>
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        In-transit &amp; lot-ready vehicles to skip the wait
                       </p>
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import * as navigation from 'next/navigation';
 import * as calendarUtils from '@/lib/utils/calendar';
+import { MarketProvider } from '@/context/MarketContext';
 
 describe('WaitTimeEstimator Component', () => {
   beforeEach(() => {
@@ -962,6 +963,41 @@ describe('WaitTimeEstimator Component', () => {
     const link = screen.getByTestId('estimator-browse-all-inventory-link');
     expect(link).toHaveTextContent(/Browse all observed dealer inventory ↗/i);
     expect(link).toHaveAttribute('href', '/inventory');
+  });
+
+  it('does NOT render live stock callout when user is viewing US wait times', async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'rav4',
+            modelName: 'RAV4',
+            powertrainSlug: 'phev',
+            province: 'WA',
+            sampleCounts: { total: 10, delivered: 10, pending: 0 },
+            waitStats: { p25: 120, median: 150, p75: 200, mean: 155, min: 90, max: 240 },
+          },
+          countsByModel: {
+            'RAV4 Plug-in Hybrid': 3,
+          },
+        }),
+      })
+    );
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(
+      <MarketProvider initialMarket="US">
+        <WaitTimeEstimator initialModel="rav4" initialPowertrain="phev" initialProvince="WA" />
+      </MarketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('estimator-inventory-callout')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('estimator-inventory-zero-callout')).not.toBeInTheDocument();
+    });
   });
 });
 

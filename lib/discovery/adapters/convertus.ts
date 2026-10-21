@@ -321,8 +321,8 @@ export function extractPrimaryImage(
       const u =
         val.url ||
         val.src ||
-        val.large ||
         val.image_lg ||
+        val.large ||
         val.original ||
         val.image_original ||
         val.image_md ||
@@ -338,74 +338,35 @@ export function extractPrimaryImage(
 
   let candidateUrl: string | null = null;
 
-  // 1. Inspect raw.images (array of strings, array of objects, or single string/object)
-  if (item.images) {
-    if (Array.isArray(item.images) && item.images.length > 0) {
-      for (const img of item.images) {
-        const u = extractUrlFromCandidate(img);
+  // 1. Check direct string fields
+  if (typeof item.image === 'string' && item.image.trim()) {
+    candidateUrl = item.image.trim();
+  } else if (typeof item.image_url === 'string' && item.image_url.trim()) {
+    candidateUrl = item.image_url.trim();
+  } else if (typeof item.thumbnail === 'string' && item.thumbnail.trim()) {
+    candidateUrl = item.thumbnail.trim();
+  }
+
+  // 2. Check array of strings or objects: images, photos, media_urls, pictures
+  if (!candidateUrl) {
+    const list = item.images || item.photos || item.media_urls || item.pictures;
+    if (Array.isArray(list) && list.length > 0) {
+      for (const entry of list) {
+        const u = extractUrlFromCandidate(entry);
         if (u) {
           candidateUrl = u;
           break;
         }
       }
-    } else {
-      candidateUrl = extractUrlFromCandidate(item.images);
     }
   }
 
-  // 2. Fall back to raw.image
-  if (!candidateUrl && item.image) {
-    if (Array.isArray(item.image) && item.image.length > 0) {
-      for (const img of item.image) {
-        const u = extractUrlFromCandidate(img);
-        if (u) {
-          candidateUrl = u;
-          break;
-        }
-      }
-    } else {
-      candidateUrl = extractUrlFromCandidate(item.image);
-    }
-  }
-
-  // 3. Fall back to raw.photos
-  if (!candidateUrl && item.photos) {
-    if (Array.isArray(item.photos) && item.photos.length > 0) {
-      for (const p of item.photos) {
-        const u = extractUrlFromCandidate(p);
-        if (u) {
-          candidateUrl = u;
-          break;
-        }
-      }
-    } else {
-      candidateUrl = extractUrlFromCandidate(item.photos);
-    }
-  }
-
-  // 4. Fall back to raw.photo
-  if (!candidateUrl && item.photo) {
-    candidateUrl = extractUrlFromCandidate(item.photo);
-  }
-
-  // 5. Fall back to raw.thumbnail
-  if (!candidateUrl && item.thumbnail) {
-    candidateUrl = extractUrlFromCandidate(item.thumbnail);
-  }
-
-  // 6. Fall back to raw.media_urls
-  if (!candidateUrl && item.media_urls) {
-    if (Array.isArray(item.media_urls) && item.media_urls.length > 0) {
-      for (const m of item.media_urls) {
-        const u = extractUrlFromCandidate(m);
-        if (u) {
-          candidateUrl = u;
-          break;
-        }
-      }
-    } else {
-      candidateUrl = extractUrlFromCandidate(item.media_urls);
-    }
+  // 3. Fall back to nested object fields: item.image, item.photo, item.thumbnail
+  if (!candidateUrl) {
+    candidateUrl =
+      extractUrlFromCandidate(item.image) ||
+      extractUrlFromCandidate(item.photo) ||
+      extractUrlFromCandidate(item.thumbnail);
   }
 
   if (candidateUrl) {
