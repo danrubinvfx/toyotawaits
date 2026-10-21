@@ -191,14 +191,21 @@ describe('Ticker Data Fetcher & 4-Stream Aggregator', () => {
       expect(item.badgeColor).toBe(TICKER_BADGE_COLORS.news);
     }
 
-    const gearItems = getGearTickerItems(3);
-    expect(gearItems.length).toBe(3);
+    const gearItems = getGearTickerItems(4);
+    expect(gearItems.length).toBe(4);
+    expect(gearItems.map((i) => i.title)).toEqual([
+      'Custom All-Weather Floor Liners',
+      'Plug-and-Play Wireless CarPlay / Android Auto',
+      'Center Console Drop-In Organizers',
+      'Compact Cordless Tire Inflator',
+    ]);
     for (const item of gearItems) {
       expect(item.type).toBe('gear');
       expect(item.badge).toBe('[⚡ GEAR PICK]');
       expect(item.badgeColor).toBe(TICKER_BADGE_COLORS.gear);
       expect(item.isExternal).toBe(true);
       expect(item.linkUrl).toContain('amazon.ca');
+      expect(item.linkUrl).toContain('tag=toyotawaits-20');
     }
   });
 
