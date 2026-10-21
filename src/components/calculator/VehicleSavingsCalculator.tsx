@@ -86,10 +86,10 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
       )}
 
-      {/* Step 1: Top Hero Section - Money-Over-Time Graph (Left) & High-Impact Savings Card (Right) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-4 lg:gap-5 items-start">
-        {/* Left Column (65% on Desktop): Interactive Recharts money-over-time graph */}
-        <div className="lg:col-span-7 xl:col-span-8 space-y-2 sm:space-y-3">
+      {/* Main 2-Column Desktop Grid (Left: Visuals & Projections, Right: Inputs) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* Left Column (7 cols): Interactive Graph on top, Projections & Wait Opportunity underneath */}
+        <div className="lg:col-span-7 flex flex-col gap-4">
           {results.timelineResult ? (
             <PaybackChart
               timeline={results.timelineResult}
@@ -109,12 +109,11 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               targetVehicleName={targetVehicleName}
             />
           )}
-        </div>
 
-        {/* Right Column (35% on Desktop): High-Impact Savings Card + Payback Summary */}
-        <div className="lg:col-span-5 xl:col-span-4 space-y-2 sm:space-y-3">
+          {/* Annual Projection / Energy Results Card directly underneath the chart */}
           <EnergyResultsCard results={results} />
 
+          {/* Payback Summary Card (when Mode 2 or 3 is active) */}
           {comparisonMode !== 'ENERGY_COMPARISON' && results.paybackResult && (
             <PaybackSummaryCard
               payback={results.paybackResult}
@@ -122,16 +121,31 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               waitDays={waitDays}
             />
           )}
+
+          {/* Wait Opportunity Card placed directly beneath energy results */}
+          <WaitOpportunityCard
+            annualCostCurrent={results.currentAnnualCost}
+            annualCostTarget={results.targetAnnualCost}
+            initialWaitDays={waitDays}
+            onWaitDaysChange={setWaitDays}
+            targetModelSlug={
+              targetVehicle.presetId.includes('rav4')
+                ? 'rav4'
+                : targetVehicle.presetId.includes('prius')
+                ? 'prius'
+                : targetVehicle.presetId.includes('camry')
+                ? 'camry'
+                : targetVehicle.presetId.includes('sienna')
+                ? 'sienna'
+                : 'rav4'
+            }
+            targetPowertrain={targetVehicle.powertrain.toLowerCase()}
+            province="BC"
+          />
         </div>
-      </div>
 
-      {/* Step 2: Streamlined 3-Step Input Cockpit (Directly Under Graph) */}
-      <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-          Driving & Vehicle Parameters
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 sm:gap-3.5 items-start">
+        {/* Right Column (5 cols): User inputs stacked cleanly (Target Toyota -> Current Baseline -> Driving Inputs) */}
+        <div className="lg:col-span-5 flex flex-col gap-3.5">
           {/* 1. Target Toyota Selection */}
           {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
             <TargetVehicleCard
@@ -162,36 +176,13 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             </div>
           )}
 
-          {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs!) */}
+          {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs) */}
           <DrivingInputsCard
             inputs={drivingInputs}
             onChange={setDrivingInputs}
             isPhev={isTargetPhev}
           />
         </div>
-      </div>
-
-      {/* Wait Opportunity Card */}
-      <div className="pt-2">
-        <WaitOpportunityCard
-          annualCostCurrent={results.currentAnnualCost}
-          annualCostTarget={results.targetAnnualCost}
-          initialWaitDays={waitDays}
-          onWaitDaysChange={setWaitDays}
-          targetModelSlug={
-            targetVehicle.presetId.includes('rav4')
-              ? 'rav4'
-              : targetVehicle.presetId.includes('prius')
-              ? 'prius'
-              : targetVehicle.presetId.includes('camry')
-              ? 'camry'
-              : targetVehicle.presetId.includes('sienna')
-              ? 'sienna'
-              : 'rav4'
-          }
-          targetPowertrain={targetVehicle.powertrain.toLowerCase()}
-          province="BC"
-        />
       </div>
 
       {/* Step 3: Collapsed Comparison Drawer (Keep vs. Replace / New A vs. B) & Scope Notice at Bottom */}

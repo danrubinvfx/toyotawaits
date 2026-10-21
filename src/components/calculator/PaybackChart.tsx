@@ -152,15 +152,15 @@ export function PaybackChart({
           </div>
 
           <div className="shrink-0">
-            {isRecovered ? (
+            {isRecovered && recoveryYear !== null && recoveryYear > 0 ? (
               <Badge className="bg-green-100 text-green-800 dark:bg-green-950/60 dark:text-green-300 border-green-200 dark:border-green-800 flex items-center gap-1 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2.5">
                 <CheckCircle2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>
-                  <span className="hidden sm:inline">Recovered at Year {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
-                  <span className="sm:hidden">Recovered Yr {recoveryYear !== null ? recoveryYear.toFixed(1) : ''}</span>
+                  <span className="hidden sm:inline">Recovered at Year {recoveryYear.toFixed(1)}</span>
+                  <span className="sm:hidden">Recovered Yr {recoveryYear.toFixed(1)}</span>
                 </span>
               </Badge>
-            ) : (
+            ) : !isRecovered ? (
               <Badge variant="outline" className="border-amber-400 text-amber-700 dark:text-amber-400 flex items-center gap-1 text-[10px] sm:text-xs py-0.5 px-1.5 sm:px-2.5">
                 <ShieldAlert className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                 <span>
@@ -168,7 +168,7 @@ export function PaybackChart({
                   <span className="sm:hidden">No Recovery (7y)</span>
                 </span>
               </Badge>
-            )}
+            ) : null}
           </div>
         </div>
       </CardHeader>

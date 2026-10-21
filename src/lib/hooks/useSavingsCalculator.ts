@@ -815,7 +815,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
         targetAnnualCost,
         0,
         0,
-        waitDays
+        0
       );
 
       refScenario = {
@@ -827,7 +827,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
 
       targetScenario = {
         name: targetPreset?.name ?? 'Target Vehicle',
-        deliveryWaitDays: waitDays,
+        deliveryWaitDays: 0,
         upfrontOutlay: 0,
         annualEnergyCost: targetAnnualCost,
         waitingAnnualEnergyCost: currentAnnualCost,
