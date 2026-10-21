@@ -54,10 +54,11 @@ body {
 .animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 45s linear infinite;
+  animation: marquee 75s linear infinite;
 }
 
-.animate-marquee:hover {
+.animate-marquee:hover,
+.animate-marquee:active {
   animation-play-state: paused;
 }
 

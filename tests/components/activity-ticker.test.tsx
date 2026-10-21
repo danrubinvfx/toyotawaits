@@ -200,7 +200,7 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
     });
   });
 
-  it('pauses marquee roll when hovered or focused', () => {
+  it('uses a comfortable 75s marquee animation duration and pauses when hovered, focused, or touched', () => {
     const { container } = render(<ActivityTicker initialData={mockFourStreamData} />);
 
     const region = screen.getByRole('region', {
@@ -208,12 +208,21 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
     });
     const marqueeTrack = container.querySelector('.animate-marquee') as HTMLElement;
     expect(marqueeTrack).toBeInTheDocument();
+    expect(marqueeTrack.style.animationDuration).toBe('75s');
     expect(marqueeTrack.style.animationPlayState).toBe('running');
+    expect(marqueeTrack.className).toContain('hover:[animation-play-state:paused]');
+    expect(marqueeTrack.className).toContain('active:[animation-play-state:paused]');
 
     fireEvent.mouseEnter(region);
     expect(marqueeTrack.style.animationPlayState).toBe('paused');
 
     fireEvent.mouseLeave(region);
+    expect(marqueeTrack.style.animationPlayState).toBe('running');
+
+    fireEvent.touchStart(region);
+    expect(marqueeTrack.style.animationPlayState).toBe('paused');
+
+    fireEvent.touchEnd(region);
     expect(marqueeTrack.style.animationPlayState).toBe('running');
 
     fireEvent.focus(region);

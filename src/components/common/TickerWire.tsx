@@ -261,6 +261,8 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
+      onTouchStart={() => setIsHovered(true)}
+      onTouchEnd={() => setIsHovered(false)}
     >
       <style
         dangerouslySetInnerHTML={{
@@ -276,10 +278,11 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
             .animate-marquee {
               display: flex;
               width: max-content;
-              animation: marquee 45s linear infinite;
+              animation: marquee 75s linear infinite;
               will-change: transform;
             }
-            .animate-marquee:hover {
+            .animate-marquee:hover,
+            .animate-marquee:active {
               animation-play-state: paused;
             }
           `,
@@ -296,8 +299,9 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
         </div>
       ) : (
         <div
-          className="flex animate-marquee"
+          className="flex animate-marquee hover:[animation-play-state:paused] active:[animation-play-state:paused]"
           style={{
+            animationDuration: '75s',
             animationPlayState: isHovered ? 'paused' : 'running',
           }}
         >
