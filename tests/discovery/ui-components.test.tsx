@@ -623,7 +623,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(gpsBtn).toHaveTextContent('Near Me (GPS)');
       const errorBanner = screen.getByTestId('gps-error-banner');
       expect(errorBanner).toHaveTextContent(
-        'Location permission denied. Please select a city below.'
+        'Location permission denied. Please choose a city below.'
       );
 
       // Trigger TIMEOUT (code 3)
@@ -647,6 +647,27 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       });
       expect(screen.queryByTestId('gps-error-banner')).not.toBeInTheDocument();
       expect(screen.getAllByText(/\(8 km away\)|\(8\.0 km away\)/i).length).toBeGreaterThan(0);
+    });
+
+    it('displays error banner when geolocation is not supported by browser', () => {
+      const originalGeo = global.navigator.geolocation;
+      // @ts-expect-error test unsupported environment
+      delete global.navigator.geolocation;
+
+      render(<InventoryExplorer />);
+
+      const gpsBtn = screen.getByTestId('gps-location-btn');
+      fireEvent.click(gpsBtn);
+
+      expect(screen.getByTestId('gps-error-banner')).toHaveTextContent(
+        'Geolocation is not supported by your browser.'
+      );
+
+      // Restore
+      Object.defineProperty(global.navigator, 'geolocation', {
+        value: originalGeo,
+        configurable: true,
+      });
     });
 
     it('displays empty state when no listings match active filter criteria', () => {

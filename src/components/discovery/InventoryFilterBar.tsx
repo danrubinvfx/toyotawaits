@@ -140,14 +140,14 @@ export function InventoryFilterBar({
   const handleGpsLocation = () => {
     setLocationError(null);
 
-    if (typeof window === 'undefined' || !navigator?.geolocation) {
-      setLocationError('Could not detect location. Please choose a municipality.');
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+      setLocationError('Geolocation is not supported by your browser.');
       return;
     }
 
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      (position: GeolocationPosition) => {
         setIsLocating(false);
         setLocationError(null);
         const coords = {
@@ -163,13 +163,13 @@ export function InventoryFilterBar({
           sortNearest: true,
         });
       },
-      (error) => {
-        setIsLocating(false);
-        if (error && error.code === 1) {
-          setLocationError('Location permission denied. Please select a city below.');
+      (error: GeolocationPositionError) => {
+        if (error.code === 1) { // PERMISSION_DENIED
+          setLocationError('Location permission denied. Please choose a city below.');
         } else {
           setLocationError('Could not detect location. Please choose a municipality.');
         }
+        setIsLocating(false);
       },
       {
         enableHighAccuracy: false, // Prevents timeouts on desktop Wi-Fi / IP triangulation
