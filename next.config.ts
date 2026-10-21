@@ -61,6 +61,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'prod.pictures.autoscout24.net',
       },
+      {
+        protocol: 'https',
+        hostname: '**.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.sm360.ca',
+      },
     ],
   },
   async redirects() {

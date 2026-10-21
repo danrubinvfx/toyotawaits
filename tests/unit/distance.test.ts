@@ -51,6 +51,30 @@ describe('Geo Distance & Preset Utilities', () => {
       );
       expect(dist).toBe(3.4);
     });
+
+    it('accurately calculates distance between Richmond preset and OpenRoad Toyota Richmond (~4.5 km)', () => {
+      const richmondPreset = LOWER_MAINLAND_PRESETS.Richmond;
+      const openroadDealer = DEALERS['openroad-toyota-richmond'];
+      const dist = calculateDistanceKm(
+        richmondPreset.lat,
+        richmondPreset.lng,
+        openroadDealer.lat,
+        openroadDealer.lng
+      );
+      expect(dist).toBe(4.5);
+    });
+
+    it('accurately calculates distance between Vancouver preset and Regency Toyota (~7.3 km)', () => {
+      const vancouverPreset = LOWER_MAINLAND_PRESETS.Vancouver;
+      const regencyDealer = DEALERS['regency-toyota'];
+      const dist = calculateDistanceKm(
+        vancouverPreset.lat,
+        vancouverPreset.lng,
+        regencyDealer.lat,
+        regencyDealer.lng
+      );
+      expect(dist).toBe(7.3);
+    });
   });
 
   describe('getPresetCoordinates', () => {
@@ -81,16 +105,29 @@ describe('Geo Distance & Preset Utilities', () => {
   });
 
   describe('getDealerCoordinates', () => {
-    it('resolves coordinates by dealer id', () => {
+    it('resolves coordinates by dealer id across all 5 Lower Mainland stores', () => {
       expect(getDealerCoordinates('jptoyota-downtown')).toEqual({ lat: 49.2638, lng: -123.0888 });
       expect(getDealerCoordinates('jptoyota-surrey')).toEqual({ lat: 49.1912, lng: -122.8024 });
       expect(getDealerCoordinates('westcoast-toyota')).toEqual({ lat: 49.2217, lng: -122.6881 });
+      expect(getDealerCoordinates('regency-toyota')).toEqual({ lat: 49.2394, lng: -123.0450 });
+      expect(getDealerCoordinates('openroad-toyota-richmond')).toEqual({
+        lat: 49.1711,
+        lng: -123.0722,
+      });
     });
 
-    it('resolves coordinates by dealer name or city', () => {
+    it('resolves coordinates by dealer name or city without colliding Vancouver dealers', () => {
       expect(getDealerCoordinates('Jim Pattison Toyota Downtown', 'Vancouver')).toEqual({
         lat: 49.2638,
         lng: -123.0888,
+      });
+      expect(getDealerCoordinates('Regency Toyota', 'Vancouver')).toEqual({
+        lat: 49.2394,
+        lng: -123.0450,
+      });
+      expect(getDealerCoordinates('OpenRoad Toyota Richmond', 'Richmond')).toEqual({
+        lat: 49.1711,
+        lng: -123.0722,
       });
       expect(getDealerCoordinates('Jim Pattison Toyota Surrey', 'Surrey')).toEqual({
         lat: 49.1912,

@@ -78,6 +78,22 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.westcoasttoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1218%26ln%3Den%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-regency-convertus',
+    sourceCode: 'regency-toyota-convertus',
+    dealerId: 'dealer-regency-toyota',
+    platform: 'convertus',
+    endpointUrl: 'https://www.regencytoyota.com/wp-json/convertus/v1/vehicles',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-openroad-richmond-convertus',
+    sourceCode: 'openroad-toyota-richmond-convertus',
+    dealerId: 'dealer-openroad-toyota-richmond',
+    platform: 'convertus',
+    endpointUrl: 'https://www.openroadtoyotarichmond.com/wp-json/convertus/v1/vehicles',
+    isActive: true,
+  },
 ];
 
 /**

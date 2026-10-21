@@ -542,6 +542,76 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
+    it('calculates proximity relative to OpenRoad Toyota Richmond and Regency Toyota when Richmond or Vancouver is selected', () => {
+      const fiveStoreListings: VehicleListingCardProps[] = [
+        {
+          id: 'regency-camry-01',
+          make: 'Toyota',
+          model: 'Camry Hybrid',
+          trim: 'SE AWD',
+          modelYear: 2026,
+          vin: null,
+          provisionalId: 'REG-31810',
+          isProvisionalVin: true,
+          dealerName: 'Regency Toyota',
+          dealerCity: 'Vancouver',
+          dealerProvince: 'BC',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://www.regencytoyota.com/en/new-catalog/toyota/2026-toyota-camry-hybrid-se-upgrade-awd-id31810',
+          msrp: 41190,
+          sellingPrice: 41190,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Hybrid',
+          stockNumber: 'REG-31810',
+        },
+        {
+          id: 'openroad-tacoma-01',
+          make: 'Toyota',
+          model: 'Tacoma',
+          trim: 'TRD Sport',
+          modelYear: 2026,
+          vin: '3TYLB5JN0TT144104',
+          isProvisionalVin: false,
+          dealerName: 'OpenRoad Toyota Richmond',
+          dealerCity: 'Richmond',
+          dealerProvince: 'BC',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://openroadtoyotarichmond.com/new/2026-toyota-tacoma-tacoma-trd-sport/3TYLB5JN0TT144104',
+          msrp: 50450,
+          sellingPrice: 50450,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Gas',
+          stockNumber: 'OR-144104',
+        },
+      ];
+
+      render(<InventoryExplorer initialListings={fiveStoreListings} />);
+
+      const locationSelect = screen.getByTestId('filter-location-select');
+
+      // Select Richmond -> OpenRoad Richmond (~4.5 km) should appear before Regency Toyota (~10.3 km)
+      fireEvent.change(locationSelect, { target: { value: 'Richmond' } });
+      expect(screen.getByText(/\(4\.5 km away\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/\(10\.3 km away\)/i)).toBeInTheDocument();
+
+      const cardsFromRichmond = screen.getAllByTestId(/^listing-card-/);
+      expect(cardsFromRichmond[0]).toHaveAttribute('data-testid', 'listing-card-openroad-tacoma-01');
+      expect(cardsFromRichmond[1]).toHaveAttribute('data-testid', 'listing-card-regency-camry-01');
+
+      // Select Vancouver -> Regency Toyota (~7.3 km) should appear before OpenRoad Richmond (~12.9 km)
+      fireEvent.change(locationSelect, { target: { value: 'Vancouver' } });
+      expect(screen.getByText(/\(7\.3 km away\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/\(12\.9 km away\)/i)).toBeInTheDocument();
+
+      const cardsFromVancouver = screen.getAllByTestId(/^listing-card-/);
+      expect(cardsFromVancouver[0]).toHaveAttribute('data-testid', 'listing-card-regency-camry-01');
+      expect(cardsFromVancouver[1]).toHaveAttribute('data-testid', 'listing-card-openroad-tacoma-01');
+    });
+
     it('resolves Near Me (GPS) coordinates with desktop-friendly options when permission is allowed', () => {
       let capturedSuccess: PositionCallback | null = null;
       const getCurrentPositionMock = vi.fn((success, _error, _options) => {

@@ -94,6 +94,36 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 465-9146',
     websiteUrl: 'https://www.westcoasttoyota.com/',
   },
+  {
+    dealerCode: 'regency-toyota',
+    aliases: ['regency-toyota', 'regency', 'regencytoyota'],
+    dealerName: 'Regency Toyota',
+    sourceCode: 'regency-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.regencytoyota.com',
+    endpointUrl: 'https://www.regencytoyota.com/wp-json/convertus/v1/vehicles',
+    address: '401 Kingsway',
+    city: 'Vancouver',
+    province: 'BC',
+    postalCode: 'V5T 3K1',
+    phone: '(604) 879-8411',
+    websiteUrl: 'https://www.regencytoyota.com/',
+  },
+  {
+    dealerCode: 'openroad-toyota-richmond',
+    aliases: ['openroad-toyota-richmond', 'openroad-richmond', 'openroadtoyotarichmond'],
+    dealerName: 'OpenRoad Toyota Richmond',
+    sourceCode: 'openroad-toyota-richmond-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.openroadtoyotarichmond.com',
+    endpointUrl: 'https://www.openroadtoyotarichmond.com/wp-json/convertus/v1/vehicles',
+    address: '13251 Smallwood Place',
+    city: 'Richmond',
+    province: 'BC',
+    postalCode: 'V6V 1W8',
+    phone: '(604) 273-3766',
+    websiteUrl: 'https://www.openroadtoyotarichmond.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -136,6 +166,170 @@ export function buildConvertusPageUrl(rawUrl: string, page: number = 1, limit: n
     modified += '&pg=' + page;
   }
   return modified;
+}
+
+const TOYOTA_MODEL_PREFIXES: Array<[string, string, number, string]> = [
+  ['grand-highlander-hybrid', 'Grand Highlander Hybrid', 58150, 'Hybrid'],
+  ['grand-highlander', 'Grand Highlander', 54150, 'Gas'],
+  ['highlander-hybrid', 'Highlander Hybrid', 53950, 'Hybrid'],
+  ['highlander', 'Highlander', 50450, 'Gas'],
+  ['rav4-plug-in-hybrid', 'RAV4 Plug-in Hybrid', 54590, 'Plug-in Hybrid'],
+  ['rav4-prime', 'RAV4 Plug-in Hybrid', 54590, 'Plug-in Hybrid'],
+  ['rav4-hybrid', 'RAV4 Hybrid', 39950, 'Hybrid'],
+  ['rav4', 'RAV4', 36550, 'Gas'],
+  ['prius-plug-in-hybrid', 'Prius Plug-in Hybrid', 43150, 'Plug-in Hybrid'],
+  ['prius-prime', 'Prius Plug-in Hybrid', 43150, 'Plug-in Hybrid'],
+  ['prius', 'Prius', 40650, 'Hybrid'],
+  ['corolla-cross-hybrid', 'Corolla Cross Hybrid', 34990, 'Hybrid'],
+  ['corolla-cross', 'Corolla Cross', 30590, 'Gas'],
+  ['corolla-hatchback', 'Corolla Hatchback', 27850, 'Gas'],
+  ['corolla-hybrid', 'Corolla Hybrid', 29590, 'Hybrid'],
+  ['gr-corolla', 'GR Corolla', 49990, 'Gas'],
+  ['corolla', 'Corolla', 26790, 'Gas'],
+  ['camry-hybrid', 'Camry Hybrid', 37690, 'Hybrid'],
+  ['camry', 'Camry Hybrid', 37690, 'Hybrid'],
+  ['4runner-hybrid', '4Runner Hybrid', 63950, 'Hybrid'],
+  ['4runner', '4Runner', 57450, 'Gas'],
+  ['tacoma-hybrid', 'Tacoma Hybrid', 64950, 'Hybrid'],
+  ['tacoma', 'Tacoma', 50450, 'Gas'],
+  ['tundra-hybrid', 'Tundra Hybrid', 72950, 'Hybrid'],
+  ['tundra', 'Tundra', 56450, 'Gas'],
+  ['sienna', 'Sienna', 50490, 'Hybrid'],
+  ['crown-signia', 'Crown Signia', 57450, 'Hybrid'],
+  ['crown', 'Crown', 55590, 'Hybrid'],
+  ['land-cruiser', 'Land Cruiser', 72950, 'Hybrid'],
+  ['sequoia', 'Sequoia', 82950, 'Hybrid'],
+  ['bz4x', 'bZ4X', 48950, 'Electric'],
+  ['bz-woodland', 'bZ4X', 52950, 'Electric'],
+  ['bz', 'bZ4X', 48950, 'Electric'],
+  ['c-hr', 'C-HR', 38950, 'Hybrid'],
+  ['gr86', 'GR86', 34950, 'Gas'],
+  ['gr-supra', 'GR Supra', 69950, 'Gas'],
+];
+
+function formatTrimTokens(rawTrimSlug: string): string {
+  if (!rawTrimSlug) return 'Base';
+  const upperTokens = new Set(['se', 'xse', 'le', 'xle', 'sr', 'sr5', 'trd', 'awd', 'fwd', '4x4', 'max', 'ev']);
+  return rawTrimSlug
+    .split('-')
+    .filter(Boolean)
+    .map((tok) => {
+      const lower = tok.toLowerCase();
+      if (lower === 'ltd') return 'Limited';
+      if (upperTokens.has(lower)) return lower.toUpperCase();
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join(' ');
+}
+
+export function parseToyotaSlugSpec(slug: string): {
+  year: number;
+  model: string;
+  trim: string;
+  msrp: number;
+  fuelType: string;
+} | null {
+  const m = slug.toLowerCase().match(/^(202\d)-toyota-(.+)$/);
+  if (!m) return null;
+  const year = parseInt(m[1], 10);
+  let rest = m[2];
+
+  for (const [prefix, canonicalModel, baseMsrp, fuelType] of TOYOTA_MODEL_PREFIXES) {
+    if (rest === prefix || rest.startsWith(prefix + '-')) {
+      rest = rest.slice(prefix.length).replace(/^-+/, '');
+      // Strip repeated model slug if present (e.g. openroad 'tacoma-tacoma-trd-sport')
+      if (rest === prefix || rest.startsWith(prefix + '-')) {
+        rest = rest.slice(prefix.length).replace(/^-+/, '');
+      }
+      let finalModel = canonicalModel;
+      let finalFuel = fuelType;
+      let finalMsrp = baseMsrp;
+      if (rest.startsWith('hybrid-') && !finalModel.includes('Hybrid')) {
+        finalModel = `${finalModel} Hybrid`;
+        finalFuel = 'Hybrid';
+        finalMsrp += 3500;
+        rest = rest.slice('hybrid-'.length);
+      }
+      const trim = formatTrimTokens(rest);
+      return { year, model: finalModel, trim, msrp: finalMsrp, fuelType: finalFuel };
+    }
+  }
+  return null;
+}
+
+/**
+ * Parses a dealer's public unauthenticated sitemap.xml into Convertus-compatible raw vehicle items.
+ */
+export function parsePublicSitemapToConvertusItems(xmlText: string): any[] {
+  const items: any[] = [];
+  const urlBlocks = [...xmlText.matchAll(/<url>([\s\S]*?)<\/url>/gi)].map((m) => m[1]);
+
+  for (const block of urlBlocks) {
+    const loc = block.match(/<loc>([^<]+)<\/loc>/i)?.[1]?.trim();
+    if (!loc) continue;
+    const imgLoc = block.match(/<image:loc>([^<]+)<\/image:loc>/i)?.[1]?.trim() || null;
+
+    // Pattern 1: OpenRoad /new/{slug}/{17-char-vin}
+    const openRoadMatch = loc.match(/\/new\/([^/]+)\/([A-HJ-NPR-Z0-9]{17})\/?$/i);
+    if (openRoadMatch) {
+      const slug = openRoadMatch[1];
+      const vin = openRoadMatch[2].toUpperCase();
+      const spec = parseToyotaSlugSpec(slug);
+      if (spec) {
+        items.push({
+          ad_id: `OR-${vin}`,
+          vehicle_id: `OR-${vin}`,
+          vin,
+          stock_number: `OR-${vin.slice(-6)}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: 'New',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+      continue;
+    }
+
+    // Pattern 2: Regency /en/new-catalog/toyota/{slug}-id{id}
+    const regencyMatch = loc.match(/\/en\/new-catalog\/toyota\/([a-z0-9-]+)-id(\d+)\/?$/i);
+    if (regencyMatch) {
+      const slug = regencyMatch[1];
+      const catalogId = regencyMatch[2];
+      const spec = parseToyotaSlugSpec(slug);
+      if (spec) {
+        items.push({
+          ad_id: `REG-${catalogId}`,
+          vehicle_id: `REG-${catalogId}`,
+          vin: null,
+          stock_number: `REG-${catalogId}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: 'New',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+    }
+  }
+
+  return items;
 }
 
 // Automatically load environment files if present
@@ -181,7 +375,7 @@ Usage:
 
 Options:
   --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
-                             Supported: jptoyota-downtown, jptoyota-surrey, westcoast-toyota, all
+                             Supported: jptoyota-downtown, jptoyota-surrey, westcoast-toyota, regency-toyota, openroad-toyota-richmond, all
   --all                      Sweep all registered active pilot dealers sequentially
   --dry-run                  Execute sweep, parse and validate without persisting to Supabase
   --fixture                  Use local offline fixture instead of fetching live endpoint
@@ -366,9 +560,48 @@ export async function sweepSingleDealer(
       rawPayload = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
     } else {
       const initialUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, 1, 100);
-      const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
-      rawPayload = fetchResult.body;
-      console.log(`  [HTTP] Feed successfully retrieved in ${Date.now() - startTime}ms.`);
+      let cachedSitemapItems: any[] | null = null;
+
+      try {
+        const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
+        rawPayload = fetchResult.body;
+        console.log(`  [HTTP] Feed successfully retrieved in ${Date.now() - startTime}ms.`);
+      } catch (primaryErr: any) {
+        if (primaryErr.message?.includes('429')) {
+          throw primaryErr;
+        }
+        const sitemapUrl = `${dealerConfig.baseUrl.replace(/\/+$/, '')}/sitemap.xml`;
+        console.log(
+          `  [FALLBACK] Primary endpoint (${primaryErr.message}). Probing public catalog ${sitemapUrl}...`
+        );
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
+        try {
+          const res = await fetch(sitemapUrl, {
+            headers: {
+              'User-Agent': USER_AGENT_AUDITOR,
+              Accept: 'application/xml, text/xml, */*',
+            },
+            signal: controller.signal,
+          });
+          clearTimeout(timer);
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          }
+          const xmlText = await res.text();
+          cachedSitemapItems = parsePublicSitemapToConvertusItems(xmlText);
+          rawPayload = {
+            summary: { total_vehicles: cachedSitemapItems.length },
+            results: cachedSitemapItems.slice(0, 100),
+          };
+          console.log(
+            `  [HTTP] Public catalog retrieved in ${Date.now() - startTime}ms (${cachedSitemapItems.length} total units).`
+          );
+        } catch (fallbackErr: any) {
+          clearTimeout(timer);
+          throw primaryErr;
+        }
+      }
 
       // Multi-page pagination loops if total inventory exceeds page capacity
       const totalVehicles = rawPayload?.summary?.total_vehicles;
@@ -384,6 +617,16 @@ export async function sweepSingleDealer(
         const maxPages = 10;
         while (rawPayload.results.length < totalVehicles && currentPage <= maxPages) {
           await new Promise((r) => setTimeout(r, 1500)); // Polite delay per Master Plan V3.2
+          if (cachedSitemapItems) {
+            const nextSlice = cachedSitemapItems.slice((currentPage - 1) * 100, currentPage * 100);
+            if (nextSlice.length === 0) break;
+            rawPayload.results.push(...nextSlice);
+            console.log(
+              `  [PAGINATION] Page ${currentPage} processed ${nextSlice.length} new items (Total: ${rawPayload.results.length}/${totalVehicles})`
+            );
+            currentPage++;
+            continue;
+          }
           const nextUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, currentPage, 100);
           try {
             const nextResult = await fetchWithRetry(nextUrl, DEFAULT_TIMEOUT_MS);

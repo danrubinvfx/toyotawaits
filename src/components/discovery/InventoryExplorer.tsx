@@ -347,18 +347,23 @@ export function InventoryExplorer({
       ['Abbotsford', 'Abbotsford'],
     ]);
     listings.forEach((item) => {
+      const lowerDealer = item.dealerName.toLowerCase();
       const city =
         item.dealerCity ||
-        (item.dealerName.toLowerCase().includes('surrey')
+        (lowerDealer.includes('surrey')
           ? 'Surrey'
-          : item.dealerName.toLowerCase().includes('west coast')
+          : lowerDealer.includes('west coast')
           ? 'Pitt Meadows'
+          : lowerDealer.includes('richmond') || lowerDealer.includes('openroad')
+          ? 'Richmond'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
         locMap.set('Vancouver', 'Vancouver (Downtown)');
       } else if (city.toLowerCase() === 'surrey') {
         locMap.set('Surrey', 'Surrey (Guildford)');
+      } else if (city.toLowerCase() === 'richmond') {
+        locMap.set('Richmond', 'Richmond');
       } else if (city.toLowerCase() === 'pitt meadows' || city.toLowerCase().includes('pitt')) {
         locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
       } else if (!locMap.has(city)) {
