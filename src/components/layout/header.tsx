@@ -127,6 +127,10 @@ export function Header({ initialRegion }: HeaderProps = {}) {
     }
   }, []);
 
+  const isCancelled = submission?.status === 'cancelled';
+  const isDelivered = submission?.status === 'delivered';
+  const hasActiveOrder = Boolean(submission && !isCancelled && !isDelivered);
+
   const editHref = submission
     ? `/edit/${submission.id || submission.editToken}?key=${encodeURIComponent(
         submission.editKey || submission.edit_key || ''
@@ -445,7 +449,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           <div className="hidden sm:block shrink-0">
             <KofiHeaderPill label="Support ☕" />
           </div>
-          {submission ? (
+          {hasActiveOrder ? (
             <Link
               href={editHref}
               className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
@@ -974,7 +978,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
             {/* 4. Community Action & Open Data */}
             <div className="pt-2 border-t border-zinc-200 dark:border-neutral-800/80 space-y-2">
-              {submission ? (
+              {hasActiveOrder ? (
                 <div className="space-y-2">
                   <Link
                     href={editHref}
@@ -982,7 +986,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2"
                   >
                     <CheckCircle2 className="h-4 w-4 text-black shrink-0" />
-                    <span>Update Status {submission.model ? `(${submission.model})` : ''}</span>
+                    <span>Update Status {submission?.model ? `(${submission.model})` : ''}</span>
                     <span className="h-2 w-2 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
                   </Link>
                   <Link

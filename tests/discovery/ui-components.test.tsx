@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   VehicleListingCard,
   VehicleListingCardProps,
@@ -539,6 +539,114 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('listing-card-wc-toyota-prius-01')).toBeInTheDocument();
       // Downtown (19.3 km) is excluded (> 15 km)
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
+    });
+
+    it('resolves Near Me (GPS) coordinates with desktop-friendly options when permission is allowed', () => {
+      let capturedSuccess: PositionCallback | null = null;
+      const getCurrentPositionMock = vi.fn((success, _error, _options) => {
+        capturedSuccess = success;
+      });
+      Object.defineProperty(global.navigator, 'geolocation', {
+        value: { getCurrentPosition: getCurrentPositionMock },
+        configurable: true,
+      });
+
+      render(<InventoryExplorer />);
+
+      const gpsBtn = screen.getByTestId('gps-location-btn');
+      fireEvent.click(gpsBtn);
+
+      // Verify loading state while resolving coordinates
+      expect(gpsBtn).toHaveTextContent('Locating...');
+      expect(screen.getByTestId('gps-loading-spinner')).toBeInTheDocument();
+
+      // Verify desktop-friendly geolocation options
+      expect(getCurrentPositionMock).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.any(Function),
+        {
+          enableHighAccuracy: false,
+          timeout: 10000,
+          maximumAge: 300000,
+        }
+      );
+
+      // Resolve position in Surrey
+      act(() => {
+        capturedSuccess!({
+          coords: {
+            latitude: 49.1913,
+            longitude: -122.849,
+            accuracy: 100,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+            toJSON: () => ({}),
+          },
+          timestamp: Date.now(),
+          toJSON: () => ({}),
+        } as GeolocationPosition);
+      });
+
+      // Loading state resets and location updates to Near Me (GPS)
+      expect(gpsBtn).toHaveTextContent('Near Me (GPS)');
+      expect(screen.queryByTestId('gps-loading-spinner')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('gps-error-banner')).not.toBeInTheDocument();
+      expect((screen.getByTestId('filter-location-select') as HTMLSelectElement).value).toBe(
+        'Near Me (GPS)'
+      );
+      expect(screen.getAllByText(/\(3\.4 km away\)/i).length).toBeGreaterThan(0);
+    });
+
+    it('displays permission denied banner and falls back to municipality dropdown when geolocation is denied or unavailable', () => {
+      const getCurrentPositionMock = vi.fn((_success, error) => {
+        error({
+          code: 1, // PERMISSION_DENIED
+          message: 'User denied Geolocation',
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        });
+      });
+      Object.defineProperty(global.navigator, 'geolocation', {
+        value: { getCurrentPosition: getCurrentPositionMock },
+        configurable: true,
+      });
+
+      render(<InventoryExplorer />);
+
+      const gpsBtn = screen.getByTestId('gps-location-btn');
+      fireEvent.click(gpsBtn);
+
+      // Loading state is reset and permission denied banner is displayed
+      expect(gpsBtn).toHaveTextContent('Near Me (GPS)');
+      const errorBanner = screen.getByTestId('gps-error-banner');
+      expect(errorBanner).toHaveTextContent(
+        'Location permission denied. Please select a city below.'
+      );
+
+      // Trigger TIMEOUT (code 3)
+      getCurrentPositionMock.mockImplementationOnce((_success, error) => {
+        error({
+          code: 3, // TIMEOUT
+          message: 'Timeout expired',
+          PERMISSION_DENIED: 1,
+          POSITION_UNAVAILABLE: 2,
+          TIMEOUT: 3,
+        });
+      });
+      fireEvent.click(gpsBtn);
+      expect(screen.getByTestId('gps-error-banner')).toHaveTextContent(
+        'Could not detect location. Please choose a municipality.'
+      );
+
+      // Selecting a municipality preset clears the error banner and sorts by distance
+      fireEvent.change(screen.getByTestId('filter-location-select'), {
+        target: { value: 'Burnaby' },
+      });
+      expect(screen.queryByTestId('gps-error-banner')).not.toBeInTheDocument();
+      expect(screen.getAllByText(/\(8 km away\)|\(8\.0 km away\)/i).length).toBeGreaterThan(0);
     });
 
     it('displays empty state when no listings match active filter criteria', () => {

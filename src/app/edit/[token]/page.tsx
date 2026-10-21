@@ -211,35 +211,45 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
         waitDays: isCancelled ? null : (json.data?.waitDays ?? prev?.waitDays),
       }));
 
-      // Update local storage
-      updateStoredSubmissionByToken(token, {
-        status: targetStatus,
-      });
+      // Update local storage across all saved submission keys
+      updateStoredSubmissionStatus(token, targetStatus);
       if (submissionId && submissionId !== token) {
-        updateStoredSubmissionByToken(submissionId, {
-          status: targetStatus,
-        });
+        updateStoredSubmissionStatus(submissionId, targetStatus);
+      }
+
+      try {
+        const raw = localStorage.getItem('toyotawaits_submission');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token || parsed.id === submissionId) {
+            parsed.status = targetStatus;
+            parsed.stage = isCancelled ? 'cancelled' : normalizedUpdatedStage;
+            parsed.currentStage = isCancelled ? 'cancelled' : normalizedUpdatedStage;
+            localStorage.setItem('toyotawaits_submission', JSON.stringify(parsed));
+          }
+        }
+      } catch {
+        // Ignore localStorage error
       }
 
       try {
         const pendingRaw = localStorage.getItem('toyotawait_pending_submission');
         if (pendingRaw) {
           const parsed = JSON.parse(pendingRaw);
-          if (parsed.editToken === token || parsed.id === submission?.id || parsed.editKey === token) {
-            if (isCancelled) {
-              parsed.status = 'cancelled';
-              parsed.stage = 'cancelled';
-              parsed.currentStage = 'cancelled';
-            } else {
-              parsed.status = targetStatus;
-              parsed.stage = normalizedUpdatedStage;
-              parsed.currentStage = normalizedUpdatedStage;
-            }
+          if (parsed.editToken === token || parsed.id === submission?.id || parsed.editKey === token || parsed.id === submissionId) {
+            parsed.status = targetStatus;
+            parsed.stage = isCancelled ? 'cancelled' : normalizedUpdatedStage;
+            parsed.currentStage = isCancelled ? 'cancelled' : normalizedUpdatedStage;
             localStorage.setItem('toyotawait_pending_submission', JSON.stringify(parsed));
           }
         }
       } catch {
         // Ignore localStorage error
+      }
+
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+        window.dispatchEvent(new Event('storage'));
       }
 
       setSaveSuccess(true);

@@ -110,47 +110,68 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
   const [isDismissed, setIsDismissed] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      const dismissedStored = localStorage.getItem('toyotawait_tracker_dismissed');
-      if (dismissedStored === 'true') {
-        setIsDismissed(true);
-      }
-
-      const collapsedPref = localStorage.getItem('toyotawait_tracker_collapsed');
-      if (collapsedPref !== null) {
-        setIsExpanded(collapsedPref === 'false');
-      } else if (defaultExpanded !== undefined) {
-        setIsExpanded(defaultExpanded);
-      }
-
-      // Check for saved local submission in browser
-      const saved =
-        localStorage.getItem('toyotawait_pending_submission') ||
-        localStorage.getItem('toyotawaits_submission');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        const resolvedEditKey = parsed.editKey || parsed.edit_key || parsed.editToken;
-        if (parsed.id && resolvedEditKey) {
-          const normalizedStage = normalizeStepperStage(
-            parsed.currentStage || parsed.stage,
-            parsed.status
-          );
-          setLocalOrder({
-            id: parsed.id,
-            editKey: resolvedEditKey,
-            modelName: parsed.modelName || parsed.model || 'RAV4',
-            powertrainName: parsed.powertrainName || parsed.powertrain || 'Prime / Plug-in Hybrid',
-            trimName: parsed.trimName || parsed.trim || 'XSE AWD',
-            province: parsed.province || 'BC',
-            orderDate: parsed.orderDate || new Date().toISOString().split('T')[0],
-            currentStage: normalizedStage,
-            status: parsed.status || 'pending',
-          });
-          setSelectedStep(normalizedStage);
+    const loadLocalOrder = () => {
+      try {
+        const dismissedStored = localStorage.getItem('toyotawait_tracker_dismissed');
+        if (dismissedStored === 'true') {
+          setIsDismissed(true);
+        } else {
+          setIsDismissed(false);
         }
+
+        const collapsedPref = localStorage.getItem('toyotawait_tracker_collapsed');
+        if (collapsedPref !== null) {
+          setIsExpanded(collapsedPref === 'false');
+        } else if (defaultExpanded !== undefined) {
+          setIsExpanded(defaultExpanded);
+        }
+
+        // Check for saved local submission in browser
+        const saved =
+          localStorage.getItem('toyotawait_pending_submission') ||
+          localStorage.getItem('toyotawaits_submission');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const resolvedEditKey = parsed.editKey || parsed.edit_key || parsed.editToken;
+          if (parsed.id && resolvedEditKey) {
+            const normalizedStage = normalizeStepperStage(
+              parsed.currentStage || parsed.stage,
+              parsed.status
+            );
+            if (parsed.status === 'cancelled' || normalizedStage === 'cancelled') {
+              setLocalOrder(null as any);
+              return;
+            }
+            setLocalOrder({
+              id: parsed.id,
+              editKey: resolvedEditKey,
+              modelName: parsed.modelName || parsed.model || 'RAV4',
+              powertrainName: parsed.powertrainName || parsed.powertrain || 'Prime / Plug-in Hybrid',
+              trimName: parsed.trimName || parsed.trim || 'XSE AWD',
+              province: parsed.province || 'BC',
+              orderDate: parsed.orderDate || new Date().toISOString().split('T')[0],
+              currentStage: normalizedStage,
+              status: parsed.status || 'pending',
+            });
+            setSelectedStep(normalizedStage);
+            return;
+          }
+        }
+        setLocalOrder(null as any);
+      } catch {
+        // Ignore parse errors from localStorage
       }
-    } catch {
-      // Ignore parse errors from localStorage
+    };
+
+    loadLocalOrder();
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('toyotawaits:submission-updated', loadLocalOrder);
+      window.addEventListener('storage', loadLocalOrder);
+      return () => {
+        window.removeEventListener('toyotawaits:submission-updated', loadLocalOrder);
+        window.removeEventListener('storage', loadLocalOrder);
+      };
     }
   }, [defaultExpanded]);
 

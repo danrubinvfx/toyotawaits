@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp, Navigation } from 'lucide-react';
+import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp, Navigation, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getPresetCoordinates } from '@/lib/geo/distance';
 
@@ -66,6 +66,7 @@ export function InventoryFilterBar({
 }: InventoryFilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Combine default municipality presets with any runtime observed locations
   const rawLocations: LocationOption[] = [...DEFAULT_MUNICIPALITY_LOCATIONS];
@@ -110,6 +111,7 @@ export function InventoryFilterBar({
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const val = e.target.value;
+    setLocationError(null);
     const coords = val ? getPresetCoordinates(val) : null;
     onFilterChange({
       ...filters,
@@ -136,14 +138,18 @@ export function InventoryFilterBar({
   };
 
   const handleGpsLocation = () => {
+    setLocationError(null);
+
     if (typeof window === 'undefined' || !navigator?.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      setLocationError('Could not detect location. Please choose a municipality.');
       return;
     }
+
     setIsLocating(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setIsLocating(false);
+        setLocationError(null);
         const coords = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -153,15 +159,23 @@ export function InventoryFilterBar({
           location: 'Near Me (GPS)',
           userLocation: 'Near Me (GPS)',
           userCoordinates: coords,
+          dealer: '',
           sortNearest: true,
         });
       },
       (error) => {
         setIsLocating(false);
-        console.warn('Geolocation lookup failed:', error);
-        alert('Unable to retrieve your current location. Please select a municipality preset.');
+        if (error && error.code === 1) {
+          setLocationError('Location permission denied. Please select a city below.');
+        } else {
+          setLocationError('Could not detect location. Please choose a municipality.');
+        }
       },
-      { timeout: 10000, enableHighAccuracy: false }
+      {
+        enableHighAccuracy: false, // Prevents timeouts on desktop Wi-Fi / IP triangulation
+        timeout: 10000,            // 10s timeout
+        maximumAge: 300000,        // Accept cached position up to 5 minutes
+      }
     );
   };
 
@@ -178,6 +192,8 @@ export function InventoryFilterBar({
   };
 
   const handleReset = () => {
+    setLocationError(null);
+    setIsLocating(false);
     onFilterChange({
       model: '',
       status: 'advertised',
@@ -329,13 +345,31 @@ export function InventoryFilterBar({
                 data-testid="gps-location-btn"
                 onClick={handleGpsLocation}
                 disabled={isLocating}
-                className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:text-sky-300 font-medium transition-colors"
+                className="inline-flex items-center gap-1 text-[10px] text-sky-400 hover:text-sky-300 disabled:opacity-60 font-medium transition-colors"
                 title="Use current GPS location"
               >
-                <Navigation className="h-2.5 w-2.5" aria-hidden="true" />
+                {isLocating ? (
+                  <Loader2
+                    data-testid="gps-loading-spinner"
+                    className="h-2.5 w-2.5 animate-spin"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Navigation className="h-2.5 w-2.5" aria-hidden="true" />
+                )}
                 <span>{isLocating ? 'Locating...' : 'Near Me (GPS)'}</span>
               </button>
             </div>
+            {locationError && (
+              <div
+                data-testid="gps-error-banner"
+                role="alert"
+                className="rounded-md border border-amber-800/60 bg-amber-950/50 px-2 py-1 text-[11px] text-amber-300 flex items-center gap-1.5"
+              >
+                <AlertCircle className="h-3 w-3 shrink-0 text-amber-400" aria-hidden="true" />
+                <span>{locationError}</span>
+              </div>
+            )}
             <select
               id="filter-location"
               data-testid="filter-location-select"

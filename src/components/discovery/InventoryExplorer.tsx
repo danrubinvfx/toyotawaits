@@ -325,7 +325,16 @@ export function InventoryExplorer({
   }, [listings, filters.model]);
 
   const availableLocations = useMemo(() => {
-    const locMap = new Map<string, string>();
+    const locMap = new Map<string, string>([
+      ['Vancouver', 'Vancouver (Downtown)'],
+      ['Burnaby', 'Burnaby'],
+      ['Surrey', 'Surrey (Guildford)'],
+      ['Richmond', 'Richmond'],
+      ['Coquitlam', 'Coquitlam / Tri-Cities'],
+      ['Pitt Meadows', 'Pitt Meadows (West Coast)'],
+      ['Langley', 'Langley'],
+      ['Abbotsford', 'Abbotsford'],
+    ]);
     listings.forEach((item) => {
       const city =
         item.dealerCity ||
@@ -341,20 +350,12 @@ export function InventoryExplorer({
         locMap.set('Surrey', 'Surrey (Guildford)');
       } else if (city.toLowerCase() === 'pitt meadows' || city.toLowerCase().includes('pitt')) {
         locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
-      } else {
+      } else if (!locMap.has(city)) {
         locMap.set(city, city);
       }
     });
 
-    if (locMap.size === 0) {
-      locMap.set('Vancouver', 'Vancouver (Downtown)');
-      locMap.set('Surrey', 'Surrey (Guildford)');
-      locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
-    }
-
-    return Array.from(locMap.entries())
-      .map(([value, label]) => ({ value, label }))
-      .sort((a, b) => a.label.localeCompare(b.label));
+    return Array.from(locMap.entries()).map(([value, label]) => ({ value, label }));
   }, [listings]);
 
   const availableDealers = useMemo(() => {

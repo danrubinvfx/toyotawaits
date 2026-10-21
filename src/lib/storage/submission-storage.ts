@@ -47,18 +47,87 @@ export function saveStoredSubmission(item: StoredSubmission): void {
 }
 
 export function updateStoredSubmissionStatus(
-  id: string,
-  newStatus: 'delivered' | 'cancelled'
+  idOrToken: string,
+  newStatus: 'pending' | 'delivered' | 'cancelled'
 ): void {
   if (typeof window === 'undefined') return;
   try {
+    // 1. Update toyotawait_my_submissions
     const existing = getStoredSubmissions();
     const updated = existing.map((s) =>
-      s.id === id ? { ...s, status: newStatus } : s
+      s.id === idOrToken || s.editToken === idOrToken || s.editKey === idOrToken
+        ? { ...s, status: newStatus }
+        : s
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+    // 2. Update toyotawaits_submission
+    const raw = localStorage.getItem('toyotawaits_submission');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (
+          !idOrToken ||
+          parsed.id === idOrToken ||
+          parsed.editToken === idOrToken ||
+          parsed.editKey === idOrToken ||
+          parsed.edit_key === idOrToken
+        ) {
+          parsed.status = newStatus;
+          if (newStatus === 'cancelled') {
+            parsed.stage = 'cancelled';
+            parsed.currentStage = 'cancelled';
+          }
+          localStorage.setItem('toyotawaits_submission', JSON.stringify(parsed));
+        }
+      } catch {
+        // Ignore JSON error
+      }
+    }
+
+    // 3. Update toyotawait_pending_submission
+    const pendingRaw = localStorage.getItem('toyotawait_pending_submission');
+    if (pendingRaw) {
+      try {
+        const parsed = JSON.parse(pendingRaw);
+        if (
+          !idOrToken ||
+          parsed.id === idOrToken ||
+          parsed.editToken === idOrToken ||
+          parsed.editKey === idOrToken ||
+          parsed.edit_key === idOrToken
+        ) {
+          parsed.status = newStatus;
+          if (newStatus === 'cancelled') {
+            parsed.stage = 'cancelled';
+            parsed.currentStage = 'cancelled';
+          }
+          localStorage.setItem('toyotawait_pending_submission', JSON.stringify(parsed));
+        }
+      } catch {
+        // Ignore JSON error
+      }
+    }
+
+    // 4. Update toyotawaits_saved_order
+    const savedOrderRaw = localStorage.getItem('toyotawaits_saved_order');
+    if (savedOrderRaw) {
+      try {
+        const parsed = JSON.parse(savedOrderRaw);
+        parsed.status = newStatus;
+        if (newStatus === 'cancelled') {
+          parsed.stage = 'cancelled';
+        }
+        localStorage.setItem('toyotawaits_saved_order', JSON.stringify(parsed));
+      } catch {
+        // Ignore JSON error
+      }
+    }
+
+    window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+    window.dispatchEvent(new Event('storage'));
   } catch (err) {
-    console.error('Failed to update submission in localStorage:', err);
+    console.error('Failed to update submission status in localStorage:', err);
   }
 }
 
@@ -75,6 +144,10 @@ export function updateStoredSubmissionByToken(
         : s
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+    if (updates.status) {
+      updateStoredSubmissionStatus(token, updates.status);
+    }
   } catch (err) {
     console.error('Failed to update submission in localStorage by token:', err);
   }
@@ -96,18 +169,21 @@ export function clearStoredSubmissionByToken(token?: string): void {
   try {
     localStorage.removeItem('toyota_submission_token');
     localStorage.removeItem('toyota_edit_token');
+    localStorage.removeItem('toyotawaits_saved_order');
 
     // 1. toyotawaits_submission
     const raw = localStorage.getItem('toyotawaits_submission');
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token) {
+        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token || parsed.edit_key === token) {
           localStorage.removeItem('toyotawaits_submission');
         }
       } catch {
         localStorage.removeItem('toyotawaits_submission');
       }
+    } else if (!token) {
+      localStorage.removeItem('toyotawaits_submission');
     }
 
     // 2. toyotawait_pending_submission
@@ -115,12 +191,14 @@ export function clearStoredSubmissionByToken(token?: string): void {
     if (pendingRaw) {
       try {
         const parsed = JSON.parse(pendingRaw);
-        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token) {
+        if (!token || parsed.id === token || parsed.editToken === token || parsed.editKey === token || parsed.edit_key === token) {
           localStorage.removeItem('toyotawait_pending_submission');
         }
       } catch {
         localStorage.removeItem('toyotawait_pending_submission');
       }
+    } else if (!token) {
+      localStorage.removeItem('toyotawait_pending_submission');
     }
 
     // 3. toyotawait_my_submissions
@@ -141,6 +219,8 @@ export function clearStoredSubmissionByToken(token?: string): void {
       } catch {
         localStorage.removeItem(STORAGE_KEY);
       }
+    } else if (!token) {
+      localStorage.removeItem(STORAGE_KEY);
     }
 
     window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
@@ -156,8 +236,10 @@ export function clearAllStoredSubmissions(): void {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem('toyotawaits_submission');
     localStorage.removeItem('toyotawait_pending_submission');
+    localStorage.removeItem('toyotawaits_saved_order');
     localStorage.removeItem('toyota_submission_token');
     localStorage.removeItem('toyota_edit_token');
+    localStorage.removeItem('toyotawait_tracker_dismissed');
 
     window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
     window.dispatchEvent(new Event('storage'));
