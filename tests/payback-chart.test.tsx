@@ -334,6 +334,24 @@ describe('Stage 4: Payback & Graph Test Suite', () => {
       expect(screen.getByText('Not recovered within 7-year horizon')).toBeInTheDocument();
     });
 
+    it('renders clean savings curve without $0 break-even reference line or baseline label', () => {
+      render(
+        <PaybackChart
+          timeline={mockTimeline}
+          isRecovered={true}
+          recoveryYear={6.9}
+          recoveryDay={2535}
+        />
+      );
+
+      // Verify legend contains the primary savings advantage line
+      expect(screen.getByText('Target Cash Flow Advantage')).toBeInTheDocument();
+
+      // Verify $0 break-even baseline reference line and labels are removed
+      expect(screen.queryByText(/Break-Even Baseline/i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Break-Even \(\$0\)/i)).not.toBeInTheDocument();
+    });
+
     it('renders AccessibleChartTable with semantic HTML table elements for screen readers', () => {
       render(<AccessibleChartTable points={mockTimeline.points} />);
 

@@ -10,7 +10,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  ReferenceLine,
   CartesianGrid,
 } from 'recharts';
 import { CashFlowTimelineResult, CashFlowPoint } from '@/types/calculator';
@@ -210,19 +209,6 @@ export function PaybackChart({
                     />
                   }
                 />
-                <ReferenceLine
-                  y={0}
-                  stroke="#ef4444"
-                  strokeDasharray="4 4"
-                  strokeWidth={1.5}
-                  label={{
-                    value: 'Break-Even ($0)',
-                    fill: '#ef4444',
-                    position: 'insideTopLeft',
-                    fontSize: 9,
-                    fontWeight: 600,
-                  }}
-                />
                 <Line
                   type="linear"
                   dataKey="netAdvantageTarget"
@@ -247,10 +233,6 @@ export function PaybackChart({
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-1 bg-[#22c55e] rounded-full inline-block" />
               <span>Target Cash Flow Advantage</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 border-t border-dashed border-[#ef4444] inline-block" />
-              <span>Break-Even Baseline ($0 {currencyCode})</span>
             </div>
           </div>
           <p className="text-[11px] text-zinc-400">
