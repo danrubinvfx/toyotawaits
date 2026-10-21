@@ -13,6 +13,8 @@ export interface StoredSubmission {
   province: string;
   orderDate: string;
   status: 'pending' | 'delivered' | 'cancelled';
+  stage?: string;
+  currentStage?: string;
   createdAt: string;
 }
 
@@ -56,7 +58,11 @@ export function updateStoredSubmissionStatus(
     const existing = getStoredSubmissions();
     const updated = existing.map((s) =>
       s.id === idOrToken || s.editToken === idOrToken || s.editKey === idOrToken
-        ? { ...s, status: newStatus }
+        ? {
+            ...s,
+            status: newStatus,
+            ...(newStatus === 'cancelled' ? { stage: 'cancelled', currentStage: 'cancelled' } : {}),
+          }
         : s
     );
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));

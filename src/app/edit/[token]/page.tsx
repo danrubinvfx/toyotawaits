@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { updateStoredSubmissionByToken, clearStoredSubmissionByToken, clearAllStoredSubmissions } from '@/lib/storage/submission-storage';
+import { updateStoredSubmissionByToken, updateStoredSubmissionStatus, clearStoredSubmissionByToken, clearAllStoredSubmissions } from '@/lib/storage/submission-storage';
 import {
   CheckCircle2,
   Clock,
@@ -674,6 +674,30 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
                   <span className="text-[11px] text-zinc-500">Moved on / refunded</span>
                 </button>
               </div>
+
+              {isCancelledState && (
+                <div className="p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                  <div className="text-left">
+                    <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                      Remove from this browser
+                    </p>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                      Clears this order from local storage so the homepage tracker resets to default.
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleClearSavedOrderAndGoHome}
+                    data-testid="edit-remove-order-btn"
+                    className="text-xs font-medium text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 shrink-0"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1 text-zinc-500" />
+                    Remove order from this browser
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Delivery Date Picker (shown when Delivered) */}
@@ -739,14 +763,24 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
         </Card>
       </form>
 
-      {/* Secondary Action: Submit another vehicle */}
-      <div className="text-center pt-2">
+      {/* Secondary Actions: Submit another vehicle or clear from browser */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2">
         <Link
           href="/submit"
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 font-medium transition-colors"
         >
           <span>+ Submit another vehicle order</span>
         </Link>
+        <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">&bull;</span>
+        <button
+          type="button"
+          onClick={handleClearSavedOrderAndGoHome}
+          data-testid="footer-remove-order-btn"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-zinc-400 hover:text-rose-500 dark:text-zinc-500 dark:hover:text-rose-400 font-medium transition-colors cursor-pointer"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          <span>Remove order from this browser</span>
+        </button>
       </div>
     </div>
   );

@@ -54,6 +54,50 @@ describe('submission-storage (Client LocalStorage Secret Key Manager)', () => {
     expect(updated[0].status).toBe('delivered');
   });
 
+  it('updates submission status to cancelled and marks stage as cancelled across all localStorage keys', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({ id: 'sub-cancel', status: 'pending', stage: 'deposit_placed' })
+    );
+    localStorage.setItem(
+      'toyotawait_pending_submission',
+      JSON.stringify({ id: 'sub-cancel', status: 'pending', stage: 'deposit_placed' })
+    );
+    localStorage.setItem(
+      'toyotawaits_saved_order',
+      JSON.stringify({ id: 'sub-cancel', status: 'pending', stage: 'deposit_placed' })
+    );
+    saveStoredSubmission({
+      id: 'sub-cancel',
+      editKey: 'key-cancel',
+      modelName: 'Tacoma',
+      trimName: 'TRD Off-Road',
+      province: 'BC',
+      orderDate: '2024-04-01',
+      status: 'pending',
+      stage: 'deposit_placed',
+      createdAt: '2024-04-01T12:00:00Z',
+    });
+
+    updateStoredSubmissionStatus('sub-cancel', 'cancelled');
+
+    const mySubs = getStoredSubmissions();
+    expect(mySubs[0].status).toBe('cancelled');
+    expect(mySubs[0].stage).toBe('cancelled');
+
+    const sub = JSON.parse(localStorage.getItem('toyotawaits_submission')!);
+    expect(sub.status).toBe('cancelled');
+    expect(sub.stage).toBe('cancelled');
+
+    const pending = JSON.parse(localStorage.getItem('toyotawait_pending_submission')!);
+    expect(pending.status).toBe('cancelled');
+    expect(pending.stage).toBe('cancelled');
+
+    const savedOrder = JSON.parse(localStorage.getItem('toyotawaits_saved_order')!);
+    expect(savedOrder.status).toBe('cancelled');
+    expect(savedOrder.stage).toBe('cancelled');
+  });
+
   it('removes stored submission', () => {
     const item: StoredSubmission = {
       id: 'sub-3',

@@ -65,4 +65,60 @@ describe('PostEstimateSubmissionCta Component', () => {
     const btn = screen.getByRole('link', { name: /\+ Add Your Wait Time/i });
     expect(btn).toHaveAttribute('href', '/submit?model=rav4&powertrain=phev&province=BC&orderDate=2025-06-01');
   });
+
+  it('renders muted cancelled pill instead of active order when status is cancelled', async () => {
+    const { fireEvent } = await import('@testing-library/react');
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'sub-cancelled-123',
+        editKey: 'key-cancelled-456',
+        model: 'Grand Highlander',
+        status: 'cancelled',
+      })
+    );
+
+    render(<PostEstimateSubmissionCta />);
+
+    // Should NOT show Active Order or update delivery milestone text
+    expect(screen.queryByText(/Active Order/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Update your delivery milestone/i)).not.toBeInTheDocument();
+
+    // Should show Order Cancelled / Refunded banner
+    expect(screen.getByText(/Order Cancelled \/ Refunded/i)).toBeInTheDocument();
+    expect(screen.getByText('Grand Highlander')).toBeInTheDocument();
+
+    // Clicking Dismiss / Clear from this device clears localStorage and resets to default visitor CTA
+    const clearBtn = screen.getByTestId('clear-cancelled-order-btn');
+    expect(clearBtn).toBeInTheDocument();
+    fireEvent.click(clearBtn);
+
+    // Verify localStorage was cleared
+    expect(localStorage.getItem('toyotawaits_submission')).toBeNull();
+    // Default visitor view should now be displayed
+    expect(screen.getByText(/Waiting on a delivery or picked up recently\?/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /\+ Add Your Wait Time/i })).toBeInTheDocument();
+  });
+
+  it('renders default + Add Your Wait Time prompt when status is delivered', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'sub-delivered-123',
+        editKey: 'key-delivered-456',
+        model: 'Sienna',
+        status: 'delivered',
+      })
+    );
+
+    render(<PostEstimateSubmissionCta />);
+
+    // Should NOT show Active Order
+    expect(screen.queryByText(/Active Order/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Update your delivery milestone/i)).not.toBeInTheDocument();
+
+    // Should show default visitor CTA
+    expect(screen.getByText(/Waiting on a delivery or picked up recently\?/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /\+ Add Your Wait Time/i })).toBeInTheDocument();
+  });
 });

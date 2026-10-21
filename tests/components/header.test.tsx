@@ -282,4 +282,40 @@ describe('Header Component', () => {
     expect(mobileInventoryLink).toHaveAttribute('href', '/inventory');
     expect(mobileInventoryLink).toHaveTextContent(/Live Inventory/i);
   });
+
+  it('renders default + Log Order CTA when saved order is cancelled or delivered', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'mock-sub-cancelled',
+        editKey: 'mock-key-cancelled',
+        model: 'Grand Highlander',
+        status: 'cancelled',
+      })
+    );
+
+    const { unmount } = render(<Header />);
+
+    // Should NOT show Update Status
+    expect(screen.queryByRole('link', { name: /Update Status/i })).not.toBeInTheDocument();
+    // Should show + Log Order
+    expect(screen.getAllByRole('link', { name: /\+ Log Order/i }).length).toBeGreaterThanOrEqual(1);
+
+    unmount();
+
+    // Now test delivered status
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'mock-sub-delivered',
+        editKey: 'mock-key-delivered',
+        model: 'Grand Highlander',
+        status: 'delivered',
+      })
+    );
+
+    render(<Header />);
+    expect(screen.queryByRole('link', { name: /Update Status/i })).not.toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /\+ Log Order/i }).length).toBeGreaterThanOrEqual(1);
+  });
 });
