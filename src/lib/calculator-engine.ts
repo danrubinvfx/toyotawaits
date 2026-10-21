@@ -129,6 +129,99 @@ export function calculateAnnualPHEVCost(
 }
 
 /**
+ * Calculates annual gas cost for a vehicle using US Customary units.
+ * Formula: (annualMiles / combinedMpg) * gasPricePerGal
+ *
+ * @param annualMiles Annual driving distance in miles
+ * @param combinedMpg Combined fuel economy in miles per gallon (MPG)
+ * @param gasPricePerGal Fuel price in USD per gallon
+ * @returns Annual fuel cost in USD
+ */
+export function calculateAnnualGasCostUS(
+  annualMiles: number,
+  combinedMpg: number,
+  gasPricePerGal: number
+): number {
+  assertFiniteNonNegative('annualMiles', annualMiles);
+  assertFiniteNonNegative('gasPricePerGal', gasPricePerGal);
+
+  if (typeof combinedMpg !== 'number' || !Number.isFinite(combinedMpg)) {
+    throw new TypeError(`combinedMpg must be a finite number. Received: ${String(combinedMpg)}`);
+  }
+  if (combinedMpg <= 0) {
+    throw new RangeError(`combinedMpg must be greater than zero. Received: ${combinedMpg}`);
+  }
+
+  const cost = (annualMiles / combinedMpg) * gasPricePerGal;
+  return Math.round((cost + Number.EPSILON) * 100) / 100;
+}
+
+/**
+ * Calculates annual PHEV cost split between electric and gas operation using US Customary units.
+ *
+ * Electric Cost = annualMiles * electricShare * (kwhPer100Miles / 100) * electricityRatePerKwh
+ * Gas Cost = (annualMiles * (1 - electricShare) / gasModeMpg) * gasPricePerGal
+ * Total Cost = Electric Cost + Gas Cost
+ *
+ * @param annualMiles Annual driving distance in miles
+ * @param electricShare Fraction of driving in EV mode (0.0 to 1.0, e.g. 0.65)
+ * @param kwhPer100Miles Wall-to-wheel electricity consumption in kWh / 100 miles
+ * @param electricityRatePerKwh Electricity rate in USD per kWh
+ * @param gasModeMpg Fuel economy in charge-sustaining (hybrid) mode in MPG
+ * @param gasPricePerGal Fuel price in USD per gallon
+ * @returns Object containing electricCost, gasCost, and totalCost
+ */
+export function calculateAnnualPHEVCostUS(
+  annualMiles: number,
+  electricShare: number,
+  kwhPer100Miles: number,
+  electricityRatePerKwh: number,
+  gasModeMpg: number,
+  gasPricePerGal: number
+): PHEVCostBreakdown {
+  assertFiniteNonNegative('annualMiles', annualMiles);
+  assertElectricShare(electricShare);
+  assertFiniteNonNegative('kwhPer100Miles', kwhPer100Miles);
+  assertFiniteNonNegative('electricityRatePerKwh', electricityRatePerKwh);
+  assertFiniteNonNegative('gasPricePerGal', gasPricePerGal);
+
+  if (typeof gasModeMpg !== 'number' || !Number.isFinite(gasModeMpg)) {
+    throw new TypeError(`gasModeMpg must be a finite number. Received: ${String(gasModeMpg)}`);
+  }
+  if (gasModeMpg <= 0) {
+    throw new RangeError(`gasModeMpg must be greater than zero. Received: ${gasModeMpg}`);
+  }
+
+  const electricMiles = annualMiles * electricShare;
+  const gasMiles = annualMiles * (1 - electricShare);
+
+  const rawElectricCost = electricMiles * (kwhPer100Miles / 100) * electricityRatePerKwh;
+  const rawGasCost = (gasMiles / gasModeMpg) * gasPricePerGal;
+
+  const electricCost = Math.round((rawElectricCost + Number.EPSILON) * 100) / 100;
+  const gasCost = Math.round((rawGasCost + Number.EPSILON) * 100) / 100;
+  const totalCost = Math.round((electricCost + gasCost + Number.EPSILON) * 100) / 100;
+
+  const result: PHEVCostBreakdown = {
+    electricCost,
+    gasCost,
+    totalCost,
+  };
+
+  // Enable valueOf and Symbol.toPrimitive so numeric operations evaluate cleanly to totalCost
+  Object.defineProperty(result, 'valueOf', {
+    value: () => totalCost,
+    enumerable: false,
+  });
+  Object.defineProperty(result, Symbol.toPrimitive, {
+    value: () => totalCost,
+    enumerable: false,
+  });
+
+  return result;
+}
+
+/**
  * Calculates extra energy cost incurred while waiting for delivery of a more efficient vehicle.
  *
  * @param annualCostCurrent Annual energy cost of current/reference vehicle

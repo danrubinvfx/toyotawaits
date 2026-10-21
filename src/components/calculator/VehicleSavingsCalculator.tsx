@@ -36,6 +36,8 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
     setMode3Outlay,
     waitDays,
     setWaitDays,
+    unitSystem,
+    setUnitSystem,
     resetToDefaults,
     targetPreset,
     results,
@@ -56,7 +58,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
   return (
     <div className="w-full space-y-4 sm:space-y-6">
       {/* Top Controls Bar */}
-      <div className="flex items-center justify-between gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
         <div>
           <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-red-600 dark:text-red-500 block">
             Interactive Calculator
@@ -65,16 +67,43 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             Configure Your Vehicle Comparison
           </h2>
         </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={resetToDefaults}
-          className="min-h-[44px] px-2.5 sm:px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer shrink-0"
-        >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset Defaults</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Unit Switcher */}
+          <div className="inline-flex items-center rounded-lg border border-zinc-200 dark:border-zinc-800 p-0.5 bg-zinc-100 dark:bg-zinc-800/80" role="group" aria-label="Unit system selection">
+            <button
+              type="button"
+              onClick={() => setUnitSystem('METRIC')}
+              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                unitSystem === 'METRIC'
+                  ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+              }`}
+            >
+              🇨🇦 Metric
+            </button>
+            <button
+              type="button"
+              onClick={() => setUnitSystem('IMPERIAL')}
+              className={`text-xs px-2.5 py-1 rounded-md font-medium transition-all cursor-pointer ${
+                unitSystem === 'IMPERIAL'
+                  ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-xs font-semibold'
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+              }`}
+            >
+              🇺🇸 US
+            </button>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={resetToDefaults}
+            className="min-h-[44px] px-2.5 sm:px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer shrink-0"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Defaults</span>
+          </Button>
+        </div>
       </div>
 
       {comparisonMode !== 'ENERGY_COMPARISON' && (
@@ -98,6 +127,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               recoveryDay={results.recoveryDay ?? null}
               refVehicleName={refVehicleName}
               targetVehicleName={targetVehicleName}
+              currencyCode={results.currencyCode}
             />
           ) : null}
 
@@ -107,6 +137,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               points={results.timelineResult.points}
               refVehicleName={refVehicleName}
               targetVehicleName={targetVehicleName}
+              currencyCode={results.currencyCode}
             />
           )}
 
@@ -151,6 +182,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             <TargetVehicleCard
               targetVehicle={targetVehicle}
               onChange={setTargetVehicle}
+              unitSystem={unitSystem}
             />
           ) : (
             <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
@@ -166,6 +198,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             <CurrentVehicleCard
               currentVehicle={currentVehicle}
               onChange={setCurrentVehicle}
+              unitSystem={unitSystem}
             />
           ) : (
             <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
@@ -181,6 +214,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             inputs={drivingInputs}
             onChange={setDrivingInputs}
             isPhev={isTargetPhev}
+            unitSystem={unitSystem}
           />
         </div>
       </div>
@@ -207,6 +241,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             onMode3OutlayChange={setMode3Outlay}
             calculatedNetOutlay={results.calculatedNetOutlay ?? 0}
             effectiveNetOutlay={results.effectiveNetOutlay ?? 0}
+            currencyCode={results.currencyCode}
           />
 
           {/* Collapsible Scope Disclosure */}

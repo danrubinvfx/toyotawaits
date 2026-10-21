@@ -23,6 +23,7 @@ export interface PaybackChartProps {
   recoveryDay: number | null;
   refVehicleName?: string;
   targetVehicleName?: string;
+  currencyCode?: 'CAD' | 'USD';
   className?: string;
 }
 
@@ -32,6 +33,7 @@ interface CustomTooltipProps {
   label?: string | number;
   refVehicleName: string;
   targetVehicleName: string;
+  currencyCode?: 'CAD' | 'USD';
 }
 
 function CustomTooltip({
@@ -39,6 +41,7 @@ function CustomTooltip({
   payload,
   refVehicleName,
   targetVehicleName,
+  currencyCode = 'CAD',
 }: CustomTooltipProps) {
   if (!active || !payload || !payload.length) {
     return null;
@@ -61,7 +64,7 @@ function CustomTooltip({
       <div className="flex items-center justify-between font-bold">
         <span className="text-zinc-400">Net Cash Advantage:</span>
         <span className={isAdvantage ? 'text-green-400 font-bold' : 'text-red-400 font-bold'}>
-          {isAdvantage ? '+' : ''}${point.netAdvantageTarget.toLocaleString()} CAD
+          {isAdvantage ? '+' : ''}${point.netAdvantageTarget.toLocaleString()} {currencyCode}
         </span>
       </div>
 
@@ -70,7 +73,7 @@ function CustomTooltip({
         <div className="space-y-0.5">
           <div className="flex justify-between font-medium text-green-400">
             <span>{targetVehicleName}:</span>
-            <span>${point.targetCumulativeCost.toLocaleString()} CAD</span>
+            <span>${point.targetCumulativeCost.toLocaleString()} {currencyCode}</span>
           </div>
           <div className="flex justify-between text-zinc-400 text-[10px] pl-2">
             <span>• Purchase Outlay:</span>
@@ -86,7 +89,7 @@ function CustomTooltip({
         <div className="space-y-0.5 pt-1 border-t border-zinc-800/60">
           <div className="flex justify-between font-medium text-zinc-300">
             <span>{refVehicleName}:</span>
-            <span>${point.refCumulativeCost.toLocaleString()} CAD</span>
+            <span>${point.refCumulativeCost.toLocaleString()} {currencyCode}</span>
           </div>
           <div className="flex justify-between text-zinc-400 text-[10px] pl-2">
             <span>• Purchase Outlay:</span>
@@ -109,6 +112,7 @@ export function PaybackChart({
   recoveryDay,
   refVehicleName = 'Reference Vehicle',
   targetVehicleName = 'Target Vehicle',
+  currencyCode = 'CAD',
   className,
 }: PaybackChartProps) {
   const [isMounted, setIsMounted] = useState(false);
@@ -202,6 +206,7 @@ export function PaybackChart({
                     <CustomTooltip
                       refVehicleName={refVehicleName}
                       targetVehicleName={targetVehicleName}
+                      currencyCode={currencyCode}
                     />
                   }
                 />
@@ -245,7 +250,7 @@ export function PaybackChart({
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 border-t border-dashed border-[#ef4444] inline-block" />
-              <span>Break-Even Baseline ($0 CAD)</span>
+              <span>Break-Even Baseline ($0 {currencyCode})</span>
             </div>
           </div>
           <p className="text-[11px] text-zinc-400">

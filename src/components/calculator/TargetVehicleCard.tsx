@@ -8,10 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { Sparkles, Zap, BatteryCharging, AlertCircle } from 'lucide-react';
 import { NEW_VEHICLE_PRESETS, getVehiclePresetById } from '@/data/vehicle-presets';
 import { TargetVehicleState } from '@/lib/hooks/useSavingsCalculator';
+import { UnitSystem } from '@/types/calculator';
 
 export interface TargetVehicleCardProps {
   targetVehicle: TargetVehicleState;
   onChange: (patch: Partial<TargetVehicleState>) => void;
+  unitSystem?: UnitSystem;
   className?: string;
 }
 
@@ -33,6 +35,7 @@ const MODEL_FAMILIES: ModelFamily[] = [
 export function TargetVehicleCard({
   targetVehicle,
   onChange,
+  unitSystem = 'METRIC',
   className,
 }: TargetVehicleCardProps) {
   const selectedPreset =
@@ -90,9 +93,26 @@ export function TargetVehicleCard({
     onChange({ electricShare: boundedPct / 100 });
   };
 
-  const ratingSummary = isPhev
+  const isImperial = unitSystem === 'IMPERIAL';
+
+  const ratingSummary = isImperial
+    ? isPhev
+      ? `${selectedPreset.consumption.electricRangeMiles ?? 42} mi EV / ${selectedPreset.consumption.gasModeMpg ?? 38} MPG`
+      : `${selectedPreset.consumption.combinedMpg ?? 40} MPG`
+    : isPhev
     ? `${selectedPreset.consumption.electricRangeKm} km EV / ${selectedPreset.consumption.gasModeL100km} L`
     : `${selectedPreset.consumption.combinedL100km} L/100km`;
+
+  const msrpDisplay = isImperial
+    ? `$${(selectedPreset.pricing?.msrpUsd ?? 32500).toLocaleString()} USD MSRP`
+    : `$${selectedPreset.pricing?.msrpCad.toLocaleString()} MSRP`;
+
+  const verificationBadgeText =
+    selectedPreset?.consumption.status === 'PROVISIONAL'
+      ? 'PROVISIONAL'
+      : isImperial
+      ? 'EPA VERIFIED'
+      : 'NRCAN VERIFIED';
 
   return (
     <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
@@ -106,9 +126,7 @@ export function TargetVehicleCard({
             variant={selectedPreset?.consumption.status === 'PROVISIONAL' ? 'secondary' : 'default'}
             className="text-[10px] font-semibold py-0"
           >
-            {selectedPreset?.consumption.status === 'PROVISIONAL'
-              ? 'PROVISIONAL'
-              : 'NRCAN VERIFIED'}
+            {verificationBadgeText}
           </Badge>
         </div>
       </CardHeader>
@@ -176,7 +194,7 @@ export function TargetVehicleCard({
             {selectedPreset.name}
           </span>
           <span className="font-mono text-zinc-600 dark:text-zinc-400 shrink-0 font-medium">
-            {ratingSummary} • ${selectedPreset.pricing?.msrpCad.toLocaleString()} MSRP
+            {ratingSummary} • {msrpDisplay}
           </span>
         </div>
 

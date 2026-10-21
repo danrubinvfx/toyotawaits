@@ -33,6 +33,8 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
   };
 
   const isPositiveSavings = results.annualSavings >= 0;
+  const currency = results.currencyCode ?? (results.unitSystem === 'IMPERIAL' ? 'USD' : 'CAD');
+  const isImperial = results.unitSystem === 'IMPERIAL';
 
   return (
     <Card className={`border-2 border-red-500/20 dark:border-red-500/30 overflow-hidden shadow-lg ${className ?? ''}`}>
@@ -52,9 +54,9 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
           <div className="flex items-baseline justify-between gap-1 flex-wrap sm:flex-nowrap">
             <div className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight">
               {isPositiveSavings ? (
-                <span>${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
+                <span>${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} {currency}</span>
               ) : (
-                <span>-${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD</span>
+                <span>-${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} {currency}</span>
               )}
               <span className="text-xs sm:text-sm font-normal text-red-100 ml-1">/ yr</span>
             </div>
@@ -62,7 +64,7 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
             <div className="text-[11px] sm:text-xs text-red-100 flex items-center gap-1.5 flex-wrap">
               <span>
                 {isPositiveSavings ? '+' : '-'}
-                ${Math.abs(results.monthlySavings).toFixed(0)} CAD / month
+                ${Math.abs(results.monthlySavings).toFixed(0)} {currency} / month
               </span>
               <span>•</span>
               <span className="font-semibold underline decoration-white/40 underline-offset-2">
@@ -91,7 +93,7 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
                 ${results.currentAnnualCost.toLocaleString()}
               </div>
               <span className="text-[10px] sm:text-[11px] text-zinc-500 dark:text-zinc-400 block truncate">
-                ${results.currentMonthlyCost.toFixed(0)} / mo • {results.currentAnnualFuelL.toLocaleString()} L gas
+                ${results.currentMonthlyCost.toFixed(0)} / mo • {isImperial ? `${(results.currentAnnualFuelGal ?? 0).toLocaleString()} gal gas` : `${results.currentAnnualFuelL.toLocaleString()} L gas`}
               </span>
             </div>
 
@@ -113,7 +115,7 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
             <div className="p-2 sm:p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
               <span className="font-medium text-[11px] sm:text-xs">5-Year Gas Money Kept in Your Pocket:</span>
               <span className="font-mono font-bold text-xs sm:text-sm">
-                ${Math.round(results.annualSavings * 5).toLocaleString()} CAD
+                ${Math.round(results.annualSavings * 5).toLocaleString()} {currency}
               </span>
             </div>
           )}
@@ -126,7 +128,7 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
             </div>
 
             {results.targetIsPhev ? (
-              /* PHEV Itemization: Electricity ($CAD & kWh) vs Gasoline ($CAD & Litres) */
+              /* PHEV Itemization: Electricity ($ & kWh) vs Gasoline ($ & Litres/Gallons) */
               <div className="space-y-1.5">
                 {/* Electricity Row */}
                 <div className="flex items-center justify-between p-2 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-900/40 text-xs">
@@ -145,7 +147,7 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
                   </div>
                   <div className="text-right">
                     <span className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-300">
-                      ${results.targetAnnualElectricCost.toFixed(2)} CAD
+                      ${results.targetAnnualElectricCost.toFixed(2)} {currency}
                     </span>
                   </div>
                 </div>
@@ -161,13 +163,13 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
                         Gasoline (Hybrid Mode)
                       </div>
                       <div className="text-[11px] text-zinc-500 dark:text-zinc-400 font-mono">
-                        {results.targetAnnualGasL.toLocaleString()} Litres
+                        {isImperial ? `${(results.targetAnnualGasGal ?? 0).toLocaleString()} Gallons` : `${results.targetAnnualGasL.toLocaleString()} Litres`}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <span className="font-mono text-xs font-bold text-amber-800 dark:text-amber-300">
-                      ${results.targetAnnualGasCost.toFixed(2)} CAD
+                      ${results.targetAnnualGasCost.toFixed(2)} {currency}
                     </span>
                   </div>
                 </div>
@@ -178,11 +180,11 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
                 <div className="flex items-center gap-2">
                   <Fuel className="w-3.5 h-3.5 text-red-600 dark:text-red-500 shrink-0" />
                   <span className="font-medium text-zinc-900 dark:text-zinc-100">
-                    Gasoline: {results.targetAnnualGasL.toLocaleString()} L
+                    Gasoline: {isImperial ? `${(results.targetAnnualGasGal ?? 0).toLocaleString()} gal` : `${results.targetAnnualGasL.toLocaleString()} L`}
                   </span>
                 </div>
                 <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100">
-                  ${results.targetAnnualGasCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} CAD/yr
+                  ${results.targetAnnualGasCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} {currency}/yr
                 </span>
               </div>
             )}

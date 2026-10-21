@@ -6,12 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Gauge, Fuel, Zap } from 'lucide-react';
 import { DrivingInputsState } from '@/lib/hooks/useSavingsCalculator';
+import { UnitSystem } from '@/types/calculator';
 
 export interface DrivingInputsCardProps {
   inputs: DrivingInputsState;
   onChange: (patch: Partial<DrivingInputsState>) => void;
   className?: string;
   isPhev?: boolean;
+  unitSystem?: UnitSystem;
 }
 
 export function DrivingInputsCard({
@@ -19,7 +21,10 @@ export function DrivingInputsCard({
   onChange,
   className,
   isPhev = true,
+  unitSystem = 'METRIC',
 }: DrivingInputsCardProps) {
+  const isImp = unitSystem === 'IMPERIAL';
+
   const handleAnnualKmChange = (val: number) => {
     if (!Number.isFinite(val) || val < 0) return;
     onChange({ annualKm: val });
@@ -34,6 +39,36 @@ export function DrivingInputsCard({
     if (!Number.isFinite(val) || val < 0) return;
     onChange({ electricityRatePerKwh: val });
   };
+
+  const distancePresets = isImp
+    ? [
+        { label: '10k', val: 10000, aria: '10,000 miles' },
+        { label: '12k', val: 12000, aria: '12,000 miles' },
+        { label: '15k', val: 15000, aria: '15,000 miles' },
+        { label: '20k', val: 20000, aria: '20,000 miles' },
+      ]
+    : [
+        { label: '15k', val: 15000, aria: '15,000 km' },
+        { label: '20k', val: 20000, aria: '20,000 km' },
+        { label: '25k', val: 25000, aria: '25,000 km' },
+        { label: '30k', val: 30000, aria: '30,000 km' },
+      ];
+
+  const gasPresets = isImp ? [3.15, 3.45, 3.75, 4.05] : [1.65, 1.75, 1.85, 1.95];
+
+  const electricityPresets = isImp
+    ? [
+        { label: 'TX ($0.14)', rate: 0.14 },
+        { label: 'FL ($0.15)', rate: 0.15 },
+        { label: 'CA ($0.30)', rate: 0.30 },
+        { label: 'WA ($0.11)', rate: 0.11 },
+      ]
+    : [
+        { label: 'QC ($0.08)', rate: 0.08 },
+        { label: 'BC ($0.14)', rate: 0.14 },
+        { label: 'ON ($0.15)', rate: 0.15 },
+        { label: 'AB ($0.18)', rate: 0.18 },
+      ];
 
   return (
     <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
@@ -51,7 +86,7 @@ export function DrivingInputsCard({
             <div className="flex items-center gap-1.5 w-24 shrink-0">
               <Gauge className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
               <Label htmlFor="annual-km-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
-                Distance
+                {isImp ? 'Distance (mi)' : 'Distance'}
               </Label>
             </div>
             <div className="flex-1 px-1">
@@ -59,7 +94,7 @@ export function DrivingInputsCard({
                 id="annual-km-slider"
                 aria-label="Annual driving distance slider"
                 type="range"
-                min={5000}
+                min={isImp ? 3000 : 5000}
                 max={50000}
                 step={1000}
                 value={inputs.annualKm}
@@ -70,7 +105,7 @@ export function DrivingInputsCard({
             <div className="w-20 shrink-0">
               <Input
                 id="annual-km-input"
-                aria-label="Annual driving distance in kilometers"
+                aria-label={isImp ? "Annual driving distance in miles" : "Annual driving distance in kilometers"}
                 type="number"
                 min={1000}
                 max={100000}
@@ -84,12 +119,7 @@ export function DrivingInputsCard({
 
           {/* Micro-pills */}
           <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Quick distance presets">
-            {[
-              { label: '15k', val: 15000, aria: '15,000 km' },
-              { label: '20k', val: 20000, aria: '20,000 km' },
-              { label: '25k', val: 25000, aria: '25,000 km' },
-              { label: '30k', val: 30000, aria: '30,000 km' },
-            ].map((item) => (
+            {distancePresets.map((item) => (
               <button
                 key={item.label}
                 type="button"
@@ -113,7 +143,7 @@ export function DrivingInputsCard({
             <div className="flex items-center gap-1.5 w-24 shrink-0">
               <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500 shrink-0" />
               <Label htmlFor="gas-price-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
-                Gas Price
+                {isImp ? 'Gas ($/gal)' : 'Gas Price'}
               </Label>
             </div>
             <div className="flex-1 px-1">
@@ -121,8 +151,8 @@ export function DrivingInputsCard({
                 id="gas-price-slider"
                 aria-label="Gasoline price slider"
                 type="range"
-                min={1.2}
-                max={2.5}
+                min={isImp ? 2.0 : 1.2}
+                max={isImp ? 6.0 : 2.5}
                 step={0.01}
                 value={inputs.gasPricePerL}
                 onChange={(e) => handleGasPriceChange(Number(e.target.value))}
@@ -132,10 +162,10 @@ export function DrivingInputsCard({
             <div className="w-20 shrink-0">
               <Input
                 id="gas-price-input"
-                aria-label="Gasoline price in Canadian dollars per litre"
+                aria-label={isImp ? "Gasoline price in US dollars per gallon" : "Gasoline price in Canadian dollars per litre"}
                 type="number"
-                min={0.5}
-                max={4.0}
+                min={isImp ? 1.0 : 0.5}
+                max={isImp ? 10.0 : 4.0}
                 step={0.01}
                 value={inputs.gasPricePerL}
                 onChange={(e) => handleGasPriceChange(Number(e.target.value))}
@@ -146,11 +176,11 @@ export function DrivingInputsCard({
 
           {/* Micro-pills */}
           <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Quick gas price presets">
-            {[1.65, 1.75, 1.85, 1.95].map((price) => (
+            {gasPresets.map((price) => (
               <button
                 key={price}
                 type="button"
-                aria-label={`$${price.toFixed(2)} / L`}
+                aria-label={`$${price.toFixed(2)} ${isImp ? '/ gal' : '/ L'}`}
                 onClick={() => handleGasPriceChange(price)}
                 className={`text-xs py-0.5 px-2 rounded-full border transition-colors cursor-pointer ${
                   inputs.gasPricePerL === price
@@ -180,7 +210,7 @@ export function DrivingInputsCard({
                   aria-label="Electricity rate slider"
                   type="range"
                   min={0.06}
-                  max={0.3}
+                  max={0.4}
                   step={0.01}
                   value={inputs.electricityRatePerKwh}
                   onChange={(e) => handleElectricityRateChange(Number(e.target.value))}
@@ -190,7 +220,7 @@ export function DrivingInputsCard({
               <div className="w-20 shrink-0">
                 <Input
                   id="electricity-rate-input"
-                  aria-label="Electricity rate in Canadian dollars per kilowatt hour"
+                  aria-label={isImp ? "Electricity rate in US dollars per kilowatt hour" : "Electricity rate in Canadian dollars per kilowatt hour"}
                   type="number"
                   min={0.05}
                   max={0.8}
@@ -203,13 +233,8 @@ export function DrivingInputsCard({
             </div>
 
             {/* Micro-pills */}
-            <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Provincial electricity rate presets">
-              {[
-                { label: 'QC ($0.08)', rate: 0.08 },
-                { label: 'BC ($0.14)', rate: 0.14 },
-                { label: 'ON ($0.15)', rate: 0.15 },
-                { label: 'AB ($0.18)', rate: 0.18 },
-              ].map((prov) => (
+            <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Electricity rate presets">
+              {electricityPresets.map((prov) => (
                 <button
                   key={prov.label}
                   type="button"

@@ -13,7 +13,9 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   calculateAnnualGasCost,
+  calculateAnnualGasCostUS,
   calculateAnnualPHEVCost,
+  calculateAnnualPHEVCostUS,
   evaluateSimplePayback,
   evaluateCashFlowTimeline,
 } from '@/lib/calculator-engine';
@@ -29,6 +31,7 @@ import {
   PaybackResult,
   CashFlowTimelineResult,
   CashFlowScenario,
+  UnitSystem,
 } from '@/types/calculator';
 
 export interface DrivingInputsState {
@@ -71,42 +74,50 @@ export interface Mode3OutlayState {
 }
 
 export interface SerializedCalculatorState {
-  k?: number; // annualKm
-  gp?: number; // gasPricePerL
+  u?: 'us' | 'ca'; // unit system (US Imperial vs Canadian Metric)
+  k?: number; // annualKm / annualMiles
+  gp?: number; // gasPricePerL / gasPricePerGal
   ep?: number; // electricityRatePerKwh
   cm?: CurrentVehicleMode; // current mode
   ca?: string; // current archetype id
-  cl?: number; // current custom L/100km
+  cl?: number; // current custom L/100km or MPG
   tp?: string; // target preset id
   pt?: Powertrain; // target powertrain
   ch?: 0 | 1; // hasChargingAccess
   es?: number; // electricShare
   // Stage 4 additions
   cpm?: ComparisonMode;
-  tp2?: number; // targetPriceCad
-  ti?: number; // tradeInProceedsCad
-  lb?: number; // loanSettlementBalanceCad
-  cc?: number; // chargerCostCad
-  rb?: number; // rebatesCad
+  tp2?: number; // targetPriceCad / targetPriceUsd
+  ti?: number; // tradeInProceedsCad / tradeInProceedsUsd
+  lb?: number; // loanSettlementBalanceCad / loanSettlementBalanceUsd
+  cc?: number; // chargerCostCad / chargerCostUsd
+  rb?: number; // rebatesCad / rebatesUsd
   no?: number | null; // netOutlayOverride
   wd?: number; // waitDays
   v1p?: string; // vehicleAPresetId
-  v1o?: number; // vehicleAOutlayCad
+  v1o?: number; // vehicleAOutlayCad / vehicleAOutlayUsd
   v1w?: number; // vehicleAWaitDays
   v2p?: string; // vehicleBPresetId
-  v2o?: number; // vehicleBOutlayCad
+  v2o?: number; // vehicleBOutlayCad / vehicleBOutlayUsd
   v2w?: number; // vehicleBWaitDays
 }
 
 export interface CalculatorResults {
+  // Unit system & currency
+  unitSystem: UnitSystem;
+  currencyCode: 'CAD' | 'USD';
+
   // Current vehicle
   effectiveCurrentL100km: number;
+  effectiveCurrentMpg?: number;
   currentAnnualCost: number;
   currentMonthlyCost: number;
   currentAnnualFuelL: number;
+  currentAnnualFuelGal?: number;
 
   // Target vehicle
   targetL100km: number;
+  targetMpg?: number;
   targetAnnualCost: number;
   targetMonthlyCost: number;
   targetIsPhev: boolean;
@@ -116,6 +127,7 @@ export interface CalculatorResults {
   targetAnnualElectricKwh: number;
   targetAnnualGasCost: number;
   targetAnnualGasL: number;
+  targetAnnualGasGal?: number;
 
   // Savings
   annualSavings: number; // currentAnnualCost - targetAnnualCost
@@ -146,10 +158,22 @@ export const DEFAULT_DRIVING_INPUTS: DrivingInputsState = {
   electricityRatePerKwh: 0.14,
 };
 
+export const DEFAULT_DRIVING_INPUTS_US: DrivingInputsState = {
+  annualKm: 12000,
+  gasPricePerL: 3.45,
+  electricityRatePerKwh: 0.16,
+};
+
 export const DEFAULT_CURRENT_VEHICLE: CurrentVehicleState = {
   mode: 'ARCHETYPE',
   archetypeId: 'archetype-compact-crossover-awd',
   customL100km: 9.5,
+};
+
+export const DEFAULT_CURRENT_VEHICLE_US: CurrentVehicleState = {
+  mode: 'ARCHETYPE',
+  archetypeId: 'archetype-compact-crossover-awd',
+  customL100km: 25,
 };
 
 export const DEFAULT_TARGET_VEHICLE: TargetVehicleState = {
@@ -168,12 +192,30 @@ export const DEFAULT_MODE2_OUTLAY: Mode2OutlayState = {
   netOutlayOverride: null,
 };
 
+export const DEFAULT_MODE2_OUTLAY_US: Mode2OutlayState = {
+  targetPriceCad: 35000,
+  tradeInProceedsCad: 12000,
+  loanSettlementBalanceCad: 0,
+  chargerCostCad: 0,
+  rebatesCad: 0,
+  netOutlayOverride: null,
+};
+
 export const DEFAULT_MODE3_OUTLAY: Mode3OutlayState = {
   vehicleAPresetId: '2026-toyota-rav4-hybrid',
   vehicleAOutlayCad: 42000,
   vehicleAWaitDays: 60,
   vehicleBPresetId: '2026-toyota-rav4-phev',
   vehicleBOutlayCad: 52000,
+  vehicleBWaitDays: 365,
+};
+
+export const DEFAULT_MODE3_OUTLAY_US: Mode3OutlayState = {
+  vehicleAPresetId: '2026-toyota-rav4-hybrid',
+  vehicleAOutlayCad: 35000,
+  vehicleAWaitDays: 60,
+  vehicleBPresetId: '2026-toyota-rav4-phev',
+  vehicleBOutlayCad: 45000,
   vehicleBWaitDays: 365,
 };
 
@@ -189,7 +231,8 @@ export function serializeCalculatorHash(
   comparisonMode: ComparisonMode = 'ENERGY_COMPARISON',
   mode2Outlay: Mode2OutlayState = DEFAULT_MODE2_OUTLAY,
   mode3Outlay: Mode3OutlayState = DEFAULT_MODE3_OUTLAY,
-  waitDays = 180
+  waitDays = 180,
+  unitSystem: UnitSystem = 'METRIC'
 ): string {
   const payload: SerializedCalculatorState = {
     k: driving.annualKm,
@@ -203,6 +246,10 @@ export function serializeCalculatorHash(
     ch: target.hasChargingAccess ? 1 : 0,
     es: target.electricShare,
   };
+
+  if (unitSystem === 'IMPERIAL') {
+    payload.u = 'us';
+  }
 
   if (comparisonMode !== 'ENERGY_COMPARISON') {
     payload.cpm = comparisonMode;
@@ -276,14 +323,21 @@ export function deserializeCalculatorHash(
     const obj = parsed as Record<string, unknown>;
     const validated: Partial<SerializedCalculatorState> = {};
 
-    // Validate annualKm (k)
+    // Validate unit system (u)
+    const isUs = obj.u === 'us';
+    if (obj.u === 'us' || obj.u === 'ca') {
+      validated.u = obj.u;
+    }
+
+    // Validate annualKm / annualMiles (k)
     if (typeof obj.k === 'number' && Number.isFinite(obj.k)) {
       validated.k = Math.min(150000, Math.max(1000, Math.round(obj.k)));
     }
 
-    // Validate gasPricePerL (gp)
+    // Validate gasPricePerL or gasPricePerGal (gp)
     if (typeof obj.gp === 'number' && Number.isFinite(obj.gp)) {
-      validated.gp = Math.min(5.0, Math.max(0.5, Number(obj.gp.toFixed(2))));
+      const maxGp = isUs ? 10.0 : 5.0;
+      validated.gp = Math.min(maxGp, Math.max(0.5, Number(obj.gp.toFixed(2))));
     }
 
     // Validate electricityRatePerKwh (ep)
@@ -304,9 +358,10 @@ export function deserializeCalculatorHash(
       validated.ca = obj.ca;
     }
 
-    // Validate custom L/100km (cl)
+    // Validate custom L/100km or MPG (cl)
     if (typeof obj.cl === 'number' && Number.isFinite(obj.cl)) {
-      validated.cl = Math.min(40.0, Math.max(1.0, Number(obj.cl.toFixed(1))));
+      const maxCl = isUs ? 100.0 : 40.0;
+      validated.cl = Math.min(maxCl, Math.max(1.0, Number(obj.cl.toFixed(1))));
     }
 
     // Validate target preset id (tp)
@@ -397,6 +452,7 @@ export interface CalculatorInitialConfig {
   initialCurrentMode?: CurrentVehicleMode;
   initialCustomL100km?: number;
   initialAnnualKm?: number;
+  initialUnitSystem?: UnitSystem;
 }
 
 export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorInitialConfig) {
@@ -406,17 +462,33 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       : initialConfigOrHash?.initialHash;
   const config = typeof initialConfigOrHash === 'object' ? initialConfigOrHash : undefined;
 
+  const [unitSystem, setUnitSystemState] = useState<UnitSystem>(() => {
+    if (typeof window !== 'undefined') {
+      const hashToParse = initialHash || window.location.hash;
+      const initialOverrides = deserializeCalculatorHash(hashToParse);
+      if (initialOverrides?.u === 'us') return 'IMPERIAL';
+      if (initialOverrides?.u === 'ca') return 'METRIC';
+    }
+    return config?.initialUnitSystem ?? 'METRIC';
+  });
+
+  const isInitialImp = config?.initialUnitSystem === 'IMPERIAL';
+  const defaultDriving = isInitialImp ? DEFAULT_DRIVING_INPUTS_US : DEFAULT_DRIVING_INPUTS;
+  const defaultCurrent = isInitialImp ? DEFAULT_CURRENT_VEHICLE_US : DEFAULT_CURRENT_VEHICLE;
+  const defaultMode2 = isInitialImp ? DEFAULT_MODE2_OUTLAY_US : DEFAULT_MODE2_OUTLAY;
+  const defaultMode3 = isInitialImp ? DEFAULT_MODE3_OUTLAY_US : DEFAULT_MODE3_OUTLAY;
+
   const [drivingInputs, setDrivingInputsState] = useState<DrivingInputsState>(() => ({
-    ...DEFAULT_DRIVING_INPUTS,
+    ...defaultDriving,
     ...(config?.initialAnnualKm ? { annualKm: config.initialAnnualKm } : {}),
   }));
 
   const [currentVehicle, setCurrentVehicleState] = useState<CurrentVehicleState>(() => ({
     mode:
       config?.initialCurrentMode ??
-      (config?.initialCustomL100km ? 'CUSTOM' : DEFAULT_CURRENT_VEHICLE.mode),
-    archetypeId: config?.initialCurrentArchetypeId ?? DEFAULT_CURRENT_VEHICLE.archetypeId,
-    customL100km: config?.initialCustomL100km ?? DEFAULT_CURRENT_VEHICLE.customL100km,
+      (config?.initialCustomL100km ? 'CUSTOM' : defaultCurrent.mode),
+    archetypeId: config?.initialCurrentArchetypeId ?? defaultCurrent.archetypeId,
+    customL100km: config?.initialCustomL100km ?? defaultCurrent.customL100km,
   }));
 
   const [targetVehicle, setTargetVehicleState] = useState<TargetVehicleState>(() => {
@@ -431,13 +503,19 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
   });
 
   const [comparisonMode, setComparisonModeState] = useState<ComparisonMode>('ENERGY_COMPARISON');
-  const [mode2Outlay, setMode2OutlayState] = useState<Mode2OutlayState>(DEFAULT_MODE2_OUTLAY);
-  const [mode3Outlay, setMode3OutlayState] = useState<Mode3OutlayState>(DEFAULT_MODE3_OUTLAY);
+  const [mode2Outlay, setMode2OutlayState] = useState<Mode2OutlayState>(defaultMode2);
+  const [mode3Outlay, setMode3OutlayState] = useState<Mode3OutlayState>(defaultMode3);
   const [waitDays, setWaitDaysState] = useState<number>(180);
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Apply state overrides safely
   const applyOverrides = useCallback((overrides: Partial<SerializedCalculatorState>) => {
+    if (overrides.u === 'us') {
+      setUnitSystemState('IMPERIAL');
+    } else if (overrides.u === 'ca') {
+      setUnitSystemState('METRIC');
+    }
+
     setDrivingInputsState((prev) => ({
       annualKm: overrides.k ?? prev.annualKm,
       gasPricePerL: overrides.gp ?? prev.gasPricePerL,
@@ -525,7 +603,8 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       comparisonMode,
       mode2Outlay,
       mode3Outlay,
-      waitDays
+      waitDays,
+      unitSystem
     );
     if (window.location.hash !== hash) {
       window.history.replaceState(null, '', `${window.location.pathname}${hash}`);
@@ -538,6 +617,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
     mode2Outlay,
     mode3Outlay,
     waitDays,
+    unitSystem,
     isHydrated,
   ]);
 
@@ -586,15 +666,44 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
     setWaitDaysState(days);
   }, []);
 
+  const setUnitSystem = useCallback((newUnit: UnitSystem) => {
+    setUnitSystemState((prevUnit) => {
+      if (prevUnit === newUnit) return prevUnit;
+      if (newUnit === 'IMPERIAL') {
+        setDrivingInputsState((prev) => ({
+          annualKm: prev.annualKm === 20000 ? 12000 : Math.round(prev.annualKm * 0.621371),
+          gasPricePerL: prev.gasPricePerL === 1.75 ? 3.45 : Number((prev.gasPricePerL * 3.78541 * 0.73).toFixed(2)),
+          electricityRatePerKwh: prev.electricityRatePerKwh === 0.14 ? 0.16 : prev.electricityRatePerKwh,
+        }));
+        setCurrentVehicleState((prev) => ({
+          ...prev,
+          customL100km: prev.customL100km === 9.5 ? 25 : Math.round((235.215 / prev.customL100km) * 10) / 10,
+        }));
+      } else {
+        setDrivingInputsState((prev) => ({
+          annualKm: prev.annualKm === 12000 ? 20000 : Math.round(prev.annualKm / 0.621371),
+          gasPricePerL: prev.gasPricePerL === 3.45 ? 1.75 : Number((prev.gasPricePerL / (3.78541 * 0.73)).toFixed(2)),
+          electricityRatePerKwh: prev.electricityRatePerKwh === 0.16 ? 0.14 : prev.electricityRatePerKwh,
+        }));
+        setCurrentVehicleState((prev) => ({
+          ...prev,
+          customL100km: prev.customL100km === 25 ? 9.5 : Math.round((235.215 / prev.customL100km) * 10) / 10,
+        }));
+      }
+      return newUnit;
+    });
+  }, []);
+
   const resetToDefaults = useCallback(() => {
-    setDrivingInputsState(DEFAULT_DRIVING_INPUTS);
-    setCurrentVehicleState(DEFAULT_CURRENT_VEHICLE);
+    const isImp = unitSystem === 'IMPERIAL';
+    setDrivingInputsState(isImp ? DEFAULT_DRIVING_INPUTS_US : DEFAULT_DRIVING_INPUTS);
+    setCurrentVehicleState(isImp ? DEFAULT_CURRENT_VEHICLE_US : DEFAULT_CURRENT_VEHICLE);
     setTargetVehicleState(DEFAULT_TARGET_VEHICLE);
     setComparisonModeState('ENERGY_COMPARISON');
-    setMode2OutlayState(DEFAULT_MODE2_OUTLAY);
-    setMode3OutlayState(DEFAULT_MODE3_OUTLAY);
+    setMode2OutlayState(isImp ? DEFAULT_MODE2_OUTLAY_US : DEFAULT_MODE2_OUTLAY);
+    setMode3OutlayState(isImp ? DEFAULT_MODE3_OUTLAY_US : DEFAULT_MODE3_OUTLAY);
     setWaitDaysState(180);
-  }, []);
+  }, [unitSystem]);
 
   // Presets lookup
   const currentArchetypePreset = useMemo(
@@ -609,73 +718,164 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
 
   // Pure Math Calculations Memoization
   const results: CalculatorResults = useMemo(() => {
-    // 1. Current Vehicle Consumption & Cost
-    const effectiveCurrentL100km =
-      currentVehicle.mode === 'ARCHETYPE'
-        ? (currentArchetypePreset?.consumption.combinedL100km ?? 9.5)
-        : currentVehicle.customL100km;
+    const isImp = unitSystem === 'IMPERIAL';
+    const currencyCode: 'CAD' | 'USD' = isImp ? 'USD' : 'CAD';
 
-    const currentAnnualCost = calculateAnnualGasCost(
-      drivingInputs.annualKm,
-      effectiveCurrentL100km,
-      drivingInputs.gasPricePerL
-    );
+    // 1. Current Vehicle Consumption & Cost
+    let effectiveCurrentL100km = 9.5;
+    let effectiveCurrentMpg = 25;
+    let currentAnnualCost = 0;
+    let currentAnnualFuelL = 0;
+    let currentAnnualFuelGal = 0;
+
+    if (isImp) {
+      effectiveCurrentMpg =
+        currentVehicle.mode === 'ARCHETYPE'
+          ? (currentArchetypePreset?.consumption.combinedMpg ?? 25)
+          : currentVehicle.customL100km;
+      effectiveCurrentL100km =
+        effectiveCurrentMpg > 0 ? Math.round((235.215 / effectiveCurrentMpg) * 10) / 10 : 9.5;
+
+      currentAnnualCost = calculateAnnualGasCostUS(
+        drivingInputs.annualKm,
+        effectiveCurrentMpg,
+        drivingInputs.gasPricePerL
+      );
+      currentAnnualFuelGal =
+        effectiveCurrentMpg > 0
+          ? Math.round(((drivingInputs.annualKm / effectiveCurrentMpg) + Number.EPSILON) * 10) / 10
+          : 0;
+      currentAnnualFuelL = Math.round((currentAnnualFuelGal * 3.78541 + Number.EPSILON) * 10) / 10;
+    } else {
+      effectiveCurrentL100km =
+        currentVehicle.mode === 'ARCHETYPE'
+          ? (currentArchetypePreset?.consumption.combinedL100km ?? 9.5)
+          : currentVehicle.customL100km;
+      effectiveCurrentMpg =
+        effectiveCurrentL100km > 0 ? Math.round((235.215 / effectiveCurrentL100km) * 10) / 10 : 25;
+
+      currentAnnualCost = calculateAnnualGasCost(
+        drivingInputs.annualKm,
+        effectiveCurrentL100km,
+        drivingInputs.gasPricePerL
+      );
+      currentAnnualFuelL =
+        Math.round(((drivingInputs.annualKm / 100) * effectiveCurrentL100km + Number.EPSILON) * 10) / 10;
+      currentAnnualFuelGal = Math.round((currentAnnualFuelL / 3.78541 + Number.EPSILON) * 10) / 10;
+    }
+
     const currentMonthlyCost = Math.round((currentAnnualCost / 12 + Number.EPSILON) * 100) / 100;
-    const currentAnnualFuelL =
-      Math.round(((drivingInputs.annualKm / 100) * effectiveCurrentL100km + Number.EPSILON) * 10) / 10;
 
     // 2. Target Vehicle Consumption & Cost
     const targetIsPhev = targetVehicle.powertrain === 'PHEV';
     let targetAnnualCost = 0;
     let targetL100km = targetPreset?.consumption.combinedL100km ?? 5.8;
+    let targetMpg = targetPreset?.consumption.combinedMpg ?? 40;
     let targetAnnualElectricCost = 0;
     let targetAnnualElectricKwh = 0;
     let targetAnnualGasCost = 0;
     let targetAnnualGasL = 0;
+    let targetAnnualGasGal = 0;
 
-    if (targetIsPhev) {
-      const effectiveElectricShare = targetVehicle.hasChargingAccess
-        ? targetVehicle.electricShare
-        : 0.0;
-      const wallKwhPer100km = targetPreset?.consumption.wallKwhPer100km ?? 21.5;
-      const gasModeL100km =
-        targetPreset?.consumption.gasModeL100km ??
-        targetPreset?.consumption.combinedL100km ??
-        6.0;
+    if (isImp) {
+      if (targetIsPhev) {
+        const effectiveElectricShare = targetVehicle.hasChargingAccess
+          ? targetVehicle.electricShare
+          : 0.0;
+        targetMpg = targetPreset?.consumption.gasModeMpg ?? 38;
+        targetL100km = targetPreset?.consumption.gasModeL100km ?? 6.0;
+        const kwhPer100Miles = targetPreset?.consumption.kwhPer100Miles ?? 36;
 
-      targetL100km = gasModeL100km;
+        const phevCost = calculateAnnualPHEVCostUS(
+          drivingInputs.annualKm,
+          effectiveElectricShare,
+          kwhPer100Miles,
+          drivingInputs.electricityRatePerKwh,
+          targetMpg,
+          drivingInputs.gasPricePerL
+        );
 
-      const phevCost = calculateAnnualPHEVCost(
-        drivingInputs.annualKm,
-        effectiveElectricShare,
-        wallKwhPer100km,
-        drivingInputs.electricityRatePerKwh,
-        gasModeL100km,
-        drivingInputs.gasPricePerL
-      );
+        targetAnnualElectricCost = phevCost.electricCost;
+        targetAnnualGasCost = phevCost.gasCost;
+        targetAnnualCost = phevCost.totalCost;
 
-      targetAnnualElectricCost = phevCost.electricCost;
-      targetAnnualGasCost = phevCost.gasCost;
-      targetAnnualCost = phevCost.totalCost;
-
-      const electricKm = drivingInputs.annualKm * effectiveElectricShare;
-      targetAnnualElectricKwh =
-        Math.round(((electricKm / 100) * wallKwhPer100km + Number.EPSILON) * 10) / 10;
-
-      const gasKm = drivingInputs.annualKm * (1 - effectiveElectricShare);
-      targetAnnualGasL =
-        Math.round(((gasKm / 100) * gasModeL100km + Number.EPSILON) * 10) / 10;
+        targetAnnualElectricKwh = Math.round(
+          drivingInputs.annualKm * effectiveElectricShare * (kwhPer100Miles / 100)
+        );
+        targetAnnualGasGal =
+          targetMpg > 0
+            ? Math.round(
+                (((drivingInputs.annualKm * (1 - effectiveElectricShare)) / targetMpg) +
+                  Number.EPSILON) *
+                  10
+              ) / 10
+            : 0;
+        targetAnnualGasL = Math.round((targetAnnualGasGal * 3.78541 + Number.EPSILON) * 10) / 10;
+      } else {
+        // HEV or Gas
+        targetMpg = targetPreset?.consumption.combinedMpg ?? 40;
+        targetL100km = targetPreset?.consumption.combinedL100km ?? 5.8;
+        targetAnnualCost = calculateAnnualGasCostUS(
+          drivingInputs.annualKm,
+          targetMpg,
+          drivingInputs.gasPricePerL
+        );
+        targetAnnualGasCost = targetAnnualCost;
+        targetAnnualGasGal =
+          targetMpg > 0
+            ? Math.round(((drivingInputs.annualKm / targetMpg) + Number.EPSILON) * 10) / 10
+            : 0;
+        targetAnnualGasL = Math.round((targetAnnualGasGal * 3.78541 + Number.EPSILON) * 10) / 10;
+      }
     } else {
-      // HEV or Gas
-      targetL100km = targetPreset?.consumption.combinedL100km ?? 5.8;
-      targetAnnualCost = calculateAnnualGasCost(
-        drivingInputs.annualKm,
-        targetL100km,
-        drivingInputs.gasPricePerL
-      );
-      targetAnnualGasCost = targetAnnualCost;
-      targetAnnualGasL =
-        Math.round(((drivingInputs.annualKm / 100) * targetL100km + Number.EPSILON) * 10) / 10;
+      if (targetIsPhev) {
+        const effectiveElectricShare = targetVehicle.hasChargingAccess
+          ? targetVehicle.electricShare
+          : 0.0;
+        const wallKwhPer100km = targetPreset?.consumption.wallKwhPer100km ?? 21.5;
+        const gasModeL100km =
+          targetPreset?.consumption.gasModeL100km ??
+          targetPreset?.consumption.combinedL100km ??
+          6.0;
+
+        targetL100km = gasModeL100km;
+        targetMpg = targetPreset?.consumption.gasModeMpg ?? 38;
+
+        const phevCost = calculateAnnualPHEVCost(
+          drivingInputs.annualKm,
+          effectiveElectricShare,
+          wallKwhPer100km,
+          drivingInputs.electricityRatePerKwh,
+          gasModeL100km,
+          drivingInputs.gasPricePerL
+        );
+
+        targetAnnualElectricCost = phevCost.electricCost;
+        targetAnnualGasCost = phevCost.gasCost;
+        targetAnnualCost = phevCost.totalCost;
+
+        const electricKm = drivingInputs.annualKm * effectiveElectricShare;
+        targetAnnualElectricKwh =
+          Math.round(((electricKm / 100) * wallKwhPer100km + Number.EPSILON) * 10) / 10;
+
+        const gasKm = drivingInputs.annualKm * (1 - effectiveElectricShare);
+        targetAnnualGasL =
+          Math.round(((gasKm / 100) * gasModeL100km + Number.EPSILON) * 10) / 10;
+        targetAnnualGasGal = Math.round((targetAnnualGasL / 3.78541 + Number.EPSILON) * 10) / 10;
+      } else {
+        // HEV or Gas
+        targetL100km = targetPreset?.consumption.combinedL100km ?? 5.8;
+        targetMpg = targetPreset?.consumption.combinedMpg ?? 40;
+        targetAnnualCost = calculateAnnualGasCost(
+          drivingInputs.annualKm,
+          targetL100km,
+          drivingInputs.gasPricePerL
+        );
+        targetAnnualGasCost = targetAnnualCost;
+        targetAnnualGasL =
+          Math.round(((drivingInputs.annualKm / 100) * targetL100km + Number.EPSILON) * 10) / 10;
+        targetAnnualGasGal = Math.round((targetAnnualGasL / 3.78541 + Number.EPSILON) * 10) / 10;
+      }
     }
 
     const targetMonthlyCost = Math.round((targetAnnualCost / 12 + Number.EPSILON) * 100) / 100;
@@ -717,40 +917,70 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
 
       // Calculate Vehicle A annual energy cost
       if (presetA.identity.powertrain === 'PHEV') {
-        const phevCost = calculateAnnualPHEVCost(
-          drivingInputs.annualKm,
-          0.65,
-          presetA.consumption.wallKwhPer100km ?? 21.5,
-          drivingInputs.electricityRatePerKwh,
-          presetA.consumption.gasModeL100km ?? 6.0,
-          drivingInputs.gasPricePerL
-        );
+        const phevCost = isImp
+          ? calculateAnnualPHEVCostUS(
+              drivingInputs.annualKm,
+              0.65,
+              presetA.consumption.kwhPer100Miles ?? 36,
+              drivingInputs.electricityRatePerKwh,
+              presetA.consumption.gasModeMpg ?? 38,
+              drivingInputs.gasPricePerL
+            )
+          : calculateAnnualPHEVCost(
+              drivingInputs.annualKm,
+              0.65,
+              presetA.consumption.wallKwhPer100km ?? 21.5,
+              drivingInputs.electricityRatePerKwh,
+              presetA.consumption.gasModeL100km ?? 6.0,
+              drivingInputs.gasPricePerL
+            );
         vehicleAAnnualCost = phevCost.totalCost;
       } else {
-        vehicleAAnnualCost = calculateAnnualGasCost(
-          drivingInputs.annualKm,
-          presetA.consumption.combinedL100km ?? 5.8,
-          drivingInputs.gasPricePerL
-        );
+        vehicleAAnnualCost = isImp
+          ? calculateAnnualGasCostUS(
+              drivingInputs.annualKm,
+              presetA.consumption.combinedMpg ?? 40,
+              drivingInputs.gasPricePerL
+            )
+          : calculateAnnualGasCost(
+              drivingInputs.annualKm,
+              presetA.consumption.combinedL100km ?? 5.8,
+              drivingInputs.gasPricePerL
+            );
       }
 
       // Calculate Vehicle B annual energy cost
       if (presetB.identity.powertrain === 'PHEV') {
-        const phevCost = calculateAnnualPHEVCost(
-          drivingInputs.annualKm,
-          0.65,
-          presetB.consumption.wallKwhPer100km ?? 21.5,
-          drivingInputs.electricityRatePerKwh,
-          presetB.consumption.gasModeL100km ?? 6.0,
-          drivingInputs.gasPricePerL
-        );
+        const phevCost = isImp
+          ? calculateAnnualPHEVCostUS(
+              drivingInputs.annualKm,
+              0.65,
+              presetB.consumption.kwhPer100Miles ?? 36,
+              drivingInputs.electricityRatePerKwh,
+              presetB.consumption.gasModeMpg ?? 38,
+              drivingInputs.gasPricePerL
+            )
+          : calculateAnnualPHEVCost(
+              drivingInputs.annualKm,
+              0.65,
+              presetB.consumption.wallKwhPer100km ?? 21.5,
+              drivingInputs.electricityRatePerKwh,
+              presetB.consumption.gasModeL100km ?? 6.0,
+              drivingInputs.gasPricePerL
+            );
         vehicleBAnnualCost = phevCost.totalCost;
       } else {
-        vehicleBAnnualCost = calculateAnnualGasCost(
-          drivingInputs.annualKm,
-          presetB.consumption.combinedL100km ?? 5.8,
-          drivingInputs.gasPricePerL
-        );
+        vehicleBAnnualCost = isImp
+          ? calculateAnnualGasCostUS(
+              drivingInputs.annualKm,
+              presetB.consumption.combinedMpg ?? 40,
+              drivingInputs.gasPricePerL
+            )
+          : calculateAnnualGasCost(
+              drivingInputs.annualKm,
+              presetB.consumption.combinedL100km ?? 5.8,
+              drivingInputs.gasPricePerL
+            );
       }
 
       const waitDelta = Math.max(0, mode3Outlay.vehicleBWaitDays - mode3Outlay.vehicleAWaitDays);
@@ -839,7 +1069,6 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
     }
 
     // 5. Recovery Boundary Check:
-    // Only designate as "Recovered" if balance crosses above $0 after all purchases have completed and stays non-negative.
     const finalPoint = timelineResult.points[timelineResult.points.length - 1];
     const maxDeliveryDay = Math.max(refScenario.deliveryWaitDays, targetScenario.deliveryWaitDays);
 
@@ -877,18 +1106,24 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       comparisonMode,
       mode2Outlay,
       mode3Outlay,
-      waitDays
+      waitDays,
+      unitSystem
     );
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://toyotawaits.ca';
     const pathname = typeof window !== 'undefined' ? window.location.pathname : '/calculator';
     const shareUrl = `${origin}${pathname}${hash}`;
 
     return {
+      unitSystem,
+      currencyCode,
       effectiveCurrentL100km,
+      effectiveCurrentMpg,
       currentAnnualCost,
       currentMonthlyCost,
       currentAnnualFuelL,
+      currentAnnualFuelGal,
       targetL100km,
+      targetMpg,
       targetAnnualCost,
       targetMonthlyCost,
       targetIsPhev,
@@ -896,6 +1131,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       targetAnnualElectricKwh,
       targetAnnualGasCost,
       targetAnnualGasL,
+      targetAnnualGasGal,
       annualSavings,
       monthlySavings,
       savingsPercent,
@@ -921,6 +1157,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
     mode2Outlay,
     mode3Outlay,
     waitDays,
+    unitSystem,
   ]);
 
   return {
@@ -938,6 +1175,8 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
     setMode3Outlay,
     waitDays,
     setWaitDays,
+    unitSystem,
+    setUnitSystem,
     resetToDefaults,
     currentArchetypePreset,
     targetPreset,

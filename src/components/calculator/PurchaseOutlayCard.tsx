@@ -28,6 +28,7 @@ export interface PurchaseOutlayCardProps {
   onMode3OutlayChange: (patch: Partial<Mode3OutlayState>) => void;
   calculatedNetOutlay: number;
   effectiveNetOutlay: number;
+  currencyCode?: 'CAD' | 'USD';
   className?: string;
 }
 
@@ -40,6 +41,7 @@ export function PurchaseOutlayCard({
   onMode3OutlayChange,
   calculatedNetOutlay,
   effectiveNetOutlay,
+  currencyCode = 'CAD',
   className,
 }: PurchaseOutlayCardProps) {
   const targetPriceId = useId();
@@ -268,7 +270,7 @@ export function PurchaseOutlayCard({
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <Label htmlFor={overrideId} className="text-xs font-bold text-zinc-900 dark:text-zinc-100">
-                    Authoritative Net Outlay ($CAD)
+                    Authoritative Net Outlay ({currencyCode === 'USD' ? '$USD' : '$CAD'})
                   </Label>
                   {mode2Outlay.netOutlayOverride !== null && (
                     <button
@@ -348,7 +350,7 @@ export function PurchaseOutlayCard({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <Label htmlFor={vehicleAOutlayId} className="text-xs text-zinc-600 dark:text-zinc-400">
-                      Total Cash Price ($CAD)
+                      Total Cash Price ({currencyCode === 'USD' ? '$USD' : '$CAD'})
                     </Label>
                     <div className="relative">
                       <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">$</span>
@@ -415,7 +417,7 @@ export function PurchaseOutlayCard({
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <Label htmlFor={vehicleBOutlayId} className="text-xs text-zinc-600 dark:text-zinc-400">
-                      Total Cash Price ($CAD)
+                      Total Cash Price ({currencyCode === 'USD' ? '$USD' : '$CAD'})
                     </Label>
                     <div className="relative">
                       <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">$</span>

@@ -296,6 +296,8 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
         annualSavings: 2149.75,
         monthlySavings: 179.15,
         savingsPercent: 64.7,
+        unitSystem: 'METRIC' as const,
+        currencyCode: 'CAD' as const,
         shareUrl: 'https://toyotawaits.ca/calculator#c=test',
       };
 

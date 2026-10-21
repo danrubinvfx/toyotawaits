@@ -8,6 +8,7 @@ export interface AccessibleChartTableProps {
   points: CashFlowPoint[];
   refVehicleName?: string;
   targetVehicleName?: string;
+  currencyCode?: 'CAD' | 'USD';
   className?: string;
 }
 
@@ -15,6 +16,7 @@ export function AccessibleChartTable({
   points,
   refVehicleName = 'Reference Vehicle',
   targetVehicleName = 'Target Vehicle',
+  currencyCode = 'CAD',
   className,
 }: AccessibleChartTableProps) {
   // Extract yearly milestone points (Year 0 through Year 7)
@@ -52,7 +54,7 @@ export function AccessibleChartTable({
                 <th scope="col" className="py-2 pr-4 font-semibold">Milestone</th>
                 <th scope="col" className="py-2 px-4 font-semibold">{refVehicleName} Cumulative Spend</th>
                 <th scope="col" className="py-2 px-4 font-semibold">{targetVehicleName} Cumulative Spend</th>
-                <th scope="col" className="py-2 px-4 font-semibold">Net Cash Advantage ($CAD)</th>
+                <th scope="col" className="py-2 px-4 font-semibold">Net Cash Advantage ({currencyCode === 'USD' ? '$USD' : '$CAD'})</th>
                 <th scope="col" className="py-2 pl-4 font-semibold">Status</th>
               </tr>
             </thead>
@@ -73,7 +75,7 @@ export function AccessibleChartTable({
                     <td className={`py-2.5 px-4 font-bold ${
                       isAdvantage ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                     }`}>
-                      {isAdvantage ? '+' : ''}${point.netAdvantageTarget.toLocaleString()} CAD
+                      {isAdvantage ? '+' : ''}${point.netAdvantageTarget.toLocaleString()} {currencyCode}
                     </td>
                     <td className="py-2.5 pl-4 font-sans text-zinc-500 dark:text-zinc-400">
                       {isAdvantage ? (

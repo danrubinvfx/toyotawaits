@@ -3,6 +3,8 @@
  * Specification Reference: Master Plan v3.1 (19 October 2026) - Stage 1 (Evidence & Engine)
  */
 
+export type UnitSystem = 'METRIC' | 'IMPERIAL';
+
 export type ComparisonMode =
   | 'ENERGY_COMPARISON'
   | 'KEEP_VS_REPLACE'
@@ -39,15 +41,23 @@ export interface ProvenanceMetadata {
 
 export interface VehicleConsumptionRecord {
   identity: VehicleIdentity;
-  // Consumption ratings
+  // Consumption ratings (Metric)
   combinedL100km?: number;
   cityL100km?: number;
   highwayL100km?: number;
+  // Consumption ratings (Imperial - EPA)
+  combinedMpg?: number;
+  cityMpg?: number;
+  highwayMpg?: number;
   // PHEV / BEV specific ratings
   electricRangeKm?: number;
+  electricRangeMiles?: number;
   wallKwhPer100km?: number;
+  kwhPer100Miles?: number;
+  mpge?: number;
   batterySideKwhPer100km?: number;
   gasModeL100km?: number;
+  gasModeMpg?: number;
   electricityMeasurementBasis?: ElectricityMeasurementBasis;
   // Provenance metadata
   sourceUrl: string;
@@ -59,6 +69,7 @@ export interface VehicleConsumptionRecord {
 export interface VehiclePriceRecord {
   identity: VehicleIdentity;
   msrpCad: number;
+  msrpUsd?: number;
   freightPdiCad?: number;
   dealerAdminFeeCad?: number;
   estimatedDeliveryDays?: number;
@@ -83,9 +94,12 @@ export interface VehiclePresetRecord {
 
 export interface DrivingInputs {
   annualKm: number;
+  annualMiles?: number;
   electricShare?: number; // 0.0 to 1.0 (defaults to 0.65 for PHEV when omitted)
   gasPricePerL: number; // CAD per liter
-  electricityRatePerKwh: number; // CAD per kWh
+  gasPricePerGal?: number; // USD per gallon
+  electricityRatePerKwh: number; // CAD or USD per kWh
+  unitSystem?: UnitSystem;
 }
 
 export interface CurrentVehicleInput {
