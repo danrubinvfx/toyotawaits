@@ -187,7 +187,16 @@ export async function getTickerItems(
   limit = 16,
   countryCode: CountryCode | string = 'CA'
 ) {
-  const { getAggregatedTickerItems } = await import('@/lib/data/ticker');
-  return getAggregatedTickerItems(limit, countryCode);
+  try {
+    const { getAggregatedTickerItems, DEFAULT_STATIC_TICKER_ITEMS } = await import('@/lib/data/ticker');
+    const items = await getAggregatedTickerItems(limit, countryCode);
+    return Array.isArray(items) && items.length > 0
+      ? items.filter(Boolean)
+      : DEFAULT_STATIC_TICKER_ITEMS.slice(0, Math.max(1, limit));
+  } catch (err) {
+    console.error('[Ticker] Failed to fetch live data:', err);
+    const { DEFAULT_STATIC_TICKER_ITEMS } = await import('@/lib/data/ticker');
+    return DEFAULT_STATIC_TICKER_ITEMS.slice(0, Math.max(1, limit));
+  }
 }
 

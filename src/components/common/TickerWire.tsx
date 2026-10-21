@@ -7,7 +7,7 @@ import { trackAffiliateClick } from '@/lib/gear/telemetry';
 import { useMarket } from '@/context/MarketContext';
 
 export interface TickerWireProps {
-  initialData?: Array<TickerItem | Record<string, any>>;
+  initialData?: Array<TickerItem | Record<string, any> | null | undefined>;
 }
 
 const DEFAULT_BADGES: Record<TickerItemType, string> = {
@@ -16,6 +16,28 @@ const DEFAULT_BADGES: Record<TickerItemType, string> = {
   delivery: '[📦 DELIVERED]',
   gear: '[⚡ GEAR PICK]',
 };
+
+const SHORTHAND_BADGE_COLORS: Record<string, string> = {
+  sky: TICKER_BADGE_COLORS.news,
+  cyan: TICKER_BADGE_COLORS.news,
+  emerald: TICKER_BADGE_COLORS.inventory,
+  green: TICKER_BADGE_COLORS.inventory,
+  amber: TICKER_BADGE_COLORS.delivery,
+  yellow: TICKER_BADGE_COLORS.delivery,
+  purple: TICKER_BADGE_COLORS.gear,
+  indigo: TICKER_BADGE_COLORS.gear,
+};
+
+function resolveBadgeColor(rawColor: string | undefined | null, type: TickerItemType): string {
+  if (!rawColor || typeof rawColor !== 'string') {
+    return TICKER_BADGE_COLORS[type] || TICKER_BADGE_COLORS.news;
+  }
+  const trimmed = rawColor.trim();
+  if (SHORTHAND_BADGE_COLORS[trimmed]) {
+    return SHORTHAND_BADGE_COLORS[trimmed];
+  }
+  return trimmed;
+}
 
 /**
  * Normalizes any incoming ticker item (unified `TickerItem` or legacy `NewsTickerItem` / `DeliveryTickerItem`)
@@ -40,7 +62,7 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
       id: String(raw.id || `${type}-${index}`),
       type,
       badge: raw.badge || DEFAULT_BADGES[type],
-      badgeColor: raw.badgeColor || TICKER_BADGE_COLORS[type],
+      badgeColor: resolveBadgeColor(raw.badgeColor, type),
       text: raw.text,
       linkUrl: raw.linkUrl || '/',
       isExternal,
@@ -60,7 +82,7 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
       id: String(raw.id || `del-${index}`),
       type: 'delivery',
       badge: raw.badge || '[📦 DELIVERED]',
-      badgeColor: raw.badgeColor || TICKER_BADGE_COLORS.delivery,
+      badgeColor: resolveBadgeColor(raw.badgeColor, 'delivery'),
       text: `${year} ${model}${trim} delivered in ${province} after ${waitDays} days`,
       linkUrl: raw.linkUrl || '/',
       isExternal: false,
@@ -78,18 +100,46 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
     id: String(raw.id || `news-${index}`),
     type: 'news',
     badge,
-    badgeColor: raw.badgeColor || TICKER_BADGE_COLORS.news,
+    badgeColor: resolveBadgeColor(raw.badgeColor, 'news'),
     text: headline,
     linkUrl,
     isExternal,
   };
 }
 
-export function TickerWire({ initialData = [] }: TickerWireProps) {
+class TickerErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error('[Ticker] Render error caught by boundary:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div className="h-9 bg-zinc-950 border-b border-zinc-800" />;
+    }
+    return this.props.children;
+  }
+}
+
+function TickerWireInner({ initialData = [] }: TickerWireProps) {
   const { isUs } = useMarket();
   const [items, setItems] = useState<TickerItem[]>(() =>
     Array.isArray(initialData)
-      ? (initialData.map((item, idx) => normalizeTickerItem(item, idx)).filter(Boolean) as TickerItem[])
+      ? (initialData
+          .filter(Boolean)
+          .map((item, idx) => normalizeTickerItem(item, idx))
+          .filter(Boolean) as TickerItem[])
       : []
   );
   const [isHovered, setIsHovered] = useState(false);
@@ -98,6 +148,7 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
   useEffect(() => {
     if (Array.isArray(initialData)) {
       const normalized = initialData
+        .filter(Boolean)
         .map((item, idx) => normalizeTickerItem(item, idx))
         .filter(Boolean) as TickerItem[];
       setItems(normalized);
@@ -125,6 +176,7 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
           const json = await res.json();
           if (json.success && Array.isArray(json.data) && json.data.length > 0) {
             const normalized = json.data
+              .filter(Boolean)
               .map((item: any, idx: number) => normalizeTickerItem(item, idx))
               .filter(Boolean) as TickerItem[];
             if (normalized.length > 0) {
@@ -142,19 +194,20 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
   }, []);
 
   const displayItems = useMemo(() => {
-    if (items.length === 0) return [];
-    if (items.length < 4) {
-      return [...items, ...items, ...items];
+    const safeItems = Array.isArray(items) ? items.filter(Boolean) : [];
+    if (safeItems.length === 0) return [];
+    if (safeItems.length < 4) {
+      return [...safeItems, ...safeItems, ...safeItems];
     }
-    return items;
+    return safeItems;
   }, [items]);
 
-  if (items.length === 0) {
+  if (!Array.isArray(items) || items.length === 0) {
     return null;
   }
 
   const handleItemClick = (item: TickerItem) => {
-    if (item.type === 'gear') {
+    if (item && item.type === 'gear') {
       trackAffiliateClick({
         accessory_id: item.accessoryId || item.id,
         placement: 'inventory_feed',
@@ -165,8 +218,9 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
   };
 
   const renderTickerItem = (item: TickerItem, prefix = 'item') => {
-    const key = `${prefix}-${item.id}`;
-    const badgeColorClass = item.badgeColor || TICKER_BADGE_COLORS[item.type] || TICKER_BADGE_COLORS.news;
+    if (!item || typeof item !== 'object') return null;
+    const key = `${prefix}-${item.id || ''}`;
+    const badgeColorClass = resolveBadgeColor(item.badgeColor, item.type);
 
     return (
       <div
@@ -238,7 +292,7 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
           className="flex items-center overflow-x-auto no-scrollbar gap-8 px-4 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
           aria-label="Scrollable list of curated Toyota news articles"
         >
-          {items.map((item, idx) => renderTickerItem(item, `red-${idx}`))}
+          {items.filter(Boolean).map((item, idx) => renderTickerItem(item, `red-${idx}`))}
         </div>
       ) : (
         <div
@@ -258,6 +312,14 @@ export function TickerWire({ initialData = [] }: TickerWireProps) {
         </div>
       )}
     </div>
+  );
+}
+
+export function TickerWire(props: TickerWireProps) {
+  return (
+    <TickerErrorBoundary>
+      <TickerWireInner {...props} />
+    </TickerErrorBoundary>
   );
 }
 

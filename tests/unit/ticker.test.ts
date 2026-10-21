@@ -222,4 +222,16 @@ describe('Ticker Data Fetcher & 4-Stream Aggregator', () => {
     expect(types.has('delivery')).toBe(true);
     expect(types.has('gear')).toBe(true);
   });
+
+  it('safely handles empty, null, or undefined items in interleaveTickerStreams without throwing', () => {
+    const emptyResult = interleaveTickerStreams({
+      news: [],
+      inventory: null,
+      delivery: undefined,
+      gear: [undefined as any, null as any],
+    });
+    expect(Array.isArray(emptyResult)).toBe(true);
+    expect(emptyResult.length).toBe(0);
+    expect(emptyResult.every(Boolean)).toBe(true);
+  });
 });

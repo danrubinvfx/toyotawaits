@@ -27,6 +27,7 @@ import {
 import { headers } from 'next/headers';
 import { Hero } from '@/components/Hero';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
@@ -78,8 +79,8 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const headersList = await headers();
   const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
-  const submissions = await getCommunitySubmissions(region);
-  const tickerItems = await getTickerItems(16, region);
+  const submissions = await getCommunitySubmissions(region).catch(() => []);
+  const tickerItems = await getTickerItems(16, region).catch(() => []);
 
   return (
     <div className="pb-16">
@@ -87,7 +88,9 @@ export default async function HomePage() {
       <HashScrollHandler />
 
       {/* Live Activity Ticker directly below top navigation/header banner */}
-      <ActivityTicker initialData={tickerItems} />
+      <React.Suspense fallback={<div className="h-9 bg-zinc-950 border-b border-zinc-800" />}>
+        <ActivityTicker initialData={tickerItems} />
+      </React.Suspense>
 
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />
