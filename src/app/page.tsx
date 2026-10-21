@@ -79,7 +79,7 @@ export default async function HomePage() {
   const headersList = await headers();
   const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
   const submissions = await getCommunitySubmissions(region);
-  const tickerItems = await getTickerItems(10, region);
+  const tickerItems = await getTickerItems(16, region);
 
   return (
     <div className="pb-16">

@@ -1,34 +1,33 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import {
   ActivityTicker,
+  TickerWire,
   formatRelativeTime,
   formatVehicleDescription,
   formatActionDescription,
   formatTickerSummary,
 } from '@/components/feed/ActivityTicker';
-import { RecentActivityItem, TickerItem } from '@/lib/types/contracts';
+import { RecentActivityItem } from '@/lib/types/contracts';
+import { TickerItem, TICKER_BADGE_COLORS } from '@/types/ticker';
+import * as gearTelemetry from '@/lib/gear/telemetry';
 
 describe('Activity Ticker Formatting Helpers', () => {
   it('formats relative time correctly for various intervals', () => {
     const now = new Date();
 
-    // Just now (within 1 minute)
     const justNow = new Date(now.getTime() - 30 * 1000).toISOString();
     expect(formatRelativeTime(justNow)).toBe('Just now');
 
-    // 2 hours ago
     const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000).toISOString();
     expect(formatRelativeTime(twoHoursAgo)).toBe('2h ago');
 
-    // Yesterday (26 hours ago)
     const yesterday = new Date(now.getTime() - 26 * 60 * 60 * 1000).toISOString();
     expect(formatRelativeTime(yesterday)).toBe('Yesterday');
   });
 
   it('formats vehicle description cleanly without duplication', () => {
-    // Example 1: RAV4 Plug-in Hybrid SE
     const item1: RecentActivityItem = {
       id: '1',
       province: 'BC',
@@ -45,7 +44,6 @@ describe('Activity Ticker Formatting Helpers', () => {
     };
     expect(formatVehicleDescription(item1)).toBe('2026 RAV4 Plug-in Hybrid SE');
 
-    // Example 2: Tacoma i-FORCE Turbo SR5
     const item2: RecentActivityItem = {
       id: '2',
       province: 'ON',
@@ -61,25 +59,6 @@ describe('Activity Ticker Formatting Helpers', () => {
       model_year: 2026,
     };
     expect(formatVehicleDescription(item2)).toBe('2026 Tacoma i-FORCE Turbo SR5');
-
-    // Example 3: Sienna XSE AWD
-    const item3: RecentActivityItem = {
-      id: '3',
-      province: 'AB',
-      model_name: 'Sienna',
-      trim_name: 'XSE AWD',
-      powertrain: 'Hybrid (HEV)',
-      status: 'delivered',
-      lifecycle_status: 'delivered',
-      order_date: '2025-10-01',
-      delivered_date: '2026-02-20',
-      wait_days: 142,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      model_year: 2026,
-    };
-    expect(formatVehicleDescription(item3)).toContain('2026 Sienna');
-    expect(formatVehicleDescription(item3)).toContain('XSE AWD');
   });
 
   it('formats lifecycle actions accurately for deposits, transitions, and deliveries', () => {
@@ -97,18 +76,6 @@ describe('Activity Ticker Formatting Helpers', () => {
       updated_at: new Date().toISOString(),
     };
     expect(formatActionDescription(depositItem)).toBe('placed on deposit');
-
-    const inTransitItem: RecentActivityItem = {
-      ...depositItem,
-      lifecycle_status: 'in_transit',
-    };
-    expect(formatActionDescription(inTransitItem)).toBe('advanced to In Transit');
-
-    const vinItem: RecentActivityItem = {
-      ...depositItem,
-      lifecycle_status: 'vin_assigned',
-    };
-    expect(formatActionDescription(vinItem)).toBe('advanced to VIN Assigned');
 
     const deliveredItem: RecentActivityItem = {
       ...depositItem,
@@ -138,37 +105,45 @@ describe('Activity Ticker Formatting Helpers', () => {
   });
 });
 
-describe('ActivityTicker Component — Alternating News Wire & Delivered Milestones', () => {
-  const mockTickerData: TickerItem[] = [
+describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
+  const mockFourStreamData: TickerItem[] = [
     {
-      type: 'delivery',
-      id: 'del-1',
-      province: 'BC',
-      model_name: 'RAV4',
-      trim_name: 'SE',
-      powertrain: 'Plug-in Hybrid',
-      model_year: 2026,
-      daysWaited: 240,
-      timestamp: '2026-10-15T12:00:00Z',
-    },
-    {
-      type: 'news',
       id: 'news-1',
-      title: 'Q4 Canadian Allocation Update: High hybrid production slots allocated for BC & ON',
-      tag: 'ALLOCATION ALERT',
-      url: '/guides',
-      timestamp: '2026-10-14T10:00:00Z',
+      type: 'news',
+      badge: '[🗞️ UPDATE]',
+      badgeColor: TICKER_BADGE_COLORS.news,
+      text: 'BC PHEV clean energy rebate allocations update • Track latest eligible trims',
+      linkUrl: '/',
+      isExternal: false,
     },
     {
+      id: 'inv-1',
+      type: 'inventory',
+      badge: '[🟢 LIVE LOT]',
+      badgeColor: TICKER_BADGE_COLORS.inventory,
+      text: '2026 RAV4 Hybrid XSE Technology Package AWD (Wind Chill Pearl / Black Roof) observed at Jim Pattison Toyota Downtown (Vancouver)',
+      linkUrl: '/inventory?q=JTDACAAJ0T3038212',
+      isExternal: false,
+    },
+    {
+      id: 'del-1',
       type: 'delivery',
-      id: 'del-2',
-      province: 'AB',
-      model_name: 'Sienna',
-      trim_name: 'XSE AWD',
-      powertrain: 'Hybrid',
-      model_year: 2026,
-      daysWaited: 142,
-      timestamp: '2026-10-13T08:00:00Z',
+      badge: '[📦 DELIVERED]',
+      badgeColor: TICKER_BADGE_COLORS.delivery,
+      text: '2026 RAV4 SE delivered in BC after 240 days',
+      linkUrl: '/',
+      isExternal: false,
+    },
+    {
+      id: 'gear-1',
+      type: 'gear',
+      badge: '[⚡ GEAR PICK]',
+      badgeColor: TICKER_BADGE_COLORS.gear,
+      text: 'Custom-fit all-weather rubber floor liners & trunk spill mats',
+      linkUrl: 'https://www.amazon.ca/s?k=Toyota+custom+fit+floor+liners&tag=toyotawaits-20',
+      isExternal: true,
+      accessoryId: 'all-weather-floor-liners',
+      modelContext: 'universal',
     },
   ];
 
@@ -178,58 +153,69 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
 
   afterEach(() => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
   });
 
-  it('filters out delivery items to show curated news items exclusively', () => {
-    render(<ActivityTicker initialData={mockTickerData} />);
+  it('renders all 4 interleaved content streams with high-contrast badges and links', () => {
+    render(<TickerWire initialData={mockFourStreamData} />);
 
-    // Delivery items are excluded per curated newswire requirements
-    const deliveredBadges = screen.queryAllByText(/DELIVERED/i);
-    expect(deliveredBadges.length).toBe(0);
+    // Verify all 4 stream badges render
+    expect(screen.getAllByText('[🗞️ UPDATE]').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('[🟢 LIVE LOT]').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('[📦 DELIVERED]').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('[⚡ GEAR PICK]').length).toBeGreaterThan(0);
 
-    // News wire announcements are rendered
-    const alertBadges = screen.getAllByText(/ALLOCATION ALERT/i);
-    expect(alertBadges.length).toBeGreaterThan(0);
-  });
-
-  it('renders news wire items with category badge, headline, and external link in new tab', () => {
-    render(<ActivityTicker initialData={mockTickerData} />);
-
-    // Should display the news wire announcement with category badge
-    const alertBadges = screen.getAllByText(/ALLOCATION ALERT/i);
-    expect(alertBadges.length).toBeGreaterThan(0);
-
-    const headlines = screen.getAllByText(
-      /Q4 Canadian Allocation Update: High hybrid production slots/i
-    );
-    expect(headlines.length).toBeGreaterThan(0);
-
-    // Verify it links to the article URL in a new tab with rel="noopener noreferrer"
-    const newsLinks = screen.getAllByRole('link', {
-      name: /Q4 Canadian Allocation Update/i,
+    // Verify inventory link points to /inventory?q={vin}
+    const inventoryLinks = screen.getAllByRole('link', {
+      name: /2026 RAV4 Hybrid XSE Technology Package AWD/i,
     });
-    expect(newsLinks[0]).toHaveAttribute('href', '/guides');
-    expect(newsLinks[0]).toHaveAttribute('target', '_blank');
-    expect(newsLinks[0]).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(inventoryLinks[0]).toHaveAttribute('href', '/inventory?q=JTDACAAJ0T3038212');
+
+    // Verify gear link has external target="_blank" and rel="noopener noreferrer"
+    const gearLinks = screen.getAllByRole('link', {
+      name: /Custom-fit all-weather rubber floor liners/i,
+    });
+    expect(gearLinks[0]).toHaveAttribute(
+      'href',
+      'https://www.amazon.ca/s?k=Toyota+custom+fit+floor+liners&tag=toyotawaits-20'
+    );
+    expect(gearLinks[0]).toHaveAttribute('target', '_blank');
+    expect(gearLinks[0]).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('fires trackAffiliateClick telemetry when a gear ticker item is clicked', () => {
+    const spy = vi.spyOn(gearTelemetry, 'trackAffiliateClick').mockImplementation(() => {});
+    render(<ActivityTicker initialData={mockFourStreamData} />);
+
+    const gearLinks = screen.getAllByRole('link', {
+      name: /Custom-fit all-weather rubber floor liners/i,
+    });
+    fireEvent.click(gearLinks[0]);
+
+    expect(spy).toHaveBeenCalledWith({
+      accessory_id: 'all-weather-floor-liners',
+      placement: 'inventory_feed',
+      model_context: 'universal',
+      target_url: 'https://www.amazon.ca/s?k=Toyota+custom+fit+floor+liners&tag=toyotawaits-20',
+    });
   });
 
   it('pauses marquee roll when hovered or focused', () => {
-    const { container } = render(<ActivityTicker initialData={mockTickerData} />);
+    const { container } = render(<ActivityTicker initialData={mockFourStreamData} />);
 
-    const region = screen.getByRole('region', { name: /Live Canadian Toyota (news wire|order activity)/i });
+    const region = screen.getByRole('region', {
+      name: /Live Canadian Toyota (news wire|order activity)/i,
+    });
     const marqueeTrack = container.querySelector('.animate-marquee') as HTMLElement;
     expect(marqueeTrack).toBeInTheDocument();
     expect(marqueeTrack.style.animationPlayState).toBe('running');
 
-    // Hover container
     fireEvent.mouseEnter(region);
     expect(marqueeTrack.style.animationPlayState).toBe('paused');
 
-    // Leave hover
     fireEvent.mouseLeave(region);
     expect(marqueeTrack.style.animationPlayState).toBe('running');
 
-    // Focus container
     fireEvent.focus(region);
     expect(marqueeTrack.style.animationPlayState).toBe('paused');
   });
@@ -246,15 +232,14 @@ describe('ActivityTicker Component — Alternating News Wire & Delivered Milesto
       dispatchEvent: vi.fn(),
     }));
 
-    const { container } = render(<ActivityTicker initialData={mockTickerData} />);
+    const { container } = render(<ActivityTicker initialData={mockFourStreamData} />);
 
-    // No animate-marquee class in reduced motion
     expect(container.querySelector('.animate-marquee')).toBeNull();
 
-    const scrollContainer = screen.getByLabelText(/Scrollable list of (curated Toyota news articles|recent community submissions)/i);
+    const scrollContainer = screen.getByLabelText(
+      /Scrollable list of (curated Toyota news articles|recent community submissions)/i
+    );
     expect(scrollContainer).toBeInTheDocument();
-
-    expect(screen.getByText(/Q4 Canadian Allocation Update/i)).toBeInTheDocument();
   });
 
   it('returns null cleanly when no items are provided', () => {

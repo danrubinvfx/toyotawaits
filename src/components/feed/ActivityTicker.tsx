@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React from 'react';
 import {
-  TickerItem,
   NewsTickerItem,
   DeliveryTickerItem,
   RecentActivityItem,
 } from '@/lib/types/contracts';
-import { ExternalLink } from 'lucide-react';
-import { useMarket } from '@/context/MarketContext';
+import { TickerItem as UnifiedTickerItem } from '@/types/ticker';
+import { TickerWire, normalizeTickerItem } from '@/components/common/TickerWire';
 
-export type AnyTickerItem = TickerItem | RecentActivityItem | any;
+export type AnyTickerItem = UnifiedTickerItem | NewsTickerItem | DeliveryTickerItem | RecentActivityItem | any;
 
 export interface ActivityTickerProps {
   initialData?: AnyTickerItem[];
@@ -20,6 +19,8 @@ export function isNewsItem(item: AnyTickerItem): item is NewsTickerItem {
   if (!item) return false;
   if (
     item.type === 'delivery' ||
+    item.type === 'inventory' ||
+    item.type === 'gear' ||
     item.status === 'delivered' ||
     item.lifecycle_status === 'delivered' ||
     item.daysWaited != null ||
@@ -128,6 +129,10 @@ export function formatActionDescription(item: AnyTickerItem): string {
  * Generates full Zero-PII ticker summary text (used for accessibility / fallback)
  */
 export function formatTickerSummary(item: AnyTickerItem): string {
+  if (item && typeof item.text === 'string' && typeof item.badge === 'string') {
+    return `${item.badge} • ${item.text}`;
+  }
+
   if (isNewsItem(item)) {
     const category = item.category || item.tag || 'MARKET_DATA';
     const headline = item.headline || item.title || 'Toyota News Alert';
@@ -148,159 +153,8 @@ export function formatTickerSummary(item: AnyTickerItem): string {
 }
 
 export function ActivityTicker({ initialData = [] }: ActivityTickerProps) {
-  const { isUs } = useMarket();
-  const [items, setItems] = useState<NewsTickerItem[]>(() =>
-    Array.isArray(initialData) ? initialData.filter(isNewsItem) : []
-  );
-  const [isHovered, setIsHovered] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  // Sync if initialData changes, strictly filtering to curated news articles
-  useEffect(() => {
-    if (Array.isArray(initialData)) {
-      setItems(initialData.filter(isNewsItem));
-    }
-  }, [initialData]);
-
-  // Check user system preference for reduced motion
-  useEffect(() => {
-    if (typeof window === 'undefined' || !window.matchMedia) return;
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handler = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(event.matches);
-    };
-
-    mediaQuery.addEventListener?.('change', handler);
-    return () => mediaQuery.removeEventListener?.('change', handler);
-  }, []);
-
-  // Periodic silent background refresh strictly from /api/ticker (curated news wire only)
-  useEffect(() => {
-    const fetchTicker = async () => {
-      try {
-        const res = await fetch('/api/ticker');
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success && Array.isArray(json.data)) {
-            const curatedNews = json.data.filter(isNewsItem);
-            if (curatedNews.length > 0) {
-              setItems(curatedNews);
-            }
-          }
-        }
-      } catch {
-        // Silently retain current news items on fetch failure
-      }
-    };
-
-    const interval = setInterval(fetchTicker, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Ensure enough items in the marquee loop so it smoothly covers ultra-wide monitors
-  const displayItems = useMemo(() => {
-    if (items.length === 0) return [];
-    if (items.length < 4) {
-      return [...items, ...items, ...items];
-    }
-    return items;
-  }, [items]);
-
-  if (items.length === 0) {
-    return null;
-  }
-
-  const renderTickerItem = (item: NewsTickerItem, prefix = 'item') => {
-    const key = `${prefix}-${item.id || ''}`;
-    const category = item.category || item.tag || 'MARKET_DATA';
-    const headline = item.headline || item.title || 'Toyota News Alert';
-
-    return (
-      <div key={key} className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium">
-        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 whitespace-nowrap">
-          <span>📢</span>
-          <span>{category}</span>
-        </span>
-        {item.url ? (
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-zinc-200 hover:text-white hover:underline transition-colors whitespace-nowrap inline-flex items-center gap-1 cursor-pointer"
-          >
-            <span>{headline}</span>
-            <ExternalLink className="h-3 w-3 opacity-60 shrink-0" />
-          </a>
-        ) : (
-          <span className="text-zinc-200 whitespace-nowrap">{headline}</span>
-        )}
-      </div>
-    );
-  };
-
-  return (
-    <div
-      className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none"
-      aria-live="polite"
-      role="region"
-      aria-label={isUs ? 'Live U.S. Toyota news wire' : 'Live Canadian Toyota news wire'}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => setIsHovered(true)}
-      onBlur={() => setIsHovered(false)}
-    >
-      {/* Explicit scoped CSS to ensure continuous rolling across all browsers and bundlers */}
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-            @keyframes marquee {
-              0% {
-                transform: translate3d(0, 0, 0);
-              }
-              100% {
-                transform: translate3d(-50%, 0, 0);
-              }
-            }
-            .animate-marquee {
-              display: flex;
-              width: max-content;
-              animation: marquee 45s linear infinite;
-              will-change: transform;
-            }
-            .animate-marquee:hover {
-              animation-play-state: paused;
-            }
-          `,
-        }}
-      />
-
-      {prefersReducedMotion ? (
-        <div
-          tabIndex={0}
-          className="flex items-center overflow-x-auto no-scrollbar gap-8 px-4 text-xs sm:text-sm focus:outline-hidden focus:ring-1 focus:ring-emerald-500"
-          aria-label="Scrollable list of curated Toyota news articles"
-        >
-          {items.map((item, idx) => renderTickerItem(item, `red-${idx}`))}
-        </div>
-      ) : (
-        <div
-          className="flex animate-marquee"
-          style={{
-            animationPlayState: isHovered ? 'paused' : 'running',
-          }}
-        >
-          {/* Set 1 */}
-          <div className="flex shrink-0 items-center gap-8 px-4">
-            {displayItems.map((item, idx) => renderTickerItem(item, `orig-${idx}`))}
-          </div>
-          {/* Set 2 (Clone for infinite loop) */}
-          <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden="true">
-            {displayItems.map((item, idx) => renderTickerItem(item, `clone-${idx}`))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return <TickerWire initialData={initialData} />;
 }
+
+export { TickerWire, normalizeTickerItem };
+export default ActivityTicker;

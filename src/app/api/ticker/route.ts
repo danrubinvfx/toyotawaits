@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTickerItems } from '@/lib/db/ticker';
-import { ApiResponse, TickerItem } from '@/lib/types/contracts';
+import { getAggregatedTickerItems } from '@/lib/data/ticker';
+import { ApiResponse } from '@/lib/types/contracts';
+import { TickerItem } from '@/types/ticker';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request?: NextRequest) {
   try {
-    let limit = 10;
+    let limit = 16;
     let countryCode = 'CA';
 
     if (request && request.url) {
@@ -29,19 +30,12 @@ export async function GET(request?: NextRequest) {
       }
     }
 
-    const items = await getTickerItems(limit, countryCode);
-    const newsOnly = items.filter(
-      (item: any) =>
-        item &&
-        item.type === 'news' &&
-        String(item.category || '').toLowerCase() !== 'delivery' &&
-        item.isUserSubmission !== true
-    );
+    const items = await getAggregatedTickerItems(limit, countryCode);
 
     return NextResponse.json<ApiResponse<TickerItem[]>>(
       {
         success: true,
-        data: newsOnly,
+        data: items,
       },
       {
         status: 200,

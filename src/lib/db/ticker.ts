@@ -180,12 +180,14 @@ export function interleaveFeeds(
 }
 
 /**
- * Fetches curated editorial and press news articles for the public newswire feed,
- * strictly excluding crowdsourced user delivery posts and order milestone updates.
+ * Fetches the unified 4-stream interleaved ticker wire items:
+ * News, Live Dealer Inventory, User Delivery Milestones, and Recommended Gear.
  */
 export async function getTickerItems(
-  limit = 10,
-  _countryCode: CountryCode | string = 'CA'
-): Promise<NewsTickerItem[]> {
-  return getNewsWireItems(limit);
+  limit = 16,
+  countryCode: CountryCode | string = 'CA'
+) {
+  const { getAggregatedTickerItems } = await import('@/lib/data/ticker');
+  return getAggregatedTickerItems(limit, countryCode);
 }
+

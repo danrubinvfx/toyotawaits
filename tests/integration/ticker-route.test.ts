@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/ticker/route';
 import * as serverSupabase from '@/lib/supabase/server';
 
-describe('GET /api/ticker Endpoint', () => {
+describe('GET /api/ticker Endpoint (4-Stream Interleaved Feed)', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
 
@@ -34,6 +34,7 @@ describe('GET /api/ticker Endpoint', () => {
         return {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
+          in: vi.fn().mockReturnThis(),
           or: vi.fn().mockReturnThis(),
           order: vi.fn().mockReturnThis(),
           limit: vi.fn().mockResolvedValue({ data: [], error: null }),
@@ -41,13 +42,13 @@ describe('GET /api/ticker Endpoint', () => {
       }),
     } as any);
   });
-  it('returns 200 OK with curated news items and required cache-control headers', async () => {
+
+  it('returns 200 OK with all 4 interleaved streams (news, inventory, delivery, gear) and required cache-control headers', async () => {
     const request = new NextRequest('http://localhost:3000/api/ticker');
     const response = await GET(request);
 
     expect(response.status).toBe(200);
 
-    // Verify Cache-Control header
     const cacheControl = response.headers.get('Cache-Control');
     expect(cacheControl).toBe('public, s-maxage=60, stale-while-revalidate=120');
 
@@ -58,7 +59,14 @@ describe('GET /api/ticker Endpoint', () => {
 
     const types = data.data.map((item: any) => item.type);
     expect(types).toContain('news');
-    expect(types).not.toContain('delivery');
+    expect(types).toContain('inventory');
+    expect(types).toContain('delivery');
+    expect(types).toContain('gear');
+
+    // Verify no two adjacent items have the same type
+    for (let i = 1; i < data.data.length; i++) {
+      expect(data.data[i].type).not.toBe(data.data[i - 1].type);
+    }
   });
 
   it('respects the limit query parameter', async () => {
@@ -71,7 +79,7 @@ describe('GET /api/ticker Endpoint', () => {
     expect(data.data.length).toBeLessThanOrEqual(4);
   });
 
-  it('strictly adheres to Zero-PII across both delivery and news items', async () => {
+  it('strictly adheres to Zero-PII across all ticker items', async () => {
     const request = new NextRequest('http://localhost:3000/api/ticker');
     const response = await GET(request);
     const data = await response.json();
