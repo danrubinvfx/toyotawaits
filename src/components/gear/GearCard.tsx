@@ -116,13 +116,13 @@ export function getAffiliateUrl(
       try {
         const parsed = new URL(rawUrl);
         parsed.hostname = 'www.amazon.com';
-        if (parsed.searchParams.get('tag') === 'danrubin03-20' || item.slug !== 'sample-dashcam') {
+        if (parsed.searchParams.get('tag') === 'toyotawaits-20' || item.slug !== 'sample-dashcam') {
           parsed.searchParams.set('tag', US_TAG);
         }
         return parsed.toString();
       } catch {
         let result = rawUrl.replace(/amazon\.ca/g, 'amazon.com');
-        if (result.includes('danrubin03-20') || item.slug !== 'sample-dashcam') {
+        if (result.includes('toyotawaits-20') || item.slug !== 'sample-dashcam') {
           result = result.replace(/tag=[^&]+/g, `tag=${US_TAG}`);
         }
         return result;
@@ -161,13 +161,13 @@ export function getAffiliateUrl(
     try {
       const parsed = new URL(rawUrl);
       parsed.hostname = 'www.amazon.ca';
-      if (parsed.searchParams.get('tag') === 'danrubin03-20' || item.slug !== 'sample-dashcam') {
+      if (parsed.searchParams.get('tag') === 'toyotawaits-20' || item.slug !== 'sample-dashcam') {
         parsed.searchParams.set('tag', CA_TAG);
       }
       return parsed.toString();
     } catch {
       let result = rawUrl.replace(/amazon\.com/g, 'amazon.ca');
-      if (result.includes('danrubin03-20') || item.slug !== 'sample-dashcam') {
+      if (result.includes('toyotawaits-20') || item.slug !== 'sample-dashcam') {
         result = result.replace(/tag=[^&]+/g, `tag=${CA_TAG}`);
       }
       return result;

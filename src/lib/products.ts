@@ -151,7 +151,56 @@ export const RAV4_AUDIO_PACKAGE: CatalogProduct[] = [
   },
 ];
 
+import { MODS_CONFIG } from '@/data/mods';
+
 export const ALL_PRODUCTS: CatalogProduct[] = [...RAV4_AUDIO_PACKAGE];
+
+const ACCESSORY_PRODUCTS: CatalogProduct[] = RAV4_AUDIO_PACKAGE.flatMap((pkg) =>
+  (pkg.accessories || []).map((acc) => ({
+    id: `acc-${acc.slug}`,
+    slug: acc.slug,
+    name: acc.name,
+    title: acc.name,
+    category: pkg.category,
+    subCategory: 'Accessories' as const,
+    fullCategory: `${pkg.category} / Accessories`,
+    description: acc.description,
+    fitment: pkg.fitment,
+    models: pkg.models,
+    powertrains: pkg.powertrains,
+    priceEstCad: acc.priceEstCad,
+    storeUrl: acc.storeUrl,
+    destinationUrl: acc.storeUrl,
+    affiliateUrl: `/out/${acc.slug}`,
+  }))
+);
+
+const ADDITIONAL_MOD_PRODUCTS: CatalogProduct[] = MODS_CONFIG.filter(
+  (mod) => !ALL_PRODUCTS.some((p) => p.slug === mod.slug)
+).map((mod) => ({
+  id: mod.id,
+  slug: mod.slug,
+  name: mod.name || mod.title,
+  title: mod.title,
+  category: mod.category,
+  subCategory: 'Accessories' as const,
+  fullCategory: mod.category,
+  description: mod.description || '',
+  fitment: mod.compatibility || 'Verified Fitment',
+  models: mod.models,
+  powertrains: mod.powertrains,
+  priceEst: mod.priceEst,
+  storeUrl: mod.destinationUrl || mod.amazonCaAsinOrUrl,
+  destinationUrl: mod.destinationUrl || mod.amazonCaAsinOrUrl,
+  affiliateUrl: mod.affiliateUrl || `/out/${mod.slug}`,
+  asin: mod.asin,
+}));
+
+export const PRODUCTS: CatalogProduct[] = [
+  ...ALL_PRODUCTS,
+  ...ACCESSORY_PRODUCTS,
+  ...ADDITIONAL_MOD_PRODUCTS,
+];
 
 export function getProductsByModel(model: string): CatalogProduct[] {
   const cleanModel = model.toLowerCase().trim();
@@ -165,3 +214,5 @@ export function getProductBySlug(slug: string): CatalogProduct | undefined {
 }
 
 export default ALL_PRODUCTS;
+
+

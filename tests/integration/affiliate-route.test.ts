@@ -130,7 +130,7 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     }
   });
 
-  it('correctly redirects all 7 Gen 5 Prius and Prius Prime mod slugs with 307 status and danrubin03-20 tag', async () => {
+  it('correctly redirects all 7 Gen 5 Prius and Prius Prime mod slugs with 307 status and toyotawaits-20 tag', async () => {
     const priusSlugs = [
       'fitcamx-prius',
       'prius-mud-flaps',
@@ -151,7 +151,7 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       const location = response.headers.get('Location');
       expect(location).toContain('amazon.ca');
       expect(location).toContain('/s?k=');
-      expect(location).toContain('tag=danrubin03-20');
+      expect(location).toContain('tag=toyotawaits-20');
       expect(response.headers.get('Cache-Control')).toContain('no-store');
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }

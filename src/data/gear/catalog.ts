@@ -325,7 +325,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   },
 
   // ==========================================
-  // Prius Guide Catalog Items (Preserve danrubin03-20 on CA)
+  // Prius Guide Catalog Items (Standardized toyotawaits-20 on CA)
   // ==========================================
   'prius-mud-flaps': {
     slug: 'prius-mud-flaps',
@@ -550,6 +550,147 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Metra 72-8104 speaker wiring harness Toyota',
     compatibility: 'Toyota Door Speaker Harness Connectors',
     whyBuy: 'Solderless plug-and-play leads clicking into factory door speaker wiring.',
+  },
+
+  // ==========================================
+  // Sequoia (3rd Gen XK80 2023-2026) Catalog Items
+  // ==========================================
+  'sequoia-all-weather-liners': {
+    slug: 'sequoia-all-weather-liners',
+    title: 'TuxMat / Husky 3-Row Custom All-Weather Floor Liners (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 2023-2026 all weather floor mats liners 3 row',
+    searchKeywordsUS: 'toyota sequoia 2023-2026 all weather floor mats liners 3 row',
+    compatibility: '2023–2026 Toyota Sequoia (7- & 8-Passenger i-FORCE MAX)',
+  },
+  'sequoia-cargo-liner': {
+    slug: 'sequoia-cargo-liner',
+    title: 'Canvasback / OEM Split 3rd-Row Rear Cargo Liner & Shelf Mat (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 2023-2026 cargo liner trunk mat hybrid battery',
+    searchKeywordsUS: 'toyota sequoia 2023-2026 cargo liner trunk mat hybrid battery',
+    compatibility: '2023–2026 Toyota Sequoia (Sliding 3rd-Row Cargo System)',
+  },
+  'sequoia-console-organizer': {
+    slug: 'sequoia-console-organizer',
+    title: 'Center Console Organizer Tray & Hidden Armrest Safe Box (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia tundra center console organizer tray armrest',
+    searchKeywordsUS: 'toyota sequoia tundra center console organizer tray armrest',
+    compatibility: '2023–2026 Toyota Sequoia & 2022–2026 Tundra',
+  },
+  'sequoia-screen-protector': {
+    slug: 'sequoia-screen-protector',
+    title: 'Tempered Glass Screen Protector for 14-inch Toyota Audio Multimedia (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 14 inch screen protector tempered glass',
+    searchKeywordsUS: 'toyota sequoia 14 inch screen protector tempered glass',
+    compatibility: '2023–2026 Toyota Sequoia (14" Touchscreen)',
+  },
+  'sequoia-running-boards': {
+    slug: 'sequoia-running-boards',
+    title: 'Heavy-Duty Aluminum / Power Running Boards (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 2023-2026 running boards side steps',
+    searchKeywordsUS: 'toyota sequoia 2023-2026 running boards side steps',
+    compatibility: '2023–2026 Toyota Sequoia (SR5, Limited, Platinum, TRD Pro, Capstone)',
+  },
+  'sequoia-trailer-brake-controller': {
+    slug: 'sequoia-trailer-brake-controller',
+    title: 'Curt / Redarc Tow-Pro Elite Electric Brake Controller & Harness (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia trailer brake controller harness curt redarc',
+    searchKeywordsUS: 'toyota sequoia trailer brake controller harness curt redarc',
+    compatibility: '2023–2026 Toyota Sequoia (9,000+ lb Tow Package)',
+  },
+  'sequoia-raptor-lights': {
+    slug: 'sequoia-raptor-lights',
+    title: 'Front TRD Heritage Grille Light Bar & Amber Marker Kit (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 2023-2026 grille lights amber raptor led',
+    searchKeywordsUS: 'toyota sequoia 2023-2026 grille lights amber raptor led',
+    compatibility: '2023–2026 Toyota Sequoia (TRD Pro & Heritage Grille Conversion)',
+  },
+  'fitcamx-sequoia': {
+    slug: 'fitcamx-sequoia',
+    title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Toyota Sequoia)',
+    searchKeywordsCA: 'fitcamx 4k dash cam toyota sequoia 2023-2026',
+    searchKeywordsUS: 'fitcamx 4k dash cam toyota sequoia 2023-2026',
+    compatibility: '2023–2026 Toyota Sequoia (All Trims)',
+  },
+  'sequoia-leveling-kit': {
+    slug: 'sequoia-leveling-kit',
+    title: 'Westcott / Rough Country 3"/1" Preload Collar Leveling Lift (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia 2023-2026 leveling kit preload collar lift',
+    searchKeywordsUS: 'toyota sequoia 2023-2026 leveling kit preload collar lift',
+    compatibility: '2023–2026 Toyota Sequoia (3rd Gen XK80)',
+  },
+  'sequoia-rear-sway-bar': {
+    slug: 'sequoia-rear-sway-bar',
+    title: 'Heavy-Duty Rear Sway Bar & Towing Coils (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia rear sway bar heavy duty towing coil springs',
+    searchKeywordsUS: 'toyota sequoia rear sway bar heavy duty towing coil springs',
+    compatibility: '2023–2026 Toyota Sequoia (3rd Gen XK80)',
+  },
+  'sequoia-sound-deadening': {
+    slug: 'sequoia-sound-deadening',
+    title: 'Multi-Layer Butyl Sound Deadening (Kilmat 80 mil)',
+    searchKeywordsCA: 'kilmat 80 mil car sound deadening mat butyl',
+    searchKeywordsUS: 'kilmat 80 mil car sound deadening mat butyl',
+    compatibility: 'Universal / 2023–2026 Toyota Sequoia',
+  },
+  'sequoia-cargo-drawers': {
+    slug: 'sequoia-cargo-drawers',
+    title: 'Rear Cargo Leveling Storage Shelf & Drawer System (Sequoia)',
+    searchKeywordsCA: 'toyota sequoia rear cargo leveling drawer storage platform',
+    searchKeywordsUS: 'toyota sequoia rear cargo leveling drawer storage platform',
+    compatibility: '2023–2026 Toyota Sequoia (i-FORCE MAX Hybrid)',
+  },
+
+  // ==========================================
+  // Corolla & Corolla Cross Mod Guide Slugs
+  // ==========================================
+  'corolla-strut-tower-brace': {
+    slug: 'corolla-strut-tower-brace',
+    title: 'Front Strut Tower Bar Brace (Corolla & Corolla Cross)',
+    searchKeywordsCA: 'Toyota Corolla E210 front strut tower bar brace',
+    searchKeywordsUS: 'Toyota Corolla E210 front strut tower bar brace',
+    compatibility: '2020–2026 Toyota Corolla & 2022–2026 Corolla Cross',
+  },
+  'corolla-rear-sway-bar': {
+    slug: 'corolla-rear-sway-bar',
+    title: 'Upgraded Rear Sway Bar (Corolla & Corolla Cross AWD)',
+    searchKeywordsCA: 'Toyota Corolla E210 2020-2026 rear sway bar upgrade',
+    searchKeywordsUS: 'Toyota Corolla E210 2020-2026 rear sway bar upgrade',
+    compatibility: '2020–2026 Toyota Corolla & Corolla Cross AWD',
+  },
+  'corolla-lowering-springs': {
+    slug: 'corolla-lowering-springs',
+    title: 'Performance Lowering Springs (RS-R Down / Eibach Pro-Kit)',
+    searchKeywordsCA: 'RS-R Eibach lowering springs Toyota Corolla 2020-2026',
+    searchKeywordsUS: 'RS-R Eibach lowering springs Toyota Corolla 2020-2026',
+    compatibility: '2020–2026 Toyota Corolla & Corolla Cross',
+  },
+  'corolla-dash-speakers': {
+    slug: 'corolla-dash-speakers',
+    title: '3.5-Inch Coaxial Dash Speaker Upgrade & Toyota Harness (Corolla)',
+    searchKeywordsCA: 'JBL Club 3412T Kicker KSC350 3.5 dash speakers Toyota Corolla',
+    searchKeywordsUS: 'JBL Club 3412T Kicker KSC350 3.5 dash speakers Toyota Corolla',
+    compatibility: '2020–2026 Toyota Corolla & 2022–2026 Corolla Cross (Non-JBL)',
+  },
+  'sound-deadening-mats': {
+    slug: 'sound-deadening-mats',
+    title: '80-Mil Butyl Sound Deadening Mats (Kilmat / Noico)',
+    searchKeywordsCA: 'Kilmat 80 mil Noico car sound deadening mat butyl',
+    searchKeywordsUS: 'Kilmat 80 mil Noico car sound deadening mat butyl',
+    compatibility: 'Universal Automotive Acoustic Insulation',
+  },
+  'corolla-cold-air-intake': {
+    slug: 'corolla-cold-air-intake',
+    title: 'High-Flow Drop-In Air Filter & Cold Air Intake (Corolla 2.0L)',
+    searchKeywordsCA: 'Toyota Corolla 2.0L M20A-FKS high flow air filter intake',
+    searchKeywordsUS: 'Toyota Corolla 2.0L M20A-FKS high flow air filter intake',
+    compatibility: '2020–2026 Toyota Corolla SE / XSE & Corolla Cross 2.0L',
+  },
+  'corolla-exhaust-system': {
+    slug: 'corolla-exhaust-system',
+    title: 'Stainless Steel Axle-Back / Cat-Back Exhaust (Corolla 2.0L)',
+    searchKeywordsCA: 'Borla Remark axle back exhaust Toyota Corolla 2020-2026',
+    searchKeywordsUS: 'Borla Remark axle back exhaust Toyota Corolla 2020-2026',
+    compatibility: '2020–2026 Toyota Corolla SE / XSE & Hatchback',
   },
 };
 

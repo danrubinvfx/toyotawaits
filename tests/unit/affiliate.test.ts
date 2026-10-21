@@ -80,8 +80,8 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
     });
 
     it('supports string query with custom tag string', () => {
-      const url = buildAmazonAffiliateUrl('FitcamX RAV4', 'danrubin03-20');
-      expect(url).toBe('https://www.amazon.ca/s?k=FitcamX%20RAV4&tag=danrubin03-20');
+      const url = buildAmazonAffiliateUrl('FitcamX RAV4', 'toyotawaits-20');
+      expect(url).toBe('https://www.amazon.ca/s?k=FitcamX%20RAV4&tag=toyotawaits-20');
     });
 
     it('supports AffiliateParams object parameter', () => {

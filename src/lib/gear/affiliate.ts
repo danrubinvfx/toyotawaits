@@ -1,12 +1,11 @@
 /**
  * ToyotaWaits Gear Affiliate Link & Tracking Tag System
- * Enforces standardized US ('toyotawaits07-20') and CA ('toyotawaits-20') Associate tags,
- * while preserving approved intentional exceptions (such as the 7 Prius guide redirects using 'danrubin03-20').
+ * Enforces standardized US ('toyotawaits07-20') and CA ('toyotawaits-20') Associate tags.
  */
 
 export const CA_ASSOCIATE_TAG = 'toyotawaits-20';
 export const US_ASSOCIATE_TAG = 'toyotawaits07-20';
-export const PRIUS_SPECIAL_TAG = 'danrubin03-20';
+export const PRIUS_SPECIAL_TAG = 'toyotawaits-20';
 
 export const DEFAULT_CA_AFFILIATE_TAG = CA_ASSOCIATE_TAG;
 export const DEFAULT_US_AFFILIATE_TAG = US_ASSOCIATE_TAG;
@@ -90,8 +89,7 @@ export function getImageLinkAriaLabel(title: string, url: string): string {
 }
 
 /**
- * Resolves the appropriate Amazon Associate tag for a given market context,
- * preserving intentional exceptions like the 7 Prius guide redirects.
+ * Resolves the appropriate Amazon Associate tag for a given market context.
  */
 export function getAssociateTag(
   marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA',
@@ -108,7 +106,7 @@ export function getAssociateTag(
 
   // Canadian market context
   if (slug && PRIUS_GUIDE_SLUGS.has(slug)) {
-    return PRIUS_SPECIAL_TAG; // 'danrubin03-20'
+    return PRIUS_SPECIAL_TAG; // 'toyotawaits-20'
   }
 
   return (
@@ -170,8 +168,7 @@ export function injectActiveModelIntoQuery(
 
 /**
  * Sanitizes and applies the standard Associate tag to an existing Amazon URL.
- * Preserves approved intentional exceptions (such as danrubin03-20 on Canadian Prius items)
- * and enforces toyotawaits07-20 (US) or toyotawaits-20 (CA).
+ * Enforces toyotawaits07-20 (US) or toyotawaits-20 (CA).
  */
 export function sanitizeAmazonAffiliateUrl(
   url: string,
@@ -186,13 +183,7 @@ export function sanitizeAmazonAffiliateUrl(
     const parsed = new URL(url);
     if (parsed.hostname.includes('amazon.')) {
       parsed.hostname = targetDomain;
-      // Preserve custom tag if intentional on CA, else set target tag
-      const existingTag = parsed.searchParams.get('tag');
-      if (!isUs && existingTag === PRIUS_SPECIAL_TAG && slug && PRIUS_GUIDE_SLUGS.has(slug)) {
-        parsed.searchParams.set('tag', PRIUS_SPECIAL_TAG);
-      } else {
-        parsed.searchParams.set('tag', targetTag);
-      }
+      parsed.searchParams.set('tag', targetTag);
       return parsed.toString();
     }
   } catch {
@@ -203,9 +194,7 @@ export function sanitizeAmazonAffiliateUrl(
       result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
     } else {
       result = result.replace(/amazon\.com/g, 'amazon.ca');
-      if (!url.includes(PRIUS_SPECIAL_TAG)) {
-        result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
-      }
+      result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
     }
     return result;
   }
