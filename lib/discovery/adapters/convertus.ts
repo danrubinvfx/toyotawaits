@@ -252,6 +252,140 @@ export function constructConvertusVdpUrl(
 }
 
 /**
+ * Known placeholder image patterns used by dealer inventory feeds.
+ */
+export const PLACEHOLDER_IMAGE_PATTERNS = [
+  /no[-_]photo/i,
+  /coming[-_]soon/i,
+  /placeholder/i,
+  /image[-_]not[-_]available/i,
+  /photo[-_]coming[-_]soon/i,
+  /vehicle[-_]coming[-_]soon/i,
+  /stock[-_]photo/i,
+  /default[-_]car/i,
+  /not[-_]available/i,
+];
+
+/**
+ * Validates if an image URL matches known dealer placeholder patterns.
+ */
+export function isPlaceholderImageUrl(url?: string | null): boolean {
+  if (!url || typeof url !== 'string') return true;
+  const clean = url.trim();
+  if (!clean || (!clean.startsWith('http://') && !clean.startsWith('https://') && !clean.startsWith('//'))) {
+    return true;
+  }
+  return PLACEHOLDER_IMAGE_PATTERNS.some((pattern) => pattern.test(clean));
+}
+
+/**
+ * Extracts and sanitizes the primary vehicle lot image from Convertus raw vehicle data.
+ * Checks item.photos (string[] and object[] formats), item.photo, and item.image.
+ * Returns sanitized https:// URL or null, and sets hasRealPhoto=true only when non-placeholder.
+ */
+export function extractPrimaryImage(item: any): {
+  imageUrl: string | null;
+  hasRealPhoto: boolean;
+  imageSource: string;
+} {
+  if (!item || typeof item !== 'object') {
+    return { imageUrl: null, hasRealPhoto: false, imageSource: 'placeholder' };
+  }
+
+  // Convertus explicit placeholder flag
+  if (item.placeholder_image === true || item.is_placeholder === true || item.has_placeholder === true) {
+    return { imageUrl: null, hasRealPhoto: false, imageSource: 'placeholder' };
+  }
+
+  let candidateUrl: string | null = null;
+
+  // 1. Inspect item.photos (both string[] and object shapes: { large, thumbnail, original, etc. })
+  if (Array.isArray(item.photos) && item.photos.length > 0) {
+    for (const p of item.photos) {
+      if (!p) continue;
+      if (typeof p === 'string' && p.trim()) {
+        candidateUrl = p.trim();
+        break;
+      } else if (typeof p === 'object') {
+        const u =
+          p.large ||
+          p.image_lg ||
+          p.original ||
+          p.image_original ||
+          p.url ||
+          p.image_md ||
+          p.thumbnail;
+        if (typeof u === 'string' && u.trim()) {
+          candidateUrl = u.trim();
+          break;
+        }
+      }
+    }
+  }
+
+  // 2. Fall back to item.photo
+  if (!candidateUrl && item.photo) {
+    if (typeof item.photo === 'string' && item.photo.trim()) {
+      candidateUrl = item.photo.trim();
+    } else if (typeof item.photo === 'object') {
+      const u =
+        item.photo.large ||
+        item.photo.image_lg ||
+        item.photo.original ||
+        item.photo.image_original ||
+        item.photo.url ||
+        item.photo.image_md ||
+        item.photo.thumbnail;
+      if (typeof u === 'string' && u.trim()) {
+        candidateUrl = u.trim();
+      }
+    }
+  }
+
+  // 3. Fall back to item.image
+  if (!candidateUrl && item.image) {
+    if (typeof item.image === 'string' && item.image.trim()) {
+      candidateUrl = item.image.trim();
+    } else if (typeof item.image === 'object') {
+      const u =
+        item.image.image_lg ||
+        item.image.image_original ||
+        item.image.large ||
+        item.image.original ||
+        item.image.image_md ||
+        item.image.url ||
+        item.image.thumbnail;
+      if (typeof u === 'string' && u.trim()) {
+        candidateUrl = u.trim();
+      }
+    }
+  }
+
+  if (candidateUrl) {
+    // Protocol normalization
+    if (candidateUrl.startsWith('//')) {
+      candidateUrl = `https:${candidateUrl}`;
+    } else if (candidateUrl.startsWith('http://')) {
+      candidateUrl = candidateUrl.replace(/^http:\/\//i, 'https://');
+    }
+
+    if (candidateUrl.startsWith('https://') && !isPlaceholderImageUrl(candidateUrl)) {
+      return {
+        imageUrl: candidateUrl,
+        hasRealPhoto: true,
+        imageSource: 'feed',
+      };
+    }
+  }
+
+  return {
+    imageUrl: null,
+    hasRealPhoto: false,
+    imageSource: 'placeholder',
+  };
+}
+
+/**
  * Parses and validates a single Convertus raw vehicle record.
  * Quarantines if missing mandatory structural attributes (make or model).
  */
@@ -356,6 +490,7 @@ export function parseConvertusRecord(
 
   const stockNumber = raw.stock_number ? String(raw.stock_number).trim() : null;
   const vdpUrl = constructConvertusVdpUrl(raw, options);
+  const imageInfo = extractPrimaryImage(raw);
   const daysOnLot =
     raw.days_on_lot !== undefined && raw.days_on_lot !== null
       ? parseInt(String(raw.days_on_lot), 10)
@@ -385,6 +520,9 @@ export function parseConvertusRecord(
       sourceListingId,
       stockNumber,
       vdpUrl,
+      imageUrl: imageInfo.imageUrl,
+      hasRealPhoto: imageInfo.hasRealPhoto,
+      imageSource: imageInfo.imageSource,
       rawStatus,
       normalizedStatus,
       daysOnLot: isNaN(daysOnLot as any) ? null : daysOnLot,

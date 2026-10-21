@@ -39,6 +39,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Hybrid 2.5L 4-Cyl AWD',
     exteriorColor: 'Wind Chill Pearl / Black Roof',
     stockNumber: 'T26-1044',
+    imageUrl: 'https://media.toyota.ca/image/2026-rav4-hybrid-xse.jpg',
+    hasRealPhoto: true,
+    imageSource: 'dealer_feed',
   },
   {
     id: 'jp-sienna-ltd-02',
@@ -62,6 +65,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Hybrid 2.5L e-AWD',
     exteriorColor: 'Blueprint',
     stockNumber: 'SI-9944',
+    imageUrl: null,
+    hasRealPhoto: false,
+    imageSource: null,
   },
   {
     id: 'jp-grand-highlander-03',
@@ -84,6 +90,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Hybrid MAX 2.4L Turbo AWD',
     exteriorColor: 'Storm Cloud',
     stockNumber: 'GH-2026',
+    imageUrl: 'https://prod.pictures.autoscout24.net/listing-images/2026-grand-highlander-limited.jpg',
+    hasRealPhoto: true,
+    imageSource: 'dealer_feed',
   },
   {
     id: 'jp-tacoma-04',
@@ -106,6 +115,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'i-FORCE 2.4L Turbo',
     exteriorColor: 'Underground',
     stockNumber: 'TAC-552',
+    imageUrl: null,
+    hasRealPhoto: false,
+    imageSource: null,
   },
   {
     id: 'jp-surrey-rav4-01',
@@ -128,6 +140,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Plug-in Hybrid 2.5L 4-Cyl AWD',
     exteriorColor: 'Storm Cloud',
     stockNumber: 'N109453',
+    imageUrl: 'https://pictures.dealerprocess.ca/inventory/2026-rav4-prime-se.jpg',
+    hasRealPhoto: true,
+    imageSource: 'dealer_feed',
   },
   {
     id: 'jp-surrey-sienna-02',
@@ -150,6 +165,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Hybrid 2.5L e-AWD',
     exteriorColor: 'White',
     stockNumber: 'N289848',
+    imageUrl: null,
+    hasRealPhoto: false,
+    imageSource: null,
   },
   {
     id: 'wc-toyota-prius-01',
@@ -172,6 +190,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Plug-in Hybrid 2.0L 4-Cyl',
     exteriorColor: 'Guardian Gray',
     stockNumber: 'W10844',
+    imageUrl: 'https://pictures.dealerprocess.ca/inventory/2026-prius-prime-se.jpg',
+    hasRealPhoto: true,
+    imageSource: 'dealer_feed',
   },
   {
     id: 'jp-corolla-stale-01',
@@ -194,6 +215,9 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     powertrain: 'Gas 2.0L 4-Cyl',
     exteriorColor: 'Classic Silver',
     stockNumber: 'STALE-99',
+    imageUrl: null,
+    hasRealPhoto: false,
+    imageSource: null,
   },
 ];
 

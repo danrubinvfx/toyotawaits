@@ -10,7 +10,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   constructConvertusVdpUrl,
+  extractPrimaryImage,
   formatRawPrice,
+  isPlaceholderImageUrl,
   normalizeConvertusStatus,
   normalizeDealerBaseUrl,
   parseConvertusPayload,
@@ -414,6 +416,91 @@ describe('Convertus Ingestion Adapter', () => {
       expect(url).toBe(
         'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New'
       );
+    });
+  });
+
+  describe('Vehicle Image Extraction & Placeholder Safeguards', () => {
+    it('extracts primary image from item.photos string array', () => {
+      const item = {
+        photos: [
+          'https://media.convertus.com/vehicles/2026/toyota/rav4/photo1.jpg',
+          'https://media.convertus.com/vehicles/2026/toyota/rav4/photo2.jpg',
+        ],
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBe('https://media.convertus.com/vehicles/2026/toyota/rav4/photo1.jpg');
+      expect(res.hasRealPhoto).toBe(true);
+      expect(res.imageSource).toBe('feed');
+    });
+
+    it('extracts primary image from item.photos object array with large/thumbnail shapes', () => {
+      const item = {
+        photos: [
+          {
+            large: 'https://media.dealerprocess.ca/photos/corolla/large.webp',
+            thumbnail: 'https://media.dealerprocess.ca/photos/corolla/thumb.webp',
+          },
+        ],
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBe('https://media.dealerprocess.ca/photos/corolla/large.webp');
+      expect(res.hasRealPhoto).toBe(true);
+      expect(res.imageSource).toBe('feed');
+    });
+
+    it('extracts primary image from item.image object with image_lg / image_original', () => {
+      const item = {
+        image: {
+          image_lg: 'https://prod.pictures.autoscout24.net/listing-images/sample/1024x786.webp',
+          image_original: 'https://prod.pictures.autoscout24.net/listing-images/sample/orig.jpg',
+        },
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBe('https://prod.pictures.autoscout24.net/listing-images/sample/1024x786.webp');
+      expect(res.hasRealPhoto).toBe(true);
+      expect(res.imageSource).toBe('feed');
+    });
+
+    it('filters out known dealer placeholder strings matching regexes', () => {
+      const placeholderUrls = [
+        'https://dealer.com/images/no-photo.jpg',
+        'https://dealer.com/assets/coming_soon.png',
+        'https://dealer.com/img/placeholder_vehicle.jpg',
+        'https://dealer.com/image-not-available.webp',
+        'https://dealer.com/photo_coming_soon.jpg',
+        'https://dealer.com/vehicle-coming-soon.jpg',
+        'https://dealer.com/stock-photo.png',
+      ];
+
+      for (const url of placeholderUrls) {
+        expect(isPlaceholderImageUrl(url)).toBe(true);
+
+        const item = { photos: [url] };
+        const res = extractPrimaryImage(item);
+        expect(res.imageUrl).toBeNull();
+        expect(res.hasRealPhoto).toBe(false);
+        expect(res.imageSource).toBe('placeholder');
+      }
+    });
+
+    it('respects explicit placeholder_image: true flag even if a URL is present', () => {
+      const item = {
+        photos: ['https://media.convertus.com/real_looking_name.jpg'],
+        placeholder_image: true,
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBeNull();
+      expect(res.hasRealPhoto).toBe(false);
+      expect(res.imageSource).toBe('placeholder');
+    });
+
+    it('normalizes protocol relative URLs to https', () => {
+      const item = {
+        photo: '//media.toyota.ca/vehicles/rav4.jpg',
+      };
+      const res = extractPrimaryImage(item);
+      expect(res.imageUrl).toBe('https://media.toyota.ca/vehicles/rav4.jpg');
+      expect(res.hasRealPhoto).toBe(true);
     });
   });
 });

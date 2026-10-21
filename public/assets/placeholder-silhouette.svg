@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" fill="none" className="w-full h-full text-zinc-700">
+  <rect width="640" height="400" fill="#18181b" />
+  <g opacity="0.45" stroke="#71717a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ground line -->
+    <path d="M 60 290 L 580 290" stroke-dasharray="8 8" opacity="0.3" />
+    
+    <!-- Car body outline (modern Toyota SUV/crossover silhouette) -->
+    <path d="M 110 270 
+             L 125 240 
+             Q 150 205 180 200 
+             L 255 195 
+             Q 285 145 340 140 
+             L 450 145 
+             Q 485 160 520 220 
+             L 535 245 
+             Q 545 260 535 270 
+             L 505 270" 
+          fill="none" />
+          
+    <!-- Windshield and roofline windows -->
+    <path d="M 285 195 L 340 152 L 442 155 L 485 210 L 290 210 Z" fill="#27272a" fill-opacity="0.5" />
+    <!-- Window divider pillar -->
+    <path d="M 385 153 L 385 210" />
+    
+    <!-- Rear Wheel arch & wheel -->
+    <circle cx="195" cy="270" r="34" fill="#09090b" stroke="#71717a" stroke-width="3" />
+    <circle cx="195" cy="270" r="18" fill="#18181b" stroke="#52525b" stroke-width="2" />
+    <circle cx="195" cy="270" r="6" fill="#71717a" />
+    
+    <!-- Front Wheel arch & wheel -->
+    <circle cx="455" cy="270" r="34" fill="#09090b" stroke="#71717a" stroke-width="3" />
+    <circle cx="455" cy="270" r="18" fill="#18181b" stroke="#52525b" stroke-width="2" />
+    <circle cx="455" cy="270" r="6" fill="#71717a" />
+
+    <!-- Headlight & Taillight subtle accents -->
+    <path d="M 525 228 L 538 234" stroke="#f59e0b" stroke-width="3" opacity="0.8" />
+    <path d="M 115 245 L 125 243" stroke="#ef4444" stroke-width="3" opacity="0.8" />
+  </g>
+  <text x="320" y="340" text-anchor="middle" fill="#71717a" font-family="system-ui, sans-serif" font-size="13" font-weight="500" letter-spacing="0.05em">
+    TOYOTA SPECIFICATION PREVIEW
+  </text>
+</svg>

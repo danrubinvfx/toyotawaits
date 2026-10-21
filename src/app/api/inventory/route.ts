@@ -81,6 +81,9 @@ export async function GET(request?: Request) {
         vdp_url,
         current_status,
         last_observed_at,
+        image_url,
+        has_real_photo,
+        image_source,
         vehicle:vehicles (
           make,
           model,
@@ -174,6 +177,9 @@ export async function GET(request?: Request) {
         driveTrain: veh.drive_train || null,
         exteriorColor: veh.exterior_color || null,
         stockNumber: item.stock_number || null,
+        imageUrl: item.image_url || null,
+        hasRealPhoto: Boolean(item.has_real_photo),
+        imageSource: item.image_source || null,
       };
     });
 

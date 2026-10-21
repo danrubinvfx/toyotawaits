@@ -99,12 +99,16 @@ export interface DealerListing {
   sourceListingId: string;
   stockNumber?: string | null;
   vdpUrl?: string | null;
+  imageUrl?: string | null;
+  hasRealPhoto?: boolean;
+  imageSource?: string;
   currentStatus: NormalizedListingStatus;
   rawStatus?: string | null;
   daysOnLot?: number | null;
   firstObservedAt: string;
   lastObservedAt: string;
   lastSuccessfulCheck?: string | null;
+  staleAt?: string | null;
   consecutiveMissedSweeps?: number;
   createdAt: string;
   updatedAt: string;
@@ -275,6 +279,9 @@ export interface ParsedVehicleListing {
     sourceListingId: string;
     stockNumber: string | null;
     vdpUrl: string | null;
+    imageUrl?: string | null;
+    hasRealPhoto?: boolean;
+    imageSource?: string;
     rawStatus: string;
     normalizedStatus: NormalizedListingStatus;
     daysOnLot: number | null;

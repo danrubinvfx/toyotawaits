@@ -226,6 +226,9 @@ export async function ingestDealerListings(
             source_listing_id: item.listing.sourceListingId,
             stock_number: item.listing.stockNumber,
             vdp_url: item.listing.vdpUrl,
+            image_url: item.listing.imageUrl || null,
+            has_real_photo: item.listing.hasRealPhoto ?? false,
+            image_source: item.listing.imageSource || 'feed',
             current_status: item.listing.normalizedStatus,
             raw_status: item.listing.rawStatus,
             days_on_lot: item.listing.daysOnLot ?? 0,
@@ -280,7 +283,7 @@ export async function ingestDealerListings(
           };
         }
 
-        // Update listing timestamps and reset missed sweeps
+        // Update listing timestamps, image info, and reset missed sweeps
         const { error: listingUpdateError } = await supabase
           .from('dealer_listings')
           .update({
@@ -289,6 +292,9 @@ export async function ingestDealerListings(
             days_on_lot: item.listing.daysOnLot ?? existingListing.days_on_lot,
             stock_number: item.listing.stockNumber || existingListing.stock_number,
             vdp_url: item.listing.vdpUrl || existingListing.vdp_url,
+            image_url: item.listing.imageUrl || existingListing.image_url,
+            has_real_photo: item.listing.hasRealPhoto ?? existingListing.has_real_photo,
+            image_source: item.listing.imageSource || existingListing.image_source,
             consecutive_missed_sweeps: 0,
             last_observed_at: sweepTimestamp,
             last_successful_check: sweepTimestamp,

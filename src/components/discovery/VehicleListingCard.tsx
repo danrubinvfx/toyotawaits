@@ -2,6 +2,7 @@ import React from 'react';
 import { ExternalLink, AlertTriangle, Clock, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { VehicleImage } from './VehicleImage';
 
 export interface VehicleListingCardProps {
   id: string;
@@ -28,6 +29,9 @@ export interface VehicleListingCardProps {
   exteriorColor?: string | null;
   stockNumber?: string | null;
   distanceKm?: number | null;
+  imageUrl?: string | null;
+  hasRealPhoto?: boolean;
+  imageSource?: string | null;
 }
 
 export function formatVehicleCardTitles(props: {
@@ -213,6 +217,9 @@ export function VehicleListingCard({
   exteriorColor,
   stockNumber,
   distanceKm,
+  imageUrl,
+  hasRealPhoto,
+  imageSource,
 }: VehicleListingCardProps) {
   const { primaryTitle, secondaryTitle } = formatVehicleCardTitles({
     modelYear,
@@ -223,7 +230,9 @@ export function VehicleListingCard({
     powertrain,
   });
 
-  const isIncoming = status.toLowerCase().includes('incoming');
+  const isIncoming =
+    status.toLowerCase().includes('incoming') ||
+    status.toLowerCase().includes('transit');
   const isSoldOrStale =
     status.toLowerCase().includes('sold') || status.toLowerCase().includes('stale') || status.toLowerCase().includes('no longer');
 
@@ -366,6 +375,41 @@ export function VehicleListingCard({
           </p>
         </div>
       </CardHeader>
+
+      {/* Vehicle Image & Transit/Lot Status Badge */}
+      <div className="px-3.5 sm:px-4 pb-2.5">
+        <div className="relative">
+          <VehicleImage
+            imageUrl={imageUrl}
+            hasRealPhoto={hasRealPhoto}
+            imageSource={imageSource}
+            modelYear={modelYear}
+            model={model}
+            trim={trim}
+            alt={`${modelYear} ${make} ${model} ${trim || ''}`.trim()}
+          />
+          <div
+            data-testid="transit-status-badge"
+            className={`absolute top-2 right-2 z-10 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold border backdrop-blur-md shadow-sm ${
+              isIncoming
+                ? 'bg-blue-950/90 text-blue-300 border-blue-800/80'
+                : 'bg-emerald-950/90 text-emerald-300 border-emerald-800/80'
+            }`}
+          >
+            {isIncoming ? (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-pulse" />
+                <span>In Transit</span>
+              </>
+            ) : (
+              <>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                <span>On Lot</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
 
       <CardContent className="p-3.5 sm:p-4 pt-0 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
         {/* Sleek inline metadata wrap: Specs, Color, Stock, and VIN */}

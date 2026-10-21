@@ -117,6 +117,31 @@ export interface Database {
         Insert: Partial<Database['public']['Tables']['submissions']['Row']>;
         Update: Partial<Database['public']['Tables']['submissions']['Row']>;
       };
+      dealer_listings: {
+        Row: {
+          id: string;
+          dealer_id: string;
+          vehicle_id: string;
+          source_listing_id: string;
+          stock_number: string | null;
+          vdp_url: string | null;
+          image_url: string | null;
+          has_real_photo: boolean;
+          image_source: string;
+          current_status: string;
+          raw_status: string | null;
+          days_on_lot: number | null;
+          consecutive_missed_sweeps: number;
+          first_observed_at: string;
+          last_observed_at: string;
+          last_successful_check: string | null;
+          stale_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database['public']['Tables']['dealer_listings']['Row']>;
+        Update: Partial<Database['public']['Tables']['dealer_listings']['Row']>;
+      };
     };
   };
 }

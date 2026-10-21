@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         protocol: 'https',
@@ -23,6 +24,26 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'images.amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.convertus.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'media.toyota.ca',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.dealerprocess.ca',
+      },
+      {
+        protocol: 'https',
+        hostname: 'prod.pictures.autoscout24.net',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.convertus.rocks',
       },
     ],
   },
