@@ -15,6 +15,8 @@ import { InventoryGearCard } from './InventoryGearCard';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { getDealerCoordinates } from '@/config/dealers';
 import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
+import { useDonationReminder } from '@/hooks/useDonationReminder';
+import { DonationToast } from '@/components/common/DonationToast';
 import { Car, AlertCircle } from 'lucide-react';
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
@@ -547,6 +549,8 @@ export function InventoryExplorer({
     return getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
   }, [filters.model, effectiveGearCounts]);
 
+  const { showReminder, recordListingClick, dismissReminder } = useDonationReminder();
+
   const isEnabled = checkInventoryDiscoveryEnabled(
     previewOverride !== undefined ? previewOverride : isPreviewQuery
   );
@@ -597,7 +601,10 @@ export function InventoryExplorer({
 
             return (
               <React.Fragment key={listing.id}>
-                <VehicleListingCard {...listing} />
+                <VehicleListingCard
+                  {...listing}
+                  onListingClick={recordListingClick}
+                />
                 {shouldInsertGear && gearItem && (
                   <InventoryGearCard
                     key={`gear-strip-${gearItem.id}-${index}`}
@@ -626,6 +633,13 @@ export function InventoryExplorer({
 
       {/* Pilot Coverage Disclosure (Positioned beneath listings grid) */}
       <CoverageDisclosureBanner />
+
+      {/* Non-intrusive Coffee Donation Reminder after 3 listing views */}
+      <DonationToast
+        isOpen={showReminder}
+        onDismiss={dismissReminder}
+        modelContext={filters.model || null}
+      />
     </div>
   );
 }

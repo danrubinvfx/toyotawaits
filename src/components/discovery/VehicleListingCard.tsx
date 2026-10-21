@@ -32,6 +32,7 @@ export interface VehicleListingCardProps {
   imageUrl?: string | null;
   hasRealPhoto?: boolean;
   imageSource?: string | null;
+  onListingClick?: () => void;
 }
 
 export function formatVehicleCardTitles(props: {
@@ -220,6 +221,7 @@ export function VehicleListingCard({
   imageUrl,
   hasRealPhoto,
   imageSource,
+  onListingClick,
 }: VehicleListingCardProps) {
   const { primaryTitle, secondaryTitle } = formatVehicleCardTitles({
     modelYear,
@@ -494,6 +496,7 @@ export function VehicleListingCard({
             target="_blank"
             rel="noopener noreferrer"
             data-testid="dealer-vdp-link"
+            onClick={() => onListingClick?.()}
             aria-label={`View public dealer listing for ${modelYear} ${make} ${model} at ${dealerName} (opens in new tab)`}
             className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-red-600/90 h-9 sm:h-10 px-3 text-sm font-medium text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
           >

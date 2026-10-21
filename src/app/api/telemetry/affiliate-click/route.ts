@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validPlacements = ['inventory_feed', 'submission_modal'];
+    const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast'];
     if (!placement || !validPlacements.includes(placement)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid placement. Expected inventory_feed or submission_modal' },
+        { success: false, error: 'Invalid placement. Expected inventory_feed, submission_modal, or donation_toast' },
         { status: 400 }
       );
     }

@@ -131,4 +131,30 @@ describe('POST /api/telemetry/affiliate-click', () => {
     const json = await res.json();
     expect(json.success).toBe(true);
   });
+
+  it('successfully records coffee donation click event from donation_toast placement', async () => {
+    const payload = {
+      accessory_id: 'kofi-coffee-support',
+      placement: 'donation_toast',
+      model_context: 'RAV4 Hybrid',
+      target_url: 'https://ko-fi.com/toyotawaits',
+    };
+
+    const req = new NextRequest('http://localhost:3000/api/telemetry/affiliate-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(mockInsert).toHaveBeenCalledWith({
+      accessory_id: 'kofi-coffee-support',
+      placement: 'donation_toast',
+      model_context: 'RAV4 Hybrid',
+      target_url: 'https://ko-fi.com/toyotawaits',
+    });
+  });
 });

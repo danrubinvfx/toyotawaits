@@ -8,7 +8,7 @@
 
 export interface AffiliateClickEvent {
   accessory_id: string;
-  placement: 'inventory_feed' | 'submission_modal';
+  placement: 'inventory_feed' | 'submission_modal' | 'donation_toast';
   model_context?: string | null;
   target_url: string;
 }

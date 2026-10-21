@@ -464,6 +464,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
   describe('InventoryExplorer Integration', () => {
     beforeEach(() => {
       process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY = 'true';
+      window.localStorage.clear();
     });
 
     it('filters listings interactively by model', () => {
@@ -755,6 +756,63 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(screen.getByTestId('listing-card-jp-surrey-rav4-01')).toBeInTheDocument();
       expect(screen.queryByTestId('listing-card-jp-sienna-ltd-02')).not.toBeInTheDocument();
+    });
+
+    it('shows slide-up coffee donation toast after 3 listing clicks and persists 14-day dismissal in localStorage', () => {
+      render(<InventoryExplorer />);
+
+      // Initially hidden
+      expect(screen.queryByTestId('donation-toast')).not.toBeInTheDocument();
+
+      const vdpLinks = screen.getAllByTestId('dealer-vdp-link');
+      expect(vdpLinks.length).toBeGreaterThanOrEqual(3);
+
+      // Click 1 -> still hidden
+      fireEvent.click(vdpLinks[0]);
+      expect(window.localStorage.getItem('toyotawaits_listing_clicks')).toBe('1');
+      expect(screen.queryByTestId('donation-toast')).not.toBeInTheDocument();
+
+      // Click 2 -> still hidden
+      fireEvent.click(vdpLinks[1]);
+      expect(window.localStorage.getItem('toyotawaits_listing_clicks')).toBe('2');
+      expect(screen.queryByTestId('donation-toast')).not.toBeInTheDocument();
+
+      // Click 3 -> toast slides in
+      fireEvent.click(vdpLinks[2]);
+      expect(window.localStorage.getItem('toyotawaits_listing_clicks')).toBe('3');
+
+      const toast = screen.getByTestId('donation-toast');
+      expect(toast).toBeInTheDocument();
+      expect(toast).toHaveTextContent(/Finding this useful\?/i);
+      expect(toast).toHaveTextContent(/ToyotaWaits is free and ad-free/i);
+
+      const ctaLink = screen.getByTestId('donation-toast-cta');
+      expect(ctaLink).toHaveTextContent(/Buy a Coffee/i);
+      expect(ctaLink).toHaveAttribute('target', '_blank');
+      expect(ctaLink).toHaveAttribute('rel', 'noopener noreferrer');
+
+      // Click "Maybe later" -> dismisses toast and records suppression timestamp
+      const dismissBtn = screen.getByTestId('donation-toast-dismiss');
+      fireEvent.click(dismissBtn);
+
+      expect(screen.queryByTestId('donation-toast')).not.toBeInTheDocument();
+      const dismissedTs = Number(window.localStorage.getItem('toyotawaits_donation_dismissed'));
+      expect(dismissedTs).toBeGreaterThan(0);
+
+      // Clicking another listing within 14 days keeps toast suppressed
+      fireEvent.click(vdpLinks[0]);
+      expect(window.localStorage.getItem('toyotawaits_listing_clicks')).toBe('4');
+      expect(screen.queryByTestId('donation-toast')).not.toBeInTheDocument();
+    });
+
+    it('re-activates donation toast when previous dismissal is older than 14 days', () => {
+      const fifteenDaysAgo = Date.now() - 15 * 24 * 60 * 60 * 1000;
+      window.localStorage.setItem('toyotawaits_listing_clicks', '3');
+      window.localStorage.setItem('toyotawaits_donation_dismissed', String(fifteenDaysAgo));
+
+      render(<InventoryExplorer />);
+
+      expect(screen.getByTestId('donation-toast')).toBeInTheDocument();
     });
   });
 
