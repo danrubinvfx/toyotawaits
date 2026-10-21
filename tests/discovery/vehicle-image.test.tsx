@@ -14,6 +14,7 @@ vi.mock('next/image', () => ({
     priority: _priority,
     fill: _fill,
     sizes: _sizes,
+    unoptimized: _unoptimized,
     className,
     ...props
   }: any) => {
