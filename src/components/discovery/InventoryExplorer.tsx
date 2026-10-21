@@ -242,6 +242,8 @@ export function checkInventoryDiscoveryEnabled(
   return false;
 }
 
+export const PAGE_SIZE = 24;
+
 export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
   previewOverride?: boolean;
@@ -273,6 +275,7 @@ export function InventoryExplorer({
 
   const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
   const [currentTime] = useState(() => Date.now());
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
 
   // Sync state if initialListings changes (e.g. tests or SSR)
   useEffect(() => {
@@ -310,10 +313,16 @@ export function InventoryExplorer({
     search: '',
   });
 
+  const handleFilterChange = (newFilters: FilterState) => {
+    setFilters(newFilters);
+    setVisibleCount(PAGE_SIZE);
+  };
+
   // Keep filter in sync if queryModel or searchParams update
   useEffect(() => {
     if (queryModel && filters.model !== queryModel) {
       setFilters((prev) => ({ ...prev, model: queryModel }));
+      setVisibleCount(PAGE_SIZE);
     }
   }, [queryModel]);
 
@@ -549,6 +558,11 @@ export function InventoryExplorer({
     return getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
   }, [filters.model, effectiveGearCounts]);
 
+  const displayedListings = useMemo(
+    () => filteredListings.slice(0, visibleCount),
+    [filteredListings, visibleCount]
+  );
+
   const { showReminder, recordListingClick, dismissReminder } = useDonationReminder();
 
   const isEnabled = checkInventoryDiscoveryEnabled(
@@ -579,7 +593,7 @@ export function InventoryExplorer({
       {/* Search & Filter Bar (Elevated immediately below header) */}
       <InventoryFilterBar
         filters={filters}
-        onFilterChange={setFilters}
+        onFilterChange={handleFilterChange}
         availableModels={availableModels}
         availableLocations={availableLocations}
         availableDealers={availableDealers}
@@ -588,34 +602,65 @@ export function InventoryExplorer({
 
       {/* Listings Grid (Rendered immediately below filter bar for mobile visibility above the fold) */}
       {filteredListings.length > 0 ? (
-        <section
-          data-testid="listings-grid"
-          aria-label="Observed inventory listings"
-          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
-        >
-          {filteredListings.map((listing, index) => {
-            const shouldInsertGear = (index + 1) % 2 === 0 && gearItems.length > 0;
-            const gearItem = shouldInsertGear
-              ? gearItems[Math.floor(index / 2) % gearItems.length]
-              : null;
+        <>
+          <section
+            data-testid="listings-grid"
+            aria-label="Observed inventory listings"
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4"
+          >
+            {displayedListings.map((listing, index) => {
+              const shouldInsertGear = (index + 1) % 2 === 0 && gearItems.length > 0;
+              const gearItem = shouldInsertGear
+                ? gearItems[Math.floor(index / 2) % gearItems.length]
+                : null;
 
-            return (
-              <React.Fragment key={listing.id}>
-                <VehicleListingCard
-                  {...listing}
-                  onListingClick={recordListingClick}
-                />
-                {shouldInsertGear && gearItem && (
-                  <InventoryGearCard
-                    key={`gear-strip-${gearItem.id}-${index}`}
-                    item={gearItem}
-                    modelContext={filters.model || undefined}
+              return (
+                <React.Fragment key={listing.id}>
+                  <VehicleListingCard
+                    {...listing}
+                    onListingClick={recordListingClick}
                   />
-                )}
-              </React.Fragment>
-            );
-          })}
-        </section>
+                  {shouldInsertGear && gearItem && (
+                    <InventoryGearCard
+                      key={`gear-strip-${gearItem.id}-${index}`}
+                      item={gearItem}
+                      modelContext={filters.model || undefined}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </section>
+
+          {/* Load More / Showing All Footer Control */}
+          <div className="pt-2 pb-1 text-center" data-testid="pagination-footer">
+            {visibleCount < filteredListings.length ? (
+              <div data-testid="load-more-section" className="flex flex-col items-center">
+                <p
+                  data-testid="load-more-counter"
+                  className="text-xs text-neutral-400 mb-3"
+                >
+                  Showing {displayedListings.length} of {filteredListings.length} vehicles
+                </p>
+                <button
+                  type="button"
+                  data-testid="load-more-btn"
+                  onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                  className="px-6 py-2.5 rounded-xl border border-neutral-700 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-sm transition-colors shadow-sm"
+                >
+                  Load 24 More Vehicles ({filteredListings.length - displayedListings.length} remaining)
+                </button>
+              </div>
+            ) : (
+              <p
+                data-testid="showing-all-message"
+                className="text-xs text-neutral-400"
+              >
+                Showing all {filteredListings.length} observed vehicles
+              </p>
+            )}
+          </div>
+        </>
       ) : (
         <div
           data-testid="no-results-message"

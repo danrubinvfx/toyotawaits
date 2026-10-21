@@ -814,6 +814,75 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(screen.getByTestId('donation-toast')).toBeInTheDocument();
     });
+
+    it('limits initial render to 24 vehicles (plus 12 gear cards), appends next 24 on Load More, and resets to 24 on filter change', () => {
+      const manyListings: VehicleListingCardProps[] = Array.from({ length: 55 }, (_, i) => ({
+        id: `batch-unit-${i + 1}`,
+        make: 'Toyota',
+        model: i < 30 ? 'RAV4 Hybrid' : 'Sienna',
+        trim: 'XSE AWD',
+        modelYear: 2026,
+        vin: `2T3P1RFV5TC${String(100000 + i)}`,
+        isProvisionalVin: false,
+        dealerName: 'Jim Pattison Toyota Downtown',
+        dealerCity: 'Vancouver',
+        dealerProvince: 'BC',
+        status: 'Advertised - availability unconfirmed',
+        lastChecked: new Date().toISOString(),
+        vdpUrl: `https://www.jptoyota-downtown.com/vehicles/new/?keyword=${i}`,
+        msrp: 52000,
+        sellingPrice: 52000,
+        mandatoryFees: 895,
+        hasUnverifiedFees: false,
+        powertrain: 'Hybrid 2.5L AWD',
+        exteriorColor: 'Ice Cap',
+        stockNumber: `STK-${i + 1}`,
+      }));
+
+      render(<InventoryExplorer initialListings={manyListings} />);
+
+      // Initial load: 24 vehicle cards + 12 gear cards
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(24);
+      expect(screen.getAllByTestId('inventory-gear-card').length).toBe(12);
+      expect(screen.getByTestId('load-more-counter')).toHaveTextContent(
+        'Showing 24 of 55 vehicles'
+      );
+
+      const loadMoreBtn = screen.getByTestId('load-more-btn');
+      expect(loadMoreBtn).toHaveTextContent('Load 24 More Vehicles (31 remaining)');
+
+      // Click Load More once -> 48 vehicle cards + 24 gear cards
+      fireEvent.click(loadMoreBtn);
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(48);
+      expect(screen.getAllByTestId('inventory-gear-card').length).toBe(24);
+      expect(screen.getByTestId('load-more-counter')).toHaveTextContent(
+        'Showing 48 of 55 vehicles'
+      );
+      expect(screen.getByTestId('load-more-btn')).toHaveTextContent(
+        'Load 24 More Vehicles (7 remaining)'
+      );
+
+      // Changing a filter (e.g. search or model) resets visibleCount back to 24
+      fireEvent.change(screen.getByTestId('filter-model-select'), {
+        target: { value: 'RAV4 Hybrid' },
+      });
+      // There are 30 RAV4 Hybrid units; only first 24 should render after filter change
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(24);
+      expect(screen.getByTestId('load-more-counter')).toHaveTextContent(
+        'Showing 24 of 30 vehicles'
+      );
+      expect(screen.getByTestId('load-more-btn')).toHaveTextContent(
+        'Load 24 More Vehicles (6 remaining)'
+      );
+
+      // Load remaining 6 -> all 30 displayed, showing-all-message appears
+      fireEvent.click(screen.getByTestId('load-more-btn'));
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(30);
+      expect(screen.queryByTestId('load-more-btn')).not.toBeInTheDocument();
+      expect(screen.getByTestId('showing-all-message')).toHaveTextContent(
+        'Showing all 30 observed vehicles'
+      );
+    });
   });
 
   // ===========================================================================
