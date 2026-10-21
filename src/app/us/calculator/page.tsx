@@ -2,14 +2,52 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
-import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
+import { ActivityTicker } from '@/components/feed/ActivityTicker';
+import { RecommendedProductsSection } from '@/components/calculator/RecommendedProductsSection';
+import { NewsTickerItem } from '@/lib/types/contracts';
+import { ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export const revalidate = 3600; // 1 hour ISR
 
+const US_CALCULATOR_NEWS_ITEMS: NewsTickerItem[] = [
+  {
+    id: 'us-news-1',
+    type: 'news',
+    category: 'US ALLOCATION',
+    title: '2026 RAV4 Hybrid & PHEV allocations distributed to Tier 1 US Toyota dealers',
+    headline: '2026 RAV4 Hybrid & PHEV allocations distributed to Tier 1 US Toyota dealers',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'us-news-2',
+    type: 'news',
+    category: 'PRICING',
+    title: 'Camry Hybrid inventory expanding nationwide with standard MSRP compliance',
+    headline: 'Camry Hybrid inventory expanding nationwide with standard MSRP compliance',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'us-news-3',
+    type: 'news',
+    category: 'DELIVERY',
+    title: 'Prius Prime deliveries accelerating in California, Texas, and Washington',
+    headline: 'Prius Prime deliveries accelerating in California, Texas, and Washington',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'us-news-4',
+    type: 'news',
+    category: 'PRODUCTION',
+    title: 'Sienna AWD hybrid output increased for North American assembly lines',
+    headline: 'Sienna AWD hybrid output increased for North American assembly lines',
+    timestamp: new Date().toISOString(),
+  },
+];
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Fuel & Energy Savings Calculator (US) | ToyotaWaits',
+  title: 'Toyota Fuel Savings & Payback Calculator (US) | ToyotaWaits',
   description:
     'Calculate real-world US fuel and electricity savings comparing Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles with official EPA ratings in MPG and USD.',
   keywords: [
@@ -24,7 +62,7 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/us/calculator',
   },
   openGraph: {
-    title: 'Toyota Fuel & Energy Savings Calculator (US) | ToyotaWaits',
+    title: 'Toyota Fuel Savings & Payback Calculator (US) | ToyotaWaits',
     description:
       'Compare real-world US fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles in MPG, gallons, and USD.',
     url: 'https://toyotawaits.ca/us/calculator',
@@ -34,7 +72,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Fuel & Energy Savings Calculator (US) | ToyotaWaits',
+    title: 'Toyota Fuel Savings & Payback Calculator (US) | ToyotaWaits',
     description:
       'Compare real-world US fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles in MPG, gallons, and USD.',
   },
@@ -43,29 +81,35 @@ export const metadata: Metadata = {
 export default function USCalculatorPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6 pb-20 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
-        {/* Navigation & Header */}
-        <div className="space-y-4">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+        {/* Navigation & Clean Header */}
+        <div className="space-y-3">
           <BackButton fallbackHref="/us" label="← Back to US Wait Time Tracker" />
 
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 text-xs font-semibold">
-              <Calculator className="w-3.5 h-3.5" />
-              <span>EPA-Verified Vehicle Energy Calculator</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-              US Toyota Fuel & Energy Savings Calculator
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+              Toyota Fuel Savings & Payback Calculator (US)
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
-              Compare actual annual gasoline and electricity operating costs between your current vehicle and a new Toyota Hybrid (HEV) or Plug-in Hybrid (PHEV). Powered by official US EPA fuel economy ratings in MPG and USD.
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+              Compare actual annual gasoline and electricity operating costs between your vehicle and a new Toyota Hybrid (HEV) or PHEV in MPG and USD.
             </p>
           </div>
+        </div>
+
+        {/* News Wire Ticker directly underneath the header */}
+        <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40">
+          <ActivityTicker initialData={US_CALCULATOR_NEWS_ITEMS} />
         </div>
 
         {/* Client-Side Interactive Calculator */}
         <section aria-label="Interactive Savings Calculator (US)">
           <VehicleSavingsCalculator initialUnitSystem="IMPERIAL" />
         </section>
+
+        {/* Recommended Products Section directly below the calculator */}
+        <div className="pt-2">
+          <RecommendedProductsSection />
+        </div>
 
         {/* Methodology & Provenance Disclosure */}
         <section aria-labelledby="methodology-heading" className="pt-4">

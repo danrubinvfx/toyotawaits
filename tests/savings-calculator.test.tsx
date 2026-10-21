@@ -276,6 +276,41 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
       expect(screen.getByText(/Without regular charging access, electric share is set to 0%/i)).toBeInTheDocument();
       expect(screen.queryByLabelText(/Electric driving share slider/i)).not.toBeInTheDocument();
     });
+
+    it('supports direct selection via estimator-style vehicle pills', () => {
+      const mockChange = vi.fn();
+      render(
+        <TargetVehicleCard
+          targetVehicle={DEFAULT_TARGET_VEHICLE}
+          onChange={mockChange}
+        />
+      );
+
+      // Verify pill options are present
+      expect(screen.getByRole('tab', { name: 'RAV4' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'RAV4 PHEV' })).toBeInTheDocument();
+      expect(screen.getByRole('tab', { name: 'Crown Signia' })).toBeInTheDocument();
+
+      // Click RAV4 PHEV
+      fireEvent.click(screen.getByRole('tab', { name: 'RAV4 PHEV' }));
+      expect(mockChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          presetId: '2026-toyota-rav4-phev',
+          powertrain: 'PHEV',
+          hasChargingAccess: true,
+          electricShare: 0.65,
+        })
+      );
+
+      // Click Crown Signia
+      fireEvent.click(screen.getByRole('tab', { name: 'Crown Signia' }));
+      expect(mockChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          presetId: '2025-toyota-crown-signia-hybrid',
+          powertrain: 'HEV',
+        })
+      );
+    });
   });
 
   describe('UI Component: EnergyResultsCard', () => {
@@ -350,13 +385,14 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
   describe('Page & Verification Gates: CalculatorPage', () => {
     it('renders server component page with metadata and canonical URL', async () => {
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
-      expect(metadata.title).toContain('Toyota Fuel & Energy Savings Calculator');
+      expect(metadata.title).toContain('Toyota Fuel Savings & Payback Calculator');
 
       await act(async () => {
         render(<CalculatorPage />);
       });
 
-      expect(screen.getByRole('heading', { level: 1, name: /Canadian Toyota Energy Savings Calculator/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /Toyota Fuel Savings & Payback Calculator/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Recommended Products/i })).toBeInTheDocument();
       expect(screen.getByText(/Calculation Methodology & Evidence Provenance/i)).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: /Canadian Annual Energy Benchmark Table/i })).toBeInTheDocument();
     });
@@ -413,7 +449,7 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
 
       // Switch to PHEV to reveal electricity rate controls
       await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: /PHEV/i }));
+        fireEvent.click(screen.getByRole('tab', { name: /PHEV/i }));
       });
 
       // Verify every number input has an accessible name

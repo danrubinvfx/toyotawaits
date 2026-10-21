@@ -17,19 +17,20 @@ export interface TargetVehicleCardProps {
   className?: string;
 }
 
-interface ModelFamily {
+interface TargetVehiclePill {
   label: string;
-  slug: string;
-  hevPresetId: string;
-  phevPresetId?: string;
+  presetId: string;
+  powertrain: 'HEV' | 'PHEV';
 }
 
-const MODEL_FAMILIES: ModelFamily[] = [
-  { label: 'RAV4', slug: 'rav4', hevPresetId: '2026-toyota-rav4-hybrid', phevPresetId: '2026-toyota-rav4-phev' },
-  { label: 'Camry', slug: 'camry', hevPresetId: '2025-toyota-camry-hybrid' },
-  { label: 'Prius', slug: 'prius', hevPresetId: '2025-toyota-prius-hybrid' },
-  { label: 'Sienna', slug: 'sienna', hevPresetId: '2025-toyota-sienna-hybrid' },
-  { label: 'Grand Highlander', slug: 'grand-highlander', hevPresetId: '2025-toyota-grand-highlander-hybrid' },
+const VEHICLE_PILLS: TargetVehiclePill[] = [
+  { label: 'RAV4', presetId: '2026-toyota-rav4-hybrid', powertrain: 'HEV' },
+  { label: 'RAV4 PHEV', presetId: '2026-toyota-rav4-phev', powertrain: 'PHEV' },
+  { label: 'Camry', presetId: '2025-toyota-camry-hybrid', powertrain: 'HEV' },
+  { label: 'Prius', presetId: '2025-toyota-prius-hybrid', powertrain: 'HEV' },
+  { label: 'Sienna', presetId: '2025-toyota-sienna-hybrid', powertrain: 'HEV' },
+  { label: 'Grand Highlander', presetId: '2025-toyota-grand-highlander-hybrid', powertrain: 'HEV' },
+  { label: 'Crown Signia', presetId: '2025-toyota-crown-signia-hybrid', powertrain: 'HEV' },
 ];
 
 export function TargetVehicleCard({
@@ -43,38 +44,17 @@ export function TargetVehicleCard({
 
   const isPhev = targetVehicle.powertrain === 'PHEV';
 
-  // Identify active model family
-  const activeFamily =
-    MODEL_FAMILIES.find((f) => targetVehicle.presetId.includes(f.slug)) ||
-    MODEL_FAMILIES[0];
-
-  const supportsPhev = Boolean(activeFamily.phevPresetId);
-
-  const handleFamilySelect = (family: ModelFamily) => {
-    if (isPhev && family.phevPresetId) {
+  const handlePillSelect = (pill: TargetVehiclePill) => {
+    if (pill.powertrain === 'PHEV') {
       onChange({
-        presetId: family.phevPresetId,
-        powertrain: 'PHEV',
-      });
-    } else {
-      onChange({
-        presetId: family.hevPresetId,
-        powertrain: 'HEV',
-      });
-    }
-  };
-
-  const handlePowertrainSelect = (powertrain: 'HEV' | 'PHEV') => {
-    if (powertrain === 'PHEV' && activeFamily.phevPresetId) {
-      onChange({
-        presetId: activeFamily.phevPresetId,
+        presetId: pill.presetId,
         powertrain: 'PHEV',
         hasChargingAccess: true,
         electricShare: 0.65,
       });
     } else {
       onChange({
-        presetId: activeFamily.hevPresetId,
+        presetId: pill.presetId,
         powertrain: 'HEV',
       });
     }
@@ -132,60 +112,31 @@ export function TargetVehicleCard({
       </CardHeader>
 
       <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-2.5">
-        {/* 1. Horizontal Model Selector Tab/Pill Row */}
-        <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Toyota models">
-          {MODEL_FAMILIES.map((family) => {
-            const isSelected = activeFamily.slug === family.slug;
+        {/* Estimator-Style Horizontal Scrollable Vehicle Pill Bar */}
+        <div
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 touch-pan-x"
+          role="tablist"
+          aria-label="Toyota models"
+        >
+          {VEHICLE_PILLS.map((pill) => {
+            const isSelected = targetVehicle.presetId === pill.presetId;
             return (
               <button
-                key={family.slug}
+                key={pill.presetId}
                 type="button"
-                onClick={() => handleFamilySelect(family)}
-                className={`text-xs py-1 px-2.5 rounded-md border font-semibold transition-all cursor-pointer ${
+                role="tab"
+                aria-selected={isSelected}
+                onClick={() => handlePillSelect(pill)}
+                className={`shrink-0 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer select-none whitespace-nowrap ${
                   isSelected
-                    ? 'border-red-600 bg-red-50 text-red-700 dark:bg-red-950/40 dark:border-red-500 dark:text-red-300 shadow-xs'
-                    : 'border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700'
+                    ? 'bg-red-600 text-white shadow-xs border border-red-600'
+                    : 'bg-zinc-100 dark:bg-zinc-900/60 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700'
                 }`}
               >
-                {family.label}
+                {pill.label}
               </button>
             );
           })}
-        </div>
-
-        {/* 2. Inline Powertrain Toggle */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-zinc-100 dark:border-zinc-800/60">
-          <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Powertrain</span>
-          <div className="flex gap-1" role="group" aria-label="Powertrain selection">
-            <button
-              type="button"
-              onClick={() => handlePowertrainSelect('HEV')}
-              className={`text-xs py-1 px-2.5 rounded-md border font-semibold flex items-center gap-1 transition-all cursor-pointer ${
-                !isPhev
-                  ? 'border-red-600 bg-red-600 text-white shadow-xs'
-                  : 'border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'
-              }`}
-            >
-              <Zap className="w-3.5 h-3.5" />
-              <span>HEV</span>
-            </button>
-
-            <button
-              type="button"
-              disabled={!supportsPhev}
-              onClick={() => handlePowertrainSelect('PHEV')}
-              className={`text-xs py-1 px-2.5 rounded-md border font-semibold flex items-center gap-1 transition-all ${
-                !supportsPhev
-                  ? 'opacity-40 border-zinc-200 dark:border-zinc-800 text-zinc-400 cursor-not-allowed'
-                  : isPhev
-                  ? 'border-emerald-600 bg-emerald-600 text-white shadow-xs cursor-pointer'
-                  : 'border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer'
-              }`}
-            >
-              <BatteryCharging className="w-3.5 h-3.5" />
-              <span>PHEV</span>
-            </button>
-          </div>
         </div>
 
         {/* 3. Active Vehicle Rating & MSRP Summary Pill */}
