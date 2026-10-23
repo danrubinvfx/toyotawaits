@@ -164,8 +164,8 @@ describe('ModCard Component', () => {
     );
     const usImageLink = screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` });
     const usButtonLink = screen.getByRole('link', { name: /View on Amazon/i });
-    expect(usImageLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
-    expect(usButtonLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+    expect(usImageLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits07-20');
+    expect(usButtonLink.getAttribute('href')).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits07-20');
     expect(usButtonLink.getAttribute('target')).toBe('_blank');
     expect(usButtonLink.getAttribute('rel')).toContain('noopener');
     expect(usButtonLink.getAttribute('rel')).toContain('noreferrer');
