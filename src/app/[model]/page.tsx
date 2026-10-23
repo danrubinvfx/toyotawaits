@@ -8,7 +8,7 @@ import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
-import { ChevronRight, PlusCircle, Car, ArrowRight, Clock, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, PlusCircle, Car, ArrowRight, Clock, CheckCircle2, Calculator } from 'lucide-react';
 
 interface RouteProps {
   params: Promise<{
@@ -175,6 +175,43 @@ export default async function ModelPage({ params }: RouteProps) {
               </Card>
             );
           })}
+        </div>
+      </section>
+
+      {/* Fuel Savings & Payback Calculator Teaser Card */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-r from-red-500/10 via-rose-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 sm:p-7 shadow-xs">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+            <div className="space-y-2 max-w-2xl">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/80 text-red-700 dark:text-red-400 text-xs font-bold">
+                <Calculator className="w-3.5 h-3.5" />
+                <span>Fuel Savings &amp; Payback Calculator</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                Weighing Gas vs. Hybrid? Calculate your fuel break-even and the energy cost of waiting.
+              </h3>
+              <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                Compare actual annual fuel costs and see how long it takes for {model.name} Hybrid fuel savings to pay back the purchase premium, including historical Canadian wait times.
+              </p>
+            </div>
+            <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shrink-0 shadow-sm min-h-[44px] px-5">
+              <Link
+                href={
+                  model.slug === 'rav4'
+                    ? '/calculator/rav4-hybrid'
+                    : model.slug === 'sienna'
+                    ? '/calculator/sienna-hybrid'
+                    : model.slug === 'grand-highlander'
+                    ? '/calculator/grand-highlander'
+                    : '/calculator'
+                }
+                className="flex items-center gap-2"
+              >
+                <span>Calculate Savings</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 

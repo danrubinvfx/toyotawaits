@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import {
   calculateAnnualGasCost,
   calculateAnnualPHEVCost,
+  calculateAnnualGasCostUS,
+  calculateAnnualPHEVCostUS,
   calculateExtraEnergyWhileWaiting,
   evaluateSimplePayback,
   evaluateCashFlowTimeline,
@@ -299,4 +301,85 @@ describe('ToyotaWaits.ca Savings & Payback Calculator Engine', () => {
       expect(TRADE_IN_ARCHETYPES.length).toBe(3);
     });
   });
+
+  describe('US Customary Calculations (MPG, Miles, Gallons, USD)', () => {
+    it('calculates US gas costs accurately with 15k miles, 25 vs 40 MPG @ $3.50/gal', () => {
+      const annualMiles = 15000;
+      const refMpg = 25;
+      const targetMpg = 40;
+      const gasPricePerGal = 3.5;
+
+      const baselineCost = calculateAnnualGasCostUS(annualMiles, refMpg, gasPricePerGal);
+      const hybridCost = calculateAnnualGasCostUS(annualMiles, targetMpg, gasPricePerGal);
+      const annualSavings = baselineCost - hybridCost;
+
+      expect(baselineCost).toBe(2100);
+      expect(hybridCost).toBe(1312.5);
+      expect(annualSavings).toBe(787.5);
+    });
+
+    it('calculates US PHEV dual-fuel operating costs with 15k miles, f=0.65, 36 kWh/100mi, $0.16/kWh, 38 MPG, $3.50/gal', () => {
+      const annualMiles = 15000;
+      const electricShare = 0.65;
+      const kwhPer100Miles = 36;
+      const electricityRate = 0.16;
+      const gasModeMpg = 38;
+      const gasPricePerGal = 3.5;
+
+      const phevCost = calculateAnnualPHEVCostUS(
+        annualMiles,
+        electricShare,
+        kwhPer100Miles,
+        electricityRate,
+        gasModeMpg,
+        gasPricePerGal
+      );
+
+      // Electric: 15,000 * 0.65 * (36 / 100) * 0.16 = $561.60
+      expect(phevCost.electricCost).toBe(561.6);
+      // Gas: (15,000 * 0.35 / 38) * 3.50 = 483.55263...
+      expect(phevCost.gasCost).toBeCloseTo(483.55, 2);
+      expect(phevCost.totalCost).toBeCloseTo(1045.15, 2);
+    });
+
+    it('rejects non-positive or non-finite MPG values in US formulas', () => {
+      expect(() => calculateAnnualGasCostUS(15000, 0, 3.5)).toThrow(RangeError);
+      expect(() => calculateAnnualGasCostUS(15000, -10, 3.5)).toThrow(RangeError);
+      expect(() => calculateAnnualGasCostUS(15000, NaN, 3.5)).toThrow(TypeError);
+
+      expect(() =>
+        calculateAnnualPHEVCostUS(15000, 0.65, 36, 0.16, 0, 3.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        calculateAnnualPHEVCostUS(15000, 1.2, 36, 0.16, 38, 3.5)
+      ).toThrow(RangeError);
+      expect(() =>
+        calculateAnnualPHEVCostUS(15000, -0.1, 36, 0.16, 38, 3.5)
+      ).toThrow(RangeError);
+    });
+
+    it('verifies EPA ratings and US MSRP presets', () => {
+      const rav4 = getVehiclePresetById('2026-toyota-rav4-hybrid');
+      expect(rav4?.consumption.combinedMpg).toBe(40);
+      expect(rav4?.pricing?.msrpUsd).toBe(32500);
+
+      const rav4Phev = getVehiclePresetById('2026-toyota-rav4-phev');
+      expect(rav4Phev?.consumption.electricRangeMiles).toBe(42);
+      expect(rav4Phev?.consumption.gasModeMpg).toBe(38);
+      expect(rav4Phev?.consumption.kwhPer100Miles).toBe(36);
+      expect(rav4Phev?.pricing?.msrpUsd).toBe(44500);
+
+      const camry = getVehiclePresetById('2025-toyota-camry-hybrid');
+      expect(camry?.consumption.combinedMpg).toBe(51);
+      expect(camry?.pricing?.msrpUsd).toBe(28400);
+
+      const prius = getVehiclePresetById('2025-toyota-prius-hybrid');
+      expect(prius?.consumption.combinedMpg).toBe(57);
+      expect(prius?.pricing?.msrpUsd).toBe(27950);
+
+      const crossover = getVehiclePresetById('archetype-compact-crossover-awd');
+      expect(crossover?.consumption.combinedMpg).toBe(25);
+    });
+  });
 });
+

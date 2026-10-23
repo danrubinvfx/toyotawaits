@@ -80,4 +80,52 @@ describe('Footer Component', () => {
       )
     ).toBeInTheDocument();
   });
+
+  it('renders official community contact channel and mailto link alongside Privacy and Sitemap', () => {
+    render(<Footer />);
+
+    // Privacy link
+    const privacyLinks = screen.getAllByRole('link', { name: /^privacy/i });
+    expect(privacyLinks.length).toBeGreaterThanOrEqual(1);
+
+    // Sitemap link
+    const sitemapLinks = screen.getAllByRole('link', { name: /sitemap/i });
+    expect(sitemapLinks.length).toBeGreaterThanOrEqual(1);
+    expect(sitemapLinks[0]).toHaveAttribute('href', '/sitemap.xml');
+
+    // Contact & Feedback link
+    const contactLinks = screen.getAllByRole('link', { name: /Contact & Feedback/i });
+    expect(contactLinks.length).toBeGreaterThanOrEqual(1);
+    contactLinks.forEach((link) => {
+      expect(link).toHaveAttribute(
+        'href',
+        'mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry'
+      );
+    });
+
+    // Check muted styling token
+    const mutedContactLink = contactLinks.find((link) =>
+      link.className.includes('text-slate-400')
+    );
+    expect(mutedContactLink).toBeDefined();
+    expect(mutedContactLink?.className).toContain('text-slate-400');
+    expect(mutedContactLink?.className).toContain('hover:text-slate-200');
+  });
+
+  it('renders clear independence and non-dealership community disclaimer', () => {
+    render(<Footer />);
+
+    const disclaimerEl = screen.getByTestId('community-disclaimer');
+    expect(disclaimerEl).toBeInTheDocument();
+    expect(disclaimerEl.textContent).toContain(
+      'ToyotaWaits is an independent, community-driven tracker and is not affiliated with Toyota Motor Corporation. We cannot look up individual factory orders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email hello@toyotawaits.ca.'
+    );
+
+    const emailInDisclaimer = screen.getByRole('link', { name: 'hello@toyotawaits.ca' });
+    expect(emailInDisclaimer).toBeInTheDocument();
+    expect(emailInDisclaimer).toHaveAttribute(
+      'href',
+      'mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry'
+    );
+  });
 });

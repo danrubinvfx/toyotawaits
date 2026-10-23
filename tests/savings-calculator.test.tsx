@@ -276,6 +276,43 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
       expect(screen.getByText(/Without regular charging access, electric share is set to 0%/i)).toBeInTheDocument();
       expect(screen.queryByLabelText(/Electric driving share slider/i)).not.toBeInTheDocument();
     });
+
+    it('supports direct selection via vehicle pulldown menu', () => {
+      const mockChange = vi.fn();
+      render(
+        <TargetVehicleCard
+          targetVehicle={DEFAULT_TARGET_VEHICLE}
+          onChange={mockChange}
+        />
+      );
+
+      const select = screen.getByLabelText('Select Target Toyota');
+      expect(select.tagName).toBe('SELECT');
+      expect(screen.getByRole('option', { name: /RAV4 PHEV AWD/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /Grand Highlander Hybrid AWD/i })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: /Crown Signia/i })).toBeInTheDocument();
+      expect(screen.queryByRole('tab')).not.toBeInTheDocument();
+
+      // Select RAV4 PHEV
+      fireEvent.change(select, { target: { value: '2026-toyota-rav4-phev' } });
+      expect(mockChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          presetId: '2026-toyota-rav4-phev',
+          powertrain: 'PHEV',
+          hasChargingAccess: true,
+          electricShare: 0.65,
+        })
+      );
+
+      // Select Crown Signia
+      fireEvent.change(select, { target: { value: '2025-toyota-crown-signia-hybrid' } });
+      expect(mockChange).toHaveBeenCalledWith(
+        expect.objectContaining({
+          presetId: '2025-toyota-crown-signia-hybrid',
+          powertrain: 'HEV',
+        })
+      );
+    });
   });
 
   describe('UI Component: EnergyResultsCard', () => {
@@ -296,6 +333,8 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
         annualSavings: 2149.75,
         monthlySavings: 179.15,
         savingsPercent: 64.7,
+        unitSystem: 'METRIC' as const,
+        currencyCode: 'CAD' as const,
         shareUrl: 'https://toyotawaits.ca/calculator#c=test',
       };
 
@@ -346,19 +385,24 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
   });
 
   describe('Page & Verification Gates: CalculatorPage', () => {
-    it('renders server component page with metadata and canonical URL', () => {
+    it('renders server component page with metadata and canonical URL', async () => {
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
-      expect(metadata.title).toContain('Toyota Fuel & Energy Savings Calculator');
+      expect(metadata.title).toContain('Toyota Fuel Savings & Payback Calculator');
 
-      render(<CalculatorPage />);
+      await act(async () => {
+        render(<CalculatorPage />);
+      });
 
-      expect(screen.getByRole('heading', { level: 1, name: /Canadian Toyota Energy Savings Calculator/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1, name: /Toyota Fuel Savings & Payback Calculator/i })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /Recommended Products/i })).toBeInTheDocument();
       expect(screen.getByText(/Calculation Methodology & Evidence Provenance/i)).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: /Canadian Annual Energy Benchmark Table/i })).toBeInTheDocument();
     });
 
-    it('verifies that full VehicleSavingsCalculator renders with zero missing controls', () => {
-      render(<VehicleSavingsCalculator />);
+    it('verifies that full VehicleSavingsCalculator renders with zero missing controls', async () => {
+      await act(async () => {
+        render(<VehicleSavingsCalculator />);
+      });
 
       // Reset button
       expect(screen.getByRole('button', { name: /Reset Defaults/i })).toBeInTheDocument();
@@ -372,29 +416,45 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
       expect(screen.getByText('Energy-Cost Savings')).toBeInTheDocument();
     });
 
-    it('Gate 1: verifies responsive layout compatibility across 320px, 375px, 768px, and 1440px', () => {
+    it('Gate 1: verifies responsive layout compatibility across 320px, 375px, 768px, and 1440px', async () => {
       const viewports = [320, 375, 768, 1440];
 
       for (const width of viewports) {
         window.innerWidth = width;
-        const { container } = render(<CalculatorPage />);
+        let containerElem: HTMLElement;
+        await act(async () => {
+          const { container } = render(<CalculatorPage />);
+          containerElem = container;
+        });
 
         // Verify main container has responsive padding and max-w constraint
-        const main = container.querySelector('main');
+        const main = containerElem!.querySelector('main');
         expect(main).toBeInTheDocument();
         expect(main?.className).toContain('min-h-screen');
 
-        const wrapper = container.querySelector('.max-w-6xl');
+        const wrapper = containerElem!.querySelector('.max-w-6xl');
         expect(wrapper).toBeInTheDocument();
 
         // Verify benchmark table has overflow-x-auto to prevent horizontal page blowouts on 320px/375px
-        const tableWrapper = container.querySelector('.overflow-x-auto');
+        const tableWrapper = containerElem!.querySelector('.overflow-x-auto');
         expect(tableWrapper).toBeInTheDocument();
       }
     });
 
-    it('Gate 2: confirms keyboard navigation and screen-reader label compliance for all slider/input pairs', () => {
-      render(<VehicleSavingsCalculator />);
+    it('Gate 2: confirms keyboard navigation and screen-reader label compliance for all slider/input pairs', async () => {
+      await act(async () => {
+        render(<VehicleSavingsCalculator />);
+      });
+
+      // Default HEV hides power rate
+      expect(screen.queryByLabelText(/Electricity rate in Canadian dollars per kilowatt hour/i)).not.toBeInTheDocument();
+
+      // Switch to PHEV to reveal electricity rate controls
+      await act(async () => {
+        fireEvent.change(screen.getByLabelText('Select Target Toyota'), {
+          target: { value: '2026-toyota-rav4-phev' },
+        });
+      });
 
       // Verify every number input has an accessible name
       const annualKmInput = screen.getByLabelText(/Annual driving distance in kilometers/i);

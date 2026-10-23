@@ -1,23 +1,53 @@
 'use client';
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Zap, BatteryCharging, AlertCircle, Sparkles } from 'lucide-react';
+import { Sparkles, Zap, BatteryCharging, AlertCircle } from 'lucide-react';
 import { NEW_VEHICLE_PRESETS, getVehiclePresetById } from '@/data/vehicle-presets';
 import { TargetVehicleState } from '@/lib/hooks/useSavingsCalculator';
+import { UnitSystem } from '@/types/calculator';
 
 export interface TargetVehicleCardProps {
   targetVehicle: TargetVehicleState;
   onChange: (patch: Partial<TargetVehicleState>) => void;
+  unitSystem?: UnitSystem;
   className?: string;
+}
+
+interface TargetVehicleOption {
+  presetId: string;
+  powertrain: 'HEV' | 'PHEV';
+}
+
+const VEHICLE_OPTIONS: TargetVehicleOption[] = [
+  { presetId: '2026-toyota-rav4-hybrid', powertrain: 'HEV' },
+  { presetId: '2026-toyota-rav4-phev', powertrain: 'PHEV' },
+  { presetId: '2025-toyota-camry-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-prius-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-sienna-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-grand-highlander-hybrid', powertrain: 'HEV' },
+  { presetId: '2025-toyota-crown-signia-hybrid', powertrain: 'HEV' },
+];
+
+/** Builds the dropdown label, e.g. "2026 Toyota RAV4 Hybrid AWD (5.8 L/100km / 40 MPG)". */
+function buildOptionLabel(option: TargetVehicleOption): string {
+  const preset = getVehiclePresetById(option.presetId);
+  if (!preset) return option.presetId;
+  const c = preset.consumption;
+  const spec =
+    option.powertrain === 'PHEV'
+      ? `${c.electricRangeKm} km EV / ${c.gasModeL100km} L/100km / ${c.mpge ?? c.combinedMpg} MPGe`
+      : `${c.combinedL100km} L/100km / ${c.combinedMpg} MPG`;
+  return `${preset.name} (${spec})`;
 }
 
 export function TargetVehicleCard({
   targetVehicle,
   onChange,
+  unitSystem = 'METRIC',
   className,
 }: TargetVehicleCardProps) {
   const selectedPreset =
@@ -25,21 +55,22 @@ export function TargetVehicleCard({
 
   const isPhev = targetVehicle.powertrain === 'PHEV';
 
-  const handlePresetSelect = (presetId: string) => {
-    const preset = getVehiclePresetById(presetId);
-    if (!preset) return;
-
-    onChange({
-      presetId,
-      powertrain: preset.identity.powertrain,
-      // If switching to PHEV and electric share is 0 with charging access, set to 0.65
-      electricShare:
-        preset.identity.powertrain === 'PHEV'
-          ? targetVehicle.hasChargingAccess
-            ? 0.65
-            : 0.0
-          : targetVehicle.electricShare,
-    });
+  const handleVehicleSelect = (presetId: string) => {
+    const option = VEHICLE_OPTIONS.find((o) => o.presetId === presetId);
+    if (!option) return;
+    if (option.powertrain === 'PHEV') {
+      onChange({
+        presetId: option.presetId,
+        powertrain: 'PHEV',
+        hasChargingAccess: true,
+        electricShare: 0.65,
+      });
+    } else {
+      onChange({
+        presetId: option.presetId,
+        powertrain: 'HEV',
+      });
+    }
   };
 
   const handleChargingAccessToggle = (hasAccess: boolean) => {
@@ -55,152 +86,101 @@ export function TargetVehicleCard({
     onChange({ electricShare: boundedPct / 100 });
   };
 
+  const isImperial = unitSystem === 'IMPERIAL';
+
+  const ratingSummary = isImperial
+    ? isPhev
+      ? `${selectedPreset.consumption.electricRangeMiles ?? 42} mi EV / ${selectedPreset.consumption.gasModeMpg ?? 38} MPG`
+      : `${selectedPreset.consumption.combinedMpg ?? 40} MPG`
+    : isPhev
+    ? `${selectedPreset.consumption.electricRangeKm} km EV / ${selectedPreset.consumption.gasModeL100km} L`
+    : `${selectedPreset.consumption.combinedL100km} L/100km`;
+
+  const msrpDisplay = isImperial
+    ? `$${(selectedPreset.pricing?.msrpUsd ?? 32500).toLocaleString()} USD MSRP`
+    : `$${selectedPreset.pricing?.msrpCad.toLocaleString()} MSRP`;
+
+  const verificationBadgeText =
+    selectedPreset?.consumption.status === 'PROVISIONAL'
+      ? 'PROVISIONAL'
+      : isImperial
+      ? 'EPA VERIFIED'
+      : 'NRCAN VERIFIED';
+
   return (
-    <Card className={className}>
-      <CardHeader className="pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="text-xl font-bold flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-red-600 dark:text-red-500" />
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+        <div className="flex items-center justify-between gap-2">
+          <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
+            <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-500" />
             Target Toyota Vehicle
           </CardTitle>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant={selectedPreset?.consumption.status === 'PROVISIONAL' ? 'secondary' : 'default'}
-              className="text-xs font-semibold"
-            >
-              {selectedPreset?.consumption.status === 'PROVISIONAL'
-                ? 'PROVISIONAL DATA'
-                : 'VERIFIED NRCAN'}
-            </Badge>
-          </div>
+          <Badge
+            variant={selectedPreset?.consumption.status === 'PROVISIONAL' ? 'secondary' : 'default'}
+            className="text-[10px] font-semibold py-0"
+          >
+            {verificationBadgeText}
+          </Badge>
         </div>
-        <CardDescription>
-          Select your desired Toyota vehicle and powertrain configuration.
-        </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* Model Presets Selector */}
-        <div className="space-y-3">
-          <Label className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-semibold">
-            Select Toyota Model
-          </Label>
-
-          <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Target Toyota models">
-            {NEW_VEHICLE_PRESETS.map((preset) => {
-              const isSelected = targetVehicle.presetId === preset.id;
-              const isPHEVPreset = preset.identity.powertrain === 'PHEV';
-
-              return (
-                <button
-                  key={preset.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={isSelected}
-                  onClick={() => handlePresetSelect(preset.id)}
-                  className={`min-h-[44px] text-left p-3 rounded-lg border transition-all flex flex-col justify-between gap-2 cursor-pointer ${
-                    isSelected
-                      ? 'border-red-600 bg-red-50/50 dark:border-red-500 dark:bg-red-950/20 ring-1 ring-red-600 dark:ring-red-500'
-                      : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 leading-tight">
-                      {preset.name}
-                    </span>
-                    <Badge
-                      variant={isPHEVPreset ? 'default' : 'outline'}
-                      className="text-[10px] uppercase font-bold shrink-0"
-                    >
-                      {preset.identity.powertrain}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs text-zinc-600 dark:text-zinc-400 pt-1 border-t border-zinc-100 dark:border-zinc-800">
-                    <span>
-                      {isPHEVPreset
-                        ? `${preset.consumption.electricRangeKm} km EV / ${preset.consumption.gasModeL100km} L`
-                        : `${preset.consumption.combinedL100km} L/100km`}
-                    </span>
-                    <span className="font-mono font-medium">
-                      ${preset.pricing?.msrpCad.toLocaleString()} CAD
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
+      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-2.5">
+        {/* Vehicle Pulldown Selector */}
+        <div className="relative">
+          <label htmlFor="target-vehicle-select" className="sr-only">
+            Select Target Toyota
+          </label>
+          <select
+            id="target-vehicle-select"
+            value={targetVehicle.presetId}
+            onChange={(e) => handleVehicleSelect(e.target.value)}
+            className="w-full bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-10 truncate"
+          >
+            {VEHICLE_OPTIONS.map((option) => (
+              <option key={option.presetId} value={option.presetId}>
+                {buildOptionLabel(option)}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-zinc-400">
+            ▾
           </div>
         </div>
 
-        {/* Powertrain Override Pills (HEV vs PHEV vs Gas) */}
-        <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
-          <Label className="text-xs uppercase tracking-wider text-zinc-500 dark:text-zinc-400 font-semibold">
-            Powertrain Technology
-          </Label>
-          <div className="grid grid-cols-2 gap-2" role="group" aria-label="Powertrain selection">
-            <button
-              type="button"
-              onClick={() => {
-                // If currently PHEV, switch to RAV4 HEV preset as default
-                if (isPhev) {
-                  onChange({
-                    presetId: '2026-toyota-rav4-hybrid',
-                    powertrain: 'HEV',
-                  });
-                }
-              }}
-              className={`min-h-[44px] px-3 py-2 text-sm font-semibold rounded-md border transition-all flex items-center justify-center gap-2 ${
-                !isPhev
-                  ? 'border-red-600 bg-red-600 text-white shadow-sm'
-                  : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
-              }`}
-            >
-              <Zap className="w-4 h-4" />
-              Hybrid (HEV)
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                // Switch to RAV4 PHEV
-                onChange({
-                  presetId: '2026-toyota-rav4-phev',
-                  powertrain: 'PHEV',
-                  hasChargingAccess: true,
-                  electricShare: 0.65,
-                });
-              }}
-              className={`min-h-[44px] px-3 py-2 text-sm font-semibold rounded-md border transition-all flex items-center justify-center gap-2 ${
-                isPhev
-                  ? 'border-emerald-600 bg-emerald-600 text-white shadow-sm'
-                  : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800'
-              }`}
-            >
-              <BatteryCharging className="w-4 h-4" />
-              Plug-in Hybrid (PHEV)
-            </button>
-          </div>
+        {/* Compact Spec Summary Badge (consumption, EV range if PHEV, MSRP) */}
+        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 text-xs">
+          <span className="font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide text-[10px]">
+            {isPhev ? 'Plug-in Hybrid' : 'Hybrid'}
+          </span>
+          <span className="font-mono text-zinc-600 dark:text-zinc-400 shrink-0 font-medium">
+            {ratingSummary} • {msrpDisplay}
+          </span>
         </div>
 
-        {/* PHEV Specific Controls: Charging Access & Electric Share */}
+        {/* 4. Tight Inline PHEV Controls */}
         {isPhev && (
-          <div className="space-y-5 p-4 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 transition-all">
-            <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-300 font-bold text-sm">
-              <BatteryCharging className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              Plug-in Hybrid EV Settings
+          <div className="space-y-1.5 p-2 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 transition-all">
+            <div className="flex items-center justify-between gap-2 text-emerald-900 dark:text-emerald-300 font-bold text-xs">
+              <span className="flex items-center gap-1">
+                <BatteryCharging className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                Plug-in Hybrid EV Settings
+              </span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 font-medium">
+                {targetVehicle.hasChargingAccess ? 'Home Charging (65% EV)' : 'No Charging (0% EV)'}
+              </span>
             </div>
 
-            {/* 1. Charging Access Toggle */}
-            <div className="space-y-2">
-              <Label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+            <div className="flex items-center justify-between gap-2">
+              <Label className="text-[11px] text-zinc-700 dark:text-zinc-300 truncate">
                 Do you have regular home or workplace charging?
               </Label>
-              <div className="grid grid-cols-2 gap-2" role="group" aria-label="Charging access options">
+              <div className="flex gap-1 shrink-0" role="group" aria-label="Charging access options">
                 <button
                   type="button"
                   onClick={() => handleChargingAccessToggle(true)}
-                  className={`min-h-[44px] px-3 py-2 text-xs font-semibold rounded-lg border transition-all ${
+                  className={`text-[10px] py-0.5 px-2 rounded-md border font-semibold transition-colors cursor-pointer ${
                     targetVehicle.hasChargingAccess
-                      ? 'border-emerald-600 bg-emerald-600 text-white shadow'
+                      ? 'border-emerald-600 bg-emerald-600 text-white shadow-xs'
                       : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
@@ -209,9 +189,9 @@ export function TargetVehicleCard({
                 <button
                   type="button"
                   onClick={() => handleChargingAccessToggle(false)}
-                  className={`min-h-[44px] px-3 py-2 text-xs font-semibold rounded-lg border transition-all ${
+                  className={`text-[10px] py-0.5 px-2 rounded-md border font-semibold transition-colors cursor-pointer ${
                     !targetVehicle.hasChargingAccess
-                      ? 'border-zinc-700 bg-zinc-800 text-white shadow'
+                      ? 'border-zinc-700 bg-zinc-800 text-white shadow-xs'
                       : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
                   }`}
                 >
@@ -220,32 +200,12 @@ export function TargetVehicleCard({
               </div>
             </div>
 
-            {/* 2. Electric Share Slider & Input (Revealed if charging access is Yes) */}
             {targetVehicle.hasChargingAccess ? (
-              <div className="space-y-3 pt-2">
-                <div className="flex items-center justify-between gap-4">
-                  <Label
-                    htmlFor="electric-share-input"
-                    className="font-medium text-xs text-zinc-800 dark:text-zinc-200"
-                  >
-                    Electric Driving Share (%)
-                  </Label>
-                  <div className="w-24">
-                    <Input
-                      id="electric-share-input"
-                      aria-label="Electric driving share percentage"
-                      type="number"
-                      min={0}
-                      max={100}
-                      step={5}
-                      value={Math.round(targetVehicle.electricShare * 100)}
-                      onChange={(e) => handleElectricShareChange(Number(e.target.value))}
-                      className="min-h-[44px] text-right font-mono font-semibold"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-1">
+              <div className="flex items-center gap-2 pt-1 border-t border-emerald-100 dark:border-emerald-900/40">
+                <Label htmlFor="electric-share-input" className="text-[11px] text-zinc-700 dark:text-zinc-300 w-24 shrink-0">
+                  EV Share (%)
+                </Label>
+                <div className="flex-1 px-1">
                   <input
                     id="electric-share-slider"
                     aria-label="Electric driving share slider"
@@ -255,27 +215,27 @@ export function TargetVehicleCard({
                     step={5}
                     value={Math.round(targetVehicle.electricShare * 100)}
                     onChange={(e) => handleElectricShareChange(Number(e.target.value))}
-                    className="w-full min-h-[44px] accent-emerald-600 cursor-pointer"
+                    className="w-full h-1.5 accent-emerald-600 cursor-pointer"
                   />
-                  <div className="flex justify-between text-xs text-zinc-500 dark:text-zinc-400">
-                    <span>0% (Gas only)</span>
-                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-                      65% (Typical daily commute)
-                    </span>
-                    <span>100% (Pure EV)</span>
-                  </div>
                 </div>
-
-                <p className="text-xs text-zinc-600 dark:text-zinc-400 italic">
-                  Default 65% assumes daily round-trips within the 80 km EV range with overnight charging.
-                </p>
+                <div className="w-16 shrink-0">
+                  <Input
+                    id="electric-share-input"
+                    aria-label="Electric driving share percentage"
+                    type="number"
+                    min={0}
+                    max={100}
+                    step={5}
+                    value={Math.round(targetVehicle.electricShare * 100)}
+                    onChange={(e) => handleElectricShareChange(Number(e.target.value))}
+                    className="w-16 h-7 text-xs text-right font-mono font-semibold px-2 py-0.5"
+                  />
+                </div>
               </div>
             ) : (
-              <div className="flex items-start gap-2 p-3 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/60 text-xs text-amber-800 dark:text-amber-300">
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-                <span>
-                  Without regular charging access, electric share is set to 0%. The vehicle will operate in charge-sustaining hybrid gasoline mode ({selectedPreset?.consumption.gasModeL100km ?? 6.0} L/100km).
-                </span>
+              <div className="text-[10px] text-amber-800 dark:text-amber-300 pt-0.5 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3 shrink-0" />
+                <span>Without regular charging access, electric share is set to 0%.</span>
               </div>
             )}
           </div>

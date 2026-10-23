@@ -129,6 +129,99 @@ export function calculateAnnualPHEVCost(
 }
 
 /**
+ * Calculates annual gas cost for a vehicle using US Customary units.
+ * Formula: (annualMiles / combinedMpg) * gasPricePerGal
+ *
+ * @param annualMiles Annual driving distance in miles
+ * @param combinedMpg Combined fuel economy in miles per gallon (MPG)
+ * @param gasPricePerGal Fuel price in USD per gallon
+ * @returns Annual fuel cost in USD
+ */
+export function calculateAnnualGasCostUS(
+  annualMiles: number,
+  combinedMpg: number,
+  gasPricePerGal: number
+): number {
+  assertFiniteNonNegative('annualMiles', annualMiles);
+  assertFiniteNonNegative('gasPricePerGal', gasPricePerGal);
+
+  if (typeof combinedMpg !== 'number' || !Number.isFinite(combinedMpg)) {
+    throw new TypeError(`combinedMpg must be a finite number. Received: ${String(combinedMpg)}`);
+  }
+  if (combinedMpg <= 0) {
+    throw new RangeError(`combinedMpg must be greater than zero. Received: ${combinedMpg}`);
+  }
+
+  const cost = (annualMiles / combinedMpg) * gasPricePerGal;
+  return Math.round((cost + Number.EPSILON) * 100) / 100;
+}
+
+/**
+ * Calculates annual PHEV cost split between electric and gas operation using US Customary units.
+ *
+ * Electric Cost = annualMiles * electricShare * (kwhPer100Miles / 100) * electricityRatePerKwh
+ * Gas Cost = (annualMiles * (1 - electricShare) / gasModeMpg) * gasPricePerGal
+ * Total Cost = Electric Cost + Gas Cost
+ *
+ * @param annualMiles Annual driving distance in miles
+ * @param electricShare Fraction of driving in EV mode (0.0 to 1.0, e.g. 0.65)
+ * @param kwhPer100Miles Wall-to-wheel electricity consumption in kWh / 100 miles
+ * @param electricityRatePerKwh Electricity rate in USD per kWh
+ * @param gasModeMpg Fuel economy in charge-sustaining (hybrid) mode in MPG
+ * @param gasPricePerGal Fuel price in USD per gallon
+ * @returns Object containing electricCost, gasCost, and totalCost
+ */
+export function calculateAnnualPHEVCostUS(
+  annualMiles: number,
+  electricShare: number,
+  kwhPer100Miles: number,
+  electricityRatePerKwh: number,
+  gasModeMpg: number,
+  gasPricePerGal: number
+): PHEVCostBreakdown {
+  assertFiniteNonNegative('annualMiles', annualMiles);
+  assertElectricShare(electricShare);
+  assertFiniteNonNegative('kwhPer100Miles', kwhPer100Miles);
+  assertFiniteNonNegative('electricityRatePerKwh', electricityRatePerKwh);
+  assertFiniteNonNegative('gasPricePerGal', gasPricePerGal);
+
+  if (typeof gasModeMpg !== 'number' || !Number.isFinite(gasModeMpg)) {
+    throw new TypeError(`gasModeMpg must be a finite number. Received: ${String(gasModeMpg)}`);
+  }
+  if (gasModeMpg <= 0) {
+    throw new RangeError(`gasModeMpg must be greater than zero. Received: ${gasModeMpg}`);
+  }
+
+  const electricMiles = annualMiles * electricShare;
+  const gasMiles = annualMiles * (1 - electricShare);
+
+  const rawElectricCost = electricMiles * (kwhPer100Miles / 100) * electricityRatePerKwh;
+  const rawGasCost = (gasMiles / gasModeMpg) * gasPricePerGal;
+
+  const electricCost = Math.round((rawElectricCost + Number.EPSILON) * 100) / 100;
+  const gasCost = Math.round((rawGasCost + Number.EPSILON) * 100) / 100;
+  const totalCost = Math.round((electricCost + gasCost + Number.EPSILON) * 100) / 100;
+
+  const result: PHEVCostBreakdown = {
+    electricCost,
+    gasCost,
+    totalCost,
+  };
+
+  // Enable valueOf and Symbol.toPrimitive so numeric operations evaluate cleanly to totalCost
+  Object.defineProperty(result, 'valueOf', {
+    value: () => totalCost,
+    enumerable: false,
+  });
+  Object.defineProperty(result, Symbol.toPrimitive, {
+    value: () => totalCost,
+    enumerable: false,
+  });
+
+  return result;
+}
+
+/**
  * Calculates extra energy cost incurred while waiting for delivery of a more efficient vehicle.
  *
  * @param annualCostCurrent Annual energy cost of current/reference vehicle
@@ -265,32 +358,40 @@ export function evaluateSimplePayback(
 }
 
 /**
- * Calculates cumulative cost for a scenario at day t.
+ * Calculates cumulative cost and breakdown for a scenario at day t.
  * Supports pre-delivery waiting energy cost and an exact vertical delivery step at deliveryWaitDays.
  */
-function getScenarioCumulativeCost(
+function getScenarioCostBreakdown(
   scenario: CashFlowScenario,
   t: number,
   isPostDeliveryOnStepDay: boolean
-): number {
+): { total: number; outlay: number; energy: number } {
   const waitDays = scenario.deliveryWaitDays;
   const waitingAnnualCost = scenario.waitingAnnualEnergyCost ?? scenario.annualEnergyCost;
   const upfront = scenario.upfrontOutlay;
   const postDeliveryAnnualCost = scenario.annualEnergyCost;
 
   if (t < waitDays) {
-    return (t / 365) * waitingAnnualCost;
+    const energy = (t / 365) * waitingAnnualCost;
+    return { total: energy, outlay: 0, energy };
   }
 
   if (t === waitDays) {
-    const preDeliveryAccrual = (waitDays / 365) * waitingAnnualCost;
-    return isPostDeliveryOnStepDay ? preDeliveryAccrual + upfront : preDeliveryAccrual;
+    const energy = (waitDays / 365) * waitingAnnualCost;
+    return isPostDeliveryOnStepDay
+      ? { total: energy + upfront, outlay: upfront, energy }
+      : { total: energy, outlay: 0, energy };
   }
 
   // t > waitDays
   const preDeliveryAccrual = (waitDays / 365) * waitingAnnualCost;
   const postDeliveryAccrual = ((t - waitDays) / 365) * postDeliveryAnnualCost;
-  return preDeliveryAccrual + upfront + postDeliveryAccrual;
+  const energy = preDeliveryAccrual + postDeliveryAccrual;
+  return {
+    total: energy + upfront,
+    outlay: upfront,
+    energy,
+  };
 }
 
 /**
@@ -303,12 +404,14 @@ function getScenarioCumulativeCost(
  *
  * @param refScenario Reference vehicle scenario
  * @param targetScenario Target vehicle scenario
- * @param horizonYears Number of years to project (e.g. 10 or 15)
+ * @param horizonYears Number of years to project (e.g. 7 or 15)
+ * @param options Optional sampling configuration (e.g. monthlySampling)
  */
 export function evaluateCashFlowTimeline(
   refScenario: CashFlowScenario,
   targetScenario: CashFlowScenario,
-  horizonYears: number
+  horizonYears: number,
+  options?: { monthlySampling?: boolean }
 ): CashFlowTimelineResult & { postDeliveryRecoveryYears?: number | null } {
   assertFiniteNonNegative('horizonYears', horizonYears);
   if (horizonYears <= 0) {
@@ -345,6 +448,17 @@ export function evaluateCashFlowTimeline(
     }
   }
 
+  // Optionally add monthly milestone days
+  if (options?.monthlySampling) {
+    const totalMonths = horizonYears * 12;
+    for (let m = 1; m <= totalMonths; m++) {
+      const day = Math.round((m * 365) / 12);
+      if (day <= horizonDays) {
+        eventDaysSet.add(day);
+      }
+    }
+  }
+
   const sortedDays = Array.from(eventDaysSet).sort((a, b) => a - b);
   const points: CashFlowPoint[] = [];
 
@@ -354,39 +468,51 @@ export function evaluateCashFlowTimeline(
 
     if (isRefDeliveryDay || isTargetDeliveryDay) {
       // 1. Point immediately BEFORE delivery step
-      const refPre = getScenarioCumulativeCost(refScenario, day, false);
-      const targetPre = getScenarioCumulativeCost(targetScenario, day, false);
+      const refPre = getScenarioCostBreakdown(refScenario, day, false);
+      const targetPre = getScenarioCostBreakdown(targetScenario, day, false);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refPre + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetPre + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refPre - targetPre + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refPre.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetPre.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refPre.total - targetPre.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refPre.outlay,
+        targetPurchaseOutlay: targetPre.outlay,
+        refEnergyCost: Math.round((refPre.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetPre.energy + Number.EPSILON) * 100) / 100,
         event: 'DELIVERY_PENDING',
         isStepPoint: true,
       });
 
       // 2. Point immediately AFTER delivery step
-      const refPost = getScenarioCumulativeCost(refScenario, day, true);
-      const targetPost = getScenarioCumulativeCost(targetScenario, day, true);
+      const refPost = getScenarioCostBreakdown(refScenario, day, true);
+      const targetPost = getScenarioCostBreakdown(targetScenario, day, true);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refPost + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetPost + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refPost - targetPost + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refPost.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetPost.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refPost.total - targetPost.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refPost.outlay,
+        targetPurchaseOutlay: targetPost.outlay,
+        refEnergyCost: Math.round((refPost.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetPost.energy + Number.EPSILON) * 100) / 100,
         event: 'DELIVERY_OUTLAY',
         isStepPoint: true,
       });
     } else {
-      const refCost = getScenarioCumulativeCost(refScenario, day, true);
-      const targetCost = getScenarioCumulativeCost(targetScenario, day, true);
+      const refCost = getScenarioCostBreakdown(refScenario, day, true);
+      const targetCost = getScenarioCostBreakdown(targetScenario, day, true);
       points.push({
         day,
         year: Math.round((day / 365) * 1000) / 1000,
-        refCumulativeCost: Math.round((refCost + Number.EPSILON) * 100) / 100,
-        targetCumulativeCost: Math.round((targetCost + Number.EPSILON) * 100) / 100,
-        netAdvantageTarget: Math.round((refCost - targetCost + Number.EPSILON) * 100) / 100,
+        refCumulativeCost: Math.round((refCost.total + Number.EPSILON) * 100) / 100,
+        targetCumulativeCost: Math.round((targetCost.total + Number.EPSILON) * 100) / 100,
+        netAdvantageTarget: Math.round((refCost.total - targetCost.total + Number.EPSILON) * 100) / 100,
+        refPurchaseOutlay: refCost.outlay,
+        targetPurchaseOutlay: targetCost.outlay,
+        refEnergyCost: Math.round((refCost.energy + Number.EPSILON) * 100) / 100,
+        targetEnergyCost: Math.round((targetCost.energy + Number.EPSILON) * 100) / 100,
         event: day % 365 === 0 ? `YEAR_${day / 365}` : undefined,
       });
     }
@@ -395,8 +521,8 @@ export function evaluateCashFlowTimeline(
   // Calculate post-delivery recovery time if target vehicle was delivered with a deficit
   let postDeliveryRecoveryYears: number | null = null;
   const targetDeliveryDay = targetScenario.deliveryWaitDays;
-  const refCostAtTargetDelivery = getScenarioCumulativeCost(refScenario, targetDeliveryDay, true);
-  const targetCostAtTargetDelivery = getScenarioCumulativeCost(targetScenario, targetDeliveryDay, true);
+  const refCostAtTargetDelivery = getScenarioCostBreakdown(refScenario, targetDeliveryDay, true).total;
+  const targetCostAtTargetDelivery = getScenarioCostBreakdown(targetScenario, targetDeliveryDay, true).total;
   const deficitAtDelivery = targetCostAtTargetDelivery - refCostAtTargetDelivery;
 
   const postDeliveryAnnualSavings = refScenario.annualEnergyCost - targetScenario.annualEnergyCost;
@@ -404,13 +530,18 @@ export function evaluateCashFlowTimeline(
     postDeliveryRecoveryYears = Math.round((deficitAtDelivery / postDeliveryAnnualSavings) * 1000) / 1000;
   }
 
-  // Find crossover (break-even) day if cumulative cost lines cross
+  // Find crossover (break-even) day if cumulative cost lines cross after all purchases are completed
   let crossoverDay: number | null = null;
   let crossoverYear: number | null = null;
+  const maxDeliveryDay = Math.max(refScenario.deliveryWaitDays, targetScenario.deliveryWaitDays);
 
   for (let i = 0; i < points.length - 1; i++) {
     const p1 = points[i];
     const p2 = points[i + 1];
+
+    if (p1.day < maxDeliveryDay) {
+      continue;
+    }
 
     if (p1.day > 0 && p1.netAdvantageTarget === 0) {
       crossoverDay = p1.day;

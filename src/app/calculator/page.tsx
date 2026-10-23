@@ -3,14 +3,52 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
-import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
+import { ActivityTicker } from '@/components/feed/ActivityTicker';
+import { RecommendedProductsSection } from '@/components/calculator/RecommendedProductsSection';
+import { NewsTickerItem } from '@/lib/types/contracts';
+import { ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export const revalidate = 3600; // 1 hour ISR
 
+const CALCULATOR_NEWS_ITEMS: NewsTickerItem[] = [
+  {
+    id: 'news-1',
+    type: 'news',
+    category: 'ALLOCATION',
+    title: '2026 RAV4 Hybrid & PHEV production allocations active for Canadian dealers',
+    headline: '2026 RAV4 Hybrid & PHEV production allocations active for Canadian dealers',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'news-2',
+    type: 'news',
+    category: 'DELIVERY',
+    title: 'Camry Hybrid wait times stabilizing at 3–4 months across BC and Ontario',
+    headline: 'Camry Hybrid wait times stabilizing at 3–4 months across BC and Ontario',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'news-3',
+    type: 'news',
+    category: 'MARKET UPDATE',
+    title: 'Prius Prime deliveries expanding; federal iZEV rebates apply at point of sale',
+    headline: 'Prius Prime deliveries expanding; federal iZEV rebates apply at point of sale',
+    timestamp: new Date().toISOString(),
+  },
+  {
+    id: 'news-4',
+    type: 'news',
+    category: 'PRODUCTION',
+    title: 'Sienna AWD hybrid fulfillment improving for Q2/Q3 2026 backlogs',
+    headline: 'Sienna AWD hybrid fulfillment improving for Q2/Q3 2026 backlogs',
+    timestamp: new Date().toISOString(),
+  },
+];
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Fuel & Energy Savings Calculator | ToyotaWaits.ca',
+  title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
   description:
     'Calculate real-world Canadian fuel and electricity savings comparing Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles with verified NRCan ratings.',
   keywords: [
@@ -26,7 +64,7 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Toyota Fuel & Energy Savings Calculator | ToyotaWaits.ca',
+    title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
     description:
       'Compare real-world Canadian fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles.',
     url: 'https://toyotawaits.ca/calculator',
@@ -36,7 +74,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Fuel & Energy Savings Calculator | ToyotaWaits.ca',
+    title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
     description:
       'Compare real-world Canadian fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles.',
   },
@@ -45,29 +83,35 @@ export const metadata: Metadata = {
 export default function CalculatorPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6 pb-20 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
-        {/* Navigation & Header */}
-        <div className="space-y-4">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+        {/* Navigation & Clean Header */}
+        <div className="space-y-3">
           <BackButton fallbackHref="/" label="← Back to Wait Time Tracker" />
 
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 text-xs font-semibold">
-              <Calculator className="w-3.5 h-3.5" />
-              <span>Evidence-Based Vehicle Energy Calculator</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-              Canadian Toyota Energy Savings Calculator
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+              Toyota Fuel Savings & Payback Calculator
             </h1>
-            <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-3xl leading-relaxed">
-              Compare actual annual gasoline and electricity operating costs between your current vehicle and a new Toyota Hybrid (HEV) or Plug-in Hybrid (PHEV). Powered by official Natural Resources Canada (NRCan) 5-cycle testing ratings.
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+              Compare actual annual fuel and electricity costs across Toyota Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas models using official NRCan & EPA ratings.
             </p>
           </div>
         </div>
 
-        {/* Client-Side Interactive Calculator */}
+        {/* News Wire Ticker directly underneath the header */}
+        <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40">
+          <ActivityTicker initialData={CALCULATOR_NEWS_ITEMS} />
+        </div>
+
+        {/* Client-Side Interactive Calculator Cockpit */}
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator />
         </section>
+
+        {/* Recommended Products Section directly below the calculator */}
+        <div className="pt-2">
+          <RecommendedProductsSection />
+        </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">
