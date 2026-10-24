@@ -379,7 +379,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'j1772-charger-lock': {
     id: 'f1000014-0014-4014-8014-000000000014',
     slug: 'j1772-charger-lock',
-    destinationUrl: 'https://www.amazon.ca/s?k=J1772+charger+lock+ring+Toyota+RAV4+Prime&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=J1772+charger+lock+ring+anti-theft&tag=toyotawaits-20',
     title: 'J1772 Public EV Charging Port Combination Lock Ring',
     category: 'roadside_winter',
     clickCount: 0,

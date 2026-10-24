@@ -50,6 +50,10 @@ export interface ModItem {
   searchKeywordsUS?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  videoUrl?: string;
+  guideVideoUrl?: string;
+  videoLabel?: string;
+  buttonLabel?: string;
   accessories?: {
     name: string;
     partNumber?: string;
@@ -828,12 +832,22 @@ export const MODS_CONFIG: ModItem[] = [
     whyBuy: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
     utilityNote: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
     image: '/images/accessories/j1772-charger-lock.png',
-    asin: 'B09V7NGLHM',
-    amazonCaAsinOrUrl: 'B09V7NGLHM',
-    destinationUrl: 'https://www.amazon.ca/dp/B09V7NGLHM?tag=toyotawaits-20',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=J1772+charger+lock+ring+anti-theft&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=J1772+charger+lock+ring+anti-theft&tag=toyotawaits-20',
     affiliateUrl: '/out/j1772-charger-lock',
+    searchKeywordsCA: 'J1772 charger lock ring anti-theft',
+    searchKeywordsUS: 'J1772 charger lock ring anti-theft',
+    searchQuery: 'J1772 charger lock ring anti-theft',
     badge: 'Recommended',
     compatibility: 'PHEV J1772 Public Charging',
+    buttonLabel: 'View on Amazon ↗',
+    videoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
+    guideVideoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
+    videoLabel: 'Watch Video Guide',
+    youtubeVideoId: '8MQgYRKKmos',
+    videoTitle: 'J1772 Charger Lock Guide',
   },
   {
     id: 'prod-mats-corolla-cross',

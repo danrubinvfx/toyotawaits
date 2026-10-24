@@ -57,6 +57,14 @@ describe('DeliveryPrepChecklist Component', () => {
     expect(screen.getByText(/J1772 Public EV Charging Port Combination Lock Ring/i)).toBeDefined();
     const lockImg = screen.getByAltText(/J1772 Public EV Charging Port Combination Lock Ring/i);
     expect(lockImg.getAttribute('src')).toBe('/images/accessories/j1772-charger-lock.png');
+
+    // 3. J1772 lock card renders external YouTube Video Guide
+    const lockVideoLink = screen.getByTestId('video-link-j1772-charger-lock');
+    expect(lockVideoLink).toBeInTheDocument();
+    expect(lockVideoLink.getAttribute('href')).toBe('https://www.youtube.com/shorts/8MQgYRKKmos');
+    expect(lockVideoLink.getAttribute('target')).toBe('_blank');
+    expect(lockVideoLink.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(lockVideoLink.textContent).toContain('Watch Video Guide');
   });
 
   it('filters accessories when model is Sienna', () => {

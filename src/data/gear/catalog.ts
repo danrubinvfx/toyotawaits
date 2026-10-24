@@ -20,6 +20,12 @@ export interface GearMarketConfig {
   whyBuy?: string;
   badge?: string;
   isDeliveryDayEssential?: boolean;
+  buttonLabel?: string;
+  videoUrl?: string;
+  guideVideoUrl?: string;
+  videoLabel?: string;
+  youtubeVideoId?: string;
+  videoTitle?: string;
 }
 
 export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
@@ -561,8 +567,20 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   'j1772-charger-lock': {
     slug: 'j1772-charger-lock',
     title: 'J1772 Public EV Charging Port Combination Lock Ring',
-    searchKeywordsCA: 'J1772 charger lock ring',
-    searchKeywordsUS: 'J1772 charger lock ring',
+    searchQuery: 'J1772 charger lock ring anti-theft',
+    searchKeywordsCA: 'J1772 charger lock ring anti-theft',
+    searchKeywordsUS: 'J1772 charger lock ring anti-theft',
+    category: 'Charging & Power',
+    compatibility: 'Toyota RAV4 Prime / Plug-in Hybrid & Prius Prime (J1772)',
+    whyBuy: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
+    badge: 'PHEV Essential',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'View on Amazon ↗',
+    videoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
+    guideVideoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
+    videoLabel: 'Watch Video Guide',
+    youtubeVideoId: '8MQgYRKKmos',
+    videoTitle: 'J1772 Charger Lock Guide',
   },
   'custom-fit-all-weather-floor-mats-corolla-cross': {
     slug: 'custom-fit-all-weather-floor-mats-corolla-cross',

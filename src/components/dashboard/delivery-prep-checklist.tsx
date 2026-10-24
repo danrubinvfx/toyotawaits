@@ -54,6 +54,9 @@ export interface ChecklistProduct {
   amazonCaAsinOrUrl?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  videoUrl?: string;
+  guideVideoUrl?: string;
+  videoLabel?: string;
   isDeliveryDayEssential?: boolean;
 }
 

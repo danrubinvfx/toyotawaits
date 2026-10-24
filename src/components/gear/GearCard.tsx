@@ -60,6 +60,9 @@ export interface GearCardItem {
   youtubeVideoId?: string;
   videoTitle?: string;
   buttonLabel?: string;
+  videoUrl?: string;
+  guideVideoUrl?: string;
+  videoLabel?: string;
 }
 
 export type ModCardItem = GearCardItem;
@@ -257,7 +260,7 @@ export function GearCard({
   const isDirectAsin = isDirectValidAsin;
   const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
-  const buttonText = buttonLabel || item.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
+  const buttonText = buttonLabel || item.buttonLabel || config?.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
@@ -437,27 +440,52 @@ export function GearCard({
           </a>
         </Button>
 
-        {/* Secondary CTA: Compact text button keeping card height under ~380px on mobile */}
-        {item.youtubeVideoId && (
-          <>
-            <button
-              type="button"
-              onClick={() => setIsVideoModalOpen(true)}
-              data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-modal-btn-${item.slug}`}
-              className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
-            >
-              <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
-              <span>Watch Video Guide</span>
-            </button>
+        {/* Secondary CTA: Compact text button or external video guide link */}
+        {(() => {
+          const videoGuideUrl = item.videoUrl || config?.videoUrl || item.guideVideoUrl || config?.guideVideoUrl;
+          const videoLabel = item.videoLabel || config?.videoLabel || 'Watch Video Guide';
+          const youtubeVideoId = item.youtubeVideoId || config?.youtubeVideoId;
 
-            <VideoModal
-              isOpen={isVideoModalOpen}
-              onClose={() => setIsVideoModalOpen(false)}
-              videoId={item.youtubeVideoId}
-              title={item.videoTitle || item.name || item.title}
-            />
-          </>
-        )}
+          if (videoGuideUrl) {
+            return (
+              <a
+                href={videoGuideUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid={`video-link-${item.slug}`}
+                className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
+              >
+                <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
+                <span>{videoLabel}</span>
+              </a>
+            );
+          }
+
+          if (youtubeVideoId) {
+            return (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsVideoModalOpen(true)}
+                  data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-modal-btn-${item.slug}`}
+                  className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
+                >
+                  <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
+                  <span>{videoLabel}</span>
+                </button>
+
+                <VideoModal
+                  isOpen={isVideoModalOpen}
+                  onClose={() => setIsVideoModalOpen(false)}
+                  videoId={youtubeVideoId}
+                  title={item.videoTitle || item.name || item.title}
+                />
+              </>
+            );
+          }
+
+          return null;
+        })()}
       </div>
     </div>
   );
