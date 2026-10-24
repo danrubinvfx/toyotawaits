@@ -63,6 +63,7 @@ export interface ConvertusRawVehicle {
   vdp_url?: string | null;
   url?: string | null;
   link?: string | null;
+  uri?: string | null;
   permalink?: string | null;
   canonical_url?: string | null;
   listing_url?: string | null;
@@ -516,32 +517,44 @@ export function parseConvertusRecord(
   const stockNumber = raw.stock_number ? String(raw.stock_number).trim() : null;
 
   // 1. Capture Direct VDP Permalinks During Ingestion:
-  // Check for the direct Vehicle Details Page (VDP) URL returned in the raw vehicle item payload:
+  // Inspect item.url || item.link || item.uri || item.permalink || item.canonical_url
+  const dealerBaseUrl = normalizeDealerBaseUrl(
+    options?.dealerBaseUrl ||
+    raw.company_data?.company_web_address ||
+    raw.dealer_base_url ||
+    raw.company_web_address
+  );
+
   const directUrlCandidate =
     raw.url ||
     raw.link ||
-    raw.vdp_url ||
+    raw.uri ||
     raw.permalink ||
-    raw.canonical_url;
+    raw.canonical_url ||
+    raw.vdp_url;
 
-  // Validate that directUrl is a full URL string starting with 'http'
   let directUrl: string | null = null;
-  if (
-    typeof directUrlCandidate === 'string' &&
-    directUrlCandidate.trim().toLowerCase().startsWith('http')
-  ) {
-    let clean = directUrlCandidate.trim();
-    if (clean.includes('jptoyotadowntown.com')) {
-      clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+  if (typeof directUrlCandidate === 'string' && directUrlCandidate.trim()) {
+    const candidate = directUrlCandidate.trim();
+    if (candidate.toLowerCase().startsWith('http')) {
+      directUrl = candidate;
+    } else if (candidate.startsWith('/')) {
+      // If candidate URL is relative (starts with /), resolve it against dealership base URL
+      directUrl = `${dealerBaseUrl.replace(/\/+$/, '')}${candidate}`;
     }
-    if (clean.includes('jptoyotasurrey.com')) {
-      clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+    if (directUrl) {
+      if (directUrl.includes('jptoyotadowntown.com')) {
+        directUrl = directUrl.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+      }
+      if (directUrl.includes('jptoyotasurrey.com')) {
+        directUrl = directUrl.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+      }
     }
-    directUrl = clean;
   }
 
+  // Save resolved absolute URL to listing_url and vdp_url
   const vdpUrl = directUrl || constructConvertusVdpUrl(raw, options);
-  const listingUrl = directUrl || (typeof directUrlCandidate === 'string' && directUrlCandidate.trim() ? directUrlCandidate.trim() : null);
+  const listingUrl = directUrl || vdpUrl;
   const imageInfo = extractPrimaryImage(raw, options);
   const daysOnLot =
     raw.days_on_lot !== undefined && raw.days_on_lot !== null

@@ -196,7 +196,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const link = screen.getByTestId('dealer-vdp-link');
       expect(link).toHaveAttribute(
         'href',
-        'https://www.jptoyota-downtown.com/vehicles/?search=JTDACAAJ0T3038212&keyword=JTDACAAJ0T3038212'
+        'https://www.jptoyota-downtown.com/vehicles/?search=JTDACAAJ0T3038212'
       );
       expect(link.getAttribute('href')).not.toContain('sc=new');
     });
@@ -212,7 +212,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const link = screen.getByTestId('dealer-vdp-link');
       expect(link).toHaveAttribute(
         'href',
-        'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+        'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456'
       );
       expect(link.getAttribute('href')).not.toContain('sc=new');
     });
@@ -229,29 +229,46 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         );
       });
 
-      it('builds resilient search query without sc=new when listing_url is missing', () => {
+      it('builds resilient search query without sc=new using real VIN', () => {
         const url = getDealerListingUrl({
           listing_url: undefined,
           dealer_base_url: 'https://www.jptoyota-downtown.com',
           vin: '2T3P1RFV5TC123456',
         });
         expect(url).toBe(
-          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456'
         );
         expect(url).not.toContain('sc=new');
         expect(url).not.toContain('/vehicles/new/');
       });
 
-      it('builds resilient search query without sc=new when listing_url is relative', () => {
+      it('falls back to real stock number when VIN is provisional (starts with PROV)', () => {
         const url = getDealerListingUrl({
-          listing_url: '/vehicles/2026/toyota/rav4/123/',
+          listing_url: null,
           dealer_base_url: 'https://www.jptoyota-downtown.com',
-          vin: '2T3P1RFV5TC123456',
+          vin: 'PROV-SIENNA-881',
+          stock_number: 'SI-9944',
+          model: 'Sienna',
+          trim: 'Limited AWD',
         });
         expect(url).toBe(
-          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+          'https://www.jptoyota-downtown.com/vehicles/?search=SI-9944'
         );
-        expect(url).not.toContain('sc=new');
+        expect(url).not.toContain('PROV');
+      });
+
+      it('falls back to vehicle model + trim when both VIN and stock number are missing/provisional', () => {
+        const url = getDealerListingUrl({
+          listing_url: null,
+          dealer_base_url: 'https://www.jptoyota-downtown.com',
+          vin: null,
+          stock_number: null,
+          model: 'Toyota Sienna',
+          trim: 'Limited',
+        });
+        expect(url).toBe(
+          'https://www.jptoyota-downtown.com/vehicles/?search=Toyota%20Sienna%20Limited'
+        );
       });
 
       it('renders "View Public Dealer Listing" button with target="_blank" and rel="noopener noreferrer" for explicit VDP URL', () => {
@@ -288,7 +305,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         const link = screen.getByTestId('dealer-vdp-link');
         expect(link).toHaveAttribute(
           'href',
-          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456'
         );
         expect(link).toHaveAttribute('target', '_blank');
         expect(link).toHaveAttribute('rel', 'noopener noreferrer');

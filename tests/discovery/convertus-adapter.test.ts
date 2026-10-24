@@ -650,6 +650,21 @@ describe('Convertus Ingestion Adapter', () => {
       );
     });
 
+    it('captures direct VDP permalink from item.uri', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Prius Prime',
+        uri: 'https://www.westcoasttoyota.com/vehicles/2026/toyota/prius-prime/556677/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.westcoasttoyota.com/vehicles/2026/toyota/prius-prime/556677/'
+      );
+      expect(record?.listing.vdpUrl).toBe(
+        'https://www.westcoasttoyota.com/vehicles/2026/toyota/prius-prime/556677/'
+      );
+    });
+
     it('normalizes known domain typos in direct VDP URL', () => {
       const raw = {
         make: 'Toyota',
@@ -662,14 +677,18 @@ describe('Convertus Ingestion Adapter', () => {
       );
     });
 
-    it('handles relative direct URL by retaining relative in listingUrl or constructing full vdpUrl', () => {
+    it('resolves relative direct URL against dealership base URL and saves to listing_url and vdp_url', () => {
       const raw = {
         make: 'Toyota',
         model: 'RAV4',
         url: '/vehicles/2026/toyota/rav4/vancouver/bc/123456/',
       };
-      const { record } = parseConvertusRecord(raw, 0);
-      expect(record?.listing.listingUrl).toBe('/vehicles/2026/toyota/rav4/vancouver/bc/123456/');
+      const { record } = parseConvertusRecord(raw, 0, {
+        dealerBaseUrl: 'https://www.jptoyota-downtown.com',
+      });
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/123456/'
+      );
       expect(record?.listing.vdpUrl).toBe(
         'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/123456/'
       );

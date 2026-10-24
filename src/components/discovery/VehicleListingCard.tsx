@@ -124,12 +124,17 @@ export function formatVehicleCardTitles(props: {
  */
 export function getDealerListingUrl(listing: {
   listing_url?: string | null;
+  vdp_url?: string | null;
   dealer_base_url?: string | null;
   vin?: string | null;
+  stock_number?: string | null;
+  model?: string | null;
+  trim?: string | null;
   [key: string]: any;
 }): string {
+  // Priority 1: If listing.listing_url or listing.vdp_url is a valid http(s) URL, use it directly
   const direct = listing.listing_url || (listing as any).vdp_url;
-  if (direct && typeof direct === 'string' && direct.trim().startsWith('http')) {
+  if (direct && typeof direct === 'string' && direct.trim().toLowerCase().startsWith('http')) {
     let clean = direct.trim();
     if (clean.includes('jptoyotadowntown.com')) {
       clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
@@ -146,17 +151,23 @@ export function getDealerListingUrl(listing: {
       clean === baseUrl ||
       clean === `${baseUrl}/`
     ) {
-      const vinKey = listing.vin || (listing as any).stock_number || (listing as any).provisional_id || '';
-      return `${baseUrl}/vehicles/?search=${encodeURIComponent(vinKey)}&keyword=${encodeURIComponent(vinKey)}`;
+      const term = (!listing.vin?.startsWith('PROV') && listing.vin)
+        || listing.stock_number
+        || `${listing.model || ''} ${listing.trim || ''}`.trim();
+      return `${baseUrl}/vehicles/?search=${encodeURIComponent(term)}`;
     }
 
     return clean;
   }
 
+  // Priority 2: If falling back to search query, NEVER search by provisional_stock_id (e.g. 'PROV-SIENNA-881')
+  // Instead, search by: 1. Real VIN (if not provisional/null), 2. Real Stock Number, 3. Vehicle Model + Trim
   const baseUrl = listing.dealer_base_url ? listing.dealer_base_url.replace(/\/+$/, '') : '';
-  const vinKey = listing.vin || (listing as any).stock_number || (listing as any).provisional_id || '';
-  // Broad search by VIN across all new & in-transit vehicles without category constraints:
-  return `${baseUrl}/vehicles/?search=${encodeURIComponent(vinKey)}&keyword=${encodeURIComponent(vinKey)}`;
+  const term = (!listing.vin?.startsWith('PROV') && listing.vin)
+    || listing.stock_number
+    || `${listing.model || ''} ${listing.trim || ''}`.trim();
+
+  return `${baseUrl}/vehicles/?search=${encodeURIComponent(term)}`;
 }
 
 export function resolveVehicleListingUrl(props: {
@@ -168,12 +179,13 @@ export function resolveVehicleListingUrl(props: {
   dealerProvince?: string | null;
   make?: string;
   model?: string;
+  trim?: string | null;
   modelYear?: number;
   vin?: string | null;
   stockNumber?: string | null;
   provisionalId?: string | null;
 }): string {
-  const { vdpUrl, listingUrl, dealerBaseUrl, vin, stockNumber, provisionalId } = props;
+  const { vdpUrl, listingUrl, dealerBaseUrl, make, model, trim, vin, stockNumber, provisionalId } = props;
 
   // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown, Surrey, West Coast, Regency, or OpenRoad)
   const isSurrey =
@@ -215,10 +227,14 @@ export function resolveVehicleListingUrl(props: {
     baseDomain = baseDomain.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
   }
 
+  const vehicleModel = [make, model].filter(Boolean).join(' ').trim() || (model || '');
   return getDealerListingUrl({
     listing_url: candidateUrl,
     dealer_base_url: baseDomain,
-    vin: vin || provisionalId || stockNumber || '',
+    vin: vin || undefined,
+    stock_number: stockNumber || undefined,
+    model: vehicleModel,
+    trim: trim || undefined,
   });
 }
 
@@ -294,6 +310,7 @@ export function VehicleListingCard({
     dealerProvince,
     make,
     model,
+    trim,
     modelYear,
     vin,
     stockNumber,
