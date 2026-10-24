@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
+import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
+import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -62,6 +64,9 @@ export default function Rav4HybridCalculatorPage() {
           </div>
         </div>
 
+        {/* News Wire Announcement Ticker */}
+        <CalculatorNewsWire activeModel="rav4" />
+
         {/* Client-Side Interactive Calculator with Pre-seeded RAV4 Hybrid */}
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator
@@ -69,6 +74,11 @@ export default function Rav4HybridCalculatorPage() {
             initialCurrentArchetypeId="archetype-compact-crossover-awd"
           />
         </section>
+
+        {/* Recommended Products */}
+        <div className="pt-2 sm:pt-4">
+          <CalculatorGearCards activeModel="rav4" />
+        </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">

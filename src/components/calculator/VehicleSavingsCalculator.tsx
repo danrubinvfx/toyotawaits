@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import {
   useSavingsCalculator,
   CalculatorInitialConfig,
+  TargetVehicleState,
 } from '@/lib/hooks/useSavingsCalculator';
 import { DrivingInputsCard } from './DrivingInputsCard';
 import { CurrentVehicleCard } from './CurrentVehicleCard';
@@ -13,13 +15,20 @@ import { PurchaseOutlayCard } from './PurchaseOutlayCard';
 import { PaybackSummaryCard } from './PaybackSummaryCard';
 import { PaybackChart } from './PaybackChart';
 import { AccessibleChartTable } from './AccessibleChartTable';
-import { RotateCcw, TrendingUp, Car } from 'lucide-react';
+import { RotateCcw, TrendingUp, Car, Clock, Sparkles, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getVehiclePresetById } from '@/data/vehicle-presets';
+import { useCalculatorContext } from '@/context/CalculatorContext';
+import {
+  presetIdToModelSlug,
+  presetIdToModelName,
+} from '@/lib/calculator-model-helpers';
 
 export type VehicleSavingsCalculatorProps = CalculatorInitialConfig;
 
 export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = {}) {
+  const calculatorContext = useCalculatorContext();
+
   const {
     drivingInputs,
     setDrivingInputs,
@@ -40,6 +49,40 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
     targetPreset,
     results,
   } = useSavingsCalculator(props);
+
+  // Synchronize with external context (URL param / route change / tracker state)
+  useEffect(() => {
+    if (
+      calculatorContext?.activePresetId &&
+      calculatorContext.activePresetId !== targetVehicle.presetId
+    ) {
+      const preset = getVehiclePresetById(calculatorContext.activePresetId);
+      if (preset) {
+        setTargetVehicle({
+          presetId: preset.id,
+          powertrain: preset.identity.powertrain,
+          hasChargingAccess: true,
+          electricShare: preset.identity.powertrain === 'PHEV' ? 0.65 : 0.0,
+        });
+      }
+    }
+  }, [calculatorContext?.activePresetId, targetVehicle.presetId, setTargetVehicle]);
+
+  // Handle Target Vehicle dropdown changes
+  const handleTargetVehicleChange = useCallback(
+    (patch: Partial<TargetVehicleState>) => {
+      setTargetVehicle(patch);
+      if (patch.presetId && calculatorContext && patch.presetId !== calculatorContext.activePresetId) {
+        calculatorContext.setActivePresetId(patch.presetId);
+      }
+    },
+    [calculatorContext, setTargetVehicle]
+  );
+
+  const activeModelSlug =
+    calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId);
+  const activeModelName =
+    calculatorContext?.activeModelName || presetIdToModelName(targetVehicle.presetId);
 
   const refVehicleName =
     comparisonMode === 'NEW_A_VS_NEW_B'
@@ -142,6 +185,45 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           {/* Annual Projection / Energy Results Card directly underneath the graph */}
           <EnergyResultsCard results={results} />
 
+          {/* Contextual Action Bridges: Wait Times & Live Inventory */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="flex-1 h-9 min-h-[36px] text-xs font-semibold border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 cursor-pointer"
+            >
+              <Link href={`/wait-times/${activeModelSlug}`} className="flex items-center justify-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-zinc-500" />
+                <span>Check {activeModelName} Wait Times</span>
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              size="sm"
+              className="flex-1 h-9 min-h-[36px] text-xs font-semibold bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-xs"
+            >
+              <Link href={`/inventory?model=${encodeURIComponent(activeModelName)}`} className="flex items-center justify-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Skip the Wait / View Live Stock</span>
+              </Link>
+            </Button>
+          </div>
+
+          {/* Sienna Trailer Hitch Guide Badge */}
+          {activeModelSlug === 'sienna' && (
+            <div className="pt-0.5">
+              <Link
+                href="/guides/toyota-sienna-trailer-hitch-guide"
+                className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 hover:underline bg-amber-500/10 dark:bg-amber-500/20 px-2.5 py-1 rounded-full border border-amber-500/30 transition-colors"
+              >
+                <span>🚚 Toyota Sienna Trailer Hitch & Towing Guide</span>
+                <ArrowRight className="w-3 h-3" />
+              </Link>
+            </div>
+          )}
+
           {/* Payback Summary Card (when Mode 2 or 3 is active) */}
           {comparisonMode !== 'ENERGY_COMPARISON' && results.paybackResult && (
             <PaybackSummaryCard
@@ -158,7 +240,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
             <TargetVehicleCard
               targetVehicle={targetVehicle}
-              onChange={setTargetVehicle}
+              onChange={handleTargetVehicleChange}
               unitSystem={unitSystem}
             />
           ) : (

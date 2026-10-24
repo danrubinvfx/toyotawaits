@@ -180,7 +180,7 @@ export default async function DynamicModelCalculatorPage({ params }: PageProps) 
         </div>
 
         {/* News Wire Announcement Ticker */}
-        <CalculatorNewsWire />
+        <CalculatorNewsWire activeModel={model} />
 
         {/* Client-Side Interactive Calculator */}
         <section aria-label="Interactive Savings Calculator">
@@ -192,7 +192,7 @@ export default async function DynamicModelCalculatorPage({ params }: PageProps) 
 
         {/* Recommended Products */}
         <div className="pt-2 sm:pt-4">
-          <CalculatorGearCards />
+          <CalculatorGearCards activeModel={model} />
         </div>
 
         {/* Pre-rendered Static Benchmark Table */}
