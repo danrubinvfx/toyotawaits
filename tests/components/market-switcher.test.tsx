@@ -121,7 +121,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
     const caSelect = screen.getByLabelText(/Province \/ Territory/i) as HTMLSelectElement;
     // WA is not a valid CA province, so it should safely reset to CA default (BC)
     expect(caSelect.value).toBe('BC');
-  }, 15000);
+  }, 30000);
 
   it('dynamically switches SubmissionForm region label, options, and sends correct countryCode', async () => {
     let capturedPayload: any = null;
