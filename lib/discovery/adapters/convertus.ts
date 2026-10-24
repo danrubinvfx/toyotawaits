@@ -56,6 +56,10 @@ export interface ConvertusRawVehicle {
   in_transit?: number | boolean | string | null;
   on_order?: number | boolean | string | null;
   days_on_lot?: number | string | null;
+  created_at?: string | null;
+  created?: string | null;
+  date?: string | null;
+  inventory_date?: string | null;
   vdp_url?: string | null;
   breakdown?: Array<{
     type?: string;
@@ -511,6 +515,24 @@ export function parseConvertusRecord(
       ? parseInt(String(raw.days_on_lot), 10)
       : null;
 
+  // Extract original dealer posting/creation date from incoming vehicle payload
+  const candidatePostedDate =
+    raw.created_at ||
+    raw.created ||
+    raw.date ||
+    raw.inventory_date ||
+    null;
+
+  let postedAt: string | null = null;
+  if (candidatePostedDate) {
+    const parsedDate = new Date(candidatePostedDate);
+    if (!isNaN(parsedDate.getTime())) {
+      postedAt = parsedDate.toISOString();
+    } else if (typeof candidatePostedDate === 'string' && candidatePostedDate.trim()) {
+      postedAt = candidatePostedDate.trim();
+    }
+  }
+
   const parsed: ParsedVehicleListing = {
     vehicle: {
       vin,
@@ -541,6 +563,7 @@ export function parseConvertusRecord(
       rawStatus,
       normalizedStatus,
       daysOnLot: isNaN(daysOnLot as any) ? null : daysOnLot,
+      postedAt,
     },
     pricing: {
       msrp,

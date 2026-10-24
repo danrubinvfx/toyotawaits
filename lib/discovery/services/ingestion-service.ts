@@ -218,6 +218,7 @@ export async function ingestDealerListings(
 
       if (!existingListing) {
         // Initial Discovery of Listing
+        const postedAt = item.listing.postedAt || sweepTimestamp;
         const { data: newListing, error: listingInsertError } = await supabase
           .from('dealer_listings')
           .insert({
@@ -233,6 +234,7 @@ export async function ingestDealerListings(
             raw_status: item.listing.rawStatus,
             days_on_lot: item.listing.daysOnLot ?? 0,
             consecutive_missed_sweeps: 0,
+            posted_at: postedAt,
             first_observed_at: sweepTimestamp,
             last_observed_at: sweepTimestamp,
             last_successful_check: sweepTimestamp,
@@ -284,6 +286,12 @@ export async function ingestDealerListings(
         }
 
         // Update listing timestamps, image info, and reset missed sweeps
+        const postedAt =
+          item.listing.postedAt ||
+          existingListing.posted_at ||
+          existingListing.first_observed_at ||
+          sweepTimestamp;
+
         const { error: listingUpdateError } = await supabase
           .from('dealer_listings')
           .update({
@@ -295,6 +303,7 @@ export async function ingestDealerListings(
             image_url: item.listing.imageUrl || existingListing.image_url,
             has_real_photo: item.listing.hasRealPhoto ?? existingListing.has_real_photo,
             image_source: item.listing.imageSource || existingListing.image_source,
+            posted_at: postedAt,
             consecutive_missed_sweeps: 0,
             last_observed_at: sweepTimestamp,
             last_successful_check: sweepTimestamp,

@@ -212,6 +212,35 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         'https://www.jptoyota-downtown.com/vehicles/new/?keyword=2T3P1RFV5TC123456'
       );
     });
+
+    it('displays dealer posted date and relative detection date with clock icon and tooltip', () => {
+      // 1. Explicit postedAt
+      const { rerender } = render(
+        <VehicleListingCard
+          {...sampleCardProps}
+          lastChecked={new Date().toISOString()}
+          postedAt="2026-10-14T08:00:00Z"
+          firstSeenAt="2026-10-14T08:00:00Z"
+        />
+      );
+
+      expect(screen.getByText('Listed Oct 14')).toBeInTheDocument();
+      const timeContainer = screen.getByTitle(/First detected on Oct 14, 2026/i);
+      expect(timeContainer).toBeInTheDocument();
+
+      // 2. Fallback to firstSeenAt (9 days ago)
+      const nineDaysAgo = new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString();
+      rerender(
+        <VehicleListingCard
+          {...sampleCardProps}
+          lastChecked={new Date().toISOString()}
+          postedAt={null}
+          firstSeenAt={nineDaysAgo}
+        />
+      );
+
+      expect(screen.getByText('Added 9 days ago')).toBeInTheDocument();
+    });
   });
 
   // ===========================================================================
@@ -227,6 +256,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       userCoordinates: null,
       maxDistance: '',
       sortNearest: false,
+      sortBy: 'newest',
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -257,6 +287,10 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('filter-location-select')).toHaveAttribute(
         'aria-label',
         'Filter by location'
+      );
+      expect(screen.getByTestId('filter-sort-select')).toHaveAttribute(
+        'aria-label',
+        'Sort inventory listings'
       );
       expect(screen.getByTestId('filter-min-price-input')).toHaveAttribute(
         'aria-label',
@@ -303,6 +337,34 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         ...defaultFilters,
         status: 'Incoming availability unconfirmed',
       });
+    });
+
+    it('renders "Sort by" dropdown control and triggers onFilterChange', () => {
+      const onFilterChange = vi.fn();
+      render(
+        <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
+      );
+
+      const sortSelect = screen.getByTestId('filter-sort-select');
+      expect(sortSelect).toHaveValue('newest');
+
+      const options = Array.from(sortSelect.querySelectorAll('option')).map((o) => ({
+        value: o.value,
+        text: o.textContent,
+      }));
+
+      expect(options).toEqual([
+        { value: 'newest', text: 'Newest Listing (Dealer Posted Date)' },
+        { value: 'price_asc', text: 'Price: Low to High' },
+        { value: 'price_desc', text: 'Price: High to Low' },
+        { value: 'distance_asc', text: 'Distance: Closest First' },
+        { value: 'status', text: 'Lot Status (On Lot first, then In Transit)' },
+      ]);
+
+      fireEvent.change(sortSelect, { target: { value: 'price_asc' } });
+      expect(onFilterChange).toHaveBeenCalledWith(
+        expect.objectContaining({ sortBy: 'price_asc' })
+      );
     });
 
     it('shows and executes Clear Filters reset button when filters are active', () => {
@@ -953,6 +1015,91 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('showing-all-message')).toHaveTextContent(
         'Showing all 30 observed vehicles'
       );
+
+      // Click Load More to expand again, then change Sort -> visibleCount resets back to 24
+      // Reset filter first to see 55 vehicles
+      fireEvent.change(screen.getByTestId('filter-model-select'), {
+        target: { value: '' },
+      });
+      fireEvent.click(screen.getByTestId('load-more-btn'));
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(48);
+
+      fireEvent.change(screen.getByTestId('filter-sort-select'), {
+        target: { value: 'price_desc' },
+      });
+      expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(24);
+    });
+
+    it('implements comprehensive sorting suite across newest, price, distance, and status', () => {
+      const customListings: VehicleListingCardProps[] = [
+        {
+          id: 'unit-cheapest-transit',
+          make: 'Toyota',
+          model: 'Corolla',
+          modelYear: 2026,
+          dealerName: 'Jim Pattison Toyota Downtown',
+          status: 'Incoming availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          postedAt: '2026-10-10T00:00:00Z',
+          msrp: 30000,
+          sellingPrice: 30000,
+        },
+        {
+          id: 'unit-expensive-onlot',
+          make: 'Toyota',
+          model: 'Land Cruiser',
+          modelYear: 2026,
+          dealerName: 'Jim Pattison Toyota Surrey',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          postedAt: '2026-10-22T00:00:00Z',
+          msrp: 85000,
+          sellingPrice: 85000,
+        },
+        {
+          id: 'unit-mid-onlot',
+          make: 'Toyota',
+          model: 'RAV4 Hybrid',
+          modelYear: 2026,
+          dealerName: 'West Coast Toyota',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          postedAt: '2026-10-18T00:00:00Z',
+          msrp: 50000,
+          sellingPrice: 50000,
+        },
+      ];
+
+      render(<InventoryExplorer initialListings={customListings} />);
+
+      const sortSelect = screen.getByTestId('filter-sort-select');
+
+      // 1. Default: newest (Land Cruiser 10-22, RAV4 10-18, Corolla 10-10)
+      let cards = screen.getAllByTestId(/^listing-card-/);
+      expect(cards[0]).toHaveAttribute('data-testid', 'listing-card-unit-expensive-onlot');
+      expect(cards[1]).toHaveAttribute('data-testid', 'listing-card-unit-mid-onlot');
+      expect(cards[2]).toHaveAttribute('data-testid', 'listing-card-unit-cheapest-transit');
+
+      // 2. Price: Low to High (Corolla $30k, RAV4 $50k, Land Cruiser $85k)
+      fireEvent.change(sortSelect, { target: { value: 'price_asc' } });
+      cards = screen.getAllByTestId(/^listing-card-/);
+      expect(cards[0]).toHaveAttribute('data-testid', 'listing-card-unit-cheapest-transit');
+      expect(cards[1]).toHaveAttribute('data-testid', 'listing-card-unit-mid-onlot');
+      expect(cards[2]).toHaveAttribute('data-testid', 'listing-card-unit-expensive-onlot');
+
+      // 3. Price: High to Low (Land Cruiser $85k, RAV4 $50k, Corolla $30k)
+      fireEvent.change(sortSelect, { target: { value: 'price_desc' } });
+      cards = screen.getAllByTestId(/^listing-card-/);
+      expect(cards[0]).toHaveAttribute('data-testid', 'listing-card-unit-expensive-onlot');
+      expect(cards[1]).toHaveAttribute('data-testid', 'listing-card-unit-mid-onlot');
+      expect(cards[2]).toHaveAttribute('data-testid', 'listing-card-unit-cheapest-transit');
+
+      // 4. Lot Status (On Lot units first, then Incoming in-transit units)
+      fireEvent.change(sortSelect, { target: { value: 'status' } });
+      cards = screen.getAllByTestId(/^listing-card-/);
+      expect(cards[0]).toHaveAttribute('data-testid', 'listing-card-unit-expensive-onlot');
+      expect(cards[1]).toHaveAttribute('data-testid', 'listing-card-unit-mid-onlot');
+      expect(cards[2]).toHaveAttribute('data-testid', 'listing-card-unit-cheapest-transit');
     });
   });
 

@@ -546,4 +546,55 @@ describe('Convertus Ingestion Adapter', () => {
       expect(res.imageSource).toBe('feed');
     });
   });
+
+  describe('Dealer Posted Date Extraction', () => {
+    it('extracts created_at as postedAt', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'RAV4',
+        created_at: '2026-10-14T08:30:00Z',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.postedAt).toBe('2026-10-14T08:30:00.000Z');
+    });
+
+    it('extracts created as postedAt', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Sienna',
+        created: '2026-10-18T12:00:00Z',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.postedAt).toBe('2026-10-18T12:00:00.000Z');
+    });
+
+    it('extracts date as postedAt', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Tacoma',
+        date: '2026-10-20',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.postedAt).toContain('2026-10-20');
+    });
+
+    it('extracts inventory_date as postedAt', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Crown Signia',
+        inventory_date: '2026-10-10T15:45:00Z',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.postedAt).toBe('2026-10-10T15:45:00.000Z');
+    });
+
+    it('falls back to null when no explicit dealer creation date is provided in payload', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Prius Prime',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.postedAt).toBeNull();
+    });
+  });
 });

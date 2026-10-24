@@ -81,6 +81,8 @@ export async function GET(request?: Request) {
         vdp_url,
         current_status,
         last_observed_at,
+        first_observed_at,
+        posted_at,
         image_url,
         has_real_photo,
         image_source,
@@ -162,6 +164,8 @@ export async function GET(request?: Request) {
         dealerProvince: dlr.province || 'BC',
         status: item.current_status,
         lastChecked: item.last_observed_at,
+        postedAt: item.posted_at || item.first_observed_at || null,
+        firstSeenAt: item.first_observed_at || null,
         vdpUrl: item.vdp_url || null,
         msrp: latestObs.msrp != null ? Number(latestObs.msrp) : null,
         sellingPrice:

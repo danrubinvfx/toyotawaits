@@ -105,6 +105,7 @@ export interface DealerListing {
   currentStatus: NormalizedListingStatus;
   rawStatus?: string | null;
   daysOnLot?: number | null;
+  postedAt?: string | null;
   firstObservedAt: string;
   lastObservedAt: string;
   lastSuccessfulCheck?: string | null;
@@ -285,6 +286,7 @@ export interface ParsedVehicleListing {
     rawStatus: string;
     normalizedStatus: NormalizedListingStatus;
     daysOnLot: number | null;
+    postedAt?: string | null;
   };
   pricing: {
     msrp: number | null;

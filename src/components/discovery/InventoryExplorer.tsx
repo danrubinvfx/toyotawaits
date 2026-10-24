@@ -33,6 +33,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date().toISOString(),
+    postedAt: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=JTDACAAJ0T3038212',
     msrp: 61285,
     sellingPrice: 63957,
@@ -59,6 +61,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Incoming availability unconfirmed',
     lastChecked: new Date(Date.now() - 3600000).toISOString(),
+    postedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=SI-9944',
     msrp: 68450,
     sellingPrice: 68450,
@@ -84,6 +88,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date(Date.now() - 7200000).toISOString(),
+    postedAt: new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=4T1B11HK5SU112233',
     msrp: 66990,
     sellingPrice: 67885,
@@ -109,6 +115,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Incoming availability unconfirmed',
     lastChecked: new Date(Date.now() - 10800000).toISOString(),
+    postedAt: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=3TYLB5EN8RT009988',
     msrp: 54200,
     sellingPrice: 54200,
@@ -134,6 +142,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date().toISOString(),
+    postedAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New',
     msrp: 48750,
     sellingPrice: 48750,
@@ -159,6 +169,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date(Date.now() - 1800000).toISOString(),
+    postedAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/Sienna/Surrey/BC/71577608/?sale_class=New',
     msrp: 54928,
     sellingPrice: 54928,
@@ -184,6 +196,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'Advertised - availability unconfirmed',
     lastChecked: new Date(Date.now() - 3600000).toISOString(),
+    postedAt: new Date(Date.now() - 12 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 12 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.westcoasttoyota.com/vehicles/2026/Toyota/Prius%20Prime/Pitt%20Meadows/BC/71882001/?sale_class=New',
     msrp: 42150,
     sellingPrice: 42150,
@@ -209,6 +223,8 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     dealerProvince: 'BC',
     status: 'No longer observed / stale',
     lastChecked: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
+    postedAt: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
+    firstSeenAt: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/new/?keyword=2T1BURHE7TC998877',
     msrp: 26500,
     sellingPrice: 26500,
@@ -311,6 +327,7 @@ export function InventoryExplorer({
     minPrice: '',
     maxPrice: '',
     search: '',
+    sortBy: 'newest',
   });
 
   const handleFilterChange = (newFilters: FilterState) => {
@@ -527,15 +544,66 @@ export function InventoryExplorer({
       return true;
     });
 
-    // 3. Proximity Sort: when sortNearest is active (or enabled when user location is chosen)
+    // 3. Sorting Engine
     const shouldSortNearest = filters.sortNearest ?? Boolean(userCoordinates);
-    if (shouldSortNearest && userCoordinates) {
-      filtered.sort((a, b) => {
+    const activeSort =
+      filters.sortBy || (shouldSortNearest && userCoordinates ? 'distance_asc' : 'newest');
+
+    filtered.sort((a, b) => {
+      if (activeSort === 'newest') {
+        const dateA = new Date(a.postedAt || a.firstSeenAt || a.lastChecked || 0).getTime();
+        const dateB = new Date(b.postedAt || b.firstSeenAt || b.lastChecked || 0).getTime();
+        if (dateB !== dateA) return dateB - dateA;
+        return a.id.localeCompare(b.id);
+      }
+
+      if (activeSort === 'price_asc') {
+        const priceA = a.sellingPrice != null ? a.sellingPrice : (a.msrp != null ? a.msrp : null);
+        const priceB = b.sellingPrice != null ? b.sellingPrice : (b.msrp != null ? b.msrp : null);
+        if (priceA == null && priceB == null) return 0;
+        if (priceA == null) return 1;
+        if (priceB == null) return -1;
+        if (priceA !== priceB) return priceA - priceB;
+        return a.id.localeCompare(b.id);
+      }
+
+      if (activeSort === 'price_desc') {
+        const priceA = a.sellingPrice != null ? a.sellingPrice : (a.msrp != null ? a.msrp : null);
+        const priceB = b.sellingPrice != null ? b.sellingPrice : (b.msrp != null ? b.msrp : null);
+        if (priceA == null && priceB == null) return 0;
+        if (priceA == null) return 1;
+        if (priceB == null) return -1;
+        if (priceA !== priceB) return priceB - priceA;
+        return a.id.localeCompare(b.id);
+      }
+
+      if (activeSort === 'distance_asc') {
         const distA = a.distanceKm != null ? a.distanceKm : Infinity;
         const distB = b.distanceKm != null ? b.distanceKm : Infinity;
-        return distA - distB;
-      });
-    }
+        if (distA !== distB) return distA - distB;
+        return a.id.localeCompare(b.id);
+      }
+
+      if (activeSort === 'status') {
+        const getStatusRank = (status?: string | null) => {
+          const s = (status || '').toLowerCase();
+          // On lot units ('advertised') first
+          if (s.includes('advertised') || s.includes('on lot') || s.includes('on_lot')) return 0;
+          // In transit units ('incoming') second
+          if (s.includes('incoming') || s.includes('transit') || s.includes('order')) return 1;
+          return 2;
+        };
+        const rankA = getStatusRank(a.status);
+        const rankB = getStatusRank(b.status);
+        if (rankA !== rankB) return rankA - rankB;
+        // Tie-breaker: newest
+        const dateA = new Date(a.postedAt || a.firstSeenAt || a.lastChecked || 0).getTime();
+        const dateB = new Date(b.postedAt || b.firstSeenAt || b.lastChecked || 0).getTime();
+        return dateB - dateA;
+      }
+
+      return 0;
+    });
 
     return filtered;
   }, [listings, filters, userCoordinates, currentTime]);

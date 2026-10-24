@@ -530,4 +530,67 @@ describe('Sprint 3: Ingestion Pipeline & Observation Persistence', () => {
       expect(hashStatusChange).not.toBe(hashOriginal);
     });
   });
+
+  describe('Dealer Posted Date Persistence & Fallback', () => {
+    it('persists explicit postedAt on initial listing creation', async () => {
+      const mockDb = createMockSupabase();
+      const listingWithDate: ParsedVehicleListing = {
+        ...baseListing,
+        listing: {
+          ...baseListing.listing,
+          sourceListingId: 'src-explicit-date-01',
+          postedAt: '2026-10-10T14:00:00.000Z',
+        },
+      };
+
+      await ingestDealerListings({
+        dealerId: mockDealerId,
+        sourceId: mockSourceId,
+        parsedListings: [listingWithDate],
+        sweepTimestamp: '2026-10-17T12:00:00.000Z',
+        supabaseClient: mockDb,
+      });
+
+      expect(mockDb.tables.dealer_listings).toHaveLength(1);
+      expect(mockDb.tables.dealer_listings[0].posted_at).toBe('2026-10-10T14:00:00.000Z');
+      expect(mockDb.tables.dealer_listings[0].first_observed_at).toBe('2026-10-17T12:00:00.000Z');
+    });
+
+    it('falls back to first_seen_at (sweepTimestamp) when postedAt is null and never overwrites with last_observed_at', async () => {
+      const mockDb = createMockSupabase();
+      const listingWithoutDate: ParsedVehicleListing = {
+        ...baseListing,
+        listing: {
+          ...baseListing.listing,
+          sourceListingId: 'src-no-date-01',
+          postedAt: null,
+        },
+      };
+
+      // Initial sweep (first sighting)
+      await ingestDealerListings({
+        dealerId: mockDealerId,
+        sourceId: mockSourceId,
+        parsedListings: [listingWithoutDate],
+        sweepTimestamp: '2026-10-15T09:00:00.000Z',
+        supabaseClient: mockDb,
+      });
+
+      expect(mockDb.tables.dealer_listings[0].posted_at).toBe('2026-10-15T09:00:00.000Z');
+      expect(mockDb.tables.dealer_listings[0].first_observed_at).toBe('2026-10-15T09:00:00.000Z');
+
+      // Subsequent sweep 5 days later
+      await ingestDealerListings({
+        dealerId: mockDealerId,
+        sourceId: mockSourceId,
+        parsedListings: [listingWithoutDate],
+        sweepTimestamp: '2026-10-20T10:00:00.000Z',
+        supabaseClient: mockDb,
+      });
+
+      // posted_at must remain the initial sighting date (2026-10-15), NEVER updated_at or last_observed_at (2026-10-20)
+      expect(mockDb.tables.dealer_listings[0].posted_at).toBe('2026-10-15T09:00:00.000Z');
+      expect(mockDb.tables.dealer_listings[0].last_observed_at).toBe('2026-10-20T10:00:00.000Z');
+    });
+  });
 });

@@ -18,6 +18,8 @@ export interface VehicleListingCardProps {
   dealerProvince?: string | null;
   status: string; // e.g. "Advertised - availability unconfirmed", "Incoming availability unconfirmed"
   lastChecked: string;
+  postedAt?: string | null;
+  firstSeenAt?: string | null;
   vdpUrl?: string | null;
   msrp?: number | null;
   sellingPrice?: number | null;
@@ -208,6 +210,8 @@ export function VehicleListingCard({
   dealerProvince,
   status,
   lastChecked,
+  postedAt,
+  firstSeenAt,
   vdpUrl,
   msrp,
   sellingPrice,
@@ -265,26 +269,77 @@ export function VehicleListingCard({
     stockNumber,
   });
 
-  // Format check date if valid ISO
-  let formattedCheckTime = lastChecked;
+  // Check date staleness evaluation
   const now = Date.now();
   let hoursSinceCheck: number | null = null;
   try {
     const d = new Date(lastChecked);
     if (!isNaN(d.getTime())) {
       hoursSinceCheck = Math.floor((now - d.getTime()) / (3600 * 1000));
-      formattedCheckTime = d.toLocaleDateString('en-CA', {
-        month: 'short',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        timeZoneName: 'short',
-      });
     }
   } catch {
-    // Keep original string if date parsing fails
+    // Graceful fallback
   }
   const isNearingExpiration = hoursSinceCheck != null && hoursSinceCheck > 24;
+
+  // Format listing date (posted_at or first_seen_at) with hover tooltip
+  const effectivePostedDate = postedAt || firstSeenAt;
+  const detectionDateStr = firstSeenAt || postedAt || lastChecked;
+
+  let formattedDateDisplay = 'Recently listed';
+  let fullDetectionDate = '';
+  let dateTimeIso = effectivePostedDate || lastChecked;
+
+  try {
+    const detectD = new Date(detectionDateStr);
+    if (!isNaN(detectD.getTime())) {
+      fullDetectionDate = detectD.toLocaleDateString('en-CA', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    }
+
+    if (effectivePostedDate) {
+      const d = new Date(effectivePostedDate);
+      if (!isNaN(d.getTime())) {
+        dateTimeIso = d.toISOString();
+        const diffMs = now - d.getTime();
+        const diffDays = Math.floor(diffMs / (24 * 3600 * 1000));
+
+        if (postedAt) {
+          const month = d.toLocaleDateString('en-US', { month: 'short' });
+          const day = d.getDate();
+          formattedDateDisplay = `Listed ${month} ${day}`;
+        } else {
+          if (diffDays <= 0) {
+            formattedDateDisplay = 'Added today';
+          } else if (diffDays === 1) {
+            formattedDateDisplay = 'Added 1 day ago';
+          } else if (diffDays < 30) {
+            formattedDateDisplay = `Added ${diffDays} days ago`;
+          } else {
+            const month = d.toLocaleDateString('en-US', { month: 'short' });
+            const day = d.getDate();
+            formattedDateDisplay = `Listed ${month} ${day}`;
+          }
+        }
+      }
+    } else {
+      const d = new Date(lastChecked);
+      if (!isNaN(d.getTime())) {
+        const month = d.toLocaleDateString('en-US', { month: 'short' });
+        const day = d.getDate();
+        formattedDateDisplay = `Listed ${month} ${day}`;
+      }
+    }
+  } catch {
+    formattedDateDisplay = 'Recently listed';
+  }
+
+  const hoverTooltip = fullDetectionDate
+    ? `First detected on ${fullDetectionDate}`
+    : `First detected on ${formattedDateDisplay}`;
 
   return (
     <article
@@ -334,10 +389,10 @@ export function VehicleListingCard({
           ) : (
             <div
               className="flex items-center gap-1 text-[11px] text-zinc-400 font-mono shrink-0"
-              title={`Last verified on dealer feed: ${lastChecked}`}
+              title={hoverTooltip}
             >
               <Clock className="h-3 w-3 text-zinc-500" aria-hidden="true" />
-              <time dateTime={lastChecked}>{formattedCheckTime}</time>
+              <time dateTime={dateTimeIso}>{formattedDateDisplay}</time>
             </div>
           )}
         </div>

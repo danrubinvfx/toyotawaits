@@ -8,6 +8,13 @@ export interface LocationOption {
   label: string;
 }
 
+export type SortOption =
+  | 'newest'
+  | 'price_asc'
+  | 'price_desc'
+  | 'distance_asc'
+  | 'status';
+
 export interface FilterState {
   model: string;
   status: string;
@@ -20,6 +27,7 @@ export interface FilterState {
   userCoordinates?: { lat: number; lng: number } | null;
   maxDistance?: string; // e.g. "", "15", "30", "50"
   sortNearest?: boolean;
+  sortBy?: SortOption;
 }
 
 export interface InventoryFilterBarProps {
@@ -123,6 +131,7 @@ export function InventoryFilterBar({
       userCoordinates: coords,
       dealer: val,
       sortNearest: Boolean(val) ? true : (filters.sortNearest ?? false),
+      sortBy: Boolean(val) ? 'distance_asc' : (filters.sortBy || 'newest'),
     });
   };
 
@@ -134,9 +143,20 @@ export function InventoryFilterBar({
   };
 
   const handleSortNearestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
     onFilterChange({
       ...filters,
-      sortNearest: e.target.checked,
+      sortNearest: checked,
+      sortBy: checked ? 'distance_asc' : 'newest',
+    });
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value as SortOption;
+    onFilterChange({
+      ...filters,
+      sortBy: val,
+      sortNearest: val === 'distance_asc',
     });
   };
 
@@ -206,6 +226,7 @@ export function InventoryFilterBar({
       userCoordinates: null,
       maxDistance: '',
       sortNearest: false,
+      sortBy: 'newest',
       minPrice: '',
       maxPrice: '',
       search: '',
@@ -218,6 +239,7 @@ export function InventoryFilterBar({
     Boolean(filters.location || filters.dealer || filters.userCoordinates),
     Boolean(filters.maxDistance),
     Boolean(filters.minPrice || filters.maxPrice),
+    Boolean(filters.sortBy && filters.sortBy !== 'newest'),
   ].filter(Boolean).length;
 
   const hasActiveFilters = Boolean(
@@ -229,6 +251,7 @@ export function InventoryFilterBar({
       filters.maxDistance ||
       filters.minPrice ||
       filters.maxPrice ||
+      (filters.sortBy && filters.sortBy !== 'newest') ||
       filters.search
   );
 
@@ -308,13 +331,13 @@ export function InventoryFilterBar({
         )}
       </div>
 
-      {/* Collapsible Filter Tray: Compact 2-column on mobile, 4-column on desktop */}
+      {/* Collapsible Filter Tray: Compact 2-column on mobile, 5-column on desktop */}
       <div
         id="collapsible-filter-tray"
         data-testid="collapsible-filter-tray"
         className={`${isExpanded ? 'block' : 'hidden'} md:block pt-2.5 mt-2.5 border-t border-zinc-800/80`}
       >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
           {/* Column 1: Model */}
           <div className="space-y-1">
             <label htmlFor="filter-model" className="text-[11px] font-medium text-zinc-400 block">
@@ -423,7 +446,28 @@ export function InventoryFilterBar({
             </div>
           </div>
 
-          {/* Column 3: Status */}
+          {/* Column 3: Sort by */}
+          <div className="space-y-1">
+            <label htmlFor="filter-sort" className="text-[11px] font-medium text-zinc-400 block">
+              Sort by
+            </label>
+            <select
+              id="filter-sort"
+              data-testid="filter-sort-select"
+              aria-label="Sort inventory listings"
+              value={filters.sortBy || 'newest'}
+              onChange={handleSortChange}
+              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+            >
+              <option value="newest">Newest Listing (Dealer Posted Date)</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+              <option value="distance_asc">Distance: Closest First</option>
+              <option value="status">Lot Status (On Lot first, then In Transit)</option>
+            </select>
+          </div>
+
+          {/* Column 4: Status */}
           <div className="space-y-1">
             <label htmlFor="filter-status" className="text-[11px] font-medium text-zinc-400 block">
               Observed Status
