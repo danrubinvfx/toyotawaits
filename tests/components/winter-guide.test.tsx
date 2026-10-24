@@ -48,7 +48,7 @@ describe('WinterGuide Component', () => {
     // Product Titles & Benefits
     expect(screen.getByText(/NOCO Boost Plus GB40 \(or GBX45 for extreme cold\)/i)).toBeInTheDocument();
     expect(screen.getByText(/TuxMat Custom High-Wall Floor Liners \(RAV4\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Magnetic Door-Anchor Windshield Frost Guard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Windshield Cover/i)).toBeInTheDocument();
 
     // View on Amazon.ca buttons
     const amazonButtons = screen.getAllByRole('link', { name: /View on Amazon\.ca/i });

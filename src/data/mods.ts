@@ -33,7 +33,7 @@ export interface ModItem {
     | 'Battery & Emergency';
   categories?: ModCategory[];
   subCategory?: string;
-  badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick';
+  badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
   compatibility: string;
   fitment?: string;
   amazonCaAsinOrUrl: string;
@@ -890,19 +890,26 @@ export const MODS_CONFIG: ModItem[] = [
     models: ['all', 'rav4', 'grand-highlander', 'sienna', 'prius-prime', 'corolla', 'corolla-cross', 'tacoma'],
     category: 'Interior Protection',
     categories: ['Winter Prep'],
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
-    name: 'Magnetic Door-Anchor Windshield Frost Guard',
-    description: 'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper cowl cavity without contacting painted panels.',
+    title: 'Windshield Cover',
+    name: 'Windshield Cover',
+    description:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
     priceEst: 'Sub-zero glass protection',
     priceEstCad: 'Sub-zero glass protection',
-    whyBuy: 'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper cowl cavity without contacting painted panels.',
-    utilityNote: 'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper cowl cavity without contacting painted panels.',
+    whyBuy:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+    utilityNote:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
     image: '/images/accessories/crossbars-rav4.png',
-    asin: 'B08927GR5Z',
-    amazonCaAsinOrUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
-    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
     affiliateUrl: '/out/magnetic-door-anchor-windshield-frost-guard',
-    badge: 'Recommended',
+    searchQuery: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsCA: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsUS: 'windshield snow cover magnetic door flaps frost ice',
+    badge: 'Sub-zero glass protection',
     compatibility: 'Universal (Cars, SUVs, Trucks)',
   },
   {

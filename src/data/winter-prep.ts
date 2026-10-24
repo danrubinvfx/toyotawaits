@@ -121,10 +121,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Beam-style silicone winter wiper blades with anti-icing aerodynamic spoilers',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard',
+        title: 'Windshield Cover',
         benefit:
-          'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper cowl cavity without contacting painted panels.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+          'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
@@ -202,10 +202,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Heavy-duty beam winter wipers resistant to freezing spray and sub-zero tear',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard (SUV Wide)',
+        title: 'Windshield Cover (SUV Wide)',
         benefit:
           'Extra-wide coverage preventing freezing rain and heavy snow buildup inside the windshield wiper cowl cavity.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
@@ -282,10 +282,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Heavy-duty silicone wipers engineered to clear severe slush without streaking',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard',
+        title: 'Windshield Cover',
         benefit:
           'Secures against high blizzard winds with interior door flaps, keeping wipers flexible and cowl clear of packed snow.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
@@ -362,10 +362,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Low-drag beam-type all-weather silicone wiper blades rated for extreme sub-zero flexibility',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard',
+        title: 'Windshield Cover',
         benefit:
           'Aero-fit front windshield guard that prevents ice buildup on wipers and eliminates early morning scraping.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
@@ -443,10 +443,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Direct-fit winter beam wiper blades with anti-icing rubber boots preventing cowl freeze-up',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard',
+        title: 'Windshield Cover',
         benefit:
           'Protects compact SUV glass and wiper cowl from overnight freezing rain glaze and ice pack.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },
@@ -524,10 +524,10 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
       wiperSpecs:
         'Heavy-duty silicone winter wipers engineered for sub-zero icing and highway wind lift resistance',
       product: {
-        title: 'Magnetic Door-Anchor Windshield Frost Guard (Truck/SUV)',
+        title: 'Windshield Cover (Truck/SUV)',
         benefit:
           'Heavy-duty windshield and wiper cowl cover anchored securely through cab doors against blizzard gusts.',
-        url: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
         slug: 'magnetic-door-anchor-windshield-frost-guard',
         badge: 'Recommended',
       },

@@ -646,15 +646,27 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   },
   'magnetic-door-anchor-windshield-frost-guard': {
     slug: 'magnetic-door-anchor-windshield-frost-guard',
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
-    searchKeywordsCA: 'windshield snow frost cover magnetic door anchor',
-    searchKeywordsUS: 'windshield snow frost cover magnetic door anchor',
+    title: 'Windshield Cover',
+    badge: 'Sub-zero glass protection',
+    description:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+    whyBuy:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+    searchQuery: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsCA: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsUS: 'windshield snow cover magnetic door flaps frost ice',
   },
   'windshield-frost-guard': {
     slug: 'windshield-frost-guard',
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
-    searchKeywordsCA: 'windshield snow frost cover magnetic door anchor',
-    searchKeywordsUS: 'windshield snow frost cover magnetic door anchor',
+    title: 'Windshield Cover',
+    badge: 'Sub-zero glass protection',
+    description:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+    whyBuy:
+      'Multi-layer ice barrier with anti-theft door flap anchors that shields glass and wiper blades from freezing rain and heavy snow.',
+    searchQuery: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsCA: 'windshield snow cover magnetic door flaps frost ice',
+    searchKeywordsUS: 'windshield snow cover magnetic door flaps frost ice',
   },
   'fitcamx-corolla': {
     slug: 'fitcamx-corolla',

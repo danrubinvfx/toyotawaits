@@ -651,8 +651,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'windshield-frost-guard': {
     id: 'f3000003-0003-4003-8003-000000000003',
     slug: 'windshield-frost-guard',
-    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
+    title: 'Windshield Cover',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
@@ -660,8 +660,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'magnetic-door-anchor-windshield-frost-guard': {
     id: 'f3000008-0008-4008-8008-000000000008',
     slug: 'magnetic-door-anchor-windshield-frost-guard',
-    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
+    title: 'Windshield Cover',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
@@ -669,8 +669,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'magnetic-door-anchor-frost-guard': {
     id: 'f3000009-0009-4009-8009-000000000009',
     slug: 'magnetic-door-anchor-frost-guard',
-    destinationUrl: 'https://www.amazon.ca/s?k=magnetic+door+anchor+windshield+frost+guard+snow+cover&tag=toyotawaits-20',
-    title: 'Magnetic Door-Anchor Windshield Frost Guard',
+    destinationUrl: 'https://www.amazon.ca/s?k=windshield+snow+cover+magnetic+door+flaps+frost+ice&tag=toyotawaits-20',
+    title: 'Windshield Cover',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
