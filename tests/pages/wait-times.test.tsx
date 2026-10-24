@@ -14,9 +14,9 @@ vi.mock('@/context/MarketContext', () => ({
 }));
 
 describe('Dedicated SEO Route: /wait-times/[model]', () => {
-  it('generates static params for all 12 registered Canadian vehicle models', async () => {
+  it('generates static params for all 13 registered Canadian vehicle models', async () => {
     const params = await generateStaticParams();
-    expect(params.length).toBe(12);
+    expect(params.length).toBe(Object.keys(MODEL_REGISTRY).length);
     expect(params.some((p) => p.model === 'rav4')).toBe(true);
     expect(params.some((p) => p.model === 'sienna')).toBe(true);
     expect(params.some((p) => p.model === 'grand-highlander')).toBe(true);
@@ -29,6 +29,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(params.some((p) => p.model === 'land-cruiser')).toBe(true);
     expect(params.some((p) => p.model === '4runner')).toBe(true);
     expect(params.some((p) => p.model === 'sequoia')).toBe(true);
+    expect(params.some((p) => p.model === 'crown-signia')).toBe(true);
   });
 
   it('generates high-intent dynamic metadata with canonical URL and 2026 tracker copy', async () => {
