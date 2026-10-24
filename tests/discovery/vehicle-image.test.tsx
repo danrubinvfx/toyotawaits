@@ -62,6 +62,7 @@ describe('VehicleImage Component (3-Tier Fallback)', () => {
 
     const badge = screen.getByTestId('vehicle-image-badge');
     expect(badge).toHaveTextContent('Dealer Unit Photo');
+    expect(badge).toHaveClass('text-emerald-400');
   });
 
   it('defaults to Tier 2 factory trim render when hasRealPhoto=false', () => {
@@ -84,6 +85,7 @@ describe('VehicleImage Component (3-Tier Fallback)', () => {
 
     const badge = screen.getByTestId('vehicle-image-badge');
     expect(badge).toHaveTextContent('Factory Trim Render');
+    expect(badge).toHaveClass('text-sky-400');
   });
 
   it('downgrades Tier 1 to Tier 2 and then Tier 3 on consecutive image load errors', () => {
@@ -115,7 +117,33 @@ describe('VehicleImage Component (3-Tier Fallback)', () => {
     expect(container).toHaveAttribute('data-tier', '3');
     const tier3Img = screen.getByRole('img', { name: '2026 Toyota Sienna Limited' });
     expect(tier3Img).toHaveAttribute('src', '/assets/placeholder-silhouette.svg');
-    expect(screen.queryByTestId('vehicle-image-badge')).not.toBeInTheDocument();
+    const tier3Badge = screen.getByTestId('vehicle-image-badge');
+    expect(tier3Badge).toHaveTextContent('Specification Preview');
+    expect(tier3Badge).toHaveClass('text-zinc-400');
+  });
+
+  it('defaults to Tier 2 factory trim render for In-Transit units even with unconfirmed dealer photo', () => {
+    render(
+      <VehicleImage
+        imageUrl="https://pictures.dealerprocess.ca/inventory/placeholder.jpg"
+        hasRealPhoto={true}
+        isInTransit={true}
+        model="Grand Highlander"
+        trim="Limited"
+        modelYear={2026}
+        alt="2026 Toyota Grand Highlander Limited"
+      />
+    );
+
+    const container = screen.getByTestId('vehicle-image-container');
+    expect(container).toHaveAttribute('data-tier', '2');
+
+    const img = screen.getByRole('img', { name: '2026 Toyota Grand Highlander Limited' });
+    expect(img).toHaveAttribute('src', '/assets/models/2026/grand-highlander-limited.webp');
+
+    const badge = screen.getByTestId('vehicle-image-badge');
+    expect(badge).toHaveTextContent('Factory Trim Render');
+    expect(badge).toHaveClass('text-sky-400');
   });
 });
 

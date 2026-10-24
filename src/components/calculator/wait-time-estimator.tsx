@@ -324,6 +324,7 @@ export function WaitTimeEstimator({
   }, [depositDate]);
 
   // Contextual inventory model mapping and active count lookup
+  const activeModel = modelSlug;
   const inventoryModelName = useMemo(() => {
     return getEstimatorInventoryModelName(modelSlug, powertrainSlug);
   }, [modelSlug, powertrainSlug]);
@@ -1067,7 +1068,7 @@ export function WaitTimeEstimator({
                     {medianDays >= 180 && (
                       <div
                         data-testid="estimator-inventory-bridge-pill"
-                        className="flex items-center justify-between gap-3 rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 text-xs shadow-xs"
+                        className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 text-xs"
                       >
                         <div className="flex flex-col gap-0.5">
                           <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-sky-400">
@@ -1080,7 +1081,7 @@ export function WaitTimeEstimator({
                         <Link
                           data-testid="estimator-bridge-view-stock-btn"
                           className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-sky-500 px-3 py-1.5 font-bold text-zinc-950 shadow-sm transition hover:bg-sky-400 active:scale-95"
-                          href={`/inventory?model=${encodeURIComponent(inventoryModelName || currentModel.name || modelSlug)}`}
+                          href={`/inventory?model=${encodeURIComponent(activeModel)}`}
                         >
                           View Stock ↗
                         </Link>

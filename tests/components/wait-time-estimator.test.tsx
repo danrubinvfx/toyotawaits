@@ -965,6 +965,41 @@ describe('WaitTimeEstimator Component', () => {
     expect(link).toHaveAttribute('href', '/inventory');
   });
 
+  it('renders "Skip the wait? View Stock ↗" bridge pill when median wait >= 180 days and links to /inventory?model=sienna', async () => {
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'sienna',
+            modelName: 'Sienna',
+            powertrainSlug: 'hev',
+            province: 'BC',
+            sampleCounts: { total: 15, delivered: 12, pending: 3 },
+            waitStats: { p25: 180, median: 240, p75: 360, mean: 250, min: 120, max: 450 },
+          },
+          countsByModel: {},
+        }),
+      })
+    );
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(<WaitTimeEstimator initialModel="sienna" initialPowertrain="hev" initialProvince="BC" />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('estimator-inventory-bridge-pill')).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/⚡ Skip the wait\?/i)).toBeInTheDocument();
+    expect(screen.getByText(/Explore live unreserved units and incoming allocations observed across Lower Mainland dealers\./i)).toBeInTheDocument();
+
+    const stockBtn = screen.getByTestId('estimator-bridge-view-stock-btn');
+    expect(stockBtn).toHaveTextContent(/View Stock ↗/i);
+    expect(stockBtn).toHaveAttribute('href', '/inventory?model=sienna');
+  });
+
   it('does NOT render live stock callout when user is viewing US wait times', async () => {
     const fetchMock = vi.fn().mockImplementation(() =>
       Promise.resolve({

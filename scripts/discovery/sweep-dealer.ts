@@ -847,14 +847,30 @@ async function main() {
   for (let i = 0; i < targetDealers.length; i++) {
     const dealer = targetDealers[i];
 
-    // Execute isolated sweep
-    const result = await sweepSingleDealer(dealer, {
-      dryRun,
-      useFixture,
-      supabase,
-      isServiceKeyConfigured,
-    });
-    results.push(result);
+    // Execute isolated sweep with store-level error isolation
+    try {
+      const result = await sweepSingleDealer(dealer, {
+        dryRun,
+        useFixture,
+        supabase,
+        isServiceKeyConfigured,
+      });
+      results.push(result);
+    } catch (storeErr) {
+      console.error('  [STORE-LEVEL FAILURE] ' + dealer.dealerName + ' threw error:', storeErr?.message || storeErr);
+      results.push({
+        dealerCode: dealer.dealerCode,
+        dealerName: dealer.dealerName,
+        success: false,
+        totalParsed: 0,
+        quarantinedCount: 0,
+        listingsCreated: 0,
+        listingsUpdated: 0,
+        observationsStored: 0,
+        durationMs: 0,
+        errorMessage: storeErr?.message || String(storeErr),
+      });
+    }
 
     // Polite delay between distinct dealerships
     if (i < targetDealers.length - 1) {
@@ -903,12 +919,13 @@ async function main() {
   if (!isServiceKeyConfigured && !dryRun) {
     console.log(`SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets`);
     console.log(`Validated ${totalValidUnits} total public inventory records across ${targetDealers.length} dealers.`);
-    return;
+    process.exit(0);
   }
 
   if (hasFailure && !runAllDealers) {
-    process.exitCode = 1;
+    process.exit(1);
   }
+  process.exit(0);
 }
 
 main().catch((err) => {

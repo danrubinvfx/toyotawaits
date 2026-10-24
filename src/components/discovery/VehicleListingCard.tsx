@@ -491,6 +491,8 @@ export function VehicleListingCard({
             modelYear={modelYear}
             model={model}
             trim={trim}
+            isInTransit={isIncoming}
+            status={status}
             alt={`${modelYear} ${make} ${model} ${trim || ''}`.trim()}
           />
           <div

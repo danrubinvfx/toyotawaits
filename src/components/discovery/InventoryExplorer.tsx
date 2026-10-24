@@ -335,13 +335,18 @@ export function InventoryExplorer({
     setVisibleCount(PAGE_SIZE);
   };
 
-  // Keep filter in sync if queryModel or searchParams update
+  // Keep filter in sync if queryModel or searchParams update (case-insensitively normalizing e.g. 'sienna' -> 'Sienna')
   useEffect(() => {
-    if (queryModel && filters.model !== queryModel) {
-      setFilters((prev) => ({ ...prev, model: queryModel }));
+    if (!queryModel) return;
+    const matched = listings.find(
+      (l) => l.model.toLowerCase() === queryModel.toLowerCase()
+    );
+    const targetModel = matched ? matched.model : queryModel;
+    if (filters.model !== targetModel) {
+      setFilters((prev) => ({ ...prev, model: targetModel }));
       setVisibleCount(PAGE_SIZE);
     }
-  }, [queryModel]);
+  }, [queryModel, listings, filters.model]);
 
   const availableModels = useMemo(() => {
     const set = new Set<string>();
