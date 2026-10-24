@@ -201,3 +201,42 @@ export function sanitizeAmazonAffiliateUrl(
 
   return url;
 }
+
+
+export interface BuildAmazonAffiliateUrlParams {
+  query?: string;
+  asin?: string;
+  market?: 'CA' | 'US';
+  isUs?: boolean;
+  slug?: string;
+}
+
+/**
+ * Builds standard Amazon affiliate URL with market domain and associate tag routing.
+ * US: amazon.com with tag 'toyotawaits07-20'
+ * CA: amazon.ca with tag 'toyotawaits-20' (or special tag for Prius guides)
+ */
+export function buildAmazonAffiliateUrl(
+  paramsOrQuery: BuildAmazonAffiliateUrlParams | string,
+  tagOrMarket?: string,
+  marketFallback: 'CA' | 'US' = 'CA'
+): string {
+  if (typeof paramsOrQuery === 'string') {
+    const isUs = tagOrMarket === 'US' || marketFallback === 'US';
+    const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+    const tag = getAssociateTag(isUs ? 'US' : 'CA');
+    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
+  }
+
+  const isUs = paramsOrQuery.market === 'US' || paramsOrQuery.isUs === true;
+  const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+  const tag = getAssociateTag(isUs ? 'US' : 'CA', paramsOrQuery.slug);
+
+  if (paramsOrQuery.asin) {
+    return `${domain}/dp/${paramsOrQuery.asin}?tag=${tag}`;
+  }
+  if (paramsOrQuery.query) {
+    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery.query)}&tag=${tag}`;
+  }
+  return `${domain}/?tag=${tag}`;
+}

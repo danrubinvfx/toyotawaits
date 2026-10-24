@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
+import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
+import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -10,9 +12,9 @@ export const revalidate = 3600; // 1 hour ISR
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Grand Highlander Hybrid Savings Calculator | ToyotaWaits',
+  title: '2025 Toyota Grand Highlander Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
   description:
-    'Calculate real-world Canadian fuel savings comparing the 2025 Toyota Grand Highlander Hybrid (7.0 L/100km) against an 11.5 L/100km 3-row gas SUV baseline.',
+    'Compare Toyota Grand Highlander Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   keywords: [
     'toyota grand highlander hybrid fuel savings',
     'grand highlander hybrid vs gas suv canada',
@@ -24,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/grand-highlander',
   },
   openGraph: {
-    title: 'Toyota Grand Highlander Hybrid Savings Calculator | ToyotaWaits',
+    title: '2025 Toyota Grand Highlander Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2025 Toyota Grand Highlander Hybrid (7.0 L/100km) against an 11.5 L/100km 3-row gas SUV with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota Grand Highlander Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
     url: 'https://toyotawaits.ca/calculator/grand-highlander',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -34,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Grand Highlander Hybrid Savings Calculator | ToyotaWaits',
+    title: '2025 Toyota Grand Highlander Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2025 Toyota Grand Highlander Hybrid (7.0 L/100km) against an 11.5 L/100km 3-row gas SUV with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota Grand Highlander Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   },
 };
 
@@ -62,14 +64,21 @@ export default function GrandHighlanderCalculatorPage() {
           </div>
         </div>
 
+        {/* News Wire Announcement Ticker */}
+        <CalculatorNewsWire activeModel="grand-highlander" />
+
         {/* Client-Side Interactive Calculator with Pre-seeded Grand Highlander Hybrid */}
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator
             initialTargetPresetId="2025-toyota-grand-highlander-hybrid"
-            initialCurrentMode="CUSTOM"
-            initialCustomL100km={11.5}
+            initialCurrentArchetypeId="archetype-compact-crossover-awd"
           />
         </section>
+
+        {/* Recommended Products */}
+        <div className="pt-2 sm:pt-4">
+          <CalculatorGearCards activeModel="grand-highlander" />
+        </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">
@@ -103,7 +112,7 @@ export default function GrandHighlanderCalculatorPage() {
                     Waiting Opportunity Cost
                   </div>
                   <p className="text-xs">
-                    High Canadian demand for 3-row family hybrids creates extended wait periods. Calculate the fuel cost of waiting for your Grand Highlander Hybrid delivery.
+                    Calculates the extra energy costs incurred while driving your existing vehicle during the verified Canadian wait period for Grand Highlander Hybrid delivery.
                   </p>
                 </div>
 
@@ -113,7 +122,7 @@ export default function GrandHighlanderCalculatorPage() {
                     Shareable Hash Permalinks
                   </div>
                   <p className="text-xs">
-                    All inputs are preserved directly in the URL hash (<code className="text-zinc-800 dark:text-zinc-200 font-mono">#c=...</code>) for bookmarking and easy sharing without tracking cookies.
+                    Custom driving distances, gas prices, and trade-in outlays are saved directly into your URL hash (<code className="text-zinc-800 dark:text-zinc-200 font-mono">#c=...</code>) for instant bookmarking without server tracking.
                   </p>
                 </div>
               </div>

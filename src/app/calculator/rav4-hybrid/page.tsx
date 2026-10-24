@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
+import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
+import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -10,9 +12,9 @@ export const revalidate = 3600; // 1 hour ISR
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+  title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
   description:
-    'Calculate real-world Canadian fuel savings and break-even payback comparing the 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover.',
+    'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   keywords: [
     'toyota rav4 hybrid fuel savings',
     'rav4 hybrid vs gas savings canada',
@@ -24,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/rav4-hybrid',
   },
   openGraph: {
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
     url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -34,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   },
 };
 
@@ -62,6 +64,9 @@ export default function Rav4HybridCalculatorPage() {
           </div>
         </div>
 
+        {/* News Wire Announcement Ticker */}
+        <CalculatorNewsWire activeModel="rav4" />
+
         {/* Client-Side Interactive Calculator with Pre-seeded RAV4 Hybrid */}
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator
@@ -69,6 +74,11 @@ export default function Rav4HybridCalculatorPage() {
             initialCurrentArchetypeId="archetype-compact-crossover-awd"
           />
         </section>
+
+        {/* Recommended Products */}
+        <div className="pt-2 sm:pt-4">
+          <CalculatorGearCards activeModel="rav4" />
+        </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}
         <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">

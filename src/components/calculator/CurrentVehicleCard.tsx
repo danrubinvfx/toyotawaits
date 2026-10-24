@@ -34,11 +34,11 @@ export function CurrentVehicleCard({
       : currentVehicle.customL100km;
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
-      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-1.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
-            <Car className="w-4 h-4 text-zinc-700 dark:text-zinc-300" />
+          <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
+            <Car className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-700 dark:text-zinc-300" />
             Current Vehicle Baseline
           </CardTitle>
           <Badge variant="outline" className="text-[10px] font-mono font-medium py-0">
@@ -47,12 +47,60 @@ export function CurrentVehicleCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-3">
-        {/* Compact Mode Toggle Tabs */}
+      <CardContent className="p-0 pt-1.5 sm:pt-3 space-y-1.5 sm:space-y-3">
+        {/* Mobile Inline Segmented Buttons (Row 2) */}
+        <div className="sm:hidden grid grid-cols-4 gap-1 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-compact-crossover-awd' })}
+            className={`text-[10px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-compact-crossover-awd'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Crossover 25' : 'Crossover 9.5L'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-sedan-gas' })}
+            className={`text-[10px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-sedan-gas'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Sedan 30' : 'Sedan 8.2L'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-truck-gas' })}
+            className={`text-[10px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-truck-gas'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Truck 18' : 'Truck 13.5L'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'CUSTOM' })}
+            className={`text-[10px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'CUSTOM'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            Custom
+          </button>
+        </div>
+
+        {/* Desktop Mode Toggle Tabs */}
         <div
           role="tablist"
           aria-label="Current vehicle input mode"
-          className="grid grid-cols-2 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg gap-1"
+          className="hidden sm:grid grid-cols-2 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg gap-1"
         >
           <button
             type="button"
@@ -84,9 +132,9 @@ export function CurrentVehicleCard({
           </button>
         </div>
 
-        {/* Option 1: Segmented Archetype Chips (2-column micro-grid) */}
+        {/* Option 1: Segmented Archetype Chips (2-column micro-grid on desktop) */}
         {currentVehicle.mode === 'ARCHETYPE' && (
-          <div className="grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
+          <div className="hidden sm:grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
             {TRADE_IN_ARCHETYPES.map((archetype) => {
               const isSelected = currentVehicle.archetypeId === archetype.id;
               const cleanName = archetype.name.replace('Trade-in Archetype: ', '');
@@ -129,9 +177,9 @@ export function CurrentVehicleCard({
 
         {/* Option 2: Custom Fuel Economy Single Row */}
         {currentVehicle.mode === 'CUSTOM' && (
-          <div className="space-y-2 pt-1">
+          <div className="space-y-1.5 sm:space-y-2 pt-0.5 sm:pt-1">
             <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1.5 w-24 shrink-0">
+              <div className="flex items-center gap-1 sm:gap-1.5 sm:w-24 shrink-0">
                 <Fuel className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400 shrink-0" />
                 <Label htmlFor="custom-l100km-input" className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 cursor-pointer">
                   {isImp ? 'MPG' : 'Consumption'}
@@ -150,7 +198,7 @@ export function CurrentVehicleCard({
                   className="w-full h-1.5 accent-zinc-800 dark:accent-zinc-200 cursor-pointer"
                 />
               </div>
-              <div className="w-20 shrink-0">
+              <div className="w-16 sm:w-20 shrink-0">
                 <Input
                   id="custom-l100km-input"
                   aria-label={isImp ? "Custom vehicle fuel economy in MPG" : "Custom fuel consumption in litres per 100 kilometers"}
@@ -165,13 +213,13 @@ export function CurrentVehicleCard({
                       onChange({ customL100km: val });
                     }
                   }}
-                  className="w-20 h-8 min-h-[44px] sm:min-h-0 text-sm text-right font-mono font-semibold px-2 py-1"
+                  className="w-16 sm:w-20 h-7 sm:h-8 min-h-0 text-xs sm:text-sm text-right font-mono font-semibold px-2 py-0.5 sm:py-1"
                 />
               </div>
             </div>
 
             {/* Micro-pills */}
-            <div className="flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Typical benchmark presets">
+            <div className="hidden sm:flex items-center justify-end gap-1 pt-0.5" role="group" aria-label="Typical benchmark presets">
               {(isImp
                 ? [
                     { label: 'Compact (31 MPG)', val: 31 },

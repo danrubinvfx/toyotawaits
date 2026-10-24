@@ -1,4 +1,5 @@
 import React from 'react';
+import { CalculatorProvider } from '@/context/CalculatorContext';
 
 export default function CalculatorLayout({
   children,
@@ -23,12 +24,12 @@ export default function CalculatorLayout({
   };
 
   return (
-    <>
+    <CalculatorProvider>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {children}
-    </>
+    </CalculatorProvider>
   );
 }
