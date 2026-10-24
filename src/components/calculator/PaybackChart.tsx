@@ -137,7 +137,7 @@ export function PaybackChart({
 
   return (
     <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm ${className ?? ''}`}>
-      <CardHeader className="px-2.5 py-1.5 sm:px-4 sm:py-3 pb-1.5 sm:pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
+      <CardHeader className="px-2 py-1 sm:px-4 sm:py-3 pb-1 sm:pb-2 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-1.5">
           <div className="flex items-center gap-1.5 sm:gap-2">
             <div className="p-1 sm:p-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 shrink-0">
@@ -176,20 +176,21 @@ export function PaybackChart({
         </div>
       </CardHeader>
 
-      <CardContent className="p-1.5 sm:p-4 pt-1 sm:pt-2.5 space-y-1.5 sm:space-y-2.5">
+      <CardContent className="p-1 sm:p-4 pt-1 sm:pt-2.5 space-y-1 sm:space-y-2.5">
         {/* Chart View */}
-        <div className="w-full h-[155px] sm:h-[260px] rounded-lg bg-zinc-950 border border-zinc-800 p-1 sm:p-2 pt-1.5 sm:pt-3">
+        <div className="w-full h-[145px] sm:h-[240px] rounded-lg bg-zinc-950 border border-zinc-800 p-0 sm:p-2 pt-1 sm:pt-3">
           {isMounted ? (
-            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 155 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 145 }}>
               <LineChart
                 data={points}
-                margin={{ top: 8, right: 12, left: -10, bottom: 0 }}
+                margin={{ top: 6, right: 8, left: -16, bottom: 0 }}
               >
                 <CartesianGrid stroke="#27272a" strokeDasharray="3 3" />
                 <XAxis
                   dataKey="year"
                   stroke="#71717a"
                   fontSize={10}
+                  tickLine={false}
                   tickFormatter={formatXAxis}
                   type="number"
                   domain={[0, 7]}
@@ -198,6 +199,7 @@ export function PaybackChart({
                 <YAxis
                   stroke="#71717a"
                   fontSize={10}
+                  tickLine={false}
                   tickFormatter={formatYAxis}
                 />
                 <Tooltip

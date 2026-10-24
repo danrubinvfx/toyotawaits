@@ -34,7 +34,7 @@ export function CurrentVehicleCard({
       : currentVehicle.customL100km;
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2 sm:p-4 ${className ?? ''}`}>
       <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-2 text-zinc-900 dark:text-zinc-100">
@@ -48,11 +48,59 @@ export function CurrentVehicleCard({
       </CardHeader>
 
       <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-3">
-        {/* Compact Mode Toggle Tabs */}
+        {/* Mobile Inline Segmented Buttons (Row 2) */}
+        <div className="sm:hidden grid grid-cols-4 gap-1 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-compact-crossover-awd' })}
+            className={`text-[11px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-compact-crossover-awd'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Crossover (25)' : 'Crossover (9.5L)'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-sedan-gas' })}
+            className={`text-[11px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-sedan-gas'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Sedan (30)' : 'Sedan (8.2L)'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'ARCHETYPE', archetypeId: 'archetype-truck-gas' })}
+            className={`text-[11px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'ARCHETYPE' && currentVehicle.archetypeId === 'archetype-truck-gas'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            {isImp ? 'Truck (18)' : 'Truck (13.5L)'}
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange({ mode: 'CUSTOM' })}
+            className={`text-[11px] py-1 px-1 rounded-md font-medium transition-all text-center truncate ${
+              currentVehicle.mode === 'CUSTOM'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-semibold shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900'
+            }`}
+          >
+            Custom
+          </button>
+        </div>
+
+        {/* Desktop Mode Toggle Tabs */}
         <div
           role="tablist"
           aria-label="Current vehicle input mode"
-          className="grid grid-cols-2 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg gap-1"
+          className="hidden sm:grid grid-cols-2 p-0.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg gap-1"
         >
           <button
             type="button"
@@ -86,7 +134,7 @@ export function CurrentVehicleCard({
 
         {/* Option 1: Segmented Archetype Chips (2-column micro-grid) */}
         {currentVehicle.mode === 'ARCHETYPE' && (
-          <div className="grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
+          <div className="hidden sm:grid grid-cols-2 gap-1.5" role="radiogroup" aria-label="Vehicle archetype choices">
             {TRADE_IN_ARCHETYPES.map((archetype) => {
               const isSelected = currentVehicle.archetypeId === archetype.id;
               const cleanName = archetype.name.replace('Trade-in Archetype: ', '');

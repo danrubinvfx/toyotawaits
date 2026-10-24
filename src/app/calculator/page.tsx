@@ -98,7 +98,7 @@ export default function CalculatorPage() {
           </div>
         </div>
 
-        {/* News Wire Ticker directly underneath the header */}
+        {/* News Wire Ticker below interactive cockpit */}
         <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40">
           <ActivityTicker initialData={CALCULATOR_NEWS_ITEMS} />
         </div>

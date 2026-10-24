@@ -108,7 +108,7 @@ export function TargetVehicleCard({
       : 'NRCAN VERIFIED';
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2.5 sm:p-4 ${className ?? ''}`}>
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2 sm:p-4 ${className ?? ''}`}>
       <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
@@ -134,7 +134,7 @@ export function TargetVehicleCard({
             id="target-vehicle-select"
             value={targetVehicle.presetId}
             onChange={(e) => handleVehicleSelect(e.target.value)}
-            className="w-full bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-10 truncate"
+            className="w-full h-9 bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-2.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-8 truncate"
           >
             {VEHICLE_OPTIONS.map((option) => (
               <option key={option.presetId} value={option.presetId}>

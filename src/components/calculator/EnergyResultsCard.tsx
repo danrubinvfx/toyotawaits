@@ -37,9 +37,20 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
   const isImperial = results.unitSystem === 'IMPERIAL';
 
   return (
-    <Card className={`border-2 border-red-500/20 dark:border-red-500/30 overflow-hidden shadow-lg ${className ?? ''}`}>
+    <Card className={`border border-red-500/20 sm:border-2 sm:border-red-500/20 dark:border-red-500/30 overflow-hidden shadow-xs sm:shadow-lg ${className ?? ''}`}>
       {/* Top Banner: Strict label & Dense Layout */}
-      <div className="bg-red-600 dark:bg-red-700 px-3 sm:px-4 py-1.5 sm:py-3 text-white">
+      {/* Mobile-Only High-Density Pill Ribbon */}
+      <div className="sm:hidden flex items-center justify-between px-3 py-1.5 h-9 bg-red-600/15 border-b border-red-500/30 text-xs font-semibold text-red-200">
+        <span>
+          {isPositiveSavings ? '' : '-'}${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} {currency}/yr savings
+        </span>
+        <span className="text-[11px] text-red-300 font-mono">
+          {isPositiveSavings ? '+' : '-'}${Math.abs(results.monthlySavings).toFixed(0)}/mo • {isPositiveSavings ? '-' : '+'}{results.savingsPercent.toFixed(1)}% spend
+        </span>
+      </div>
+
+      {/* Desktop Banner: Strict label & Dense Layout */}
+      <div className="hidden sm:block bg-red-600 dark:bg-red-700 px-3 sm:px-4 py-1.5 sm:py-3 text-white">
         <div className="flex flex-col gap-0.5 sm:gap-2">
           <div className="flex items-center justify-between gap-2">
             <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-red-100">

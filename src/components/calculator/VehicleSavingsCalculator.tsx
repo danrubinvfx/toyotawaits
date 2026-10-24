@@ -54,9 +54,9 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
   const isTargetPhev = targetVehicle.powertrain === 'PHEV';
 
   return (
-    <div className="w-full space-y-4 sm:space-y-6">
+    <div className="w-full space-y-2 sm:space-y-6">
       {/* Top Controls Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+      <div className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 pb-1.5 sm:pb-2 border-b border-zinc-200 dark:border-zinc-800">
         <div>
           <span className="text-[10px] sm:text-xs uppercase font-bold tracking-wider text-red-600 dark:text-red-500 block">
             Interactive Calculator
@@ -114,9 +114,9 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       )}
 
       {/* Main 2-Column Desktop Grid (Left: Visuals & Projections, Right: Inputs) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-5 items-start">
         {/* Left Column (7 cols): Interactive Graph on top, Annual Projections underneath */}
-        <div className="lg:col-span-7 flex flex-col gap-4">
+        <div className="lg:col-span-7 flex flex-col gap-2 sm:gap-4">
           {results.timelineResult ? (
             <PaybackChart
               timeline={results.timelineResult}
@@ -153,7 +153,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
 
         {/* Right Column (5 cols): User inputs stacked cleanly (Target Toyota -> Current Baseline -> Driving Inputs) */}
-        <div className="lg:col-span-5 flex flex-col gap-3.5">
+        <div className="lg:col-span-5 flex flex-col gap-2 sm:gap-3.5">
           {/* 1. Target Toyota Selection */}
           {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
             <TargetVehicleCard
