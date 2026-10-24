@@ -169,18 +169,32 @@ export function injectActiveModelIntoQuery(
 /**
  * Sanitizes and applies the standard Associate tag to an existing Amazon URL.
  * Enforces toyotawaits07-20 (US) or toyotawaits-20 (CA).
+ * Also un-wraps any Google search wrapper if present.
  */
 export function sanitizeAmazonAffiliateUrl(
   url: string,
   marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA',
   slug?: string
 ): string {
+  let cleanUrl = url;
+  if (cleanUrl.includes('google.com/search')) {
+    try {
+      const parsedGoogle = new URL(cleanUrl);
+      const q = parsedGoogle.searchParams.get('q');
+      if (q && (q.startsWith('http://') || q.startsWith('https://'))) {
+        cleanUrl = q;
+      }
+    } catch {
+      // ignore parsing error
+    }
+  }
+
   const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
   const targetTag = getAssociateTag(marketOrIsUs, slug);
   const targetDomain = isUs ? 'www.amazon.com' : 'www.amazon.ca';
 
   try {
-    const parsed = new URL(url);
+    const parsed = new URL(cleanUrl);
     if (parsed.hostname.includes('amazon.')) {
       parsed.hostname = targetDomain;
       parsed.searchParams.set('tag', targetTag);
@@ -188,7 +202,7 @@ export function sanitizeAmazonAffiliateUrl(
     }
   } catch {
     // If not a valid parseable URL, perform safe string substitutions
-    let result = url;
+    let result = cleanUrl;
     if (isUs) {
       result = result.replace(/amazon\.ca/g, 'amazon.com');
       result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
@@ -199,14 +213,15 @@ export function sanitizeAmazonAffiliateUrl(
     return result;
   }
 
-  return url;
+  return cleanUrl;
 }
-
 
 export interface BuildAmazonAffiliateUrlParams {
   query?: string;
   searchQuery?: string;
   asin?: string;
+  asin_ca?: string;
+  asin_us?: string;
   market?: 'CA' | 'US';
   isUs?: boolean;
   slug?: string;
@@ -232,18 +247,18 @@ export function buildAmazonAffiliateUrl(
   const isUs = paramsOrQuery.market === 'US' || paramsOrQuery.isUs === true;
   const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
   const tag = getAssociateTag(isUs ? 'US' : 'CA', paramsOrQuery.slug);
-  const effectiveQuery = paramsOrQuery.searchQuery || paramsOrQuery.query;
+  const effectiveQuery = paramsOrQuery.searchQuery || paramsOrQuery.query || 'Toyota accessories';
+
+  const activeAsin = isUs
+    ? (paramsOrQuery.asin_us || paramsOrQuery.asin)
+    : (paramsOrQuery.asin_ca || paramsOrQuery.asin);
 
   // Validate ASIN: Must be 10 alphanumeric characters
-  const cleanAsin = paramsOrQuery.asin?.trim().toUpperCase();
+  const cleanAsin = activeAsin?.trim().toUpperCase();
   if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
     return `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
 
   // Fallback cleanly to search query if ASIN is missing or invalid
-  if (effectiveQuery && effectiveQuery.trim().length > 0) {
-    return `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}&tag=${tag}`;
-  }
-
-  return `${domain}/?tag=${tag}`;
+  return `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}&tag=${tag}`;
 }

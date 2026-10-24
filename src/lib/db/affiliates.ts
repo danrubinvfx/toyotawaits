@@ -105,7 +105,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'bridgestone-blizzak': {
     id: 'f9999999-9999-4999-8999-999999999999',
     slug: 'bridgestone-blizzak',
-    destinationUrl: 'https://www.quattrotires.com/tires/bridgestone-blizzak-ws90?ref=toyotawaits',
+    destinationUrl: 'https://www.amazon.ca/s?k=Bridgestone+Blizzak+WS90+DM-V2+winter+tires&tag=toyotawaits-20',
     title: 'Bridgestone Blizzak WS90 / DM-V2 Winter Tires',
     category: 'winter-tires',
     clickCount: 0,
@@ -569,8 +569,17 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'prius-console-organizer': {
     id: 'f2000005-0005-4005-8005-000000000005',
     slug: 'prius-console-organizer',
-    destinationUrl: 'https://www.amazon.ca/s?k=Gen+5+Prius+Center+Console+Organizer+Tray&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Prius+2023-2026+center+console+organizer+tray&tag=toyotawaits-20',
     title: 'Center Console 2-Tier Organizer Tray & Lower Cubby Insert',
+    category: 'cabin_storage',
+    clickCount: 0,
+    isActive: true,
+  },
+  'prius-console-tray': {
+    id: 'f2000005-0005-4005-8005-000000000005b',
+    slug: 'prius-console-tray',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Prius+2023-2026+center+console+organizer+tray&tag=toyotawaits-20',
+    title: 'Center Console 2-Tier Organizer Tray (Prius 2023-2026)',
     category: 'cabin_storage',
     clickCount: 0,
     isActive: true,

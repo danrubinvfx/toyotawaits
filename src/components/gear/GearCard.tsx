@@ -82,6 +82,7 @@ export type ModCardProps = GearCardProps;
  * Resolves the destination Amazon affiliate URL for a product,
  * respecting the active country context (Amazon.ca vs Amazon.com)
  * with verified ASIN routing and resilient keyword search fallbacks.
+ * Completely eliminates Google Search wrapping and ensures clean URLs.
  */
 export function getAffiliateUrl(
   item: GearCardItem,
@@ -110,7 +111,18 @@ export function getAffiliateUrl(
 
   // Fallback if neither ASIN nor keywords exist
   if (!rawAsin && !searchQuery) {
-    const rawUrl = item.destinationUrl || item.affiliateUrl || '';
+    let rawUrl = item.destinationUrl || item.affiliateUrl || '';
+    if (rawUrl.includes('google.com/search')) {
+      try {
+        const parsed = new URL(rawUrl);
+        const q = parsed.searchParams.get('q');
+        if (q && (q.startsWith('http://') || q.startsWith('https://'))) {
+          rawUrl = q;
+        }
+      } catch {
+        // ignore
+      }
+    }
     if (rawUrl && rawUrl.includes('amazon.')) {
       return sanitizeAmazonAffiliateUrl(rawUrl, market, item.slug);
     }
@@ -118,7 +130,18 @@ export function getAffiliateUrl(
   }
 
   // Handle direct custom destinationUrls with tag override
-  const rawUrl = item.destinationUrl || item.affiliateUrl;
+  let rawUrl = item.destinationUrl || item.affiliateUrl;
+  if (rawUrl && rawUrl.includes('google.com/search')) {
+    try {
+      const parsed = new URL(rawUrl);
+      const q = parsed.searchParams.get('q');
+      if (q && (q.startsWith('http://') || q.startsWith('https://'))) {
+        rawUrl = q;
+      }
+    } catch {
+      // ignore
+    }
+  }
   if (!rawAsin && rawUrl && rawUrl.includes('amazon.') && !searchQuery) {
     return sanitizeAmazonAffiliateUrl(rawUrl, market, item.slug);
   }
@@ -231,9 +254,10 @@ export function GearCard({
     ? item.asin_us || config?.asin_us || item.asin || config?.asin
     : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
   const isDirectValidAsin = Boolean(directAsin && /^[A-Z0-9]{10}$/i.test(directAsin.trim()));
+  const isDirectAsin = isDirectValidAsin;
   const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
-  const buttonText = buttonLabel || item.buttonLabel || (hasDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
+  const buttonText = buttonLabel || item.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 

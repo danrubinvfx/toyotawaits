@@ -41,7 +41,7 @@ export function AffiliateCTA({
       const urlObj = new URL(href);
       urlObj.hostname = isUs ? 'www.amazon.com' : 'www.amazon.ca';
       const tag = isUs
-        ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
+        ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20')
         : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
       urlObj.searchParams.set('tag', tag);
       href = urlObj.toString();
@@ -70,7 +70,7 @@ export function AffiliateCTA({
       <a
         href={href}
         target="_blank"
-        rel="noopener noreferrer nofollow sponsored"
+        rel="sponsored noopener noreferrer nofollow"
       >
         <span className="font-bold flex items-center gap-1.5 leading-snug">
           <span>{displayLabel}</span>

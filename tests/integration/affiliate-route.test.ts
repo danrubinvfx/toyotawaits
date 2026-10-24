@@ -193,7 +193,7 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     expect(response.status).toBe(307);
     const location = response.headers.get('Location');
     expect(location).toContain('amazon.com');
-    expect(location).toContain('tag=toyotawaits-20');
+    expect(location).toContain('tag=toyotawaits07-20');
   });
 
   it('routes to amazon.com when toyotawaits_market=US cookie is present', async () => {

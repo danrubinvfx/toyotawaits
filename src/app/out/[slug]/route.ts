@@ -42,14 +42,30 @@ export async function GET(
             });
           }
         } catch {
-          // Ignore invalid referer URL and fallback to root
+          // Ignore invalid referer URL and fallback
         }
       }
 
-      // 2. Default safe fallback to home page instead of throwing a hard 404
-      return NextResponse.redirect(new URL('/', request.url), {
+      // 2. Safe proxy fallback: Redirect to /winter-prep if winter-related, else / (never throw notFound)
+      const isWinter =
+        validation.data.slug.includes('winter') ||
+        (referer && referer.toLowerCase().includes('winter'));
+      return NextResponse.redirect(new URL(isWinter ? '/winter-prep' : '/', request.url), {
         status: 302,
       });
+    }
+
+    // Eliminate any Google Search wrapping on destination URL
+    if (destinationUrl.includes('google.com/search')) {
+      try {
+        const parsedGoogle = new URL(destinationUrl);
+        const q = parsedGoogle.searchParams.get('q');
+        if (q && (q.startsWith('http://') || q.startsWith('https://'))) {
+          destinationUrl = q;
+        }
+      } catch {
+        // ignore parsing error
+      }
     }
 
     // Detect market context from URL param, cookie, or hostname
@@ -60,36 +76,31 @@ export async function GET(
     const isUS = marketParam === 'US' || cookieMarket === 'US' || host.includes('toyotawaits.com');
 
     // 3. Safe Outbound Link Handler & Geolocation Strategy:
-    // Route to Amazon.com with US tag for US visitors, Amazon.ca with CA tag for CA visitors
+    // Route to Amazon.com with US tag (toyotawaits07-20) for US visitors,
+    // Amazon.ca with CA tag (toyotawaits-20) for CA visitors.
+    // Enforce associate tag hygiene and eliminate legacy tags.
     if (destinationUrl.includes('amazon.')) {
       try {
         const urlObj = new URL(destinationUrl);
         urlObj.hostname = isUS ? 'www.amazon.com' : 'www.amazon.ca';
 
-        const hasCustomTag =
-          urlObj.searchParams.has('tag') &&
-          urlObj.searchParams.get('tag') !== 'toyotawaits-20';
-
         const marketTag = isUS
           ? process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
-            process.env.NEXT_PUBLIC_AMAZON_TAG ||
-            'toyotawaits-20'
+            process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
+            'toyotawaits07-20'
           : process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
             process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
             process.env.AMAZON_AFFILIATE_TAG ||
             'toyotawaits-20';
 
-        if (isUS || !urlObj.searchParams.has('tag') || !hasCustomTag) {
-          urlObj.searchParams.set('tag', marketTag);
-        }
-
+        urlObj.searchParams.set('tag', marketTag);
         destinationUrl = urlObj.toString();
       } catch {
         // preserve original URL if parsing fails
       }
     }
 
-    // 3. Return 307 Temporary Redirect with strict privacy headers
+    // 4. Return 307 Temporary Redirect with strict privacy headers
     const redirectResponse = NextResponse.redirect(destinationUrl, {
       status: 307,
     });

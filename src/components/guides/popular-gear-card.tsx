@@ -61,7 +61,7 @@ export function PopularGearCard({ item }: { item: PopularGearItem }) {
         <a
           href={amazonUrl}
           target="_blank"
-          rel="noopener noreferrer nofollow"
+          rel="sponsored noopener noreferrer nofollow"
           aria-label={ariaLabel}
         >
           <span>{buttonLabel}</span> <ExternalLink className="h-3 w-3" />

@@ -419,8 +419,7 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     brand: 'EDBETOS',
     title: 'Center Console Organizer & Coin Tray',
     description: 'Precision molded drop-in organizer tailored for the 5th-gen Prius center armrest.',
-    asin: 'B0C3793VCR',
-    searchQuery: 'Toyota Prius center console organizer tray 2023-2026',
+    searchQuery: 'Toyota Prius 2023-2026 center console organizer tray',
     bullets: [
       'Custom partitioned slots for key fob, cards, and coins',
       'Non-slip silicone mats prevent rattling during acceleration',
