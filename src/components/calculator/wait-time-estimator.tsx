@@ -1062,39 +1062,42 @@ export function WaitTimeEstimator({
                       View Live Stock ↗
                     </Link>
                   </div>
-                ) : medianDays >= 180 ? (
-                  <div
-                    data-testid="estimator-inventory-callout"
-                    className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 text-xs shadow-xs"
-                  >
-                    <div className="flex flex-col gap-0.5">
-                      <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-sky-400">
-                        ⚡ Skip the wait?
-                      </span>
-                      <span className="text-neutral-300">
-                        Explore live unreserved units and incoming allocations observed across Lower Mainland dealers.
-                      </span>
-                    </div>
-                    <Link
-                      data-testid="estimator-view-stock-btn"
-                      className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-sky-500 px-3 py-1.5 font-bold text-zinc-950 shadow-sm transition hover:bg-sky-400 active:scale-95"
-                      href={`/inventory?model=${encodeURIComponent(inventoryModelName || currentModel.name || modelSlug)}`}
-                    >
-                      View Stock ↗
-                    </Link>
-                  </div>
                 ) : (
-                  <div
-                    data-testid="estimator-inventory-zero-callout"
-                    className="flex items-center justify-end pt-0.5"
-                  >
-                    <Link
-                      href="/inventory"
-                      data-testid="estimator-browse-all-inventory-link"
-                      className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
+                  <div className="space-y-2">
+                    {medianDays >= 180 && (
+                      <div
+                        data-testid="estimator-inventory-bridge-pill"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-sky-500/30 bg-sky-950/20 p-3.5 text-xs shadow-xs"
+                      >
+                        <div className="flex flex-col gap-0.5">
+                          <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-sky-400">
+                            ⚡ Skip the wait?
+                          </span>
+                          <span className="text-neutral-300">
+                            Explore live unreserved units and incoming allocations observed across Lower Mainland dealers.
+                          </span>
+                        </div>
+                        <Link
+                          data-testid="estimator-bridge-view-stock-btn"
+                          className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-sky-500 px-3 py-1.5 font-bold text-zinc-950 shadow-sm transition hover:bg-sky-400 active:scale-95"
+                          href={`/inventory?model=${encodeURIComponent(inventoryModelName || currentModel.name || modelSlug)}`}
+                        >
+                          View Stock ↗
+                        </Link>
+                      </div>
+                    )}
+                    <div
+                      data-testid="estimator-inventory-zero-callout"
+                      className="flex items-center justify-end pt-0.5"
                     >
-                      Browse all observed dealer inventory ↗
-                    </Link>
+                      <Link
+                        href="/inventory"
+                        data-testid="estimator-browse-all-inventory-link"
+                        className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
+                      >
+                        Browse all observed dealer inventory ↗
+                      </Link>
+                    </div>
                   </div>
                 )
               )}
