@@ -189,6 +189,35 @@ export function sortAccessoriesByPopularity(
  * Returns curated delivery-day gear, tailoring queries and links to the vehicle model when available.
  * Supports optional 30-day telemetry click weighting for dynamic popularity ranking.
  */
+export function isAudioEquipmentItem(item: {
+  category?: string;
+  id?: string;
+  title?: string;
+  description?: string;
+}): boolean {
+  const cat = (item.category || '').toLowerCase();
+  const id = (item.id || '').toLowerCase();
+  const title = (item.title || '').toLowerCase();
+  const desc = (item.description || '').toLowerCase();
+
+  return (
+    cat.includes('audio') ||
+    id.includes('speaker') ||
+    id.includes('subwoofer') ||
+    id.includes('amplifier') ||
+    id.includes('beat-sonic') ||
+    id.includes('tweeter') ||
+    title.includes('speaker') ||
+    title.includes('subwoofer') ||
+    title.includes('amplifier') ||
+    title.includes('beat-sonic') ||
+    title.includes('tweeter') ||
+    desc.includes('speaker') ||
+    desc.includes('subwoofer') ||
+    desc.includes('amplifier')
+  );
+}
+
 export function getAccessoriesForModel(
   modelName?: string | null,
   clickCounts?: Record<string, number>
@@ -212,6 +241,9 @@ export function getAccessoriesForModel(
       );
     });
   }
+
+  // Exclude audio equipment from Day 1 / delivery-day gear lists
+  matching = matching.filter((item) => !isAudioEquipmentItem(item));
 
   // Dynamically tailor search queries for model-specific items
   const tailored = matching.map((item) => {

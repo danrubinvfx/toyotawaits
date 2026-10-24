@@ -60,7 +60,15 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
   }, [popularityCounts]);
 
   const effectiveCounts = popularityCounts || fetchedCounts;
-  const accessories = React.useMemo(() => getAccessoriesForModel(modelName, effectiveCounts), [modelName, effectiveCounts]);
+  const rawAccessories = React.useMemo(() => getAccessoriesForModel(modelName, effectiveCounts), [modelName, effectiveCounts]);
+  const accessories = React.useMemo(() => {
+    return (rawAccessories || []).filter(
+      (item) =>
+        !/speaker|audio|amplifier|subwoofer|beat-sonic|tweeter/i.test(
+          `${item.id} ${item.title} ${item.category}`
+        )
+    );
+  }, [rawAccessories]);
 
   if (!accessories || accessories.length === 0) {
     return null;

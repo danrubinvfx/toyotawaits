@@ -93,7 +93,44 @@ const CATEGORIES = [
   { id: 'roadside_winter', label: 'Roadside Armor', icon: ShieldAlert },
 ] as const;
 
+export function isAudioEquipmentItem(item: {
+  category?: string;
+  categories?: string[];
+  slug?: string;
+  title?: string;
+  id?: string;
+}): boolean {
+  const cat = (item.category || '').toLowerCase();
+  const cats = (item.categories || []).map((c) => c.toLowerCase());
+  const slug = (item.slug || '').toLowerCase();
+  const title = (item.title || '').toLowerCase();
+  const id = (item.id || '').toLowerCase();
+
+  return (
+    cat.includes('audio') ||
+    cats.some((c) => c.includes('audio')) ||
+    slug.includes('speaker') ||
+    slug.includes('subwoofer') ||
+    slug.includes('amplifier') ||
+    slug.includes('beat-sonic') ||
+    slug.includes('alpine-pwe') ||
+    slug.includes('kicker') ||
+    slug.includes('cerwin-vega') ||
+    slug.includes('metra-') ||
+    id.includes('speaker') ||
+    id.includes('subwoofer') ||
+    id.includes('amplifier') ||
+    id.includes('beat-sonic') ||
+    title.includes('speaker') ||
+    title.includes('subwoofer') ||
+    title.includes('amplifier') ||
+    title.includes('beat-sonic')
+  );
+}
+
 function matchesCategory(item: ChecklistProduct, selectedCategory: string): boolean {
+  // Exclude audio equipment from all Day 1 / delivery prep gear categories
+  if (isAudioEquipmentItem(item)) return false;
   if (selectedCategory === 'all') return true;
 
   if (selectedCategory === 'delivery_day_1') {
@@ -169,7 +206,6 @@ function matchesCategory(item: ChecklistProduct, selectedCategory: string): bool
       cat.includes('comfort') ||
       cat.includes('visibility') ||
       cat.includes('safety') ||
-      cat.includes('audio') ||
       cat.includes('electronic') ||
       cats.some((c) => c.includes('tech') || c.includes('comfort') || c.includes('safety') || c.includes('electronic')) ||
       slug.includes('fitcamx') ||
@@ -177,7 +213,6 @@ function matchesCategory(item: ChecklistProduct, selectedCategory: string): bool
       slug.includes('charger') ||
       slug.includes('organizer') ||
       slug.includes('tray') ||
-      slug.includes('speaker') ||
       slug.includes('carplay')
     );
   }
@@ -407,6 +442,8 @@ export function DeliveryPrepChecklist({
     const seenAsins = new Set<string>();
 
     return list.filter((item) => {
+      // Audio equipment is an enthusiast modification, NOT Day 1 delivery prep gear
+      if (isAudioEquipmentItem(item)) return false;
       // Model match
       const modelMatch =
         item.models.includes('all') ||

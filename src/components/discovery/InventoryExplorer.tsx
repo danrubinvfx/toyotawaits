@@ -633,7 +633,13 @@ export function InventoryExplorer({
 
   const effectiveGearCounts = popularityCounts || fetchedGearCounts;
   const gearItems = useMemo(() => {
-    return getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
+    const raw = getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
+    return raw.filter(
+      (item) =>
+        !/speaker|audio|amplifier|subwoofer|beat-sonic|tweeter/i.test(
+          `${item.id} ${item.title} ${item.category}`
+        )
+    );
   }, [filters.model, effectiveGearCounts]);
 
   const displayedListings = useMemo(
