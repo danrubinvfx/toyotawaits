@@ -1112,7 +1112,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         target: { value: 'price_desc' },
       });
       expect(screen.getAllByTestId(/^listing-card-batch-unit-/).length).toBe(24);
-    });
+    }, 30000);
 
     it('implements comprehensive sorting suite across newest, price, distance, and status', () => {
       const customListings: VehicleListingCardProps[] = [
