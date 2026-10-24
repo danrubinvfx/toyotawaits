@@ -5,7 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Check,
-  ExternalLink,
   Play,
   ShieldCheck,
   Layers,
@@ -23,7 +22,7 @@ import {
   CA_ASSOCIATE_TAG,
   US_ASSOCIATE_TAG,
   injectActiveModelIntoQuery,
-  getAffiliateButtonLabel,
+  isAmazonDirectProductUrl,
   getImageLinkAriaLabel,
 } from '@/lib/gear/affiliate';
 
@@ -46,6 +45,7 @@ export interface GearCardItem {
   asin?: string;
   asin_ca?: string;
   asin_us?: string;
+  searchQuery?: string;
   searchKeywordsCA?: string;
   searchKeywordsUS?: string;
   destinationUrl?: string;
@@ -99,12 +99,16 @@ export function getAffiliateUrl(
     CA_ASSOCIATE_TAG; // 'toyotawaits-20'
 
   if (isUs) {
-    const verifiedAsinUs = item.asin_us || config?.asin_us;
+    const verifiedAsinUs = item.asin_us || config?.asin_us || item.asin || config?.asin;
     if (verifiedAsinUs) {
       return `https://www.amazon.com/dp/${verifiedAsinUs}?tag=${US_TAG}`;
     }
 
-    const rawKeywordsUS = item.searchKeywordsUS || config?.searchKeywordsUS;
+    const rawKeywordsUS =
+      item.searchKeywordsUS ||
+      config?.searchKeywordsUS ||
+      item.searchQuery ||
+      config?.searchQuery;
     if (rawKeywordsUS) {
       const searchKeywordsUS = injectActiveModelIntoQuery(rawKeywordsUS, targetModel);
       return `https://www.amazon.com/s?k=${encodeURIComponent(searchKeywordsUS)}&tag=${US_TAG}`;
@@ -139,20 +143,19 @@ export function getAffiliateUrl(
   }
 
   // CA Market
-  const verifiedAsinCa = item.asin_ca || config?.asin_ca;
+  const verifiedAsinCa = item.asin_ca || config?.asin_ca || item.asin || config?.asin;
   if (verifiedAsinCa) {
     return `https://www.amazon.ca/dp/${verifiedAsinCa}?tag=${CA_TAG}`;
   }
 
-  const rawKeywordsCA = item.searchKeywordsCA || config?.searchKeywordsCA;
+  const rawKeywordsCA =
+    item.searchKeywordsCA ||
+    config?.searchKeywordsCA ||
+    item.searchQuery ||
+    config?.searchQuery;
   if (rawKeywordsCA) {
     const searchKeywordsCA = injectActiveModelIntoQuery(rawKeywordsCA, targetModel);
     return `https://www.amazon.ca/s?k=${encodeURIComponent(searchKeywordsCA)}&tag=${CA_TAG}`;
-  }
-
-  // Direct ASIN fallback if available
-  if (item.asin) {
-    return `https://www.amazon.ca/dp/${item.asin}?tag=${CA_TAG}`;
   }
 
   // Fallback: If raw destinationUrl exists and no specific config/keywords exist
@@ -259,14 +262,23 @@ export function GearCard({
     activeModel ||
     item.activeModel ||
     (item.models?.length === 1 && item.models[0] !== 'all' ? item.models[0] : undefined);
+  const activeMarket = market || (isUs ? 'US' : 'CA');
+  const isUsMarket = activeMarket === 'US';
+  const config = getGearMarketConfig(item.slug || item.id, currentModel);
   const amazonAffiliateUrl = getAffiliateUrl(
     item,
-    market || (isUs ? 'US' : 'CA'),
+    activeMarket,
     currentModel
   );
 
-  const buttonLabel = getAffiliateButtonLabel(amazonAffiliateUrl);
+  const directAsin = isUsMarket
+    ? item.asin_us || config?.asin_us || item.asin || config?.asin
+    : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
+  const hasDirectAsin = Boolean(directAsin || isAmazonDirectProductUrl(amazonAffiliateUrl));
+
+  const buttonText = hasDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗';
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
+  const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
   const imageSource = item.imageSrc || item.image;
   const showImage = Boolean(imageSource && !imgError);
@@ -354,23 +366,27 @@ export function GearCard({
         </a>
 
         {/* Group badges into a single line (text-[10px] px-2 py-0.5) */}
-        {(item.badge || item.compatibility) && (
+        {(effectiveBadge || item.compatibility) && (
           <div className="flex items-center gap-1.5 mb-1.5 overflow-hidden text-[11px]">
-            {item.badge && (
+            {effectiveBadge && (
               <Badge
                 variant="outline"
                 className={cn(
                   'text-[10px] font-semibold px-2 py-0.5 border shrink-0',
-                  item.badge === 'Essential'
+                  effectiveBadge === 'Essential'
                     ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
-                    : item.badge === 'Recommended' || item.badge === 'Recommended Upgrade'
+                    : effectiveBadge === 'Direct Fit'
                     ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                    : item.badge === 'Top Pick'
+                    : effectiveBadge === 'Delivery Day 1'
+                    ? 'bg-sky-500/15 border-sky-500/40 text-sky-400'
+                    : effectiveBadge === 'Recommended' || effectiveBadge === 'Recommended Upgrade'
+                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                    : effectiveBadge === 'Top Pick'
                     ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
                     : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
                 )}
               >
-                {item.badge}
+                {effectiveBadge}
               </Badge>
             )}
             {item.compatibility && (
@@ -418,14 +434,13 @@ export function GearCard({
           <a
             href={amazonAffiliateUrl}
             target="_blank"
-            rel="noopener noreferrer nofollow sponsored"
+            rel="sponsored noopener noreferrer nofollow"
             draggable={false}
           >
-            <span>{buttonLabel}</span>
+            <span>{buttonText}</span>
             <span className="sr-only">
-              {buttonLabel === 'View Product on Amazon' ? ' (View on Amazon)' : ''}
+              {buttonText.startsWith('View on Amazon') ? ' (View on Amazon)' : ' (Search on Amazon)'}
             </span>
-            <ExternalLink className="h-3 w-3 text-amber-400 shrink-0" />
           </a>
         </Button>
 
