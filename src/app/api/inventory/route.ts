@@ -4,6 +4,7 @@ import { INITIAL_SAMPLE_LISTINGS } from '@/components/discovery/InventoryExplore
 import { VehicleListingCardProps } from '@/components/discovery/VehicleListingCard';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export async function GET(request?: Request) {
   let isSummary = false;
@@ -129,6 +130,9 @@ export async function GET(request?: Request) {
     const { data, error } = await query.order('last_observed_at', { ascending: false });
 
     if (error || !data || data.length === 0) {
+      if (error) {
+        console.error('[/api/inventory] Database query error:', error);
+      }
       const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
       const countsByModel = getFallbackCounts();
       return NextResponse.json({
@@ -207,7 +211,8 @@ export async function GET(request?: Request) {
       ...(isSummary ? {} : { listings: mappedListings }),
       source: 'supabase_dealer_listings',
     });
-  } catch {
+  } catch (err) {
+    console.error('[/api/inventory] Unexpected catch error:', err);
     const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
     const countsByModel = getFallbackCounts();
     return NextResponse.json({
