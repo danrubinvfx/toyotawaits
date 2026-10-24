@@ -57,7 +57,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     category: 'tech',
     description: 'OEM-integrated rearview mirror power tap with zero visible wiring',
     estimatedPriceCad: '$169 – $289 CAD',
-    url: buildAmazonCaSearchUrl('FitcamX 4K dash cam Toyota OEM rearview mirror power tap'),
+    url: buildAmazonCaSearchUrl('Fitcamx dash cam Toyota RAV4 OEM 4K'),
     applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
@@ -223,6 +223,15 @@ export function getAccessoriesForModel(
         : normalized?.toLowerCase() === 'rav4'
         ? 'TuxMat Toyota RAV4 2019-2026'
         : `Toyota ${normalized || 'universal'} all weather floor mats liners TPE`;
+      return {
+        ...item,
+        url: buildAmazonCaSearchUrl(q),
+      };
+    }
+    if (item.id === '4k-front-rear-dash-cam') {
+      const q = normalized?.toLowerCase().includes('rav4')
+        ? 'Fitcamx dash cam Toyota RAV4 OEM 4K'
+        : `Fitcamx dash cam Toyota ${normalized || 'OEM'} 4K`;
       return {
         ...item,
         url: buildAmazonCaSearchUrl(q),

@@ -45,6 +45,9 @@ export interface ModItem {
   asin?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
+  searchQuery?: string;
+  searchKeywordsCA?: string;
+  searchKeywordsUS?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
   accessories?: {
@@ -250,10 +253,14 @@ export const MODS_CONFIG: ModItem[] = [
     utilityNote:
       'Replaces the TSS mirror shroud with zero dangling cables and no fuse box splicing. Ensure selection matches 2019–2025 (Gen 5) or 2026+ (Gen 6) mirror cover shape.',
     image: '/images/accessories/fitcamx-rav4.png',
-    asin: 'B09GLVMB76',
-    amazonCaAsinOrUrl: 'B09GLVMB76',
-    destinationUrl: 'https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Toyota+RAV4+OEM+4K&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Toyota+RAV4+OEM+4K&tag=toyotawaits-20',
     affiliateUrl: '/out/fitcamx-rav4',
+    searchKeywordsCA: 'Fitcamx dash cam Toyota RAV4 OEM 4K',
+    searchKeywordsUS: 'Fitcamx dash cam Toyota RAV4 OEM 4K',
+    searchQuery: 'Fitcamx dash cam Toyota RAV4 OEM 4K',
     badge: 'Recommended',
     compatibility: 'Verified: 2019–2025 | 2026: Pending Validation',
     youtubeVideoId: 'HrrClvzZpnI',
