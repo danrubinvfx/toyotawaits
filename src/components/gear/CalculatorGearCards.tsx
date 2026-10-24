@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
+import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export interface VettedProduct {
   id: string;
@@ -26,7 +27,8 @@ export interface VettedProduct {
   brand: string;
   title: string;
   description: string;
-  asin: string;
+  asin?: string;
+  searchQuery?: string;
   bullets: string[];
   buttonText: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -42,6 +44,7 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
     title: 'Portable Digital 120 PSI Auto-Shutoff Tire Inflator',
     description: 'Ultra-fast handheld 12V DC compressor with digital gauge to prevent cold-weather pressure drops.',
     asin: 'B07XZCL5F2',
+    searchQuery: 'AstroAI portable tire inflator air compressor 12V',
     bullets: [
       'Accurate auto-shutoff presets prevent over-inflation',
       'Ultra-bright integrated emergency LED flashlight',
@@ -60,6 +63,7 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
     title: 'Plug-and-Play Wireless CarPlay & Android Auto Adapter',
     description: 'Eliminate tangled cables with seamless 5.8GHz automatic Bluetooth and Wi-Fi phone connection.',
     asin: 'B0B19D12P6',
+    searchQuery: 'CarlinKit 5.0 2Air wireless CarPlay Android Auto adapter',
     bullets: [
       'Converts OEM factory wired CarPlay/Auto to wireless',
       'Near-zero latency 5.8GHz Wi-Fi transmission',
@@ -73,382 +77,400 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
   },
 ];
 
-const MODEL_CATALOG: Record<string, VettedProduct[]> = {
-  rav4: [
-    {
-      id: 'rav4-dashcam',
-      category: 'Vehicle Safety & Electronics',
-      brand: 'FITCAMX / VIOFO',
-      title: 'Integrated OEM-Fit 4K Dashcam',
-      description: 'Factory-appearance dual dashcam replacing the rear-view mirror housing with no exposed dangling cords.',
-      asin: 'B09GFNZK3C',
-      bullets: [
-        'Plug-and-play harness taps TSS 2.5/3.0 mirror socket',
-        '4K Sony Starvis sensor with ultra-crisp HDR night vision',
-        'Zero windshield clutter, preserves factory aesthetic',
-        'Built-in Wi-Fi and instant smartphone video playback',
-      ],
-      buttonText: 'View OEM-Fit Dashcams',
-      icon: Video,
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-    },
-    {
-      id: 'rav4-floor-liners',
-      category: 'Interior Protection',
-      brand: 'TuxMat / 3D MAXpider',
-      title: 'All-Weather Custom-Fit TPE Floor Liners',
-      description: 'Laser-measured precision tub coverage engineered to protect carpets from Canadian winter slush and salt.',
-      asin: 'B09GLVMB76',
-      bullets: [
-        'High-wall tub coverage extends up to center console',
-        'Cold-flexible down to -40°C without curling or cracking',
-        'Engineered hybrid battery intake vent clearance',
-        'OEM factory retention hook snap-in alignment',
-      ],
-      buttonText: 'View All-Weather Liners',
-      icon: Layers,
-      iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-    },
-    {
-      id: 'rav4-screen-protector',
-      category: 'Cabin Accessories',
-      brand: 'Spigen / Muslogy',
-      title: 'Matte Anti-Glare Infotainment Screen Protector',
-      description: 'Essential 9H oleophobic tempered glass to eliminate fingerprint smudges and harsh sunlight glare.',
-      asin: 'B0D8XQ99P3',
-      bullets: [
-        '9H hardness matte oleophobic glass kills fingerprints & glare',
-        'Precision fit for 10.5" and 12.3" Toyota Multimedia displays',
-        'Zero touchscreen latency and responsive gesture recognition',
-        'Resists key and fingernail scratches permanently',
-      ],
-      buttonText: 'View Screen Protector',
-      icon: ShieldCheck,
-      iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-    },
-    {
-      id: 'rav4-console-organizer',
-      category: 'Interior Storage',
-      brand: 'Muslogy / EDBETOS',
-      title: 'Center Console Armrest Organizer Tray',
-      description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
-      asin: 'B08Q37151M',
-      bullets: [
-        'Drop-in multi-tier center console armrest divider tray',
-        'Anti-slip silicone coin & smartphone compartment inserts',
-        'Leaves full access to 12V power port and cable pass-through',
-        'Factory-matched matte black textured ABS plastic',
-      ],
-      buttonText: 'View Console Organizer',
-      icon: Box,
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-    },
-  ],
+const RAV4_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'rav4-dashcam',
+    category: 'Vehicle Safety & Electronics',
+    brand: 'FITCAMX / VIOFO',
+    title: 'Integrated OEM-Fit 4K Dashcam',
+    description: 'Factory-appearance dual dashcam replacing the rear-view mirror housing with no exposed dangling cords.',
+    asin: 'B09GFNZK3C',
+    searchQuery: 'FITCAMX 4K dash cam Toyota RAV4 2019-2026',
+    bullets: [
+      'Plug-and-play harness taps TSS 2.5/3.0 mirror socket',
+      '4K Sony Starvis sensor with ultra-crisp HDR night vision',
+      'Zero windshield clutter, preserves factory aesthetic',
+      'Built-in Wi-Fi and instant smartphone video playback',
+    ],
+    buttonText: 'View OEM-Fit Dashcams',
+    icon: Video,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    id: 'rav4-floor-liners',
+    category: 'Interior Protection',
+    brand: 'TuxMat / 3D MAXpider',
+    title: 'All-Weather Custom-Fit TPE Floor Liners',
+    description: 'Laser-measured precision tub coverage engineered to protect carpets from Canadian winter slush and salt.',
+    asin: 'B0833DT93B',
+    searchQuery: 'TuxMat Toyota RAV4 2019-2026',
+    bullets: [
+      'High-wall tub coverage extends up to center console',
+      'Cold-flexible down to -40°C without curling or cracking',
+      'Engineered hybrid battery intake vent clearance',
+      'OEM factory retention hook snap-in alignment',
+    ],
+    buttonText: 'View All-Weather Liners',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'rav4-screen-protector',
+    category: 'Cabin Accessories',
+    brand: 'Spigen / Muslogy',
+    title: 'Matte Anti-Glare Infotainment Screen Protector',
+    description: 'Essential 9H oleophobic tempered glass to eliminate fingerprint smudges and harsh sunlight glare.',
+    asin: 'B0D8XQ99P3',
+    searchQuery: 'Spigen matte screen protector Toyota RAV4',
+    bullets: [
+      '9H hardness matte oleophobic glass kills fingerprints & glare',
+      'Precision fit for 10.5" and 12.3" Toyota Multimedia displays',
+      'Zero touchscreen latency and responsive gesture recognition',
+      'Resists key and fingernail scratches permanently',
+    ],
+    buttonText: 'View Screen Protector',
+    icon: ShieldCheck,
+    iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    id: 'rav4-console-organizer',
+    category: 'Interior Storage',
+    brand: 'Muslogy / EDBETOS',
+    title: 'Center Console Armrest Organizer Tray',
+    description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
+    asin: 'B08Q37151M',
+    searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
+    bullets: [
+      'Drop-in multi-tier center console armrest divider tray',
+      'Anti-slip silicone coin & smartphone compartment inserts',
+      'Leaves full access to 12V power port and cable pass-through',
+      'Factory-matched matte black textured ABS plastic',
+    ],
+    buttonText: 'View Console Organizer',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+];
 
-  sienna: [
-    {
-      id: 'sienna-floor-liners',
-      category: 'Interior Protection',
-      brand: 'TuxMat / 3D MAXpider',
-      title: '3-Row Custom All-Weather Floor Liners',
-      description: 'Complete 3-row laser-scanned floor liners engineered specifically for Sienna Super-Long Slide seats.',
-      asin: 'B08XN3D75P',
-      bullets: [
-        'Full 1st, 2nd, and 3rd row coverage with seat-track clearance',
-        'Shields against juice spills, winter salt crust, and gravel',
-        'Custom cutout leaves 2nd-row sliding tracks unobstructed',
-        'Deep high walls contain melted snow and liquid runoff',
-      ],
-      buttonText: 'View 3-Row Liners',
-      icon: Layers,
-      iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-    },
-    {
-      id: 'sienna-console-organizer',
-      category: 'Storage & Organization',
-      brand: 'Vehicle OCD / Muslogy',
-      title: 'Center Console Sliding Organizer & Bridge Box',
-      description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
-      asin: 'B095K28114',
-      bullets: [
-        'Smooth-sliding top tray for sunglasses, toll passes, and pens',
-        'Lower bridge organizer for purse, tissue boxes, or tablets',
-        'OEM-matched texture and sound-deadening rubber mats',
-        'Prevents items from sliding into pedals during braking',
-      ],
-      buttonText: 'View Console Organizer',
-      icon: Box,
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-    },
-    {
-      id: 'sienna-seatback-kick-guards',
-      category: 'Cabin Protection',
-      brand: 'JoyTutus / Powerty',
-      title: 'Rear Seatback & Kick Mat Protectors',
-      description: 'Durable anti-scuff backrest protectors shielding 2nd and 3rd row seatbacks from kids and cargo.',
-      asin: 'B09F5X976B',
-      bullets: [
-        'Tough waterproof TPE shields fabric and SofTex leather',
-        'Velcro-backed quick installation with factory alignment',
-        'Split-folding design accommodates 60/40 folding 3rd row',
-        'Easy wipe-down cleaning with a damp microfiber cloth',
-      ],
-      buttonText: 'View Kick Protectors',
-      icon: ShieldCheck,
-      iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-    },
-    {
-      id: 'sienna-trailer-hitch',
-      category: 'Towing & Hauling',
-      brand: 'Curt 13470 / EcoHitch',
-      title: 'Class III 2-Inch Trailer Hitch Receiver',
-      description: 'Heavy-duty 3,500 lb rated hitch engineered for Sienna hybrid bumper clearance and bike racks.',
-      asin: 'B08R5R21L4',
-      bullets: [
-        'Standard 2" receiver tube for bike racks and cargo baskets',
-        '3,500 lbs GTW / 525 lbs tongue weight rating',
-        'Designed to maintain factory hands-free kick sensor function',
-        'Dual-coat rust-resistant liquid Bonderite & black powder coat',
-      ],
-      buttonText: 'View Trailer Hitch',
-      icon: Compass,
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-    },
-  ],
+const SIENNA_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'sienna-floor-liners',
+    category: 'Interior Protection',
+    brand: 'TuxMat / 3D MAXpider',
+    title: '3-Row All-Weather High-Wall Floor Liners',
+    description: 'Complete 3-row laser-scanned floor liners engineered specifically for Sienna Super-Long Slide seats.',
+    asin: 'B0CFV5R8QM',
+    searchQuery: 'Toyota Sienna all weather floor mats 2021-2026',
+    bullets: [
+      'Full 1st, 2nd, and 3rd row coverage with seat-track clearance',
+      'Shields against juice spills, winter salt crust, and gravel',
+      'Custom cutout leaves 2nd-row sliding tracks unobstructed',
+      'Deep high walls contain melted snow and liquid runoff',
+    ],
+    buttonText: 'View 3-Row Liners',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'sienna-console-organizer',
+    category: 'Storage & Organization',
+    brand: 'Vehicle OCD / Muslogy',
+    title: 'Center Console Sliding Organizer & Bridge Box',
+    description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
+    asin: 'B095K28114',
+    searchQuery: 'Toyota Sienna 2021-2026 center console bridge organizer tray',
+    bullets: [
+      'Smooth-sliding top tray for sunglasses, toll passes, and pens',
+      'Lower bridge organizer for purse, tissue boxes, or tablets',
+      'OEM-matched texture and sound-deadening rubber mats',
+      'Prevents items from sliding into pedals during braking',
+    ],
+    buttonText: 'View Console Organizer',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+  {
+    id: 'sienna-seatback-kick-guards',
+    category: 'Cabin Protection',
+    brand: 'JoyTutus / Powerty',
+    title: 'Rear Seatback & Kick Mat Protectors',
+    description: 'Durable anti-scuff backrest protectors shielding 2nd and 3rd row seatbacks from kids and cargo.',
+    asin: 'B09F5X976B',
+    searchQuery: 'Toyota Sienna seat back protectors kick mats',
+    bullets: [
+      'Tough waterproof TPE shields fabric and SofTex leather',
+      'Velcro-backed quick installation with factory alignment',
+      'Split-folding design accommodates 60/40 folding 3rd row',
+      'Easy wipe-down cleaning with a damp microfiber cloth',
+    ],
+    buttonText: 'View Kick Protectors',
+    icon: ShieldCheck,
+    iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    id: 'sienna-trailer-hitch',
+    category: 'Towing & Hauling',
+    brand: 'Curt 13470 / EcoHitch',
+    title: 'Class III 2-Inch Trailer Hitch Receiver',
+    description: 'Heavy-duty 3,500 lb rated hitch engineered for Sienna hybrid bumper clearance and bike racks.',
+    asin: 'B08R5R21L4',
+    searchQuery: 'Curt 13470 Toyota Sienna trailer hitch receiver class 3',
+    bullets: [
+      'Standard 2" receiver tube for bike racks and cargo baskets',
+      '3,500 lbs GTW / 525 lbs tongue weight rating',
+      'Designed to maintain factory hands-free kick sensor function',
+      'Dual-coat rust-resistant liquid Bonderite & black powder coat',
+    ],
+    buttonText: 'View Trailer Hitch',
+    icon: Compass,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+];
 
-  'grand-highlander': [
-    {
-      id: 'gh-screen-protector',
-      category: 'Cabin Protection',
-      brand: 'Spigen / YEE PIN',
-      title: '12.3" Matte Anti-Glare Infotainment Glass',
-      description: 'Ultra-thin 9H tempered glass custom cut for the expansive 12.3" Grand Highlander center screen.',
-      asin: 'B0CF8N1Y6N',
-      bullets: [
-        'Matte finish eliminates reflective dashboard glare and haze',
-        'Oleophobic nano-coating repels fingerprint smudges',
-        'Precise laser cut around multimedia volume knob',
-        'Zero degradation in touchscreen sensitivity or clarity',
-      ],
-      buttonText: 'View Screen Glass',
-      icon: ShieldCheck,
-      iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-    },
-    {
-      id: 'gh-cargo-liner',
-      category: 'Interior Protection',
-      brand: 'Powerty / TuxMat',
-      title: 'High-Wall 3-Row Cargo & Seatback Liner',
-      description: 'Full-coverage trunk tub liner that covers trunk floor and fold-flat 3rd row seatbacks.',
-      asin: 'B0CJ97SZ8N',
-      bullets: [
-        'Protects trunk and folding 3rd-row seats from muddy gear',
-        'Hook-and-loop backing sticks firmly to carpet backing',
-        'Flexible hinge fold allows effortless seat transitions',
-        'Non-skid textured TPE prevents sports equipment shifting',
-      ],
-      buttonText: 'View Cargo Liners',
-      icon: Layers,
-      iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-    },
-    {
-      id: 'gh-dashcam',
-      category: 'Vehicle Safety',
-      brand: 'FITCAMX',
-      title: 'Integrated OEM-Fit 4K Dashcam (TSS 3.0)',
-      description: 'Factory-style front dashcam replacing the TSS 3.0 sensor housing without trailing wires.',
-      asin: 'B0CKZ9Z72Z',
-      bullets: [
-        'TSS 3.0 mirror housing replacement looks completely stock',
-        '4K UHD Sony sensor with superior low-light recording',
-        'Automatic emergency collision G-sensor loop recording',
-        'Direct smartphone companion app for video export',
-      ],
-      buttonText: 'View OEM Dashcam',
-      icon: Video,
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-    },
-    {
-      id: 'gh-console-divider',
-      category: 'Cabin Storage',
-      brand: 'Vehicle OCD',
-      title: 'Center Console Dual-Tier Divider Tray',
-      description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
-      asin: 'B0CL3N26D6',
-      bullets: [
-        'Organizes phones, wallet, sunglasses, keys, and coins',
-        'Preserves lower bin room for large items and charging cables',
-        'High-density matte black ABS plastic matching interior trim',
-        'Anti-rattle non-slip removable rubber base inserts',
-      ],
-      buttonText: 'View Console Tray',
-      icon: Box,
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-    },
-  ],
+const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'gh-screen-protector',
+    category: 'Cabin Protection',
+    brand: 'Spigen / YEE PIN',
+    title: '12.3" Matte Anti-Glare Infotainment Glass',
+    description: 'Ultra-thin 9H tempered glass custom cut for the expansive 12.3" Grand Highlander center screen.',
+    asin: 'B0CF8N1Y6N',
+    searchQuery: 'Toyota Grand Highlander 12.3 screen protector tempered glass',
+    bullets: [
+      'Matte finish eliminates reflective dashboard glare and haze',
+      'Oleophobic nano-coating repels fingerprint smudges',
+      'Precise laser cut around multimedia volume knob',
+      'Zero degradation in touchscreen sensitivity or clarity',
+    ],
+    buttonText: 'View Screen Glass',
+    icon: ShieldCheck,
+    iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    id: 'gh-cargo-liner',
+    category: 'Interior Protection',
+    brand: 'Powerty / TuxMat',
+    title: 'High-Wall 3-Row Cargo & Seatback Liner',
+    description: 'Full-coverage trunk tub liner that covers trunk floor and fold-flat 3rd row seatbacks.',
+    asin: 'B0CJ97SZ8N',
+    searchQuery: 'Toyota Grand Highlander 3 row cargo liner trunk mat',
+    bullets: [
+      'Protects trunk and folding 3rd-row seats from muddy gear',
+      'Hook-and-loop backing sticks firmly to carpet backing',
+      'Flexible hinge fold allows effortless seat transitions',
+      'Non-skid textured TPE prevents sports equipment shifting',
+    ],
+    buttonText: 'View Cargo Liners',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'gh-dashcam',
+    category: 'Vehicle Safety',
+    brand: 'FITCAMX',
+    title: 'Integrated OEM-Fit 4K Dashcam (TSS 3.0)',
+    description: 'Factory-style front dashcam replacing the TSS 3.0 sensor housing without trailing wires.',
+    asin: 'B0CKZ9Z72Z',
+    searchQuery: 'FITCAMX 4K dash cam Toyota Grand Highlander TSS 3.0',
+    bullets: [
+      'TSS 3.0 mirror housing replacement looks completely stock',
+      '4K UHD Sony sensor with superior low-light recording',
+      'Automatic emergency collision G-sensor loop recording',
+      'Direct smartphone companion app for video export',
+    ],
+    buttonText: 'View OEM Dashcam',
+    icon: Video,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    id: 'gh-console-divider',
+    category: 'Cabin Storage',
+    brand: 'Vehicle OCD',
+    title: 'Center Console Dual-Tier Divider Tray',
+    description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
+    asin: 'B0CL3N26D6',
+    searchQuery: 'Toyota Grand Highlander center console organizer tray divider',
+    bullets: [
+      'Organizes phones, wallet, sunglasses, keys, and coins',
+      'Preserves lower bin room for large items and charging cables',
+      'High-density matte black ABS plastic matching interior trim',
+      'Anti-rattle non-slip removable rubber base inserts',
+    ],
+    buttonText: 'View Console Tray',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+];
 
-  camry: [
-    {
-      id: 'camry-screen-protector',
-      category: 'Cabin Protection',
-      brand: 'Spigen / YEE PIN',
-      title: 'Anti-Glare 12.3" Tempered Glass Screen Protector',
-      description: 'Ultra-clear 9H hardness tempered glass custom made for the updated Camry widescreen display.',
-      asin: 'B0CZS7RRLP',
-      bullets: [
-        '9H tempered hardness prevents keys and ring scratches',
-        'Anti-fingerprint hydrophobic oleophobic surface',
-        'Silicone auto-adhesion eliminates bubbles during installation',
-        'Preserves vivid colors and touch responsiveness',
-      ],
-      buttonText: 'View Screen Protector',
-      icon: ShieldCheck,
-      iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-    },
-    {
-      id: 'camry-console-organizer',
-      category: 'Cabin Storage',
-      brand: 'EDBETOS',
-      title: 'Center Console Organizer & Armrest Tray',
-      description: 'Custom-molded tray maximizing storage utility in the Camry center armrest console.',
-      asin: 'B095K17NZK',
-      bullets: [
-        'Transforms messy deep compartment into neat dual tiers',
-        'Coin holder slots and dedicated phone pocket',
-        'Noise-dampening textured rubber mats eliminate rattles',
-        'Easy lift-out access to deep lower compartment',
-      ],
-      buttonText: 'View Console Tray',
-      icon: Box,
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-    },
-    {
-      id: 'camry-floor-mats',
-      category: 'Interior Protection',
-      brand: 'TuxMat / WeatherTech',
-      title: 'All-Weather Custom TPE Floor Mats',
-      description: 'Heavy-duty laser-fit floor mats protecting front and rear footwells from Canadian road salt.',
-      asin: 'B07H4W528J',
-      bullets: [
-        'Deep raised edges trap snow, melted slush, and mud',
-        'Factory retention clip lock-in stops mat slipping forward',
-        'Safe non-toxic TPE remains supple in deep sub-zero cold',
-        'Quick hose-off cleaning dries in minutes',
-      ],
-      buttonText: 'View Floor Mats',
-      icon: Layers,
-      iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-    },
-    {
-      id: 'camry-fast-charger',
-      category: 'Cabin Power',
-      brand: 'Anker / Baseus',
-      title: 'Dual-Port 65W USB-C Fast Car Charger',
-      description: 'Compact metal 12V adapter with 65W Power Delivery to rapidly charge laptops and phones.',
-      asin: 'B071WYF9HP',
-      bullets: [
-        'Dual USB-C and USB-A high-speed fast charging',
-        '65W total output powers MacBooks, iPads, and smartphones',
-        'Flush-fit aluminum alloy shell with ambient LED ring',
-        'Active temperature monitoring protects vehicle battery',
-      ],
-      buttonText: 'View Fast Charger',
-      icon: Zap,
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-    },
-  ],
+const CAMRY_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'camry-screen-protector',
+    category: 'Cabin Protection',
+    brand: 'Spigen / YEE PIN',
+    title: 'Anti-Glare 12.3" Tempered Glass Screen Protector',
+    description: 'Ultra-clear 9H hardness tempered glass custom made for the updated Camry widescreen display.',
+    asin: 'B0CZS7RRLP',
+    searchQuery: 'Toyota Camry 12.3 inch screen protector tempered glass',
+    bullets: [
+      '9H tempered hardness prevents keys and ring scratches',
+      'Anti-fingerprint hydrophobic oleophobic surface',
+      'Silicone auto-adhesion eliminates bubbles during installation',
+      'Preserves vivid colors and touch responsiveness',
+    ],
+    buttonText: 'View Screen Protector',
+    icon: ShieldCheck,
+    iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    id: 'camry-console-organizer',
+    category: 'Cabin Storage',
+    brand: 'EDBETOS',
+    title: 'Center Console Organizer & Armrest Tray',
+    description: 'Custom-molded tray maximizing storage utility in the Camry center armrest console.',
+    asin: 'B095K17NZK',
+    searchQuery: 'Toyota Camry center console organizer tray',
+    bullets: [
+      'Transforms messy deep compartment into neat dual tiers',
+      'Coin holder slots and dedicated phone pocket',
+      'Noise-dampening textured rubber mats eliminate rattles',
+      'Easy lift-out access to deep lower compartment',
+    ],
+    buttonText: 'View Console Tray',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+  {
+    id: 'camry-floor-mats',
+    category: 'Interior Protection',
+    brand: 'TuxMat / WeatherTech',
+    title: 'All-Weather Custom TPE Floor Mats',
+    description: 'Heavy-duty laser-fit floor mats protecting front and rear footwells from Canadian road salt.',
+    asin: 'B07H4W528J',
+    searchQuery: 'Toyota Camry all weather floor mats TPE',
+    bullets: [
+      'Deep raised edges trap snow, melted slush, and mud',
+      'Factory retention clip lock-in stops mat slipping forward',
+      'Safe non-toxic TPE remains supple in deep sub-zero cold',
+      'Quick hose-off cleaning dries in minutes',
+    ],
+    buttonText: 'View Floor Mats',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'camry-fast-charger',
+    category: 'Cabin Power',
+    brand: 'Anker / Baseus',
+    title: 'Dual-Port 65W USB-C Fast Car Charger',
+    description: 'Compact metal 12V adapter with 65W Power Delivery to rapidly charge laptops and phones.',
+    asin: 'B071WYF9HP',
+    searchQuery: 'Anker 65W fast USB-C PD car charger',
+    bullets: [
+      'Dual USB-C and USB-A high-speed fast charging',
+      '65W total output powers MacBooks, iPads, and smartphones',
+      'Flush-fit aluminum alloy shell with ambient LED ring',
+      'Active temperature monitoring protects vehicle battery',
+    ],
+    buttonText: 'View Fast Charger',
+    icon: Zap,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+];
 
-  prius: [
-    {
-      id: 'prius-screen-protector',
-      category: 'Cabin Protection',
-      brand: 'Spigen',
-      title: 'Anti-Glare 12.3" Infotainment Screen Protector',
-      description: 'Premium tempered glass engineered for the 5th-gen Prius center multimedia display.',
-      asin: 'B0BWRR4PGL',
-      bullets: [
-        'Matte anti-glare finish cuts harsh sun reflections on highway',
-        '9H surface hardness defends against scratches',
-        'Oleophobic coating keeps fingerprints off the touchscreen',
-        'Includes alignment frame for bubble-free application',
-      ],
-      buttonText: 'View Screen Protector',
-      icon: ShieldCheck,
-      iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-    },
-    {
-      id: 'prius-console-tray',
-      category: 'Storage & Organization',
-      brand: 'EDBETOS',
-      title: 'Center Console Organizer & Coin Tray',
-      description: 'Precision molded drop-in organizer tailored for the 5th-gen Prius center armrest.',
-      asin: 'B0C3793VCR',
-      bullets: [
-        'Custom partitioned slots for key fob, cards, and coins',
-        'Non-slip silicone mats prevent rattling during acceleration',
-        'Quick lift out to reach lower storage box',
-        'Seamless OEM appearance matching Prius cabin plastic',
-      ],
-      buttonText: 'View Console Tray',
-      icon: Box,
-      iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-    },
-    {
-      id: 'prius-floor-liners',
-      category: 'Interior Protection',
-      brand: '3D MAXpider / TuxMat',
-      title: 'All-Weather Heavy-Duty TPE Liners',
-      description: 'Laser-measured floor protection customized for the Prius hybrid cabin layout.',
-      asin: 'B0BYW28N85',
-      bullets: [
-        'High-wall tub design stops liquid spillover onto carpet',
-        'Patented bottom layer prevents shifting without pins',
-        'Engineered clearance around hybrid battery cooling vents',
-        'Ultra-lightweight yet rigid waterproof construction',
-      ],
-      buttonText: 'View Floor Liners',
-      icon: Layers,
-      iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-    },
-    {
-      id: 'prius-wireless-carplay',
-      category: 'Connectivity',
-      brand: 'CarlinKit 5.0 2Air',
-      title: 'Plug-and-Play Wireless CarPlay & Auto Adapter',
-      description: 'Converts factory wired smartphone connection to immediate 5.8GHz wireless syncing.',
-      asin: 'B0B19D12P6',
-      bullets: [
-        'Instant wireless connection when you start your Prius',
-        'Fast 5.8GHz transmission with minimal audio lag',
-        'Full steering wheel and touchscreen compatibility',
-        'Compact form factor tucks neatly into center tray',
-      ],
-      buttonText: 'View Wireless Adapter',
-      icon: Radio,
-      iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
-      iconColor: 'text-emerald-600 dark:text-emerald-400',
-    },
-  ],
-};
+const PRIUS_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'prius-screen-protector',
+    category: 'Cabin Protection',
+    brand: 'Spigen',
+    title: 'Anti-Glare 12.3" Infotainment Screen Protector',
+    description: 'Premium tempered glass engineered for the 5th-gen Prius center multimedia display.',
+    asin: 'B0BWRR4PGL',
+    searchQuery: 'Spigen Toyota Prius 12.3 inch screen protector',
+    bullets: [
+      'Matte anti-glare finish cuts harsh sun reflections on highway',
+      '9H surface hardness defends against scratches',
+      'Oleophobic coating keeps fingerprints off the touchscreen',
+      'Includes alignment frame for bubble-free application',
+    ],
+    buttonText: 'View Screen Protector',
+    icon: ShieldCheck,
+    iconBg: 'bg-purple-500/10 dark:bg-purple-500/20',
+    iconColor: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    id: 'prius-console-tray',
+    category: 'Storage & Organization',
+    brand: 'EDBETOS',
+    title: 'Center Console Organizer & Coin Tray',
+    description: 'Precision molded drop-in organizer tailored for the 5th-gen Prius center armrest.',
+    asin: 'B0C3793VCR',
+    searchQuery: 'Toyota Prius center console organizer tray 2023-2026',
+    bullets: [
+      'Custom partitioned slots for key fob, cards, and coins',
+      'Non-slip silicone mats prevent rattling during acceleration',
+      'Quick lift out to reach lower storage box',
+      'Seamless OEM appearance matching Prius cabin plastic',
+    ],
+    buttonText: 'View Console Tray',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+  {
+    id: 'prius-floor-liners',
+    category: 'Interior Protection',
+    brand: '3D MAXpider / TuxMat',
+    title: 'All-Weather Heavy-Duty TPE Liners',
+    description: 'Laser-measured floor protection customized for the Prius hybrid cabin layout.',
+    asin: 'B0BYW28N85',
+    searchQuery: 'Toyota Prius 2023-2026 all weather floor mats TPE',
+    bullets: [
+      'High-wall tub design stops liquid spillover onto carpet',
+      'Patented bottom layer prevents shifting without pins',
+      'Engineered clearance around hybrid battery cooling vents',
+      'Ultra-lightweight yet rigid waterproof construction',
+    ],
+    buttonText: 'View Floor Liners',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'prius-wireless-carplay',
+    category: 'Connectivity',
+    brand: 'CarlinKit 5.0 2Air',
+    title: 'Plug-and-Play Wireless CarPlay & Auto Adapter',
+    description: 'Converts factory wired smartphone connection to immediate 5.8GHz wireless syncing.',
+    asin: 'B0B19D12P6',
+    searchQuery: 'CarlinKit 5.0 2Air wireless CarPlay adapter',
+    bullets: [
+      'Instant wireless connection when you start your Prius',
+      'Fast 5.8GHz transmission with minimal audio lag',
+      'Full steering wheel and touchscreen compatibility',
+      'Compact form factor tucks neatly into center tray',
+    ],
+    buttonText: 'View Wireless Adapter',
+    icon: Radio,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+];
 
 const PHEV_EVSE_CHARGER: VettedProduct = {
   id: 'evse-charger',
@@ -457,6 +479,7 @@ const PHEV_EVSE_CHARGER: VettedProduct = {
   title: 'Level 2 Home EVSE 40A Fast Charger',
   description: 'Heavy-duty 40A / 9.6 kW fast charger to fully recharge your Toyota PHEV in under 2.5 hours.',
   asin: 'B082LMVSLY',
+  searchQuery: 'Grizzl-E Classic 40A Level 2 EVSE home charger NEMA 14-50',
   bullets: [
     'NEMA 14-50 plug or hardwire capable with flexible 24ft cable',
     'Cast-aluminum NEMA 4 sub-zero Canadian winter weatherproofing',
@@ -467,6 +490,21 @@ const PHEV_EVSE_CHARGER: VettedProduct = {
   icon: Zap,
   iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
   iconColor: 'text-amber-600 dark:text-amber-400',
+};
+
+const MODEL_CATALOG: Record<string, VettedProduct[]> = {
+  rav4: RAV4_PRODUCTS,
+  'rav4-hybrid': RAV4_PRODUCTS,
+  'rav4-phev': RAV4_PRODUCTS,
+  sienna: SIENNA_PRODUCTS,
+  'sienna-hybrid': SIENNA_PRODUCTS,
+  'grand-highlander': GRAND_HIGHLANDER_PRODUCTS,
+  'grand-highlander-hybrid': GRAND_HIGHLANDER_PRODUCTS,
+  camry: CAMRY_PRODUCTS,
+  'camry-hybrid': CAMRY_PRODUCTS,
+  prius: PRIUS_PRODUCTS,
+  'prius-hybrid': PRIUS_PRODUCTS,
+  'prius-prime': PRIUS_PRODUCTS,
 };
 
 export interface CalculatorGearCardsProps {
@@ -483,7 +521,23 @@ export function CalculatorGearCards({
   const { isUs } = useMarket();
   const context = useCalculatorContext();
 
-  const rawModel = propActiveModel || context?.activeModelSlug || 'rav4';
+  // Listen to window-level model change events for instant reactivity across client components
+  const [eventModelSlug, setEventModelSlug] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleModelChange = (e: Event) => {
+      const customEvent = e as CustomEvent<{ model?: string; presetId?: string }>;
+      if (customEvent.detail?.model) {
+        setEventModelSlug(customEvent.detail.model);
+      }
+    };
+    window.addEventListener('toyotawait:model-change', handleModelChange);
+    return () => {
+      window.removeEventListener('toyotawait:model-change', handleModelChange);
+    };
+  }, []);
+
+  const rawModel = propActiveModel || eventModelSlug || context?.activeModelSlug || 'rav4';
   const effectiveIsPhev = propIsPhev ?? context?.isPhev ?? false;
 
   // Normalize model key
@@ -540,11 +594,15 @@ export function CalculatorGearCards({
     return list.slice(0, 4);
   }, [modelKey, effectiveIsPhev]);
 
-  const getAffiliateUrl = (asin: string) => {
-    if (isUs) {
-      return `https://www.amazon.com/dp/${asin}/?tag=toyotawaits07-20`;
+  const getAffiliateUrl = (prod: VettedProduct) => {
+    const market = isUs ? 'US' : 'CA';
+    if (prod.asin) {
+      return buildAmazonAffiliateUrl({ asin: prod.asin, market });
     }
-    return `https://www.amazon.ca/dp/${asin}/?tag=toyotawaits-20`;
+    if (prod.searchQuery) {
+      return buildAmazonAffiliateUrl({ query: prod.searchQuery, market });
+    }
+    return buildAmazonAffiliateUrl({ market });
   };
 
   return (
@@ -573,7 +631,7 @@ export function CalculatorGearCards({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {products.map((prod) => {
           const Icon = prod.icon;
-          const affiliateUrl = getAffiliateUrl(prod.asin);
+          const affiliateUrl = getAffiliateUrl(prod);
 
           return (
             <Card
@@ -598,7 +656,14 @@ export function CalculatorGearCards({
                     {prod.brand}
                   </span>
                   <CardTitle className="text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug line-clamp-2">
-                    {prod.title}
+                    <a
+                      href={affiliateUrl}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer"
+                      className="hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                    >
+                      {prod.title}
+                    </a>
                   </CardTitle>
                 </div>
               </CardHeader>

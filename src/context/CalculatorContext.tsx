@@ -84,17 +84,47 @@ export function CalculatorProvider({
     }
   }, []);
 
-  // Sync if initial props change
+  // Sync if initial props change or tracker context is present on client mount
   useEffect(() => {
     if (initialPresetId) {
       setActivePresetIdState(initialPresetId);
-    } else if (initialModelSlug) {
+      return;
+    }
+    if (initialModelSlug) {
       const fromSlug = modelSlugToPresetId(initialModelSlug);
       if (fromSlug) {
         setActivePresetIdState(fromSlug);
+        return;
+      }
+    }
+    const tracked = resolveTrackerContextModel();
+    if (tracked) {
+      const fromTracker = modelSlugToPresetId(tracked);
+      if (fromTracker) {
+        setActivePresetIdState(fromTracker);
       }
     }
   }, [initialPresetId, initialModelSlug]);
+
+  // Global window listener for external model change events
+  useEffect(() => {
+    const handleModelChangeEvent = (e: Event) => {
+      const ce = e as CustomEvent<{ model?: string; presetId?: string }>;
+      if (ce.detail?.presetId) {
+        setActivePresetIdState(ce.detail.presetId);
+      } else if (ce.detail?.model) {
+        const fromSlug = modelSlugToPresetId(ce.detail.model);
+        if (fromSlug) {
+          setActivePresetIdState(fromSlug);
+        }
+      }
+    };
+
+    window.addEventListener('toyotawait:model-change', handleModelChangeEvent);
+    return () => {
+      window.removeEventListener('toyotawait:model-change', handleModelChangeEvent);
+    };
+  }, []);
 
   const activeModelSlug = useMemo(() => presetIdToModelSlug(activePresetId), [activePresetId]);
   const activeModelName = useMemo(() => presetIdToModelName(activePresetId), [activePresetId]);

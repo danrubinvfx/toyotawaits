@@ -50,12 +50,24 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
     results,
   } = useSavingsCalculator(props);
 
-  // Synchronize with external context (URL param / route change / tracker state)
+  const initializedFromContext = React.useRef(false);
+
+  // Synchronize initialTargetPresetId prop with CalculatorContext on mount
+  useEffect(() => {
+    if (props.initialTargetPresetId && calculatorContext) {
+      calculatorContext.setActivePresetId(props.initialTargetPresetId);
+    }
+  }, [props.initialTargetPresetId]);
+
+  // Synchronize with external context (URL param / route change / tracker state) once on mount if no initial target was given
   useEffect(() => {
     if (
+      !initializedFromContext.current &&
+      !props.initialTargetPresetId &&
       calculatorContext?.activePresetId &&
       calculatorContext.activePresetId !== targetVehicle.presetId
     ) {
+      initializedFromContext.current = true;
       const preset = getVehiclePresetById(calculatorContext.activePresetId);
       if (preset) {
         setTargetVehicle({
@@ -66,13 +78,13 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         });
       }
     }
-  }, [calculatorContext?.activePresetId, targetVehicle.presetId, setTargetVehicle]);
+  }, [calculatorContext?.activePresetId, props.initialTargetPresetId, targetVehicle.presetId, setTargetVehicle]);
 
   // Handle Target Vehicle dropdown changes
   const handleTargetVehicleChange = useCallback(
     (patch: Partial<TargetVehicleState>) => {
       setTargetVehicle(patch);
-      if (patch.presetId && calculatorContext && patch.presetId !== calculatorContext.activePresetId) {
+      if (patch.presetId && calculatorContext) {
         calculatorContext.setActivePresetId(patch.presetId);
       }
     },

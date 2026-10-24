@@ -5,6 +5,8 @@ import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { CalculatorProvider } from '@/context/CalculatorContext';
 import { MarketProvider } from '@/context/MarketContext';
+import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import { GEAR_MARKET_CATALOG } from '@/data/gear/catalog';
 
 describe('Calculator Dynamic Links & Recommended Products', () => {
   it('renders strictly "Recommended Products" heading and required affiliate disclosure', () => {
@@ -62,16 +64,84 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     });
   });
 
-  it('displays curated accessories for Sienna including 3-row liners and trailer hitch', () => {
+  it('displays curated accessories for Sienna including 3-row high-wall liners (ASIN B0CFV5R8QM) and hitch', () => {
     render(
       <MarketProvider initialMarket="CA">
         <CalculatorGearCards activeModel="sienna" />
       </MarketProvider>
     );
 
-    expect(screen.getByText(/3-Row Custom All-Weather Floor Liners/i)).toBeDefined();
+    expect(screen.getByText(/3-Row All-Weather High-Wall Floor Liners/i)).toBeDefined();
     expect(screen.getByText(/Class III 2-Inch Trailer Hitch Receiver/i)).toBeDefined();
     expect(screen.getByText(/Rear Seatback & Kick Mat Protectors/i)).toBeDefined();
+
+    // Verify Sienna floor liners link strictly uses Sienna ASIN B0CFV5R8QM and never mentions RAV4
+    const siennaLinerLink = screen.getByRole('link', { name: /View 3-Row Liners/i });
+    expect(siennaLinerLink.getAttribute('href')).toContain('B0CFV5R8QM');
+    expect(siennaLinerLink.getAttribute('href')).not.toContain('RAV4');
+    expect(siennaLinerLink.getAttribute('href')).not.toContain('B0833DT93B');
+  });
+
+  it('strictly isolates RAV4 floor liners to ASIN B0833DT93B and never includes Sienna data', () => {
+    render(
+      <MarketProvider initialMarket="CA">
+        <CalculatorGearCards activeModel="rav4" />
+      </MarketProvider>
+    );
+
+    const rav4LinerLink = screen.getByRole('link', { name: /View All-Weather Liners/i });
+    expect(rav4LinerLink.getAttribute('href')).toContain('B0833DT93B');
+    expect(rav4LinerLink.getAttribute('href')).not.toContain('B0CFV5R8QM');
+    expect(rav4LinerLink.getAttribute('href')).not.toContain('Sienna');
+  });
+
+  it('verifies buildAmazonAffiliateUrl in src/lib/gear/affiliate.ts generates correct CA and US URLs', () => {
+    // CA query fallback
+    const caQueryUrl = buildAmazonAffiliateUrl({
+      query: 'Toyota Sienna all weather floor mats 2021-2026',
+      market: 'CA',
+    });
+    expect(caQueryUrl).toBe(
+      'https://www.amazon.ca/s?k=Toyota%20Sienna%20all%20weather%20floor%20mats%202021-2026&tag=toyotawaits-20'
+    );
+
+    // CA direct ASIN
+    const caAsinUrl = buildAmazonAffiliateUrl({
+      asin: 'B0CFV5R8QM',
+      market: 'CA',
+    });
+    expect(caAsinUrl).toBe('https://www.amazon.ca/dp/B0CFV5R8QM?tag=toyotawaits-20');
+
+    // US query fallback
+    const usQueryUrl = buildAmazonAffiliateUrl({
+      query: 'Toyota Sienna all weather floor mats 2021-2026',
+      market: 'US',
+    });
+    expect(usQueryUrl).toBe(
+      'https://www.amazon.com/s?k=Toyota%20Sienna%20all%20weather%20floor%20mats%202021-2026&tag=toyotawaits07-20'
+    );
+
+    // US direct ASIN
+    const usAsinUrl = buildAmazonAffiliateUrl({
+      asin: 'B0CFV5R8QM',
+      market: 'US',
+    });
+    expect(usAsinUrl).toBe('https://www.amazon.com/dp/B0CFV5R8QM?tag=toyotawaits07-20');
+  });
+
+  it('verifies GEAR_MARKET_CATALOG floor liner entries for Sienna and RAV4', () => {
+    const siennaEntry = GEAR_MARKET_CATALOG['sienna-all-weather-liners'];
+    expect(siennaEntry.title).toBe('3-Row All-Weather High-Wall Floor Liners');
+    expect(siennaEntry.asin_ca).toBe('B0CFV5R8QM');
+    expect(siennaEntry.asin_us).toBe('B0CFV5R8QM');
+    expect(siennaEntry.searchKeywordsCA).toBe('Toyota Sienna all weather floor mats 2021-2026');
+    expect(siennaEntry.searchKeywordsUS).toBe('Toyota Sienna all weather floor mats 2021-2026');
+
+    const rav4Entry = GEAR_MARKET_CATALOG['high-wall-floor-liners-rav4'];
+    expect(rav4Entry.asin_ca).toBe('B0833DT93B');
+    expect(rav4Entry.asin_us).toBe('B0833DT93B');
+    expect(rav4Entry.searchKeywordsCA).toBe('TuxMat Toyota RAV4 2019-2026');
+    expect(rav4Entry.searchKeywordsUS).toBe('TuxMat Toyota RAV4 2019-2026');
   });
 
   it('displays curated accessories for Grand Highlander including 12.3" glass and cargo liner', () => {
