@@ -21,6 +21,27 @@ interface ModelInfo {
 }
 
 const KNOWN_MODELS: Record<string, ModelInfo> = {
+  'sienna-hev': {
+    name: 'Sienna',
+    year: 2025,
+    presetId: '2025-toyota-sienna-hybrid',
+    archetypeId: 'archetype-minivan',
+    combinedL100km: 6.6,
+  },
+  'camry-hev': {
+    name: 'Camry',
+    year: 2025,
+    presetId: '2025-toyota-camry-hybrid',
+    archetypeId: 'archetype-sedan-gas',
+    combinedL100km: 4.6,
+  },
+  'rav4-prime': {
+    name: 'RAV4 PHEV',
+    year: 2026,
+    presetId: '2026-toyota-rav4-phev',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.0,
+  },
   'rav4': {
     name: 'RAV4 Hybrid',
     year: 2026,

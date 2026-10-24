@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { Metadata } from 'next';
 import { getModelBySlug, CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 import { getModelBenchmark } from '@/lib/db/stats';
@@ -45,6 +45,10 @@ export default async function ModelPage({ params }: RouteProps) {
 
   if (!model) {
     notFound();
+  }
+
+  if (modelSlug.toLowerCase().trim() !== model.slug) {
+    permanentRedirect(`/${model.slug}`);
   }
 
   const benchmark = await getModelBenchmark(model.slug);

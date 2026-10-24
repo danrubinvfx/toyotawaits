@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
@@ -265,7 +265,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const title = `${modelConfig.name} Wait Times Canada (2026 Tracker) | ToyotaWaits`;
   const description = `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`;
-  const canonical = `https://toyotawaits.ca/wait-times/${model}`;
+  const canonical = `https://toyotawaits.ca/wait-times/${modelConfig.slug}`;
 
   return {
     title,
@@ -428,6 +428,11 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
 
   if (!modelConfig) {
     notFound();
+  }
+
+  // Canonical 301/308 redirect for model aliases and powertrain suffixes (e.g. rav4-hybrid, sienna-hev)
+  if (model.toLowerCase().trim() !== modelConfig.slug) {
+    permanentRedirect(`/wait-times/${modelConfig.slug}`);
   }
 
   const { submissions, latestSubmissionDate } = await fetchModelSubmissions(modelConfig);

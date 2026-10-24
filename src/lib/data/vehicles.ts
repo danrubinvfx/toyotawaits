@@ -1,3 +1,4 @@
+import { toCanonicalWaitTimeSlug } from '@/lib/calculator-model-helpers';
 // ============================================================================
 // CANADIAN VEHICLE CATALOG DATA
 // Canonical models, powertrains, and trims with UUIDs matching DB seed data.
@@ -343,6 +344,25 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
       },
     ],
   },
+  {
+    id: '10000000-0000-4000-8000-000000000011',
+    slug: 'camry',
+    name: 'Camry',
+    generationStartYear: 2025,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000110',
+        slug: 'hev',
+        name: 'Hybrid (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000140', slug: 'le-fwd', name: 'LE FWD', msrpCad: 34300 },
+          { id: '30000000-0000-4000-8000-000000000141', slug: 'se-awd', name: 'SE AWD', msrpCad: 37950 },
+          { id: '30000000-0000-4000-8000-000000000142', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 44250 },
+          { id: '30000000-0000-4000-8000-000000000143', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 44250 },
+        ],
+      },
+    ],
+  },
 ];
 
 import {
@@ -370,8 +390,15 @@ export {
 };
 
 export function getModelBySlug(slug: string): CatalogModel | undefined {
+  if (!slug) return undefined;
+  const clean = slug.toLowerCase().trim();
+  const direct = CANADIAN_VEHICLE_CATALOG.find(
+    (m) => m.slug.toLowerCase() === clean
+  );
+  if (direct) return direct;
+  const canonical = toCanonicalWaitTimeSlug(clean);
   return CANADIAN_VEHICLE_CATALOG.find(
-    (m) => m.slug.toLowerCase() === slug.toLowerCase()
+    (m) => m.slug.toLowerCase() === canonical.toLowerCase()
   );
 }
 
