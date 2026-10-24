@@ -23,12 +23,15 @@ export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateP
     ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
     : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
 
-  if (query) {
-    return `${domain}/s?k=${encodeURIComponent(query)}&tag=${tag}`;
+  const cleanAsin = asin?.trim().toUpperCase();
+  if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
+    return `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
-  if (asin) {
-    return `${domain}/dp/${asin}?tag=${tag}`;
+
+  if (query && query.trim().length > 0) {
+    return `${domain}/s?k=${encodeURIComponent(query.trim())}&tag=${tag}`;
   }
+
   return `${domain}/?tag=${tag}`;
 }
 

@@ -52,6 +52,29 @@ export function presetIdToModelName(presetId?: string): string {
 }
 
 /**
+ * Normalizes any model slug, vehicle preset ID, or name into a canonical /wait-times/[model] route slug.
+ * Strips powertrain suffixes (-hev, -phev, -hybrid, etc.) so internal navigation links never 404.
+ */
+export function toCanonicalWaitTimeSlug(slugOrPreset?: string | null): string {
+  if (!slugOrPreset) return 'rav4';
+  const clean = slugOrPreset.toLowerCase().trim().replace(/_/g, '-');
+  if (clean.includes('crown')) return 'crown-signia';
+  if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
+  if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
+  if (clean.includes('land-cruiser') || clean.includes('landcruiser')) return 'land-cruiser';
+  if (clean.includes('sienna')) return 'sienna';
+  if (clean.includes('highlander')) return 'highlander';
+  if (clean.includes('rav4')) return 'rav4';
+  if (clean.includes('camry')) return 'camry';
+  if (clean.includes('prius')) return 'prius';
+  if (clean.includes('tacoma')) return 'tacoma';
+  if (clean.includes('tundra')) return 'tundra';
+  if (clean.includes('4runner')) return '4runner';
+  if (clean.includes('sequoia')) return 'sequoia';
+  return clean.replace(/-(hybrid|phev|hev|gas|prime|awd|fwd)$/g, '').trim();
+}
+
+/**
  * Resolves previously tracked vehicle from localStorage (tracker context)
  */
 export function resolveTrackerContextModel(): string | null {

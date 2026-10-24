@@ -205,6 +205,7 @@ export function sanitizeAmazonAffiliateUrl(
 
 export interface BuildAmazonAffiliateUrlParams {
   query?: string;
+  searchQuery?: string;
   asin?: string;
   market?: 'CA' | 'US';
   isUs?: boolean;
@@ -231,12 +232,18 @@ export function buildAmazonAffiliateUrl(
   const isUs = paramsOrQuery.market === 'US' || paramsOrQuery.isUs === true;
   const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
   const tag = getAssociateTag(isUs ? 'US' : 'CA', paramsOrQuery.slug);
+  const effectiveQuery = paramsOrQuery.searchQuery || paramsOrQuery.query;
 
-  if (paramsOrQuery.asin) {
-    return `${domain}/dp/${paramsOrQuery.asin}?tag=${tag}`;
+  // Validate ASIN: Must be 10 alphanumeric characters
+  const cleanAsin = paramsOrQuery.asin?.trim().toUpperCase();
+  if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
+    return `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
-  if (paramsOrQuery.query) {
-    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery.query)}&tag=${tag}`;
+
+  // Fallback cleanly to search query if ASIN is missing or invalid
+  if (effectiveQuery && effectiveQuery.trim().length > 0) {
+    return `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}&tag=${tag}`;
   }
+
   return `${domain}/?tag=${tag}`;
 }

@@ -415,11 +415,79 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
       },
     ],
   },
+  'crown-signia': {
+    slug: 'crown-signia',
+    name: 'Toyota Crown Signia',
+    shortName: 'Crown Signia',
+    dbFilter: 'crown-signia',
+    powertrains: ['Hybrid AWD'],
+    baseMedian: 180,
+    baseP25: 120,
+    baseP75: 270,
+    popularTrims: [
+      { trim: 'XLE AWD', powertrain: 'Hybrid AWD', spread: '3–6 months (90–180 days)', status: 'Balanced' },
+      { trim: 'Limited AWD', powertrain: 'Hybrid AWD', spread: '5–8 months (150–240 days)', status: 'High Demand' },
+    ],
+    allocationTips: [
+      'The Crown Signia replaces the Venza as Toyota’s premium 2-row hybrid crossover in Canada.',
+      'All Canadian Crown Signia models come standard with Electronic On-Demand AWD and hybrid powertrain.',
+      'Limited trims with panoramic glass roof and 21-inch wheels face slightly tighter allocation windows.',
+      'Check mid-volume suburban dealerships for unreserved incoming allocation pipelines.',
+    ],
+    faqs: [
+      {
+        question: 'What is the wait time for a Toyota Crown Signia in Canada in 2026?',
+        answer: 'The Canadian median wait time for a Toyota Crown Signia is approximately 4 to 7 months (120 to 210 days), depending on trim level and dealership allocation volume.',
+      },
+      {
+        question: 'Is the Toyota Crown Signia available in gas-only in Canada?',
+        answer: 'No, all Crown Signia models in Canada are exclusively hybrid with electronic on-demand all-wheel drive.',
+      },
+      {
+        question: 'Does the Crown Signia qualify for Canadian EV/PHEV government rebates?',
+        answer: 'No, as a standard self-charging hybrid (HEV) rather than a plug-in hybrid (PHEV), it does not qualify for federal iZEV or provincial EV rebates.',
+      },
+    ],
+  },
 };
+
+/**
+ * Normalizes any model slug, variant, or preset ID to a canonical model registry slug.
+ * Strips powertrain suffixes like -hev, -phev, -hybrid, -gas, -prime, etc.
+ */
+export function normalizeModelSlug(slug?: string | null): string {
+  if (!slug) return 'rav4';
+  let clean = slug.toLowerCase().trim().replace(/_/g, '-');
+
+  // Direct match
+  if (MODEL_REGISTRY[clean]) return clean;
+
+  // Specific multi-word or compound models
+  if (clean.includes('crown')) return 'crown-signia';
+  if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
+  if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
+  if (clean.includes('land-cruiser') || clean.includes('landcruiser')) return 'land-cruiser';
+  if (clean.includes('sienna')) return 'sienna';
+  if (clean.includes('highlander')) return 'highlander';
+  if (clean.includes('rav4')) return 'rav4';
+  if (clean.includes('camry')) return 'camry';
+  if (clean.includes('prius')) return 'prius';
+  if (clean.includes('tacoma')) return 'tacoma';
+  if (clean.includes('tundra')) return 'tundra';
+  if (clean.includes('4runner')) return '4runner';
+  if (clean.includes('sequoia')) return 'sequoia';
+
+  clean = clean.replace(/-(hybrid|phev|hev|gas|prime|awd|fwd)$/g, '').trim();
+
+  return clean;
+}
 
 export function getModelConfig(slug: string): ModelRegistryEntry | undefined {
   if (!slug) return undefined;
-  return MODEL_REGISTRY[slug.toLowerCase().trim()];
+  const clean = slug.toLowerCase().trim();
+  if (MODEL_REGISTRY[clean]) return MODEL_REGISTRY[clean];
+  const normalized = normalizeModelSlug(clean);
+  return MODEL_REGISTRY[normalized];
 }
 
 export function getAllModelConfigs(): ModelRegistryEntry[] {

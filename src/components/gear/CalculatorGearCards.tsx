@@ -594,15 +594,13 @@ export function CalculatorGearCards({
     return list.slice(0, 4);
   }, [modelKey, effectiveIsPhev]);
 
-  const getAffiliateUrl = (prod: VettedProduct) => {
+    const getAffiliateUrl = (prod: VettedProduct) => {
     const market = isUs ? 'US' : 'CA';
-    if (prod.asin) {
-      return buildAmazonAffiliateUrl({ asin: prod.asin, market });
-    }
-    if (prod.searchQuery) {
-      return buildAmazonAffiliateUrl({ query: prod.searchQuery, market });
-    }
-    return buildAmazonAffiliateUrl({ market });
+    return buildAmazonAffiliateUrl({
+      asin: prod.asin,
+      searchQuery: prod.searchQuery,
+      market,
+    });
   };
 
   return (

@@ -22,6 +22,7 @@ import { useCalculatorContext } from '@/context/CalculatorContext';
 import {
   presetIdToModelSlug,
   presetIdToModelName,
+  toCanonicalWaitTimeSlug,
 } from '@/lib/calculator-model-helpers';
 
 export type VehicleSavingsCalculatorProps = CalculatorInitialConfig;
@@ -205,7 +206,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               size="sm"
               className="flex-1 h-9 min-h-[36px] text-xs font-semibold border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 cursor-pointer"
             >
-              <Link href={`/wait-times/${activeModelSlug}`} className="flex items-center justify-center gap-1.5">
+              <Link href={`/wait-times/${toCanonicalWaitTimeSlug(activeModelSlug)}`} className="flex items-center justify-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-zinc-500" />
                 <span>Check {activeModelName} Wait Times</span>
               </Link>

@@ -195,4 +195,42 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     const siennaWaitLink = screen.getByRole('link', { name: /Check Sienna Wait Times/i });
     expect(siennaWaitLink.getAttribute('href')).toBe('/wait-times/sienna');
   });
+  it('correctly maps Crown Signia to /wait-times/crown-signia and /inventory?model=Crown%20Signia without 404', () => {
+    render(
+      <CalculatorProvider initialPresetId="2025-toyota-crown-signia-hybrid">
+        <VehicleSavingsCalculator initialTargetPresetId="2025-toyota-crown-signia-hybrid" />
+      </CalculatorProvider>
+    );
+
+    const waitTimesLink = screen.getByRole('link', { name: /Check Crown Signia Wait Times/i });
+    expect(waitTimesLink.getAttribute('href')).toBe('/wait-times/crown-signia');
+
+    const inventoryLink = screen.getByRole('link', { name: /Skip the Wait \/ View Live Stock/i });
+    expect(inventoryLink.getAttribute('href')).toBe('/inventory?model=Crown%20Signia');
+  });
+
+  it('validates 10-character alphanumeric ASINs and falls back safely to search query to prevent 404s', () => {
+    // Valid 10-char ASIN
+    const validUrl = buildAmazonAffiliateUrl({
+      asin: 'B0CFV5R8QM',
+      searchQuery: 'Toyota Sienna floor mats',
+      market: 'CA',
+    });
+    expect(validUrl).toBe('https://www.amazon.ca/dp/B0CFV5R8QM?tag=toyotawaits-20');
+
+    // Invalid ASIN format falls back to searchQuery
+    const invalidAsinUrl = buildAmazonAffiliateUrl({
+      asin: 'INVALID_ASIN_12345',
+      searchQuery: 'Toyota Sienna floor mats',
+      market: 'CA',
+    });
+    expect(invalidAsinUrl).toBe('https://www.amazon.ca/s?k=Toyota%20Sienna%20floor%20mats&tag=toyotawaits-20');
+
+    // Missing ASIN falls back to searchQuery
+    const noAsinUrl = buildAmazonAffiliateUrl({
+      searchQuery: 'Toyota RAV4 dash cam',
+      market: 'US',
+    });
+    expect(noAsinUrl).toBe('https://www.amazon.com/s?k=Toyota%20RAV4%20dash%20cam&tag=toyotawaits07-20');
+  });
 });

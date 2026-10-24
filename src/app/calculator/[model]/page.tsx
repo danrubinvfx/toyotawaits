@@ -21,6 +21,41 @@ interface ModelInfo {
 }
 
 const KNOWN_MODELS: Record<string, ModelInfo> = {
+  'rav4': {
+    name: 'RAV4 Hybrid',
+    year: 2026,
+    presetId: '2026-toyota-rav4-hybrid',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 5.8,
+  },
+  'sienna': {
+    name: 'Sienna',
+    year: 2025,
+    presetId: '2025-toyota-sienna-hybrid',
+    archetypeId: 'archetype-minivan',
+    combinedL100km: 6.6,
+  },
+  'camry': {
+    name: 'Camry',
+    year: 2025,
+    presetId: '2025-toyota-camry-hybrid',
+    archetypeId: 'archetype-sedan-gas',
+    combinedL100km: 4.6,
+  },
+  'prius': {
+    name: 'Prius',
+    year: 2025,
+    presetId: '2025-toyota-prius-hybrid',
+    archetypeId: 'archetype-sedan-gas',
+    combinedL100km: 4.1,
+  },
+  'grand-highlander-hybrid': {
+    name: 'Grand Highlander',
+    year: 2025,
+    presetId: '2025-toyota-grand-highlander-hybrid',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 7.0,
+  },
   'rav4-hybrid': {
     name: 'RAV4 Hybrid',
     year: 2026,
@@ -118,9 +153,25 @@ interface PageProps {
 
 export async function generateStaticParams() {
   return [
+    { model: 'rav4' },
+    { model: 'rav4-hybrid' },
+    { model: 'rav4-phev' },
+    { model: 'sienna' },
+    { model: 'sienna-hybrid' },
+    { model: 'grand-highlander' },
+    { model: 'grand-highlander-hybrid' },
+    { model: 'camry' },
     { model: 'camry-hybrid' },
+    { model: 'prius' },
     { model: 'prius-hybrid' },
     { model: 'crown-signia' },
+    { model: 'highlander' },
+    { model: 'tacoma' },
+    { model: 'tundra' },
+    { model: 'corolla-cross' },
+    { model: 'land-cruiser' },
+    { model: '4runner' },
+    { model: 'sequoia' },
   ];
 }
 
