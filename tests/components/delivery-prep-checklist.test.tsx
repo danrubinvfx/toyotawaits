@@ -58,13 +58,21 @@ describe('DeliveryPrepChecklist Component', () => {
     const lockImg = screen.getByAltText(/J1772 Public EV Charging Port Combination Lock Ring/i);
     expect(lockImg.getAttribute('src')).toContain('/images/accessories/j1772-charger-lock.png');
 
-    // 3. J1772 lock card renders external YouTube Video Guide
-    const lockVideoLink = screen.getByTestId('video-link-j1772-charger-lock');
-    expect(lockVideoLink).toBeInTheDocument();
-    expect(lockVideoLink.getAttribute('href')).toBe('https://www.youtube.com/shorts/8MQgYRKKmos');
-    expect(lockVideoLink.getAttribute('target')).toBe('_blank');
-    expect(lockVideoLink.getAttribute('rel')).toBe('noopener noreferrer');
-    expect(lockVideoLink.textContent).toContain('Watch Video Guide');
+    // 3. J1772 lock card triggers in-page popup modal
+    const lockVideoBtn = screen.getByTestId('video-modal-btn-j1772-charger-lock');
+    expect(lockVideoBtn).toBeInTheDocument();
+    expect(lockVideoBtn.tagName).toBe('BUTTON');
+    expect(lockVideoBtn.textContent).toContain('Watch Video Guide');
+
+    fireEvent.click(lockVideoBtn);
+    const modalContent = screen.getByTestId('video-modal-content');
+    expect(modalContent).toBeInTheDocument();
+    const activeIframe = modalContent.querySelector('iframe');
+    expect(activeIframe).toBeInTheDocument();
+    expect(activeIframe?.getAttribute('src')).toContain('https://www.youtube-nocookie.com/embed/8MQgYRKKmos');
+
+    const closeBtn = screen.getByTestId('video-modal-close');
+    fireEvent.click(closeBtn);
   });
 
   it('filters accessories when model is Sienna', () => {

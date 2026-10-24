@@ -53,6 +53,7 @@ export interface ModItem {
   searchKeywordsCA?: string;
   searchKeywordsUS?: string;
   youtubeVideoId?: string;
+  youtubeId?: string;
   videoTitle?: string;
   videoUrl?: string;
   guideVideoUrl?: string;
@@ -859,6 +860,7 @@ export const MODS_CONFIG: ModItem[] = [
     guideVideoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
     videoLabel: 'Watch Video Guide',
     youtubeVideoId: '8MQgYRKKmos',
+    youtubeId: '8MQgYRKKmos',
     videoTitle: 'J1772 Charger Lock Guide',
   },
   {

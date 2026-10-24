@@ -13,12 +13,45 @@ export interface VideoModalProps {
 }
 
 /**
+ * Normalizes YouTube video IDs and URLs (watch, shorts, embed, youtu.be) into an 11-char ID.
+ */
+export function extractYouTubeVideoId(input?: string): string {
+  if (!input) return '';
+  const trimmed = input.trim();
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+    return trimmed;
+  }
+  try {
+    const url = new URL(trimmed);
+    if (url.pathname.startsWith('/shorts/')) {
+      const id = url.pathname.replace('/shorts/', '').split('/')[0].split('?')[0];
+      if (id) return id;
+    }
+    if (url.pathname.startsWith('/embed/')) {
+      const id = url.pathname.replace('/embed/', '').split('/')[0].split('?')[0];
+      if (id) return id;
+    }
+    const v = url.searchParams.get('v');
+    if (v) return v;
+    if (url.hostname.includes('youtu.be')) {
+      const id = url.pathname.replace(/^\//, '').split('/')[0].split('?')[0];
+      if (id) return id;
+    }
+  } catch {
+    const match = trimmed.match(/(?:shorts\/|v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+    if (match) return match[1];
+  }
+  return trimmed;
+}
+
+/**
  * On-Site YouTube Video Modal
  * Keeps users engaged on toyotawaits.ca with zero bounce rate.
  * Accessible dialog with dark backdrop (bg-black/80), responsive 16:9 ratio, and Esc/close button support.
  */
 export function VideoModal({ isOpen, onClose, videoId, title }: VideoModalProps) {
-  if (!videoId) return null;
+  const normalizedId = extractYouTubeVideoId(videoId);
+  if (!normalizedId) return null;
 
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -66,7 +99,7 @@ export function VideoModal({ isOpen, onClose, videoId, title }: VideoModalProps)
           <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black border border-zinc-800/80 shadow-inner">
             {isOpen && (
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`}
+                src={`https://www.youtube-nocookie.com/embed/${normalizedId}?autoplay=1&rel=0`}
                 title={title || 'YouTube video guide'}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen

@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
-import { VideoModal } from '@/components/delivery-prep/video-modal';
+import { VideoModal, extractYouTubeVideoId } from '@/components/delivery-prep/video-modal';
 import { trackAffiliateClick } from '@/lib/gear/telemetry';
 
 import { getGearMarketConfig } from '@/data/gear/catalog';
@@ -61,6 +61,7 @@ export interface GearCardItem {
   compatibility?: string;
   fitment?: string;
   youtubeVideoId?: string;
+  youtubeId?: string;
   videoTitle?: string;
   buttonLabel?: string;
   videoUrl?: string;
@@ -420,34 +421,32 @@ export function GearCard({
           </a>
         </Button>
 
-        {/* Secondary CTA: Compact text button or external video guide link */}
+        {/* Secondary CTA: Compact text button for VideoModal or external link */}
         {(() => {
-          const videoGuideUrl = item.videoUrl || config?.videoUrl || item.guideVideoUrl || config?.guideVideoUrl;
           const videoLabel = item.videoLabel || config?.videoLabel || 'Watch Video Guide';
-          const youtubeVideoId = item.youtubeVideoId || config?.youtubeVideoId;
+          const rawVideo =
+            item.youtubeVideoId ||
+            config?.youtubeVideoId ||
+            item.youtubeId ||
+            config?.youtubeId ||
+            item.videoUrl ||
+            config?.videoUrl ||
+            item.guideVideoUrl ||
+            config?.guideVideoUrl;
 
-          if (videoGuideUrl) {
-            return (
-              <a
-                href={videoGuideUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid={`video-link-${item.slug}`}
-                className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
-              >
-                <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
-                <span>{videoLabel}</span>
-              </a>
-            );
-          }
+          const videoId = extractYouTubeVideoId(rawVideo);
 
-          if (youtubeVideoId) {
+          if (videoId) {
             return (
               <>
                 <button
                   type="button"
                   onClick={() => setIsVideoModalOpen(true)}
-                  data-testid={item.slug === 'noco-gb40-jump-pack' ? 'jump-pack-video-comparison' : `video-modal-btn-${item.slug}`}
+                  data-testid={
+                    item.slug === 'noco-gb40-jump-pack'
+                      ? 'jump-pack-video-comparison'
+                      : `video-modal-btn-${item.slug}`
+                  }
                   className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
                 >
                   <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
@@ -457,10 +456,26 @@ export function GearCard({
                 <VideoModal
                   isOpen={isVideoModalOpen}
                   onClose={() => setIsVideoModalOpen(false)}
-                  videoId={youtubeVideoId}
+                  videoId={videoId}
                   title={item.videoTitle || item.name || item.title}
                 />
               </>
+            );
+          }
+
+          const externalVideoUrl = item.videoUrl || config?.videoUrl || item.guideVideoUrl || config?.guideVideoUrl;
+          if (externalVideoUrl) {
+            return (
+              <a
+                href={externalVideoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid={`video-link-${item.slug}`}
+                className="w-full flex items-center justify-center gap-1.5 text-[11px] font-medium text-red-400 hover:text-red-300 transition-colors py-0.5 cursor-pointer"
+              >
+                <Play className="h-2.5 w-2.5 fill-red-500 text-red-500 shrink-0" />
+                <span>{videoLabel}</span>
+              </a>
             );
           }
 

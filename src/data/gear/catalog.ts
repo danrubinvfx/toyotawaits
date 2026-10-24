@@ -42,6 +42,7 @@ export interface GearMarketConfig {
   guideVideoUrl?: string;
   videoLabel?: string;
   youtubeVideoId?: string;
+  youtubeId?: string;
   videoTitle?: string;
   imageUrl?: string;
   fallbackIcon?: string;
@@ -626,6 +627,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     guideVideoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
     videoLabel: 'Watch Video Guide',
     youtubeVideoId: '8MQgYRKKmos',
+    youtubeId: '8MQgYRKKmos',
     videoTitle: 'J1772 Charger Lock Guide',
   },
   'custom-fit-all-weather-floor-mats-corolla-cross': {
