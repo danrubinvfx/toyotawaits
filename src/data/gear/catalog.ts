@@ -240,12 +240,15 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   // ==========================================
   'console-tray-rav4': {
     slug: 'console-tray-rav4',
-    title: 'Drop-In Center Console Divider & Coin Tray (RAV4 2019-2025)',
-    searchKeywordsCA: 'toyota rav4 2019-2025 center console organizer tray',
-    searchKeywordsUS: 'toyota rav4 2019-2025 center console organizer tray',
-    compatibility: 'RAV4 Gen 5 LE, XLE, SE, XSE, Limited, Woodland (2019-2025)',
+    title: 'Drop-In Center Console Divider & Coin Tray (RAV4 2019-2026)',
+    searchQuery: 'Toyota RAV4 center console organizer tray 2019-2026',
+    searchKeywordsCA: 'Toyota RAV4 center console organizer tray 2019-2026',
+    searchKeywordsUS: 'Toyota RAV4 center console organizer tray 2019-2026',
+    category: 'Interior Organization',
+    compatibility: 'RAV4 Gen 5 LE, XLE, SE, XSE, Limited, Woodland (2019-2026)',
     whyBuy: 'Converts cavernous empty armrest bin into two accessible tiers with coin slot and USB pass-through.',
-      isDeliveryDayEssential: true,
+    badge: 'Direct Fit',
+    isDeliveryDayEssential: true,
   },
   'console-tray-sienna': {
     slug: 'console-tray-sienna',

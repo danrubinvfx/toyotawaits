@@ -111,7 +111,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     category: 'comfort',
     description: 'Drop-in dual tray with OEM-style USB-C fast charging',
     estimatedPriceCad: '$18 – $29 CAD',
-    url: buildAmazonCaSearchUrl('Toyota center console organizer tray armrest divider'),
+    url: buildAmazonCaSearchUrl('Toyota RAV4 center console organizer tray 2019-2026'),
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'universal'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
@@ -276,9 +276,12 @@ export function getAccessoriesForModel(
       };
     }
     if (item.id === 'center-console-organizer-tray') {
+      const q = normalized?.toLowerCase().includes('rav4')
+        ? 'Toyota RAV4 center console organizer tray 2019-2026'
+        : `Toyota ${normalized || 'universal'} center console organizer tray`;
       return {
         ...item,
-        url: buildAmazonCaSearchUrl(`Toyota ${normalized || 'universal'} center console organizer tray`),
+        url: buildAmazonCaSearchUrl(q),
       };
     }
     return item;

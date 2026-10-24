@@ -334,7 +334,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'console-tray-rav4': {
     id: 'f1000009-0009-4009-8009-000000000009',
     slug: 'console-tray-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+center+console+tray+organizer&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+center+console+organizer+tray+2019-2026&tag=toyotawaits-20',
     title: 'Drop-In Center Console Divider & Coin Tray (RAV4)',
     category: 'cabin_organization',
     clickCount: 0,

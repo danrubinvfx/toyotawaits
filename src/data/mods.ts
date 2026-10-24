@@ -544,10 +544,14 @@ export const MODS_CONFIG: ModItem[] = [
     priceEst: 'Dual-tier OEM-fit utility',
     priceEstCad: 'Dual-tier OEM-fit utility',
     image: '/images/accessories/console-tray-rav4.png',
-    asin: 'B07WCSG2R8',
-    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B07WCSG2R8?tag=toyotawaits-20',
-    destinationUrl: 'https://www.amazon.ca/dp/B07WCSG2R8?tag=toyotawaits-20',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=Toyota+RAV4+center+console+organizer+tray+2019-2026&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=Toyota+RAV4+center+console+organizer+tray+2019-2026&tag=toyotawaits-20',
     affiliateUrl: '/out/console-tray-rav4',
+    searchKeywordsCA: 'Toyota RAV4 center console organizer tray 2019-2026',
+    searchKeywordsUS: 'Toyota RAV4 center console organizer tray 2019-2026',
+    searchQuery: 'Toyota RAV4 center console organizer tray 2019-2026',
   },
   {
     id: 'prod-tray-sienna',
