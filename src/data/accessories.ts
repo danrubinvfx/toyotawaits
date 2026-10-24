@@ -9,6 +9,7 @@ export interface AccessoryItem {
   url: string;
   applicableModels: string[];
   badge?: string;
+  isDeliveryDayEssential?: boolean;
 }
 
 function buildAmazonCaSearchUrl(keywords: string): string {
@@ -26,6 +27,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('Toyota all weather floor mats liners TPE'),
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Corolla Cross', 'universal'],
     badge: 'Essential',
+    isDeliveryDayEssential: true,
   },
   {
     id: '4k-front-rear-dash-cam',
@@ -36,6 +38,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('FitcamX 4K dash cam Toyota OEM rearview mirror power tap'),
     applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla'],
     badge: 'Top Pick',
+    isDeliveryDayEssential: true,
   },
   {
     id: 'infotainment-screen-protector',
@@ -46,6 +49,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('Toyota navigation screen protector tempered glass 9H'),
     applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Prius'],
     badge: 'Community Favorite',
+    isDeliveryDayEssential: true,
   },
   {
     id: 'rfid-faraday-key-fob-pouch',
@@ -56,6 +60,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('faraday bag key fob protector RFID signal blocker car theft'),
     applicableModels: ['universal'],
     badge: 'Essential',
+    isDeliveryDayEssential: true,
   },
   {
     id: 'ceramic-interior-leather-protection',
@@ -76,6 +81,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('65W fast USB-C PD car charger metal compact dual port'),
     applicableModels: ['universal'],
     badge: 'Community Favorite',
+    isDeliveryDayEssential: true,
   },
   {
     id: 'center-console-organizer-tray',
@@ -86,6 +92,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('Toyota center console organizer tray armrest divider'),
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'universal'],
     badge: 'Top Pick',
+    isDeliveryDayEssential: true,
   },
 ];
 

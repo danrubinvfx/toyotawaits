@@ -330,4 +330,28 @@ describe('DeliveryPrepChecklist Component', () => {
     fireEvent.mouseUp(container);
     expect(container).toBeInTheDocument();
   });
+
+  it('renders Delivery Day 1 Checklist tab, displays subtitle, and filters to essentials', () => {
+    render(<DeliveryPrepChecklist model="rav4" powertrain="hev" />);
+
+    const deliveryTab = screen.getByRole('button', { name: /Delivery Day 1 Checklist/i });
+    expect(deliveryTab).toBeInTheDocument();
+
+    fireEvent.click(deliveryTab);
+
+    // Amber highlight styling
+    expect(deliveryTab.className).toContain('text-amber-300');
+    expect(deliveryTab.className).toContain('bg-amber-950/30');
+
+    // Subtitle helper
+    expect(
+      screen.getByText(/Essential protection and plug-and-play accessories Canadian Toyota owners order before taking delivery\./i)
+    ).toBeInTheDocument();
+
+    // Contains day 1 essentials
+    expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/High-Wall All-Weather Floor Liners/i)).toBeInTheDocument();
+    expect(screen.getByText(/Drop-In Center Console Divider & Coin Tray/i)).toBeInTheDocument();
+    expect(screen.getByText(/Anti-Glare 9H Tempered Glass Screen Protector/i)).toBeInTheDocument();
+  });
 });

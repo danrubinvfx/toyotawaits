@@ -16,5 +16,6 @@ export function GearCarousel({ activeModel, model, ...props }: GearCarouselProps
   return <DeliveryPrepChecklist model={effectiveModel} {...props} />;
 }
 
+export const GearSection = GearCarousel;
 export { DeliveryPrepChecklist, injectActiveModelIntoQuery, getModelDisplayName };
 export default GearCarousel;

@@ -2,10 +2,19 @@
   {
     "id": "prod-beat-sonic-ena-3t3",
     "slug": "beat-sonic-ena-3t3",
-    "models": ["rav4"],
-    "powertrains": ["gas", "hybrid", "hev", "phev"],
+    "models": [
+      "rav4"
+    ],
+    "powertrains": [
+      "gas",
+      "hybrid",
+      "hev",
+      "phev"
+    ],
     "category": "Audio & Electronics",
-    "categories": ["Audio & Electronics"],
+    "categories": [
+      "Audio & Electronics"
+    ],
     "subCategory": "Amplifiers",
     "title": "Beat-Sonic ENA-3T3 Micro Power Amplifier Kit (RAV4 Non-JBL)",
     "name": "Beat-Sonic ENA-3T3 Micro Power Amplifier Kit",
@@ -24,10 +33,19 @@
   {
     "id": "prod-alpine-pwe-s800",
     "slug": "alpine-pwe-s800",
-    "models": ["rav4"],
-    "powertrains": ["gas", "hybrid", "hev", "phev"],
+    "models": [
+      "rav4"
+    ],
+    "powertrains": [
+      "gas",
+      "hybrid",
+      "hev",
+      "phev"
+    ],
     "category": "Audio & Electronics",
-    "categories": ["Audio & Electronics"],
+    "categories": [
+      "Audio & Electronics"
+    ],
     "subCategory": "Subwoofers",
     "title": "Alpine PWE-S800 8\" Compact Powered Subwoofer (120W RMS Under-Seat)",
     "name": "Alpine PWE-S800 / PWE-S8 8\" Compact Powered Subwoofer",
@@ -46,10 +64,19 @@
   {
     "id": "prod-dash-speakers-cerwin-kicker",
     "slug": "dash-speakers-rav4",
-    "models": ["rav4"],
-    "powertrains": ["gas", "hybrid", "hev", "phev"],
+    "models": [
+      "rav4"
+    ],
+    "powertrains": [
+      "gas",
+      "hybrid",
+      "hev",
+      "phev"
+    ],
     "category": "Audio & Electronics",
-    "categories": ["Audio & Electronics"],
+    "categories": [
+      "Audio & Electronics"
+    ],
     "subCategory": "Speakers",
     "title": "Cerwin-Vega V3 3.5\" / Kicker KSC350 3.5\" Coaxial Dash Speakers",
     "name": "Cerwin-Vega V3 3.5\" (or Kicker KSC350) Dash Corner Speakers",
@@ -68,10 +95,19 @@
   {
     "id": "prod-kicker-cs-door-speakers-rav4",
     "slug": "kicker-cs-door-speakers-rav4",
-    "models": ["rav4"],
-    "powertrains": ["gas", "hybrid", "hev", "phev"],
+    "models": [
+      "rav4"
+    ],
+    "powertrains": [
+      "gas",
+      "hybrid",
+      "hev",
+      "phev"
+    ],
     "category": "Audio & Electronics",
-    "categories": ["Audio & Electronics"],
+    "categories": [
+      "Audio & Electronics"
+    ],
     "subCategory": "Speakers",
     "title": "Kicker CS Series 6.5\" Door Speakers (Front & Rear Upgrade)",
     "name": "Kicker CS Series 6.5\" Door Speakers (Front & Rear)",
@@ -90,9 +126,13 @@
   {
     "id": "prod-fitcamx-rav4",
     "slug": "fitcamx-rav4",
-    "models": ["rav4"],
+    "models": [
+      "rav4"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (RAV4)",
     "name": "FitcamX OEM Integrated 4K Mirror Dashcam",
     "priceEst": "Saves ~$350+ vs dealer install",
@@ -107,14 +147,19 @@
     "badge": "Recommended",
     "compatibility": "TSS Mirror Plug & Play",
     "youtubeVideoId": "HrrClvzZpnI",
-    "videoTitle": "Fitcamx Plug & Play Installation & Clarity"
+    "videoTitle": "Fitcamx Plug & Play Installation & Clarity",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-fitcamx-sienna",
     "slug": "fitcamx-sienna",
-    "models": ["sienna"],
+    "models": [
+      "sienna"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Sienna)",
     "name": "FitcamX OEM Integrated 4K Mirror Dashcam",
     "priceEst": "Saves ~$350+ vs dealer install",
@@ -127,14 +172,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B09GFNZK3C?tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-sienna",
     "badge": "Recommended",
-    "compatibility": "TSS Mirror Plug & Play"
+    "compatibility": "TSS Mirror Plug & Play",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-fitcamx-grand-highlander",
     "slug": "fitcamx-grand-highlander",
-    "models": ["grand-highlander"],
+    "models": [
+      "grand-highlander"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Grand Highlander)",
     "name": "FitcamX OEM Integrated 4K Mirror Dashcam",
     "priceEst": "Saves ~$350+ vs dealer install",
@@ -147,14 +197,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B0CK5M3N7V?tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-grand-highlander",
     "badge": "Recommended",
-    "compatibility": "TSS Mirror Plug & Play"
+    "compatibility": "TSS Mirror Plug & Play",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-fitcamx-land-cruiser",
     "slug": "fitcamx-land-cruiser",
-    "models": ["land-cruiser"],
+    "models": [
+      "land-cruiser"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Land Cruiser 250)",
     "name": "FitcamX OEM Integrated 4K Mirror Dashcam",
     "priceEst": "Saves ~$350+ vs dealer install",
@@ -167,14 +222,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B0D8TY5M67?tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-land-cruiser",
     "badge": "Recommended",
-    "compatibility": "TSS Mirror Plug & Play"
+    "compatibility": "TSS Mirror Plug & Play",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-rav4",
     "slug": "screen-protector-rav4",
-    "models": ["rav4"],
+    "models": [
+      "rav4"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "title": "Anti-Glare 9H Tempered Glass Screen Protector (RAV4 2019–2025)",
     "name": "Anti-Glare Screen Protector (RAV4)",
     "priceEst": "High-ROI scratch defense",
@@ -186,14 +246,19 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+RAV4+2019-2025+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-rav4",
     "badge": "Recommended",
-    "compatibility": "RAV4 (2019–2025) 7/8/10.5-inch Displays"
+    "compatibility": "RAV4 (2019–2025) 7/8/10.5-inch Displays",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-corolla-cross",
     "slug": "screen-protector-corolla-cross",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "title": "Anti-Glare 9H Tempered Glass Screen Protector (Corolla Cross 2022–2025)",
     "name": "Anti-Glare Screen Protector (Corolla Cross)",
     "priceEst": "High-ROI scratch defense",
@@ -205,14 +270,19 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+Cross+2022-2025+8-inch+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-corolla-cross",
     "badge": "Recommended",
-    "compatibility": "Corolla Cross (2022–2025) 8-inch Display"
+    "compatibility": "Corolla Cross (2022–2025) 8-inch Display",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-sienna",
     "slug": "screen-protector-sienna",
-    "models": ["sienna"],
+    "models": [
+      "sienna"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "title": "Matte Anti-Glare Screen Protector (Toyota Sienna 2021–2025)",
     "name": "Matte Anti-Glare Screen Protector",
     "priceEst": "High-ROI scratch defense",
@@ -224,14 +294,19 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+2021-2025+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-sienna",
     "badge": "Recommended",
-    "compatibility": "Sienna (2021–2025) 9-inch Display"
+    "compatibility": "Sienna (2021–2025) 9-inch Display",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-grand-highlander",
     "slug": "screen-protector-grand-highlander",
-    "models": ["grand-highlander"],
+    "models": [
+      "grand-highlander"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "title": "12.3-inch Anti-Glare Tempered Glass Screen Protector (Grand Highlander)",
     "name": "12.3-inch Anti-Glare Tempered Glass",
     "priceEst": "High-ROI scratch defense",
@@ -243,14 +318,19 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Grand+Highlander+2024+2025+2026+12.3-inch+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-grand-highlander",
     "badge": "Recommended",
-    "compatibility": "Grand Highlander (2024–2025) 12.3\" Display"
+    "compatibility": "Grand Highlander (2024–2025) 12.3\" Display",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-land-cruiser",
     "slug": "screen-protector-land-cruiser",
-    "models": ["land-cruiser"],
+    "models": [
+      "land-cruiser"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "title": "Armor-Grade Multimedia Screen Shield (Land Cruiser 250)",
     "name": "Armor-Grade Multimedia Screen Shield",
     "priceEst": "High-ROI scratch defense",
@@ -263,14 +343,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B0D8XQ99P3?tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-land-cruiser",
     "badge": "Recommended",
-    "compatibility": "Armor-Grade 12.3\" Display Shield"
+    "compatibility": "Armor-Grade 12.3\" Display Shield",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-tray-rav4",
     "slug": "console-tray-rav4",
-    "models": ["rav4"],
+    "models": [
+      "rav4"
+    ],
     "category": "Organization",
-    "categories": ["Organization"],
+    "categories": [
+      "Organization"
+    ],
     "title": "Drop-In Center Console Divider & Coin Tray (RAV4)",
     "name": "Center Console Organizer Tray",
     "priceEst": "Dual-tier OEM-fit utility",
@@ -283,14 +368,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B07WCSG2R8?tag=toyotawaits-20",
     "affiliateUrl": "/out/console-tray-rav4",
     "badge": "Pro Tip",
-    "compatibility": "Dual-Tier Armrest Mold"
+    "compatibility": "Dual-Tier Armrest Mold",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-tray-sienna",
     "slug": "console-tray-sienna",
-    "models": ["sienna"],
+    "models": [
+      "sienna"
+    ],
     "category": "Organization",
-    "categories": ["Organization"],
+    "categories": [
+      "Organization"
+    ],
     "title": "Dual-Tier Center Console & Bridge Organizer (Sienna)",
     "name": "Dual-Tier Bridge Organizer",
     "priceEst": "Bridge console organizer",
@@ -303,14 +393,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B097GZ9X5B?tag=toyotawaits-20",
     "affiliateUrl": "/out/console-tray-sienna",
     "badge": "Pro Tip",
-    "compatibility": "Bridge Shifter Lower Cubby"
+    "compatibility": "Bridge Shifter Lower Cubby",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-tray-grand-highlander",
     "slug": "console-tray-grand-highlander",
-    "models": ["grand-highlander"],
+    "models": [
+      "grand-highlander"
+    ],
     "category": "Organization",
-    "categories": ["Organization"],
+    "categories": [
+      "Organization"
+    ],
     "title": "Precision Armrest Divider & Upper Storage Tray (Grand Highlander)",
     "name": "Armrest Divider & Upper Storage Tray",
     "priceEst": "Precision armrest utility",
@@ -323,14 +418,19 @@
     "destinationUrl": "https://www.amazon.ca/dp/B0CC9H5S4W?tag=toyotawaits-20",
     "affiliateUrl": "/out/console-tray-grand-highlander",
     "badge": "Pro Tip",
-    "compatibility": "Precision Armrest Divider"
+    "compatibility": "Precision Armrest Divider",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-tray-land-cruiser",
     "slug": "console-tray-land-cruiser",
-    "models": ["land-cruiser"],
+    "models": [
+      "land-cruiser"
+    ],
     "category": "Organization",
-    "categories": ["Organization"],
+    "categories": [
+      "Organization"
+    ],
     "title": "Heavy-Duty Armrest Storage Organizer (Land Cruiser 250)",
     "name": "Heavy-Duty Armrest Organizer",
     "priceEst": "Heavy-duty console storage",
@@ -343,14 +443,20 @@
     "destinationUrl": "https://www.amazon.ca/dp/B0D93L8H12?tag=toyotawaits-20",
     "affiliateUrl": "/out/console-tray-land-cruiser",
     "badge": "Pro Tip",
-    "compatibility": "Heavy-Duty Armrest Storage"
+    "compatibility": "Heavy-Duty Armrest Storage",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-mats-rav4",
     "slug": "high-wall-floor-liners-rav4",
-    "models": ["rav4"],
+    "models": [
+      "rav4"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 Hybrid & Prime)",
     "name": "High-Wall All-Weather Floor Liners & Cargo Mat",
     "priceEst": "Saves ~$150+ vs dealer mats",
@@ -362,14 +468,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20",
     "affiliateUrl": "/out/high-wall-floor-liners-rav4",
     "badge": "Essential",
-    "compatibility": "RAV4 Hybrid & Prime (Row 1, 2, and Trunk)"
+    "compatibility": "RAV4 Hybrid & Prime (Row 1, 2, and Trunk)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-mats-sienna",
     "slug": "sienna-all-weather-liners",
-    "models": ["sienna"],
+    "models": [
+      "sienna"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "3-Row Heavy Duty All-Weather Floor Liners (Sienna 2021–2025)",
     "name": "3-Row Heavy Duty All-Weather Floor Liners (Sienna)",
     "priceEst": "Saves ~$200+ vs dealer 3-row package",
@@ -381,14 +493,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+2021-2025+all+weather+floor+mats+liners+7+8+passenger&tag=toyotawaits-20",
     "affiliateUrl": "/out/sienna-all-weather-liners",
     "badge": "Essential",
-    "compatibility": "Toyota Sienna 2021–2025 (7 & 8 Passenger)"
+    "compatibility": "Toyota Sienna 2021–2025 (7 & 8 Passenger)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-mats-grand-highlander",
     "slug": "grand-highlander-all-weather-liners",
-    "models": ["grand-highlander"],
+    "models": [
+      "grand-highlander"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "3-Row Heavy Duty All-Weather Floor Liners (Grand Highlander 2024–2025)",
     "name": "3-Row Heavy Duty All-Weather Floor Liners (Grand Highlander)",
     "priceEst": "Saves ~$200+ vs dealer 3-row package",
@@ -400,14 +518,19 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Grand+Highlander+2024-2025+all+weather+floor+mats+liners&tag=toyotawaits-20",
     "affiliateUrl": "/out/grand-highlander-all-weather-liners",
     "badge": "Essential",
-    "compatibility": "Toyota Grand Highlander (2024–2025)"
+    "compatibility": "Toyota Grand Highlander (2024–2025)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-crossbars-rav4",
     "slug": "roof-rack-crossbars-rav4",
-    "models": ["rav4"],
+    "models": [
+      "rav4"
+    ],
     "category": "Cargo & Utility",
-    "categories": ["Cargo & Utility"],
+    "categories": [
+      "Cargo & Utility"
+    ],
     "title": "OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4)",
     "name": "OEM-Style Lockable Aluminum Roof Rack Cross Bars",
     "priceEst": "Saves ~$250+ compared to dealer port package",
@@ -425,9 +548,13 @@
   {
     "id": "prod-crossbars-grand-highlander",
     "slug": "roof-rack-crossbars-grand-highlander",
-    "models": ["grand-highlander"],
+    "models": [
+      "grand-highlander"
+    ],
     "category": "Cargo & Utility",
-    "categories": ["Cargo & Utility"],
+    "categories": [
+      "Cargo & Utility"
+    ],
     "title": "Heavy-Duty Roof Crossbar System (Highlander & Grand Highlander)",
     "name": "Heavy-Duty Roof Crossbar System",
     "priceEst": "Saves ~$300+ compared to dealer port package",
@@ -445,9 +572,13 @@
   {
     "id": "prod-crossbars-corolla-cross",
     "slug": "roof-rack-crossbars-corolla-cross",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Cargo & Utility",
-    "categories": ["Cargo & Utility"],
+    "categories": [
+      "Cargo & Utility"
+    ],
     "title": "Low-Profile Cargo Roof Rack Bars (Corolla Cross)",
     "name": "Low-Profile Cargo Roof Rack Bars",
     "priceEst": "Saves ~$200+ compared to dealer port package",
@@ -465,9 +596,14 @@
   {
     "id": "prod-noco-gb40",
     "slug": "noco-gb40-jump-pack",
-    "models": ["all"],
+    "models": [
+      "all"
+    ],
     "category": "Battery & Emergency",
-    "categories": ["Battery & Emergency", "Winter Prep"],
+    "categories": [
+      "Battery & Emergency",
+      "Winter Prep"
+    ],
     "title": "NOCO Boost Plus GB40 1000A 12V UltraSafe Lithium Jump Starter",
     "name": "NOCO Boost Plus GB40 1000A Jump Starter",
     "priceEst": "Emergency essential vs towing fees",
@@ -487,10 +623,16 @@
   {
     "id": "prod-j1772-lock",
     "slug": "j1772-charger-lock",
-    "models": ["rav4"],
-    "powertrains": ["phev"],
+    "models": [
+      "rav4"
+    ],
+    "powertrains": [
+      "phev"
+    ],
     "category": "Battery & Emergency",
-    "categories": ["Battery & Emergency"],
+    "categories": [
+      "Battery & Emergency"
+    ],
     "title": "J1772 Public EV Charging Port Combination Lock Ring",
     "name": "J1772 EV Charger Combination Lock",
     "priceEst": "Public EV charge security",
@@ -508,9 +650,15 @@
   {
     "id": "prod-dongar-10pin-a",
     "slug": "dongar-10pin-type-a",
-    "models": ["rav4", "highlander", "tacoma"],
+    "models": [
+      "rav4",
+      "highlander",
+      "tacoma"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "badge": "Pro Tip",
     "compatibility": "10-Pin Tap: Auto-Dim Mirror (XSE/Limited/Platinum)",
     "title": "10-Pin Type A TSS Mirror Harness Adapter (Dongar Style)",
@@ -527,9 +675,15 @@
   {
     "id": "prod-dongar-12pin-a",
     "slug": "dongar-12pin-type-a",
-    "models": ["rav4", "sienna", "grand-highlander"],
+    "models": [
+      "rav4",
+      "sienna",
+      "grand-highlander"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "badge": "Pro Tip",
     "compatibility": "12-Pin Connector. Check mirror connector before ordering — pin count alone does not establish compatibility.",
     "title": "12-Pin Mirror Tap / Dash Cam Power Adapter (Type A - 12-pin TSS connector)",
@@ -546,9 +700,15 @@
   {
     "id": "prod-dongar-16pin-b",
     "slug": "dongar-16pin-type-b",
-    "models": ["rav4", "sienna", "grand-highlander"],
+    "models": [
+      "rav4",
+      "sienna",
+      "grand-highlander"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety"],
+    "categories": [
+      "Electronics & Safety"
+    ],
     "badge": "Pro Tip",
     "compatibility": "16-Pin Connector. Check mirror connector before ordering — pin count alone does not establish compatibility.",
     "title": "16-Pin Mirror Tap / Dash Cam Power Adapter (Type B - 16-pin TSS connector)",
@@ -565,10 +725,18 @@
   {
     "id": "prod-filter-hybrid",
     "slug": "hybrid-battery-filter-mesh",
-    "models": ["rav4", "sienna"],
-    "powertrains": ["hev", "phev"],
+    "models": [
+      "rav4",
+      "sienna"
+    ],
+    "powertrains": [
+      "hev",
+      "phev"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "badge": "Essential",
     "compatibility": "RAV4 Hybrid & Prime, Sienna Hybrid",
     "title": "Hybrid Battery Intake Pre-Filter Mesh",
@@ -585,9 +753,15 @@
   {
     "id": "prod-door-sills",
     "slug": "door-sill-scuff-guards",
-    "models": ["rav4", "grand-highlander", "corolla-cross"],
+    "models": [
+      "rav4",
+      "grand-highlander",
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection"],
+    "categories": [
+      "Interior Protection"
+    ],
     "badge": "Recommended",
     "compatibility": "RAV4, Grand Highlander, Corolla Cross",
     "title": "Stainless Steel / ABS Door Sill Scuff Guards",
@@ -604,9 +778,14 @@
   {
     "id": "prod-mats-corolla-cross",
     "slug": "custom-fit-all-weather-floor-mats-corolla-cross",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "Custom-Fit All-Weather Floor Mats (Corolla Cross)",
     "name": "Custom-Fit All-Weather Floor Mats",
     "priceEst": "Form-fit bucket liners",
@@ -619,14 +798,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20",
     "affiliateUrl": "/out/custom-fit-all-weather-floor-mats-corolla-cross",
     "badge": "Top Pick",
-    "compatibility": "Corolla Cross (Hybrid & Gas)"
+    "compatibility": "Corolla Cross (Hybrid & Gas)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-mats-corolla-cross-liners",
     "slug": "corolla-cross-all-weather-liners",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "Custom-Fit All-Weather Floor Mats (Corolla Cross)",
     "name": "Custom-Fit All-Weather Floor Mats",
     "priceEst": "Form-fit bucket liners",
@@ -639,14 +824,26 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+Cross+all+weather+floor+mats+liners&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-cross-all-weather-liners",
     "badge": "Top Pick",
-    "compatibility": "Corolla Cross (Hybrid & Gas)"
+    "compatibility": "Corolla Cross (Hybrid & Gas)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-frost-guard-magnetic",
     "slug": "magnetic-door-anchor-windshield-frost-guard",
-    "models": ["all", "rav4", "grand-highlander", "sienna", "prius-prime", "corolla-cross", "tacoma"],
+    "models": [
+      "all",
+      "rav4",
+      "grand-highlander",
+      "sienna",
+      "prius-prime",
+      "corolla-cross",
+      "tacoma"
+    ],
     "category": "Winter Prep",
-    "categories": ["Winter Prep", "Exterior Protection"],
+    "categories": [
+      "Winter Prep",
+      "Exterior Protection"
+    ],
     "title": "Magnetic Door-Anchor Windshield Frost Guard",
     "name": "Magnetic Door-Anchor Windshield Frost Guard",
     "priceEst": "Sub-zero glass protection",
@@ -664,9 +861,21 @@
   {
     "id": "prod-frost-guard-windshield",
     "slug": "windshield-frost-guard",
-    "models": ["all", "rav4", "grand-highlander", "sienna", "prius-prime", "corolla", "corolla-cross", "tacoma"],
+    "models": [
+      "all",
+      "rav4",
+      "grand-highlander",
+      "sienna",
+      "prius-prime",
+      "corolla",
+      "corolla-cross",
+      "tacoma"
+    ],
     "category": "Winter Prep",
-    "categories": ["Winter Prep", "Exterior Protection"],
+    "categories": [
+      "Winter Prep",
+      "Exterior Protection"
+    ],
     "title": "Magnetic Door-Anchor Windshield Frost Guard",
     "name": "Magnetic Door-Anchor Windshield Frost Guard",
     "priceEst": "Sub-zero glass protection",
@@ -684,9 +893,14 @@
   {
     "id": "prod-mats-corolla-e210",
     "slug": "corolla-all-weather-liners",
-    "models": ["corolla"],
+    "models": [
+      "corolla"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "Winter Prep"],
+    "categories": [
+      "Interior Protection",
+      "Winter Prep"
+    ],
     "title": "TuxMat / WeatherTech Custom All-Weather Floor Liners (Corolla E210)",
     "name": "Custom All-Weather Floor Liners",
     "priceEst": "Full footwell winter armor",
@@ -698,14 +912,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+2020-2026+all+weather+floor+mats+liners&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-all-weather-liners",
     "badge": "Essential",
-    "compatibility": "Corolla Sedan & Hatchback (2020–2026)"
+    "compatibility": "Corolla Sedan & Hatchback (2020–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-cargo-corolla-cross",
     "slug": "corolla-cross-cargo-liner",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Cargo & Utility",
-    "categories": ["Cargo & Utility", "Interior Protection"],
+    "categories": [
+      "Cargo & Utility",
+      "Interior Protection"
+    ],
     "title": "Corolla Cross All-Weather Cargo Trunk Liner (FWD / AWD)",
     "name": "Cargo Trunk Liner Tray",
     "priceEst": "Molded spill protection",
@@ -723,9 +943,14 @@
   {
     "id": "prod-fitcamx-corolla",
     "slug": "fitcamx-corolla",
-    "models": ["corolla"],
+    "models": [
+      "corolla"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety", "visibility_protection"],
+    "categories": [
+      "Electronics & Safety",
+      "visibility_protection"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Corolla E210)",
     "name": "FitcamX OEM Integrated Dashcam",
     "priceEst": "Plug & Play 4K Camera",
@@ -738,14 +963,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=fitcamx+4k+dash+cam+toyota+corolla+2020-2026&tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-corolla",
     "badge": "Pro Tip",
-    "compatibility": "Corolla E210 Sedan & Hatch (2020–2026)"
+    "compatibility": "Corolla E210 Sedan & Hatch (2020–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-fitcamx-corolla-cross",
     "slug": "fitcamx-corolla-cross",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety", "visibility_protection"],
+    "categories": [
+      "Electronics & Safety",
+      "visibility_protection"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Corolla Cross)",
     "name": "FitcamX OEM Integrated Dashcam",
     "priceEst": "Plug & Play 4K Camera",
@@ -758,14 +989,21 @@
     "destinationUrl": "https://www.amazon.ca/s?k=fitcamx+4k+dash+cam+toyota+corolla+cross&tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-corolla-cross",
     "badge": "Pro Tip",
-    "compatibility": "Corolla Cross (2022–2026)"
+    "compatibility": "Corolla Cross (2022–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-carplay-corolla",
     "slug": "wireless-carplay-adapter-corolla",
-    "models": ["corolla", "corolla-cross"],
+    "models": [
+      "corolla",
+      "corolla-cross"
+    ],
     "category": "Electronics & Safety",
-    "categories": ["Electronics & Safety", "visibility_protection"],
+    "categories": [
+      "Electronics & Safety",
+      "visibility_protection"
+    ],
     "title": "Wireless CarPlay & Android Auto Adapter (Toyota Multimedia)",
     "name": "Wireless CarPlay Adapter",
     "priceEst": "Cord-free smartphone link",
@@ -783,9 +1021,14 @@
   {
     "id": "prod-console-corolla-e210",
     "slug": "corolla-console-organizer",
-    "models": ["corolla"],
+    "models": [
+      "corolla"
+    ],
     "category": "Organization",
-    "categories": ["Organization", "cabin_organization"],
+    "categories": [
+      "Organization",
+      "cabin_organization"
+    ],
     "title": "Center Console Armrest Organizer Insert Tray (Corolla E210)",
     "name": "Center Console Organizer Tray",
     "priceEst": "Dual-tier storage divider",
@@ -798,14 +1041,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+corolla+2020-2026+center+console+organizer+tray&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-console-organizer",
     "badge": "Essential",
-    "compatibility": "Corolla Sedan & Hatchback (2020–2026)"
+    "compatibility": "Corolla Sedan & Hatchback (2020–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-console-corolla-cross",
     "slug": "corolla-cross-console-organizer",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "Organization",
-    "categories": ["Organization", "cabin_organization"],
+    "categories": [
+      "Organization",
+      "cabin_organization"
+    ],
     "title": "Center Console Storage Divider Tray (Corolla Cross)",
     "name": "Center Console Storage Tray",
     "priceEst": "Drop-in organizer",
@@ -818,14 +1067,21 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+corolla+cross+center+console+organizer+tray&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-cross-console-organizer",
     "badge": "Recommended",
-    "compatibility": "Corolla Cross (2022–2026)"
+    "compatibility": "Corolla Cross (2022–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-corolla-e210",
     "slug": "corolla-screen-protector",
-    "models": ["corolla", "corolla-cross"],
+    "models": [
+      "corolla",
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "visibility_protection"],
+    "categories": [
+      "Interior Protection",
+      "visibility_protection"
+    ],
     "title": "Anti-Glare 9H Tempered Glass Screen Protector (8-inch & 10.5-inch)",
     "name": "Tempered Glass Screen Protector",
     "priceEst": "9H oleophobic glass",
@@ -837,14 +1093,21 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+corolla+screen+protector+tempered+glass+8-inch+10.5-inch&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-screen-protector",
     "badge": "Essential",
-    "compatibility": "Corolla & Corolla Cross (8-inch & 10.5-inch screens)"
+    "compatibility": "Corolla & Corolla Cross (8-inch & 10.5-inch screens)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-sunshade-corolla",
     "slug": "corolla-custom-sunshade",
-    "models": ["corolla", "corolla-cross"],
+    "models": [
+      "corolla",
+      "corolla-cross"
+    ],
     "category": "Interior Protection",
-    "categories": ["Interior Protection", "cabin_organization"],
+    "categories": [
+      "Interior Protection",
+      "cabin_organization"
+    ],
     "title": "Custom-Fit Reflective Windshield Sunshade (Corolla & Cross)",
     "name": "Custom-Fit Windshield Sunshade",
     "priceEst": "UV heat barrier",
@@ -862,9 +1125,14 @@
   {
     "id": "prod-visors-corolla",
     "slug": "corolla-window-visors",
-    "models": ["corolla"],
+    "models": [
+      "corolla"
+    ],
     "category": "Cargo & Utility",
-    "categories": ["Cargo & Utility", "Exterior Protection"],
+    "categories": [
+      "Cargo & Utility",
+      "Exterior Protection"
+    ],
     "title": "OEM-Style Aerodynamic Window Visors & Rain Guards (Corolla)",
     "name": "Window Visors Rain Guards",
     "priceEst": "Fresh air rain deflectors",
@@ -882,9 +1150,14 @@
   {
     "id": "prod-mudflaps-corolla-sedan",
     "slug": "corolla-sedan-mud-flaps",
-    "models": ["corolla"],
+    "models": [
+      "corolla"
+    ],
     "category": "roadside_winter",
-    "categories": ["roadside_winter", "Exterior Protection"],
+    "categories": [
+      "roadside_winter",
+      "Exterior Protection"
+    ],
     "title": "Molded Splash Guards & Mud Flap Kit (Corolla Sedan & Hatch)",
     "name": "Molded Splash Guards 4-Piece Kit",
     "priceEst": "Winter salt & gravel armor",
@@ -902,9 +1175,14 @@
   {
     "id": "prod-mudflaps-corolla-cross",
     "slug": "corolla-cross-mud-flaps",
-    "models": ["corolla-cross"],
+    "models": [
+      "corolla-cross"
+    ],
     "category": "roadside_winter",
-    "categories": ["roadside_winter", "Exterior Protection"],
+    "categories": [
+      "roadside_winter",
+      "Exterior Protection"
+    ],
     "title": "Molded Splash Guards & Mud Flap Kit (Corolla Cross)",
     "name": "Corolla Cross Splash Guards Kit",
     "priceEst": "Crossover rocker armor",
@@ -922,9 +1200,14 @@
   {
     "id": "prod-mats-sequoia-xk80",
     "slug": "sequoia-all-weather-liners",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "floor_mats",
-    "categories": ["floor_mats", "Interior Protection"],
+    "categories": [
+      "floor_mats",
+      "Interior Protection"
+    ],
     "title": "TuxMat / Husky 3-Row Custom All-Weather Floor Liners (Sequoia XK80)",
     "name": "TuxMat / Husky Custom 3-Row Floor Liners",
     "priceEst": "Maximum 3-Row Cabin Salt Protection",
@@ -937,14 +1220,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+sequoia+2023-2026+all+weather+floor+mats+liners+3+row&tag=toyotawaits-20",
     "affiliateUrl": "/out/sequoia-all-weather-liners",
     "badge": "Essential",
-    "compatibility": "Toyota Sequoia (2023–2026 XK80)"
+    "compatibility": "Toyota Sequoia (2023–2026 XK80)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-cargo-sequoia-xk80",
     "slug": "sequoia-cargo-liner",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "cargo",
-    "categories": ["cargo", "Interior Protection"],
+    "categories": [
+      "cargo",
+      "Interior Protection"
+    ],
     "title": "Canvasback / OEM Split 3rd-Row Rear Cargo Liner (Sequoia Battery Deck)",
     "name": "Rear Cargo Liner & Battery Deck Protector",
     "priceEst": "Stepped Battery Deck Armor",
@@ -962,9 +1251,14 @@
   {
     "id": "prod-console-sequoia-xk80",
     "slug": "sequoia-console-organizer",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "organization",
-    "categories": ["organization", "Interior Protection"],
+    "categories": [
+      "organization",
+      "Interior Protection"
+    ],
     "title": "Center Console Organizer Tray & Hidden Armrest Vault Insert (Sequoia / Tundra)",
     "name": "Center Console Dual-Tier Tray & Vault Insert",
     "priceEst": "Deep Console Organization",
@@ -977,14 +1271,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+sequoia+tundra+center+console+organizer+tray+armrest&tag=toyotawaits-20",
     "affiliateUrl": "/out/sequoia-console-organizer",
     "badge": "Essential",
-    "compatibility": "Toyota Sequoia & Tundra (2022–2026)"
+    "compatibility": "Toyota Sequoia & Tundra (2022–2026)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-screen-sequoia-14in",
     "slug": "sequoia-screen-protector",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "interior_protection",
-    "categories": ["interior_protection", "Interior Protection"],
+    "categories": [
+      "interior_protection",
+      "Interior Protection"
+    ],
     "title": "Tempered Glass Screen Protector for 14-inch Toyota Audio Multimedia",
     "name": "14-inch Tempered Glass Screen Protector",
     "priceEst": "9H Tempered Glass Anti-Glare",
@@ -997,14 +1297,20 @@
     "destinationUrl": "https://www.amazon.ca/s?k=toyota+sequoia+14+inch+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/sequoia-screen-protector",
     "badge": "Essential",
-    "compatibility": "Toyota Sequoia (Limited, Platinum, TRD Pro, Capstone 14\" display)"
+    "compatibility": "Toyota Sequoia (Limited, Platinum, TRD Pro, Capstone 14\" display)",
+    "isDeliveryDayEssential": true
   },
   {
     "id": "prod-runningboards-sequoia",
     "slug": "sequoia-running-boards",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "exterior_utility",
-    "categories": ["exterior_utility", "Cargo & Utility"],
+    "categories": [
+      "exterior_utility",
+      "Cargo & Utility"
+    ],
     "title": "Heavy-Duty Aluminum / Power Running Boards (Sequoia XK80)",
     "name": "Cast Aluminum Side Step Running Boards",
     "priceEst": "High Clearance Family Cab Access",
@@ -1022,9 +1328,14 @@
   {
     "id": "prod-brakecontroller-sequoia",
     "slug": "sequoia-trailer-brake-controller",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "towing_tech",
-    "categories": ["towing_tech", "Electronics & Safety"],
+    "categories": [
+      "towing_tech",
+      "Electronics & Safety"
+    ],
     "title": "Curt / Redarc Tow-Pro Elite Electric Brake Controller & Harness (Sequoia)",
     "name": "Proportional Trailer Brake Controller & Plug-and-Play Harness",
     "priceEst": "Heavy Trailer Towing Control",
@@ -1042,9 +1353,14 @@
   {
     "id": "prod-grillelights-sequoia",
     "slug": "sequoia-raptor-lights",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "exterior_lighting",
-    "categories": ["exterior_lighting", "Electronics & Safety"],
+    "categories": [
+      "exterior_lighting",
+      "Electronics & Safety"
+    ],
     "title": "Front TRD Heritage Grille Light Bar & Amber Marker Raptor Lights (Sequoia)",
     "name": "TRD Heritage Grille Amber LED Marker Lights",
     "priceEst": "Aggressive Front Stance & Visibility",
@@ -1062,9 +1378,14 @@
   {
     "id": "prod-fitcamx-sequoia",
     "slug": "fitcamx-sequoia",
-    "models": ["sequoia"],
+    "models": [
+      "sequoia"
+    ],
     "category": "dashcam",
-    "categories": ["dashcam", "Electronics & Safety"],
+    "categories": [
+      "dashcam",
+      "Electronics & Safety"
+    ],
     "title": "FitcamX OEM Integrated 4K Mirror Dashcam (Toyota Sequoia XK80)",
     "name": "FitcamX OEM 4K Integrated Dashcam",
     "priceEst": "Plug & Play 4K Camera",
@@ -1077,6 +1398,61 @@
     "destinationUrl": "https://www.amazon.ca/s?k=fitcamx+4k+dash+cam+toyota+sequoia+2023-2026&tag=toyotawaits-20",
     "affiliateUrl": "/out/fitcamx-sequoia",
     "badge": "Pro Tip",
-    "compatibility": "Toyota Sequoia (2023–2026 XK80)"
+    "compatibility": "Toyota Sequoia (2023–2026 XK80)",
+    "isDeliveryDayEssential": true
+  },
+  {
+    "id": "prod-rfid-faraday-key-fob-pouch",
+    "slug": "rfid-faraday-key-fob-pouch",
+    "models": [
+      "all"
+    ],
+    "category": "Battery & Emergency",
+    "categories": [
+      "Battery & Emergency",
+      "protection",
+      "roadside_winter"
+    ],
+    "title": "Heavy-Duty RFID Faraday Key Fob Signal Blocker (2-Pack)",
+    "name": "RFID Faraday Key Fob Signal Blocker",
+    "priceEst": "$14 – $24 CAD",
+    "priceEstCad": "$14 – $24 CAD",
+    "whyBuy": "Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key while parked at home or work.",
+    "utilityNote": "Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key while parked at home or work.",
+    "image": "/images/accessories/rfid-faraday-pouch.png",
+    "asin": "B08CZ8PNF3",
+    "amazonCaAsinOrUrl": "B08CZ8PNF3",
+    "destinationUrl": "https://www.amazon.ca/dp/B08CZ8PNF3?tag=toyotawaits-20",
+    "affiliateUrl": "/out/rfid-faraday-key-fob-pouch",
+    "badge": "Delivery Day 1",
+    "compatibility": "Universal Toyota Smart Key",
+    "isDeliveryDayEssential": true
+  },
+  {
+    "id": "prod-fast-usbc-pd-car-charger",
+    "slug": "fast-usbc-pd-car-charger",
+    "models": [
+      "all"
+    ],
+    "category": "Electronics & Safety",
+    "categories": [
+      "Electronics & Safety",
+      "visibility_protection",
+      "tech"
+    ],
+    "title": "Dual-Port 65W Fast USB-C PD Metal Car Charger",
+    "name": "Dual-Port 65W Fast USB-C PD Car Charger",
+    "priceEst": "$19 – $32 CAD",
+    "priceEstCad": "$19 – $32 CAD",
+    "whyBuy": "High-speed compact metal 12V adapter with 65W Power Delivery to fast-charge laptops, tablets, and phones simultaneously without clutter.",
+    "utilityNote": "High-speed compact metal 12V adapter with 65W Power Delivery to fast-charge laptops, tablets, and phones simultaneously without clutter.",
+    "image": "/images/accessories/fast-usbc-charger.png",
+    "asin": "B08HYQLV18",
+    "amazonCaAsinOrUrl": "B08HYQLV18",
+    "destinationUrl": "https://www.amazon.ca/dp/B08HYQLV18?tag=toyotawaits-20",
+    "affiliateUrl": "/out/fast-usbc-pd-car-charger",
+    "badge": "Delivery Day 1",
+    "compatibility": "Universal 12V Socket",
+    "isDeliveryDayEssential": true
   }
 ]

@@ -19,9 +19,41 @@ export interface GearMarketConfig {
   compatibility?: string;
   whyBuy?: string;
   badge?: string;
+  isDeliveryDayEssential?: boolean;
 }
 
 export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
+  'rfid-faraday-key-fob-pouch': {
+    slug: 'rfid-faraday-key-fob-pouch',
+    title: 'Heavy-Duty RFID Faraday Key Fob Signal Blocker (2-Pack)',
+    asin: 'B08CZ8PNF3',
+    asin_ca: 'B08CZ8PNF3',
+    asin_us: 'B08CZ8PNF3',
+    searchQuery: 'faraday bag key fob protector RFID signal blocker car theft',
+    searchKeywordsCA: 'faraday bag key fob protector RFID signal blocker car theft',
+    searchKeywordsUS: 'faraday bag key fob protector RFID signal blocker car theft',
+    category: 'Tech & Security',
+    compatibility: 'Universal Toyota Smart Key',
+    whyBuy: 'Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key.',
+    badge: 'Delivery Day 1',
+    isDeliveryDayEssential: true,
+  },
+  'fast-usbc-pd-car-charger': {
+    slug: 'fast-usbc-pd-car-charger',
+    title: 'Dual-Port 65W Fast USB-C PD Metal Car Charger',
+    asin: 'B08HYQLV18',
+    asin_ca: 'B08HYQLV18',
+    asin_us: 'B08HYQLV18',
+    searchQuery: '65W fast USB-C PD car charger metal compact dual port',
+    searchKeywordsCA: '65W fast USB-C PD car charger metal compact dual port',
+    searchKeywordsUS: '65W fast USB-C PD car charger metal compact dual port',
+    category: 'Tech & Security',
+    compatibility: 'Universal 12V Socket',
+    whyBuy: 'High-speed compact metal 12V adapter with 65W Power Delivery to fast-charge devices simultaneously.',
+    badge: 'Delivery Day 1',
+    isDeliveryDayEssential: true,
+  },
+
   // ==========================================
   // Dashcams / FitcamX (Fit-Sensitive Generation Bounds)
   // ==========================================
@@ -38,6 +70,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'RAV4 Gen 5 TSS 2.0 / 2.5 Shroud (2019-2026)',
     whyBuy: 'Discrete OEM look tapping into rearview mirror power with zero dangling cables. Verified for Gen 5 (2019-2026).',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'fitcamx-sienna': {
     slug: 'fitcamx-sienna',
@@ -52,6 +85,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Sienna Gen 4 TSS 2.0 / 2.5 Shroud (2021-2026)',
     whyBuy: 'Seamless mirror tap installation protecting family trips without cluttering windshield glass.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'fitcamx-grand-highlander': {
     slug: 'fitcamx-grand-highlander',
@@ -66,6 +100,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Grand Highlander Gen 1 TSS 3.0 Shroud (2024-2026)',
     whyBuy: 'Custom molded mirror housing integrating 4K recording under the digital/standard mirror bracket.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'fitcamx-land-cruiser': {
     slug: 'fitcamx-land-cruiser',
@@ -74,6 +109,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'fitcamx 4k dash cam land cruiser 2024-2025',
     compatibility: 'Land Cruiser 250-Series TSS 3.0 Mirror Cover (2024-2025)',
     whyBuy: 'Rugged plug-and-play harness designed for the 250-Series off-road cockpit.',
+      isDeliveryDayEssential: true,
   },
   'fitcamx-prius': {
     slug: 'fitcamx-prius',
@@ -82,6 +118,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'fitcamx 4k dash cam prius 2023-2025',
     compatibility: 'Gen 5 Prius & Prius Prime TSS 3.0 (2023-2025)',
     whyBuy: 'Factory-integrated mirror replacement for sleek Gen 5 Prius windshield aerodynamics.',
+      isDeliveryDayEssential: true,
   },
 
   // ==========================================
@@ -100,6 +137,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: '12.3-inch Grand Highlander Touchscreen (2024-2026)',
     whyBuy: 'Prevents fingerprint oil buildup and eliminates harsh reflections across wide cabin glass.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'screen-protector-rav4': {
     slug: 'screen-protector-rav4',
@@ -114,6 +152,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota RAV4 10.5-inch & 12.3-inch Multimedia Displays (2019-2026)',
     whyBuy: 'Spigen GlasTR EZ FIT 9H tempered glass repels fingerprint smudges and cuts daytime glare.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'screen-protector-corolla-cross': {
     slug: 'screen-protector-corolla-cross',
@@ -122,6 +161,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Toyota Corolla Cross 2022-2025 screen protector 8 inch tempered glass',
     compatibility: '8.0-inch Corolla Cross Touchscreen (2022-2025)',
     whyBuy: 'Precision cut for Corolla Cross 8-inch display bezels; avoids edge lifting.',
+      isDeliveryDayEssential: true,
   },
   'screen-protector-sienna': {
     slug: 'screen-protector-sienna',
@@ -130,6 +170,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'toyota sienna 2021-2025 screen protector tempered glass',
     compatibility: '9-inch & 12.3-inch Sienna Infotainment (2021-2025)',
     whyBuy: 'Cuts blinding glare from panoramic glass and protects against finger smudges.',
+      isDeliveryDayEssential: true,
   },
   'screen-protector-land-cruiser': {
     slug: 'screen-protector-land-cruiser',
@@ -137,6 +178,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'land cruiser 250 2024-2025 screen protector 12.3 inch tempered glass',
     searchKeywordsUS: 'land cruiser 250 2024-2025 screen protector 12.3 inch tempered glass',
     compatibility: '12.3-inch Touchscreen (2024-2025 Land Cruiser 1958 & First Edition)',
+      isDeliveryDayEssential: true,
   },
   'prius-screen-protector': {
     slug: 'prius-screen-protector',
@@ -144,6 +186,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'toyota prius 2023-2025 screen protector 12.3 inch tempered glass',
     searchKeywordsUS: 'toyota prius 2023-2025 screen protector 12.3 inch tempered glass',
     compatibility: '8-inch & 12.3-inch Gen 5 Displays (2023-2025)',
+      isDeliveryDayEssential: true,
   },
 
   // ==========================================
@@ -156,6 +199,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'toyota rav4 2019-2025 center console organizer tray',
     compatibility: 'RAV4 Gen 5 LE, XLE, SE, XSE, Limited, Woodland (2019-2025)',
     whyBuy: 'Converts cavernous empty armrest bin into two accessible tiers with coin slot and USB pass-through.',
+      isDeliveryDayEssential: true,
   },
   'console-tray-sienna': {
     slug: 'console-tray-sienna',
@@ -170,6 +214,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Sienna Gen 4 LE, XLE, XSE, Limited, Platinum (2021-2026)',
     whyBuy: 'Tames the deep center bridge cubby and upper armrest cavity with non-slip rubber inserts.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'console-tray-grand-highlander': {
     slug: 'console-tray-grand-highlander',
@@ -184,6 +229,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Grand Highlander XLE, Limited, Platinum (2024-2026)',
     whyBuy: 'Adds modular organization for keys, wallets, and pens above the oversized bottom bin.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'console-tray-land-cruiser': {
     slug: 'console-tray-land-cruiser',
@@ -191,6 +237,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'land cruiser 2024-2025 center console organizer tray',
     searchKeywordsUS: 'land cruiser 2024-2025 center console organizer tray',
     compatibility: 'Land Cruiser 250-Series with/without Cool Box (2024-2025)',
+      isDeliveryDayEssential: true,
   },
   'prius-console-organizer': {
     slug: 'prius-console-organizer',
@@ -198,6 +245,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'gen 5 prius 2023-2025 center console organizer tray',
     searchKeywordsUS: 'gen 5 prius 2023-2025 center console organizer tray',
     compatibility: 'Gen 5 Prius & Prius Prime (2023-2025)',
+      isDeliveryDayEssential: true,
   },
 
   // ==========================================
@@ -216,6 +264,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'RAV4 Gen 5 Hybrid & Prime (2019-2026)',
     whyBuy: 'Maximum high-wall laser-measured coverage containing snow, salt, mud, and water spills.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'sienna-all-weather-liners': {
     slug: 'sienna-all-weather-liners',
@@ -230,6 +279,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Sienna 7-Passenger & 8-Passenger (2021-2026)',
     whyBuy: 'Maximized spill containment along sliding Super Long Slide tracks and cargo trunk well.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'grand-highlander-all-weather-liners': {
     slug: 'grand-highlander-all-weather-liners',
@@ -244,6 +294,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Grand Highlander Captain & Bench (2024-2026)',
     whyBuy: 'Precision laser-scanned edge protection covering all 3 passenger rows and cargo area.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   '3-row-all-weather-liners': {
     slug: '3-row-all-weather-liners',
@@ -254,6 +305,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     category: 'Protection',
     compatibility: '3-Row Toyota Family Vehicles (Sienna & Grand Highlander)',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'prius-all-weather-liners': {
     slug: 'prius-all-weather-liners',
@@ -261,6 +313,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'toyota prius 2023-2025 all weather floor mats cargo liner',
     searchKeywordsUS: 'toyota prius 2023-2025 all weather floor mats cargo liner',
     compatibility: 'Prius & Prius Prime Gen 5 (2023-2025)',
+      isDeliveryDayEssential: true,
   },
 
   // ==========================================
@@ -430,12 +483,14 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross 2022-2025)',
     searchKeywordsCA: 'Toyota Corolla Cross 2022-2025 all weather floor mats liners',
     searchKeywordsUS: 'Toyota Corolla Cross 2022-2025 all weather floor mats liners',
+      isDeliveryDayEssential: true,
   },
   'corolla-cross-all-weather-liners': {
     slug: 'corolla-cross-all-weather-liners',
     title: 'Custom-Fit All-Weather Floor Mats (Corolla Cross 2022-2025)',
     searchKeywordsCA: 'Toyota Corolla Cross 2022-2025 all weather floor mats liners',
     searchKeywordsUS: 'Toyota Corolla Cross 2022-2025 all weather floor mats liners',
+      isDeliveryDayEssential: true,
   },
   'magnetic-door-anchor-windshield-frost-guard': {
     slug: 'magnetic-door-anchor-windshield-frost-guard',
@@ -456,6 +511,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'fitcamx 4k dash cam toyota corolla 2020-2026',
     compatibility: 'Corolla E210 Sedan & Hatch TSS 2.0 / 3.0 (2020–2026)',
     whyBuy: 'Seamless mirror tap installation drawing power directly from factory rearview mirror harness with zero dangling cables.',
+      isDeliveryDayEssential: true,
   },
   'fitcamx-corolla-cross': {
     slug: 'fitcamx-corolla-cross',
@@ -464,6 +520,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'fitcamx 4k dash cam toyota corolla cross',
     compatibility: 'Corolla Cross TSS 3.0 Mirror Shroud (2022–2026)',
     whyBuy: 'Discrete factory appearance with 4K recording for Canadian road salt, commute, and parking lot protection.',
+      isDeliveryDayEssential: true,
   },
   'corolla-all-weather-liners': {
     slug: 'corolla-all-weather-liners',
@@ -472,6 +529,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Toyota Corolla 2020-2026 all weather floor mats liners',
     compatibility: 'Corolla Sedan & Hatchback (2020–2026)',
     whyBuy: 'Laser-scanned high-wall bucket coverage containing melted winter snow and slush.',
+      isDeliveryDayEssential: true,
   },
   'corolla-cross-cargo-liner': {
     slug: 'corolla-cross-cargo-liner',
@@ -496,6 +554,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'toyota corolla 2020-2026 center console organizer tray',
     compatibility: 'Corolla E210 Sedan & Hatch (2020–2026)',
     whyBuy: 'Converts deep bottomless center console into organized upper and lower compartments with anti-rattle rubber mats.',
+      isDeliveryDayEssential: true,
   },
   'corolla-cross-console-organizer': {
     slug: 'corolla-cross-console-organizer',
@@ -504,6 +563,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'toyota corolla cross center console organizer tray',
     compatibility: 'Corolla Cross (2022–2026)',
     whyBuy: 'Drop-in dual-tier storage organizer for sunglasses, coins, and keys.',
+      isDeliveryDayEssential: true,
   },
   'corolla-screen-protector': {
     slug: 'corolla-screen-protector',
@@ -512,6 +572,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'toyota corolla screen protector tempered glass 8-inch 10.5-inch',
     compatibility: 'Corolla & Corolla Cross 8" and 10.5" Touchscreens',
     whyBuy: 'Scratch-resistant 9H glass with oleophobic coating that repels fingerprints and cuts daytime glare.',
+      isDeliveryDayEssential: true,
   },
   'corolla-custom-sunshade': {
     slug: 'corolla-custom-sunshade',
@@ -628,6 +689,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'toyota sequoia 2023-2026 all weather floor mats liners 3 row',
     searchKeywordsUS: 'toyota sequoia 2023-2026 all weather floor mats liners 3 row',
     compatibility: '2023–2026 Toyota Sequoia (7- & 8-Passenger i-FORCE MAX)',
+      isDeliveryDayEssential: true,
   },
   'sequoia-cargo-liner': {
     slug: 'sequoia-cargo-liner',
@@ -642,6 +704,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'toyota sequoia tundra center console organizer tray armrest',
     searchKeywordsUS: 'toyota sequoia tundra center console organizer tray armrest',
     compatibility: '2023–2026 Toyota Sequoia & 2022–2026 Tundra',
+      isDeliveryDayEssential: true,
   },
   'sequoia-screen-protector': {
     slug: 'sequoia-screen-protector',
@@ -649,6 +712,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'toyota sequoia 14 inch screen protector tempered glass',
     searchKeywordsUS: 'toyota sequoia 14 inch screen protector tempered glass',
     compatibility: '2023–2026 Toyota Sequoia (14" Touchscreen)',
+      isDeliveryDayEssential: true,
   },
   'sequoia-running-boards': {
     slug: 'sequoia-running-boards',
@@ -677,6 +741,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsCA: 'fitcamx 4k dash cam toyota sequoia 2023-2026',
     searchKeywordsUS: 'fitcamx 4k dash cam toyota sequoia 2023-2026',
     compatibility: '2023–2026 Toyota Sequoia (All Trims)',
+      isDeliveryDayEssential: true,
   },
   'sequoia-leveling-kit': {
     slug: 'sequoia-leveling-kit',
@@ -822,6 +887,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Tacoma 4th Gen (2024-2026)',
     whyBuy: 'Drop-in divider tray organizing smartphones, coins, and pens in the deep Tacoma console box.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'screen-protector-tacoma': {
     slug: 'screen-protector-tacoma',
@@ -836,6 +902,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Tacoma 14-inch Touchscreen (2024-2026)',
     whyBuy: 'Ultra-clear 9H tempered glass with anti-fingerprint and matte glare-reducing coating.',
     badge: 'Direct Fit',
+      isDeliveryDayEssential: true,
   },
   'tacoma-bed-cleats': {
     slug: 'tacoma-bed-cleats',

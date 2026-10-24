@@ -53,6 +53,7 @@ export interface ChecklistProduct {
   amazonCaAsinOrUrl?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  isDeliveryDayEssential?: boolean;
 }
 
 import {
@@ -74,6 +75,13 @@ export interface DeliveryPrepChecklistProps {
   onToggleUniversalGear?: () => void;
 }
 
+const PRIMARY_FILTER_TABS = [
+  { id: 'all', label: 'All Gear' },
+  { id: 'delivery_day_1', label: '📦 Delivery Day 1 Checklist' },
+  { id: 'protection', label: '🛡️ Protection' },
+  { id: 'tech_comfort', label: '⚡ Tech & Comfort' },
+] as const;
+
 const CATEGORIES = [
   { id: 'all', label: 'All Essentials', icon: ClipboardCheck },
   { id: 'visibility_protection', label: 'Visibility & Tech', icon: Eye },
@@ -84,6 +92,75 @@ const CATEGORIES = [
 
 function matchesCategory(item: ChecklistProduct, selectedCategory: string): boolean {
   if (selectedCategory === 'all') return true;
+
+  if (selectedCategory === 'delivery_day_1') {
+    if (
+      (item as any).isDeliveryDayEssential ||
+      item.badge === 'Delivery Day 1' ||
+      item.slug === 'rfid-faraday-key-fob-pouch' ||
+      item.slug === 'fast-usbc-pd-car-charger'
+    ) {
+      return true;
+    }
+    const slug = (item.slug || '').toLowerCase();
+    const title = (item.title || '').toLowerCase();
+    return (
+      slug.includes('fitcamx') ||
+      slug.includes('dashcam') ||
+      slug.includes('screen-protector') ||
+      slug.includes('console-tray') ||
+      slug.includes('console-organizer') ||
+      slug.includes('all-weather-liners') ||
+      slug.includes('floor-liners') ||
+      slug.includes('floor-mats') ||
+      title.includes('floor liner') ||
+      title.includes('floor mat') ||
+      title.includes('tuxmat') ||
+      title.includes('fitcamx') ||
+      title.includes('screen protector') ||
+      title.includes('console')
+    );
+  }
+
+  if (selectedCategory === 'protection') {
+    const slug = (item.slug || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    const cats = (item.categories || []).map((c) => c.toLowerCase());
+    return (
+      cat.includes('protection') ||
+      cat.includes('armor') ||
+      cat.includes('cargo') ||
+      cat.includes('floor') ||
+      cats.some((c) => c.includes('protection') || c.includes('cargo') || c.includes('armor') || c.includes('floor')) ||
+      slug.includes('liner') ||
+      slug.includes('mat') ||
+      slug.includes('protector') ||
+      slug.includes('guard') ||
+      slug.includes('scuff')
+    );
+  }
+
+  if (selectedCategory === 'tech_comfort') {
+    const slug = (item.slug || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    const cats = (item.categories || []).map((c) => c.toLowerCase());
+    return (
+      cat.includes('tech') ||
+      cat.includes('comfort') ||
+      cat.includes('visibility') ||
+      cat.includes('safety') ||
+      cat.includes('audio') ||
+      cat.includes('electronic') ||
+      cats.some((c) => c.includes('tech') || c.includes('comfort') || c.includes('safety') || c.includes('electronic')) ||
+      slug.includes('fitcamx') ||
+      slug.includes('dashcam') ||
+      slug.includes('charger') ||
+      slug.includes('organizer') ||
+      slug.includes('tray') ||
+      slug.includes('speaker') ||
+      slug.includes('carplay')
+    );
+  }
 
   // Check multi-category array if present
   if (item.categories && item.categories.length > 0) {
@@ -453,10 +530,47 @@ export function DeliveryPrepChecklist({
           )}
         </div>
 
+        {/* Primary Segmented Control: All Gear | 📦 Delivery Day 1 Checklist | 🛡️ Protection | ⚡ Tech & Comfort */}
+        <div
+          style={{ WebkitOverflowScrolling: 'touch', touchAction: 'auto' }}
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar touch-auto overscroll-x-contain py-2 mt-2.5 border-t border-zinc-800/50 print:hidden"
+        >
+          {PRIMARY_FILTER_TABS.map((tab) => {
+            const isSelected = selectedCategory === tab.id;
+            const isDeliveryDayTab = tab.id === 'delivery_day_1';
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setSelectedCategory(tab.id)}
+                className={cn(
+                  'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer shrink-0 whitespace-nowrap',
+                  isDeliveryDayTab
+                    ? isSelected
+                      ? 'border border-amber-500/40 text-amber-300 bg-amber-950/30 shadow-xs'
+                      : 'border border-amber-500/20 text-amber-400/80 bg-amber-950/10 hover:border-amber-500/40 hover:text-amber-300 hover:bg-amber-950/20'
+                    : isSelected
+                    ? 'bg-zinc-800 text-white font-bold border border-zinc-700 shadow-xs'
+                    : 'bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-800/80'
+                )}
+              >
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Subtitle helper when Delivery Day 1 Checklist is active */}
+        {selectedCategory === 'delivery_day_1' && (
+          <p className="text-xs text-amber-300/90 font-medium px-1 py-1 print:hidden">
+            Essential protection and plug-and-play accessories Canadian Toyota owners order before taking delivery.
+          </p>
+        )}
+
         {/* Category Filter Pills: Smooth horizontal scrolling with no-scrollbar */}
         <div
           style={{ WebkitOverflowScrolling: 'touch', touchAction: 'auto' }}
-          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-auto overscroll-x-contain py-2 mt-2.5 border-t border-zinc-800/50 print:hidden"
+          className="flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-auto overscroll-x-contain py-1.5 print:hidden"
         >
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
