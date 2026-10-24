@@ -33,7 +33,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'tuxmat-rav4': {
     id: 'f1111111-1111-4111-8111-111111111111',
     slug: 'tuxmat-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4+custom+all+weather+floor+mats&tag=toyotawaits-20',
     title: 'TuxMat Custom Floor Liners (RAV4)',
     category: 'accessories',
     clickCount: 0,
@@ -397,7 +397,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'high-wall-floor-liners-rav4': {
     id: 'f1000016-0016-4016-8016-000000000016',
     slug: 'high-wall-floor-liners-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4+custom+all+weather+floor+mats&tag=toyotawaits-20',
     title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 Hybrid & Prime)',
     category: 'cabin_organization',
     clickCount: 0,

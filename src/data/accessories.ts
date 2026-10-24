@@ -253,7 +253,7 @@ export function getAccessoriesForModel(
         : normalized?.toLowerCase() === 'grand highlander'
         ? 'Toyota Grand Highlander all weather floor mats liners'
         : normalized?.toLowerCase() === 'rav4'
-        ? 'TuxMat Toyota RAV4 2019-2026'
+        ? 'TuxMat Toyota RAV4 custom all weather floor mats'
         : `Toyota ${normalized || 'universal'} all weather floor mats liners TPE`;
       return {
         ...item,

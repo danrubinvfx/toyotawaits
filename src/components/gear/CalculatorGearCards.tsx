@@ -103,8 +103,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     brand: 'TuxMat / 3D MAXpider',
     title: 'All-Weather Custom-Fit TPE Floor Liners',
     description: 'Laser-measured precision tub coverage engineered to protect carpets from Canadian winter slush and salt.',
-    asin: 'B0833DT93B',
-    searchQuery: 'TuxMat Toyota RAV4 2019-2026',
+    searchQuery: 'TuxMat Toyota RAV4 custom all weather floor mats',
     bullets: [
       'High-wall tub coverage extends up to center console',
       'Cold-flexible down to -40°C without curling or cracking',

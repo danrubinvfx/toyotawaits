@@ -319,12 +319,9 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   'high-wall-floor-liners-rav4': {
     slug: 'high-wall-floor-liners-rav4',
     title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 2019-2026)',
-    asin: 'B0833DT93B',
-    asin_ca: 'B0833DT93B',
-    asin_us: 'B0833DT93B',
-    searchQuery: 'TuxMat Toyota RAV4 2019-2026',
-    searchKeywordsCA: 'TuxMat Toyota RAV4 2019-2026',
-    searchKeywordsUS: 'TuxMat Toyota RAV4 2019-2026',
+    searchQuery: 'TuxMat Toyota RAV4 custom all weather floor mats',
+    searchKeywordsCA: 'TuxMat Toyota RAV4 custom all weather floor mats',
+    searchKeywordsUS: 'TuxMat Toyota RAV4 custom all weather floor mats',
     category: 'Floor Protection',
     compatibility: 'RAV4 Gen 5 Hybrid & Prime (2019-2026)',
     whyBuy: 'Maximum high-wall laser-measured coverage containing snow, salt, mud, and water spills.',
@@ -369,10 +366,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   'rav4': {
     slug: 'high-wall-floor-liners-rav4',
     title: 'High-Wall All-Weather Floor Liners & Cargo Mat (RAV4 2019-2026)',
-    asin_ca: 'B0833DT93B',
-    asin_us: 'B0833DT93B',
-    searchKeywordsCA: 'TuxMat Toyota RAV4 2019-2026',
-    searchKeywordsUS: 'TuxMat Toyota RAV4 2019-2026',
+    searchKeywordsCA: 'TuxMat Toyota RAV4 custom all weather floor mats',
+    searchKeywordsUS: 'TuxMat Toyota RAV4 custom all weather floor mats',
     compatibility: 'RAV4 Gen 5 Hybrid & Prime (2019-2026)',
   },
   'grand-highlander-all-weather-liners': {

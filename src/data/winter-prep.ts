@@ -106,7 +106,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'TuxMat Custom High-Wall Floor Liners (RAV4)',
         benefit:
           'Maximum edge-to-edge carpet and salt crust protection precision-cut to maintain 100% rear seat battery vent intake clearance.',
-        url: 'https://www.amazon.ca/s?k=TuxMat+RAV4&tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4+custom+all+weather+floor+mats&tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },

@@ -82,7 +82,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     expect(siennaLinerLink.getAttribute('href')).not.toContain('B0833DT93B');
   });
 
-  it('strictly isolates RAV4 floor liners to ASIN B0833DT93B and never includes Sienna data', () => {
+  it('strictly isolates RAV4 floor liners to evergreen search fallback and never includes Sienna data', () => {
     render(
       <MarketProvider initialMarket="CA">
         <CalculatorGearCards activeModel="rav4" />
@@ -90,7 +90,9 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     );
 
     const rav4LinerLink = screen.getByRole('link', { name: /View All-Weather Liners/i });
-    expect(rav4LinerLink.getAttribute('href')).toContain('B0833DT93B');
+    expect(rav4LinerLink.getAttribute('href')).toContain('TuxMat');
+    expect(rav4LinerLink.getAttribute('href')).toContain('RAV4');
+    expect(rav4LinerLink.getAttribute('href')).not.toContain('B0833DT93B');
     expect(rav4LinerLink.getAttribute('href')).not.toContain('B0CFV5R8QM');
     expect(rav4LinerLink.getAttribute('href')).not.toContain('Sienna');
   });
@@ -138,10 +140,10 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     expect(siennaEntry.searchKeywordsUS).toBe('Toyota Sienna all weather floor mats 2021-2026');
 
     const rav4Entry = GEAR_MARKET_CATALOG['high-wall-floor-liners-rav4'];
-    expect(rav4Entry.asin_ca).toBe('B0833DT93B');
-    expect(rav4Entry.asin_us).toBe('B0833DT93B');
-    expect(rav4Entry.searchKeywordsCA).toBe('TuxMat Toyota RAV4 2019-2026');
-    expect(rav4Entry.searchKeywordsUS).toBe('TuxMat Toyota RAV4 2019-2026');
+    expect(rav4Entry.asin_ca).toBeUndefined();
+    expect(rav4Entry.asin_us).toBeUndefined();
+    expect(rav4Entry.searchKeywordsCA).toBe('TuxMat Toyota RAV4 custom all weather floor mats');
+    expect(rav4Entry.searchKeywordsUS).toBe('TuxMat Toyota RAV4 custom all weather floor mats');
   });
 
   it('displays curated accessories for Grand Highlander including 12.3" glass and cargo liner', () => {
