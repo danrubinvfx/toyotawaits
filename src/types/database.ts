@@ -125,6 +125,8 @@ export interface Database {
           source_listing_id: string;
           stock_number: string | null;
           vdp_url: string | null;
+          listing_url: string | null;
+          posted_at: string | null;
           image_url: string | null;
           has_real_photo: boolean;
           image_source: string;

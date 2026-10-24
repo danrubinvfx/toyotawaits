@@ -597,4 +597,82 @@ describe('Convertus Ingestion Adapter', () => {
       expect(record?.listing.postedAt).toBeNull();
     });
   });
+
+  describe('Direct VDP Permalink Extraction', () => {
+    it('captures direct VDP permalink from item.url when starting with http', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'RAV4',
+        url: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/112233/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/112233/'
+      );
+      expect(record?.listing.vdpUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/112233/'
+      );
+    });
+
+    it('captures direct VDP permalink from item.link', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Sienna',
+        link: 'https://www.jptoyota-surrey.com/vehicles/2026/toyota/sienna/surrey/bc/445566/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.jptoyota-surrey.com/vehicles/2026/toyota/sienna/surrey/bc/445566/'
+      );
+    });
+
+    it('captures direct VDP permalink from item.permalink', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Tacoma',
+        permalink: 'https://www.westcoasttoyota.com/vehicles/2026/toyota/tacoma/778899/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.westcoasttoyota.com/vehicles/2026/toyota/tacoma/778899/'
+      );
+    });
+
+    it('captures direct VDP permalink from item.canonical_url', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Crown Signia',
+        canonical_url: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/crown-signia/990011/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/crown-signia/990011/'
+      );
+    });
+
+    it('normalizes known domain typos in direct VDP URL', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'RAV4',
+        url: 'https://www.jptoyotadowntown.com/vehicles/2026/toyota/rav4/123/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/123/'
+      );
+    });
+
+    it('handles relative direct URL by retaining relative in listingUrl or constructing full vdpUrl', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'RAV4',
+        url: '/vehicles/2026/toyota/rav4/vancouver/bc/123456/',
+      };
+      const { record } = parseConvertusRecord(raw, 0);
+      expect(record?.listing.listingUrl).toBe('/vehicles/2026/toyota/rav4/vancouver/bc/123456/');
+      expect(record?.listing.vdpUrl).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/123456/'
+      );
+    });
+  });
 });

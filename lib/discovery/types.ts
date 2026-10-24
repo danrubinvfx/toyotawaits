@@ -99,6 +99,7 @@ export interface DealerListing {
   sourceListingId: string;
   stockNumber?: string | null;
   vdpUrl?: string | null;
+  listingUrl?: string | null;
   imageUrl?: string | null;
   hasRealPhoto?: boolean;
   imageSource?: string;
@@ -280,6 +281,7 @@ export interface ParsedVehicleListing {
     sourceListingId: string;
     stockNumber: string | null;
     vdpUrl: string | null;
+    listingUrl?: string | null;
     imageUrl?: string | null;
     hasRealPhoto?: boolean;
     imageSource?: string;

@@ -21,6 +21,8 @@ export interface VehicleListingCardProps {
   postedAt?: string | null;
   firstSeenAt?: string | null;
   vdpUrl?: string | null;
+  listingUrl?: string | null;
+  dealerBaseUrl?: string | null;
   msrp?: number | null;
   sellingPrice?: number | null;
   mandatoryFees?: number | null;
@@ -115,8 +117,52 @@ export function formatVehicleCardTitles(props: {
   return { primaryTitle, secondaryTitle };
 }
 
+/**
+ * Resilient Dealer Search Fallback URL Generator
+ * If listing_url is missing or relative, build a resilient dealer search query avoiding
+ * restrictive category parameters like &sc=new (which blocks demo/transit stock).
+ */
+export function getDealerListingUrl(listing: {
+  listing_url?: string | null;
+  dealer_base_url?: string | null;
+  vin?: string | null;
+  [key: string]: any;
+}): string {
+  const direct = listing.listing_url || (listing as any).vdp_url;
+  if (direct && typeof direct === 'string' && direct.trim().startsWith('http')) {
+    let clean = direct.trim();
+    if (clean.includes('jptoyotadowntown.com')) {
+      clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+    }
+    if (clean.includes('jptoyotasurrey.com')) {
+      clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+    }
+
+    // Intercept dead placeholder /new-vehicles/ URL that 404s
+    const baseUrl = listing.dealer_base_url ? listing.dealer_base_url.replace(/\/+$/, '') : '';
+    if (
+      clean.endsWith('/new-vehicles/') ||
+      clean.endsWith('/new-vehicles') ||
+      clean === baseUrl ||
+      clean === `${baseUrl}/`
+    ) {
+      const vinKey = listing.vin || (listing as any).stock_number || (listing as any).provisional_id || '';
+      return `${baseUrl}/vehicles/?search=${encodeURIComponent(vinKey)}&keyword=${encodeURIComponent(vinKey)}`;
+    }
+
+    return clean;
+  }
+
+  const baseUrl = listing.dealer_base_url ? listing.dealer_base_url.replace(/\/+$/, '') : '';
+  const vinKey = listing.vin || (listing as any).stock_number || (listing as any).provisional_id || '';
+  // Broad search by VIN across all new & in-transit vehicles without category constraints:
+  return `${baseUrl}/vehicles/?search=${encodeURIComponent(vinKey)}&keyword=${encodeURIComponent(vinKey)}`;
+}
+
 export function resolveVehicleListingUrl(props: {
   vdpUrl?: string | null;
+  listingUrl?: string | null;
+  dealerBaseUrl?: string | null;
   dealerName?: string;
   dealerCity?: string | null;
   dealerProvince?: string | null;
@@ -125,31 +171,43 @@ export function resolveVehicleListingUrl(props: {
   modelYear?: number;
   vin?: string | null;
   stockNumber?: string | null;
-}): string | null {
-  const { vdpUrl, vin, stockNumber } = props;
+  provisionalId?: string | null;
+}): string {
+  const { vdpUrl, listingUrl, dealerBaseUrl, vin, stockNumber, provisionalId } = props;
 
-  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown, Surrey, or West Coast)
+  // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown, Surrey, West Coast, Regency, or OpenRoad)
   const isSurrey =
     props.dealerName?.toLowerCase().includes('surrey') ||
     props.dealerCity?.toLowerCase().includes('surrey');
   const isWestCoast =
     props.dealerName?.toLowerCase().includes('west coast') ||
     props.dealerCity?.toLowerCase().includes('pitt meadows');
-  let baseDomain = isWestCoast
+  const isRegency =
+    props.dealerName?.toLowerCase().includes('regency');
+  const isOpenRoadRichmond =
+    props.dealerName?.toLowerCase().includes('openroad') ||
+    props.dealerName?.toLowerCase().includes('richmond');
+
+  let baseDomain = dealerBaseUrl || (isWestCoast
     ? 'https://www.westcoasttoyota.com'
     : isSurrey
     ? 'https://www.jptoyota-surrey.com'
-    : 'https://www.jptoyota-downtown.com';
-  if (vdpUrl && (vdpUrl.startsWith('http://') || vdpUrl.startsWith('https://'))) {
+    : isRegency
+    ? 'https://www.regencytoyota.com'
+    : isOpenRoadRichmond
+    ? 'https://www.openroadtoyotarichmond.com'
+    : 'https://www.jptoyota-downtown.com');
+
+  const candidateUrl = listingUrl || vdpUrl;
+  if (candidateUrl && (candidateUrl.startsWith('http://') || candidateUrl.startsWith('https://'))) {
     try {
-      const parsed = new URL(vdpUrl);
+      const parsed = new URL(candidateUrl);
       baseDomain = parsed.origin;
     } catch {
-      // retain fallback baseDomain
+      // retain baseDomain
     }
   }
 
-  // Normalize common missing-hyphen domain typos
   if (baseDomain.includes('jptoyotadowntown.com')) {
     baseDomain = baseDomain.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
   }
@@ -157,43 +215,11 @@ export function resolveVehicleListingUrl(props: {
     baseDomain = baseDomain.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
   }
 
-  if (vdpUrl && typeof vdpUrl === 'string') {
-    let clean = vdpUrl.trim();
-    if (clean.includes('jptoyotadowntown.com')) {
-      clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
-    }
-    if (clean.includes('jptoyotasurrey.com')) {
-      clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
-    }
-
-    // Relative path: prepend dealer base domain
-    if (clean.startsWith('/')) {
-      return `${baseDomain}${clean}`;
-    }
-
-    // Intercept dead placeholder /new-vehicles/ URL that 404s
-    if (
-      clean.endsWith('/new-vehicles/') ||
-      clean.endsWith('/new-vehicles') ||
-      clean === baseDomain ||
-      clean === `${baseDomain}/`
-    ) {
-      const keyword = vin || stockNumber;
-      return keyword
-        ? `${baseDomain}/vehicles/new/?keyword=${encodeURIComponent(keyword.trim())}`
-        : `${baseDomain}/vehicles/new/`;
-    }
-
-    return clean;
-  }
-
-  // Fallback to public new inventory search page if direct VDP link is absent
-  const keyword = vin || stockNumber;
-  if (keyword) {
-    return `${baseDomain}/vehicles/new/?keyword=${encodeURIComponent(keyword.trim())}`;
-  }
-
-  return `${baseDomain}/vehicles/new/`;
+  return getDealerListingUrl({
+    listing_url: candidateUrl,
+    dealer_base_url: baseDomain,
+    vin: vin || provisionalId || stockNumber || '',
+  });
 }
 
 export function VehicleListingCard({
@@ -213,6 +239,8 @@ export function VehicleListingCard({
   postedAt,
   firstSeenAt,
   vdpUrl,
+  listingUrl,
+  dealerBaseUrl,
   msrp,
   sellingPrice,
   mandatoryFees,
@@ -259,6 +287,8 @@ export function VehicleListingCard({
   
   const resolvedVdpUrl = resolveVehicleListingUrl({
     vdpUrl,
+    listingUrl,
+    dealerBaseUrl,
     dealerName,
     dealerCity,
     dealerProvince,
@@ -267,6 +297,7 @@ export function VehicleListingCard({
     modelYear,
     vin,
     stockNumber,
+    provisionalId,
   });
 
   // Check date staleness evaluation

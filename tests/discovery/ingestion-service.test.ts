@@ -592,5 +592,33 @@ describe('Sprint 3: Ingestion Pipeline & Observation Persistence', () => {
       expect(mockDb.tables.dealer_listings[0].posted_at).toBe('2026-10-15T09:00:00.000Z');
       expect(mockDb.tables.dealer_listings[0].last_observed_at).toBe('2026-10-20T10:00:00.000Z');
     });
+
+    it('persists direct VDP permalink into listing_url and vdp_url', async () => {
+      const mockDb = createMockSupabase();
+      const listingWithVdp: ParsedVehicleListing = {
+        ...baseListing,
+        listing: {
+          ...baseListing.listing,
+          sourceListingId: 'src-vdp-permalink-01',
+          listingUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/998877/',
+          vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/998877/',
+        },
+      };
+
+      await ingestDealerListings({
+        dealerId: mockDealerId,
+        sourceId: mockSourceId,
+        parsedListings: [listingWithVdp],
+        sweepTimestamp: '2026-10-21T09:00:00.000Z',
+        supabaseClient: mockDb,
+      });
+
+      expect(mockDb.tables.dealer_listings[0].listing_url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/998877/'
+      );
+      expect(mockDb.tables.dealer_listings[0].vdp_url).toBe(
+        'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/998877/'
+      );
+    });
   });
 });

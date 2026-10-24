@@ -79,6 +79,7 @@ export async function GET(request?: Request) {
         id,
         stock_number,
         vdp_url,
+        listing_url,
         current_status,
         last_observed_at,
         first_observed_at,
@@ -166,7 +167,8 @@ export async function GET(request?: Request) {
         lastChecked: item.last_observed_at,
         postedAt: item.posted_at || item.first_observed_at || null,
         firstSeenAt: item.first_observed_at || null,
-        vdpUrl: item.vdp_url || null,
+        vdpUrl: item.listing_url || item.vdp_url || null,
+        listingUrl: item.listing_url || item.vdp_url || null,
         msrp: latestObs.msrp != null ? Number(latestObs.msrp) : null,
         sellingPrice:
           latestObs.selling_price != null

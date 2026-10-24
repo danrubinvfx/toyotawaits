@@ -61,6 +61,11 @@ export interface ConvertusRawVehicle {
   date?: string | null;
   inventory_date?: string | null;
   vdp_url?: string | null;
+  url?: string | null;
+  link?: string | null;
+  permalink?: string | null;
+  canonical_url?: string | null;
+  listing_url?: string | null;
   breakdown?: Array<{
     type?: string;
     amount?: number | string;
@@ -192,11 +197,12 @@ export function constructConvertusVdpUrl(
 
   // 1. Check raw link fields
   const candidateLink =
-    raw.vdp_url ||
-    raw.canonical_url ||
-    raw.dealer_url ||
     raw.url ||
-    raw.link;
+    raw.link ||
+    raw.vdp_url ||
+    raw.permalink ||
+    raw.canonical_url ||
+    raw.dealer_url;
 
   if (candidateLink && typeof candidateLink === 'string') {
     let link = candidateLink.trim();
@@ -508,7 +514,34 @@ export function parseConvertusRecord(
   ).trim();
 
   const stockNumber = raw.stock_number ? String(raw.stock_number).trim() : null;
-  const vdpUrl = constructConvertusVdpUrl(raw, options);
+
+  // 1. Capture Direct VDP Permalinks During Ingestion:
+  // Check for the direct Vehicle Details Page (VDP) URL returned in the raw vehicle item payload:
+  const directUrlCandidate =
+    raw.url ||
+    raw.link ||
+    raw.vdp_url ||
+    raw.permalink ||
+    raw.canonical_url;
+
+  // Validate that directUrl is a full URL string starting with 'http'
+  let directUrl: string | null = null;
+  if (
+    typeof directUrlCandidate === 'string' &&
+    directUrlCandidate.trim().toLowerCase().startsWith('http')
+  ) {
+    let clean = directUrlCandidate.trim();
+    if (clean.includes('jptoyotadowntown.com')) {
+      clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+    }
+    if (clean.includes('jptoyotasurrey.com')) {
+      clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+    }
+    directUrl = clean;
+  }
+
+  const vdpUrl = directUrl || constructConvertusVdpUrl(raw, options);
+  const listingUrl = directUrl || (typeof directUrlCandidate === 'string' && directUrlCandidate.trim() ? directUrlCandidate.trim() : null);
   const imageInfo = extractPrimaryImage(raw, options);
   const daysOnLot =
     raw.days_on_lot !== undefined && raw.days_on_lot !== null
@@ -557,6 +590,7 @@ export function parseConvertusRecord(
       sourceListingId,
       stockNumber,
       vdpUrl,
+      listingUrl,
       imageUrl: imageInfo.imageUrl,
       hasRealPhoto: imageInfo.hasRealPhoto,
       imageSource: imageInfo.imageSource,

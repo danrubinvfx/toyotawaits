@@ -11,7 +11,9 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   VehicleListingCard,
   VehicleListingCardProps,
+  getDealerListingUrl,
 } from '@/components/discovery/VehicleListingCard';
+import { InventoryVehicleCard } from '@/components/discovery/InventoryVehicleCard';
 import {
   InventoryFilterBar,
   FilterState,
@@ -183,7 +185,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       );
     });
 
-    it('falls back to dealer inventory search URL when vdpUrl is dead /new-vehicles/ placeholder', () => {
+    it('falls back to resilient dealer inventory search URL without sc=new when vdpUrl is dead /new-vehicles/ placeholder', () => {
       render(
         <VehicleListingCard
           {...sampleCardProps}
@@ -194,11 +196,12 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const link = screen.getByTestId('dealer-vdp-link');
       expect(link).toHaveAttribute(
         'href',
-        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=JTDACAAJ0T3038212'
+        'https://www.jptoyota-downtown.com/vehicles/?search=JTDACAAJ0T3038212&keyword=JTDACAAJ0T3038212'
       );
+      expect(link.getAttribute('href')).not.toContain('sc=new');
     });
 
-    it('falls back to dealer inventory search URL when vdpUrl is omitted', () => {
+    it('falls back to resilient dealer inventory search URL without sc=new when vdpUrl is omitted', () => {
       render(
         <VehicleListingCard
           {...sampleCardProps}
@@ -209,8 +212,89 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const link = screen.getByTestId('dealer-vdp-link');
       expect(link).toHaveAttribute(
         'href',
-        'https://www.jptoyota-downtown.com/vehicles/new/?keyword=2T3P1RFV5TC123456'
+        'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
       );
+      expect(link.getAttribute('href')).not.toContain('sc=new');
+    });
+
+    describe('getDealerListingUrl & Action Button Permalinks', () => {
+      it('returns direct URL when listing_url is provided and starts with http', () => {
+        const url = getDealerListingUrl({
+          listing_url: 'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/112233/',
+          dealer_base_url: 'https://www.jptoyota-downtown.com',
+          vin: '2T3P1RFV5TC123456',
+        });
+        expect(url).toBe(
+          'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/112233/'
+        );
+      });
+
+      it('builds resilient search query without sc=new when listing_url is missing', () => {
+        const url = getDealerListingUrl({
+          listing_url: undefined,
+          dealer_base_url: 'https://www.jptoyota-downtown.com',
+          vin: '2T3P1RFV5TC123456',
+        });
+        expect(url).toBe(
+          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+        );
+        expect(url).not.toContain('sc=new');
+        expect(url).not.toContain('/vehicles/new/');
+      });
+
+      it('builds resilient search query without sc=new when listing_url is relative', () => {
+        const url = getDealerListingUrl({
+          listing_url: '/vehicles/2026/toyota/rav4/123/',
+          dealer_base_url: 'https://www.jptoyota-downtown.com',
+          vin: '2T3P1RFV5TC123456',
+        });
+        expect(url).toBe(
+          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+        );
+        expect(url).not.toContain('sc=new');
+      });
+
+      it('renders "View Public Dealer Listing" button with target="_blank" and rel="noopener noreferrer" for explicit VDP URL', () => {
+        const onListingClick = vi.fn();
+        render(
+          <InventoryVehicleCard
+            {...sampleCardProps}
+            vdpUrl="https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/69116486/?sale_class=New"
+            onListingClick={onListingClick}
+          />
+        );
+        const link = screen.getByTestId('dealer-vdp-link');
+        expect(link).toHaveAttribute(
+          'href',
+          'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/69116486/?sale_class=New'
+        );
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        expect(link).toHaveTextContent('View Public Dealer Listing');
+
+        fireEvent.click(link);
+        expect(onListingClick).toHaveBeenCalled();
+      });
+
+      it('renders "View Public Dealer Listing" button linking to resilient fallback search without sc=new for fallback vehicle', () => {
+        render(
+          <VehicleListingCard
+            {...sampleCardProps}
+            vdpUrl={null}
+            listingUrl={null}
+            vin="2T3P1RFV5TC123456"
+          />
+        );
+        const link = screen.getByTestId('dealer-vdp-link');
+        expect(link).toHaveAttribute(
+          'href',
+          'https://www.jptoyota-downtown.com/vehicles/?search=2T3P1RFV5TC123456&keyword=2T3P1RFV5TC123456'
+        );
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        expect(link.getAttribute('href')).not.toContain('sc=new');
+        expect(link.getAttribute('href')).not.toContain('/vehicles/new/');
+      });
     });
 
     it('displays dealer posted date and relative detection date with clock icon and tooltip', () => {
