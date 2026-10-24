@@ -19,6 +19,28 @@ function buildAmazonCaSearchUrl(keywords: string): string {
 
 export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
   {
+    id: 'rav4-padded-armrest-cover',
+    title: 'Custom-Fit Padded Center Console Armrest Cover',
+    category: 'comfort',
+    description: 'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
+    estimatedPriceCad: '$24 – $32 CAD',
+    url: buildAmazonCaSearchUrl('Toyota RAV4 2019-2026 center console armrest cover cushion pad'),
+    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    badge: 'Long-Drive Pick',
+    isDeliveryDayEssential: true,
+  },
+  {
+    id: 'lateral-console-knee-cushion',
+    title: 'Driver Side Console Edge Leather Knee Cushion',
+    category: 'comfort',
+    description: 'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
+    estimatedPriceCad: '$14 – $19 CAD',
+    url: buildAmazonCaSearchUrl('car center console knee rest pad leather cushion ergonomic leg support'),
+    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    badge: 'Road Trip Essential',
+    isDeliveryDayEssential: true,
+  },
+  {
     id: 'all-weather-floor-liners',
     title: 'TPE All-Weather Floor & Cargo Liners',
     category: 'protection',
@@ -217,5 +239,5 @@ export function getAccessoriesForModel(
   // Dynamically sort by popularity weights when available
   const sorted = sortAccessoriesByPopularity(tailored, clickCounts);
 
-  return sorted.slice(0, 6);
+  return sorted.slice(0, 8);
 }

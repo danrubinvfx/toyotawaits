@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
+import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import {
   MODEL_REGISTRY,
   getModelConfig,
@@ -686,6 +687,19 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             submissions={submissions}
           />
         </Suspense>
+      </section>
+
+      {/* Section 4.5: Delivery Prep & Gear Shelf */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
+            Essential Delivery Day Gear &amp; Upgrades: {modelConfig.name}
+          </h2>
+          <p className="text-xs sm:text-sm text-zinc-500">
+            Field-tested interior protection, cabin ergonomics, and plug-and-play accessories while you wait for allocation.
+          </p>
+        </div>
+        <DeliveryPrepChecklist model={modelConfig.slug} powertrain={modelConfig.slug === 'sienna' ? 'hev' : undefined} />
       </section>
 
       {/* Section 5: FAQ Accordion Section */}

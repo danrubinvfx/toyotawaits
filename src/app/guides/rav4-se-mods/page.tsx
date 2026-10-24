@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ModComparisonCard } from '@/components/guides/mod-comparison-card';
+import { GearCard } from '@/components/gear/GearCard';
 import {
   Wrench,
   Clock,
@@ -18,6 +19,7 @@ import {
   CheckCircle2,
   ExternalLink,
   Sparkles,
+  AlertCircle,
   Zap,
 } from 'lucide-react';
 
@@ -108,6 +110,123 @@ export default function Rav4SeModsGuidePage() {
             </p>
           </CardContent>
         </Card>
+      </section>
+
+      {/* Stage 1.5: Cabin Ergonomics & Long-Distance Comfort */}
+      <section className="space-y-6" id="cabin-ergonomics">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold">
+              Stage 1.5 Ergonomics &amp; Comfort
+            </Badge>
+            <Badge variant="outline" className="border-emerald-500/30 text-emerald-400 text-xs">
+              Under $35 CAD • Direct DIY Fit
+            </Badge>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+            <Sparkles className="h-6 w-6 text-amber-500 shrink-0" />
+            Cabin Ergonomics &amp; Long-Distance Comfort (Stage 1.5)
+          </h2>
+          <p className="text-sm sm:text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
+            Community feedback from long-distance Canadian RAV4 drivers identifies two major daily ergonomics pain points on extended highway trips:
+          </p>
+        </div>
+
+        {/* The Problem Callout Card */}
+        <Card className="border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20">
+          <CardContent className="p-5 sm:p-6 space-y-3">
+            <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-amber-500 shrink-0" />
+              The Problem: Hard Plastics &amp; Elbow Fatigue
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 italic leading-relaxed">
+              &ldquo;The 5th-generation RAV4 cockpit features firm plastics right where the driver&apos;s right leg rests against the center stack tunnel, coupled with a firm factory armrest that quickly wears under daily commuting.&rdquo;
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* The Quick Fixes Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
+              Fix 1: Console Armrest Sleeve
+            </span>
+            <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              0.5&quot; Memory Foam Padding &amp; Stitching Protection
+            </h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Slip-on padded covers are preferred over full lid replacements because they preserve original factory stitching, add approximately 0.5&quot; of plush memory foam cushioning to relieve forearm fatigue, and shield the factory vinyl from sunscreen oils, sweat, and dog paws.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-500">
+              Fix 2: Tunnel Knee Pad Cushion
+            </span>
+            <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              Eliminate Highway Right-Knee Soreness
+            </h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Extended highway driving creates a notorious contact pressure point where the driver&apos;s right knee braces against the rigid console tunnel plastic. Low-profile self-adhesive leather knee cushions cushion this contact zone completely without interfering with seatbelts, cup holders, or passenger legroom.
+            </p>
+          </div>
+        </div>
+
+        {/* Embedded Gear Cards with Direct "Check Price ↗" buttons */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+              Recommended Ergonomic Gear (Stage 1.5)
+            </h3>
+            <span className="text-[11px] text-zinc-500">
+              Verified OEM Fit: 2019–2026 RAV4 / Hybrid / Prime
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <GearCard
+              item={{
+                id: 'rav4-padded-armrest-cover',
+                slug: 'rav4-padded-armrest-cover',
+                title: 'Custom-Fit Padded Center Console Armrest Cover',
+                category: 'comfort',
+                badge: 'Long-Drive Pick',
+                priceEstCad: '$24 – $32 CAD',
+                description: 'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
+                whyBuy: 'Preserves OEM stitching, adds ~0.5" memory foam cushioning, and shields the lid from sunscreen, sweat, and dog paws.',
+                buttonLabel: 'Check Price ↗',
+                models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+                activeModel: 'rav4',
+              }}
+              placement="guide_rav4_mods"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+            <GearCard
+              item={{
+                id: 'lateral-console-knee-cushion',
+                slug: 'lateral-console-knee-cushion',
+                title: 'Driver Side Console Edge Leather Knee Cushion',
+                category: 'comfort',
+                badge: 'Road Trip Essential',
+                priceEstCad: '$14 – $19 CAD',
+                description: 'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
+                whyBuy: 'Eliminates right knee contact pressure points on long highway cruises without interfering with seatbelts or cup holders.',
+                buttonLabel: 'Check Price ↗',
+                models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+                activeModel: 'rav4',
+              }}
+              placement="guide_rav4_mods"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+          </div>
+
+          {/* FTC-compliant Amazon Associate disclosure */}
+          <p className="text-[11px] text-zinc-500 italic pt-1">
+            As an Amazon Associate, ToyotaWaits earns from qualifying purchases. Real-time pricing and stock verified on Amazon.ca and Amazon.com.
+          </p>
+        </div>
       </section>
 
       {/* 2. Audio: Stealth "OEM+" Audio Overhaul (Non-JBL Fix) */}

@@ -6,6 +6,7 @@ import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button';
 import {
   ClipboardCheck,
+  Sparkles,
   Eye,
   Layers,
   ShieldAlert,
@@ -79,6 +80,7 @@ const PRIMARY_FILTER_TABS = [
   { id: 'all', label: 'All Gear' },
   { id: 'delivery_day_1', label: '📦 Delivery Day 1 Checklist' },
   { id: 'protection', label: '🛡️ Protection' },
+  { id: 'comfort', label: '🛋️ Comfort' },
   { id: 'tech_comfort', label: '⚡ Tech & Comfort' },
 ] as const;
 
@@ -86,6 +88,7 @@ const CATEGORIES = [
   { id: 'all', label: 'All Essentials', icon: ClipboardCheck },
   { id: 'visibility_protection', label: 'Visibility & Tech', icon: Eye },
   { id: 'cabin_organization', label: 'Interior Protection', icon: Layers },
+  { id: 'comfort', label: 'Comfort', icon: Sparkles },
   { id: 'cargo_utility', label: 'Cargo & Utility', icon: Luggage },
   { id: 'roadside_winter', label: 'Roadside Armor', icon: ShieldAlert },
 ] as const;
@@ -137,6 +140,23 @@ function matchesCategory(item: ChecklistProduct, selectedCategory: string): bool
       slug.includes('protector') ||
       slug.includes('guard') ||
       slug.includes('scuff')
+    );
+  }
+
+  if (selectedCategory === 'comfort') {
+    const slug = (item.slug || '').toLowerCase();
+    const cat = (item.category || '').toLowerCase();
+    const cats = (item.categories || []).map((c) => c.toLowerCase());
+    const title = (item.title || '').toLowerCase();
+    return (
+      cat.includes('comfort') ||
+      cats.some((c) => c.includes('comfort')) ||
+      slug.includes('armrest') ||
+      slug.includes('cushion') ||
+      slug.includes('knee') ||
+      title.includes('armrest') ||
+      title.includes('cushion') ||
+      title.includes('knee')
     );
   }
 

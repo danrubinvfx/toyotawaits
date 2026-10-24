@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast'];
+    const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait'];
     if (!placement || !validPlacements.includes(placement)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid placement. Expected inventory_feed, submission_modal, or donation_toast' },
+        { success: false, error: 'Invalid placement. Expected inventory_feed, submission_modal, donation_toast, guide_rav4_mods, or while_you_wait' },
         { status: 400 }
       );
     }

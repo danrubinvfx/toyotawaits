@@ -12,6 +12,24 @@ export interface AffiliateRecord {
 
 // Fallback registry matching 004_seed_canadian_data.sql and 006_se_mods_affiliates.sql
 export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
+  'rav4-padded-armrest-cover': {
+    id: 'fbaaaaaa-1111-4111-8111-111111111111',
+    slug: 'rav4-padded-armrest-cover',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+2019-2026+center+console+armrest+cover+cushion+pad&tag=toyotawaits-20',
+    title: 'Custom-Fit Padded Center Console Armrest Cover',
+    category: 'comfort',
+    clickCount: 0,
+    isActive: true,
+  },
+  'lateral-console-knee-cushion': {
+    id: 'fbaaaaaa-2222-4222-8222-222222222222',
+    slug: 'lateral-console-knee-cushion',
+    destinationUrl: 'https://www.amazon.ca/s?k=car+center+console+knee+rest+pad+leather+cushion+ergonomic+leg+support&tag=toyotawaits-20',
+    title: 'Driver Side Console Edge Leather Knee Cushion',
+    category: 'comfort',
+    clickCount: 0,
+    isActive: true,
+  },
   'tuxmat-rav4': {
     id: 'f1111111-1111-4111-8111-111111111111',
     slug: 'tuxmat-rav4',

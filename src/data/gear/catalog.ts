@@ -55,6 +55,40 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   },
 
   // ==========================================
+  // RAV4 Cabin Ergonomics & Road-Trip Relief
+  // ==========================================
+  'rav4-padded-armrest-cover': {
+    slug: 'rav4-padded-armrest-cover',
+    title: 'Custom-Fit Padded Center Console Armrest Cover',
+    asin: 'B099F5D2T4',
+    asin_ca: 'B099F5D2T4',
+    asin_us: 'B099F5D2T4',
+    searchQuery: 'Toyota RAV4 2019-2026 center console armrest cover cushion pad',
+    searchKeywordsCA: 'Toyota RAV4 2019-2026 center console armrest cover cushion pad',
+    searchKeywordsUS: 'Toyota RAV4 2019-2026 center console armrest cover cushion pad',
+    category: 'Comfort & Ergonomics',
+    compatibility: 'Toyota RAV4 (2019–2026) All Trims (LE, XLE, SE, XSE, Limited, Woodland, Trail)',
+    whyBuy: 'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
+    badge: 'Long-Drive Pick',
+    isDeliveryDayEssential: true,
+  },
+  'lateral-console-knee-cushion': {
+    slug: 'lateral-console-knee-cushion',
+    title: 'Driver Side Console Edge Leather Knee Cushion',
+    asin: 'B08F9V772D',
+    asin_ca: 'B08F9V772D',
+    asin_us: 'B08F9V772D',
+    searchQuery: 'car center console knee rest pad leather cushion ergonomic leg support',
+    searchKeywordsCA: 'car center console knee rest pad leather cushion ergonomic leg support',
+    searchKeywordsUS: 'car center console knee rest pad leather cushion ergonomic leg support',
+    category: 'Comfort & Ergonomics',
+    compatibility: 'Universal Toyota Center Console Tunnel (Driver Knee Contact Area)',
+    whyBuy: 'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
+    badge: 'Road Trip Essential',
+    isDeliveryDayEssential: true,
+  },
+
+  // ==========================================
   // Dashcams / FitcamX (Fit-Sensitive Generation Bounds)
   // ==========================================
   'fitcamx-rav4': {

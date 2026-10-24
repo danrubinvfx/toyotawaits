@@ -12,10 +12,12 @@ import {
   Luggage,
   Package,
   BatteryCharging,
+  Armchair,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 import { VideoModal } from '@/components/delivery-prep/video-modal';
+import { trackAffiliateClick } from '@/lib/gear/telemetry';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { getGearMarketConfig } from '@/data/gear/catalog';
 import {
@@ -55,6 +57,7 @@ export interface GearCardItem {
   compatibility?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  buttonLabel?: string;
 }
 
 export type ModCardItem = GearCardItem;
@@ -67,6 +70,8 @@ export interface GearCardProps {
   isDragging?: boolean;
   activeModel?: string;
   className?: string;
+  placement?: string;
+  buttonLabel?: string;
 }
 
 export type ModCardProps = GearCardProps;
@@ -232,6 +237,15 @@ export function getThemedCategoryIcon(category?: string, title?: string) {
     return Package;
   }
   if (
+    cat.includes('comfort') ||
+    cat.includes('ergonomic') ||
+    name.includes('armrest') ||
+    name.includes('cushion') ||
+    name.includes('knee')
+  ) {
+    return Armchair;
+  }
+  if (
     cat.includes('interior') ||
     cat.includes('protection') ||
     cat.includes('cabin') ||
@@ -254,6 +268,8 @@ export function GearCard({
   isDragging = false,
   activeModel,
   className,
+  placement,
+  buttonLabel,
 }: GearCardProps) {
   const [imgError, setImgError] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
@@ -276,7 +292,7 @@ export function GearCard({
     : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
   const hasDirectAsin = Boolean(directAsin || isAmazonDirectProductUrl(amazonAffiliateUrl));
 
-  const buttonText = hasDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗';
+  const buttonText = buttonLabel || item.buttonLabel || (hasDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
@@ -284,6 +300,17 @@ export function GearCard({
   const showImage = Boolean(imageSource && !imgError);
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
+
+  const handleAffiliateClick = () => {
+    if (placement) {
+      trackAffiliateClick({
+        accessory_id: item.id || item.slug,
+        placement: placement as any,
+        model_context: currentModel || 'RAV4',
+        target_url: amazonAffiliateUrl,
+      });
+    }
+  };
 
   const handleImageClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (isDragging) {
@@ -436,6 +463,7 @@ export function GearCard({
             target="_blank"
             rel="sponsored noopener noreferrer nofollow"
             draggable={false}
+            onClick={handleAffiliateClick}
           >
             <span>{buttonText}</span>
             <span className="sr-only">

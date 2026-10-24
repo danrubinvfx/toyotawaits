@@ -11,6 +11,7 @@ export interface WhileYouWaitGearProps {
   modelName?: string | null;
   className?: string;
   popularityCounts?: Record<string, number>;
+  placement?: string;
 }
 
 const CATEGORY_META: Record<
@@ -39,7 +40,7 @@ const CATEGORY_META: Record<
   },
 };
 
-export function WhileYouWaitGear({ modelName, className = '', popularityCounts }: WhileYouWaitGearProps) {
+export function WhileYouWaitGear({ modelName, className = '', popularityCounts, placement = 'while_you_wait' }: WhileYouWaitGearProps) {
   const [fetchedCounts, setFetchedCounts] = React.useState<Record<string, number>>({});
 
   React.useEffect(() => {
@@ -156,7 +157,7 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts }
                     onClick={() => {
                       trackAffiliateClick({
                         accessory_id: item.id,
-                        placement: 'submission_modal',
+                        placement: (placement || 'while_you_wait') as any,
                         model_context: modelName || null,
                         target_url: item.url,
                       });

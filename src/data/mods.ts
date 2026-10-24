@@ -58,6 +58,50 @@ export interface ModItem {
 }
 
 export const MODS_CONFIG: ModItem[] = [
+  {
+    id: 'rav4-padded-armrest-cover',
+    slug: 'rav4-padded-armrest-cover',
+    models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    category: 'Interior Protection',
+    categories: ['Interior Protection'],
+    title: 'Custom-Fit Padded Center Console Armrest Cover',
+    name: 'Custom-Fit Padded Center Console Armrest Cover',
+    description:
+      'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
+    whyBuy:
+      'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
+    priceEst: '$24 – $32 CAD',
+    priceEstCad: '$24 – $32 CAD',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=Toyota+RAV4+2019-2026+center+console+armrest+cover+cushion+pad&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=Toyota+RAV4+2019-2026+center+console+armrest+cover+cushion+pad&tag=toyotawaits-20',
+    affiliateUrl: '/out/rav4-padded-armrest-cover',
+    badge: 'Top Pick',
+    compatibility: 'Toyota RAV4 5th-Gen (2019–2026) All Trims',
+  },
+  {
+    id: 'lateral-console-knee-cushion',
+    slug: 'lateral-console-knee-cushion',
+    models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    category: 'Interior Protection',
+    categories: ['Interior Protection'],
+    title: 'Driver Side Console Edge Leather Knee Cushion',
+    name: 'Driver Side Console Edge Leather Knee Cushion',
+    description:
+      'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
+    whyBuy:
+      'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
+    priceEst: '$14 – $19 CAD',
+    priceEstCad: '$14 – $19 CAD',
+    amazonCaAsinOrUrl:
+      'https://www.amazon.ca/s?k=car+center+console+knee+rest+pad+leather+cushion+ergonomic+leg+support&tag=toyotawaits-20',
+    destinationUrl:
+      'https://www.amazon.ca/s?k=car+center+console+knee+rest+pad+leather+cushion+ergonomic+leg+support&tag=toyotawaits-20',
+    affiliateUrl: '/out/lateral-console-knee-cushion',
+    badge: 'Essential',
+    compatibility: 'Universal Toyota Center Console Tunnel (Driver Knee Contact Area)',
+  },
   // 0. Audio & Electronics: Stealth "OEM+" Audio Package (Non-JBL Overhaul)
   {
     id: 'prod-beat-sonic-ena-3t3',

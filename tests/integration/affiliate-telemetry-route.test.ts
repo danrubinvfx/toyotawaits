@@ -157,4 +157,55 @@ describe('POST /api/telemetry/affiliate-click', () => {
       target_url: 'https://ko-fi.com/toyotawaits',
     });
   });
+  it('successfully records affiliate click event from guide_rav4_mods placement', async () => {
+    const payload = {
+      accessory_id: 'rav4-padded-armrest-cover',
+      placement: 'guide_rav4_mods',
+      model_context: 'rav4',
+      target_url: 'https://www.amazon.ca/s?k=rav4+armrest&tag=toyotawaits-20',
+    };
+
+    const req = new NextRequest('http://localhost:3000/api/telemetry/affiliate-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(mockInsert).toHaveBeenCalledWith({
+      accessory_id: 'rav4-padded-armrest-cover',
+      placement: 'guide_rav4_mods',
+      model_context: 'rav4',
+      target_url: 'https://www.amazon.ca/s?k=rav4+armrest&tag=toyotawaits-20',
+    });
+  });
+
+  it('successfully records affiliate click event from while_you_wait placement', async () => {
+    const payload = {
+      accessory_id: 'lateral-console-knee-cushion',
+      placement: 'while_you_wait',
+      model_context: 'RAV4',
+      target_url: 'https://www.amazon.ca/s?k=knee+cushion&tag=toyotawaits-20',
+    };
+
+    const req = new NextRequest('http://localhost:3000/api/telemetry/affiliate-click', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(mockInsert).toHaveBeenCalledWith({
+      accessory_id: 'lateral-console-knee-cushion',
+      placement: 'while_you_wait',
+      model_context: 'RAV4',
+      target_url: 'https://www.amazon.ca/s?k=knee+cushion&tag=toyotawaits-20',
+    });
+  });
 });
