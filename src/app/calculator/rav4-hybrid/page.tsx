@@ -10,9 +10,9 @@ export const revalidate = 3600; // 1 hour ISR
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+  title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
   description:
-    'Calculate real-world Canadian fuel savings and break-even payback comparing the 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover.',
+    'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   keywords: [
     'toyota rav4 hybrid fuel savings',
     'rav4 hybrid vs gas savings canada',
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/rav4-hybrid',
   },
   openGraph: {
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
     url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2026 Toyota RAV4 Hybrid (5.8 L/100km) against a 9.5 L/100km compact crossover with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota RAV4 Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   },
 };
 

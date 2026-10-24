@@ -71,7 +71,7 @@ export function DrivingInputsCard({
       ];
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2 sm:p-4 ${className ?? ''}`}>
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-1.5 sm:p-4 ${className ?? ''}`}>
       <CardHeader className="p-0 pb-1 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
           <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-500" />
@@ -79,10 +79,10 @@ export function DrivingInputsCard({
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="p-0 pt-1.5 sm:pt-3 space-y-2 sm:space-y-3">
+      <CardContent className="p-0 pt-1.5 sm:pt-3 space-y-1.5 sm:space-y-3">
         {/* Row 3: 2-column grid on mobile (<sm), stacked rows on desktop (sm+) */}
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-1 sm:gap-3">
-          {/* Col A: Distance */}
+          {/* Col 1: Distance */}
           <div className="space-y-1">
             <div className="flex items-center justify-between sm:justify-start sm:gap-2">
               <div className="flex items-center gap-1 sm:gap-1.5 sm:w-24 shrink-0">
@@ -93,7 +93,7 @@ export function DrivingInputsCard({
               </div>
 
               {/* Mobile Inline Value Badge */}
-              <div className="sm:hidden font-mono text-[11px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1.5 py-0.5 rounded">
+              <div className="sm:hidden font-mono text-[10px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1 py-0.5 rounded">
                 {inputs.annualKm >= 1000 ? `${(inputs.annualKm / 1000).toFixed(0)}k` : inputs.annualKm} {isImp ? 'mi' : 'km'}
               </div>
             </div>
@@ -147,7 +147,7 @@ export function DrivingInputsCard({
             </div>
           </div>
 
-          {/* Col B: Gas Price */}
+          {/* Col 2: Fuel Price */}
           <div className="space-y-1 sm:pt-2 sm:border-t sm:border-zinc-100 sm:dark:border-zinc-800/60">
             <div className="flex items-center justify-between sm:justify-start sm:gap-2">
               <div className="flex items-center gap-1 sm:gap-1.5 sm:w-24 shrink-0">
@@ -158,7 +158,7 @@ export function DrivingInputsCard({
               </div>
 
               {/* Mobile Inline Value Badge */}
-              <div className="sm:hidden font-mono text-[11px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1.5 py-0.5 rounded">
+              <div className="sm:hidden font-mono text-[10px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1 py-0.5 rounded">
                 ${inputs.gasPricePerL.toFixed(2)}{isImp ? '/gal' : '/L'}
               </div>
             </div>
@@ -213,7 +213,7 @@ export function DrivingInputsCard({
           </div>
         </div>
 
-        {/* 3. Power Rate (PHEV Only) */}
+        {/* 3. Power Rate (PHEV Only - Strictly Hidden unless PHEV is selected) */}
         {isPhev && (
           <div className="space-y-1 pt-1.5 sm:pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
             <div className="flex items-center justify-between sm:justify-start sm:gap-2">
@@ -225,7 +225,7 @@ export function DrivingInputsCard({
               </div>
 
               {/* Mobile Inline Value Badge */}
-              <div className="sm:hidden font-mono text-[11px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1.5 py-0.5 rounded">
+              <div className="sm:hidden font-mono text-[10px] font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800/80 px-1 py-0.5 rounded">
                 ${inputs.electricityRatePerKwh.toFixed(2)}/kWh
               </div>
             </div>

@@ -10,9 +10,9 @@ export const revalidate = 3600; // 1 hour ISR
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Sienna Hybrid Fuel Savings Calculator | ToyotaWaits',
+  title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
   description:
-    'Calculate real-world Canadian fuel savings comparing the 2025 Toyota Sienna Hybrid (6.6 L/100km) against an 11.2 L/100km gas V6 minivan baseline.',
+    'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   keywords: [
     'toyota sienna hybrid fuel savings',
     'sienna hybrid vs gas minivan canada',
@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/sienna-hybrid',
   },
   openGraph: {
-    title: 'Toyota Sienna Hybrid Fuel Savings Calculator | ToyotaWaits',
+    title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2025 Toyota Sienna Hybrid (6.6 L/100km) against an 11.2 L/100km V6 gas minivan with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
     url: 'https://toyotawaits.ca/calculator/sienna-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Sienna Hybrid Fuel Savings Calculator | ToyotaWaits',
+    title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
     description:
-      'Compare 2025 Toyota Sienna Hybrid (6.6 L/100km) against an 11.2 L/100km V6 gas minivan with verified NRCan ratings and delivery wait times.',
+      'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
   },
 };
 
@@ -66,8 +66,7 @@ export default function SiennaHybridCalculatorPage() {
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator
             initialTargetPresetId="2025-toyota-sienna-hybrid"
-            initialCurrentMode="CUSTOM"
-            initialCustomL100km={11.2}
+            initialCurrentArchetypeId="archetype-minivan"
           />
         </section>
 
@@ -100,10 +99,10 @@ export default function SiennaHybridCalculatorPage() {
                 <div className="p-3.5 rounded-lg bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
                   <div className="font-semibold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
                     <Zap className="w-4 h-4 text-emerald-600" />
-                    Long Wait Opportunity Cost
+                    Waiting Opportunity Cost
                   </div>
                   <p className="text-xs">
-                    Sienna deliveries in Canada frequently exceed 12–18 months. Evaluate the fuel cost penalty of continuing to drive a gas minivan while awaiting your Sienna allocation.
+                    Calculates the extra energy costs incurred while driving your existing vehicle during the verified Canadian wait period for Sienna Hybrid delivery.
                   </p>
                 </div>
 
@@ -113,7 +112,7 @@ export default function SiennaHybridCalculatorPage() {
                     Shareable Hash Permalinks
                   </div>
                   <p className="text-xs">
-                    Your parameters are encoded directly in the URL hash (<code className="text-zinc-800 dark:text-zinc-200 font-mono">#c=...</code>) for instant sharing with spouses and family members.
+                    Custom driving distances, gas prices, and trade-in outlays are saved directly into your URL hash (<code className="text-zinc-800 dark:text-zinc-200 font-mono">#c=...</code>) for instant bookmarking without server tracking.
                   </p>
                 </div>
               </div>

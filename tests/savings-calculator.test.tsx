@@ -387,7 +387,7 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
   describe('Page & Verification Gates: CalculatorPage', () => {
     it('renders server component page with metadata and canonical URL', async () => {
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
-      expect(metadata.title).toContain('Toyota Fuel Savings & Payback Calculator');
+      expect(metadata.title).toContain('Toyota Hybrid Fuel Savings & Payback Calculator');
 
       await act(async () => {
         render(<CalculatorPage />);

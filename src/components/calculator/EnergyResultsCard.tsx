@@ -37,10 +37,9 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
   const isImperial = results.unitSystem === 'IMPERIAL';
 
   return (
-    <Card className={`border border-red-500/20 sm:border-2 sm:border-red-500/20 dark:border-red-500/30 overflow-hidden shadow-xs sm:shadow-lg ${className ?? ''}`}>
-      {/* Top Banner: Strict label & Dense Layout */}
+    <Card className={`border border-transparent sm:border-2 sm:border-red-500/20 bg-transparent sm:bg-white sm:dark:bg-zinc-900 overflow-hidden shadow-none sm:shadow-lg ${className ?? ''}`}>
       {/* Mobile-Only High-Density Pill Ribbon */}
-      <div className="sm:hidden flex items-center justify-between px-3 py-1.5 h-9 bg-red-600/15 border-b border-red-500/30 text-xs font-semibold text-red-200">
+      <div className="sm:hidden flex items-center justify-between px-3 py-1.5 h-9 sm:h-10 bg-red-600/15 border border-red-500/30 rounded-lg text-xs font-semibold text-red-200">
         <span>
           {isPositiveSavings ? '' : '-'}${Math.abs(results.annualSavings).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} {currency}/yr savings
         </span>
@@ -87,8 +86,8 @@ export function EnergyResultsCard({ results, className }: EnergyResultsCardProps
       </div>
 
       {/* Details Container: Collapsible on mobile, always visible on sm+ */}
-      <details className="group border-t border-zinc-200/60 dark:border-zinc-800/60 sm:[&>summary]:!hidden sm:[&>div]:!block">
-        <summary className="sm:hidden flex items-center justify-between px-3 py-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 cursor-pointer select-none bg-zinc-50 dark:bg-zinc-900/60">
+      <details className="group mt-1.5 sm:mt-0 border border-zinc-200/60 dark:border-zinc-800/60 rounded-lg sm:rounded-none sm:border-t sm:border-x-0 sm:border-b-0 sm:[&>summary]:!hidden sm:[&>div]:!block bg-white dark:bg-zinc-900">
+        <summary className="sm:hidden flex items-center justify-between px-3 py-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 cursor-pointer select-none bg-zinc-50 dark:bg-zinc-900/60 rounded-lg">
           <span>View Cost Breakdown & Share</span>
           <span className="text-[10px] text-zinc-400 group-open:rotate-180 transition-transform">▾</span>
         </summary>

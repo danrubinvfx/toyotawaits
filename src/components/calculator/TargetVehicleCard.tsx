@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Zap, BatteryCharging, AlertCircle } from 'lucide-react';
+import { Sparkles, BatteryCharging, AlertCircle } from 'lucide-react';
 import { NEW_VEHICLE_PRESETS, getVehiclePresetById } from '@/data/vehicle-presets';
 import { TargetVehicleState } from '@/lib/hooks/useSavingsCalculator';
 import { UnitSystem } from '@/types/calculator';
@@ -108,8 +108,8 @@ export function TargetVehicleCard({
       : 'NRCAN VERIFIED';
 
   return (
-    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-2 sm:p-4 ${className ?? ''}`}>
-      <CardHeader className="p-0 pb-1.5 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
+    <Card className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm p-1.5 sm:p-4 ${className ?? ''}`}>
+      <CardHeader className="p-0 pb-1 sm:pb-2.5 border-b border-zinc-100 dark:border-zinc-800/60">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-xs sm:text-base font-bold flex items-center gap-1.5 sm:gap-2 text-zinc-900 dark:text-zinc-100">
             <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600 dark:text-red-500" />
@@ -124,7 +124,7 @@ export function TargetVehicleCard({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 pt-2 sm:pt-3 space-y-2 sm:space-y-2.5">
+      <CardContent className="p-0 pt-1.5 sm:pt-3 space-y-1.5 sm:space-y-2.5">
         {/* Vehicle Pulldown Selector */}
         <div className="relative">
           <label htmlFor="target-vehicle-select" className="sr-only">
@@ -134,7 +134,7 @@ export function TargetVehicleCard({
             id="target-vehicle-select"
             value={targetVehicle.presetId}
             onChange={(e) => handleVehicleSelect(e.target.value)}
-            className="w-full h-9 bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-2.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-8 truncate"
+            className="w-full h-9 text-xs bg-zinc-950 border border-zinc-800 text-zinc-100 rounded-lg px-2.5 font-medium focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition cursor-pointer appearance-none pr-8 truncate"
           >
             {VEHICLE_OPTIONS.map((option) => (
               <option key={option.presetId} value={option.presetId}>
@@ -148,16 +148,16 @@ export function TargetVehicleCard({
         </div>
 
         {/* Compact Spec Summary Badge (consumption, EV range if PHEV, MSRP) */}
-        <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 text-xs">
+        <div className="flex items-center justify-between gap-2 p-1.5 sm:p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 text-xs">
           <span className="font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wide text-[10px]">
             {isPhev ? 'Plug-in Hybrid' : 'Hybrid'}
           </span>
-          <span className="font-mono text-zinc-600 dark:text-zinc-400 shrink-0 font-medium">
+          <span className="font-mono text-zinc-600 dark:text-zinc-400 shrink-0 font-medium text-[11px] sm:text-xs">
             {ratingSummary} • {msrpDisplay}
           </span>
         </div>
 
-        {/* 4. Tight Inline PHEV Controls */}
+        {/* Tight Inline PHEV Controls */}
         {isPhev && (
           <div className="space-y-1.5 p-2 rounded-lg bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/60 transition-all">
             <div className="flex items-center justify-between gap-2 text-emerald-900 dark:text-emerald-300 font-bold text-xs">

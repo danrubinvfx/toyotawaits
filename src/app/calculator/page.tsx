@@ -3,57 +3,22 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
-import { ActivityTicker } from '@/components/feed/ActivityTicker';
-import { RecommendedProductsSection } from '@/components/calculator/RecommendedProductsSection';
-import { NewsTickerItem } from '@/lib/types/contracts';
+import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
+import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 export const revalidate = 3600; // 1 hour ISR
 
-const CALCULATOR_NEWS_ITEMS: NewsTickerItem[] = [
-  {
-    id: 'news-1',
-    type: 'news',
-    category: 'ALLOCATION',
-    title: '2026 RAV4 Hybrid & PHEV production allocations active for Canadian dealers',
-    headline: '2026 RAV4 Hybrid & PHEV production allocations active for Canadian dealers',
-    timestamp: new Date().toISOString(),
-  },
-  {
-    id: 'news-2',
-    type: 'news',
-    category: 'DELIVERY',
-    title: 'Camry Hybrid wait times stabilizing at 3–4 months across BC and Ontario',
-    headline: 'Camry Hybrid wait times stabilizing at 3–4 months across BC and Ontario',
-    timestamp: new Date().toISOString(),
-  },
-  {
-    id: 'news-3',
-    type: 'news',
-    category: 'MARKET UPDATE',
-    title: 'Prius Prime deliveries expanding; federal iZEV rebates apply at point of sale',
-    headline: 'Prius Prime deliveries expanding; federal iZEV rebates apply at point of sale',
-    timestamp: new Date().toISOString(),
-  },
-  {
-    id: 'news-4',
-    type: 'news',
-    category: 'PRODUCTION',
-    title: 'Sienna AWD hybrid fulfillment improving for Q2/Q3 2026 backlogs',
-    headline: 'Sienna AWD hybrid fulfillment improving for Q2/Q3 2026 backlogs',
-    timestamp: new Date().toISOString(),
-  },
-];
-
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
+  title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
   description:
-    'Calculate real-world Canadian fuel and electricity savings comparing Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles with verified NRCan ratings.',
+    'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
   keywords: [
     'toyota savings calculator',
     'toyota hybrid fuel savings canada',
+    'toyota hybrid payback calculator',
     'rav4 hybrid vs gas savings',
     'phev electricity vs gas cost canada',
     'canadian ev payback calculator',
@@ -64,9 +29,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
+    title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
     description:
-      'Compare real-world Canadian fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles.',
+      'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
     url: 'https://toyotawaits.ca/calculator',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -74,55 +39,108 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Fuel Savings & Payback Calculator | ToyotaWaits.ca',
+    title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
     description:
-      'Compare real-world Canadian fuel and electricity costs across Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas vehicles.',
+      'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
   },
+};
+
+const webApplicationSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Toyota Hybrid Fuel Savings & Payback Calculator',
+  url: 'https://toyotawaits.ca/calculator',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'All',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'CAD',
+  },
+};
+
+const faqPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How much money does a Toyota Hybrid save per year?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'A Toyota Hybrid typically saves between $1,200 and $2,400 CAD (or $900 to $1,800 USD) per year in fuel costs compared to a conventional gas-powered vehicle driven 20,000 km (12,000 miles) annually, depending on local fuel prices and vehicle class.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How long does it take for a Toyota Hybrid to pay for itself?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'For most drivers purchasing a new Toyota Hybrid over a comparable gas model, the upfront purchase premium is recovered through fuel savings in approximately 2 to 4 years post-delivery. When keeping an existing paid-off vehicle vs. buying new, payback timelines range from 5 to 7+ years depending on trade-in value.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'How does electricity cost compare to gasoline for Toyota PHEVs?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'At average Canadian residential electricity rates ($0.14/kWh) and $1.75/L gasoline, driving a Toyota PHEV (like the RAV4 Prime) in EV mode costs approximately $2.80 CAD per 100 km, compared to over $10.15 CAD per 100 km on gasoline—a savings of over 70% per electric kilometer.',
+      },
+    },
+  ],
 };
 
 export default function CalculatorPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6 pb-20 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50">
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+      {/* Machine-Readable JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+      />
+
+      <div className="container mx-auto max-w-6xl px-3 sm:px-6 space-y-4 sm:space-y-6">
         {/* Navigation & Clean Header */}
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
           <BackButton fallbackHref="/" label="← Back to Wait Time Tracker" />
 
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
+            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
               Toyota Fuel Savings & Payback Calculator
             </h1>
-            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+            <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1">
               Compare actual annual fuel and electricity costs across Toyota Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas models using official NRCan & EPA ratings.
             </p>
           </div>
         </div>
 
-        {/* News Wire Ticker below interactive cockpit */}
-        <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40">
-          <ActivityTicker initialData={CALCULATOR_NEWS_ITEMS} />
-        </div>
+        {/* News Wire Announcement Ticker mounted directly beneath the header and above cockpit */}
+        <CalculatorNewsWire />
 
         {/* Client-Side Interactive Calculator Cockpit */}
         <section aria-label="Interactive Savings Calculator">
           <VehicleSavingsCalculator />
         </section>
 
-        {/* Recommended Products Section directly below the calculator */}
-        <div className="pt-2">
-          <RecommendedProductsSection />
+        {/* Recommended Products Section placed below the calculator cockpit and collapsed outlay drawer */}
+        <div className="pt-2 sm:pt-4">
+          <CalculatorGearCards />
         </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}
-        <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="pt-6 sm:pt-8 border-t border-zinc-200 dark:border-zinc-800">
           <StaticEnergyTable />
         </div>
 
         {/* Methodology & Provenance Disclosure */}
-        <section aria-labelledby="methodology-heading" className="pt-4">
+        <section aria-labelledby="methodology-heading" className="pt-2 sm:pt-4">
           <Card className="bg-zinc-100/60 dark:bg-zinc-900/60 border-zinc-200 dark:border-zinc-800">
             <CardHeader className="pb-3">
-              <CardTitle id="methodology-heading" className="text-lg font-bold flex items-center gap-2">
+              <CardTitle id="methodology-heading" className="text-base sm:text-lg font-bold flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Calculation Methodology & Evidence Provenance
               </CardTitle>

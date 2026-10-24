@@ -96,7 +96,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             variant="ghost"
             size="sm"
             onClick={resetToDefaults}
-            className="min-h-[44px] px-2.5 sm:px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer shrink-0"
+            className="min-h-[44px] sm:min-h-0 px-2.5 sm:px-3 text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 flex items-center gap-1.5 cursor-pointer shrink-0"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Reset Defaults</span>
@@ -114,8 +114,8 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       )}
 
       {/* Main 2-Column Desktop Grid (Left: Visuals & Projections, Right: Inputs) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-5 items-start">
-        {/* Left Column (7 cols): Interactive Graph on top, Annual Projections underneath */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-4 lg:gap-5 items-start">
+        {/* Left Column (7 cols): Interactive Graph on top, Annual Projections directly underneath */}
         <div className="lg:col-span-7 flex flex-col gap-2 sm:gap-4">
           {results.timelineResult ? (
             <PaybackChart
@@ -139,7 +139,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
             />
           )}
 
-          {/* Annual Projection / Energy Results Card directly underneath the chart */}
+          {/* Annual Projection / Energy Results Card directly underneath the graph */}
           <EnergyResultsCard results={results} />
 
           {/* Payback Summary Card (when Mode 2 or 3 is active) */}
@@ -162,7 +162,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               unitSystem={unitSystem}
             />
           ) : (
-            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
               <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
                 Vehicle B Configured Below
               </span>
@@ -178,7 +178,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               unitSystem={unitSystem}
             />
           ) : (
-            <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
               <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
                 Vehicle A Configured Below
               </span>
@@ -196,12 +196,12 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
       </div>
 
-      {/* Step 3: Collapsed Comparison Drawer (Keep vs. Replace / New A vs. B) & Scope Notice at Bottom */}
+      {/* Advanced Comparison Outlays Drawer (Keep vs. Replace / New A vs. B) & Scope Notice at Bottom */}
       <details
-        className="mt-8 border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 bg-zinc-50/50 dark:bg-zinc-900/30"
+        className="mt-6 sm:mt-8 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 sm:p-4 bg-zinc-50/50 dark:bg-zinc-900/30"
         open={comparisonMode !== 'ENERGY_COMPARISON'}
       >
-        <summary className="cursor-pointer font-medium text-sm text-zinc-700 dark:text-zinc-300 flex items-center justify-between select-none">
+        <summary className="cursor-pointer font-medium text-xs sm:text-sm text-zinc-700 dark:text-zinc-300 flex items-center justify-between select-none">
           <span className="flex items-center gap-2">
             <Car className="w-4 h-4 text-zinc-500" />
             <span>🚗 Factor in Vehicle Purchase Price & Trade-in (Keep vs. Replace / New A vs. B)</span>

@@ -13,7 +13,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { CashFlowTimelineResult, CashFlowPoint } from '@/types/calculator';
-import { TrendingUp, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { TrendingUp, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 export interface PaybackChartProps {
   timeline: CashFlowTimelineResult;
@@ -148,9 +148,6 @@ export function PaybackChart({
                 <span className="hidden sm:inline">7-Year Cumulative Cash Flow Advantage</span>
                 <span className="sm:hidden">Cash Flow Over Time</span>
               </CardTitle>
-              <p className="hidden sm:block text-[11px] text-zinc-500 dark:text-zinc-400">
-                Discrete daily energy accrual with vertical delivery steps. No curve smoothing.
-              </p>
             </div>
           </div>
 
@@ -176,11 +173,11 @@ export function PaybackChart({
         </div>
       </CardHeader>
 
-      <CardContent className="p-1 sm:p-4 pt-1 sm:pt-2.5 space-y-1 sm:space-y-2.5">
+      <CardContent className="p-1.5 sm:p-4 pt-1 sm:pt-2.5 space-y-1 sm:space-y-2.5">
         {/* Chart View */}
-        <div className="w-full h-[145px] sm:h-[240px] rounded-lg bg-zinc-950 border border-zinc-800 p-0 sm:p-2 pt-1 sm:pt-3">
+        <div className="w-full h-[148px] sm:h-[240px] lg:h-[260px] rounded-lg bg-zinc-950 border border-zinc-800 p-0 sm:p-2 pt-1 sm:pt-3">
           {isMounted ? (
-            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 145 }}>
+            <ResponsiveContainer width="100%" height="100%" minWidth={100} minHeight={100} initialDimension={{ width: 600, height: 148 }}>
               <LineChart
                 data={points}
                 margin={{ top: 6, right: 8, left: -16, bottom: 0 }}
@@ -237,9 +234,6 @@ export function PaybackChart({
               <span>Target Cash Flow Advantage</span>
             </div>
           </div>
-          <p className="text-[11px] text-zinc-400">
-            Positive values indicate cumulative dollar advantage of target vehicle.
-          </p>
         </div>
       </CardContent>
     </Card>
