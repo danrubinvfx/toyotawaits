@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { getAllModelConfigs } from '@/lib/data/model-registry';
+import { toCanonicalWaitTimeSlug } from '@/lib/calculator-model-helpers';
 
 export function ModelDirectory() {
   const models = getAllModelConfigs();
@@ -23,7 +24,7 @@ export function ModelDirectory() {
           {models.map((m) => (
             <Link
               key={m.slug}
-              href={`/wait-times/${m.slug}`}
+              href={`/wait-times/${toCanonicalWaitTimeSlug(m.slug)}`}
               className="group flex flex-col p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-red-500/40 hover:bg-red-50/50 dark:hover:bg-red-950/20 hover:text-red-700 dark:hover:text-red-400 transition-all shadow-2xs"
               title={`${m.name} Wait Times Canada`}
             >

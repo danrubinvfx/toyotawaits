@@ -176,5 +176,23 @@ describe('ModCard Component', () => {
     render(<GearCard item={sampleItem} />);
     expect(screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` })).toBeInTheDocument();
   });
-});
+  it('falls back to search query and "Search on Amazon ↗" button text when ASIN is missing or invalid', () => {
+    const itemWithInvalidAsin = {
+      id: 'prod-fallback-search',
+      slug: 'sample-search-item',
+      title: 'TuxMat All-Weather Liners',
+      category: 'Interior Protection',
+      asin: 'INVALID_TOO_LONG_123',
+      searchQuery: 'TuxMat Toyota RAV4 2019-2026',
+    };
 
+    render(<ModCard item={itemWithInvalidAsin} />);
+
+    // Link must route to search query, NOT /dp/...
+    const buttonLink = screen.getByRole('link', { name: /Search on Amazon/i });
+    expect(buttonLink).toBeInTheDocument();
+    expect(buttonLink.getAttribute('href')).toBe('https://www.amazon.ca/s?k=TuxMat%20Toyota%20RAV4%202019-2026&tag=toyotawaits-20');
+    expect(buttonLink.getAttribute('target')).toBe('_blank');
+    expect(buttonLink.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
+  });
+});

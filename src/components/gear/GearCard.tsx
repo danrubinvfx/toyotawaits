@@ -18,11 +18,13 @@ import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 import { VideoModal } from '@/components/delivery-prep/video-modal';
 import { trackAffiliateClick } from '@/lib/gear/telemetry';
-import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+
 import { getGearMarketConfig } from '@/data/gear/catalog';
 import {
   CA_ASSOCIATE_TAG,
   US_ASSOCIATE_TAG,
+  buildAmazonAffiliateUrl,
+  sanitizeAmazonAffiliateUrl,
   injectActiveModelIntoQuery,
   isAmazonDirectProductUrl,
   getImageLinkAriaLabel,
@@ -87,108 +89,46 @@ export function getAffiliateUrl(
   activeModel?: string
 ): string {
   const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
+  const market = isUs ? 'US' : 'CA';
   const targetModel =
     activeModel ||
     item.activeModel ||
     (item.models?.length === 1 && item.models[0] !== 'all' ? item.models[0] : undefined);
   const config = getGearMarketConfig(item.slug || item.id, targetModel);
 
-  const US_TAG =
-    process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
-    process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
-    US_ASSOCIATE_TAG; // 'toyotawaits07-20'
+  const rawAsin = isUs
+    ? item.asin_us || config?.asin_us || item.asin || config?.asin
+    : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
 
-  const CA_TAG =
-    process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
-    process.env.NEXT_PUBLIC_AMAZON_CA_AFFILIATE_TAG ||
-    CA_ASSOCIATE_TAG; // 'toyotawaits-20'
+  const rawKeywords = isUs
+    ? item.searchKeywordsUS || config?.searchKeywordsUS || item.searchQuery || config?.searchQuery || item.title
+    : item.searchKeywordsCA || config?.searchKeywordsCA || item.searchQuery || config?.searchQuery || item.title;
 
-  if (isUs) {
-    const verifiedAsinUs = item.asin_us || config?.asin_us || item.asin || config?.asin;
-    if (verifiedAsinUs) {
-      return `https://www.amazon.com/dp/${verifiedAsinUs}?tag=${US_TAG}`;
-    }
+  const searchQuery = rawKeywords
+    ? injectActiveModelIntoQuery(rawKeywords, targetModel, item.slug)
+    : undefined;
 
-    const rawKeywordsUS =
-      item.searchKeywordsUS ||
-      config?.searchKeywordsUS ||
-      item.searchQuery ||
-      config?.searchQuery;
-    if (rawKeywordsUS) {
-      const searchKeywordsUS = injectActiveModelIntoQuery(rawKeywordsUS, targetModel);
-      return `https://www.amazon.com/s?k=${encodeURIComponent(searchKeywordsUS)}&tag=${US_TAG}`;
-    }
-
-    // Fallback: If raw destinationUrl exists and no specific config/keywords exist
+  // Fallback if neither ASIN nor keywords exist
+  if (!rawAsin && !searchQuery) {
     const rawUrl = item.destinationUrl || item.affiliateUrl || '';
     if (rawUrl && rawUrl.includes('amazon.')) {
-      try {
-        const parsed = new URL(rawUrl);
-        parsed.hostname = 'www.amazon.com';
-        if (parsed.searchParams.get('tag') === 'toyotawaits-20' || item.slug !== 'sample-dashcam') {
-          parsed.searchParams.set('tag', US_TAG);
-        }
-        return parsed.toString();
-      } catch {
-        let result = rawUrl.replace(/amazon\.ca/g, 'amazon.com');
-        if (result.includes('toyotawaits-20') || item.slug !== 'sample-dashcam') {
-          result = result.replace(/tag=[^&]+/g, `tag=${US_TAG}`);
-        }
-        return result;
-      }
+      return sanitizeAmazonAffiliateUrl(rawUrl, market, item.slug);
     }
-
-    // Fallback to title search if available
-    if (item.title) {
-      const titleQuery = injectActiveModelIntoQuery(item.title, targetModel);
-      return `https://www.amazon.com/s?k=${encodeURIComponent(titleQuery)}&tag=${US_TAG}`;
-    }
-
     return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
   }
 
-  // CA Market
-  const verifiedAsinCa = item.asin_ca || config?.asin_ca || item.asin || config?.asin;
-  if (verifiedAsinCa) {
-    return `https://www.amazon.ca/dp/${verifiedAsinCa}?tag=${CA_TAG}`;
+  // Handle direct custom destinationUrls with tag override
+  const rawUrl = item.destinationUrl || item.affiliateUrl;
+  if (!rawAsin && rawUrl && rawUrl.includes('amazon.') && !searchQuery) {
+    return sanitizeAmazonAffiliateUrl(rawUrl, market, item.slug);
   }
 
-  const rawKeywordsCA =
-    item.searchKeywordsCA ||
-    config?.searchKeywordsCA ||
-    item.searchQuery ||
-    config?.searchQuery;
-  if (rawKeywordsCA) {
-    const searchKeywordsCA = injectActiveModelIntoQuery(rawKeywordsCA, targetModel);
-    return `https://www.amazon.ca/s?k=${encodeURIComponent(searchKeywordsCA)}&tag=${CA_TAG}`;
-  }
-
-  // Fallback: If raw destinationUrl exists and no specific config/keywords exist
-  const rawUrl = item.destinationUrl || item.affiliateUrl || '';
-  if (rawUrl && rawUrl.includes('amazon.')) {
-    try {
-      const parsed = new URL(rawUrl);
-      parsed.hostname = 'www.amazon.ca';
-      if (parsed.searchParams.get('tag') === 'toyotawaits-20' || item.slug !== 'sample-dashcam') {
-        parsed.searchParams.set('tag', CA_TAG);
-      }
-      return parsed.toString();
-    } catch {
-      let result = rawUrl.replace(/amazon\.com/g, 'amazon.ca');
-      if (result.includes('toyotawaits-20') || item.slug !== 'sample-dashcam') {
-        result = result.replace(/tag=[^&]+/g, `tag=${CA_TAG}`);
-      }
-      return result;
-    }
-  }
-
-  // Fallback to title search if available
-  if (item.title) {
-    const titleQuery = injectActiveModelIntoQuery(item.title, targetModel);
-    return `https://www.amazon.ca/s?k=${encodeURIComponent(titleQuery)}&tag=${CA_TAG}`;
-  }
-
-  return item.affiliateUrl || (item.slug ? `/out/${item.slug}` : '#');
+  return buildAmazonAffiliateUrl({
+    asin: rawAsin,
+    searchQuery,
+    market,
+    slug: item.slug,
+  });
 }
 
 export const getAmazonAffiliateUrl = getAffiliateUrl;
@@ -290,7 +230,8 @@ export function GearCard({
   const directAsin = isUsMarket
     ? item.asin_us || config?.asin_us || item.asin || config?.asin
     : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
-  const hasDirectAsin = Boolean(directAsin || isAmazonDirectProductUrl(amazonAffiliateUrl));
+  const isDirectValidAsin = Boolean(directAsin && /^[A-Z0-9]{10}$/i.test(directAsin.trim()));
+  const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
   const buttonText = buttonLabel || item.buttonLabel || (hasDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);

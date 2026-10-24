@@ -79,7 +79,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     category: 'protection',
     description: 'Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key while parked at home or work.',
     estimatedPriceCad: '$14 – $24 CAD',
-    url: buildAmazonCaSearchUrl('faraday bag key fob protector RFID signal blocker car theft'),
+    url: buildAmazonCaSearchUrl('Faraday bag key fob signal protector pouch'),
     applicableModels: ['universal'],
     badge: 'Essential',
     isDeliveryDayEssential: true,
@@ -216,9 +216,16 @@ export function getAccessoriesForModel(
   // Dynamically tailor search queries for model-specific items
   const tailored = matching.map((item) => {
     if (item.id === 'all-weather-floor-liners') {
+      const q = normalized?.toLowerCase() === 'sienna'
+        ? 'Toyota Sienna all weather floor mats 2021-2026'
+        : normalized?.toLowerCase() === 'grand highlander'
+        ? 'Toyota Grand Highlander all weather floor mats liners'
+        : normalized?.toLowerCase() === 'rav4'
+        ? 'TuxMat Toyota RAV4 2019-2026'
+        : `Toyota ${normalized || 'universal'} all weather floor mats liners TPE`;
       return {
         ...item,
-        url: buildAmazonCaSearchUrl(`Toyota ${normalized || 'universal'} all weather floor mats liners TPE`),
+        url: buildAmazonCaSearchUrl(q),
       };
     }
     if (item.id === 'infotainment-screen-protector') {
