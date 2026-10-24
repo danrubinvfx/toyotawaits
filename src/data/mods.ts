@@ -35,6 +35,7 @@ export interface ModItem {
   subCategory?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick';
   compatibility: string;
+  fitment?: string;
   amazonCaAsinOrUrl: string;
   priceEst?: string;
   priceEstCad?: string;
@@ -42,6 +43,9 @@ export interface ModItem {
   utilityNote?: string;
   image?: string;
   imageSrc?: string;
+  imageUrl?: string;
+  fallbackIcon?: string;
+  savingsCad?: string;
   asin?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
@@ -739,20 +743,24 @@ export const MODS_CONFIG: ModItem[] = [
     models: ['rav4'],
     category: 'Cargo & Utility',
     categories: ['Cargo & Utility'],
-    title: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4)',
-    name: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars',
-    description: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
+    title: 'Roof Crossbars',
+    name: 'Roof Crossbars',
+    fitment: 'RAV4 (LE, XLE, XSE, Limited 2019-2026)',
+    description: 'Aerodynamic lockable aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof ditch channels.',
     priceEst: 'Saves ~$250+ compared to dealer port package',
     priceEstCad: 'Saves ~$250+ compared to dealer port package',
-    whyBuy: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
-    utilityNote: 'Aerodynamic aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof rails without drilling or wind whistle.',
+    whyBuy: 'Aerodynamic lockable aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof ditch channels.',
+    utilityNote: 'Aerodynamic lockable aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof ditch channels.',
     image: '/images/accessories/crossbars-rav4.png',
-    asin: 'B081J8QWVG',
-    amazonCaAsinOrUrl: 'https://www.amazon.ca/dp/B081J8QWVG?tag=toyotawaits-20',
-    destinationUrl: 'https://www.amazon.ca/dp/B081J8QWVG?tag=toyotawaits-20',
+    amazonCaAsinOrUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+roof+rack+crossbars+lockable+2019-2026&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+roof+rack+crossbars+lockable+2019-2026&tag=toyotawaits-20',
+    searchQuery: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    searchKeywordsCA: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    searchKeywordsUS: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    buttonLabel: 'View on Amazon ↗',
     affiliateUrl: '/out/roof-rack-crossbars-rav4',
     badge: 'Recommended',
-    compatibility: 'RAV4 (LE, XLE, XSE, Limited - excludes Adventure/TRD flush rails)',
+    compatibility: 'RAV4 (LE, XLE, XSE, Limited 2019-2026)',
   },
   {
     id: 'prod-crossbars-grand-highlander',

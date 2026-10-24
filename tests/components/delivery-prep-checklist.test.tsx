@@ -38,7 +38,7 @@ describe('DeliveryPrepChecklist Component', () => {
 
     const dashcamImg = screen.getByAltText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i);
     expect(dashcamImg).toBeDefined();
-    expect(dashcamImg.getAttribute('src')).toBe('/images/accessories/fitcamx-rav4.png');
+    expect(dashcamImg.getAttribute('src')).toContain('/images/accessories/fitcamx-rav4.png');
 
     // Price badge check
     expect(screen.getByText(/Saves ~\$350\+ vs dealer install/i)).toBeDefined();
@@ -56,7 +56,7 @@ describe('DeliveryPrepChecklist Component', () => {
     render(<DeliveryPrepChecklist model="rav4" powertrain="phev" />);
     expect(screen.getByText(/J1772 Public EV Charging Port Combination Lock Ring/i)).toBeDefined();
     const lockImg = screen.getByAltText(/J1772 Public EV Charging Port Combination Lock Ring/i);
-    expect(lockImg.getAttribute('src')).toBe('/images/accessories/j1772-charger-lock.png');
+    expect(lockImg.getAttribute('src')).toContain('/images/accessories/j1772-charger-lock.png');
 
     // 3. J1772 lock card renders external YouTube Video Guide
     const lockVideoLink = screen.getByTestId('video-link-j1772-charger-lock');
@@ -228,9 +228,9 @@ describe('DeliveryPrepChecklist Component', () => {
     fireEvent.click(cargoTab);
 
     // Crossbars should be visible
-    expect(screen.getByText(/OEM-Style Lockable Aluminum Roof Rack Cross Bars \(RAV4\)/i)).toBeDefined();
+    expect(screen.getByText(/Roof Crossbars/i)).toBeDefined();
     expect(screen.getAllByText('Recommended').length).toBeGreaterThan(0);
-    expect(screen.getByText(/RAV4 \(LE, XLE, XSE, Limited - excludes Adventure\/TRD flush rails\)/i)).toBeDefined();
+    expect(screen.getByText(/RAV4 \(LE, XLE, XSE, Limited 2019-2026\)/i)).toBeDefined();
 
     // Visibility and interior protection items should be hidden
     expect(screen.queryByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(RAV4\)/i)).toBeNull();

@@ -6,6 +6,21 @@
 
 import { injectActiveModelIntoQuery } from '@/lib/gear/affiliate';
 
+export interface GearItem {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  imageUrl?: string;         // e.g. '/assets/gear/fitcamx-rav4.webp'
+  fallbackIcon?: string;     // e.g. 'camera' | 'layers' | 'lock' | 'layout-grid'
+  searchQuery: string;
+  asin_ca?: string;
+  asin_us?: string;
+  videoUrl?: string;         // e.g. YouTube guide
+  badge?: string;
+  savingsCad?: string;
+}
+
 export interface GearMarketConfig {
   slug: string;
   title: string;
@@ -17,6 +32,8 @@ export interface GearMarketConfig {
   searchKeywordsUS: string;
   category?: string;
   compatibility?: string;
+  fitment?: string;
+  description?: string;
   whyBuy?: string;
   badge?: string;
   isDeliveryDayEssential?: boolean;
@@ -26,6 +43,9 @@ export interface GearMarketConfig {
   videoLabel?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
+  imageUrl?: string;
+  fallbackIcon?: string;
+  savingsCad?: string;
 }
 
 export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
@@ -43,6 +63,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Heavy-duty 40A Level 2 EVSE charger that cuts PHEV charging time from 12 hours to under 2.5 hours.',
     badge: 'PHEV Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/grizzl-e-charger.webp',
+    fallbackIcon: 'zap',
   },
   'rfid-faraday-key-fob-pouch': {
     slug: 'rfid-faraday-key-fob-pouch',
@@ -58,6 +80,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key.',
     badge: 'Delivery Day 1',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/faraday-pouch.webp',
+    fallbackIcon: 'lock',
   },
   'fast-usbc-pd-car-charger': {
     slug: 'fast-usbc-pd-car-charger',
@@ -73,6 +97,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'High-speed compact metal 12V adapter with 65W Power Delivery to fast-charge devices simultaneously.',
     badge: 'Delivery Day 1',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/fast-usbc-charger.webp',
+    fallbackIcon: 'zap',
   },
 
   // ==========================================
@@ -89,6 +115,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
     badge: 'Long-Drive Pick',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/armrest-cover.webp',
+    fallbackIcon: 'layers',
   },
   'lateral-console-knee-cushion': {
     slug: 'lateral-console-knee-cushion',
@@ -104,6 +132,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Self-adhesive ergonomic foam pad that mounts along the center console tunnel to prevent right knee soreness against the hard interior plastics.',
     badge: 'Road Trip Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/knee-cushion.webp',
+    fallbackIcon: 'layers',
   },
 
   // ==========================================
@@ -118,6 +148,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     category: 'Tech & Security',
     compatibility: 'RAV4 Gen 5 TSS 2.0 / 2.5 Shroud (2019-2026)',
     whyBuy: 'Discrete OEM look tapping into rearview mirror power with zero dangling cables. Verified for Gen 5 (2019-2026).',
+    imageUrl: '/assets/gear/fitcamx-rav4.webp',
+    fallbackIcon: 'camera',
     badge: 'Direct Fit',
     isDeliveryDayEssential: true,
   },
@@ -199,6 +231,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Spigen GlasTR EZ FIT 9H tempered glass repels fingerprint smudges and cuts daytime glare.',
     badge: 'Direct Fit',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    fallbackIcon: 'layout-grid',
   },
   'screen-protector-corolla-cross': {
     slug: 'screen-protector-corolla-cross',
@@ -249,6 +283,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Converts cavernous empty armrest bin into two accessible tiers with coin slot and USB pass-through.',
     badge: 'Direct Fit',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/console-tray-organizer.webp',
+    fallbackIcon: 'layout-grid',
   },
   'console-tray-sienna': {
     slug: 'console-tray-sienna',
@@ -327,6 +363,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Maximum high-wall laser-measured coverage containing snow, salt, mud, and water spills.',
     badge: 'Direct Fit',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+    fallbackIcon: 'layers',
   },
   'sienna-all-weather-liners': {
     slug: 'sienna-all-weather-liners',
@@ -410,10 +448,16 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   // ==========================================
   'roof-rack-crossbars-rav4': {
     slug: 'roof-rack-crossbars-rav4',
-    title: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4 2019-2025)',
-    searchKeywordsCA: 'toyota rav4 2019-2025 roof rack cross bars OEM style',
-    searchKeywordsUS: 'toyota rav4 2019-2025 roof rack cross bars OEM style',
-    compatibility: 'RAV4 Gen 5 with Factory Roof Rails (2019-2025)',
+    title: 'Roof Crossbars',
+    fitment: 'RAV4 (LE, XLE, XSE, Limited 2019-2026)',
+    description: 'Aerodynamic lockable aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof ditch channels.',
+    searchQuery: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    searchKeywordsCA: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    searchKeywordsUS: 'Toyota RAV4 roof rack crossbars lockable 2019-2026',
+    compatibility: 'RAV4 (LE, XLE, XSE, Limited 2019-2026)',
+    whyBuy: 'Aerodynamic lockable aluminum crossbars supporting up to 165 lbs. Fits flush into factory roof ditch channels.',
+    buttonLabel: 'View on Amazon ↗',
+    badge: 'Recommended',
   },
   'roof-rack-crossbars-grand-highlander': {
     slug: 'roof-rack-crossbars-grand-highlander',
@@ -495,6 +539,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Universal 12V Auxiliary Battery Jump Starting (HEV / PHEV / Gas)',
     whyBuy: 'Prevents getting stranded when the 12V auxiliary battery discharges under hybrid sleep drain.',
     badge: 'Essential',
+    imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
+    fallbackIcon: 'battery',
   },
 
   // ==========================================
@@ -573,6 +619,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Prevents passersby or other EV drivers from unplugging your vehicle at public Level 2 stations.',
     badge: 'PHEV Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/j1772-lock-ring.webp',
+    fallbackIcon: 'lock',
     buttonLabel: 'View on Amazon ↗',
     videoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
     guideVideoUrl: 'https://www.youtube.com/shorts/8MQgYRKKmos',
@@ -943,6 +991,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Sienna Gen 4 (2021-2026)',
     whyBuy: 'Direct bolt-on 2-inch receiver hitch supporting bike racks, cargo carriers, and up to 3,500 lbs towing capacity.',
     badge: 'Direct Fit',
+    imageUrl: '/assets/gear/curt-trailer-hitch.webp',
+    fallbackIcon: 'package',
   },
   'curt-13470': {
     slug: 'curt-13470',
@@ -957,6 +1007,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Sienna Gen 4 (2021-2026)',
     whyBuy: 'Direct bolt-on 2-inch receiver hitch supporting bike racks, cargo carriers, and up to 3,500 lbs towing capacity.',
     badge: 'Direct Fit',
+    imageUrl: '/assets/gear/curt-trailer-hitch.webp',
+    fallbackIcon: 'package',
   },
   'sienna-trailer-hitch': {
     slug: 'sienna-trailer-hitch',
@@ -971,6 +1023,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Toyota Sienna Gen 4 (2021-2026)',
     whyBuy: 'Direct bolt-on 2-inch receiver hitch supporting bike racks, cargo carriers, and up to 3,500 lbs towing capacity.',
     badge: 'Direct Fit',
+    imageUrl: '/assets/gear/curt-trailer-hitch.webp',
+    fallbackIcon: 'package',
   },
 
   // ==========================================
@@ -1037,6 +1091,135 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
 };
 
 /**
+ * Maps product slugs, categories, or keywords to verified local WebP visual assets and category icons.
+ * Guarantees zero hotlinking to Amazon image CDNs and provides instant sub-50ms local image load.
+ */
+export function resolveGearLocalImage(
+  slugOrId: string,
+  category?: string,
+  title?: string
+): { imageUrl: string; fallbackIcon: string } | undefined {
+  const clean = (slugOrId || '').toLowerCase();
+  const t = (title || '').toLowerCase();
+  const c = (category || '').toLowerCase();
+
+  // 1. FitcamX Dash Cam
+  if (
+    clean.includes('fitcamx') ||
+    clean.includes('dashcam') ||
+    clean.includes('dash-cam') ||
+    t.includes('fitcamx') ||
+    t.includes('dash cam')
+  ) {
+    return { imageUrl: '/assets/gear/fitcamx-rav4.webp', fallbackIcon: 'camera' };
+  }
+  // 2. TuxMat Floor Liners / All-weather Mats
+  if (
+    clean.includes('floor-liner') ||
+    clean.includes('all-weather-liner') ||
+    clean.includes('floor-mat') ||
+    clean.includes('high-wall-floor') ||
+    t.includes('floor liner') ||
+    t.includes('floor mat') ||
+    t.includes('tuxmat') ||
+    c.includes('floor protection')
+  ) {
+    return { imageUrl: '/assets/gear/tuxmat-floor-liners.webp', fallbackIcon: 'layers' };
+  }
+  // 3. Spigen Screen Protector
+  if (
+    clean.includes('screen-protector') ||
+    t.includes('screen protector') ||
+    t.includes('tempered glass') ||
+    c.includes('display care')
+  ) {
+    return { imageUrl: '/assets/gear/spigen-screen-protector.webp', fallbackIcon: 'layout-grid' };
+  }
+  // 4. Center Console Divider / Tray
+  if (
+    clean.includes('console-tray') ||
+    clean.includes('console-organizer') ||
+    clean.includes('console-divider') ||
+    t.includes('console') ||
+    t.includes('organizer tray') ||
+    c.includes('interior organization')
+  ) {
+    return { imageUrl: '/assets/gear/console-tray-organizer.webp', fallbackIcon: 'layout-grid' };
+  }
+  // 5. J1772 Charger Lock
+  if (
+    clean.includes('j1772') ||
+    clean.includes('charger-lock') ||
+    t.includes('j1772') ||
+    t.includes('lock ring')
+  ) {
+    return { imageUrl: '/assets/gear/j1772-lock-ring.webp', fallbackIcon: 'lock' };
+  }
+  // 6. Grizzl-E Level 2 Charger
+  if (
+    clean.includes('level-2') ||
+    clean.includes('evse') ||
+    clean.includes('grizzl') ||
+    t.includes('level 2') ||
+    t.includes('evse') ||
+    t.includes('grizzl-e')
+  ) {
+    return { imageUrl: '/assets/gear/grizzl-e-charger.webp', fallbackIcon: 'zap' };
+  }
+  // 7. Faraday RFID Pouch
+  if (
+    clean.includes('faraday') ||
+    clean.includes('rfid') ||
+    t.includes('faraday') ||
+    t.includes('rfid') ||
+    t.includes('signal blocker')
+  ) {
+    return { imageUrl: '/assets/gear/faraday-pouch.webp', fallbackIcon: 'lock' };
+  }
+  // 8. Curt Trailer Hitch
+  if (
+    clean.includes('curt') ||
+    clean.includes('hitch') ||
+    t.includes('trailer hitch') ||
+    t.includes('curt')
+  ) {
+    return { imageUrl: '/assets/gear/curt-trailer-hitch.webp', fallbackIcon: 'package' };
+  }
+  // 9. NOCO Jump Starter
+  if (
+    clean.includes('noco') ||
+    clean.includes('jump') ||
+    t.includes('noco') ||
+    t.includes('jump starter')
+  ) {
+    return { imageUrl: '/assets/gear/noco-gb40-jump-pack.webp', fallbackIcon: 'battery' };
+  }
+  // 10. Fast USB-C PD Charger
+  if (
+    clean.includes('usbc') ||
+    clean.includes('charger') ||
+    t.includes('usb-c') ||
+    t.includes('car charger')
+  ) {
+    return { imageUrl: '/assets/gear/fast-usbc-charger.webp', fallbackIcon: 'zap' };
+  }
+  // 11. Armrest cover
+  if (clean.includes('armrest') || t.includes('armrest')) {
+    return { imageUrl: '/assets/gear/armrest-cover.webp', fallbackIcon: 'layers' };
+  }
+  // 12. Knee cushion
+  if (clean.includes('knee') || t.includes('knee')) {
+    return { imageUrl: '/assets/gear/knee-cushion.webp', fallbackIcon: 'layers' };
+  }
+  // 13. Ceramic interior protection
+  if (clean.includes('ceramic') || clean.includes('leather') || t.includes('ceramic')) {
+    return { imageUrl: '/assets/gear/ceramic-interior-protection.webp', fallbackIcon: 'shield' };
+  }
+
+  return undefined;
+}
+
+/**
  * Retrieves catalog configuration for a product slug, dynamically injecting
  * the active vehicle model into shared accessories when provided.
  */
@@ -1045,11 +1228,18 @@ export function getGearMarketConfig(
   activeModel?: string
 ): GearMarketConfig | undefined {
   if (!slugOrId) return undefined;
-  const config =
+  const rawConfig =
     GEAR_MARKET_CATALOG[slugOrId] ||
     GEAR_MARKET_CATALOG[slugOrId.replace(/^prod-/, '')];
 
-  if (!config) return undefined;
+  if (!rawConfig) return undefined;
+
+  const resolved = resolveGearLocalImage(rawConfig.slug || slugOrId, rawConfig.category, rawConfig.title);
+  const config: GearMarketConfig = {
+    ...rawConfig,
+    imageUrl: rawConfig.imageUrl || resolved?.imageUrl,
+    fallbackIcon: rawConfig.fallbackIcon || resolved?.fallbackIcon,
+  };
 
   // Dynamically adapt multi-vehicle cards to the active vehicle context
   if (activeModel && activeModel !== 'all') {

@@ -4,6 +4,8 @@ import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import { AccessoryItem } from '@/data/accessories';
 import { trackAffiliateClick } from '@/lib/gear';
+import { GearImage } from '@/components/gear/GearImage';
+import { GEAR_MARKET_CATALOG } from '@/data/gear/catalog';
 
 export interface InventoryGearCardProps {
   item: AccessoryItem;
@@ -34,6 +36,8 @@ export function InventoryGearCard({
   className = '',
 }: InventoryGearCardProps) {
   const benefitSubline = BENEFIT_HOOK_MAP[item.id] || item.description;
+  const imageSource = item.imageUrl || GEAR_MARKET_CATALOG[item.id]?.imageUrl;
+  const fallbackIcon = item.fallbackIcon || GEAR_MARKET_CATALOG[item.id]?.fallbackIcon;
 
   return (
     <article
@@ -62,9 +66,23 @@ export function InventoryGearCard({
         </span>
       </div>
 
-      {/* 2. Content & Action Row: Title/Benefit + Action Button */}
-      <div className="flex items-center justify-between gap-3 pt-0.5">
-        {/* Left Column: Product Identity & Description */}
+      {/* 2. Content & Action Row: Thumbnail + Title/Benefit + Action Button */}
+      <div className="flex items-center gap-3 pt-0.5">
+        {/* Compact Gear Thumbnail */}
+        <div className="w-16 sm:w-20 shrink-0">
+          <GearImage
+            src={imageSource}
+            alt={item.title}
+            affiliateUrl={item.url}
+            fallbackIcon={fallbackIcon}
+            category={item.category}
+            aspectRatioClass="aspect-[16/10]"
+            containerClassName="h-12 sm:h-14"
+            testId={item.id}
+          />
+        </div>
+
+        {/* Middle Column: Product Identity & Description */}
         <div className="flex-1 min-w-0">
           <h4 className="text-sm font-semibold text-white tracking-tight truncate">
             {item.title}

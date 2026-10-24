@@ -20,9 +20,8 @@ import { VideoModal } from '@/components/delivery-prep/video-modal';
 import { trackAffiliateClick } from '@/lib/gear/telemetry';
 
 import { getGearMarketConfig } from '@/data/gear/catalog';
+import { GearImage } from '@/components/gear/GearImage';
 import {
-  CA_ASSOCIATE_TAG,
-  US_ASSOCIATE_TAG,
   buildAmazonAffiliateUrl,
   sanitizeAmazonAffiliateUrl,
   injectActiveModelIntoQuery,
@@ -46,6 +45,9 @@ export interface GearCardItem {
   description?: string;
   image?: string;
   imageSrc?: string;
+  imageUrl?: string;
+  fallbackIcon?: string;
+  savingsCad?: string;
   asin?: string;
   asin_ca?: string;
   asin_us?: string;
@@ -57,6 +59,7 @@ export interface GearCardItem {
   activeModel?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
   compatibility?: string;
+  fitment?: string;
   youtubeVideoId?: string;
   videoTitle?: string;
   buttonLabel?: string;
@@ -237,7 +240,6 @@ export function GearCard({
   placement,
   buttonLabel,
 }: GearCardProps) {
-  const [imgError, setImgError] = useState(false);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const { market, isUs } = useMarket();
   const currentModel =
@@ -264,8 +266,8 @@ export function GearCard({
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
-  const imageSource = item.imageSrc || item.image;
-  const showImage = Boolean(imageSource && !imgError);
+  const imageSource = item.imageUrl || item.imageSrc || item.image || config?.imageUrl;
+  const fallbackIcon = item.fallbackIcon || config?.fallbackIcon;
   const price = item.priceEst || item.priceEstCad;
   const note = item.whyBuy || item.utilityNote || item.description;
 
@@ -324,44 +326,22 @@ export function GearCard({
       {/* Top Section: Media + Badges + Title + Savings Callout + Note */}
       <div className="flex-1 flex flex-col">
         {/* Compact Product Image / Preview Container with Clickable Amazon Outbound Affiliate Link */}
-        <a
-          href={amazonAffiliateUrl}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          aria-label={imageAriaLabel}
+        <GearImage
+          src={imageSource}
+          alt={item.title}
+          affiliateUrl={amazonAffiliateUrl}
+          fallbackIcon={fallbackIcon}
+          category={item.category}
+          ariaLabel={imageAriaLabel}
+          testId={item.slug}
+          isChecked={isChecked}
           onClick={handleImageClick}
-          draggable={false}
-          className="cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block mb-2"
-        >
-          {showImage ? (
-            <div className="relative h-32 sm:h-44 w-full shrink-0 rounded-lg overflow-hidden border border-neutral-800/80 bg-neutral-950/60 p-2 flex items-center justify-center shadow-xs">
-              <img
-                src={imageSource!}
-                alt={item.title}
-                loading="lazy"
-                draggable={false}
-                onError={() => setImgError(true)}
-                className={cn(
-                  'w-full h-full object-contain transition-transform duration-300',
-                  isChecked ? 'opacity-60 grayscale' : 'hover:scale-105'
-                )}
-              />
-            </div>
-          ) : (
-            <div
-              data-testid={`fallback-icon-${item.slug}`}
-              className="relative h-32 sm:h-44 w-full shrink-0 rounded-lg border border-neutral-800/80 bg-neutral-950/60 p-2 flex items-center justify-center text-amber-500/80 shadow-xs"
-              title={item.title}
-            >
-              {React.createElement(getThemedCategoryIcon(item.category, item.title), {
-                className: 'h-9 w-9 stroke-[1.5]',
-              })}
-            </div>
-          )}
-        </a>
+          className="mb-2"
+          containerClassName="h-32 sm:h-44"
+        />
 
         {/* Group badges into a single line (text-[10px] px-2 py-0.5) */}
-        {(effectiveBadge || item.compatibility) && (
+        {(effectiveBadge || item.fitment || item.compatibility) && (
           <div className="flex items-center gap-1.5 mb-1.5 overflow-hidden text-[11px]">
             {effectiveBadge && (
               <Badge
@@ -384,9 +364,9 @@ export function GearCard({
                 {effectiveBadge}
               </Badge>
             )}
-            {item.compatibility && (
+            {(item.fitment || item.compatibility) && (
               <span className="text-[10px] text-zinc-400 bg-zinc-800/80 border border-zinc-700/60 px-2 py-0.5 rounded font-mono truncate">
-                {item.compatibility}
+                {item.fitment || item.compatibility}
               </span>
             )}
           </div>

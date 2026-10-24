@@ -433,8 +433,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'roof-rack-crossbars-rav4': {
     id: 'f1000018-0018-4018-8018-000000000018',
     slug: 'roof-rack-crossbars-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+roof+rack+cross+bars+OEM+style&tag=toyotawaits-20',
-    title: 'OEM-Style Lockable Aluminum Roof Rack Cross Bars (RAV4)',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+roof+rack+crossbars+lockable+2019-2026&tag=toyotawaits-20',
+    title: 'Roof Crossbars',
     category: 'cargo_utility',
     clickCount: 0,
     isActive: true,

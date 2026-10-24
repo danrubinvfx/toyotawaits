@@ -18,15 +18,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'm.media-amazon.com',
+        hostname: 'media.toyota.ca',
       },
       {
         protocol: 'https',
-        hostname: 'images-na.ssl-images-amazon.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.amazon.com',
+        hostname: 'pressroom.toyota.com',
       },
       {
         protocol: 'https',
@@ -39,10 +35,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '**.convertus.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'media.toyota.ca',
       },
       {
         protocol: 'https',
@@ -63,10 +55,6 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'prod.pictures.autoscout24.net',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.amazonaws.com',
       },
       {
         protocol: 'https',

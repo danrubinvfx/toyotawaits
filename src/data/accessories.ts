@@ -3,13 +3,20 @@ import { CA_ASSOCIATE_TAG } from '@/lib/gear/affiliate';
 export interface AccessoryItem {
   id: string;
   title: string;
-  category: 'protection' | 'tech' | 'comfort' | 'care';
+  category: 'protection' | 'tech' | 'comfort' | 'care' | string;
   description: string;
   estimatedPriceCad: string;
   url: string;
   applicableModels: string[];
   badge?: string;
   isDeliveryDayEssential?: boolean;
+  imageUrl?: string;
+  fallbackIcon?: string;
+  searchQuery?: string;
+  asin_ca?: string;
+  asin_us?: string;
+  videoUrl?: string;
+  savingsCad?: string;
 }
 
 function buildAmazonCaSearchUrl(keywords: string): string {
@@ -28,6 +35,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
     badge: 'Long-Drive Pick',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/armrest-cover.webp',
+    fallbackIcon: 'layers',
   },
   {
     id: 'lateral-console-knee-cushion',
@@ -39,6 +48,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
     badge: 'Road Trip Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/knee-cushion.webp',
+    fallbackIcon: 'layers',
   },
   {
     id: 'all-weather-floor-liners',
@@ -50,6 +61,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Corolla Cross', 'universal'],
     badge: 'Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+    fallbackIcon: 'layers',
   },
   {
     id: '4k-front-rear-dash-cam',
@@ -61,6 +74,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/fitcamx-rav4.webp',
+    fallbackIcon: 'camera',
   },
   {
     id: 'infotainment-screen-protector',
@@ -72,6 +87,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Prius'],
     badge: 'Community Favorite',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    fallbackIcon: 'layout-grid',
   },
   {
     id: 'rfid-faraday-key-fob-pouch',
@@ -83,6 +100,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['universal'],
     badge: 'Essential',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/faraday-pouch.webp',
+    fallbackIcon: 'lock',
   },
   {
     id: 'ceramic-interior-leather-protection',
@@ -93,6 +112,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     url: buildAmazonCaSearchUrl('ceramic interior protectant spray leather softex UV protection'),
     applicableModels: ['universal'],
     badge: 'Top Pick',
+    imageUrl: '/assets/gear/ceramic-interior-protection.webp',
+    fallbackIcon: 'shield',
   },
   {
     id: 'fast-usbc-pd-car-charger',
@@ -104,6 +125,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['universal'],
     badge: 'Community Favorite',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/fast-usbc-charger.webp',
+    fallbackIcon: 'zap',
   },
   {
     id: 'center-console-organizer-tray',
@@ -115,6 +138,8 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'universal'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/console-tray-organizer.webp',
+    fallbackIcon: 'layout-grid',
   },
 ];
 
