@@ -253,7 +253,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'fitcamx-rav4': {
     id: 'f1000001-0001-4001-8001-000000000001',
     slug: 'fitcamx-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=Fitcamx+Toyota+RAV4+dash+cam&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Toyota+RAV4+OEM+4K&tag=toyotawaits-20',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (RAV4)',
     category: 'visibility_protection',
     clickCount: 0,
@@ -289,7 +289,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'screen-protector-rav4': {
     id: 'f1000005-0005-4005-8005-000000000005',
     slug: 'screen-protector-rav4',
-    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+tempered+glass+screen+protector&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Spigen+screen+protector+Toyota+RAV4+tempered+glass&tag=toyotawaits-20',
     title: 'Anti-Glare 9H Tempered Glass Screen Protector (RAV4)',
     category: 'visibility_protection',
     clickCount: 0,
