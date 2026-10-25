@@ -127,9 +127,9 @@ export function formatVehicleCardTitles(props: {
 }
 
 /**
- * Resilient Dealer Search Fallback URL Generator
- * If listing_url is missing or relative, build a resilient dealer search query avoiding
- * restrictive category parameters like &sc=new (which blocks demo/transit stock).
+ * Resilient Dealer VDP & Search Fallback URL Generator
+ * Priority 1: Direct VDP permalink (absolute http(s) or relative path starting with `/`).
+ * Priority 2: Clean search query using real VIN or clean stock number (never provisional IDs).
  */
 export function getDealerListingUrl(listing: {
   listing_url?: string | null;
@@ -141,10 +141,36 @@ export function getDealerListingUrl(listing: {
   trim?: string | null;
   [key: string]: any;
 }): string {
-  // Priority 1: If listing.listing_url or listing.vdp_url is a valid http(s) URL, use it directly
-  const direct = listing.listing_url || (listing as any).vdp_url;
-  if (direct && typeof direct === 'string' && direct.trim().toLowerCase().startsWith('http')) {
+  let baseUrl = (listing.dealer_base_url || listing.dealerBaseUrl || '').trim().replace(/\/+$/, '');
+  if (baseUrl.includes('jptoyotadowntown.com')) {
+    baseUrl = baseUrl.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
+  }
+  if (baseUrl.includes('jptoyotasurrey.com')) {
+    baseUrl = baseUrl.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
+  }
+  if (baseUrl.startsWith('http://') || baseUrl.startsWith('https://')) {
+    try {
+      baseUrl = new URL(baseUrl).origin;
+    } catch {
+      // retain trimmed baseUrl
+    }
+  }
+
+  // Priority 1: If listing.vdp_url or listing.listing_url is present (http(s) or relative `/`)
+  const direct =
+    listing.vdp_url ||
+    listing.listing_url ||
+    (listing as any).vdpUrl ||
+    (listing as any).listingUrl;
+
+  if (direct && typeof direct === 'string' && direct.trim()) {
     let clean = direct.trim();
+
+    // Prepend dealer base domain to relative VDP permalinks
+    if (clean.startsWith('/')) {
+      clean = `${baseUrl}${clean}`;
+    }
+
     if (clean.includes('jptoyotadowntown.com')) {
       clean = clean.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
     }
@@ -152,31 +178,39 @@ export function getDealerListingUrl(listing: {
       clean = clean.replace('jptoyotasurrey.com', 'jptoyota-surrey.com');
     }
 
-    // Intercept dead placeholder /new-vehicles/ URL that 404s
-    const baseUrl = listing.dealer_base_url ? listing.dealer_base_url.replace(/\/+$/, '') : '';
-    if (
+    const isGenericCatalogPlaceholder =
       clean.endsWith('/new-vehicles/') ||
       clean.endsWith('/new-vehicles') ||
+      clean.endsWith('/vehicles/new/') ||
+      clean.endsWith('/vehicles/new') ||
+      clean.endsWith('/vehicles/') ||
+      clean.endsWith('/vehicles') ||
+      clean.includes('/vehicles/?view=') ||
+      clean.includes('/vehicles?view=') ||
       clean === baseUrl ||
-      clean === `${baseUrl}/`
-    ) {
-      const term = (!listing.vin?.startsWith('PROV') && listing.vin)
-        || listing.stock_number
-        || `${listing.model || ''} ${listing.trim || ''}`.trim();
-      return `${baseUrl}/vehicles/?search=${encodeURIComponent(term)}`;
-    }
+      clean === `${baseUrl}/`;
 
-    return clean;
+    if (clean.toLowerCase().startsWith('http') && !isGenericCatalogPlaceholder) {
+      return clean;
+    }
   }
 
-  // Priority 2: If falling back to search query, NEVER search by provisional_stock_id (e.g. 'PROV-SIENNA-881')
-  // Instead, search by: 1. Real VIN (if not provisional/null), 2. Real Stock Number, 3. Vehicle Model + Trim
-  const baseUrl = listing.dealer_base_url ? listing.dealer_base_url.replace(/\/+$/, '') : '';
-  const term = (!listing.vin?.startsWith('PROV') && listing.vin)
-    || listing.stock_number
-    || `${listing.model || ''} ${listing.trim || ''}`.trim();
+  // Priority 2 (Search fallback): Construct a clean search link that Convertus understands
+  // Never search by provisional stock ID (e.g. 'PROV-SIENNA-881')
+  const rawVin = listing.vin ? String(listing.vin).trim() : '';
+  const cleanVin = rawVin && !rawVin.toUpperCase().startsWith('PROV') ? rawVin : '';
 
-  return `${baseUrl}/vehicles/?search=${encodeURIComponent(term)}`;
+  const rawStock = (listing.stock_number || listing.stockNumber || '')
+    ? String(listing.stock_number || listing.stockNumber).trim()
+    : '';
+  const cleanStock = rawStock && !rawStock.toUpperCase().startsWith('PROV') ? rawStock : '';
+
+  const modelFallback = `${listing.model || ''} ${listing.trim || ''}`.trim();
+  const query = cleanVin || cleanStock || modelFallback;
+
+  return query
+    ? `${baseUrl}/vehicles/?search=${encodeURIComponent(query)}`
+    : `${baseUrl}/vehicles/`;
 }
 
 export function resolveVehicleListingUrl(props: {
@@ -219,7 +253,7 @@ export function resolveVehicleListingUrl(props: {
     ? 'https://www.openroadtoyotarichmond.com'
     : 'https://www.jptoyota-downtown.com');
 
-  const candidateUrl = listingUrl || vdpUrl;
+  const candidateUrl = vdpUrl || listingUrl;
   if (candidateUrl && (candidateUrl.startsWith('http://') || candidateUrl.startsWith('https://'))) {
     try {
       const parsed = new URL(candidateUrl);
@@ -238,7 +272,8 @@ export function resolveVehicleListingUrl(props: {
 
   const vehicleModel = [make, model].filter(Boolean).join(' ').trim() || (model || '');
   return getDealerListingUrl({
-    listing_url: candidateUrl,
+    vdp_url: vdpUrl || listingUrl,
+    listing_url: listingUrl || vdpUrl,
     dealer_base_url: baseDomain,
     vin: vin || undefined,
     stock_number: stockNumber || undefined,

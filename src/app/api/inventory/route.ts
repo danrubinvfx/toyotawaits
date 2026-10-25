@@ -31,11 +31,12 @@ export async function GET(request?: Request) {
       lifecycle_status?: string | null;
     }
   >(
-    items: T[]
+    items: T[],
+    enforceTimeCutoff = true
   ): T[] => {
     if (includeStale) return items;
     return items.filter((item) => {
-      if (item.lastChecked) {
+      if (enforceTimeCutoff && item.lastChecked) {
         const checkTime = new Date(item.lastChecked).getTime();
         if (!isNaN(checkTime) && checkTime < cutoffTime) {
           return false;
@@ -87,48 +88,20 @@ export async function GET(request?: Request) {
     const supabase = createServerClient();
     const cutoffIso = new Date(cutoffTime).toISOString();
 
-    let query: any = supabase
-      .from('dealer_listings')
-      .select(`
-        id,
-        stock_number,
-        vdp_url,
-        listing_url,
-        current_status,
-        days_on_lot,
-        is_likely_cancellation,
-        lifecycle_status,
-        sold_at,
-        last_observed_at,
-        first_observed_at,
-        posted_at,
-        image_url,
-        has_real_photo,
-        image_source,
-        vehicle:vehicles (
-          make,
-          model,
-          trim,
-          model_year,
-          vin,
-          provisional_id,
-          powertrain,
-          exterior_color,
-          drive_train
-        ),
-        dealer:dealers (
-          name,
-          city,
-          province
-        ),
-        observations (
-          msrp,
-          selling_price,
-          mandatory_fees,
-          has_unverified_fees,
-          observed_at
-        )
-      `);
+    const selectClause = `
+      *,
+      vehicle:vehicles (*),
+      dealer:dealers (*),
+      observations (
+        msrp,
+        selling_price,
+        mandatory_fees,
+        has_unverified_fees,
+        observed_at
+      )
+    `;
+
+    let query: any = supabase.from('dealer_listings').select(selectClause);
 
     // Strict 48h staleness cutoff: exclude older than 48h and stale/removed/quarantined unless includeStale=true
     if (!includeStale) {
@@ -144,24 +117,44 @@ export async function GET(request?: Request) {
       }
     }
 
-    const { data, error } = await query.order('last_observed_at', { ascending: false });
+    let { data, error } = await query.order('last_observed_at', { ascending: false });
+    let enforceTimeCutoff = true;
 
-    if (error || !data || data.length === 0) {
-      if (error) {
-        console.error('[/api/inventory] Database query error:', error);
+    // If strict 48h window yielded 0 rows on live DB (e.g. between sweeps), query all active rows without 48h cutoff
+    if (!includeStale && !error && (!data || data.length === 0)) {
+      let fallbackActiveQuery: any = supabase.from('dealer_listings').select(selectClause);
+      if (typeof fallbackActiveQuery.not === 'function') {
+        fallbackActiveQuery = fallbackActiveQuery.not(
+          'current_status',
+          'in',
+          '("stale","removed","quarantined","No longer observed / stale","No longer observed")'
+        );
       }
-      const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
-      const countsByModel = getFallbackCounts();
+      if (typeof fallbackActiveQuery.order === 'function') {
+        const fallbackResult = await fallbackActiveQuery.order('last_observed_at', {
+          ascending: false,
+        });
+        if (!fallbackResult.error && Array.isArray(fallbackResult.data) && fallbackResult.data.length > 0) {
+          data = fallbackResult.data;
+          enforceTimeCutoff = false;
+        }
+      }
+    }
+
+    if (error) {
+      console.error('[/api/inventory] Database query error:', error);
       return NextResponse.json({
-        success: true,
-        count: freshSampleListings.length,
-        countsByModel,
-        ...(isSummary ? {} : { listings: freshSampleListings }),
-        source: 'sample_fallback',
+        success: false,
+        count: 0,
+        countsByModel: {},
+        ...(isSummary ? {} : { listings: [] }),
+        source: 'supabase_error',
       });
     }
 
-    let mappedListings: VehicleListingCardProps[] = data.map((item: any) => {
+    const activeRows = Array.isArray(data) ? data : [];
+
+    let mappedListings: VehicleListingCardProps[] = activeRows.map((item: any) => {
       const obsList = Array.isArray(item.observations) ? item.observations : [];
       obsList.sort(
         (a: any, b: any) =>
@@ -203,11 +196,12 @@ export async function GET(request?: Request) {
         dealerName: dlr.name || 'Jim Pattison Toyota Downtown',
         dealerCity: dlr.city || 'Vancouver',
         dealerProvince: dlr.province || 'BC',
+        dealerBaseUrl: dlr.website_url || null,
         status: item.current_status,
         lastChecked: item.last_observed_at,
         postedAt: item.posted_at || item.first_observed_at || null,
         firstSeenAt: item.first_observed_at || null,
-        vdpUrl: item.listing_url || item.vdp_url || null,
+        vdpUrl: item.vdp_url || item.listing_url || null,
         listingUrl: item.listing_url || item.vdp_url || null,
         msrp: latestObs.msrp != null ? Number(latestObs.msrp) : null,
         sellingPrice:
@@ -238,7 +232,7 @@ export async function GET(request?: Request) {
     });
 
     if (!includeStale) {
-      mappedListings = filterFreshListings(mappedListings);
+      mappedListings = filterFreshListings(mappedListings, enforceTimeCutoff);
     }
 
     const countsByModel: Record<string, number> = {};
@@ -257,14 +251,12 @@ export async function GET(request?: Request) {
     });
   } catch (err) {
     console.error('[/api/inventory] Unexpected catch error:', err);
-    const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
-    const countsByModel = getFallbackCounts();
     return NextResponse.json({
-      success: true,
-      count: freshSampleListings.length,
-      countsByModel,
-      ...(isSummary ? {} : { listings: freshSampleListings }),
-      source: 'sample_fallback_catch',
+      success: false,
+      count: 0,
+      countsByModel: {},
+      ...(isSummary ? {} : { listings: [] }),
+      source: 'supabase_catch_error',
     });
   }
 }

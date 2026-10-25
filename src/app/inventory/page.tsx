@@ -6,6 +6,7 @@ import { AlertTriangle, ShieldCheck, ArrowLeft, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),

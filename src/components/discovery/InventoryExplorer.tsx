@@ -353,7 +353,7 @@ export function InventoryExplorer({
     if (typeof window === 'undefined') return;
 
     let isMounted = true;
-    fetch('/api/inventory')
+    fetch('/api/inventory', { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (isMounted && data && Array.isArray(data.listings) && data.listings.length > 0) {
@@ -481,6 +481,24 @@ export function InventoryExplorer({
       };
     });
 
+    const hasRecentObservation = withDistance.some((item) => {
+      const st = (item.status || '').toLowerCase();
+      const lc = (item.lifecycleStatus || item.lifecycle_status || 'active').toLowerCase();
+      if (
+        lc === 'sold' ||
+        lc === 'unlisted' ||
+        st.includes('stale') ||
+        st.includes('no longer') ||
+        st.includes('removed') ||
+        st.includes('quarantined') ||
+        st.includes('sold')
+      ) {
+        return false;
+      }
+      const checkTime = new Date(item.lastChecked).getTime();
+      return !isNaN(checkTime) && currentTime - checkTime <= 48 * 3600 * 1000;
+    });
+
     // 2. Filter listings based on active facets
     const filtered = withDistance.filter((item) => {
       // Model facet
@@ -550,10 +568,12 @@ export function InventoryExplorer({
         ) {
           return false;
         }
-        // Exclude anything older than 48 hours
-        const checkTime = new Date(item.lastChecked).getTime();
-        if (!isNaN(checkTime) && currentTime - checkTime > 48 * 3600 * 1000) {
-          return false;
+        // Exclude anything older than 48 hours when recent sweep data is present
+        if (hasRecentObservation) {
+          const checkTime = new Date(item.lastChecked).getTime();
+          if (!isNaN(checkTime) && currentTime - checkTime > 48 * 3600 * 1000) {
+            return false;
+          }
         }
       } else if (statusFilter !== 'all' && statusFilter !== '') {
         if (item.status.toLowerCase() !== filters.status.toLowerCase()) {
