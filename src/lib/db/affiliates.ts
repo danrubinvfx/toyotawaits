@@ -750,8 +750,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'corolla-console-organizer': {
     id: 'f3000010-0010-4010-8010-000000000006',
     slug: 'corolla-console-organizer',
-    destinationUrl: 'https://www.amazon.ca/s?k=toyota+corolla+2020-2026+center+console+organizer+tray&tag=toyotawaits-20',
-    title: 'Center Console Armrest Organizer Insert Tray (Corolla E210)',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+center+console+organizer+tray+2020-2026&tag=toyotawaits-20',
+    title: 'Center Console Organizer Tray',
     category: 'interior_protection',
     clickCount: 0,
     isActive: true,
@@ -1098,6 +1098,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B0821M4Z9Z') ||
     url.includes('B09L7X8V3Q') ||
     url.includes('B0CDG87Z9M') ||
+    url.includes('B07Z8Z56J8') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );
