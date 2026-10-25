@@ -741,7 +741,16 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'wireless-carplay-adapter-corolla': {
     id: 'f3000010-0010-4010-8010-000000000005',
     slug: 'wireless-carplay-adapter-corolla',
-    destinationUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota+corolla+cross&tag=toyotawaits-20',
+    title: 'Wireless CarPlay & Android Auto Adapter',
+    category: 'tech_safety',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-cross-wireless-carplay': {
+    id: 'f3000010-0010-4010-8010-000000000022',
+    slug: 'corolla-cross-wireless-carplay',
+    destinationUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota+corolla+cross&tag=toyotawaits-20',
     title: 'Wireless CarPlay & Android Auto Adapter',
     category: 'tech_safety',
     clickCount: 0,

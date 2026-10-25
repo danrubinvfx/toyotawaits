@@ -721,11 +721,25 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     title: 'Wireless CarPlay & Android Auto Adapter',
     category: 'tech',
     fallbackIcon: 'smartphone',
-    description: 'Converts wired CarPlay to wireless.',
-    whyBuy: 'Converts wired CarPlay to wireless.',
-    searchQuery: 'wireless carplay android auto adapter toyota',
-    searchKeywordsCA: 'wireless carplay android auto adapter toyota',
-    searchKeywordsUS: 'wireless carplay android auto adapter toyota',
+    description: 'Converts wired to wireless.',
+    whyBuy: 'Converts wired to wireless.',
+    badge: 'Cord-free smartphone link',
+    searchQuery: 'wireless carplay android auto adapter toyota corolla cross',
+    searchKeywordsCA: 'wireless carplay android auto adapter toyota corolla cross',
+    searchKeywordsUS: 'wireless carplay android auto adapter toyota corolla cross',
+    compatibility: 'Toyota Audio Multimedia 8-inch & 10.5-inch systems',
+  },
+  'corolla-cross-wireless-carplay': {
+    slug: 'corolla-cross-wireless-carplay',
+    title: 'Wireless CarPlay & Android Auto Adapter',
+    category: 'tech',
+    fallbackIcon: 'smartphone',
+    description: 'Converts wired to wireless.',
+    whyBuy: 'Converts wired to wireless.',
+    badge: 'Cord-free smartphone link',
+    searchQuery: 'wireless carplay android auto adapter toyota corolla cross',
+    searchKeywordsCA: 'wireless carplay android auto adapter toyota corolla cross',
+    searchKeywordsUS: 'wireless carplay android auto adapter toyota corolla cross',
     compatibility: 'Toyota Audio Multimedia 8-inch & 10.5-inch systems',
   },
   'corolla-console-organizer': {
@@ -1352,6 +1366,17 @@ export function getGearMarketConfig(
           ...config,
           searchKeywordsCA: 'Toyota Sequoia 2023-2026 all weather floor mats liners 3 row',
           searchKeywordsUS: 'Toyota Sequoia 2023-2026 all weather floor mats liners 3 row',
+        };
+      }
+    }
+
+    if (config.slug === 'wireless-carplay-adapter-corolla' || config.slug === 'corolla-cross-wireless-carplay') {
+      if (cleanModel === 'corolla-cross') {
+        return {
+          ...config,
+          searchQuery: 'wireless carplay android auto adapter toyota corolla cross',
+          searchKeywordsCA: 'wireless carplay android auto adapter toyota corolla cross',
+          searchKeywordsUS: 'wireless carplay android auto adapter toyota corolla cross',
         };
       }
     }

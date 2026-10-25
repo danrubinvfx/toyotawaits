@@ -173,7 +173,11 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       },
       {
         slug: 'wireless-carplay-adapter-corolla',
-        expectedUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota&tag=toyotawaits-20',
+        expectedUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota+corolla+cross&tag=toyotawaits-20',
+      },
+      {
+        slug: 'corolla-cross-wireless-carplay',
+        expectedUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota+corolla+cross&tag=toyotawaits-20',
       },
       {
         slug: 'corolla-console-organizer',
