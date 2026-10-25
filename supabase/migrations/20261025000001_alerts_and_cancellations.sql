@@ -60,9 +60,8 @@ ALTER TABLE public.dealer_listings ENABLE ROW LEVEL SECURITY;
 -- 4. Mandatory Data API Grants (Post-October 30 Supabase Rule)
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 
--- Public client read/insert permissions for inventory_alert_subscriptions
-GRANT SELECT ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
-GRANT INSERT ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
+-- Public client read/insert/update permissions for inventory_alert_subscriptions (required for upsert + returning)
+GRANT SELECT, INSERT, UPDATE ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
 GRANT ALL ON TABLE public.inventory_alert_subscriptions TO service_role;
 
 -- Public read permissions for dealer_listings (including is_likely_cancellation)
@@ -82,6 +81,26 @@ CREATE POLICY "Allow anon insert on inventory_alert_subscriptions"
         AND length(trim(model)) > 0
     );
 
+DROP POLICY IF EXISTS "Allow anon update on inventory_alert_subscriptions" ON public.inventory_alert_subscriptions;
+CREATE POLICY "Allow anon update on inventory_alert_subscriptions"
+    ON public.inventory_alert_subscriptions
+    FOR UPDATE
+    TO anon, authenticated
+    USING (true)
+    WITH CHECK (
+        email IS NOT NULL
+        AND length(trim(email)) >= 5
+        AND email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+        AND length(trim(model)) > 0
+    );
+
+DROP POLICY IF EXISTS "Allow anon select on inventory_alert_subscriptions" ON public.inventory_alert_subscriptions;
+CREATE POLICY "Allow anon select on inventory_alert_subscriptions"
+    ON public.inventory_alert_subscriptions
+    FOR SELECT
+    TO anon, authenticated
+    USING (true);
+
 DROP POLICY IF EXISTS "Service role full access on inventory_alert_subscriptions" ON public.inventory_alert_subscriptions;
 CREATE POLICY "Service role full access on inventory_alert_subscriptions"
     ON public.inventory_alert_subscriptions
@@ -96,3 +115,5 @@ CREATE POLICY "Public read access for dealer listings"
     FOR SELECT
     TO anon, authenticated
     USING (true);
+
+NOTIFY pgrst, 'reload schema';

@@ -74,6 +74,11 @@ export async function applyAllMigrations(dbUrl?: string): Promise<{ success: boo
     const { rows: existingRows } = await client.query('SELECT version FROM _schema_migrations;');
     const appliedVersions = new Set(existingRows.map((r: any) => r.version));
 
+    const reapplyArg = process.argv.find((a) => a.startsWith('--reapply='))?.split('=')[1];
+    if (reapplyArg) {
+      appliedVersions.delete(reapplyArg);
+    }
+
     for (const file of files) {
       if (appliedVersions.has(file)) {
         console.log(`   ⏭️  ${file} already applied, skipping.`);
