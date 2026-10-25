@@ -1189,23 +1189,24 @@
     "models": [
       "corolla"
     ],
-    "category": "roadside_winter",
+    "category": "Exterior Protection",
     "categories": [
-      "roadside_winter",
-      "Exterior Protection"
+      "Exterior Protection",
+      "Cargo & Utility"
     ],
-    "title": "Molded Splash Guards & Mud Flap Kit (Corolla Sedan & Hatch)",
-    "name": "Molded Splash Guards 4-Piece Kit",
+    "title": "Splash Guards",
+    "name": "Splash Guards",
+    "description": "Protects rocker panels cleanly.",
     "priceEst": "Winter salt & gravel armor",
     "priceEstCad": "Winter salt & gravel armor",
-    "whyBuy": "Protects lower rocker panels and door sills from winter gravel, sandblasting, and salt spray with zero-drilling factory screw mount.",
-    "utilityNote": "Protects lower rocker panels and door sills from winter gravel, sandblasting, and salt spray.",
-    "image": "/images/accessories/crossbars-rav4.png",
-    "asin": "B08R7C5P1L",
-    "amazonCaAsinOrUrl": "https://www.amazon.ca/s?k=toyota+corolla+sedan+mud+flaps+splash+guards&tag=toyotawaits-20",
-    "destinationUrl": "https://www.amazon.ca/s?k=toyota+corolla+sedan+mud+flaps+splash+guards&tag=toyotawaits-20",
+    "whyBuy": "Protects rocker panels cleanly.",
+    "utilityNote": "Protects rocker panels cleanly.",
+    "fallbackIcon": "shield",
+    "searchQuery": "Toyota Corolla mud flaps splash guards 2020-2026",
+    "amazonCaAsinOrUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+mud+flaps+splash+guards+2020-2026&tag=toyotawaits-20",
+    "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Corolla+mud+flaps+splash+guards+2020-2026&tag=toyotawaits-20",
     "affiliateUrl": "/out/corolla-sedan-mud-flaps",
-    "badge": "Essential",
+    "badge": "Winter salt & gravel armor",
     "compatibility": "Corolla Sedan & Hatchback (2020–2026)"
   },
   {

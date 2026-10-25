@@ -813,8 +813,17 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'corolla-sedan-mud-flaps': {
     id: 'f3000010-0010-4010-8010-000000000011',
     slug: 'corolla-sedan-mud-flaps',
-    destinationUrl: 'https://www.amazon.ca/s?k=toyota+corolla+sedan+mud+flaps+splash+guards&tag=toyotawaits-20',
-    title: 'Molded Splash Guards & Mud Flap Kit (Corolla Sedan & Hatch)',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+mud+flaps+splash+guards+2020-2026&tag=toyotawaits-20',
+    title: 'Splash Guards',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-splash-guards': {
+    id: 'f3000010-0010-4010-8010-000000000021',
+    slug: 'corolla-sedan-mud-flaps',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+mud+flaps+splash+guards+2020-2026&tag=toyotawaits-20',
+    title: 'Splash Guards',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
@@ -1119,6 +1128,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B07Z8Z56J8') ||
     url.includes('B08XWN7J1Z') ||
     url.includes('B08T1T4Z2M') ||
+    url.includes('B08R7C5P1L') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );
