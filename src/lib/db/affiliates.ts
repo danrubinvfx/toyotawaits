@@ -777,8 +777,17 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'corolla-custom-sunshade': {
     id: 'f3000010-0010-4010-8010-000000000009',
     slug: 'corolla-custom-sunshade',
-    destinationUrl: 'https://www.amazon.ca/s?k=toyota+corolla+custom+fit+windshield+sunshade&tag=toyotawaits-20',
-    title: 'Custom-Fit Reflective Windshield Sunshade (Corolla & Cross)',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+custom+fit+windshield+sunshade+2020-2026&tag=toyotawaits-20',
+    title: 'Windshield Sunshade',
+    category: 'interior_protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-windshield-sunshade': {
+    id: 'f3000010-0010-4010-8010-000000000019',
+    slug: 'corolla-custom-sunshade',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+custom+fit+windshield+sunshade+2020-2026&tag=toyotawaits-20',
+    title: 'Windshield Sunshade',
     category: 'interior_protection',
     clickCount: 0,
     isActive: true,
@@ -1099,6 +1108,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B09L7X8V3Q') ||
     url.includes('B0CDG87Z9M') ||
     url.includes('B07Z8Z56J8') ||
+    url.includes('B08XWN7J1Z') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );
