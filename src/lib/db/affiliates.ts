@@ -795,8 +795,17 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'corolla-window-visors': {
     id: 'f3000010-0010-4010-8010-000000000010',
     slug: 'corolla-window-visors',
-    destinationUrl: 'https://www.amazon.ca/s?k=toyota+corolla+window+visors+rain+guards+deflectors&tag=toyotawaits-20',
-    title: 'OEM-Style Window Visors & Rain Guards (Corolla Sedan & Hatch)',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+window+visors+rain+guards+2020-2026&tag=toyotawaits-20',
+    title: 'Window Deflectors',
+    category: 'exterior_armor',
+    clickCount: 0,
+    isActive: true,
+  },
+  'corolla-window-deflectors': {
+    id: 'f3000010-0010-4010-8010-000000000020',
+    slug: 'corolla-window-visors',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+window+visors+rain+guards+2020-2026&tag=toyotawaits-20',
+    title: 'Window Deflectors',
     category: 'exterior_armor',
     clickCount: 0,
     isActive: true,
@@ -1109,6 +1118,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B0CDG87Z9M') ||
     url.includes('B07Z8Z56J8') ||
     url.includes('B08XWN7J1Z') ||
+    url.includes('B08T1T4Z2M') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );

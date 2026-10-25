@@ -188,6 +188,10 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
         expectedUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+custom+fit+windshield+sunshade+2020-2026&tag=toyotawaits-20',
       },
       {
+        slug: 'corolla-window-visors',
+        expectedUrl: 'https://www.amazon.ca/s?k=Toyota+Corolla+window+visors+rain+guards+2020-2026&tag=toyotawaits-20',
+      },
+      {
         slug: 'door-sill-scuff-guards',
         expectedUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+door+sill+protector+scuff+plate&tag=toyotawaits-20',
       },
