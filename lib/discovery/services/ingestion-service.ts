@@ -18,6 +18,7 @@ import {
   NormalizedListingStatus,
   ParsedVehicleListing,
 } from '../types';
+import { evaluateListingLifecycle } from './lifecycle-service';
 
 export interface IngestDealerListingsParams {
   dealerId: string;
@@ -26,6 +27,20 @@ export interface IngestDealerListingsParams {
   sweepTimestamp?: string;
   supabaseClient?: any;
   db?: any;
+}
+
+export interface NewlyInsertedVinRecord {
+  vin: string | null;
+  provisionalId?: string | null;
+  model: string;
+  trim: string | null;
+  powertrain?: string | null;
+  modelYear?: number;
+  dealerId?: string;
+  sourceListingId?: string;
+  vdpUrl?: string | null;
+  sellingPrice?: number | null;
+  msrp?: number | null;
 }
 
 export interface IngestionSummary {
@@ -37,6 +52,7 @@ export interface IngestionSummary {
   observationsStored: number;
   statusTransitionsDetected: number;
   statusEventsLogged: number;
+  newlyInsertedVins: NewlyInsertedVinRecord[];
   errors: Array<{ listingId?: string; error: string }>;
 }
 
@@ -82,6 +98,7 @@ export async function ingestDealerListings(
     observationsStored: 0,
     statusTransitionsDetected: 0,
     statusEventsLogged: 0,
+    newlyInsertedVins: [],
     errors: [],
   };
 
@@ -219,6 +236,14 @@ export async function ingestDealerListings(
       if (!existingListing) {
         // Initial Discovery of Listing
         const postedAt = item.listing.postedAt || sweepTimestamp;
+        const lifecycle = evaluateListingLifecycle({
+          status: item.listing.normalizedStatus,
+          postedAt,
+          firstSeenAt: sweepTimestamp,
+          existingDaysOnLot: item.listing.daysOnLot,
+          now: sweepTimestamp,
+        });
+
         const { data: newListing, error: listingInsertError } = await supabase
           .from('dealer_listings')
           .insert({
@@ -233,7 +258,10 @@ export async function ingestDealerListings(
             image_source: item.listing.imageSource || 'feed',
             current_status: item.listing.normalizedStatus,
             raw_status: item.listing.rawStatus,
-            days_on_lot: item.listing.daysOnLot ?? 0,
+            days_on_lot: lifecycle.daysOnLot,
+            is_likely_cancellation: lifecycle.isLikelyCancellation,
+            lifecycle_status: lifecycle.lifecycleStatus,
+            sold_at: null,
             consecutive_missed_sweeps: 0,
             posted_at: postedAt,
             first_observed_at: sweepTimestamp,
@@ -251,6 +279,19 @@ export async function ingestDealerListings(
 
         dealerListingId = newListing.id;
         summary.listingsCreated++;
+        summary.newlyInsertedVins.push({
+          vin: item.vehicle.vin || item.vehicle.provisionalId || item.listing.sourceListingId,
+          provisionalId: item.vehicle.provisionalId,
+          model: item.vehicle.model,
+          trim: item.vehicle.trim,
+          powertrain: item.vehicle.powertrain,
+          modelYear: item.vehicle.modelYear,
+          dealerId,
+          sourceListingId: item.listing.sourceListingId,
+          vdpUrl: item.listing.vdpUrl || item.listing.listingUrl,
+          sellingPrice: item.pricing.sellingPrice,
+          msrp: item.pricing.msrp,
+        });
 
         // Log initial listing event
         pendingStatusEvent = {
@@ -293,12 +334,23 @@ export async function ingestDealerListings(
           existingListing.first_observed_at ||
           sweepTimestamp;
 
+        const lifecycle = evaluateListingLifecycle({
+          status: item.listing.normalizedStatus,
+          postedAt,
+          firstSeenAt: existingListing.first_observed_at || sweepTimestamp,
+          existingDaysOnLot: item.listing.daysOnLot ?? existingListing.days_on_lot,
+          now: sweepTimestamp,
+        });
+
         const { error: listingUpdateError } = await supabase
           .from('dealer_listings')
           .update({
             current_status: item.listing.normalizedStatus,
             raw_status: item.listing.rawStatus,
-            days_on_lot: item.listing.daysOnLot ?? existingListing.days_on_lot,
+            days_on_lot: lifecycle.daysOnLot,
+            is_likely_cancellation: lifecycle.isLikelyCancellation,
+            lifecycle_status: lifecycle.lifecycleStatus,
+            sold_at: lifecycle.lifecycleStatus === 'sold' ? sweepTimestamp : null,
             stock_number: item.listing.stockNumber || existingListing.stock_number,
             vdp_url: item.listing.vdpUrl || item.listing.listingUrl || existingListing.vdp_url,
             listing_url: item.listing.listingUrl || item.listing.vdpUrl || existingListing.listing_url,

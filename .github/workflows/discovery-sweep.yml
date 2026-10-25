@@ -1,0 +1,50 @@
+name: "Discovery / Scheduled Multi-Dealer Sweep"
+
+on:
+  schedule:
+    # Runs twice daily at 6:00 AM PST (14:00 UTC) and 6:00 PM PST (02:00 UTC)
+    - cron: '0 14 * * *'
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      dealer:
+        description: 'Specific dealer ID to sweep (leave empty for --all)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: discovery-sweep-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    name: "Sweep Dealer Lots & Refresh Active Inventory"
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (Node 22+)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Execute Discovery Sweep
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          POLITE_DEALER_COOLDOWN_MS: 4000
+        run: |
+          if [ "${{ github.event.inputs.dealer }}" != "" ] && [ "${{ github.event.inputs.dealer }}" != "all" ]; then
+            echo "Running sweep for dealer: ${{ github.event.inputs.dealer }}"
+            npx tsx scripts/discovery/sweep-dealer.ts --dealer=${{ github.event.inputs.dealer }}
+          else
+            echo "Running sweep across all registered pilot dealerships..."
+            npx tsx scripts/discovery/sweep-dealer.ts --all
+          fi

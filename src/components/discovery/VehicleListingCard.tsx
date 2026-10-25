@@ -36,6 +36,15 @@ export interface VehicleListingCardProps {
   imageUrl?: string | null;
   hasRealPhoto?: boolean;
   imageSource?: string | null;
+  isLikelyCancellation?: boolean;
+  is_likely_cancellation?: boolean;
+  daysOnLot?: number | null;
+  days_on_lot?: number | null;
+  lifecycleStatus?: 'active' | 'sold' | 'unlisted' | string | null;
+  lifecycle_status?: 'active' | 'sold' | 'unlisted' | string | null;
+  soldAt?: string | null;
+  sold_at?: string | null;
+  listing?: Partial<VehicleListingCardProps> & Record<string, any>;
   onListingClick?: () => void;
 }
 
@@ -185,7 +194,7 @@ export function resolveVehicleListingUrl(props: {
   stockNumber?: string | null;
   provisionalId?: string | null;
 }): string {
-  const { vdpUrl, listingUrl, dealerBaseUrl, make, model, trim, vin, stockNumber, provisionalId } = props;
+  const { vdpUrl, listingUrl, dealerBaseUrl, make, model, trim, vin, stockNumber } = props;
 
   // Resolve base dealer domain (defaulting to Jim Pattison Toyota Downtown, Surrey, West Coast, Regency, or OpenRoad)
   const isSurrey =
@@ -238,39 +247,49 @@ export function resolveVehicleListingUrl(props: {
   });
 }
 
-export function VehicleListingCard({
-  id,
-  make,
-  model,
-  trim,
-  modelYear,
-  vin,
-  provisionalId,
-  isProvisionalVin,
-  dealerName,
-  dealerCity,
-  dealerProvince,
-  status,
-  lastChecked,
-  postedAt,
-  firstSeenAt,
-  vdpUrl,
-  listingUrl,
-  dealerBaseUrl,
-  msrp,
-  sellingPrice,
-  mandatoryFees,
-  hasUnverifiedFees,
-  powertrain,
-  driveTrain,
-  exteriorColor,
-  stockNumber,
-  distanceKm,
-  imageUrl,
-  hasRealPhoto,
-  imageSource,
-  onListingClick,
-}: VehicleListingCardProps) {
+export function VehicleListingCard(rawProps: VehicleListingCardProps) {
+  const mergedProps: VehicleListingCardProps = rawProps.listing
+    ? ({ ...rawProps.listing, ...rawProps } as VehicleListingCardProps)
+    : rawProps;
+
+  const {
+    id,
+    make,
+    model,
+    trim,
+    modelYear,
+    vin,
+    provisionalId,
+    isProvisionalVin,
+    dealerName,
+    dealerCity,
+    dealerProvince,
+    status = 'Advertised - availability unconfirmed',
+    lastChecked,
+    postedAt,
+    firstSeenAt,
+    vdpUrl,
+    listingUrl,
+    dealerBaseUrl,
+    msrp,
+    sellingPrice,
+    mandatoryFees,
+    hasUnverifiedFees,
+    powertrain,
+    driveTrain,
+    exteriorColor,
+    stockNumber,
+    distanceKm,
+    imageUrl,
+    hasRealPhoto,
+    imageSource,
+    isLikelyCancellation,
+    is_likely_cancellation,
+    daysOnLot,
+    days_on_lot,
+    onListingClick,
+  } = mergedProps;
+
   const { primaryTitle, secondaryTitle } = formatVehicleCardTitles({
     modelYear,
     make,
@@ -300,7 +319,7 @@ export function VehicleListingCard({
   const regionDisplay = [resolvedCity, resolvedProvince].filter(Boolean).join(', ');
   const formattedMsrp = msrp != null ? `$${msrp.toLocaleString('en-CA')}` : null;
   const formattedSellingPrice = sellingPrice != null ? `$${sellingPrice.toLocaleString('en-CA')}` : formattedMsrp;
-  
+
   const resolvedVdpUrl = resolveVehicleListingUrl({
     vdpUrl,
     listingUrl,
@@ -337,6 +356,7 @@ export function VehicleListingCard({
   let formattedDateDisplay = 'Recently listed';
   let fullDetectionDate = '';
   let dateTimeIso = effectivePostedDate || lastChecked;
+  let computedDaysFromDate = 0;
 
   try {
     const detectD = new Date(detectionDateStr);
@@ -354,6 +374,9 @@ export function VehicleListingCard({
         dateTimeIso = d.toISOString();
         const diffMs = now - d.getTime();
         const diffDays = Math.floor(diffMs / (24 * 3600 * 1000));
+        if (diffDays > 0) {
+          computedDaysFromDate = diffDays;
+        }
 
         if (postedAt) {
           const month = d.toLocaleDateString('en-US', { month: 'short' });
@@ -388,6 +411,11 @@ export function VehicleListingCard({
   const hoverTooltip = fullDetectionDate
     ? `First detected on ${fullDetectionDate}`
     : `First detected on ${formattedDateDisplay}`;
+
+  const explicitDays = days_on_lot ?? daysOnLot;
+  const resolvedDaysOnLot =
+    explicitDays != null ? explicitDays : computedDaysFromDate > 0 ? computedDaysFromDate : 5;
+  const showLikelyCancellation = Boolean(is_likely_cancellation ?? isLikelyCancellation);
 
   return (
     <article
@@ -444,6 +472,25 @@ export function VehicleListingCard({
             </div>
           )}
         </div>
+
+        {/* Likely Cancellation Badge & Sub-note */}
+        {showLikelyCancellation && (
+          <div className="mb-2 space-y-1" data-testid="likely-cancellation-section">
+            <span
+              data-testid="likely-cancellation-badge"
+              title="Vehicles on lot over 5 days are frequently canceled customer allocations ready for immediate deposit."
+              className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400 border border-amber-500/30"
+            >
+              ⚡ Likely Available Cancellation ({resolvedDaysOnLot}d on lot)
+            </span>
+            <p
+              data-testid="likely-cancellation-subnote"
+              className="text-[11px] text-amber-300/80 italic leading-snug"
+            >
+              Vehicles on lot over 5 days are frequently canceled customer allocations ready for immediate deposit.
+            </p>
+          </div>
+        )}
 
         {/* Title & Dealer Location */}
         <div className="space-y-1">

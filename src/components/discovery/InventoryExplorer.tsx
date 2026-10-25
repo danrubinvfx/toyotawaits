@@ -12,6 +12,7 @@ import {
 } from './InventoryFilterBar';
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
+import { InventoryAlertModal } from './InventoryAlertModal';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { getDealerCoordinates } from '@/config/dealers';
 import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
@@ -35,6 +36,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date().toISOString(),
     postedAt: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 9,
+    days_on_lot: 9,
+    isLikelyCancellation: true,
+    is_likely_cancellation: true,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/Toyota/RAV4%20Hybrid/Vancouver/BC/69116486/?sale_class=New',
     msrp: 61285,
     sellingPrice: 63957,
@@ -63,6 +70,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 3600000).toISOString(),
     postedAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 3 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 3,
+    days_on_lot: 3,
+    isLikelyCancellation: false,
+    is_likely_cancellation: false,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: null,
     msrp: 68450,
     sellingPrice: 68450,
@@ -90,6 +103,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 7200000).toISOString(),
     postedAt: new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 14 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 14,
+    days_on_lot: 14,
+    isLikelyCancellation: true,
+    is_likely_cancellation: true,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/Toyota/Grand%20Highlander%20Hybrid/Vancouver/BC/69116488/?sale_class=New',
     msrp: 66990,
     sellingPrice: 67885,
@@ -117,6 +136,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 10800000).toISOString(),
     postedAt: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 1 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 1,
+    days_on_lot: 1,
+    isLikelyCancellation: false,
+    is_likely_cancellation: false,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: null,
     msrp: 54200,
     sellingPrice: 54200,
@@ -144,6 +169,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date().toISOString(),
     postedAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 7,
+    days_on_lot: 7,
+    isLikelyCancellation: true,
+    is_likely_cancellation: true,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/RAV4/Surrey/BC/71577607/?sale_class=New',
     msrp: 48750,
     sellingPrice: 48750,
@@ -171,6 +202,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 1800000).toISOString(),
     postedAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 5,
+    days_on_lot: 5,
+    isLikelyCancellation: true,
+    is_likely_cancellation: true,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/2026/Toyota/Sienna/Surrey/BC/71577608/?sale_class=New',
     msrp: 54928,
     sellingPrice: 54928,
@@ -198,6 +235,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 3600000).toISOString(),
     postedAt: new Date(Date.now() - 12 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 12 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 12,
+    days_on_lot: 12,
+    isLikelyCancellation: true,
+    is_likely_cancellation: true,
+    lifecycleStatus: 'active',
+    lifecycle_status: 'active',
     vdpUrl: 'https://www.westcoasttoyota.com/vehicles/2026/Toyota/Prius%20Prime/Pitt%20Meadows/BC/71882001/?sale_class=New',
     msrp: 42150,
     sellingPrice: 42150,
@@ -225,6 +268,12 @@ export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
     lastChecked: new Date(Date.now() - 36 * 3600 * 1000).toISOString(),
     postedAt: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
     firstSeenAt: new Date(Date.now() - 20 * 24 * 3600 * 1000).toISOString(),
+    daysOnLot: 20,
+    days_on_lot: 20,
+    isLikelyCancellation: false,
+    is_likely_cancellation: false,
+    lifecycleStatus: 'unlisted',
+    lifecycle_status: 'unlisted',
     vdpUrl: null,
     msrp: 26500,
     sellingPrice: 26500,
@@ -292,6 +341,7 @@ export function InventoryExplorer({
   const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
   const [currentTime] = useState(() => Date.now());
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+  const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
 
   // Sync state if initialListings changes (e.g. tests or SSR)
   useEffect(() => {
@@ -486,6 +536,10 @@ export function InventoryExplorer({
       const statusFilter = (filters.status ?? 'advertised').toLowerCase().trim();
       if (statusFilter === 'advertised' || statusFilter === 'active') {
         const itemStatus = item.status.toLowerCase();
+        const lcStatus = (item.lifecycleStatus || item.lifecycle_status || 'active').toLowerCase();
+        if (lcStatus === 'sold' || lcStatus === 'unlisted') {
+          return false;
+        }
         // Exclude stale, no longer observed, removed, quarantined, sold
         if (
           itemStatus.includes('stale') ||
@@ -682,6 +736,7 @@ export function InventoryExplorer({
         availableLocations={availableLocations}
         availableDealers={availableDealers}
         totalResults={filteredListings.length}
+        onOpenAlertModal={() => setIsAlertModalOpen(true)}
       />
 
       {/* Listings Grid (Rendered immediately below filter bar for mobile visibility above the fold) */}
@@ -762,6 +817,20 @@ export function InventoryExplorer({
 
       {/* Pilot Coverage Disclosure (Positioned beneath listings grid) */}
       <CoverageDisclosureBanner />
+
+      {/* Allocation Drop Alerts Modal */}
+      <InventoryAlertModal
+        isOpen={isAlertModalOpen}
+        onClose={() => setIsAlertModalOpen(false)}
+        initialModel={filters.model}
+        initialTrim={filters.search || 'ALL'}
+        initialRegion={
+          filters.location && filters.location !== 'Near Me (GPS)'
+            ? `${filters.location}, BC`
+            : 'Lower Mainland, BC'
+        }
+        availableModels={availableModels}
+      />
 
       {/* Non-intrusive Coffee Donation Reminder after 3 listing views */}
       <DonationToast

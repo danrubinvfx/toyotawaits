@@ -17,8 +17,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { parseConvertusPayload } from '../../lib/discovery/adapters/convertus';
 import { ingestDealerListings } from '../../lib/discovery/services/ingestion-service';
+import {
+  detectAndTransitionSoldUnits,
+  dispatchPendingAlerts,
+} from '../../lib/discovery/services/lifecycle-service';
 import { evaluateSweepStaleness } from '../../lib/discovery/services/staleness-service';
 import { createServerClient } from '../../src/lib/supabase/server';
+
+export { dispatchPendingAlerts, detectAndTransitionSoldUnits };
 
 // Polite operating safeguards per Master Plan V3.2
 export const USER_AGENT_AUDITOR =
@@ -26,7 +32,7 @@ export const USER_AGENT_AUDITOR =
 export const DEFAULT_TIMEOUT_MS = 8000;
 export const MAX_RETRIES = 2;
 export const INITIAL_BACKOFF_MS = 1000;
-export const POLITE_DEALER_COOLDOWN_MS = 4000;
+export const POLITE_DEALER_COOLDOWN_MS = Number(process.env.POLITE_DEALER_COOLDOWN_MS) || 4000;
 
 // Registered dealer configurations
 export interface RegisteredDealerSource {
@@ -129,6 +135,7 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
 export interface DealerSweepExecutionResult {
   dealerCode: string;
   dealerName: string;
+  dealerId?: string;
   success: boolean;
   totalParsed: number;
   quarantinedCount: number;
@@ -332,8 +339,11 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): any[] {
   return items;
 }
 
-// Automatically load environment files if present
+// Automatically load environment files if present (local non-CI runs only)
 function loadEnv() {
+  if (process.env.CI === 'true' || process.env.GITHUB_ACTIONS === 'true') {
+    return;
+  }
   const envFiles = ['.env.production', '.env.local', '.env'];
   for (const f of envFiles) {
     const full = path.resolve(process.cwd(), f);
@@ -350,7 +360,7 @@ function loadEnv() {
             if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
               v = v.slice(1, -1);
             }
-            if (f === '.env.production' || !process.env[k] || process.env[k]?.includes('mock-')) {
+            if (!(k in process.env) || process.env[k]?.includes('mock-')) {
               process.env[k] = v;
             }
           }
@@ -719,6 +729,18 @@ export async function sweepSingleDealer(
     console.log(`  -> Status Transitions Detected: ${ingestSummary.statusTransitionsDetected}`);
     console.log(`  -> Observations Persisted:      ${ingestSummary.observationsStored}`);
 
+    // Dispatch pending alerts for newly inserted VINs
+    if (ingestSummary.newlyInsertedVins && ingestSummary.newlyInsertedVins.length > 0) {
+      await dispatchPendingAlerts(
+        ingestSummary.newlyInsertedVins.map((v) => ({
+          ...v,
+          dealerName: dealerConfig.dealerName,
+          dealerCity: dealerConfig.city,
+        })),
+        { supabaseClient: supabase }
+      );
+    }
+
     // Staleness Evaluation (enforcing 2-sweep safeguard)
     console.log(`  [STALENESS] Evaluating missed listings against 2-sweep safeguard...`);
     const activeIds = parseResult.records.map((r) => r.listing.sourceListingId);
@@ -759,6 +781,7 @@ export async function sweepSingleDealer(
     return {
       dealerCode: dealerConfig.dealerCode,
       dealerName: dealerConfig.dealerName,
+      dealerId,
       success: true,
       totalParsed: parseResult.count,
       quarantinedCount: parseResult.quarantined.length,
@@ -786,19 +809,63 @@ export async function sweepSingleDealer(
 
 export type DealerSweepResult = DealerSweepExecutionResult;
 
-async function main() {
+export interface SweepRunSummary {
+  dealersTargeted: number;
+  dealersSucceeded: number;
+  dealersFailed: number;
+  totalValidUnits: number;
+  totalObservations: number;
+  totalQuarantined: number;
+  durationMs: number;
+}
+
+export async function runSweep(): Promise<SweepRunSummary> {
   loadEnv();
 
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
     printHelp();
-    return;
+    return {
+      dealersTargeted: 0,
+      dealersSucceeded: 0,
+      dealersFailed: 0,
+      totalValidUnits: 0,
+      totalObservations: 0,
+      totalQuarantined: 0,
+      durationMs: 0,
+    };
   }
 
   const dryRun = args.includes('--dry-run');
   const useFixture = args.includes('--fixture');
   const isAll = args.includes('--all');
+
+  // Secrets validation: Fail fast in headless CI if NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+
+  const isUrlConfigured = Boolean(
+    supabaseUrl &&
+    !supabaseUrl.includes('placeholder') &&
+    !supabaseUrl.includes('mock-') &&
+    supabaseUrl !== ''
+  );
+  const isServiceKeyConfigured = Boolean(
+    serviceKey &&
+    !serviceKey.includes('placeholder') &&
+    !serviceKey.includes('mock-') &&
+    serviceKey !== ''
+  );
+
+  if (!dryRun && !useFixture && (!isUrlConfigured || !isServiceKeyConfigured)) {
+    const missing: string[] = [];
+    if (!isUrlConfigured) missing.push('NEXT_PUBLIC_SUPABASE_URL');
+    if (!isServiceKeyConfigured) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+    throw new Error(
+      `Missing required Supabase secrets (${missing.join(', ')}). Failing fast to prevent unauthenticated or hanging sweep execution.`
+    );
+  }
 
   let dealerArg = isAll ? 'all' : 'jptoyota-downtown';
   for (const arg of args) {
@@ -816,10 +883,9 @@ async function main() {
   } else {
     const single = resolveDealer(dealerArg);
     if (!single) {
-      console.error(`[ERROR] Unknown dealer code: "${dealerArg}"`);
-      console.error(`Supported dealers: ${REGISTERED_DEALERS.map((d) => d.dealerCode).join(', ')}, all`);
-      process.exitCode = 1;
-      return;
+      throw new Error(
+        `Unknown dealer code: "${dealerArg}". Supported dealers: ${REGISTERED_DEALERS.map((d) => d.dealerCode).join(', ')}, all`
+      );
     }
     targetDealers = [single];
   }
@@ -832,17 +898,10 @@ async function main() {
   console.log(`Mode:             ${useFixture ? 'OFFLINE FIXTURE' : dryRun ? 'DRY RUN' : 'LIVE INGESTION'}`);
   console.log(`================================================================`);
 
-  // Validate service role key
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const isServiceKeyConfigured = Boolean(
-    serviceKey &&
-    !serviceKey.includes('placeholder') &&
-    serviceKey.trim() !== ''
-  );
-
   const supabase = isServiceKeyConfigured && !dryRun ? createServerClient() : null;
 
   const results: DealerSweepResult[] = [];
+  const cooldownMs = Number(process.env.POLITE_DEALER_COOLDOWN_MS) || POLITE_DEALER_COOLDOWN_MS;
 
   for (let i = 0; i < targetDealers.length; i++) {
     const dealer = targetDealers[i];
@@ -856,7 +915,7 @@ async function main() {
         isServiceKeyConfigured,
       });
       results.push(result);
-    } catch (storeErr) {
+    } catch (storeErr: any) {
       console.error('  [STORE-LEVEL FAILURE] ' + dealer.dealerName + ' threw error:', storeErr?.message || storeErr);
       results.push({
         dealerCode: dealer.dealerCode,
@@ -874,12 +933,29 @@ async function main() {
 
     // Polite delay between distinct dealerships
     if (i < targetDealers.length - 1) {
-      console.log(`\n[POLITE COOLDOWN] Waiting ${POLITE_DEALER_COOLDOWN_MS}ms before next dealership sweep...`);
-      await new Promise((r) => setTimeout(r, POLITE_DEALER_COOLDOWN_MS));
+      console.log(`\n[POLITE COOLDOWN] Waiting ${cooldownMs}ms before next dealership sweep...`);
+      await new Promise((r) => setTimeout(r, cooldownMs));
     }
   }
 
   const totalTime = Date.now() - overallStartTime;
+
+  // Sold Unit Detection after an --all sweep completes
+  if (runAllDealers && supabase) {
+    const sweptDealerIds = results
+      .filter((r) => r.success && r.dealerId)
+      .map((r) => r.dealerId as string);
+    if (sweptDealerIds.length > 0) {
+      const soldSummary = await detectAndTransitionSoldUnits({
+        sweptDealerIds,
+        sweepStartTime: new Date(overallStartTime).toISOString(),
+        supabaseClient: supabase,
+      });
+      console.log(
+        `[LIFECYCLE] Sold Unit Detection evaluated ${soldSummary.evaluatedCount} active units -> transitioned ${soldSummary.transitionedToSoldCount} unobserved units to 'sold'.`
+      );
+    }
+  }
 
   // Print Overall Execution Summary
   console.log(`\n================================================================`);
@@ -916,19 +992,37 @@ async function main() {
   console.log(`Total Quarantined Across Stores:     ${totalQuarantined}`);
   console.log(`================================================================\n`);
 
-  if (!isServiceKeyConfigured && !dryRun) {
-    console.log(`SKIPPED: SUPABASE_SERVICE_ROLE_KEY not configured in GitHub Secrets`);
-    console.log(`Validated ${totalValidUnits} total public inventory records across ${targetDealers.length} dealers.`);
-    process.exit(0);
+  const dealersSucceeded = results.filter((r) => r.success).length;
+  const dealersFailed = results.length - dealersSucceeded;
+
+  if (hasFailure && (!runAllDealers || dealersSucceeded === 0)) {
+    throw new Error(
+      `Sweep failed for dealer(s): ${results
+        .filter((r) => !r.success)
+        .map((r) => r.dealerCode)
+        .join(', ')}`
+    );
   }
 
-  if (hasFailure && !runAllDealers) {
-    process.exit(1);
-  }
-  process.exit(0);
+  return {
+    dealersTargeted: targetDealers.length,
+    dealersSucceeded,
+    dealersFailed,
+    totalValidUnits,
+    totalObservations,
+    totalQuarantined,
+    durationMs: totalTime,
+  };
 }
 
-main().catch((err) => {
-  console.error(`[UNHANDLED ERROR]`, err);
-  process.exit(1);
-});
+if (process.env.VITEST !== 'true' && process.env.NODE_ENV !== 'test') {
+  runSweep()
+    .then((summary) => {
+      console.log('Sweep finished successfully:', summary);
+      process.exit(0);
+    })
+    .catch((err) => {
+      console.error('Fatal sweep error:', err);
+      process.exit(1);
+    });
+}

@@ -37,6 +37,7 @@ export interface InventoryFilterBarProps {
   availableLocations?: (LocationOption | string)[];
   availableDealers?: string[];
   totalResults?: number;
+  onOpenAlertModal?: () => void;
 }
 
 const DEFAULT_MODELS = [
@@ -71,6 +72,7 @@ export function InventoryFilterBar({
   availableLocations,
   availableDealers,
   totalResults,
+  onOpenAlertModal,
 }: InventoryFilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
@@ -446,25 +448,37 @@ export function InventoryFilterBar({
             </div>
           </div>
 
-          {/* Column 3: Sort by */}
+          {/* Column 3: Sort by + Drop Alerts CTA */}
           <div className="space-y-1">
             <label htmlFor="filter-sort" className="text-[11px] font-medium text-zinc-400 block">
               Sort by
             </label>
-            <select
-              id="filter-sort"
-              data-testid="filter-sort-select"
-              aria-label="Sort inventory listings"
-              value={filters.sortBy || 'newest'}
-              onChange={handleSortChange}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-            >
-              <option value="newest">Newest Listing (Dealer Posted Date)</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="distance_asc">Distance: Closest First</option>
-              <option value="status">Lot Status (On Lot first, then In Transit)</option>
-            </select>
+            <div className="flex items-center gap-1.5">
+              <select
+                id="filter-sort"
+                data-testid="filter-sort-select"
+                aria-label="Sort inventory listings"
+                value={filters.sortBy || 'newest'}
+                onChange={handleSortChange}
+                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              >
+                <option value="newest">Newest Listing (Dealer Posted Date)</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="distance_asc">Distance: Closest First</option>
+                <option value="status">Lot Status (On Lot first, then In Transit)</option>
+              </select>
+              {onOpenAlertModal && (
+                <button
+                  type="button"
+                  data-testid="get-drop-alerts-btn"
+                  onClick={onOpenAlertModal}
+                  className="inline-flex items-center gap-1 rounded-lg border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1.5 text-xs font-semibold text-amber-300 transition whitespace-nowrap shrink-0"
+                >
+                  🔔 Get Drop Alerts
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Column 4: Status */}
@@ -489,7 +503,7 @@ export function InventoryFilterBar({
             </select>
           </div>
 
-          {/* Column 4: Price Range */}
+          {/* Column 5: Price Range */}
           <div className="space-y-1">
             <label htmlFor="filter-min-price" className="text-[11px] font-medium text-zinc-400 block">
               Price Range ($ CAD)
