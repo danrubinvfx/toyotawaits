@@ -486,7 +486,7 @@ export async function dispatchPendingAlerts(
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'ToyotaWaits.ca <hello@toyotawaits.ca>',
+              from: process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev',
               to: [sub.email],
               subject: `🔔 New ${item.model} (${displayTrim}) Drop Observed at ${dispatchPayload.dealerName}`,
               html: `<p>A matching <strong>${item.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dispatchPayload.dealerName}</strong>.</p><p><a href="${dispatchPayload.vdpUrl}">View Dealer Listing</a></p><hr /><p style="font-size:11px;color:#71717a;">Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership). Contact: <a href="mailto:hello@toyotawaits.ca">hello@toyotawaits.ca</a> &bull; <a href="${unsubscribeUrl}">1-Click Unsubscribe</a></p>`,

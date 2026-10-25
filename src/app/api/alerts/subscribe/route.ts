@@ -1,5 +1,6 @@
 import * as crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
@@ -8,15 +9,16 @@ export const revalidate = 0;
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
-async function dispatchVerificationEmail(params: {
+const resend = new Resend(process.env.RESEND_API_KEY || 're_missing_api_key');
+
+function buildVerificationEmailPayload(params: {
   email: string;
   model: string;
   trim: string;
   powertrain: string;
   region: string;
   verificationToken: string;
-  expiresAtIso: string;
-}): Promise<boolean> {
+}) {
   const { email, model, trim, powertrain, region, verificationToken } = params;
   const verifyUrl = `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
     verificationToken
@@ -58,42 +60,7 @@ async function dispatchVerificationEmail(params: {
     </div>
   `.trim();
 
-  const resendApiKey = process.env.RESEND_API_KEY;
-  const hasResendKey = Boolean(
-    resendApiKey &&
-      resendApiKey.trim() !== '' &&
-      !resendApiKey.includes('placeholder') &&
-      !resendApiKey.includes('mock-')
-  );
-
-  if (hasResendKey && typeof globalThis.fetch === 'function') {
-    try {
-      const res = await globalThis.fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'ToyotaWaits.ca <hello@toyotawaits.ca>',
-          to: [email],
-          subject,
-          html,
-        }),
-      });
-      if (res.ok) {
-        return true;
-      }
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.warn('[/api/alerts/subscribe] Resend dispatch warning:', msg);
-    }
-  }
-
-  console.log(
-    `[/api/alerts/subscribe] Verification email ready for ${email} (${subject}): ${verifyUrl} | Unsubscribe: ${unsubscribeUrl}`
-  );
-  return false;
+  return { email, subject, html, verifyUrl, unsubscribeUrl };
 }
 
 export async function POST(request: NextRequest | Request) {
@@ -158,15 +125,50 @@ export async function POST(request: NextRequest | Request) {
 
     if (!isLiveSupabaseConfigured()) {
       const fallbackToken = crypto.randomBytes(16).toString('hex');
-      await dispatchVerificationEmail({
+      const emailPayload = buildVerificationEmailPayload({
         email: rawEmail,
         model: rawModel,
         trim: rawTrim,
         powertrain: rawPowertrain,
         region: rawRegion,
         verificationToken: freshVerificationToken,
-        expiresAtIso,
       });
+
+      const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev';
+      const hasResendKey = Boolean(
+        process.env.RESEND_API_KEY &&
+          process.env.RESEND_API_KEY.trim() !== '' &&
+          !process.env.RESEND_API_KEY.includes('placeholder') &&
+          !process.env.RESEND_API_KEY.includes('mock-')
+      );
+
+      if (hasResendKey || process.env.NODE_ENV === 'production') {
+        if (!hasResendKey) {
+          console.error('[Resend Error]: Missing RESEND_API_KEY environment variable');
+          return NextResponse.json(
+            { error: 'Missing RESEND_API_KEY environment variable on server.' },
+            { status: 500 }
+          );
+        }
+        const activeResend = process.env.RESEND_API_KEY
+          ? new Resend(process.env.RESEND_API_KEY)
+          : resend;
+        const { data, error } = await activeResend.emails.send({
+          from: fromEmail,
+          to: [rawEmail],
+          subject: emailPayload.subject,
+          html: emailPayload.html,
+        });
+        if (error) {
+          console.error('[Resend Error]:', error);
+          return NextResponse.json({ error: error.message }, { status: 500 });
+        }
+        console.log('[Resend Success]:', data?.id);
+      } else {
+        console.log(
+          `[/api/alerts/subscribe] Verification email ready for ${rawEmail}: ${emailPayload.verifyUrl}`
+        );
+      }
 
       return NextResponse.json(
         {
@@ -264,16 +266,50 @@ export async function POST(request: NextRequest | Request) {
         ? resultData.verification_token
         : freshVerificationToken;
 
-    await dispatchVerificationEmail({
+    const emailPayload = buildVerificationEmailPayload({
       email: rawEmail,
       model: rawModel,
       trim: rawTrim,
       powertrain: rawPowertrain,
       region: rawRegion,
       verificationToken: effectiveVerificationToken,
-      expiresAtIso:
-        typeof resultData?.expires_at === 'string' ? resultData.expires_at : expiresAtIso,
     });
+
+    const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev';
+    const hasResendKey = Boolean(
+      process.env.RESEND_API_KEY &&
+        process.env.RESEND_API_KEY.trim() !== '' &&
+        !process.env.RESEND_API_KEY.includes('placeholder') &&
+        !process.env.RESEND_API_KEY.includes('mock-')
+    );
+
+    if (hasResendKey || process.env.NODE_ENV === 'production') {
+      if (!hasResendKey) {
+        console.error('[Resend Error]: Missing RESEND_API_KEY environment variable');
+        return NextResponse.json(
+          { error: 'Missing RESEND_API_KEY environment variable on server.' },
+          { status: 500 }
+        );
+      }
+      const activeResend = process.env.RESEND_API_KEY
+        ? new Resend(process.env.RESEND_API_KEY)
+        : resend;
+      const { data, error } = await activeResend.emails.send({
+        from: fromEmail,
+        to: [rawEmail],
+        subject: emailPayload.subject,
+        html: emailPayload.html,
+      });
+      if (error) {
+        console.error('[Resend Error]:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+      console.log('[Resend Success]:', data?.id);
+    } else {
+      console.log(
+        `[/api/alerts/subscribe] Verification email ready for ${rawEmail} (${emailPayload.subject}): ${emailPayload.verifyUrl} | Unsubscribe: ${emailPayload.unsubscribeUrl}`
+      );
+    }
 
     const finalRecord = {
       id: crypto.randomUUID(),
