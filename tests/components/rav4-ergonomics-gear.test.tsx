@@ -40,7 +40,7 @@ describe('RAV4 Interior Comfort & Ergonomics Gear Integration', () => {
       expect(item).toBeDefined();
       expect(item.title).toBe('Driver Side Console Edge Leather Knee Cushion');
       expect(item.badge).toBe('Road Trip Essential');
-      expect(item.searchKeywordsCA).toContain('knee rest pad');
+      expect(item.searchKeywordsCA).toContain('knee cushion pad');
       expect(item.isDeliveryDayEssential).toBe(true);
     });
 

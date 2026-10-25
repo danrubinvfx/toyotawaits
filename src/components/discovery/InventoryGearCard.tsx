@@ -25,7 +25,7 @@ const BENEFIT_HOOK_MAP: Record<string, string> = {
   'ceramic-interior-leather-protection':
     'Shields SofTex & leather seats from indigo dye transfer and winter salt.',
   'fast-usbc-pd-car-charger':
-    'Dual 65W fast charging for phones, tablets & laptops on the go.',
+    'Ultra-fast dual phone charging.',
   'center-console-organizer-tray':
     'Drop-in dual tray with OEM-style USB-C fast charging',
 };

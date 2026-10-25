@@ -270,7 +270,7 @@ export function GearCard({
   const imageSource = item.imageUrl || item.imageSrc || item.image || config?.imageUrl;
   const fallbackIcon = item.fallbackIcon || config?.fallbackIcon;
   const price = item.priceEst || item.priceEstCad;
-  const note = item.whyBuy || item.utilityNote || item.description;
+  const note = config?.description || item.description || item.whyBuy || item.utilityNote || config?.whyBuy;
 
   const handleAffiliateClick = () => {
     if (placement) {
