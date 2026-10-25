@@ -13,7 +13,6 @@ import { parseConvertusVmsPayload } from '../adapters/convertus';
 import { ingestDealerListings } from '../services/ingestion-service';
 import {
   AdapterParseResult,
-  Source,
   SourceHealthLog,
 } from '../types';
 
@@ -36,6 +35,7 @@ export interface SweepOptions {
   timeoutMs?: number;
   maxRetries?: number;
   initialBackoffMs?: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db?: any; // SupabaseClient or mock client
   fetcher?: (url: string, init?: RequestInit) => Promise<Response>;
   now?: Date;
@@ -128,9 +128,9 @@ export async function runScheduledSweep(
 
     const startTime = Date.now();
     let attempt = 0;
-    let lastError: any = null;
+    let lastError: Error | null = null;
     let httpStatus: number | null = null;
-    let responseBody: any = null;
+    let responseBody: unknown = null;
     let isSuccess = false;
 
     // Retry loop with bounded backoff
@@ -162,12 +162,13 @@ export async function runScheduledSweep(
 
         responseBody = await res.json();
         isSuccess = true;
-      } catch (err: any) {
-        lastError = err;
+      } catch (err: unknown) {
+        const normalizedErr = err instanceof Error ? err : new Error(String(err));
+        lastError = normalizedErr;
         const isTransient =
-          err.name === 'AbortError' ||
-          err.message?.includes('timeout') ||
-          err.message?.includes('network') ||
+          normalizedErr.name === 'AbortError' ||
+          normalizedErr.message?.includes('timeout') ||
+          normalizedErr.message?.includes('network') ||
           (httpStatus != null && httpStatus >= 500);
 
         if (attempt <= maxRetries && isTransient) {
@@ -244,8 +245,9 @@ export async function runScheduledSweep(
           });
           summary.totalListingsIngested +=
             ingestResult.totalProcessed ?? parseResult.records.length;
-        } catch (ingestErr: any) {
-          errorMessage = `Ingestion error: ${ingestErr.message}`;
+        } catch (ingestErr: unknown) {
+          const msg = ingestErr instanceof Error ? ingestErr.message : String(ingestErr);
+          errorMessage = `Ingestion error: ${msg}`;
           healthStatus = 'degraded';
         }
       } else {
@@ -285,7 +287,7 @@ export async function runScheduledSweep(
           error_message: healthLog.errorMessage,
           created_at: healthLog.createdAt,
         });
-      } catch (logErr) {
+      } catch {
         // Telemetry persistence error caught gracefully
       }
     }

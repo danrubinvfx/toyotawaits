@@ -354,6 +354,7 @@ export function InventoryExplorer({
 
   // Sync state if initialListings changes (e.g. tests or SSR)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setListings(initialListings);
   }, [initialListings]);
 
@@ -402,6 +403,7 @@ export function InventoryExplorer({
     );
     const targetModel = matched ? matched.model : queryModel;
     if (filters.model !== targetModel) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFilters((prev) => ({ ...prev, model: targetModel }));
       setVisibleCount(PAGE_SIZE);
     }

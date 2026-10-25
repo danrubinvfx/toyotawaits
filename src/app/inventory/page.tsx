@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
-import { AlertTriangle, ShieldCheck, ArrowLeft, Lock } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export const dynamic = 'force-dynamic';
@@ -51,20 +51,24 @@ export interface InventoryPageProps {
   initialListings?: VehicleListingCardProps[];
 }
 
+type SearchParamsRecord = { [key: string]: string | string[] | undefined };
+type SearchParamsPromiseLike = Promise<SearchParamsRecord> & {
+  value?: SearchParamsRecord;
+  _value?: SearchParamsRecord;
+};
+
 function parsePreviewParam(
-  searchParams?:
-    | Promise<{ [key: string]: string | string[] | undefined }>
-    | { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 ): boolean {
   if (!searchParams) return false;
-  if (typeof (searchParams as any).then !== 'function') {
-    const sp = searchParams as { [key: string]: string | string[] | undefined };
+  const candidate = searchParams as SearchParamsPromiseLike & SearchParamsRecord;
+  if (typeof candidate.then !== 'function') {
     return (
-      sp?.preview === 'true' ||
-      (Array.isArray(sp?.preview) && sp.preview.includes('true'))
+      candidate.preview === 'true' ||
+      (Array.isArray(candidate.preview) && candidate.preview.includes('true'))
     );
   }
-  const maybeObj = (searchParams as any).value ?? (searchParams as any)._value;
+  const maybeObj = candidate.value ?? candidate._value;
   if (maybeObj) {
     return (
       maybeObj.preview === 'true' ||
@@ -75,17 +79,15 @@ function parsePreviewParam(
 }
 
 function parseModelParam(
-  searchParams?:
-    | Promise<{ [key: string]: string | string[] | undefined }>
-    | { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 ): string | undefined {
   if (!searchParams) return undefined;
-  if (typeof (searchParams as any).then !== 'function') {
-    const sp = searchParams as { [key: string]: string | string[] | undefined };
-    if (typeof sp?.model === 'string') return sp.model;
-    if (Array.isArray(sp?.model) && sp.model.length > 0) return sp.model[0];
+  const candidate = searchParams as SearchParamsPromiseLike & SearchParamsRecord;
+  if (typeof candidate.then !== 'function') {
+    if (typeof candidate.model === 'string') return candidate.model;
+    if (Array.isArray(candidate.model) && candidate.model.length > 0) return candidate.model[0];
   }
-  const maybeObj = (searchParams as any).value ?? (searchParams as any)._value;
+  const maybeObj = candidate.value ?? candidate._value;
   if (maybeObj) {
     if (typeof maybeObj.model === 'string') return maybeObj.model;
     if (Array.isArray(maybeObj.model) && maybeObj.model.length > 0) return maybeObj.model[0];

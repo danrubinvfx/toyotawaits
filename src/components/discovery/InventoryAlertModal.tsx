@@ -75,6 +75,7 @@ export function InventoryAlertModal({
   // Sync pre-filled criteria when modal opens or active filters change
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setModel(initialModel && initialModel.trim() ? initialModel.trim() : 'Sienna');
       setTrim(initialTrim && initialTrim.trim() ? initialTrim.trim() : 'ALL');
       setPowertrain(

@@ -101,6 +101,7 @@ export async function GET(request?: Request) {
       )
     `;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let query: any = supabase.from('dealer_listings').select(selectClause);
 
     // Strict 48h staleness cutoff: exclude older than 48h and stale/removed/quarantined unless includeStale=true
@@ -117,11 +118,14 @@ export async function GET(request?: Request) {
       }
     }
 
-    let { data, error } = await query.order('last_observed_at', { ascending: false });
+    const initialResult = await query.order('last_observed_at', { ascending: false });
+    let data = initialResult.data;
+    const error = initialResult.error;
     let enforceTimeCutoff = true;
 
     // If strict 48h window yielded 0 rows on live DB (e.g. between sweeps), query all active rows without 48h cutoff
     if (!includeStale && !error && (!data || data.length === 0)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let fallbackActiveQuery: any = supabase.from('dealer_listings').select(selectClause);
       if (typeof fallbackActiveQuery.not === 'function') {
         fallbackActiveQuery = fallbackActiveQuery.not(
@@ -154,11 +158,12 @@ export async function GET(request?: Request) {
 
     const activeRows = Array.isArray(data) ? data : [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mappedListings: VehicleListingCardProps[] = activeRows.map((item: any) => {
       const obsList = Array.isArray(item.observations) ? item.observations : [];
       obsList.sort(
-        (a: any, b: any) =>
-          new Date(b.observed_at).getTime() - new Date(a.observed_at).getTime()
+        (a: { observed_at?: string }, b: { observed_at?: string }) =>
+          new Date(b.observed_at || 0).getTime() - new Date(a.observed_at || 0).getTime()
       );
       const latestObs = obsList[0] || {};
 

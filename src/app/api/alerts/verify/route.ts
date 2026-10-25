@@ -28,6 +28,7 @@ export async function GET(request: NextRequest | Request) {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = createServerClient() as any;
     const nowIso = new Date().toISOString();
     const expiresAtIso = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -109,7 +110,7 @@ export async function GET(request: NextRequest | Request) {
       new URL('/inventory?alert_verified=true', reqUrl.origin),
       302
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[/api/alerts/verify] Unexpected error:', err);
     return NextResponse.json(
       {

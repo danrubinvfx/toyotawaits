@@ -44,7 +44,7 @@ export interface VehicleListingCardProps {
   lifecycle_status?: 'active' | 'sold' | 'unlisted' | string | null;
   soldAt?: string | null;
   sold_at?: string | null;
-  listing?: Partial<VehicleListingCardProps> & Record<string, any>;
+  listing?: Partial<VehicleListingCardProps> & Record<string, unknown>;
   onListingClick?: () => void;
 }
 
@@ -139,9 +139,9 @@ export function getDealerListingUrl(listing: {
   stock_number?: string | null;
   model?: string | null;
   trim?: string | null;
-  [key: string]: any;
+  [key: string]: unknown;
 }): string {
-  let baseUrl = (listing.dealer_base_url || listing.dealerBaseUrl || '').trim().replace(/\/+$/, '');
+  let baseUrl = String(listing.dealer_base_url || listing.dealerBaseUrl || '').trim().replace(/\/+$/, '');
   if (baseUrl.includes('jptoyotadowntown.com')) {
     baseUrl = baseUrl.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
   }
@@ -160,8 +160,8 @@ export function getDealerListingUrl(listing: {
   const direct =
     listing.vdp_url ||
     listing.listing_url ||
-    (listing as any).vdpUrl ||
-    (listing as any).listingUrl;
+    (listing.vdpUrl as string | undefined) ||
+    (listing.listingUrl as string | undefined);
 
   if (direct && typeof direct === 'string' && direct.trim()) {
     let clean = direct.trim();

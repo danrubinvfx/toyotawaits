@@ -84,8 +84,9 @@ async function dispatchVerificationEmail(params: {
       if (res.ok) {
         return true;
       }
-    } catch (err: any) {
-      console.warn('[/api/alerts/subscribe] Resend dispatch warning:', err?.message);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.warn('[/api/alerts/subscribe] Resend dispatch warning:', msg);
     }
   }
 
@@ -97,9 +98,9 @@ async function dispatchVerificationEmail(params: {
 
 export async function POST(request: NextRequest | Request) {
   try {
-    let body: any;
+    let body: Record<string, unknown>;
     try {
-      body = await request.json();
+      body = (await request.json()) as Record<string, unknown>;
     } catch {
       return NextResponse.json(
         {
@@ -185,6 +186,7 @@ export async function POST(request: NextRequest | Request) {
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = createServerClient() as any;
     const tableRef = supabase.from('inventory_alert_subscriptions');
 
@@ -199,8 +201,8 @@ export async function POST(request: NextRequest | Request) {
         }
       : basePayload;
 
-    let resultData: any = null;
-    let dbError: any = null;
+    let resultData: Record<string, unknown> | null = null;
+    let dbError: { message?: string } | null = null;
 
     if (typeof tableRef.upsert === 'function') {
       const upsertQuery = tableRef.upsert(upsertPayload, {
@@ -258,7 +260,9 @@ export async function POST(request: NextRequest | Request) {
     }
 
     const effectiveVerificationToken =
-      resultData?.verification_token || freshVerificationToken;
+      typeof resultData?.verification_token === 'string'
+        ? resultData.verification_token
+        : freshVerificationToken;
 
     await dispatchVerificationEmail({
       email: rawEmail,
@@ -267,7 +271,8 @@ export async function POST(request: NextRequest | Request) {
       powertrain: rawPowertrain,
       region: rawRegion,
       verificationToken: effectiveVerificationToken,
-      expiresAtIso: resultData?.expires_at || expiresAtIso,
+      expiresAtIso:
+        typeof resultData?.expires_at === 'string' ? resultData.expires_at : expiresAtIso,
     });
 
     const finalRecord = {
@@ -289,7 +294,7 @@ export async function POST(request: NextRequest | Request) {
       },
       { status: 201, headers: { 'Cache-Control': 'no-store' } }
     );
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('[/api/alerts/subscribe] Error:', err);
     return NextResponse.json(
       {

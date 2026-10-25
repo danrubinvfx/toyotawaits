@@ -42,7 +42,9 @@ export interface SoldTransitionParams {
   sweepStartTime: string | Date;
   observedSourceListingIds?: Set<string> | string[];
   observedVins?: Set<string> | string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseClient?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db?: any;
   now?: string | Date;
 }
@@ -71,7 +73,9 @@ export interface AlertDispatchVehicle {
 }
 
 export interface DispatchPendingAlertsOptions {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabaseClient?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db?: any;
   resendApiKey?: string;
   fetcher?: typeof fetch;
@@ -81,7 +85,7 @@ export interface DispatchPendingAlertsSummary {
   vehiclesEvaluated: number;
   subscribersMatched: number;
   emailsSent: number;
-  loggedPayloads: Array<Record<string, any>>;
+  loggedPayloads: Array<Record<string, unknown>>;
 }
 
 /**
@@ -264,6 +268,7 @@ export async function detectAndTransitionSoldUnits(
 
   for (const tableName of targetTables) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase
         .from(tableName)
         .select(
@@ -281,6 +286,7 @@ export async function detectAndTransitionSoldUnits(
         continue;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const candidates = (rows || []).filter((row: any) => {
         if (!sweptDealerSet.has(row.dealer_id)) return false;
 
@@ -333,8 +339,8 @@ export async function detectAndTransitionSoldUnits(
           }
         }
       }
-    } catch (err: any) {
-      summary.errors.push(err?.message || String(err));
+    } catch (err: unknown) {
+      summary.errors.push(err instanceof Error ? err.message : String(err));
     }
   }
 
@@ -374,8 +380,10 @@ export async function dispatchPendingAlerts(
     const displayVin = item.vin || item.provisionalId || 'PROVISIONAL';
     const displayTrim = item.trim || 'Base';
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let matchingSubs: any[] = [];
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query: any = supabase.from('inventory_alert_subscriptions').select('*');
       if (typeof query.eq === 'function') {
         query = query.eq('is_active', true);
@@ -393,6 +401,7 @@ export async function dispatchPendingAlerts(
       const itemPowertrainLower = (item.powertrain || '').toLowerCase().trim();
       const nowMs = Date.now();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       matchingSubs = (subs || []).filter((sub: any) => {
         if (sub.is_active === false) return false;
         if (sub.is_verified === false) return false;
@@ -486,8 +495,9 @@ export async function dispatchPendingAlerts(
           if (res.ok) {
             summary.emailsSent++;
           }
-        } catch (emailErr: any) {
-          console.warn(`[Alert Worker] Resend email dispatch failed for ${sub.email}:`, emailErr?.message);
+        } catch (emailErr: unknown) {
+          const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+          console.warn(`[Alert Worker] Resend email dispatch failed for ${sub.email}:`, msg);
         }
       } else {
         console.log('[Alert Worker] Alert dispatch payload:', JSON.stringify(dispatchPayload));
