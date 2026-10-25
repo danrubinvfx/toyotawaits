@@ -13,6 +13,8 @@ import {
   Package,
   Armchair,
   ShieldCheck,
+  Smartphone,
+  Wifi,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -53,6 +55,8 @@ export function resolveCategoryIcon(
   if (iconKey === 'package') return Package;
   if (iconKey === 'armchair') return Armchair;
   if (iconKey === 'shield') return ShieldCheck;
+  if (iconKey === 'smartphone' || iconKey === 'phone' || iconKey === 'tech') return Smartphone;
+  if (iconKey === 'wifi' || iconKey === 'wireless') return Wifi;
 
   const cat = (category || '').toLowerCase();
   const name = (title || '').toLowerCase();
@@ -74,6 +78,15 @@ export function resolveCategoryIcon(
     name.includes('hitch')
   ) {
     return Luggage;
+  }
+  if (
+    name.includes('carplay') ||
+    name.includes('android auto') ||
+    name.includes('adapter') ||
+    name.includes('smartphone') ||
+    name.includes('phone')
+  ) {
+    return Smartphone;
   }
   if (
     cat.includes('electronics') ||

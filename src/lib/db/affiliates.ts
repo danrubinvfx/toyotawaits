@@ -741,8 +741,8 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'wireless-carplay-adapter-corolla': {
     id: 'f3000010-0010-4010-8010-000000000005',
     slug: 'wireless-carplay-adapter-corolla',
-    destinationUrl: 'https://www.amazon.ca/s?k=wireless+carplay+adapter+toyota+corolla&tag=toyotawaits-20',
-    title: 'Wireless CarPlay & Android Auto Adapter (Toyota Audio Multimedia)',
+    destinationUrl: 'https://www.amazon.ca/s?k=wireless+carplay+android+auto+adapter+toyota&tag=toyotawaits-20',
+    title: 'Wireless CarPlay & Android Auto Adapter',
     category: 'tech_safety',
     clickCount: 0,
     isActive: true,
@@ -1097,6 +1097,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B08F9V3NZ8') ||
     url.includes('B0821M4Z9Z') ||
     url.includes('B09L7X8V3Q') ||
+    url.includes('B0CDG87Z9M') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );

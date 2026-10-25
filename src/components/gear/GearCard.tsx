@@ -13,6 +13,8 @@ import {
   Package,
   BatteryCharging,
   Armchair,
+  Smartphone,
+  Wifi,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
@@ -186,6 +188,15 @@ export function getThemedCategoryIcon(category?: string, title?: string) {
     name.includes('crossbar')
   ) {
     return Luggage;
+  }
+  if (
+    name.includes('carplay') ||
+    name.includes('android auto') ||
+    name.includes('smartphone') ||
+    name.includes('wireless') ||
+    cat.includes('tech')
+  ) {
+    return Smartphone;
   }
   if (
     cat.includes('electronics') ||
