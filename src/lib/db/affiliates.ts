@@ -723,7 +723,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'fitcamx-corolla': {
     id: 'f3000010-0010-4010-8010-000000000003',
     slug: 'fitcamx-corolla',
-    destinationUrl: 'https://www.amazon.ca/s?k=fitcamx+4k+dash+cam+toyota+corolla+2020-2026&tag=toyotawaits-20',
+    destinationUrl: 'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Toyota+Corolla+OEM+4K&tag=toyotawaits-20',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Corolla E210)',
     category: 'tech_safety',
     clickCount: 0,
@@ -1096,6 +1096,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B0C39XQ7NV') ||
     url.includes('B08F9V3NZ8') ||
     url.includes('B0821M4Z9Z') ||
+    url.includes('B09L7X8V3Q') ||
     url.includes('404-page-not-found') ||
     url.includes('clazzio.com/toyota-rav4-prime')
   );

@@ -168,6 +168,10 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
         expectedUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+hybrid+battery+intake+filter+mesh+G92DH-42010&tag=toyotawaits-20',
       },
       {
+        slug: 'fitcamx-corolla',
+        expectedUrl: 'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Toyota+Corolla+OEM+4K&tag=toyotawaits-20',
+      },
+      {
         slug: 'door-sill-scuff-guards',
         expectedUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+door+sill+protector+scuff+plate&tag=toyotawaits-20',
       },

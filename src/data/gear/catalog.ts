@@ -682,11 +682,13 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   'fitcamx-corolla': {
     slug: 'fitcamx-corolla',
     title: 'FitcamX OEM Integrated 4K Mirror Dashcam (Corolla E210)',
-    searchKeywordsCA: 'fitcamx 4k dash cam toyota corolla 2020-2026',
-    searchKeywordsUS: 'fitcamx 4k dash cam toyota corolla 2020-2026',
+    searchQuery: 'Fitcamx dash cam Toyota Corolla OEM 4K',
+    searchKeywordsCA: 'Fitcamx dash cam Toyota Corolla OEM 4K',
+    searchKeywordsUS: 'Fitcamx dash cam Toyota Corolla OEM 4K',
     compatibility: 'Corolla E210 Sedan & Hatch TSS 2.0 / 3.0 (2020–2026)',
+    badge: 'Plug & Play 4K Camera',
     whyBuy: 'Seamless mirror tap installation drawing power directly from factory rearview mirror harness with zero dangling cables.',
-      isDeliveryDayEssential: true,
+    isDeliveryDayEssential: true,
   },
   'fitcamx-corolla-cross': {
     slug: 'fitcamx-corolla-cross',
