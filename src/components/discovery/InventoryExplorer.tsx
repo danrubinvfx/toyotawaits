@@ -324,11 +324,19 @@ export function InventoryExplorer({
 }: InventoryExplorerProps) {
   let isPreviewQuery = false;
   let queryModel = initialModel || '';
+  let isAlertVerifiedQuery = false;
+  let isAlertUnsubscribedQuery = false;
 
   try {
     const sp = useSearchParams();
     if (sp?.get('preview') === 'true') {
       isPreviewQuery = true;
+    }
+    if (sp?.get('alert_verified') === 'true') {
+      isAlertVerifiedQuery = true;
+    }
+    if (sp?.get('alert_unsubscribed') === 'true') {
+      isAlertUnsubscribedQuery = true;
     }
     const paramModel = sp?.get('model');
     if (paramModel && !queryModel) {
@@ -342,6 +350,7 @@ export function InventoryExplorer({
   const [currentTime] = useState(() => Date.now());
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [dismissedBanner, setDismissedBanner] = useState(false);
 
   // Sync state if initialListings changes (e.g. tests or SSR)
   useEffect(() => {
@@ -748,6 +757,46 @@ export function InventoryExplorer({
 
   return (
     <div className="space-y-3 sm:space-y-4" data-testid="inventory-explorer">
+      {!dismissedBanner && isAlertVerifiedQuery && (
+        <div
+          data-testid="alert-verified-banner"
+          role="status"
+          className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950/40 px-4 py-3 text-xs sm:text-sm text-emerald-200 shadow-sm"
+        >
+          <span>
+            ✅ <strong>30-Day Free Allocation Pass Activated!</strong> Your email is verified and we are now monitoring Lower Mainland dealer drops for your vehicle.
+          </span>
+          <button
+            type="button"
+            onClick={() => setDismissedBanner(true)}
+            aria-label="Dismiss confirmation banner"
+            className="text-emerald-300/80 hover:text-white text-xs font-semibold shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {!dismissedBanner && isAlertUnsubscribedQuery && (
+        <div
+          data-testid="alert-unsubscribed-banner"
+          role="status"
+          className="flex items-center justify-between gap-3 rounded-xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-xs sm:text-sm text-zinc-300 shadow-sm"
+        >
+          <span>
+            You have been unsubscribed from your 30-day allocation drop alert pass.
+          </span>
+          <button
+            type="button"
+            onClick={() => setDismissedBanner(true)}
+            aria-label="Dismiss unsubscribed banner"
+            className="text-zinc-400 hover:text-white text-xs font-semibold shrink-0"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
       {/* Search & Filter Bar (Elevated immediately below header) */}
       <InventoryFilterBar
         filters={filters}

@@ -380,14 +380,26 @@ export async function dispatchPendingAlerts(
       if (typeof query.eq === 'function') {
         query = query.eq('is_active', true);
       }
+      if (query && typeof query.eq === 'function') {
+        query = query.eq('is_verified', true);
+      }
+      if (query && typeof query.gt === 'function') {
+        query = query.gt('expires_at', nowIso);
+      }
       const { data: subs } = await query;
 
       const itemModelLower = (item.model || '').toLowerCase().trim();
       const itemTrimLower = (item.trim || '').toLowerCase().trim();
       const itemPowertrainLower = (item.powertrain || '').toLowerCase().trim();
+      const nowMs = Date.now();
 
       matchingSubs = (subs || []).filter((sub: any) => {
         if (sub.is_active === false) return false;
+        if (sub.is_verified === false) return false;
+        if (sub.expires_at) {
+          const expMs = new Date(sub.expires_at).getTime();
+          if (!isNaN(expMs) && expMs <= nowMs) return false;
+        }
 
         const subModel = (sub.model || '').toLowerCase().trim();
         const subTrim = (sub.trim || 'ALL').toLowerCase().trim();
@@ -423,11 +435,19 @@ export async function dispatchPendingAlerts(
     }
 
     console.log(
+      `[Alert Worker] Active verified candidates for ${item.model}: ${matchingSubs.length}.`
+    );
+    console.log(
       `[Alert Worker] Found ${matchingSubs.length} subscribers matching ${displayVin} (${item.model} ${displayTrim})`
     );
 
     for (const sub of matchingSubs) {
       summary.subscribersMatched++;
+
+      const unsubToken = sub.verification_token || sub.token || '';
+      const unsubscribeUrl = `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
+        unsubToken
+      )}&action=unsubscribe`;
 
       const dispatchPayload = {
         email: sub.email,
@@ -435,9 +455,9 @@ export async function dispatchPendingAlerts(
         model: item.model,
         trim: displayTrim,
         dealerName: item.dealerName || 'Lower Mainland Toyota Dealer',
-        vdpUrl: item.vdpUrl || 'https://toyotawaits.ca/inventory',
+        vdpUrl: item.vdpUrl || 'https://www.toyotawaits.ca/inventory',
         sellingPrice: item.sellingPrice ?? item.msrp ?? null,
-        token: sub.token,
+        token: sub.token || sub.verification_token,
         dispatchedAt: nowIso,
       };
 
@@ -457,10 +477,10 @@ export async function dispatchPendingAlerts(
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: 'ToyotaWaits Alerts <alerts@toyotawaits.ca>',
+              from: 'ToyotaWaits.ca <hello@toyotawaits.ca>',
               to: [sub.email],
               subject: `🔔 New ${item.model} (${displayTrim}) Drop Observed at ${dispatchPayload.dealerName}`,
-              html: `<p>A matching <strong>${item.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dispatchPayload.dealerName}</strong>.</p><p><a href="${dispatchPayload.vdpUrl}">View Dealer Listing</a></p>`,
+              html: `<p>A matching <strong>${item.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dispatchPayload.dealerName}</strong>.</p><p><a href="${dispatchPayload.vdpUrl}">View Dealer Listing</a></p><hr /><p style="font-size:11px;color:#71717a;">Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership). Contact: <a href="mailto:hello@toyotawaits.ca">hello@toyotawaits.ca</a> &bull; <a href="${unsubscribeUrl}">1-Click Unsubscribe</a></p>`,
             }),
           });
           if (res.ok) {

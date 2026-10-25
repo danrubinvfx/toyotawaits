@@ -132,10 +132,7 @@ export function InventoryAlertModal({
       }
 
       setSuccessMessage(
-        data?.message ||
-          `You're subscribed! We'll notify ${trimmedEmail} when a matching ${model} (${
-            trim === 'ALL' ? 'Any Trim' : trim
-          }) drops in ${region}.`
+        `We sent a confirmation link to ${trimmedEmail}. Tap it to verify your email and start your 30-day drop monitoring.`
       );
       setIsSubmitting(false);
     } catch {
@@ -156,7 +153,7 @@ export function InventoryAlertModal({
         {/* Modal Header */}
         <div className="flex items-start justify-between gap-3 border-b border-zinc-800/80 pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
               <Bell className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
@@ -164,10 +161,10 @@ export function InventoryAlertModal({
                 id="inventory-alert-modal-title"
                 className="text-base sm:text-lg font-bold text-white tracking-tight"
               >
-                Allocation Drop Alerts (&ldquo;Notify Me&rdquo;)
+                30-Day Free Allocation Pass
               </h2>
               <p className="text-xs text-zinc-400">
-                Get instant email alerts when matching dealer inventory or canceled allocations land.
+                Get instant email alerts when matching unreserved inventory or canceled customer orders land across Lower Mainland dealers. Free for 30 days.
               </p>
             </div>
           </div>
@@ -190,7 +187,7 @@ export function InventoryAlertModal({
             <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400">
               <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
             </div>
-            <h3 className="text-base font-bold text-white">Drop Alert Activated!</h3>
+            <h3 className="text-base font-bold text-white">Check Your Inbox to Activate!</h3>
             <p className="text-xs text-zinc-300 leading-relaxed">{successMessage}</p>
             <div className="pt-2 flex items-center justify-center gap-2">
               <button
@@ -401,32 +398,40 @@ export function InventoryAlertModal({
             )}
 
             {/* Submit Actions */}
-            <div className="flex items-center justify-end gap-2 pt-1">
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 px-3.5 py-2 text-xs font-medium text-zinc-300 transition"
+            <div className="space-y-2.5 pt-1">
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="rounded-lg border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 px-3.5 py-2 text-xs font-medium text-zinc-300 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  data-testid="alert-submit-btn"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-60 px-4 py-2 text-xs font-semibold text-white shadow-sm transition"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+                      <span>Activating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Bell className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>Activate Free 30-Day Alert</span>
+                    </>
+                  )}
+                </button>
+              </div>
+              <p
+                data-testid="alert-casl-disclaimer"
+                className="text-[11px] text-zinc-500 leading-relaxed border-t border-zinc-800/70 pt-2"
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                data-testid="alert-submit-btn"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-60 px-4 py-2 text-xs font-semibold text-white shadow-sm transition"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                    <span>Saving Alert...</span>
-                  </>
-                ) : (
-                  <>
-                    <Bell className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>Notify Me When In Stock</span>
-                  </>
-                )}
-              </button>
+                Notice: This free 30-day alert pass monitors publicly indexed dealer management feeds across Metro Vancouver. ToyotaWaits is an independent research platform not affiliated with Toyota Canada Inc. or any dealership. Listings do not guarantee vehicle availability or reservation status. Unsubscribe anytime.
+              </p>
             </div>
           </form>
         )}

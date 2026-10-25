@@ -61,7 +61,9 @@ ALTER TABLE public.dealer_listings ENABLE ROW LEVEL SECURITY;
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 
 -- Public client read/insert/update permissions for inventory_alert_subscriptions (required for upsert + returning)
-GRANT SELECT, INSERT, UPDATE ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
+GRANT SELECT ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
+GRANT INSERT ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
+GRANT UPDATE ON TABLE public.inventory_alert_subscriptions TO anon, authenticated;
 GRANT ALL ON TABLE public.inventory_alert_subscriptions TO service_role;
 
 -- Public read permissions for dealer_listings (including is_likely_cancellation)
