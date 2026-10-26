@@ -134,7 +134,8 @@ export async function POST(request: NextRequest | Request) {
         verificationToken: freshVerificationToken,
       });
 
-      const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev';
+      const fromEmail =
+        process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
       const hasResendKey = Boolean(
         process.env.RESEND_API_KEY &&
           process.env.RESEND_API_KEY.trim() !== '' &&
@@ -275,7 +276,8 @@ export async function POST(request: NextRequest | Request) {
       verificationToken: effectiveVerificationToken,
     });
 
-    const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev';
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
     const hasResendKey = Boolean(
       process.env.RESEND_API_KEY &&
         process.env.RESEND_API_KEY.trim() !== '' &&

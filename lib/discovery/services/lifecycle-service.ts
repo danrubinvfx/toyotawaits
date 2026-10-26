@@ -79,13 +79,40 @@ export interface DispatchPendingAlertsOptions {
   db?: any;
   resendApiKey?: string;
   fetcher?: typeof fetch;
+  dryRun?: boolean;
 }
 
 export interface DispatchPendingAlertsSummary {
   vehiclesEvaluated: number;
   subscribersMatched: number;
   emailsSent: number;
+  duplicatesSkipped?: number;
   loggedPayloads: Array<Record<string, unknown>>;
+}
+
+function normalizeModelForAlertMatch(rawModel: string, rawPowertrain?: string | null): string {
+  const m = (rawModel || '').toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const pt = (rawPowertrain || '').toLowerCase().trim();
+  if (
+    m.includes('rav4 prime') ||
+    m.includes('rav4 plug in') ||
+    m.includes('rav4 phev') ||
+    (m.startsWith('rav4') && (pt.includes('plug') || pt.includes('phev') || pt.includes('prime')))
+  ) {
+    return 'rav4 plug-in hybrid';
+  }
+  if (
+    m.includes('prius prime') ||
+    m.includes('prius plug in') ||
+    m.includes('prius phev') ||
+    (m.startsWith('prius') && (pt.includes('plug') || pt.includes('phev') || pt.includes('prime')))
+  ) {
+    return 'prius plug-in hybrid';
+  }
+  if (!m.includes('hybrid') && pt === 'hybrid' && m !== 'sienna' && m !== 'crown' && m !== 'crown signia' && m !== 'land cruiser' && m !== 'sequoia' && m !== 'prius') {
+    return `${m} hybrid`;
+  }
+  return m;
 }
 
 /**
@@ -364,6 +391,7 @@ export async function dispatchPendingAlerts(
     vehiclesEvaluated: items.length,
     subscribersMatched: 0,
     emailsSent: 0,
+    duplicatesSkipped: 0,
     loggedPayloads: [],
   };
 
@@ -374,7 +402,9 @@ export async function dispatchPendingAlerts(
   const supabase = options.supabaseClient || options.db || createServerClient();
   const resendApiKey = options.resendApiKey ?? process.env.RESEND_API_KEY;
   const fetchFn = options.fetcher || globalThis.fetch;
+  const isDryRun = Boolean(options.dryRun);
   const nowIso = new Date().toISOString();
+  const seenEmailVinPairs = new Set<string>();
 
   for (const item of items) {
     const displayVin = item.vin || item.provisionalId || 'PROVISIONAL';
@@ -396,6 +426,7 @@ export async function dispatchPendingAlerts(
       }
       const { data: subs } = await query;
 
+      const itemModelCanonical = normalizeModelForAlertMatch(item.model || '', item.powertrain);
       const itemModelLower = (item.model || '').toLowerCase().trim();
       const itemTrimLower = (item.trim || '').toLowerCase().trim();
       const itemPowertrainLower = (item.powertrain || '').toLowerCase().trim();
@@ -410,15 +441,31 @@ export async function dispatchPendingAlerts(
           if (!isNaN(expMs) && expMs <= nowMs) return false;
         }
 
+        const subModelCanonical = normalizeModelForAlertMatch(sub.model || '');
         const subModel = (sub.model || '').toLowerCase().trim();
         const subTrim = (sub.trim || 'ALL').toLowerCase().trim();
         const subPowertrain = (sub.powertrain || 'ALL').toLowerCase().trim();
 
-        const modelMatches =
-          subModel === 'all' ||
-          subModel === itemModelLower ||
-          itemModelLower.includes(subModel) ||
-          subModel.includes(itemModelLower);
+        const subRequiresPlugIn =
+          subModelCanonical.includes('plug-in') || subModel.includes('prime');
+        const subRequiresHybrid =
+          !subRequiresPlugIn && subModelCanonical.includes('hybrid');
+
+        let modelMatches = false;
+        if (subModel === 'all') {
+          modelMatches = true;
+        } else if (subRequiresPlugIn) {
+          modelMatches = itemModelCanonical === subModelCanonical;
+        } else if (subRequiresHybrid) {
+          modelMatches =
+            itemModelCanonical === subModelCanonical ||
+            (itemModelLower.includes(subModel) && !itemModelCanonical.includes('plug-in'));
+        } else {
+          modelMatches =
+            subModelCanonical === itemModelCanonical ||
+            subModel === itemModelLower ||
+            itemModelLower.startsWith(subModel);
+        }
 
         if (!modelMatches) return false;
 
@@ -431,7 +478,8 @@ export async function dispatchPendingAlerts(
         if (subPowertrain && subPowertrain !== 'all') {
           if (
             !itemPowertrainLower.includes(subPowertrain) &&
-            !itemModelLower.includes(subPowertrain)
+            !itemModelLower.includes(subPowertrain) &&
+            !itemModelCanonical.includes(subPowertrain)
           ) {
             return false;
           }
@@ -451,14 +499,57 @@ export async function dispatchPendingAlerts(
     );
 
     for (const sub of matchingSubs) {
+      const dedupKey = `${String(sub.email).toLowerCase()}::${displayVin}`;
+      let alreadyDispatched = seenEmailVinPairs.has(dedupKey);
+
+      if (!alreadyDispatched && supabase && typeof supabase.from === 'function') {
+        try {
+          const dispatchTable = supabase.from('inventory_alert_dispatches');
+          if (dispatchTable && typeof dispatchTable.select === 'function') {
+            let dQuery = dispatchTable.select('id');
+            if (typeof dQuery.eq === 'function') {
+              dQuery = dQuery.eq('email', sub.email).eq('vin', displayVin);
+              const { data: existingRows } =
+                typeof dQuery.maybeSingle === 'function'
+                  ? await dQuery.maybeSingle()
+                  : await dQuery;
+              if (
+                (Array.isArray(existingRows) && existingRows.length > 0) ||
+                (existingRows && !Array.isArray(existingRows) && existingRows.id)
+              ) {
+                alreadyDispatched = true;
+              }
+            }
+          }
+        } catch {
+          // Table might not be mocked in unit tests; proceed with in-memory dedup
+        }
+      }
+
+      if (alreadyDispatched) {
+        summary.duplicatesSkipped = (summary.duplicatesSkipped || 0) + 1;
+        console.log(
+          `[Alert Match] VIN: ${displayVin} | Model: ${item.model} | Recipient: ${sub.email} | Status: SKIPPED_DUPLICATE`
+        );
+        continue;
+      }
+
+      seenEmailVinPairs.add(dedupKey);
       summary.subscribersMatched++;
+
+      console.log(
+        `[Alert Match] VIN: ${displayVin} | Model: ${item.model} | Recipient: ${sub.email} | Status: ELIGIBLE`
+      );
 
       const unsubToken = sub.verification_token || sub.token || '';
       const unsubscribeUrl = `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
         unsubToken
       )}&action=unsubscribe`;
+      const fromSender =
+        process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
 
       const dispatchPayload = {
+        from: fromSender,
         email: sub.email,
         vin: displayVin,
         model: item.model,
@@ -468,6 +559,7 @@ export async function dispatchPendingAlerts(
         sellingPrice: item.sellingPrice ?? item.msrp ?? null,
         token: sub.token || sub.verification_token,
         dispatchedAt: nowIso,
+        dryRun: isDryRun,
       };
 
       const hasResendKey = Boolean(
@@ -477,7 +569,7 @@ export async function dispatchPendingAlerts(
           !resendApiKey.includes('mock-')
       );
 
-      if (hasResendKey && typeof fetchFn === 'function') {
+      if (!isDryRun && hasResendKey && typeof fetchFn === 'function') {
         try {
           const res = await fetchFn('https://api.resend.com/emails', {
             method: 'POST',
@@ -486,7 +578,7 @@ export async function dispatchPendingAlerts(
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              from: process.env.RESEND_FROM_EMAIL?.trim() || 'onboarding@resend.dev',
+              from: fromSender,
               to: [sub.email],
               subject: `🔔 New ${item.model} (${displayTrim}) Drop Observed at ${dispatchPayload.dealerName}`,
               html: `<p>A matching <strong>${item.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dispatchPayload.dealerName}</strong>.</p><p><a href="${dispatchPayload.vdpUrl}">View Dealer Listing</a></p><hr /><p style="font-size:11px;color:#71717a;">Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership). Contact: <a href="mailto:hello@toyotawaits.ca">hello@toyotawaits.ca</a> &bull; <a href="${unsubscribeUrl}">1-Click Unsubscribe</a></p>`,
@@ -505,16 +597,39 @@ export async function dispatchPendingAlerts(
 
       summary.loggedPayloads.push(dispatchPayload);
 
-      // Update last_notified_at on subscription
-      try {
-        if (sub.id) {
-          await supabase
-            .from('inventory_alert_subscriptions')
-            .update({ last_notified_at: nowIso })
-            .eq('id', sub.id);
+      if (!isDryRun) {
+        // Record in inventory_alert_dispatches so the same VIN is never emailed twice to the same recipient
+        try {
+          const dispatchTable = supabase.from('inventory_alert_dispatches');
+          if (dispatchTable && typeof dispatchTable.upsert === 'function') {
+            await dispatchTable.upsert(
+              {
+                subscription_id: sub.id || null,
+                email: sub.email,
+                vin: displayVin,
+                model: item.model,
+                trim: displayTrim,
+                dealer_name: dispatchPayload.dealerName,
+                dispatched_at: nowIso,
+              },
+              { onConflict: 'email,vin' }
+            );
+          }
+        } catch {
+          // Non-fatal in mock test environments
         }
-      } catch {
-        // Non-fatal update error
+
+        // Update last_notified_at on subscription
+        try {
+          if (sub.id) {
+            await supabase
+              .from('inventory_alert_subscriptions')
+              .update({ last_notified_at: nowIso })
+              .eq('id', sub.id);
+          }
+        } catch {
+          // Non-fatal update error
+        }
       }
     }
   }

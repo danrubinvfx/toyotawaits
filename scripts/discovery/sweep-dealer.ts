@@ -1015,7 +1015,11 @@ export async function runSweep(): Promise<SweepRunSummary> {
   };
 }
 
-if (process.env.VITEST !== 'true' && process.env.NODE_ENV !== 'test') {
+if (
+  process.env.VITEST !== 'true' &&
+  process.env.NODE_ENV !== 'test' &&
+  process.argv[1]?.includes('sweep-dealer')
+) {
   runSweep()
     .then((summary) => {
       console.log('Sweep finished successfully:', summary);
