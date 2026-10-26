@@ -2,9 +2,7 @@ name: "Discovery / Scheduled Multi-Dealer Sweep"
 
 on:
   schedule:
-    # Runs twice daily at 6:00 AM PST (14:00 UTC) and 6:00 PM PST (02:00 UTC)
-    - cron: '0 14 * * *'
-    - cron: '0 2 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       dealer:
@@ -39,6 +37,7 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           POLITE_DEALER_COOLDOWN_MS: 4000
         run: |
           if [ "${{ github.event.inputs.dealer }}" != "" ] && [ "${{ github.event.inputs.dealer }}" != "all" ]; then

@@ -221,4 +221,30 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
     expect(auth.authorized).toBe(false);
     expect(auth.reason).toContain('CRON_SECRET environment variable is empty or undefined');
   });
+
+  it('performs lightweight database alert reconcile when no dealer param is passed', async () => {
+    process.env.CRON_SECRET = 'cron-secret-super-secure';
+
+    vi.spyOn(lifecycleModule, 'dispatchPendingAlerts').mockResolvedValue({
+      vehiclesEvaluated: 3,
+      subscribersMatched: 2,
+      emailsSent: 2,
+      duplicatesSkipped: 0,
+      loggedPayloads: [],
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer cron-secret-super-secure',
+      },
+    });
+
+    const res = await checkAlertsPOST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.matches).toBe(2);
+    expect(json.dispatched).toBe(2);
+  });
 });
