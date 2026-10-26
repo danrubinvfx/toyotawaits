@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { GET as checkAlertsGET, POST as checkAlertsPOST } from '@/app/api/cron/check-alerts/route';
+import { GET as checkAlertsGET, POST as checkAlertsPOST, validateCronSecret } from '@/app/api/cron/check-alerts/route';
 import { GET as sweepGET, POST as sweepPOST } from '@/app/api/cron/sweep/route';
 import * as dealersModule from '@/../lib/discovery/dealers';
 import * as lifecycleModule from '@/../lib/discovery/services/lifecycle-service';
@@ -158,5 +158,67 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
     expect(json.matches).toBe(1);
     expect(json.dispatched).toBe(1);
     expect(json.skippedDuplicates).toBe(0);
+  });
+
+  it('provides precise diagnostic error message when token mismatches', async () => {
+    process.env.CRON_SECRET = 'expected-secret-12345';
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer wrong-key',
+      },
+    });
+
+    const res = await checkAlertsPOST(req);
+    expect(res.status).toBe(401);
+    const json = await res.json();
+    expect(json.success).toBe(false);
+    expect(json.error).toContain('Token mismatch');
+    expect(json.error).toContain('Provided length: 9');
+    expect(json.error).toContain('Expected server length: 21');
+  });
+
+  it('authorizes when token has surrounding quotes and extra whitespace', async () => {
+    process.env.CRON_SECRET = '"quoted-secret-key"';
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer   "quoted-secret-key"  ',
+      },
+    });
+
+    const auth = validateCronSecret(req);
+    expect(auth.authorized).toBe(true);
+  });
+
+  it('reports when no token is provided in request headers or query params', async () => {
+    process.env.CRON_SECRET = 'my-secret';
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'GET',
+    });
+
+    const auth = validateCronSecret(req);
+    expect(auth.authorized).toBe(false);
+    expect(auth.reason).toContain('No token provided');
+  });
+
+  it('reports when CRON_SECRET is empty on runtime', async () => {
+    delete process.env.CRON_SECRET;
+    delete process.env.VERCEL_CRON_SECRET;
+    delete process.env.SWEEP_CRON_SECRET;
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer some-key',
+      },
+    });
+
+    const auth = validateCronSecret(req);
+    expect(auth.authorized).toBe(false);
+    expect(auth.reason).toContain('CRON_SECRET environment variable is empty or undefined');
   });
 });

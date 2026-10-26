@@ -16,29 +16,51 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const maxDuration = 60;
 
-export function isAuthorized(request: Request): boolean {
-  const authHeader = request.headers.get('authorization') || '';
-  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
-  const cronSecretHeader = request.headers.get('x-cron-secret')?.trim();
-  const url = new URL(request.url);
-  const queryKey = url.searchParams.get('key')?.trim();
-  const expectedSecret = process.env.CRON_SECRET?.trim();
+export function validateCronSecret(request: Request): { authorized: boolean; reason?: string } {
+  const envSecret = (
+    process.env.CRON_SECRET ||
+    process.env.VERCEL_CRON_SECRET ||
+    process.env.SWEEP_CRON_SECRET ||
+    ''
+  ).trim().replace(/^["']|["']$/g, '');
 
-  if (!expectedSecret) {
-    if (process.env.NODE_ENV === 'production') {
-      console.error('[CRON /api/cron/sweep] CRON_SECRET is not configured in production environment.');
-      return false;
+  if (!envSecret) {
+    if (process.env.NODE_ENV !== 'production' && process.env.VITEST !== 'true') {
+      return { authorized: true };
     }
-    // Allow local development and testing when CRON_SECRET is omitted
-    return true;
+    return {
+      authorized: false,
+      reason: 'CRON_SECRET environment variable is empty or undefined on Vercel runtime.',
+    };
   }
 
-  return Boolean(
-    expectedSecret &&
-      (token === expectedSecret ||
-        queryKey === expectedSecret ||
-        cronSecretHeader === expectedSecret)
-  );
+  const authHeader = (request.headers.get('authorization') || '').trim();
+  const bearerToken = authHeader.replace(/^Bearer\s+/i, '').trim().replace(/^["']|["']$/g, '');
+  const xCronSecret = (request.headers.get('x-cron-secret') || '').trim().replace(/^["']|["']$/g, '');
+
+  const url = new URL(request.url);
+  const queryKey = (url.searchParams.get('key') || '').trim().replace(/^["']|["']$/g, '');
+
+  const provided = bearerToken || xCronSecret || queryKey;
+  if (!provided) {
+    return {
+      authorized: false,
+      reason: 'No token provided in Authorization header, x-cron-secret, or ?key= param.',
+    };
+  }
+
+  if (bearerToken === envSecret || xCronSecret === envSecret || queryKey === envSecret) {
+    return { authorized: true };
+  }
+
+  return {
+    authorized: false,
+    reason: `Token mismatch. Provided length: ${provided.length}, Expected server length: ${envSecret.length}`,
+  };
+}
+
+export function isAuthorized(request: Request): boolean {
+  return validateCronSecret(request).authorized;
 }
 
 export async function GET(request: Request) {
@@ -50,9 +72,14 @@ export async function POST(request: Request) {
 }
 
 export async function handleSweep(request: Request) {
-  if (!isAuthorized(request)) {
+  const auth = validateCronSecret(request);
+  if (!auth.authorized) {
     return NextResponse.json(
-      { success: false, error: 'Unauthorized: Invalid or missing CRON_SECRET.' },
+      {
+        success: false,
+        error: `Unauthorized: ${auth.reason}`,
+        reason: auth.reason,
+      },
       { status: 401, headers: { 'Cache-Control': 'no-store' } }
     );
   }
