@@ -84,7 +84,6 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     brand: 'FITCAMX / VIOFO',
     title: 'Integrated OEM-Fit 4K Dashcam',
     description: 'Factory-appearance dual dashcam replacing the rear-view mirror housing with no exposed dangling cords.',
-    asin: 'B09GFNZK3C',
     searchQuery: 'FITCAMX 4K dash cam Toyota RAV4 2019-2026',
     bullets: [
       'Plug-and-play harness taps TSS 2.5/3.0 mirror socket',
@@ -162,8 +161,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     brand: 'TuxMat / 3D MAXpider',
     title: '3-Row All-Weather High-Wall Floor Liners',
     description: 'Complete 3-row laser-scanned floor liners engineered specifically for Sienna Super-Long Slide seats.',
-    asin: 'B0CFV5R8QM',
-    searchQuery: 'Toyota Sienna all weather floor mats 2021-2026',
+    searchQuery: 'Toyota Sienna 2021-2026 all weather floor mats liners 7 8 passenger',
     bullets: [
       'Full 1st, 2nd, and 3rd row coverage with seat-track clearance',
       'Shields against juice spills, winter salt crust, and gravel',

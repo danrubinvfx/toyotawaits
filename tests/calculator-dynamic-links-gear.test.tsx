@@ -64,7 +64,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     });
   });
 
-  it('displays curated accessories for Sienna including 3-row high-wall liners (ASIN B0CFV5R8QM) and hitch', () => {
+  it('displays curated accessories for Sienna including 3-row high-wall liners and hitch', () => {
     render(
       <MarketProvider initialMarket="CA">
         <CalculatorGearCards activeModel="sienna" />
@@ -77,7 +77,8 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
 
     // Verify Sienna floor liners link strictly uses Sienna ASIN B0CFV5R8QM and never mentions RAV4
     const siennaLinerLink = screen.getByRole('link', { name: /View 3-Row Liners/i });
-    expect(siennaLinerLink.getAttribute('href')).toContain('B0CFV5R8QM');
+    expect(siennaLinerLink.getAttribute('href')).toContain('Sienna');
+    expect(siennaLinerLink.getAttribute('href')).not.toContain('B0CFV5R8QM');
     expect(siennaLinerLink.getAttribute('href')).not.toContain('RAV4');
     expect(siennaLinerLink.getAttribute('href')).not.toContain('B0833DT93B');
   });
@@ -134,10 +135,10 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
   it('verifies GEAR_MARKET_CATALOG floor liner entries for Sienna and RAV4', () => {
     const siennaEntry = GEAR_MARKET_CATALOG['sienna-all-weather-liners'];
     expect(siennaEntry.title).toBe('3-Row All-Weather High-Wall Floor Liners');
-    expect(siennaEntry.asin_ca).toBe('B0CFV5R8QM');
-    expect(siennaEntry.asin_us).toBe('B0CFV5R8QM');
-    expect(siennaEntry.searchKeywordsCA).toBe('Toyota Sienna all weather floor mats 2021-2026');
-    expect(siennaEntry.searchKeywordsUS).toBe('Toyota Sienna all weather floor mats 2021-2026');
+    expect(siennaEntry.asin_ca).toBeUndefined();
+    expect(siennaEntry.asin_us).toBeUndefined();
+    expect(siennaEntry.searchKeywordsCA).toBe('Toyota Sienna 2021-2026 all weather floor mats liners 7 8 passenger');
+    expect(siennaEntry.searchKeywordsUS).toBe('Toyota Sienna 2021-2026 all weather floor mats liners 7 8 passenger');
 
     const rav4Entry = GEAR_MARKET_CATALOG['high-wall-floor-liners-rav4'];
     expect(rav4Entry.asin_ca).toBeUndefined();

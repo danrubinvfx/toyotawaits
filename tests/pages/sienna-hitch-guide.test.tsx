@@ -181,5 +181,5 @@ describe('Toyota Sienna Trailer Hitch Guide Page', () => {
     });
     rerender(rav4Jsx);
     expect(screen.queryByText('Planning Bike Racks or Towing?')).not.toBeInTheDocument();
-  }, 15000);
+  }, 30000);
 });

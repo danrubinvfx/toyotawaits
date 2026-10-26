@@ -131,33 +131,34 @@ async function runAudit() {
 
   console.table(records);
 
-  const criticalFailures = records.filter(
-    (r) =>
-      r.issue.startsWith('CRITICAL') ||
-      r.issue.startsWith('WRONG/MISSING') ||
-      (r.source === 'fallback_dict' && r.issue !== 'OK' && r.status !== 503) ||
-      (r.slug.includes('tacoma-recovery-tow-strap') && r.issue !== 'OK' && r.status !== 503) ||
-      (!r.url.includes('/dp/') && r.issue !== 'OK' && r.status !== 503)
-  );
-
   const unmigratedAsins = records.filter(
-    (r) => r.issue === 'DEAD_ASIN_404' && r.url.includes('/dp/') && !r.slug.includes('tacoma-recovery-tow-strap')
+    (r) => r.issue === 'DEAD_ASIN_404' && r.url.includes('/dp/')
   );
 
   if (unmigratedAsins.length > 0) {
     console.warn(
-      `\n⚠️  Discovered ${unmigratedAsins.length} unmigrated legacy catalog ASINs returning Amazon 404 (deferred to follow-up migration):`
+      `\n⚠️  Discovered ${unmigratedAsins.length} unmigrated legacy catalog ASINs returning Amazon 404:`
     );
     console.table(unmigratedAsins);
+  } else {
+    console.log(`\n✅ 0 unmigrated legacy ASIN 404 warnings.`);
   }
 
-  if (criticalFailures.length > 0) {
-    console.error(`\n❌ Found ${criticalFailures.length} critical problematic affiliate links.`);
-    console.table(criticalFailures);
+  const failures = records.filter(
+    (r) =>
+      r.issue.startsWith('CRITICAL') ||
+      r.issue.startsWith('WRONG/MISSING') ||
+      r.issue === 'DEAD_ASIN_404' ||
+      (r.issue !== 'OK' && r.status !== 503)
+  );
+
+  if (failures.length > 0) {
+    console.error(`\n❌ Found ${failures.length} problematic affiliate links.`);
+    console.table(failures);
     process.exit(1);
   } else {
     console.log(
-      `\n✅ Verified clean: 0 dead links on fallback dictionary, tow strap, and search fallback routes across CA and US markets.`
+      `\n✅ All ${records.length} links verified clean with zero 404s across CA and US markets.`
     );
     process.exit(0);
   }
