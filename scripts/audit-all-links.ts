@@ -1,5 +1,9 @@
+import fs from 'fs';
+import path from 'path';
 import { FALLBACK_AFFILIATES } from '../src/lib/db/affiliates';
 import { GEAR_MARKET_CATALOG } from '../src/data/gear/catalog';
+import { ALL_CALCULATOR_PRODUCTS } from '../src/components/gear/CalculatorGearCards';
+import { AFFILIATE_LINKS } from '../src/lib/affiliate';
 import { buildAmazonAffiliateUrl } from '../src/lib/gear/affiliate';
 
 interface AuditRecord {
@@ -16,23 +20,55 @@ interface TargetItem {
   url: string;
 }
 
+function extractAmazonUrlsFromDirectory(dirPath: string): TargetItem[] {
+  const items: TargetItem[] = [];
+  if (!fs.existsSync(dirPath)) return items;
+
+  function crawl(currentDir: string) {
+    const entries = fs.readdirSync(currentDir, { withFileTypes: true });
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        crawl(fullPath);
+      } else if (/\.(tsx?|jsx?|json|md)$/.test(entry.name)) {
+        const content = fs.readFileSync(fullPath, 'utf8');
+        // Match string literals containing Amazon URLs
+        const regex = /https?:\/\/(?:www\.)?amazon\.[a-z.]+[^\s"'`<>)]+/gi;
+        let match: RegExpExecArray | null;
+        while ((match = regex.exec(content)) !== null) {
+          const rawUrl = match[0].replace(/[;,]+$/, '');
+          const relativeFile = path.relative(process.cwd(), fullPath).replace(/\\/g, '/');
+          items.push({
+            source: `static:${relativeFile}`,
+            slug: path.basename(fullPath),
+            url: rawUrl,
+          });
+        }
+      }
+    }
+  }
+
+  crawl(dirPath);
+  return items;
+}
+
 async function runAudit() {
-  console.log('Auditing toyotawaits links and affiliate endpoints across catalog and fallback dictionary...\n');
+  console.log('Auditing toyotawaits links and affiliate endpoints across catalog, calculator cards, guides, and static data...\n');
   const records: AuditRecord[] = [];
   const targetItems: TargetItem[] = [];
   const seenUrls = new Set<string>();
 
-  // 1. Gather URLs from the static fallback dictionary
+  function registerUrl(source: string, slug: string, url?: string) {
+    if (!url) return;
+    const cleanUrl = url.trim();
+    if (!cleanUrl || seenUrls.has(cleanUrl)) return;
+    seenUrls.add(cleanUrl);
+    targetItems.push({ source, slug, url: cleanUrl });
+  }
+
+  // 1. Gather URLs from the static fallback dictionary (src/lib/affiliates.ts / src/lib/db/affiliates.ts)
   for (const [slug, record] of Object.entries(FALLBACK_AFFILIATES)) {
-    const url = record.destinationUrl;
-    if (url && !seenUrls.has(url)) {
-      seenUrls.add(url);
-      targetItems.push({
-        source: 'fallback_dict',
-        slug,
-        url,
-      });
-    }
+    registerUrl('fallback_dict', slug, record.destinationUrl);
   }
 
   // 2. Gather URLs from src/data/gear/catalog.ts across CA and US markets
@@ -42,31 +78,48 @@ async function runAudit() {
       searchQuery: config.searchKeywordsCA || config.searchQuery || config.title,
       market: 'CA',
     });
-    if (caUrl && !seenUrls.has(caUrl)) {
-      seenUrls.add(caUrl);
-      targetItems.push({
-        source: 'catalog_ca',
-        slug: `${slug} (CA)`,
-        url: caUrl,
-      });
-    }
+    registerUrl('catalog_ca', `${slug} (CA)`, caUrl);
 
     const usUrl = buildAmazonAffiliateUrl({
       asin: config.asin_us || config.asin,
       searchQuery: config.searchKeywordsUS || config.searchQuery || config.title,
       market: 'US',
     });
-    if (usUrl && !seenUrls.has(usUrl)) {
-      seenUrls.add(usUrl);
-      targetItems.push({
-        source: 'catalog_us',
-        slug: `${slug} (US)`,
-        url: usUrl,
-      });
+    registerUrl('catalog_us', `${slug} (US)`, usUrl);
+  }
+
+  // 3. Gather URLs from Calculator Cards (src/components/gear/CalculatorGearCards.tsx)
+  for (const product of ALL_CALCULATOR_PRODUCTS) {
+    const caUrl = buildAmazonAffiliateUrl({
+      asin: product.asin,
+      searchQuery: product.searchQuery || product.title,
+      market: 'CA',
+    });
+    registerUrl('calculator_ca', `${product.id} (CA)`, caUrl);
+
+    const usUrl = buildAmazonAffiliateUrl({
+      asin: product.asin,
+      searchQuery: product.searchQuery || product.title,
+      market: 'US',
+    });
+    registerUrl('calculator_us', `${product.id} (US)`, usUrl);
+  }
+
+  // 4. Gather URLs from AFFILIATE_LINKS in src/lib/affiliate.ts
+  for (const [key, link] of Object.entries(AFFILIATE_LINKS)) {
+    if (typeof link === 'string' && link.includes('amazon.')) {
+      registerUrl('affiliate_links_const', key, link);
     }
   }
 
-  console.log(`Discovered ${targetItems.length} unique URLs to audit.`);
+  // 5. Crawl all static links in src/app/guides/
+  const guideDir = path.resolve(process.cwd(), 'src/app/guides');
+  const guideItems = extractAmazonUrlsFromDirectory(guideDir);
+  for (const item of guideItems) {
+    registerUrl(item.source, item.slug, item.url);
+  }
+
+  console.log(`Discovered ${targetItems.length} unique Amazon affiliate URLs to audit across the repository.`);
 
   // Concurrently audit in batches of 10 for fast, non-blocking CI execution
   const BATCH_SIZE = 10;
@@ -123,7 +176,7 @@ async function runAudit() {
           }
         }
 
-        return { source, slug, url: url.slice(0, 60) + '...', status, issue };
+        return { source, slug, url: url.slice(0, 65) + '...', status, issue };
       })
     );
     records.push(...batchResults);

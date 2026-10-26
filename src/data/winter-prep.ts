@@ -90,7 +90,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Delivers the 12V auxiliary surge needed to close hybrid starter relays. Operating range: -20°C to +50°C (device temperature, not outdoor air) — store indoors in extreme cold. Follow your vehicle owner\'s manual and the NOCO manual for the correct 12V jump procedure.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -171,7 +171,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Ensures reliable 12V auxiliary power to trip starter relays across large 3-row hybrid architectures in deep sub-zero conditions.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -251,7 +251,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Compact glove box lithium starter that wakes up hybrid power computers even when power sliding doors and hatch latches freeze.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -331,7 +331,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Delivers instantaneous 12V power to boot the vehicle hybrid control ECUs and contactor relays during extreme Canadian cold snaps.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -411,7 +411,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Safely overcomes the 10.5V contactor voltage threshold to energize hybrid relays in freezing sub-zero weather.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -492,7 +492,7 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Heavy-duty lithium jump starter designed for truck powertrains and sub-zero trail rescues.',
-        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
+        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
         badge: 'Essential',
       },
     },

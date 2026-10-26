@@ -5,6 +5,7 @@
  */
 
 export const DEFAULT_AMAZON_AFFILIATE_TAG = 'toyotawaits-20';
+export const DEFAULT_AMAZON_US_AFFILIATE_TAG = 'toyotawaits07-20';
 
 export interface AffiliateParams {
   query?: string;
@@ -20,7 +21,7 @@ export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateP
   const isUS = market === 'US';
   const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
   const tag = isUS
-    ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20')
+    ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20')
     : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
 
   const cleanAsin = asin?.trim().toUpperCase();
@@ -53,7 +54,7 @@ export function buildAmazonAffiliateUrl(
     const tag =
       tagOrMarket ||
       (isUS
-        ? process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits-20'
+        ? process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20'
         : process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
     return `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
   }
@@ -72,25 +73,25 @@ export const AFFILIATE_LINKS = {
     'https://torkliftcentral.com/catalogsearch/result/?q=sienna',
   AMAZON_CURT_HITCH:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_CURT_HITCH ||
-    'https://www.amazon.com/dp/B0BJ5928HS',
+    'https://www.amazon.com/dp/B0BJ5928HS?tag=toyotawaits07-20',
   AMAZON_CURT_HITCH_SEARCH:
-    'https://www.amazon.com/s?k=Curt+13470+Sienna',
+    'https://www.amazon.com/s?k=Curt+13470+Sienna&tag=toyotawaits07-20',
   AMAZON_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_AMAZON_WIRING ||
-    'https://www.amazon.com/s?k=CURT+56456',
+    'https://www.amazon.com/s?k=CURT+56456&tag=toyotawaits07-20',
   TEKONSHA_WIRING:
     process.env.NEXT_PUBLIC_AFFILIATE_TEKONSHA_WIRING ||
-    'https://www.amazon.com/s?k=Tekonsha+118844',
+    'https://www.amazon.com/s?k=Tekonsha+118844&tag=toyotawaits07-20',
   BALL_MOUNT:
     process.env.NEXT_PUBLIC_AFFILIATE_BALL_MOUNT ||
-    'https://www.amazon.com/s?k=Curt+45036+Class+3+Ball+Mount+2-Inch+Rise',
+    'https://www.amazon.com/s?k=Curt+45036+Class+3+Ball+Mount+2-Inch+Rise&tag=toyotawaits07-20',
   ANTI_RATTLE_CLAMP:
     process.env.NEXT_PUBLIC_AFFILIATE_ANTI_RATTLE ||
-    'https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener',
+    'https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener&tag=toyotawaits07-20',
   AIR_LIFT_1000:
     process.env.NEXT_PUBLIC_AFFILIATE_AIR_LIFT ||
-    'https://www.amazon.com/s?k=Air+Lift+60858',
+    'https://www.amazon.com/s?k=Air+Lift+60858&tag=toyotawaits07-20',
   BRAKE_CONTROLLER:
     process.env.NEXT_PUBLIC_AFFILIATE_BRAKE_CONTROLLER ||
-    'https://www.amazon.com/s?k=CURT+51180+Echo+Mobile+Electric+Trailer+Brake+Controller',
+    'https://www.amazon.com/s?k=CURT+51180+Echo+Mobile+Electric+Trailer+Brake+Controller&tag=toyotawaits07-20',
 } as const;

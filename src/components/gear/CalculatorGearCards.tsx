@@ -43,7 +43,6 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
     brand: 'AstroAI',
     title: 'Portable Digital 120 PSI Auto-Shutoff Tire Inflator',
     description: 'Ultra-fast handheld 12V DC compressor with digital gauge to prevent cold-weather pressure drops.',
-    asin: 'B07XZCL5F2',
     searchQuery: 'AstroAI portable tire inflator air compressor 12V',
     bullets: [
       'Accurate auto-shutoff presets prevent over-inflation',
@@ -62,7 +61,6 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
     brand: 'CarlinKit 5.0 2Air',
     title: 'Plug-and-Play Wireless CarPlay & Android Auto Adapter',
     description: 'Eliminate tangled cables with seamless 5.8GHz automatic Bluetooth and Wi-Fi phone connection.',
-    asin: 'B0B19D12P6',
     searchQuery: 'CarlinKit 5.0 2Air wireless CarPlay Android Auto adapter',
     bullets: [
       'Converts OEM factory wired CarPlay/Auto to wireless',
@@ -120,7 +118,6 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     brand: 'Spigen / Muslogy',
     title: 'Matte Anti-Glare Infotainment Screen Protector',
     description: 'Essential 9H oleophobic tempered glass to eliminate fingerprint smudges and harsh sunlight glare.',
-    asin: 'B0D8XQ99P3',
     searchQuery: 'Spigen matte screen protector Toyota RAV4',
     bullets: [
       '9H hardness matte oleophobic glass kills fingerprints & glare',
@@ -139,7 +136,6 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     brand: 'Muslogy / EDBETOS',
     title: 'Center Console Armrest Organizer Tray',
     description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
-    asin: 'B08Q37151M',
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
     bullets: [
       'Drop-in multi-tier center console armrest divider tray',
@@ -179,7 +175,6 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     brand: 'Vehicle OCD / Muslogy',
     title: 'Center Console Sliding Organizer & Bridge Box',
     description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
-    asin: 'B095K28114',
     searchQuery: 'Toyota Sienna 2021-2026 center console bridge organizer tray',
     bullets: [
       'Smooth-sliding top tray for sunglasses, toll passes, and pens',
@@ -198,7 +193,6 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     brand: 'JoyTutus / Powerty',
     title: 'Rear Seatback & Kick Mat Protectors',
     description: 'Durable anti-scuff backrest protectors shielding 2nd and 3rd row seatbacks from kids and cargo.',
-    asin: 'B09F5X976B',
     searchQuery: 'Toyota Sienna seat back protectors kick mats',
     bullets: [
       'Tough waterproof TPE shields fabric and SofTex leather',
@@ -217,7 +211,6 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     brand: 'Curt 13470 / EcoHitch',
     title: 'Class III 2-Inch Trailer Hitch Receiver',
     description: 'Heavy-duty 3,500 lb rated hitch engineered for Sienna hybrid bumper clearance and bike racks.',
-    asin: 'B08R5R21L4',
     searchQuery: 'Curt 13470 Toyota Sienna trailer hitch receiver class 3',
     bullets: [
       'Standard 2" receiver tube for bike racks and cargo baskets',
@@ -239,7 +232,6 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     brand: 'Spigen / YEE PIN',
     title: '12.3" Matte Anti-Glare Infotainment Glass',
     description: 'Ultra-thin 9H tempered glass custom cut for the expansive 12.3" Grand Highlander center screen.',
-    asin: 'B0CF8N1Y6N',
     searchQuery: 'Toyota Grand Highlander 12.3 screen protector tempered glass',
     bullets: [
       'Matte finish eliminates reflective dashboard glare and haze',
@@ -258,7 +250,6 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     brand: 'Powerty / TuxMat',
     title: 'High-Wall 3-Row Cargo & Seatback Liner',
     description: 'Full-coverage trunk tub liner that covers trunk floor and fold-flat 3rd row seatbacks.',
-    asin: 'B0CJ97SZ8N',
     searchQuery: 'Toyota Grand Highlander 3 row cargo liner trunk mat',
     bullets: [
       'Protects trunk and folding 3rd-row seats from muddy gear',
@@ -277,7 +268,6 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     brand: 'FITCAMX',
     title: 'Integrated OEM-Fit 4K Dashcam (TSS 3.0)',
     description: 'Factory-style front dashcam replacing the TSS 3.0 sensor housing without trailing wires.',
-    asin: 'B0CKZ9Z72Z',
     searchQuery: 'FITCAMX 4K dash cam Toyota Grand Highlander TSS 3.0',
     bullets: [
       'TSS 3.0 mirror housing replacement looks completely stock',
@@ -296,7 +286,6 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     brand: 'Vehicle OCD',
     title: 'Center Console Dual-Tier Divider Tray',
     description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
-    asin: 'B0CL3N26D6',
     searchQuery: 'Toyota Grand Highlander center console organizer tray divider',
     bullets: [
       'Organizes phones, wallet, sunglasses, keys, and coins',
@@ -318,7 +307,6 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     brand: 'Spigen / YEE PIN',
     title: 'Anti-Glare 12.3" Tempered Glass Screen Protector',
     description: 'Ultra-clear 9H hardness tempered glass custom made for the updated Camry widescreen display.',
-    asin: 'B0CZS7RRLP',
     searchQuery: 'Toyota Camry 12.3 inch screen protector tempered glass',
     bullets: [
       '9H tempered hardness prevents keys and ring scratches',
@@ -337,7 +325,6 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     brand: 'EDBETOS',
     title: 'Center Console Organizer & Armrest Tray',
     description: 'Custom-molded tray maximizing storage utility in the Camry center armrest console.',
-    asin: 'B095K17NZK',
     searchQuery: 'Toyota Camry center console organizer tray',
     bullets: [
       'Transforms messy deep compartment into neat dual tiers',
@@ -356,7 +343,6 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     brand: 'TuxMat / WeatherTech',
     title: 'All-Weather Custom TPE Floor Mats',
     description: 'Heavy-duty laser-fit floor mats protecting front and rear footwells from Canadian road salt.',
-    asin: 'B07H4W528J',
     searchQuery: 'Toyota Camry all weather floor mats TPE',
     bullets: [
       'Deep raised edges trap snow, melted slush, and mud',
@@ -375,7 +361,6 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     brand: 'Anker / Baseus',
     title: 'Dual-Port 65W USB-C Fast Car Charger',
     description: 'Compact metal 12V adapter with 65W Power Delivery to rapidly charge laptops and phones.',
-    asin: 'B071WYF9HP',
     searchQuery: 'Anker 65W fast USB-C PD car charger',
     bullets: [
       'Dual USB-C and USB-A high-speed fast charging',
@@ -397,7 +382,6 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     brand: 'Spigen',
     title: 'Anti-Glare 12.3" Infotainment Screen Protector',
     description: 'Premium tempered glass engineered for the 5th-gen Prius center multimedia display.',
-    asin: 'B0BWRR4PGL',
     searchQuery: 'Spigen Toyota Prius 12.3 inch screen protector',
     bullets: [
       'Matte anti-glare finish cuts harsh sun reflections on highway',
@@ -434,7 +418,6 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     brand: '3D MAXpider / TuxMat',
     title: 'All-Weather Heavy-Duty TPE Liners',
     description: 'Laser-measured floor protection customized for the Prius hybrid cabin layout.',
-    asin: 'B0BYW28N85',
     searchQuery: 'Toyota Prius 2023-2026 all weather floor mats TPE',
     bullets: [
       'High-wall tub design stops liquid spillover onto carpet',
@@ -453,7 +436,6 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     brand: 'CarlinKit 5.0 2Air',
     title: 'Plug-and-Play Wireless CarPlay & Auto Adapter',
     description: 'Converts factory wired smartphone connection to immediate 5.8GHz wireless syncing.',
-    asin: 'B0B19D12P6',
     searchQuery: 'CarlinKit 5.0 2Air wireless CarPlay adapter',
     bullets: [
       'Instant wireless connection when you start your Prius',
@@ -474,7 +456,6 @@ const PHEV_EVSE_CHARGER: VettedProduct = {
   brand: 'Grizzl-E Classic 40A / Emporia',
   title: 'Level 2 Home EVSE 40A Fast Charger',
   description: 'Heavy-duty 40A / 9.6 kW fast charger to fully recharge your Toyota PHEV in under 2.5 hours.',
-  asin: 'B082LMVSLY',
   searchQuery: 'Grizzl-E Classic 40A Level 2 EVSE home charger NEMA 14-50',
   bullets: [
     'NEMA 14-50 plug or hardwire capable with flexible 24ft cable',
@@ -502,6 +483,16 @@ const MODEL_CATALOG: Record<string, VettedProduct[]> = {
   'prius-hybrid': PRIUS_PRODUCTS,
   'prius-prime': PRIUS_PRODUCTS,
 };
+
+export const ALL_CALCULATOR_PRODUCTS: VettedProduct[] = [
+  ...UNIVERSAL_FALLBACKS,
+  ...RAV4_PRODUCTS,
+  ...SIENNA_PRODUCTS,
+  ...GRAND_HIGHLANDER_PRODUCTS,
+  ...CAMRY_PRODUCTS,
+  ...PRIUS_PRODUCTS,
+  PHEV_EVSE_CHARGER,
+];
 
 export interface CalculatorGearCardsProps {
   className?: string;
@@ -653,7 +644,7 @@ export function CalculatorGearCards({
                     <a
                       href={affiliateUrl}
                       target="_blank"
-                      rel="sponsored noopener noreferrer"
+                      rel="sponsored noopener noreferrer nofollow"
                       className="hover:text-red-600 dark:hover:text-red-400 transition-colors"
                     >
                       {prod.title}
@@ -682,7 +673,7 @@ export function CalculatorGearCards({
                     <a
                       href={affiliateUrl}
                       target="_blank"
-                      rel="sponsored noopener noreferrer"
+                      rel="sponsored noopener noreferrer nofollow"
                     >
                       <span>{prod.buttonText}</span>
                       <ExternalLink className="w-3 h-3 opacity-60" />

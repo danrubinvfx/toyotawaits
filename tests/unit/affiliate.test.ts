@@ -3,6 +3,7 @@ import {
   getAmazonAffiliateUrl,
   buildAmazonAffiliateUrl,
   DEFAULT_AMAZON_AFFILIATE_TAG,
+  DEFAULT_AMAZON_US_AFFILIATE_TAG,
   AFFILIATE_LINKS,
 } from '@/lib/affiliate';
 
@@ -27,7 +28,7 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
 
     it('routes to US market (amazon.com) when market is US', () => {
       const url = getAmazonAffiliateUrl({ query: 'NOCO GB40', market: 'US' });
-      expect(url).toBe('https://www.amazon.com/s?k=NOCO%20GB40&tag=toyotawaits-20');
+      expect(url).toBe('https://www.amazon.com/s?k=NOCO%20GB40&tag=toyotawaits07-20');
     });
 
     it('builds direct ASIN product links', () => {
@@ -35,7 +36,7 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
       expect(caUrl).toBe('https://www.amazon.ca/dp/B09GLVMB76?tag=toyotawaits-20');
 
       const usUrl = getAmazonAffiliateUrl({ asin: 'B09GLVMB76', market: 'US' });
-      expect(usUrl).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+      expect(usUrl).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits07-20');
     });
 
     it('properly encodes special characters in queries', () => {
@@ -64,7 +65,7 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
 
     it('returns root store with affiliate tag when query and asin are omitted', () => {
       expect(getAmazonAffiliateUrl({ market: 'CA' })).toBe('https://www.amazon.ca/?tag=toyotawaits-20');
-      expect(getAmazonAffiliateUrl({ market: 'US' })).toBe('https://www.amazon.com/?tag=toyotawaits-20');
+      expect(getAmazonAffiliateUrl({ market: 'US' })).toBe('https://www.amazon.com/?tag=toyotawaits07-20');
     });
   });
 
@@ -76,7 +77,7 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
 
     it('supports string query with market passed as second argument', () => {
       const url = buildAmazonAffiliateUrl('FitcamX RAV4', 'US');
-      expect(url).toBe('https://www.amazon.com/s?k=FitcamX%20RAV4&tag=toyotawaits-20');
+      expect(url).toBe('https://www.amazon.com/s?k=FitcamX%20RAV4&tag=toyotawaits07-20');
     });
 
     it('supports string query with custom tag string', () => {
@@ -86,13 +87,17 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
 
     it('supports AffiliateParams object parameter', () => {
       const url = buildAmazonAffiliateUrl({ asin: 'B09GLVMB76', market: 'US' });
-      expect(url).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits-20');
+      expect(url).toBe('https://www.amazon.com/dp/B09GLVMB76?tag=toyotawaits07-20');
     });
   });
 
   describe('DEFAULT_AMAZON_AFFILIATE_TAG', () => {
     it('exports default associate tag', () => {
       expect(DEFAULT_AMAZON_AFFILIATE_TAG).toBe('toyotawaits-20');
+    });
+
+    it('exports default US associate tag', () => {
+      expect(DEFAULT_AMAZON_US_AFFILIATE_TAG).toBe('toyotawaits07-20');
     });
   });
 
@@ -101,11 +106,11 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
       expect(AFFILIATE_LINKS.TORKLIFT).toBe(
         'https://torkliftcentral.com/2021-2027-toyota-sienna-featured-stainless-steel-rust-free-trailer-hitch-receiver'
       );
-      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toBe('https://www.amazon.com/dp/B0BJ5928HS');
-      expect(AFFILIATE_LINKS.AMAZON_WIRING).toBe('https://www.amazon.com/s?k=CURT+56456');
-      expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toBe('https://www.amazon.com/s?k=Tekonsha+118844');
-      expect(AFFILIATE_LINKS.ANTI_RATTLE_CLAMP).toBe('https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener');
-      expect(AFFILIATE_LINKS.AIR_LIFT_1000).toBe('https://www.amazon.com/s?k=Air+Lift+60858');
+      expect(AFFILIATE_LINKS.AMAZON_CURT_HITCH).toBe('https://www.amazon.com/dp/B0BJ5928HS?tag=toyotawaits07-20');
+      expect(AFFILIATE_LINKS.AMAZON_WIRING).toBe('https://www.amazon.com/s?k=CURT+56456&tag=toyotawaits07-20');
+      expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toBe('https://www.amazon.com/s?k=Tekonsha+118844&tag=toyotawaits07-20');
+      expect(AFFILIATE_LINKS.ANTI_RATTLE_CLAMP).toBe('https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener&tag=toyotawaits07-20');
+      expect(AFFILIATE_LINKS.AIR_LIFT_1000).toBe('https://www.amazon.com/s?k=Air+Lift+60858&tag=toyotawaits07-20');
     });
   });
 });

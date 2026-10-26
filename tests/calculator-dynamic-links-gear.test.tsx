@@ -40,7 +40,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
       const href = link.getAttribute('href');
       expect(href).toContain('amazon.ca');
       expect(href).toContain('tag=toyotawaits-20');
-      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer');
+      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
       expect(link.getAttribute('target')).toBe('_blank');
     });
   });
@@ -59,7 +59,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
       const href = link.getAttribute('href');
       expect(href).toContain('amazon.com');
       expect(href).toContain('tag=toyotawaits07-20');
-      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer');
+      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
       expect(link.getAttribute('target')).toBe('_blank');
     });
   });

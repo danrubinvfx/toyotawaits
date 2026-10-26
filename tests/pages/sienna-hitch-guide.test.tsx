@@ -122,7 +122,7 @@ describe('Toyota Sienna Trailer Hitch Guide Page', () => {
       name: /Check Curt 13470 on Amazon/i,
     });
     expect(curtLink).toHaveAttribute('href', AFFILIATE_LINKS.AMAZON_CURT_HITCH);
-    expect(curtLink).toHaveAttribute('href', 'https://www.amazon.com/dp/B0BJ5928HS');
+    expect(curtLink).toHaveAttribute('href', 'https://www.amazon.com/dp/B0BJ5928HS?tag=toyotawaits07-20');
     expect(curtLink).toHaveAttribute('rel', 'noopener noreferrer nofollow sponsored');
     expect(curtLink).toHaveAttribute('target', '_blank');
 
@@ -130,14 +130,14 @@ describe('Toyota Sienna Trailer Hitch Guide Page', () => {
       name: /View Curt 56456 Harness/i,
     });
     expect(wiringLink).toHaveAttribute('href', AFFILIATE_LINKS.AMAZON_WIRING);
-    expect(wiringLink).toHaveAttribute('href', 'https://www.amazon.com/s?k=CURT+56456');
+    expect(wiringLink).toHaveAttribute('href', 'https://www.amazon.com/s?k=CURT+56456&tag=toyotawaits07-20');
     expect(wiringLink).toHaveAttribute('rel', 'noopener noreferrer nofollow sponsored');
 
     const tekonshaLink = screen.getByRole('link', {
       name: /View Tekonsha 118844 Harness/i,
     });
     expect(tekonshaLink).toHaveAttribute('href', AFFILIATE_LINKS.TEKONSHA_WIRING);
-    expect(tekonshaLink).toHaveAttribute('href', 'https://www.amazon.com/s?k=Tekonsha+118844');
+    expect(tekonshaLink).toHaveAttribute('href', 'https://www.amazon.com/s?k=Tekonsha+118844&tag=toyotawaits07-20');
     expect(tekonshaLink).toHaveAttribute('rel', 'noopener noreferrer nofollow sponsored');
   });
 
