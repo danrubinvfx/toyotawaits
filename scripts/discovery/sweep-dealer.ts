@@ -13,8 +13,6 @@
  *   npm run sweep:dealer -- --help
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
 import {
   detectAndTransitionSoldUnits,
   dispatchPendingAlerts,
@@ -66,9 +64,36 @@ export interface SweepRunSummary {
   durationMs: number;
 }
 
-export async function runSweep(): Promise<SweepRunSummary> {
-  loadEnv();
+function printHelp() {
+  console.log(`
+ToyotaWaits.ca Dealer Inventory Sweep Runner
+============================================
+Automated polite sweep runner for Canadian Toyota dealer public inventory.
 
+Usage:
+  npx tsx scripts/discovery/sweep-dealer.ts [options]
+  npm run sweep:dealer -- [options]
+  npm run sweep:all
+
+Options:
+  --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
+                             Supported: jptoyota-downtown, jptoyota-surrey, westcoast-toyota, regency-toyota, openroad-toyota-richmond, all
+  --all                      Sweep all registered active pilot dealers sequentially
+  --dry-run                  Execute sweep, parse and validate without persisting to Supabase
+  --fixture                  Use local offline fixture instead of fetching live endpoint
+  --help, -h                 Show this help screen and exit
+
+Operating Safeguards:
+  - User-Agent disclosure: ${USER_AGENT_AUDITOR}
+  - Polite Cooldown: ${POLITE_DEALER_COOLDOWN_MS}ms between distinct dealership requests
+  - Request timeout: ${DEFAULT_TIMEOUT_MS}ms
+  - Retries: Up to ${MAX_RETRIES} attempts with exponential backoff on transient errors
+  - Circuit Breaker: Immediate exit on HTTP 429 rate-limiting
+  - Staleness Protection: Enforces 2-sweep confirmation before marking vehicles stale
+`);
+}
+
+export async function runSweep(): Promise<SweepRunSummary> {
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
