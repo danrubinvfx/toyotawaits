@@ -16,9 +16,15 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const maxDuration = 60;
 
-export function isAuthorized(request: NextRequest): boolean {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
+export function isAuthorized(request: Request): boolean {
+  const authHeader = request.headers.get('authorization') || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
+  const cronSecretHeader = request.headers.get('x-cron-secret')?.trim();
+  const url = new URL(request.url);
+  const queryKey = url.searchParams.get('key')?.trim();
+  const expectedSecret = process.env.CRON_SECRET?.trim();
+
+  if (!expectedSecret) {
     if (process.env.NODE_ENV === 'production') {
       console.error('[CRON /api/cron/sweep] CRON_SECRET is not configured in production environment.');
       return false;
@@ -27,34 +33,23 @@ export function isAuthorized(request: NextRequest): boolean {
     return true;
   }
 
-  const authHeader = request.headers.get('authorization');
-  if (authHeader && authHeader === `Bearer ${cronSecret}`) {
-    return true;
-  }
-
-  const cronSecretHeader = request.headers.get('x-cron-secret');
-  if (cronSecretHeader && cronSecretHeader === cronSecret) {
-    return true;
-  }
-
-  const url = new URL(request.url);
-  const keyParam = url.searchParams.get('key');
-  if (keyParam && keyParam === cronSecret) {
-    return true;
-  }
-
-  return false;
+  return Boolean(
+    expectedSecret &&
+      (token === expectedSecret ||
+        queryKey === expectedSecret ||
+        cronSecretHeader === expectedSecret)
+  );
 }
 
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   return handleSweep(request);
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   return handleSweep(request);
 }
 
-export async function handleSweep(request: NextRequest) {
+export async function handleSweep(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json(
       { success: false, error: 'Unauthorized: Invalid or missing CRON_SECRET.' },

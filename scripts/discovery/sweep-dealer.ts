@@ -37,6 +37,7 @@ import {
 } from '../../lib/discovery/dealers';
 
 export {
+  loadEnv,
   dispatchPendingAlerts,
   detectAndTransitionSoldUnits,
   USER_AGENT_AUDITOR,
@@ -93,7 +94,59 @@ Operating Safeguards:
 `);
 }
 
+/**
+ * Safely load local environment in non-CI development if present.
+ * In CI (e.g. GitHub Actions runner), relies directly on process.env.NEXT_PUBLIC_SUPABASE_URL
+ * and process.env.SUPABASE_SERVICE_ROLE_KEY provided by the workflow environment.
+ */
+function loadEnv(): void {
+  if (process.env.CI === 'true') {
+    return;
+  }
+
+  // Attempt Node 20.6+ native loadEnvFile
+  const proc = process as unknown as { loadEnvFile?: (path?: string) => void };
+  if (typeof proc.loadEnvFile === 'function') {
+    try {
+      proc.loadEnvFile('.env.local');
+      return;
+    } catch {
+      // Fall through to manual parsing if file doesn't exist or errors
+    }
+  }
+
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    for (const f of ['.env.local', '.env']) {
+      const full = path.resolve(process.cwd(), f);
+      if (fs.existsSync(full)) {
+        const text = fs.readFileSync(full, 'utf-8');
+        for (const line of text.split(/\r?\n/)) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const idx = trimmed.indexOf('=');
+          if (idx !== -1) {
+            const k = trimmed.slice(0, idx).trim();
+            let v = trimmed.slice(idx + 1).trim();
+            if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+              v = v.slice(1, -1);
+            }
+            if (!process.env[k]) {
+              process.env[k] = v;
+            }
+          }
+        }
+      }
+    }
+  } catch {
+    // Non-fatal if local env cannot be loaded
+  }
+}
+
 export async function runSweep(): Promise<SweepRunSummary> {
+  loadEnv();
+
   const args = process.argv.slice(2);
 
   if (args.includes('--help') || args.includes('-h')) {
