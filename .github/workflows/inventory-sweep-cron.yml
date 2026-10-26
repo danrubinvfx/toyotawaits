@@ -17,16 +17,29 @@ jobs:
 
     steps:
       - name: Trigger Remote Inventory Sweep
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
-          TARGET_URL="https://www.toyotawaits.ca/api/cron/check-alerts"
+          if [ -z "$CRON_SECRET" ]; then
+            echo "ERROR: CRON_SECRET is empty in GitHub Actions secrets!"
+            exit 1
+          fi
+
+          TARGET_URL="https://www.toyotawaits.ca/api/cron/check-alerts?key=${CRON_SECRET}"
           echo "Triggering $TARGET_URL..."
+
           HTTP_STATUS=$(curl -s -o /tmp/cron_response.json -w "%{http_code}" -X POST "$TARGET_URL" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            -H "x-cron-secret: ${CRON_SECRET}" \
             -H "Content-Type: application/json")
+
           echo "HTTP Status Code: $HTTP_STATUS"
           cat /tmp/cron_response.json || true
+          echo ""
+
           if [ "$HTTP_STATUS" -ne 200 ]; then
             echo "Sweep trigger failed with HTTP $HTTP_STATUS"
             exit 1
           fi
+
           echo "Sweep completed successfully."
