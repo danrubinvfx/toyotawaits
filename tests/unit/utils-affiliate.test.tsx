@@ -72,7 +72,7 @@ describe('GearCard CTA and Market Localization Behavior', () => {
     expect(buttonLink.getAttribute('rel')).toContain('noreferrer');
   });
 
-  it('renders "Search on Amazon ↗" when falling back to search query', () => {
+  it('renders "Search Amazon ↗" when falling back to search query', () => {
     const itemWithQueryOnly = {
       id: 'custom-search-item',
       slug: 'custom-search-item',
@@ -88,7 +88,7 @@ describe('GearCard CTA and Market Localization Behavior', () => {
       </MarketProvider>
     );
 
-    const buttonLink = screen.getByRole('link', { name: /Search on Amazon ↗/i });
+    const buttonLink = screen.getByRole('link', { name: /Search Amazon ↗/i });
     expect(buttonLink).toBeInTheDocument();
     expect(buttonLink.getAttribute('href')).toContain('/s?k=Custom%20Roof%20Rails%202026');
     expect(buttonLink.getAttribute('href')).toContain('tag=toyotawaits-20');

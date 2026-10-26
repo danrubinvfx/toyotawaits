@@ -37,22 +37,15 @@ export async function GET(
         try {
           const refererUrl = new URL(referer);
           if (refererUrl.origin === new URL(request.url).origin) {
-            return NextResponse.redirect(refererUrl, {
-              status: 302,
-            });
+            return NextResponse.redirect(refererUrl, 307);
           }
         } catch {
           // Ignore invalid referer URL and fallback
         }
       }
 
-      // 2. Safe proxy fallback: Redirect to /winter-prep if winter-related, else / (never throw notFound)
-      const isWinter =
-        validation.data.slug.includes('winter') ||
-        (referer && referer.toLowerCase().includes('winter'));
-      return NextResponse.redirect(new URL(isWinter ? '/winter-prep' : '/', request.url), {
-        status: 302,
-      });
+      // 2. Safe proxy fallback: Do NOT call notFound(). Safe redirect to /winter-prep
+      return NextResponse.redirect(new URL('/winter-prep', request.url), 307);
     }
 
     // Eliminate any Google Search wrapping on destination URL
@@ -114,8 +107,6 @@ export async function GET(
       throw error;
     }
     console.error('Error handling affiliate redirect:', error);
-    return NextResponse.redirect(new URL('/', request.url), {
-      status: 302,
-    });
+    return NextResponse.redirect(new URL('/winter-prep', request.url), 307);
   }
 }

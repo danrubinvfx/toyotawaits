@@ -18,14 +18,14 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
   });
 
-  it('redirects to / with 302 fallback when slug is unknown', async () => {
+  it('redirects safely to /winter-prep with 307 fallback when slug is unknown', async () => {
     const request = new NextRequest('http://localhost:3000/out/unknown-product-slug');
     const response = await GET(request, {
       params: Promise.resolve({ slug: 'unknown-product-slug' }),
     });
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe('http://localhost:3000/');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toBe('http://localhost:3000/winter-prep');
   });
 
   it('rejects malicious slug with directory traversal or uppercase characters with 400 Bad Request', async () => {

@@ -121,7 +121,7 @@ describe('ModCard Component', () => {
     expect(imageLink.getAttribute('href')).toContain('amazon.ca');
     expect(imageLink.getAttribute('href')).toContain('B09GLVMB76');
     expect(imageLink.getAttribute('target')).toBe('_blank');
-    expect(imageLink.getAttribute('rel')).toBe('noopener noreferrer nofollow');
+    expect(imageLink.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
     expect(imageLink).toHaveClass('cursor-pointer');
     expect(imageLink).toHaveClass('transition-opacity');
     expect(imageLink).toHaveClass('hover:opacity-90');
@@ -176,7 +176,7 @@ describe('ModCard Component', () => {
     render(<GearCard item={sampleItem} />);
     expect(screen.getByRole('link', { name: `View ${sampleItem.title} on Amazon` })).toBeInTheDocument();
   });
-  it('falls back to search query and "Search on Amazon ↗" button text when ASIN is missing or invalid', () => {
+  it('falls back to search query and "Search Amazon ↗" button text when ASIN is missing or invalid', () => {
     const itemWithInvalidAsin = {
       id: 'prod-fallback-search',
       slug: 'sample-search-item',
@@ -189,7 +189,7 @@ describe('ModCard Component', () => {
     render(<ModCard item={itemWithInvalidAsin} />);
 
     // Link must route to search query, NOT /dp/...
-    const buttonLink = screen.getByRole('link', { name: /Search on Amazon/i });
+    const buttonLink = screen.getByRole('link', { name: /Search Amazon ↗/i });
     expect(buttonLink).toBeInTheDocument();
     expect(buttonLink.getAttribute('href')).toBe('https://www.amazon.ca/s?k=TuxMat%20Toyota%20RAV4%202019-2026&tag=toyotawaits-20');
     expect(buttonLink.getAttribute('target')).toBe('_blank');

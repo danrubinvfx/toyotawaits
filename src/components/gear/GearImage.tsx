@@ -33,6 +33,7 @@ export interface GearImageProps {
   ariaLabel?: string;
   testId?: string;
   isChecked?: boolean;
+  rel?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
@@ -188,6 +189,7 @@ export function GearImage({
   ariaLabel,
   testId,
   isChecked = false,
+  rel = 'sponsored noopener noreferrer nofollow',
   onClick,
 }: GearImageProps) {
   const [hasError, setHasError] = useState(false);
@@ -202,7 +204,7 @@ export function GearImage({
     <a
       href={affiliateUrl}
       target="_blank"
-      rel="noopener noreferrer nofollow"
+      rel={rel}
       aria-label={ariaLabel || `View ${alt} on Amazon`}
       onClick={onClick}
       draggable={false}

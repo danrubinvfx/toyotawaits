@@ -216,7 +216,7 @@ export function sanitizeAmazonAffiliateUrl(
   return cleanUrl;
 }
 
-export interface BuildAmazonAffiliateUrlParams {
+export interface AffiliateParams {
   query?: string;
   searchQuery?: string;
   asin?: string;
@@ -227,38 +227,46 @@ export interface BuildAmazonAffiliateUrlParams {
   slug?: string;
 }
 
+export type BuildAmazonAffiliateUrlParams = AffiliateParams;
+
 /**
  * Builds standard Amazon affiliate URL with market domain and associate tag routing.
  * US: amazon.com with tag 'toyotawaits07-20'
- * CA: amazon.ca with tag 'toyotawaits-20' (or special tag for Prius guides)
+ * CA: amazon.ca with tag 'toyotawaits-20'
  */
 export function buildAmazonAffiliateUrl(
-  paramsOrQuery: BuildAmazonAffiliateUrlParams | string,
+  paramsOrQuery: AffiliateParams | string,
   tagOrMarket?: string,
   marketFallback: 'CA' | 'US' = 'CA'
 ): string {
   if (typeof paramsOrQuery === 'string') {
-    const isUs = tagOrMarket === 'US' || marketFallback === 'US';
-    const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
-    const tag = getAssociateTag(isUs ? 'US' : 'CA');
-    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
+    const isUS = tagOrMarket === 'US' || marketFallback === 'US';
+    const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+    const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
+    const cleanQuery = encodeURIComponent(paramsOrQuery.trim() || 'Toyota accessories');
+    return `${domain}/s?k=${cleanQuery}&tag=${tag}`;
   }
 
-  const isUs = paramsOrQuery.market === 'US' || paramsOrQuery.isUs === true;
-  const domain = isUs ? 'https://www.amazon.com' : 'https://www.amazon.ca';
-  const tag = getAssociateTag(isUs ? 'US' : 'CA', paramsOrQuery.slug);
-  const effectiveQuery = paramsOrQuery.searchQuery || paramsOrQuery.query || 'Toyota accessories';
+  const {
+    query,
+    searchQuery,
+    asin,
+    asin_ca,
+    asin_us,
+    market = 'CA',
+    isUs,
+  } = paramsOrQuery;
 
-  const activeAsin = isUs
-    ? (paramsOrQuery.asin_us || paramsOrQuery.asin)
-    : (paramsOrQuery.asin_ca || paramsOrQuery.asin);
+  const isUS = market === 'US' || isUs === true;
+  const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
+  const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
+  const activeAsin = isUS ? (asin_us || asin) : (asin_ca || asin);
 
-  // Validate ASIN: Must be 10 alphanumeric characters
   const cleanAsin = activeAsin?.trim().toUpperCase();
   if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
     return `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
 
-  // Fallback cleanly to search query if ASIN is missing or invalid
-  return `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}&tag=${tag}`;
+  const cleanQuery = encodeURIComponent((query || searchQuery || 'Toyota accessories').trim());
+  return `${domain}/s?k=${cleanQuery}&tag=${tag}`;
 }

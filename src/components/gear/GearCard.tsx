@@ -274,7 +274,7 @@ export function GearCard({
   const isDirectAsin = isDirectValidAsin;
   const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
-  const buttonText = buttonLabel || item.buttonLabel || config?.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search on Amazon ↗');
+  const buttonText = buttonLabel || item.buttonLabel || config?.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search Amazon ↗');
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
@@ -427,7 +427,7 @@ export function GearCard({
           >
             <span>{buttonText}</span>
             <span className="sr-only">
-              {buttonText.startsWith('View on Amazon') ? ' (View on Amazon)' : ' (Search on Amazon)'}
+              {buttonText.startsWith('View on Amazon') ? ' (View on Amazon)' : ' (Search Amazon)'}
             </span>
           </a>
         </Button>
