@@ -1,3 +1,5 @@
+import { buildDropAlertEnrichment } from '@/lib/alerts/templates';
+
 export interface NotificationEmailData {
   recipientEmail: string;
   model: string;
@@ -51,6 +53,11 @@ export function generateNotificationEmail(data: NotificationEmailData): Generate
         : String(data.momTrendPercent)
       : 'Stable';
 
+  const enrichment = buildDropAlertEnrichment({
+    model: data.model,
+    modelSlug: data.modelSlug,
+  });
+
   // Plain Text Version
   const text = `
 ToyotaWaits.ca 🍁 Canada
@@ -71,6 +78,8 @@ REGIONAL BENCHMARK DELTA (${provinceUpper}):
 
 View Live Benchmark & Provincial Data:
 ${estimatesUrl}
+
+${enrichment.textSection}
 
 --------------------------------------------------
 PREPARING FOR DELIVERY?
@@ -303,6 +312,8 @@ ${unsubscribeUrl}
         </a>
       </div>
     </div>
+
+    ${enrichment.htmlSection}
 
     <!-- Secondary Delivery Prep Card -->
     <div class="prep-card">

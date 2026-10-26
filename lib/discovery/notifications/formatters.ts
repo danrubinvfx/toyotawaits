@@ -10,6 +10,7 @@
  * - CASL-compliant footer: sender identity, Canadian mailing address, and one-click unsubscribe mechanism
  */
 
+import { buildDropAlertEnrichment } from '../../../src/lib/alerts/templates';
 import { FormattedNotification } from '../types';
 
 export interface AlertEmailVehicle {
@@ -93,6 +94,10 @@ export function formatAlertEmail(payload: AlertEmailPayload): FormattedNotificat
     ? 'Pricing Notice: Dealer fee items are unverified. Advertised price may exclude mandatory documentation fees, environmental levies, or dealer add-ons. Final purchase price is subject to in-person dealer confirmation.'
     : 'Pricing Note: Price reflects public advertised figure. Subject to dealer confirmation and applicable taxes.';
 
+  const enrichment = buildDropAlertEnrichment({
+    model: vehicle.model,
+  });
+
   // Format Plain Text Version
   const text = `
 ToyotaWaits.ca - Canadian Vehicle Inventory Discovery
@@ -115,6 +120,8 @@ ${pricing?.mandatoryFees != null ? `- Disclosed Fees: $${pricing.mandatoryFees.t
 
 CANONICAL DEALER SOURCE:
 View Original Dealer Listing: ${sourceLink}
+
+${enrichment.textSection}
 
 IMPORTANT DISCLAIMER:
 ToyotaWaits.ca is an independent public observation tool and does NOT confirm vehicle availability with dealer staff. Vehicles may have pre-existing deposits, pending customer handoffs, or internal allocations. Always contact ${dealer.name} directly to confirm physical status.
@@ -291,6 +298,8 @@ ${unsubscribeUrl}
         View Public Dealer Listing &rarr;
       </a>
     </div>
+
+    ${enrichment.htmlSection}
 
     <!-- CASL & Compliance Footer -->
     <div class="footer">

@@ -16,6 +16,7 @@
  */
 
 import { createServerClient } from '../../../src/lib/supabase/server';
+import { generateAllocationDropAlertEmail } from '../../../src/lib/alerts/templates';
 import { NormalizedListingStatus } from '../types';
 
 export const LIKELY_CANCELLATION_DAYS_THRESHOLD = 5;
@@ -548,15 +549,35 @@ export async function dispatchPendingAlerts(
       const fromSender =
         process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
 
+      const dealerName = item.dealerName || 'Lower Mainland Toyota Dealer';
+      const vdpUrl = item.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+      const emailMessage = generateAllocationDropAlertEmail({
+        recipientEmail: sub.email,
+        model: item.model,
+        trim: displayTrim,
+        powertrain: item.powertrain,
+        vin: displayVin,
+        dealerName,
+        dealerCity: item.dealerCity,
+        vdpUrl,
+        sellingPrice: item.sellingPrice,
+        msrp: item.msrp,
+        unsubscribeToken: unsubToken,
+        unsubscribeUrl,
+      });
+
       const dispatchPayload = {
         from: fromSender,
         email: sub.email,
         vin: displayVin,
         model: item.model,
         trim: displayTrim,
-        dealerName: item.dealerName || 'Lower Mainland Toyota Dealer',
-        vdpUrl: item.vdpUrl || 'https://www.toyotawaits.ca/inventory',
+        dealerName,
+        vdpUrl,
         sellingPrice: item.sellingPrice ?? item.msrp ?? null,
+        calculatorUrl: emailMessage.calculatorUrl,
+        guideUrl: emailMessage.guideUrl,
+        gearPicks: emailMessage.gearPicks,
         token: sub.token || sub.verification_token,
         dispatchedAt: nowIso,
         dryRun: isDryRun,
@@ -580,8 +601,10 @@ export async function dispatchPendingAlerts(
             body: JSON.stringify({
               from: fromSender,
               to: [sub.email],
-              subject: `🔔 New ${item.model} (${displayTrim}) Drop Observed at ${dispatchPayload.dealerName}`,
-              html: `<p>A matching <strong>${item.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dispatchPayload.dealerName}</strong>.</p><p><a href="${dispatchPayload.vdpUrl}">View Dealer Listing</a></p><hr /><p style="font-size:11px;color:#71717a;">Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership). Contact: <a href="mailto:hello@toyotawaits.ca">hello@toyotawaits.ca</a> &bull; <a href="${unsubscribeUrl}">1-Click Unsubscribe</a></p>`,
+              subject: emailMessage.subject,
+              html: emailMessage.html,
+              text: emailMessage.text,
+              headers: emailMessage.headers,
             }),
           });
           if (res.ok) {

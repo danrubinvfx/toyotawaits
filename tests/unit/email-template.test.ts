@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { generateNotificationEmail } from '@/lib/email/notification-template';
+import {
+  AMAZON_ASSOCIATES_DISCLOSURE,
+  SIENNA_HITCH_GUIDE_URL,
+  generateAllocationDropAlertEmail,
+  getCuratedGearForDropAlert,
+} from '@/lib/alerts/templates';
 
 describe('Notification Email Engine & Template Generator', () => {
   const samplePayload = {
@@ -88,5 +94,104 @@ describe('Notification Email Engine & Template Generator', () => {
     expect(email.html).toContain(supportText);
     expect(email.text).toContain(kofiUrl);
     expect(email.text).toContain(supportText);
+  });
+
+  describe('Allocation Drop Alert Enhancements (Calculator CTA, Gear Picks, Guide Cross-Links)', () => {
+    it('renders RAV4 calculator CTA, FitcamX & TuxMat gear picks, and wait-times hub link in HTML and text', () => {
+      const email = generateAllocationDropAlertEmail({
+        model: 'RAV4',
+        trim: 'XSE AWD',
+        vin: '2T3P1RFV5TC123456',
+        dealerName: 'Jim Pattison Toyota Downtown',
+        vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/rav4-1',
+        unsubscribeToken: 'tok-rav4-123',
+      });
+
+      const expectedCalcText =
+        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this RAV4 on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/rav4';
+      expect(email.text).toContain(expectedCalcText);
+      expect(email.html).toContain('https://www.toyotawaits.ca/calculator/rav4');
+
+      // 2 Curated Picks for RAV4: FitcamX OEM 4K Dashcam & TuxMat TPE Liners
+      expect(email.html).toContain('FitcamX OEM 4K Dashcam');
+      expect(email.html).toContain('TuxMat TPE Liners');
+      expect(email.html).toContain('Check on Amazon ↗');
+      expect(email.text).toContain('FitcamX OEM 4K Dashcam');
+      expect(email.text).toContain('TuxMat TPE Liners');
+
+      // Zero-404 search URLs with CA Associate tag
+      for (const pick of email.gearPicks) {
+        expect(pick.url).toContain('https://www.amazon.ca/s?k=');
+        expect(pick.url).toContain('tag=toyotawaits-20');
+        expect(email.html).toContain(pick.url);
+        expect(email.text).toContain(pick.url);
+      }
+
+      // Standard Amazon Associates disclosure
+      expect(email.html).toContain(AMAZON_ASSOCIATES_DISCLOSURE);
+      expect(email.text).toContain(AMAZON_ASSOCIATES_DISCLOSURE);
+
+      // Model Hub Cross-Link for non-Sienna
+      expect(email.html).toContain('https://www.toyotawaits.ca/wait-times/rav4');
+      expect(email.text).toContain('https://www.toyotawaits.ca/wait-times/rav4');
+    });
+
+    it('renders Sienna calculator CTA, 3-Row Liners & Sliding Console Organizer, and Sienna Trailer Hitch Guide link', () => {
+      const email = generateAllocationDropAlertEmail({
+        model: 'Sienna',
+        trim: 'XSE 7-Passenger',
+        vin: '5TDGSKFC1TS289848',
+        dealerName: 'Jim Pattison Toyota Surrey',
+      });
+
+      expect(email.text).toContain(
+        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this Sienna on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/sienna'
+      );
+      expect(email.html).toContain('https://www.toyotawaits.ca/calculator/sienna');
+
+      // 2 Curated Picks for Sienna
+      expect(email.html).toContain('3-Row Custom Floor Liners');
+      expect(email.html).toContain('Center Console Sliding Organizer');
+      expect(email.text).toContain('3-Row Custom Floor Liners');
+      expect(email.text).toContain('Center Console Sliding Organizer');
+
+      // Sienna Trailer Hitch & Bike Rack Guide cross-link
+      expect(email.guideUrl).toBe(SIENNA_HITCH_GUIDE_URL);
+      expect(email.html).toContain(SIENNA_HITCH_GUIDE_URL);
+      expect(email.text).toContain(SIENNA_HITCH_GUIDE_URL);
+    });
+
+    it('renders Grand Highlander calculator CTA, 12.3" Matte Screen Protector & TSS 3.0 Dashcam, and wait-times hub link', () => {
+      const email = generateAllocationDropAlertEmail({
+        model: 'Grand Highlander',
+        trim: 'Limited',
+        vin: '5TDAAAA50RS001122',
+        dealerName: 'OpenRoad Toyota Richmond',
+      });
+
+      expect(email.text).toContain(
+        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this Grand Highlander on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/grand-highlander'
+      );
+      expect(email.html).toContain('https://www.toyotawaits.ca/calculator/grand-highlander');
+
+      // 2 Curated Picks for Grand Highlander
+      expect(email.html).toContain('12.3" Matte Screen Protector');
+      expect(email.html).toContain('TSS 3.0 Dashcam');
+      expect(email.text).toContain('12.3" Matte Screen Protector');
+      expect(email.text).toContain('TSS 3.0 Dashcam');
+
+      // Model Hub Cross-Link
+      expect(email.html).toContain('https://www.toyotawaits.ca/wait-times/grand-highlander');
+      expect(email.text).toContain('https://www.toyotawaits.ca/wait-times/grand-highlander');
+    });
+
+    it('supports US market Associate tag (toyotawaits07-20) on zero-404 search URLs', () => {
+      const usPicks = getCuratedGearForDropAlert('RAV4', 'US');
+      expect(usPicks).toHaveLength(2);
+      for (const pick of usPicks) {
+        expect(pick.url).toContain('https://www.amazon.com/s?k=');
+        expect(pick.url).toContain('tag=toyotawaits07-20');
+      }
+    });
   });
 });

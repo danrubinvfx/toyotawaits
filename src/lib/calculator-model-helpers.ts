@@ -57,7 +57,7 @@ export function presetIdToModelName(presetId?: string): string {
  */
 export function toCanonicalWaitTimeSlug(slugOrPreset?: string | null): string {
   if (!slugOrPreset) return 'rav4';
-  const clean = slugOrPreset.toLowerCase().trim().replace(/_/g, '-');
+  const clean = slugOrPreset.toLowerCase().trim().replace(/[\s_]+/g, '-');
   if (clean.includes('crown')) return 'crown-signia';
   if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
   if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
