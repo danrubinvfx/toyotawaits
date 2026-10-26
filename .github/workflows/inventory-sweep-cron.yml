@@ -1,0 +1,40 @@
+name: Scheduled 6-Hour Inventory Sweep
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: inventory-sweep-cron
+  cancel-in-progress: false
+
+jobs:
+  trigger-sweep:
+    name: Trigger Remote Inventory Sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Trigger ToyotaWaits Sweep Endpoint
+        run: |
+          echo "Triggering 6-Hour Dealer Sweep & Alert Dispatch on https://toyotawaits.ca/api/cron/sweep..."
+          HTTP_RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s" \
+            --max-time 90 \
+            -X POST "https://toyotawaits.ca/api/cron/sweep" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json")
+
+          HTTP_BODY=$(echo "$HTTP_RESPONSE" | sed -e '$d' | sed -e '$d')
+          HTTP_STATUS=$(echo "$HTTP_RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+          TIME_TOTAL=$(echo "$HTTP_RESPONSE" | grep "TIME_TOTAL:" | cut -d':' -f2)
+
+          echo "Response Status: $HTTP_STATUS ($TIME_TOTAL)"
+          echo "Response Body: $HTTP_BODY"
+
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::error::Sweep endpoint returned HTTP $HTTP_STATUS: $HTTP_BODY"
+            exit 1
+          fi
+
+          echo "Sweep completed successfully."

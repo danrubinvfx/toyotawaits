@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { GET as checkAlertsGET, POST as checkAlertsPOST } from '@/app/api/cron/check-alerts/route';
+import { GET as sweepGET, POST as sweepPOST } from '@/app/api/cron/sweep/route';
 import * as dealersModule from '@/../lib/discovery/dealers';
 import * as lifecycleModule from '@/../lib/discovery/services/lifecycle-service';
 
-describe('Allocation Check Alerts Cron Worker (/api/cron/check-alerts)', () => {
+describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts & /api/cron/sweep)', () => {
   const originalCronSecret = process.env.CRON_SECRET;
 
   beforeEach(() => {
@@ -13,6 +14,54 @@ describe('Allocation Check Alerts Cron Worker (/api/cron/check-alerts)', () => {
 
   afterEach(() => {
     process.env.CRON_SECRET = originalCronSecret;
+  });
+
+  it('rejects unauthorized requests with 401 on /api/cron/sweep when CRON_SECRET is configured', async () => {
+    process.env.CRON_SECRET = 'cron-secret-super-secure';
+
+    const req = new NextRequest('http://localhost:3000/api/cron/sweep', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer wrong-key',
+      },
+    });
+
+    const res = await sweepPOST(req);
+    expect(res.status).toBe(401);
+    const json = await res.json();
+    expect(json.success).toBe(false);
+    expect(json.error).toContain('Unauthorized');
+  });
+
+  it('authorizes /api/cron/sweep with matching Bearer token', async () => {
+    process.env.CRON_SECRET = 'cron-secret-super-secure';
+
+    vi.spyOn(dealersModule, 'sweepSingleDealer').mockResolvedValue({
+      dealerCode: 'jptoyota-downtown',
+      dealerName: 'Jim Pattison Toyota Downtown',
+      success: true,
+      totalParsed: 12,
+      quarantinedCount: 0,
+      listingsCreated: 3,
+      listingsUpdated: 9,
+      observationsStored: 12,
+      durationMs: 140,
+      unreservedVehicles: [],
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/cron/sweep?dealer=jptoyota-downtown&cooldown=0', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer cron-secret-super-secure',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const res = await sweepPOST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.swept).toBe(12);
   });
 
   it('rejects unauthorized requests with 401 when CRON_SECRET is configured', async () => {
