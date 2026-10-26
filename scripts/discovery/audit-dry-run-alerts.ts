@@ -18,7 +18,7 @@ import {
   parsePublicSitemapToConvertusItems,
   POLITE_DEALER_COOLDOWN_MS,
   USER_AGENT_AUDITOR,
-} from './sweep-dealer';
+} from '../../lib/discovery/dealers';
 import { parseConvertusPayload } from '../../lib/discovery/adapters/convertus';
 import {
   AlertDispatchVehicle,
