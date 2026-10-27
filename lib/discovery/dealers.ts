@@ -75,6 +75,22 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     websiteUrl: 'https://www.jptoyota-surrey.com/',
   },
   {
+    dealerCode: 'destination-toyota-burnaby',
+    aliases: ['destination-toyota-burnaby', 'destination-toyota', 'destination toyota'],
+    dealerName: 'Destination Toyota Burnaby',
+    sourceCode: 'destination-toyota-burnaby-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.destinationtoyota.ca',
+    endpointUrl:
+      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
+    address: '4451 Still Creek Drive',
+    city: 'Burnaby',
+    province: 'BC',
+    postalCode: 'V5C 6G9',
+    phone: '(604) 571-4399',
+    websiteUrl: 'https://www.destinationtoyota.ca/',
+  },
+  {
     dealerCode: 'westcoast-toyota',
     aliases: ['west-coast-toyota', 'westcoast-toyota', 'westcoasttoyota'],
     dealerName: 'West Coast Toyota',
