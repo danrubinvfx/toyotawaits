@@ -74,7 +74,7 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 495-4100',
     websiteUrl: 'https://www.jptoyota-surrey.com/',
   },
-  {
+{
     dealerCode: 'destination-toyota-burnaby',
     aliases: ['destination-toyota-burnaby', 'destination-toyota', 'destination toyota'],
     dealerName: 'Destination Toyota Burnaby',
@@ -82,7 +82,7 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     platform: 'convertus',
     baseUrl: 'https://www.destinationtoyota.ca',
     endpointUrl:
-      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
+      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1224%26ln%3Den%26pg%3D1%26pc%3D25%26dc%3Dfalse%26qs%3D%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dtoyota&action=vms_data',
     address: '4451 Still Creek Drive',
     city: 'Burnaby',
     province: 'BC',
