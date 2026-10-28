@@ -6,7 +6,7 @@ import {
 import {
   AlertDispatchVehicle,
   DispatchPendingAlertsSummary,
-  dispatchPendingAlerts,
+  dispatchPendingAlerts,  
 } from '../../../../../lib/discovery/services/lifecycle-service';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { validateCronSecret } from '../sweep/route';
@@ -106,15 +106,16 @@ export async function handleCheckAlerts(request: Request) {
         .order('last_observed_at', { ascending: false })
         .limit(50);
 
-      if (listings && Array.isArray(listings)) {
+ if (listings && Array.isArray(listings)) {
+        console.log(`[check-alerts] Raw listings fetched from Supabase: ${listings.length}`);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         alertVehicles = listings.map((l: any) => ({
           vin: l.vin,
           provisionalId: l.source_listing_id,
-          model: l.vehicle?.model || '',
-          trim: l.vehicle?.trim || 'Base',
-          powertrain: l.vehicle?.powertrain || null,
-          modelYear: l.vehicle?.model_year || undefined,
+          model: l.vehicle?.model || l.model || '',
+          trim: l.vehicle?.trim || l.trim || 'Base',
+          powertrain: l.vehicle?.powertrain || l.powertrain || null,
+          modelYear: l.vehicle?.model_year || l.model_year || undefined,
           dealerName: l.dealer?.name || undefined,
           dealerCity: l.dealer?.city || undefined,
           vdpUrl: l.listing_url || undefined,
