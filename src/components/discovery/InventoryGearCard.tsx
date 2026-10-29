@@ -5,7 +5,7 @@ import { ExternalLink } from 'lucide-react';
 import { AccessoryItem } from '@/data/accessories';
 import { trackAffiliateClick } from '@/lib/gear';
 import { GearImage } from '@/components/gear/GearImage';
-import { GEAR_MARKET_CATALOG } from '@/data/gear/catalog';
+import { GEAR_MARKET_CATALOG, resolveVerifiedGearImageSrc } from '@/data/gear/catalog';
 
 export interface InventoryGearCardProps {
   item: AccessoryItem;
@@ -36,7 +36,10 @@ export function InventoryGearCard({
   className = '',
 }: InventoryGearCardProps) {
   const benefitSubline = BENEFIT_HOOK_MAP[item.id] || item.description;
-  const imageSource = item.imageUrl || GEAR_MARKET_CATALOG[item.id]?.imageUrl;
+  const imageSource = resolveVerifiedGearImageSrc(
+    item.imageUrl,
+    GEAR_MARKET_CATALOG[item.id]?.imageUrl
+  );
   const fallbackIcon = item.fallbackIcon || GEAR_MARKET_CATALOG[item.id]?.fallbackIcon;
 
   return (

@@ -21,7 +21,7 @@ import { useMarket } from '@/context/MarketContext';
 import { VideoModal, extractYouTubeVideoId } from '@/components/delivery-prep/video-modal';
 import { trackAffiliateClick } from '@/lib/gear/telemetry';
 
-import { getGearMarketConfig } from '@/data/gear/catalog';
+import { getGearMarketConfig, resolveVerifiedGearImageSrc } from '@/data/gear/catalog';
 import { GearImage } from '@/components/gear/GearImage';
 import {
   buildAmazonAffiliateUrl,
@@ -278,7 +278,10 @@ export function GearCard({
   const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
 
-  const imageSource = item.imageUrl || item.imageSrc || item.image || config?.imageUrl;
+  const imageSource = resolveVerifiedGearImageSrc(
+    item.imageUrl || item.imageSrc || item.image,
+    config?.imageUrl
+  );
   const fallbackIcon = item.fallbackIcon || config?.fallbackIcon;
   const price = item.priceEst || item.priceEstCad;
   const note = config?.description || item.description || item.whyBuy || item.utilityNote || config?.whyBuy;

@@ -23,7 +23,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
 @utility no-scrollbar {
@@ -73,4 +73,3 @@ input[type="date"]::-webkit-date-and-time-value {
   min-height: 1.5em;
   margin: 0;
 }
-

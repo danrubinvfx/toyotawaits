@@ -1266,12 +1266,73 @@ export function resolveGearLocalImage(
   if (clean.includes('knee') || t.includes('knee')) {
     return { imageUrl: '/assets/gear/knee-cushion.webp', fallbackIcon: 'layers' };
   }
-  // 13. Ceramic interior protection
-  if (clean.includes('ceramic') || clean.includes('leather') || t.includes('ceramic')) {
+  // 13. Ceramic interior protection / scuff guards / filter mesh
+  if (
+    clean.includes('ceramic') ||
+    clean.includes('leather') ||
+    clean.includes('scuff') ||
+    clean.includes('filter-mesh') ||
+    t.includes('ceramic') ||
+    t.includes('scuff')
+  ) {
     return { imageUrl: '/assets/gear/ceramic-interior-protection.webp', fallbackIcon: 'shield' };
+  }
+  // 14. Roof crossbars / cargo carriers / frost guard
+  if (
+    clean.includes('crossbar') ||
+    clean.includes('roof-rack') ||
+    clean.includes('cargo-liner') ||
+    clean.includes('frost-guard') ||
+    t.includes('crossbar') ||
+    t.includes('roof rack') ||
+    t.includes('cargo trunk liner')
+  ) {
+    return { imageUrl: '/assets/gear/curt-trailer-hitch.webp', fallbackIcon: 'luggage' };
+  }
+  // 15. Dongar mirror power tap harness
+  if (clean.includes('dongar') || t.includes('dongar')) {
+    return { imageUrl: '/assets/gear/fitcamx-rav4.webp', fallbackIcon: 'camera' };
   }
 
   return undefined;
+}
+
+/**
+ * Legacy `/images/accessories/*.png` filenames that do not exist on disk mapped
+ * to their verified local `/assets/gear/*.webp` or `/images/accessories/*.png` equivalents.
+ */
+const LEGACY_MISSING_ACCESSORY_IMAGE_MAP: Record<string, string> = {
+  '/images/accessories/floor-mats-rav4.png': '/assets/gear/tuxmat-floor-liners.webp',
+  '/images/accessories/floor-mats-3row.png': '/assets/gear/tuxmat-floor-liners.webp',
+  '/images/accessories/cargo-liner-rav4.png': '/assets/gear/tuxmat-floor-liners.webp',
+  '/images/accessories/console-organizer-rav4.png': '/images/accessories/console-tray-rav4.png',
+  '/images/accessories/curt-trailer-hitch-rav4.png': '/assets/gear/curt-trailer-hitch.webp',
+  '/images/accessories/dashcam-rav4.png': '/images/accessories/fitcamx-rav4.png',
+  '/images/accessories/dongar-10pin-type-a.png': '/images/accessories/fitcamx-rav4.png',
+  '/images/accessories/dongar-12pin-type-b.png': '/images/accessories/fitcamx-rav4.png',
+  '/images/accessories/fast-usbc-charger.png': '/assets/gear/fast-usbc-charger.webp',
+  '/images/accessories/rfid-faraday-pouch.png': '/assets/gear/faraday-pouch.webp',
+  '/images/accessories/door-sill-scuff-guards.png': '/assets/gear/ceramic-interior-protection.webp',
+  '/images/accessories/hybrid-battery-filter-mesh.png': '/assets/gear/ceramic-interior-protection.webp',
+  '/images/accessories/crossbars-rav4.png': '/assets/gear/curt-trailer-hitch.webp',
+  '/images/accessories/crossbars-grand-highlander.png': '/assets/gear/curt-trailer-hitch.webp',
+  '/images/accessories/crossbars-corolla-cross.png': '/assets/gear/curt-trailer-hitch.webp',
+};
+
+/**
+ * Normalizes a candidate gear/accessory image path so legacy missing `/images/accessories/*`
+ * references resolve to verified local assets instead of triggering HTTP 404s.
+ */
+export function resolveVerifiedGearImageSrc(
+  candidateSrc?: string,
+  fallbackSrc?: string
+): string | undefined {
+  const raw = candidateSrc?.trim();
+  if (!raw) return fallbackSrc;
+  if (LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw]) {
+    return LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw];
+  }
+  return raw;
 }
 
 /**
