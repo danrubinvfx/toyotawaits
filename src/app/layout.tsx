@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { AnalyticsWrapper } from '@/components/analytics/AnalyticsWrapper';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -128,12 +127,11 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">
             {children}
-            <Analytics />
-            <SpeedInsights />
           </main>
           <KofiFloatingPill />
           <Footer />
         </MarketProvider>
+        <AnalyticsWrapper />
       </body>
     </html>
   );

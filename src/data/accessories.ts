@@ -164,24 +164,26 @@ function normalizeModelName(model?: string | null): string {
   return model.trim();
 }
 
+export const COMMUNITY_TOP_PICK_BADGE = '🔥 Community Top Pick';
+
 /**
- * Sorts accessory items by recent 30-day click telemetry, enhancing badges for the top 2 clicked items.
+ * Sorts accessory items by recent 30-day click telemetry (popularity weights).
  * 1. Primary: Sort descending by recent click count.
- * 2. Secondary / Fallback: Preserve original curated order.
- * 3. Badge Enhancement: Top 1 gets '🔥 Most Popular', Top 2 gets 'Community Top Pick' (when clicks > 0).
+ * 2. Secondary / Fallback: Preserve original curated order (priority).
+ * 3. Badge Enhancement: The #1 clicked item (clicks > 0) is tagged '🔥 Community Top Pick'.
  */
 export function sortAccessoriesByPopularity(
   items: AccessoryItem[],
-  clickCounts?: Record<string, number>
+  popularityWeights?: Record<string, number>
 ): AccessoryItem[] {
-  if (!clickCounts || Object.keys(clickCounts).length === 0) {
+  if (!popularityWeights || Object.keys(popularityWeights).length === 0) {
     return items;
   }
 
   const withIndex = items.map((item, originalIndex) => ({
     item,
     originalIndex,
-    clicks: clickCounts[item.id] ?? 0,
+    clicks: Number(popularityWeights[item.id]) || 0,
   }));
 
   withIndex.sort((a, b) => {
@@ -192,19 +194,11 @@ export function sortAccessoriesByPopularity(
   });
 
   return withIndex.map(({ item, clicks }, rank) => {
-    if (clicks > 0) {
-      if (rank === 0) {
-        return {
-          ...item,
-          badge: '🔥 Most Popular',
-        };
-      }
-      if (rank === 1) {
-        return {
-          ...item,
-          badge: 'Community Top Pick',
-        };
-      }
+    if (rank === 0 && clicks > 0) {
+      return {
+        ...item,
+        badge: COMMUNITY_TOP_PICK_BADGE,
+      };
     }
     return item;
   });
@@ -245,7 +239,7 @@ export function isAudioEquipmentItem(item: {
 
 export function getAccessoriesForModel(
   modelName?: string | null,
-  clickCounts?: Record<string, number>
+  popularityWeights?: Record<string, number>
 ): AccessoryItem[] {
   const normalized = normalizeModelName(modelName);
 
@@ -313,7 +307,7 @@ export function getAccessoriesForModel(
   });
 
   // Dynamically sort by popularity weights when available
-  const sorted = sortAccessoriesByPopularity(tailored, clickCounts);
+  const sorted = sortAccessoriesByPopularity(tailored, popularityWeights);
 
   return sorted.slice(0, 8);
 }

@@ -102,6 +102,23 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -123.0722,
     enabled: true,
   },
+  // 3. OpenRoad Toyota Port Moody (St Johns Street / Eagle Ridge)
+  'openroad-toyota-port-moody': {
+    id: 'openroad-toyota-port-moody',
+    name: 'OpenRoad Toyota Port Moody',
+    city: 'Port Moody',
+    area: 'St Johns Street / Eagle Ridge',
+    province: 'BC',
+    adapter: 'convertus',
+    baseUrl: 'https://www.openroadtoyotaportmoody.com',
+    apiEndpoint:
+      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
+    latitude: 49.2772,
+    longitude: -122.8366,
+    lat: 49.2772,
+    lng: -122.8366,
+    enabled: true,
+  },
 };
 
 /**
@@ -127,6 +144,18 @@ export function getDealerCoordinates(
     query.includes('kingsway')
   ) {
     return { lat: DEALERS['regency-toyota'].lat, lng: DEALERS['regency-toyota'].lng };
+  }
+
+  // OpenRoad Toyota Port Moody — check before the generic 'openroad' (Richmond) match
+  if (
+    query.includes('port moody') ||
+    query.includes('port-moody') ||
+    query.includes('portmoody')
+  ) {
+    return {
+      lat: DEALERS['openroad-toyota-port-moody'].lat,
+      lng: DEALERS['openroad-toyota-port-moody'].lng,
+    };
   }
 
   // OpenRoad Toyota Richmond (Richmond Automall)

@@ -136,6 +136,25 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 273-3766',
     websiteUrl: 'https://www.openroadtoyotarichmond.com/',
   },
+  {
+    dealerCode: 'openroad-toyota-port-moody',
+    aliases: ['openroad-toyota-port-moody', 'openroad-port-moody', 'openroadtoyotaportmoody', 'port-moody'],
+    dealerName: 'OpenRoad Toyota Port Moody',
+    sourceCode: 'openroad-toyota-port-moody-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.openroadtoyotaportmoody.com',
+    // NOTE: As of 2026-10-29 this proxy returns HTTP 404 (site runs the eDealer platform, same as
+    // OpenRoad Richmond). sweepSingleDealer() falls back to the public /sitemap.xml
+    // (`/new/<year>-toyota-<slug>/<VIN>` entries), which parsePublicSitemapToConvertusItems handles.
+    endpointUrl:
+      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
+    address: '3166 St Johns Street',
+    city: 'Port Moody',
+    province: 'BC',
+    postalCode: 'V3H 2H7',
+    phone: '(604) 461-3656',
+    websiteUrl: 'https://www.openroadtoyotaportmoody.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {

@@ -100,11 +100,11 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
 
       // Slot 0: 4k-front-rear-dash-cam with '🔥 Most Popular'
       expect(sorted[0].id).toBe('4k-front-rear-dash-cam');
-      expect(sorted[0].badge).toBe('🔥 Most Popular');
+      expect(sorted[0].badge).toBe('🔥 Community Top Pick');
 
       // Slot 1: center-console-organizer-tray with 'Community Top Pick'
       expect(sorted[1].id).toBe('center-console-organizer-tray');
-      expect(sorted[1].badge).toBe('Community Top Pick');
+      expect(sorted[1].badge).not.toBe('🔥 Community Top Pick');
 
       // Slot 2: all-weather-floor-liners
       expect(sorted[2].id).toBe('all-weather-floor-liners');
@@ -124,8 +124,8 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       expect(titles[0]).toHaveTextContent('Anti-Glare Screen Protector (10.5" / 12.3")');
       expect(titles[1]).toHaveTextContent('Heavy-Duty RFID Faraday Key Fob Signal Blocker');
 
-      expect(screen.getByText('🔥 Most Popular')).toBeInTheDocument();
-      expect(screen.getByText('Community Top Pick')).toBeInTheDocument();
+      expect(screen.getAllByText('🔥 Community Top Pick')).toHaveLength(1);
+      expect(screen.queryByText('Community Top Pick')).not.toBeInTheDocument();
     });
   });
 });
