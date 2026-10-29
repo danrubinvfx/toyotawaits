@@ -192,7 +192,9 @@ export function GearImage({
   rel = 'sponsored noopener noreferrer nofollow',
   onClick,
 }: GearImageProps) {
-  const [hasError, setHasError] = useState(false);
+  // Track the specific src that failed so a new src (e.g. vehicle switch) gets a fresh attempt
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const hasError = Boolean(src) && failedSrc === src;
 
   // Strictly enforce compliance: Never hotlink from Amazon CDN endpoints
   const isDirectAmazonUrl = isAmazonImageDomain(src);
@@ -227,7 +229,7 @@ export function GearImage({
             fill
             unoptimized
             sizes={sizes}
-            onError={() => setHasError(true)}
+            onError={() => setFailedSrc(src ?? null)}
             className={cn(
               'object-contain p-2 transition-transform duration-300',
               isChecked ? 'opacity-60 grayscale' : 'group-hover:scale-105',

@@ -7,10 +7,14 @@ import { Footer } from '@/components/layout/footer';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
 
+// Geist is a variable font: a single file covers every weight (incl. font-black used site-wide),
+// so no explicit `weight` list is needed. Preloading is disabled to stop the
+// "preloaded but not used within a few seconds" warnings; `swap` keeps text visible meanwhile.
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
   display: 'swap',
+  preload: false,
 });
 
 const geistMono = Geist_Mono({
