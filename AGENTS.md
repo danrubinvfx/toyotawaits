@@ -26,3 +26,15 @@ When authoring any migration in `supabase/migrations/`:
    ```
 2. For complete standards, table privilege matrices, and templates, consult `docs/database-migration-standards.md`.
 3. Never create a table with RLS policies without corresponding `GRANT` statements.
+
+
+## Amazon Affiliate & Outbound Link Standards
+
+1. **Zero-404 Fallback Policy**: NEVER hardcode raw `/dp/[ASIN]` links for generic aftermarket accessories (screen protectors, console trays, harnesses, mud flaps).
+2. **Hero Brands**: Reserve direct ASINs strictly for verified, permanent hero brands (e.g. TuxMat, Grizzl-E).
+3. **Route via `buildAmazonAffiliateUrl`**:
+   - CA: `https://www.amazon.ca/s?k=[encodedQuery]&tag=toyotawaits-20`
+   - US: `https://www.amazon.com/s?k=[encodedQuery]&tag=toyotawaits07-20`
+4. **Link Attributes**: `target="_blank" rel="sponsored noopener noreferrer nofollow"`.
+5. **Mandatory CI Pre-Push Check**: Run `npx tsx scripts/audit-all-links.ts` (must exit code 0 with 0 dead links).
+6. **Link Audit Request Method**: All link audits must use browser-simulated `GET` requests to catch false-positive 405s and Dogs of Amazon 404 pages.

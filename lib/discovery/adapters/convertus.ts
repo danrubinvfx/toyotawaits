@@ -67,26 +67,41 @@ export interface ConvertusRawVehicle {
   permalink?: string | null;
   canonical_url?: string | null;
   listing_url?: string | null;
+  dealer_url?: string | null;
+  dealer_base_url?: string | null;
+  company_web_address?: string | null;
+  company_data?: {
+    company_web_address?: string | null;
+    company_city?: string | null;
+    company_province?: string | null;
+    [key: string]: unknown;
+  } | null;
   breakdown?: Array<{
     type?: string;
     amount?: number | string;
     title?: string;
     pre_tax?: boolean;
   }> | null;
-  images?: any;
-  image?: any;
-  photos?: any;
-  photo?: any;
-  thumbnail?: any;
-  media_urls?: any;
+  images?: unknown;
+  image?: unknown;
+  photos?: unknown;
+  photo?: unknown;
+  thumbnail?: unknown;
+  media_urls?: unknown;
+  pictures?: unknown;
+  image_url?: string | null;
+  is_sold?: number | boolean | null;
+  reserved?: number | boolean | null;
+  is_placeholder?: boolean | null;
+  has_placeholder?: boolean | null;
   placeholder_image?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
  * Safely parses a numeric dollar amount, returning null if invalid or negative.
  */
-export function parseNumericPrice(val: any): number | null {
+export function parseNumericPrice(val: unknown): number | null {
   if (val === null || val === undefined || val === '') return null;
   if (typeof val === 'number') {
     return isNaN(val) || val <= 0 ? null : val;
@@ -99,7 +114,7 @@ export function parseNumericPrice(val: any): number | null {
 /**
  * Normalizes raw price to a trimmed string representation.
  */
-export function formatRawPrice(val: any): string | null {
+export function formatRawPrice(val: unknown): string | null {
   if (val === null || val === undefined || val === '') return null;
   return String(val).trim();
 }
@@ -301,7 +316,7 @@ export function isPlaceholderImageUrl(url?: string | null): boolean {
  * Returns sanitized https:// URL or null, and sets hasRealPhoto=true only when non-placeholder.
  */
 export function extractPrimaryImage(
-  item: any,
+  item: unknown,
   options?: ConvertusAdapterOptions
 ): {
   imageUrl: string | null;
@@ -312,33 +327,36 @@ export function extractPrimaryImage(
     return { imageUrl: null, hasRealPhoto: false, imageSource: 'placeholder' };
   }
 
+  const raw = item as Record<string, unknown>;
+
   // Convertus explicit placeholder flag
   if (
-    item.placeholder_image === true ||
-    item.is_placeholder === true ||
-    item.has_placeholder === true
+    raw.placeholder_image === true ||
+    raw.is_placeholder === true ||
+    raw.has_placeholder === true
   ) {
     return { imageUrl: null, hasRealPhoto: false, imageSource: 'placeholder' };
   }
 
   // Helper to extract a clean string URL from a candidate value (string or object)
-  const extractUrlFromCandidate = (val: any): string | null => {
+  const extractUrlFromCandidate = (val: unknown): string | null => {
     if (!val) return null;
     if (typeof val === 'string') {
       const s = val.trim();
       return s.length > 0 ? s : null;
     }
-    if (typeof val === 'object') {
+    if (typeof val === 'object' && val !== null) {
+      const valObj = val as Record<string, unknown>;
       const u =
-        val.url ||
-        val.src ||
-        val.image_lg ||
-        val.large ||
-        val.original ||
-        val.image_original ||
-        val.image_md ||
-        val.thumbnail ||
-        val.small;
+        valObj.url ||
+        valObj.src ||
+        valObj.image_lg ||
+        valObj.large ||
+        valObj.original ||
+        valObj.image_original ||
+        valObj.image_md ||
+        valObj.thumbnail ||
+        valObj.small;
       if (typeof u === 'string') {
         const s = u.trim();
         return s.length > 0 ? s : null;
@@ -350,17 +368,17 @@ export function extractPrimaryImage(
   let candidateUrl: string | null = null;
 
   // 1. Check direct string fields
-  if (typeof item.image === 'string' && item.image.trim()) {
-    candidateUrl = item.image.trim();
-  } else if (typeof item.image_url === 'string' && item.image_url.trim()) {
-    candidateUrl = item.image_url.trim();
-  } else if (typeof item.thumbnail === 'string' && item.thumbnail.trim()) {
-    candidateUrl = item.thumbnail.trim();
+  if (typeof raw.image === 'string' && raw.image.trim()) {
+    candidateUrl = raw.image.trim();
+  } else if (typeof raw.image_url === 'string' && raw.image_url.trim()) {
+    candidateUrl = raw.image_url.trim();
+  } else if (typeof raw.thumbnail === 'string' && raw.thumbnail.trim()) {
+    candidateUrl = raw.thumbnail.trim();
   }
 
   // 2. Check array of strings or objects: images, photos, media_urls, pictures
   if (!candidateUrl) {
-    const list = item.images || item.photos || item.media_urls || item.pictures;
+    const list = raw.images || raw.photos || raw.media_urls || raw.pictures;
     if (Array.isArray(list) && list.length > 0) {
       for (const entry of list) {
         const u = extractUrlFromCandidate(entry);
@@ -375,9 +393,9 @@ export function extractPrimaryImage(
   // 3. Fall back to nested object fields: item.image, item.photo, item.thumbnail
   if (!candidateUrl) {
     candidateUrl =
-      extractUrlFromCandidate(item.image) ||
-      extractUrlFromCandidate(item.photo) ||
-      extractUrlFromCandidate(item.thumbnail);
+      extractUrlFromCandidate(raw.image) ||
+      extractUrlFromCandidate(raw.photo) ||
+      extractUrlFromCandidate(raw.thumbnail);
   }
 
   if (candidateUrl) {
@@ -385,8 +403,9 @@ export function extractPrimaryImage(
     if (candidateUrl.startsWith('//')) {
       candidateUrl = `https:${candidateUrl}`;
     } else if (candidateUrl.startsWith('/')) {
+      const companyData = raw.company_data as Record<string, unknown> | undefined;
       const base = normalizeDealerBaseUrl(
-        options?.dealerBaseUrl || item.company_data?.company_web_address
+        options?.dealerBaseUrl || (typeof companyData?.company_web_address === 'string' ? companyData.company_web_address : undefined)
       );
       candidateUrl = `${base}${candidateUrl}`;
     } else if (candidateUrl.startsWith('http://')) {
@@ -416,21 +435,23 @@ export function extractPrimaryImage(
  * Quarantines if missing mandatory structural attributes (make or model).
  */
 export function parseConvertusRecord(
-  raw: any,
+  input: unknown,
   index: number,
   options?: ConvertusAdapterOptions
 ): { record?: ParsedVehicleListing; quarantine?: QuarantinedRecord } {
   const timestamp = new Date().toISOString();
 
-  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
     return {
       quarantine: {
-        record: raw,
+        record: input,
         reason: `Item at index ${index} is not a valid vehicle object`,
         timestamp,
       },
     };
   }
+
+  const raw = input as ConvertusRawVehicle;
 
   const make = String(raw.make || '').trim();
   const model = String(raw.model || '').trim();
@@ -609,7 +630,7 @@ export function parseConvertusRecord(
       imageSource: imageInfo.imageSource,
       rawStatus,
       normalizedStatus,
-      daysOnLot: isNaN(daysOnLot as any) ? null : daysOnLot,
+      daysOnLot: daysOnLot !== null && Number.isNaN(daysOnLot) ? null : daysOnLot,
       postedAt,
     },
     pricing: {
@@ -634,22 +655,23 @@ export function parseConvertusRecord(
  * Returns an AdapterParseResult with normalized records and quarantined items.
  */
 export function parseConvertusPayload(
-  input: any,
+  input: unknown,
   options?: ConvertusAdapterOptions
 ): AdapterParseResult {
-  let data: any = input;
+  let data: unknown = input;
 
   if (typeof input === 'string') {
     try {
       data = JSON.parse(input);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
       return {
         success: false,
         count: 0,
         totalInPayload: 0,
         records: [],
         quarantined: [],
-        error: `JSON parse failure: ${err?.message || String(err)}`,
+        error: `JSON parse failure: ${message}`,
       };
     }
   }
@@ -666,15 +688,16 @@ export function parseConvertusPayload(
   }
 
   // Extract results array
-  let rawItems: any[] = [];
+  let rawItems: unknown[] = [];
+  const dataObj = data as Record<string, unknown>;
   if (Array.isArray(data)) {
     rawItems = data;
-  } else if (Array.isArray(data.results)) {
-    rawItems = data.results;
-  } else if (Array.isArray(data.vehicles)) {
-    rawItems = data.vehicles;
-  } else if (Array.isArray(data.data)) {
-    rawItems = data.data;
+  } else if (Array.isArray(dataObj.results)) {
+    rawItems = dataObj.results;
+  } else if (Array.isArray(dataObj.vehicles)) {
+    rawItems = dataObj.vehicles;
+  } else if (Array.isArray(dataObj.data)) {
+    rawItems = dataObj.data;
   } else {
     return {
       success: false,
