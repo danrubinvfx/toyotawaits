@@ -4,6 +4,7 @@ import { GET as checkAlertsGET, POST as checkAlertsPOST, validateCronSecret } fr
 import { GET as sweepGET, POST as sweepPOST } from '@/app/api/cron/sweep/route';
 import * as dealersModule from '@/../lib/discovery/dealers';
 import * as lifecycleModule from '@/../lib/discovery/services/lifecycle-service';
+import * as serverSupabase from '@/lib/supabase/server';
 
 describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts & /api/cron/sweep)', () => {
   const originalCronSecret = process.env.CRON_SECRET;
@@ -112,6 +113,11 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
     expect(json.matches).toBe(0);
     expect(json.dispatched).toBe(0);
     expect(json.skippedDuplicates).toBe(0);
+    expect(json.diagnostics).toEqual({
+      rawListingsQueried: 10,
+      candidatesEvaluated: 0,
+      subscribersFound: 0,
+    });
   });
 
   it('authorizes requests with query parameter ?key=CRON_SECRET', async () => {
@@ -158,6 +164,11 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
     expect(json.matches).toBe(1);
     expect(json.dispatched).toBe(1);
     expect(json.skippedDuplicates).toBe(0);
+    expect(json.diagnostics).toEqual({
+      rawListingsQueried: 5,
+      candidatesEvaluated: 1,
+      subscribersFound: 1,
+    });
   });
 
   it('provides precise diagnostic error message when token mismatches', async () => {
@@ -246,5 +257,172 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
     expect(json.success).toBe(true);
     expect(json.matches).toBe(2);
     expect(json.dispatched).toBe(2);
+    expect(json.diagnostics).toEqual({
+      rawListingsQueried: 0,
+      candidatesEvaluated: 0,
+      subscribersFound: 2,
+    });
+  });
+
+  it('reconcile mode resolves joined vehicle and falls back to unjoined row fields when vehicle is null', async () => {
+    process.env.CRON_SECRET = 'cron-secret-super-secure';
+    vi.spyOn(serverSupabase, 'isLiveSupabaseConfigured').mockReturnValue(true);
+
+    const mockListings = [
+      {
+        source_listing_id: 'SRC-001',
+        listing_url: 'https://dealer.ca/v/1',
+        current_status: 'Advertised - availability unconfirmed',
+        lifecycle_status: 'active',
+        selling_price: 45000,
+        vehicle: {
+          vin: '2T3JOINEDVIN11111',
+          model: 'Sienna',
+          trim: 'XSE',
+          powertrain: 'Hybrid',
+          model_year: 2026,
+        },
+        dealer: {
+          name: 'Jim Pattison Toyota Downtown',
+          city: 'Vancouver',
+        },
+      },
+      {
+        // Unjoined row where vehicle is null, relies on fallback fields directly on dealer_listings
+        vin: '2T3FALLBACKVIN222',
+        source_listing_id: 'SRC-002',
+        vdp_url: 'https://dealer.ca/v/2',
+        status: 'in_stock', // relaxed status
+        model: 'RAV4 Prime',
+        trim: 'XSE',
+        powertrain: 'Plug-in Hybrid',
+        model_year: 2026,
+        vehicle: null,
+        dealerName: 'Jim Pattison Toyota Surrey',
+        dealerCity: 'Surrey',
+      },
+      {
+        // Explicitly sold listing - should be filtered out
+        vin: '2T3SOLDVIN3333333',
+        source_listing_id: 'SRC-003',
+        lifecycle_status: 'sold',
+        model: 'Corolla',
+        trim: 'LE',
+        vehicle: null,
+      },
+    ];
+
+    const mockSupabase = {
+      from: (table: string) => {
+        expect(table).toBe('dealer_listings');
+        return {
+          select: () => ({
+            order: () => ({
+              limit: async () => ({ data: mockListings, error: null }),
+            }),
+          }),
+        };
+      },
+    };
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue(mockSupabase as any);
+
+    let evaluatedItems: any[] = [];
+    vi.spyOn(lifecycleModule, 'dispatchPendingAlerts').mockImplementation(async (vehicles: any) => {
+      evaluatedItems = vehicles;
+      return {
+        vehiclesEvaluated: vehicles.length,
+        subscribersMatched: 2,
+        emailsSent: 2,
+        duplicatesSkipped: 0,
+        loggedPayloads: [],
+      };
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer cron-secret-super-secure',
+      },
+    });
+
+    const res = await checkAlertsPOST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.evaluated).toBe(2); // 2 active candidates, sold excluded
+    expect(json.diagnostics).toEqual({
+      rawListingsQueried: 3,
+      candidatesEvaluated: 2,
+      subscribersFound: 2,
+    });
+
+    // Verify first item resolved from joined vehicle
+    expect(evaluatedItems[0]).toEqual(
+      expect.objectContaining({
+        vin: '2T3JOINEDVIN11111',
+        model: 'Sienna',
+        trim: 'XSE',
+        powertrain: 'Hybrid',
+        modelYear: 2026,
+      })
+    );
+
+    // Verify second item used unjoined row fallbacks
+    expect(evaluatedItems[1]).toEqual(
+      expect.objectContaining({
+        vin: '2T3FALLBACKVIN222',
+        model: 'RAV4 Prime',
+        trim: 'XSE',
+        powertrain: 'Plug-in Hybrid',
+        modelYear: 2026,
+      })
+    );
+  });
+
+  it('logs Supabase query error if listings query returns an error', async () => {
+    process.env.CRON_SECRET = 'cron-secret-super-secure';
+    vi.spyOn(serverSupabase, 'isLiveSupabaseConfigured').mockReturnValue(true);
+
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const mockSupabase = {
+      from: () => ({
+        select: () => ({
+          order: () => ({
+            limit: async () => ({
+              data: null,
+              error: { message: 'relation "vehicles" does not exist', code: '42P01' },
+            }),
+          }),
+        }),
+      }),
+    };
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue(mockSupabase as any);
+
+    vi.spyOn(lifecycleModule, 'dispatchPendingAlerts').mockResolvedValue({
+      vehiclesEvaluated: 0,
+      subscribersMatched: 0,
+      emailsSent: 0,
+      duplicatesSkipped: 0,
+      loggedPayloads: [],
+    });
+
+    const req = new NextRequest('http://localhost:3000/api/cron/check-alerts', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer cron-secret-super-secure',
+      },
+    });
+
+    const res = await checkAlertsPOST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.diagnostics.rawListingsQueried).toBe(0);
+    expect(errorSpy).toHaveBeenCalledWith(
+      '[check-alerts] Supabase listings query error:',
+      expect.objectContaining({ message: 'relation "vehicles" does not exist' })
+    );
+
+    errorSpy.mockRestore();
   });
 });

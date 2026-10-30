@@ -6,7 +6,7 @@ import {
 import {
   AlertDispatchVehicle,
   DispatchPendingAlertsSummary,
-  dispatchPendingAlerts,  
+  dispatchPendingAlerts,
 } from '../../../../../lib/discovery/services/lifecycle-service';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { validateCronSecret } from '../sweep/route';
@@ -36,6 +36,9 @@ export async function handleCheckAlerts(request: Request) {
   const url = new URL(request.url);
   const dealerParam = url.searchParams.get('dealer');
   const dryRun = url.searchParams.get('dryRun') === 'true';
+  const cooldownParam = url.searchParams.get('cooldown');
+  const cooldown =
+    cooldownParam !== null && !isNaN(Number(cooldownParam)) ? Number(cooldownParam) : undefined;
 
   const isConfigured = isLiveSupabaseConfigured();
   const supabase = isConfigured ? createServerClient() : null;
@@ -67,6 +70,7 @@ export async function handleCheckAlerts(request: Request) {
       alertSummary = await dispatchPendingAlerts(result.unreservedVehicles, {
         supabaseClient: supabase,
         dryRun,
+        cooldown,
       });
     }
 
@@ -79,6 +83,11 @@ export async function handleCheckAlerts(request: Request) {
         skippedDuplicates: alertSummary.duplicatesSkipped ?? 0,
         dealerSwept: targetDealer.dealerCode,
         durationMs: Date.now() - startTime,
+        diagnostics: {
+          rawListingsQueried: result.totalParsed,
+          candidatesEvaluated: result.unreservedVehicles?.length ?? 0,
+          subscribersFound: alertSummary.subscribersMatched,
+        },
       },
       {
         status: 200,
@@ -89,38 +98,55 @@ export async function handleCheckAlerts(request: Request) {
 
   // Fast Database Reconcile Only (decoupled from multi-dealer scraping loop)
   let alertVehicles: AlertDispatchVehicle[] = [];
+  let rawListingsQueried = 0;
 
   if (isConfigured && supabase) {
     try {
-      const { data: listings } = await supabase
+      const { data: listings, error: queryError } = await supabase
         .from('dealer_listings')
         .select(`
-          vin,
-          source_listing_id,
-          selling_price,
-          listing_url,
-          vehicle:vehicles (model, trim, powertrain, model_year),
+          *,
+          vehicle:vehicles (model, trim, powertrain, model_year, vin, provisional_id),
           dealer:dealers (name, city)
         `)
-        .eq('lifecycle_status', 'active')
         .order('last_observed_at', { ascending: false })
         .limit(50);
 
- if (listings && Array.isArray(listings)) {
+      if (queryError) {
+        console.error('[check-alerts] Supabase listings query error:', queryError);
+      }
+
+      if (listings && Array.isArray(listings)) {
+        rawListingsQueried = listings.length;
         console.log(`[check-alerts] Raw listings fetched from Supabase: ${listings.length}`);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        alertVehicles = listings.map((l: any) => ({
-          vin: l.vin,
-          provisionalId: l.source_listing_id,
-          model: l.vehicle?.model || l.model || '',
-          trim: l.vehicle?.trim || l.trim || 'Base',
-          powertrain: l.vehicle?.powertrain || l.powertrain || null,
-          modelYear: l.vehicle?.model_year || l.model_year || undefined,
-          dealerName: l.dealer?.name || undefined,
-          dealerCity: l.dealer?.city || undefined,
-          vdpUrl: l.listing_url || undefined,
-          sellingPrice: l.selling_price || undefined,
-        })).filter((v: AlertDispatchVehicle) => Boolean(v.model));
+        alertVehicles = (listings as Array<Record<string, any>>)
+          .filter((l) => {
+            // Relax strict lifecycle_status: allow active, in_stock, is_active=true, or unflagged active listings
+            if (l.lifecycle_status === 'sold' || l.lifecycle_status === 'unlisted') return false;
+            if (l.is_active === false) return false;
+            const currentStatus = String(l.current_status || l.status || '').toLowerCase();
+            if (
+              currentStatus.includes('sold') ||
+              currentStatus.includes('stale') ||
+              currentStatus.includes('no longer')
+            ) {
+              return false;
+            }
+            return true;
+          })
+          .map((l) => ({
+            vin: l.vehicle?.vin || l.vin || null,
+            provisionalId: l.vehicle?.provisional_id || l.source_listing_id || l.provisionalId || null,
+            model: l.vehicle?.model || l.model || '',
+            trim: l.vehicle?.trim || l.trim || 'Base',
+            powertrain: l.vehicle?.powertrain || l.powertrain || null,
+            modelYear: l.vehicle?.model_year || l.model_year || undefined,
+            dealerName: l.dealer?.name || l.dealerName || undefined,
+            dealerCity: l.dealer?.city || l.dealerCity || undefined,
+            vdpUrl: l.listing_url || l.vdp_url || l.vdpUrl || undefined,
+            sellingPrice: l.selling_price || l.observations?.[0]?.selling_price || undefined,
+          }))
+          .filter((v: AlertDispatchVehicle) => Boolean(v.model));
       }
     } catch (dbErr) {
       console.warn('[check-alerts] Failed querying active listings for reconcile:', dbErr);
@@ -130,6 +156,7 @@ export async function handleCheckAlerts(request: Request) {
   const alertSummary = await dispatchPendingAlerts(alertVehicles, {
     supabaseClient: supabase,
     dryRun,
+    cooldown,
   });
 
   return NextResponse.json(
@@ -141,6 +168,11 @@ export async function handleCheckAlerts(request: Request) {
       skippedDuplicates: alertSummary.duplicatesSkipped ?? 0,
       durationMs: Date.now() - startTime,
       timestamp: new Date().toISOString(),
+      diagnostics: {
+        rawListingsQueried,
+        candidatesEvaluated: alertVehicles.length,
+        subscribersFound: alertSummary.subscribersMatched,
+      },
     },
     {
       status: 200,

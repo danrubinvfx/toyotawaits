@@ -568,5 +568,74 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
         })
       );
     });
+
+    it('enforces 24h subscriber cooldown by default and allows cooldown=0 to bypass it', async () => {
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const mockSubscriptions = [
+        {
+          id: 'sub-cooldown-1',
+          email: 'recent-subscriber@example.ca',
+          model: ' RAV4 Prime ',
+          trim: ' XSE ',
+          powertrain: 'Plug-in Hybrid',
+          is_active: true,
+          is_verified: true,
+          last_notified_at: oneHourAgo,
+          token: 'tok-cd-1',
+        },
+      ];
+
+      const mockSupabase = {
+        from: (table: string) => {
+          if (table === 'inventory_alert_subscriptions') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    gt: async () => ({ data: mockSubscriptions, error: null }),
+                  }),
+                }),
+              }),
+              update: () => ({
+                eq: async () => ({ data: null, error: null }),
+              }),
+            };
+          }
+          return {
+            select: () => ({
+              eq: () => ({
+                eq: () => ({
+                  maybeSingle: async () => ({ data: null, error: null }),
+                }),
+              }),
+            }),
+            upsert: async () => ({ error: null }),
+          };
+        },
+      };
+
+      const testVehicle = {
+        vin: '2T3TESTVIN9999999',
+        model: 'rav4 prime',
+        trim: 'xse',
+        powertrain: 'plug-in hybrid',
+        dealerName: 'Jim Pattison Toyota Downtown',
+      };
+
+      // 1. Default cooldown (24h) blocks notification because last_notified_at was 1h ago
+      const normalSummary = await dispatchPendingAlerts([testVehicle], {
+        supabaseClient: mockSupabase,
+        resendApiKey: '',
+      });
+      expect(normalSummary.subscribersMatched).toBe(0);
+
+      // 2. cooldown=0 bypasses the cooldown check during testing
+      const bypassedSummary = await dispatchPendingAlerts([testVehicle], {
+        supabaseClient: mockSupabase,
+        resendApiKey: '',
+        cooldown: 0,
+      });
+      expect(bypassedSummary.subscribersMatched).toBe(1);
+    });
   });
 });

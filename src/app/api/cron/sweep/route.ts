@@ -170,6 +170,10 @@ export async function handleSweep(request: Request) {
     const alertSummary = await dispatchPendingAlerts(allUnreservedVehicles, {
       supabaseClient: supabase,
       dryRun,
+      cooldown:
+        customCooldown !== null && !isNaN(Number(customCooldown))
+          ? Number(customCooldown)
+          : undefined,
     });
     totalMatches = alertSummary.subscribersMatched;
     totalDispatched = alertSummary.emailsSent;

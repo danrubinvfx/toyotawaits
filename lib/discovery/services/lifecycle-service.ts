@@ -85,6 +85,8 @@ export interface DispatchPendingAlertsOptions {
   resendApiKey?: string;
   fetcher?: typeof fetch;
   dryRun?: boolean;
+  cooldown?: number | string | null;
+  cooldownHours?: number;
 }
 
 export interface DispatchPendingAlertsSummary {
@@ -447,7 +449,26 @@ export async function dispatchPendingAlerts(
           if (!isNaN(expMs) && expMs <= nowMs) return false;
         }
 
-        const subModelCanonical = normalizeModelForAlertMatch(sub.model || '');
+        // Subscriber alert cooldown check (24h default / 6h configurable)
+        // If cooldown=0 is passed in options, this check is explicitly bypassed for testing
+        const isCooldownBypassed = options.cooldown === 0 || options.cooldown === '0';
+        if (!isCooldownBypassed && sub.last_notified_at) {
+          const lastNotifiedMs = new Date(sub.last_notified_at).getTime();
+          if (!isNaN(lastNotifiedMs)) {
+            const elapsedMs = nowMs - lastNotifiedMs;
+            const cooldownWindowMs =
+              typeof options.cooldown === 'number' && options.cooldown > 0
+                ? options.cooldown < 1000
+                  ? options.cooldown * 60 * 60 * 1000
+                  : options.cooldown
+                : (options.cooldownHours ?? 24) * 60 * 60 * 1000;
+            if (elapsedMs < cooldownWindowMs) {
+              return false;
+            }
+          }
+        }
+
+        const subModelCanonical = normalizeModelForAlertMatch(sub.model || '', sub.powertrain);
         const subModel = (sub.model || '').toLowerCase().trim();
         const subTrim = (sub.trim || 'ALL').toLowerCase().trim();
         const subPowertrain = (sub.powertrain || 'ALL').toLowerCase().trim();
@@ -475,13 +496,16 @@ export async function dispatchPendingAlerts(
 
         if (!modelMatches) return false;
 
-        if (subTrim && subTrim !== 'all') {
+        const isAllTrims = !subTrim || subTrim === 'all' || subTrim === 'all trims';
+        if (!isAllTrims) {
           if (!itemTrimLower.includes(subTrim) && !subTrim.includes(itemTrimLower)) {
             return false;
           }
         }
 
-        if (subPowertrain && subPowertrain !== 'all') {
+        const isAllPowertrains =
+          !subPowertrain || subPowertrain === 'all' || subPowertrain === 'all powertrains';
+        if (!isAllPowertrains) {
           if (
             !itemPowertrainLower.includes(subPowertrain) &&
             !itemModelLower.includes(subPowertrain) &&
