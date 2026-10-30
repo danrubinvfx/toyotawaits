@@ -13,13 +13,13 @@ describe('GET /api/aggregate', () => {
 
     const cacheHeader = response.headers.get('Cache-Control');
     expect(cacheHeader).toContain('public');
-    expect(cacheHeader).toContain('s-maxage=60');
-    expect(cacheHeader).toContain('stale-while-revalidate=600');
+    expect(cacheHeader).toContain('s-maxage=300');
+    expect(cacheHeader).toContain('stale-while-revalidate=3600');
     expect(response.headers.get('CDN-Cache-Control')).toBe(
-      'public, s-maxage=60, stale-while-revalidate=600'
+      'public, s-maxage=300, stale-while-revalidate=3600'
     );
     expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
-      'public, s-maxage=60, stale-while-revalidate=600'
+      'public, s-maxage=300, stale-while-revalidate=3600'
     );
 
     const json = await response.json();
