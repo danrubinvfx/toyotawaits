@@ -110,7 +110,9 @@ export async function GET(request: NextRequest) {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'Content-Disposition': 'attachment; filename="toyotawaits-data.csv"',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+        'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+        'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
       },
     });
   } catch (error: any) {

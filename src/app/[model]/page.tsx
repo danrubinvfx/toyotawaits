@@ -16,7 +16,7 @@ interface RouteProps {
   }>;
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: revalidate at most once per hour
 
 export async function generateStaticParams() {
   return CANADIAN_VEHICLE_CATALOG.map((m) => ({ model: m.slug }));

@@ -326,7 +326,7 @@ export async function fetchRawModelWaitBenchmarks(): Promise<Record<string, Mode
     !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
   ) {
     try {
-      const supabase = createServerClient();
+      const supabase = createServerClient({ revalidate: 3600, tags: ['benchmarks'] });
       const { data, error } = await supabase
         .from('model_wait_benchmarks')
         .select('model, sample_size, min_days, p25_days, median_days, p75_days, max_days, mean_days');

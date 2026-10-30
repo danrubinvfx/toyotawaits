@@ -33,7 +33,19 @@ export function isLiveSupabaseConfigured(): boolean {
   return true;
 }
 
-export function createServerClient() {
+export interface ServerClientOptions {
+  /** Opt in to Next.js Data Cache for read-only queries. Omit for uncached (
+o-store) mutations and sensitive reads. */
+  revalidate?: number | false;
+  tags?: string[];
+}
+
+export function createServerClient(options?: ServerClientOptions) {
+  const cachedFetch: typeof fetch = (url, init) =>
+    options?.revalidate !== undefined
+      ? fetch(url, { ...init, next: { revalidate: options.revalidate, tags: options.tags } })
+      : fetch(url, { ...init, cache: 'no-store' });
+
   if (process.env.NODE_ENV === 'test' && process.env.NEXT_PUBLIC_SUPABASE_URL?.includes('mock-')) {
     const testUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const testKey =
@@ -71,7 +83,7 @@ export function createServerClient() {
       autoRefreshToken: false,
     },
     global: {
-      fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
+      fetch: cachedFetch,
     },
   });
 }

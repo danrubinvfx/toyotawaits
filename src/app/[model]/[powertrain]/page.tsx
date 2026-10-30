@@ -22,7 +22,7 @@ interface RouteProps {
   }>;
 }
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // ISR: revalidate at most once per hour
 
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string }> = [];

@@ -1684,11 +1684,19 @@ export async function getRecentActivity(limit = 10, countryCode?: CountryCode | 
   return items.slice(0, effectiveLimit);
 }
 
-export async function getCommunitySubmissions(countryCode?: CountryCode | string): Promise<CommunityRecord[]> {
+export interface CommunitySubmissionsOptions {
+  /** Cache the Supabase read via the Next.js Data Cache (seconds). Omit for uncached. */
+  revalidate?: number | false;
+  tags?: string[];
+  /** Cap the number of most-recent rows fetched. */
+  limit?: number;
+}
+
+export async function getCommunitySubmissions(countryCode?: CountryCode | string, options?: CommunitySubmissionsOptions): Promise<CommunityRecord[]> {
   const isUs = countryCode === 'US';
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient();
+      const supabase = createServerClient(options?.revalidate !== undefined ? { revalidate: options.revalidate, tags: options.tags } : undefined);
       let query = supabase
         .from('submissions')
         .select(`
@@ -1726,7 +1734,9 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
         query = query.or('country_code.eq.CA,country_code.is.null');
       }
 
-      const { data, error } = await query.order('order_date', { ascending: false });
+      let ordered = query.order('order_date', { ascending: false });
+      if (options?.limit) ordered = ordered.limit(options.limit);
+      const { data, error } = await ordered;
 
       if (!error && Array.isArray(data) && data.length > 0) {
         const dbRecords: CommunityRecord[] = data
