@@ -17,6 +17,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
   const { market, setMarket } = useMarket();
   const currentRegion = (market as CountryCode) || initialRegion;
   const isUs = currentRegion === 'US';
+  const baseUrl = isUs ? 'https://www.toyotawaits.com' : 'https://www.toyotawaits.ca';
 
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 py-12 text-zinc-600 dark:text-zinc-400">
@@ -100,23 +101,28 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/#estimator" className="hover:text-amber-500 transition-colors">
-                  Wait-Time Estimator
+                <Link href={`${baseUrl}/#estimator`} className="hover:text-amber-500 transition-colors">
+                  Toyota Delivery Wait-Time Estimator
                 </Link>
               </li>
               <li>
-                <Link href="/#community-log" className="hover:text-amber-500 transition-colors">
-                  {isUs ? 'State Analytics' : 'Provincial Analytics'}
+                <Link href={`${baseUrl}/calculator`} className="hover:text-amber-500 transition-colors">
+                  Toyota Hybrid Savings Calculator
                 </Link>
               </li>
               <li>
-                <Link href="/submit" className="hover:text-amber-500 transition-colors">
-                  Submit Wait Time
+                <Link href={`${baseUrl}/#community-log`} className="hover:text-amber-500 transition-colors">
+                  {isUs ? 'State Analytics & Delivery Log' : 'Canadian Provincial Analytics & Delivery Log'}
                 </Link>
               </li>
               <li>
-                <Link href="/api/export" className="hover:text-amber-500 transition-colors">
-                  Download Full Database (CSV)
+                <Link href={`${baseUrl}/submit`} className="hover:text-amber-500 transition-colors">
+                  Submit Toyota Wait Time Timeline
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/api/export`} className="hover:text-amber-500 transition-colors">
+                  Download Canadian Toyota Delivery Data (CSV)
                 </Link>
               </li>
             </ul>
@@ -129,69 +135,69 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/guides" className="text-amber-500 font-semibold hover:underline">
-                  All Mod Guides &amp; Almanac →
+                <Link href={`${baseUrl}/guides`} className="text-amber-500 font-semibold hover:underline">
+                  All Toyota Build Guides &amp; Mod Almanac →
                 </Link>
               </li>
               <li>
-                <Link href="/tires" className="hover:text-amber-500 transition-colors">
+                <Link href={`${baseUrl}/tires`} className="hover:text-amber-500 transition-colors">
                   {isUs ? 'Tire Guide & Reviews 🛞' : 'Canadian Tire Guide 🛞'}
                 </Link>
               </li>
               <li>
-                <Link href="/winter-prep" className="hover:text-amber-500 transition-colors">
+                <Link href={`${baseUrl}/winter-prep`} className="hover:text-amber-500 transition-colors">
                   Winter Prep &amp; Survival ❄️
                 </Link>
               </li>
               <li>
-                <Link href="/delivery-prep" className="hover:text-amber-500 transition-colors">
-                  Delivery Prep Checklist
+                <Link href={`${baseUrl}/delivery-prep`} className="hover:text-amber-500 transition-colors">
+                  Toyota Delivery Day Prep Checklist
                 </Link>
               </li>
               <li>
-                <Link href="/guides/rav4-se-mods" className="hover:text-amber-500 transition-colors">
-                  RAV4 SE Mod Playbook
+                <Link href={`${baseUrl}/guides/rav4-se-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota RAV4 Prime SE to XSE Mod Playbook
                 </Link>
               </li>
               <li>
-                <Link href="/guides/sienna-mods" className="hover:text-amber-500 transition-colors">
-                  Sienna Road Dog Mods
+                <Link href={`${baseUrl}/guides/sienna-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Sienna Road Dog Mods
                 </Link>
               </li>
               <li>
-                <Link href="/guides/toyota-sienna-trailer-hitch-guide" className="hover:text-amber-500 transition-colors">
-                  Sienna Hitch &amp; Tow Guide
+                <Link href={`${baseUrl}/guides/toyota-sienna-trailer-hitch-guide`} className="hover:text-amber-500 transition-colors">
+                  Toyota Sienna Trailer Hitch &amp; Tow Guide
                 </Link>
               </li>
               <li>
-                <Link href="/guides/grand-highlander-mods" className="hover:text-amber-500 transition-colors">
-                  Grand Highlander Utility
+                <Link href={`${baseUrl}/guides/grand-highlander-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Grand Highlander Utility Mods
                 </Link>
               </li>
               <li>
-                <Link href="/guides/land-cruiser-mods" className="hover:text-amber-500 transition-colors">
-                  Land Cruiser 250 Mods
+                <Link href={`${baseUrl}/guides/land-cruiser-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Land Cruiser 250 Mods
                 </Link>
               </li>
               <li>
-                <Link href="/guides/ev-charging" className="hover:text-amber-500 transition-colors">
-                  Level 2 EV Charging
+                <Link href={`${baseUrl}/guides/ev-charging`} className="hover:text-amber-500 transition-colors">
+                  Toyota Level 2 EV &amp; PHEV Charging
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors pt-1">
+                <Link href={`${baseUrl}/privacy`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors pt-1">
                   <Shield className="h-3.5 w-3.5 text-zinc-400" />
                   Zero-PII Privacy Charter
                 </Link>
               </li>
               <li>
-                <Link href="/legal" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
+                <Link href={`${baseUrl}/legal`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
                   <Scale className="h-3.5 w-3.5 text-zinc-400" />
                   Legal &amp; Pricing Disclosures
                 </Link>
               </li>
               <li>
-                <a href="/sitemap.xml" className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
+                <a href={`${baseUrl}/sitemap.xml`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
                   <Globe className="h-3.5 w-3.5 text-zinc-400" />
                   Sitemap
                 </a>
@@ -249,21 +255,21 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           {/* Global Footer Quick Navigation & Community Contact */}
           <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-slate-400">
             <Link
-              href="/privacy"
+              href={`${baseUrl}/privacy`}
               className="text-slate-400 hover:text-slate-200 transition-colors"
             >
               Privacy
             </Link>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <Link
-              href="/legal"
+              href={`${baseUrl}/legal`}
               className="text-slate-400 hover:text-slate-200 transition-colors"
             >
               Legal
             </Link>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <a
-              href="/sitemap.xml"
+              href={`${baseUrl}/sitemap.xml`}
               className="text-slate-400 hover:text-slate-200 transition-colors"
             >
               Sitemap

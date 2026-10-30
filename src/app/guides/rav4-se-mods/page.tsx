@@ -25,25 +25,33 @@ import {
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE | ToyotaWaits.ca',
-  description:
-    'Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD.',
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
-  },
-  openGraph: {
-    title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',
+export function generateMetadata(): Metadata {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  return {
+    title: `Skipping the Wait: Turn Your RAV4 Prime SE into an XSE (Updated ${currentMonthYear}) | ToyotaWaits.ca`,
     description:
-      'The DIY playbook for Canadian buyers tired of waiting 18+ months for an XSE. Get premium sound and leather on an SE for $700 CAD.',
-    url: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'article',
-  },
-};
+      `Skip the 12-month XSE queue: How Canadian RAV4 Prime SE buyers upgrade dash speakers, leather seats, and accessories for under $700 CAD (Updated ${currentMonthYear}).`,
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
+    },
+    openGraph: {
+      title: `Skipping the Wait: Turn Your RAV4 Prime SE into an XSE (Updated ${currentMonthYear})`,
+      description:
+        'The DIY playbook for Canadian buyers tired of waiting 18+ months for an XSE. Get premium sound and leather on an SE for $700 CAD.',
+      url: 'https://www.toyotawaits.ca/guides/rav4-se-mods',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'article',
+    },
+  };
+}
 
 export default function Rav4SeModsGuidePage() {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* Header & Breadcrumb */}
@@ -63,7 +71,7 @@ export default function Rav4SeModsGuidePage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
-          Skipping the Wait: Turn Your RAV4 Prime SE into an XSE
+          Skipping the Wait: Turn Your RAV4 Prime SE into an XSE (Updated {currentMonthYear})
         </h1>
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
           Dealer allocation queues for the RAV4 Prime XSE Technology Package remain backed up over a year across Canada. Taking delivery of a base SE trim and installing community-proven acoustic, upholstery, and dashcam upgrades in an afternoon gets you on the road faster while saving thousands of dollars.

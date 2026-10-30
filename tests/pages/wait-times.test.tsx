@@ -33,48 +33,51 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
   });
 
     it('optimizes Grand Highlander dynamic title, description, OpenGraph, and Twitter tags for high CTR', async () => {
+    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const metadata = await generateMetadata({
       params: Promise.resolve({ model: 'grand-highlander' }),
     });
 
     expect(metadata.title).toBe(
-      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
     );
     expect(metadata.description).toBe(
-      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+      `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect(metadata.openGraph?.title).toBe(
-      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
     );
     expect(metadata.openGraph?.description).toBe(
-      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+      `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect((metadata.twitter as any)?.title).toBe(
-      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
     );
     expect((metadata.twitter as any)?.description).toBe(
-      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+      `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect(metadata.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/wait-times/grand-highlander'
     );
   });
 
-  it('generates high-intent dynamic metadata with canonical URL and 2026 tracker copy', async () => {
+  it('generates high-intent dynamic metadata with canonical URL and dynamic freshness date', async () => {
+    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const metadata = await generateMetadata({
       params: Promise.resolve({ model: 'rav4' }),
     });
 
     expect(metadata.title).toBe(
-      'Toyota RAV4 Wait Times Canada (2026 Tracker) | ToyotaWaits'
+      `Toyota RAV4 Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
     );
     expect(metadata.description).toBe(
-      'Track real-time 2026 Toyota RAV4 delivery wait times across Canada. Compare crowdsourced lead times by trim and province.'
+      `Track real-time crowdsourced Toyota RAV4 delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/rav4');
   });
 
-  it('renders exact <h1>, fast summary grid, breakdown sections, and Sienna hitch guide banner', async () => {
+  it('renders exact <h1>, Position Zero answer box, fast summary grid, calculator banner, and Sienna hitch guide banner', async () => {
+    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const jsx = await ModelWaitTimePage({
       params: Promise.resolve({ model: 'sienna' }),
     });
@@ -85,12 +88,22 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
       container = rendered.container;
     });
 
-    // Verify exact H1 search target: {Model} Wait Times in Canada (2026 Tracker)
+    // Verify exact H1 search target: {Model} Wait Times Canada (Updated {Month Year})
     const heading = screen.getByRole('heading', {
       level: 1,
-      name: 'Toyota Sienna Wait Times in Canada (2026 Tracker)',
+      name: `Toyota Sienna Wait Times Canada (Updated ${currentMonthYear})`,
     });
     expect(heading).toBeInTheDocument();
+
+    // Verify Featured Snippet Position Zero Answer Box
+    const snippetBox = screen.getByTestId('featured-snippet-box');
+    expect(snippetBox).toBeInTheDocument();
+    expect(screen.getByText(/Quick Summary • Canadian Delivery Overview/i)).toBeInTheDocument();
+    expect(screen.getByText('Canadian Median Wait')).toBeInTheDocument();
+    expect(screen.getAllByText('Powertrain Breakdown').length).toBeGreaterThan(0);
+    expect(screen.getByText('Regional Lead Times')).toBeInTheDocument();
+    expect(screen.getByText(/Fastest:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Slowest:/i)).toBeInTheDocument();
 
     // Verify fast summary grid columns
     expect(screen.getAllByText('Powertrain').length).toBeGreaterThan(0);
@@ -98,6 +111,14 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(screen.getByText('BC Lead Time')).toBeInTheDocument();
     expect(screen.getByText('Ontario Lead Time')).toBeInTheDocument();
     expect(screen.getAllByText('Hybrid AWD / FWD').length).toBeGreaterThan(0);
+
+    // Verify Contextual Calculator Teaser Callout Banner for high-volume model (Sienna)
+    const calcBanner = screen.getByTestId('calculator-teaser-banner');
+    expect(calcBanner).toBeInTheDocument();
+    expect(screen.getAllByText(/Weighing Gas vs\. Hybrid\?/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Calculate your annual fuel savings and the extra energy cost of waiting/i)).toBeInTheDocument();
+    const calcCta = screen.getByRole('link', { name: /Calculate Payback & Waiting Cost →/i });
+    expect(calcCta).toHaveAttribute('href', '/calculator/sienna-hybrid');
 
     // Verify Breakdown sections (<h2>)
     expect(screen.getByText(/Trim & Powertrain Delivery Spreads/i)).toBeInTheDocument();
@@ -124,25 +145,30 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
 
     const dataset = json['@graph'].find((e: any) => e['@type'] === 'Dataset');
     expect(dataset).toBeDefined();
-    expect(dataset.name).toBe('Toyota Sienna Wait Times in Canada (2026 Tracker)');
+    expect(dataset.name).toBe(`Toyota Sienna Wait Times in Canada (${currentMonthYear} Tracker)`);
     expect(dataset.license).toBe('https://creativecommons.org/licenses/by-nc/4.0/');
     expect(dataset.spatialCoverage).toBe('Canada');
 
     const faqPage = json['@graph'].find((e: any) => e['@type'] === 'FAQPage');
     expect(faqPage).toBeDefined();
-    expect(faqPage.mainEntity.length).toBeGreaterThan(0);
-    expect(faqPage.mainEntity[0].name).toContain('Toyota Sienna in Canada');
+    expect(faqPage.mainEntity.length).toBeGreaterThanOrEqual(2);
+    // Core user queries
+    expect(faqPage.mainEntity[0].name).toBe('What is the average wait time for a Toyota Sienna in Canada?');
+    expect(faqPage.mainEntity[1].name).toBe('Which Canadian province has the shortest wait time for the Sienna?');
   });
 
   it('renders distinct data separation for rav4, sienna, and tacoma', async () => {
+    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     // 1. RAV4
     const rav4Jsx = await ModelWaitTimePage({
       params: Promise.resolve({ model: 'rav4' }),
     });
     const rav4Render = render(rav4Jsx);
-    expect(rav4Render.getByRole('heading', { level: 1, name: 'Toyota RAV4 Wait Times in Canada (2026 Tracker)' })).toBeInTheDocument();
+    expect(rav4Render.getByRole('heading', { level: 1, name: `Toyota RAV4 Wait Times Canada (Updated ${currentMonthYear})` })).toBeInTheDocument();
     expect(rav4Render.getAllByText('Gas').length).toBeGreaterThan(0);
     expect(rav4Render.getAllByText('Plug-in Hybrid').length).toBeGreaterThan(0);
+    // RAV4 has calculator banner
+    expect(rav4Render.getByTestId('calculator-teaser-banner')).toBeInTheDocument();
     rav4Render.unmount();
 
     // 2. Tacoma
@@ -150,9 +176,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
       params: Promise.resolve({ model: 'tacoma' }),
     });
     const tacomaRender = render(tacomaJsx);
-    expect(tacomaRender.getByRole('heading', { level: 1, name: 'Toyota Tacoma Wait Times in Canada (2026 Tracker)' })).toBeInTheDocument();
+    expect(tacomaRender.getByRole('heading', { level: 1, name: `Toyota Tacoma Wait Times Canada (Updated ${currentMonthYear})` })).toBeInTheDocument();
     expect(tacomaRender.getAllByText('i-FORCE').length).toBeGreaterThan(0);
     expect(tacomaRender.getAllByText('i-FORCE MAX').length).toBeGreaterThan(0);
+    // Tacoma is not in rav4, sienna, camry, so calculator teaser is omitted
+    expect(tacomaRender.queryByTestId('calculator-teaser-banner')).toBeNull();
     tacomaRender.unmount();
   });
 

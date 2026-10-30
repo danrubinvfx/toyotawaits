@@ -24,12 +24,12 @@ export function ModelDirectory() {
           {models.map((m) => (
             <Link
               key={m.slug}
-              href={`/wait-times/${toCanonicalWaitTimeSlug(m.slug)}`}
+              href={`https://www.toyotawaits.ca/wait-times/${toCanonicalWaitTimeSlug(m.slug)}`}
               className="group flex flex-col p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-red-500/40 hover:bg-red-50/50 dark:hover:bg-red-950/20 hover:text-red-700 dark:hover:text-red-400 transition-all shadow-2xs"
-              title={`${m.name} Wait Times Canada`}
+              title={`Toyota ${m.name} Delivery Wait Times Canada`}
             >
               <span className="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 truncate">
-                {m.name}
+                Toyota {m.name} Delivery Wait Times
               </span>
               <span className="text-[11px] text-zinc-500 truncate mt-0.5">
                 {m.powertrains.join(', ')}

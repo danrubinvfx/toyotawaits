@@ -49,11 +49,11 @@ describe('Footer Component', () => {
 
     const tireLink = screen.getByRole('link', { name: /Canadian Tire Guide 🛞/i });
     expect(tireLink).toBeInTheDocument();
-    expect(tireLink).toHaveAttribute('href', '/tires');
+    expect(tireLink).toHaveAttribute('href', 'https://www.toyotawaits.ca/tires');
 
     const winterPrepLink = screen.getByRole('link', { name: /Winter Prep & Survival ❄️/i });
     expect(winterPrepLink).toBeInTheDocument();
-    expect(winterPrepLink).toHaveAttribute('href', '/winter-prep');
+    expect(winterPrepLink).toHaveAttribute('href', 'https://www.toyotawaits.ca/winter-prep');
   });
 
   it('renders standardized Global Nominative Fair Use Disclaimer', () => {
@@ -91,7 +91,7 @@ describe('Footer Component', () => {
     // Sitemap link
     const sitemapLinks = screen.getAllByRole('link', { name: /sitemap/i });
     expect(sitemapLinks.length).toBeGreaterThanOrEqual(1);
-    expect(sitemapLinks[0]).toHaveAttribute('href', '/sitemap.xml');
+    expect(sitemapLinks[0]).toHaveAttribute('href', 'https://www.toyotawaits.ca/sitemap.xml');
 
     // Contact & Feedback link
     const contactLinks = screen.getAllByRole('link', { name: /Contact & Feedback/i });

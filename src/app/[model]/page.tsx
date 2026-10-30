@@ -30,9 +30,12 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     return { title: 'Model Not Found | ToyotaWaits.ca' };
   }
 
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
   return {
-    title: `Toyota ${model.name} Canadian Delivery Wait Times | ToyotaWaits.ca`,
-    description: `Crowdsourced delivery wait times, trims, and pricing transparency for the Toyota ${model.name} across Canada.`,
+    title: `Toyota ${model.name} Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`,
+    description: `Track real-time crowdsourced delivery wait times, trims, and pricing transparency for the Toyota ${model.name} across Canada (Updated ${currentMonthYear}).`,
     alternates: {
       canonical: `https://www.toyotawaits.ca/${model.slug}`,
     },
@@ -52,6 +55,8 @@ export default async function ModelPage({ params }: RouteProps) {
   }
 
   const benchmark = await getModelBenchmark(model.slug);
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   return (
     <div className="space-y-10 pb-16">
@@ -72,7 +77,7 @@ export default async function ModelPage({ params }: RouteProps) {
             <div className="space-y-2">
               <Badge className="bg-red-600 text-white">🇨🇦 Canadian Tracker</Badge>
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-                Toyota {model.name}
+                Toyota {model.name} Wait Times Canada (Updated {currentMonthYear})
               </h1>
               <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
                 Explore crowdsourced wait times across all available {model.name} powertrain configurations.

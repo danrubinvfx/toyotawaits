@@ -27,23 +27,28 @@ import { PopularGearCard } from '@/components/guides/popular-gear-card';
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: 'Toyota DIY Mod Guides & Delivery Prep Almanac | ToyotaWaits.ca',
-  description:
-    'Comprehensive Canadian DIY upgrade playbooks and delivery day prep gear for Toyota RAV4 Prime, Sienna, Grand Highlander, and Land Cruiser 250 buyers.',
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/guides',
-  },
-  openGraph: {
-    title: 'Toyota DIY Mod Guides & Delivery Prep Almanac',
+export function generateMetadata(): Metadata {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  return {
+    title: `Toyota DIY Mod Guides & Delivery Prep Almanac (Updated ${currentMonthYear}) | ToyotaWaits.ca`,
     description:
-      'Skip lengthy dealer waitlists with DIY trim upgrades, and prep your vehicle for Canadian roads with community-vetted accessories.',
-    url: 'https://www.toyotawaits.ca/guides',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'website',
-  },
-};
+      `Comprehensive Canadian DIY upgrade playbooks and delivery day prep gear for Toyota RAV4 Prime, Sienna, Grand Highlander, and Land Cruiser 250 buyers (Updated ${currentMonthYear}).`,
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/guides',
+    },
+    openGraph: {
+      title: `Toyota DIY Mod Guides & Delivery Prep Almanac (Updated ${currentMonthYear})`,
+      description:
+        'Skip lengthy dealer waitlists with DIY trim upgrades, and prep your vehicle for Canadian roads with community-vetted accessories.',
+      url: 'https://www.toyotawaits.ca/guides',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'website',
+    },
+  };
+}
 
 const MOD_GUIDES = [
   {
@@ -196,6 +201,9 @@ const POPULAR_GEAR = [
 ];
 
 export default function GuidesIndexPage() {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-14">
       {/* Header & Breadcrumb */}
@@ -212,7 +220,7 @@ export default function GuidesIndexPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
-          DIY Mod Playbooks &amp; Delivery Day Prep
+          DIY Mod Playbooks &amp; Delivery Day Prep (Updated {currentMonthYear})
         </h1>
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
           The piano has been drinking, and dealer allocation queues are backed up for months. Turn your standard trim into a luxury spec, prep for Canadian winter roads, and skip the line.

@@ -19,31 +19,39 @@ import {
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: 'The Road Dog Cruiser: Essential Toyota Sienna Mods & Upgrades | ToyotaWaits.ca',
-  description:
-    'Essential DIY upgrades for Canadian Toyota Sienna owners: Air Lift 1000 rear suspension helpers, console bridge trays, FitcamX OEM dashcam, and cargo hatch LED lighting.',
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/guides/sienna-mods',
-  },
-  openGraph: {
-    title: 'The Road Dog Cruiser: Essential Toyota Sienna Mods & Road-Trip Prep',
+export function generateMetadata(): Metadata {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  return {
+    title: `The Road Dog Cruiser: Essential Toyota Sienna Mods & Upgrades (Updated ${currentMonthYear}) | ToyotaWaits.ca`,
     description:
-      'Community-proven DIY upgrades to fix factory minivan annoyances: suspension sag, dark trunks, and flying bridge clutter.',
-    url: 'https://www.toyotawaits.ca/guides/sienna-mods',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'article',
-  },
-  twitter: {
-    card: 'summary',
-    title: 'Essential Toyota Sienna Mods & Road-Trip Prep',
-    description:
-      'Air Lift 1000 helper springs, FitcamX OEM-look dashcam, and hatch LED lighting for Canadian Sienna families.',
-  },
-};
+      `Essential DIY upgrades for Canadian Toyota Sienna owners: Air Lift 1000 rear suspension helpers, console bridge trays, FitcamX OEM dashcam, and cargo hatch LED lighting (Updated ${currentMonthYear}).`,
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/guides/sienna-mods',
+    },
+    openGraph: {
+      title: `The Road Dog Cruiser: Essential Toyota Sienna Mods (Updated ${currentMonthYear})`,
+      description:
+        'Community-proven DIY upgrades to fix factory minivan annoyances: suspension sag, dark trunks, and flying bridge clutter.',
+      url: 'https://www.toyotawaits.ca/guides/sienna-mods',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary',
+      title: `Essential Toyota Sienna Mods & Road-Trip Prep (Updated ${currentMonthYear})`,
+      description:
+        'Air Lift 1000 helper springs, FitcamX OEM-look dashcam, and hatch LED lighting for Canadian Sienna families.',
+    },
+  };
+}
 
 export default function SiennaModsGuidePage() {
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
   return (
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* Hero Header */}
@@ -51,7 +59,7 @@ export default function SiennaModsGuidePage() {
         badgeText="Sienna Mod Playbook"
         badgeIcon={Car}
         subBadgeText="4th Gen (2021–2026)"
-        title="The Road Dog Cruiser: Essential Sienna Family & Road-Trip Mods"
+        title={`The Road Dog Cruiser: Essential Sienna Family & Road-Trip Mods (Updated ${currentMonthYear})`}
         tagline="The kids are asleep, the coffee is lukewarm, and the highway stretches past Thunder Bay."
         description="The 4th-generation Toyota Sienna hybrid is Canada's definitive road-trip machine, but Toyota left a few glaring gaps: a rear suspension that squats under heavy cargo, a cavernous center console bridge that swallows phones, and a single dim cargo bulb. Here is how Canadian owners dial it in before the cross-country trek."
       />

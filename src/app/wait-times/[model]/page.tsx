@@ -28,6 +28,7 @@ import {
   AlertCircle,
   Calendar,
   CheckCircle2,
+  Calculator,
 } from 'lucide-react';
 
 export const revalidate = 3600; // ISR: revalidate at most once per hour
@@ -237,6 +238,10 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
     };
   });
 
+  const sortedProvinces = [...provincialSpreads].sort((a, b) => a.days - b.days);
+  const fastestProvince = sortedProvinces[0];
+  const slowestProvince = sortedProvinces[sortedProvinces.length - 1];
+
   return {
     sampleSize: records.length,
     deliveredCount: delivered.length,
@@ -250,6 +255,8 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
     maxWaitMonths,
     projectedDeliveryText,
     provincialSpreads,
+    fastestProvince,
+    slowestProvince,
     powertrainGrid,
   };
 }
@@ -264,14 +271,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-    const title =
-    modelConfig.slug === 'grand-highlander'
-      ? 'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
-      : (modelConfig.metaTitle || `${modelConfig.name} Wait Times Canada (2026 Tracker) | ToyotaWaits`);
-  const description =
-    modelConfig.slug === 'grand-highlander'
-      ? 'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
-      : (modelConfig.metaDescription || `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`);
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  const title = `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`;
+  const description = `Track real-time crowdsourced ${modelConfig.name} delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`;
   const canonical = `https://www.toyotawaits.ca/wait-times/${modelConfig.slug}`;
 
   return {
@@ -444,26 +448,50 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
 
   const { submissions, latestSubmissionDate } = await fetchModelSubmissions(modelConfig);
   const stats = computeModelStats(modelConfig, submissions);
+  const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  // Core machine-readable FAQs targeting Google Position Zero and user queries
+  const coreFaqs = [
+    {
+      question: `What is the average wait time for a Toyota ${modelConfig.shortName} in Canada?`,
+      answer: `The Canadian national median wait time for a ${modelConfig.name} is approximately ${stats.medianMonths} months (${stats.medianDays} days), with typical delivery times ranging from ${stats.minWaitMonths} to ${stats.maxWaitMonths} months (${stats.p25Days} to ${stats.p75Days} days) depending on powertrain and trim level.`,
+    },
+    {
+      question: `Which Canadian province has the shortest wait time for the ${modelConfig.shortName}?`,
+      answer: `${stats.fastestProvince.name} (${stats.fastestProvince.code}) generally reports the shortest wait times for the ${modelConfig.name} in Canada at approximately ${stats.fastestProvince.months} months (~${stats.fastestProvince.days} days), while provinces with heavy EV/ZEV rebate programs like ${stats.slowestProvince.name} (${stats.slowestProvince.code}) experience the longest delivery queues (~${stats.slowestProvince.days} days).`,
+    },
+  ];
+
+  const allFaqs = [
+    ...coreFaqs,
+    ...modelConfig.faqs.filter((faq) => {
+      const qLower = faq.question.toLowerCase();
+      return (
+        !qLower.includes('average wait time for') &&
+        !qLower.includes('shortest wait time for')
+      );
+    }),
+  ];
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
       {
         '@type': 'Dataset',
-        name: `${modelConfig.name} Wait Times in Canada (2026 Tracker)`,
-        description: `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`,
+        name: `${modelConfig.name} Wait Times in Canada (${currentMonthYear} Tracker)`,
+        description: `Track real-time ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`,
         license: 'https://creativecommons.org/licenses/by-nc/4.0/',
         spatialCoverage: 'Canada',
         dateModified: latestSubmissionDate,
         creator: {
           '@type': 'Organization',
           name: 'ToyotaWaits',
-          url: 'https://toyotawaits.ca',
+          url: 'https://www.toyotawaits.ca',
         },
       },
       {
         '@type': 'FAQPage',
-        mainEntity: modelConfig.faqs.map((faq) => ({
+        mainEntity: allFaqs.map((faq) => ({
           '@type': 'Question',
           name: faq.question,
           acceptedAnswer: {
@@ -509,8 +537,88 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-          {modelConfig.name} Wait Times in Canada (2026 Tracker)
+          {modelConfig.name} Wait Times Canada (Updated {currentMonthYear})
         </h1>
+
+        {/* Position Zero Featured Snippet Answer Box */}
+        <div
+          data-testid="featured-snippet-box"
+          className="rounded-2xl border-2 border-red-500/30 bg-gradient-to-br from-red-50/80 via-white to-zinc-50 dark:from-red-950/20 dark:via-zinc-900/60 dark:to-zinc-950 p-5 sm:p-6 shadow-sm space-y-4"
+        >
+          <div className="flex items-center justify-between gap-2 flex-wrap border-b border-zinc-200/80 dark:border-zinc-800 pb-3">
+            <div className="flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white font-black text-xs">
+                ✓
+              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                Quick Summary &bull; Canadian Delivery Overview
+              </span>
+            </div>
+            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+              Live Allocation Tracker &bull; Updated {currentMonthYear}
+            </span>
+          </div>
+
+          {/* Core Snippet Direct Answer */}
+          <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
+            The Canadian national median wait time for a <strong>{modelConfig.name}</strong> is{' '}
+            <strong className="text-red-600 dark:text-red-400">
+              {stats.medianMonths} months ({stats.medianDays} days)
+            </strong>
+            , with typical buyer deliveries falling between {stats.minWaitMonths} and {stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days).
+          </p>
+
+          {/* 3 Key Takeaway Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+            {/* 1. Canadian Median Wait */}
+            <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                Canadian Median Wait
+              </span>
+              <div className="text-xl font-black text-zinc-950 dark:text-zinc-50">
+                {stats.medianMonths} mos <span className="text-sm font-normal text-zinc-500">({stats.medianDays} days)</span>
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                IQR: {stats.minWaitMonths}–{stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days)
+              </p>
+            </div>
+
+            {/* 2. Powertrain Breakdown */}
+            <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                Powertrain Breakdown
+              </span>
+              <ul className="text-xs space-y-1 text-zinc-700 dark:text-zinc-300">
+                {stats.powertrainGrid.map((pt) => (
+                  <li key={pt.powertrain} className="flex justify-between items-center gap-1">
+                    <span className="font-semibold truncate">{pt.powertrain}:</span>
+                    <span className="font-mono text-zinc-900 dark:text-zinc-100 shrink-0 font-medium">{pt.nationalMedian}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* 3. Regional Lead Times */}
+            <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                Regional Lead Times
+              </span>
+              <div className="text-xs space-y-1 text-zinc-700 dark:text-zinc-300">
+                <div className="flex justify-between items-center">
+                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold truncate">Fastest: {stats.fastestProvince.name} ({stats.fastestProvince.code})</span>
+                  <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.fastestProvince.days}d</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-amber-700 dark:text-amber-400 font-semibold truncate">Slowest: {stats.slowestProvince.name} ({stats.slowestProvince.code})</span>
+                  <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.slowestProvince.days}d</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-zinc-400 leading-tight pt-0.5">
+                Rebate demand compounds wait times in BC &amp; QC.
+              </p>
+            </div>
+          </div>
+        </div>
 
         <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-2">
           <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
@@ -560,6 +668,33 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         </Card>
       </section>
+
+      {/* Contextual Calculator Teaser Callout Banner */}
+      {['rav4', 'sienna', 'camry'].includes(modelConfig.slug) && (
+        <section aria-label="Hybrid Savings Calculator Teaser" data-testid="calculator-teaser-banner">
+          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-zinc-50 dark:from-emerald-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-emerald-600 text-white font-bold text-xs gap-1.5 shadow-xs">
+                  <Calculator className="h-3.5 w-3.5" />
+                  Fuel Savings &amp; Energy Analysis
+                </Badge>
+                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Weighing Gas vs. Hybrid?
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Weighing Gas vs. Hybrid? Calculate your annual fuel savings and the extra energy cost of waiting.
+                </p>
+              </div>
+              <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shrink-0 shadow-sm">
+                <Link href={`/calculator/${modelConfig.slug}-hybrid`} className="gap-2">
+                  Calculate Payback &amp; Waiting Cost &rarr;
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Sienna Trailer Hitch Guide Callout Banner */}
       {model === 'sienna' && (
@@ -724,7 +859,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
 
         <div className="space-y-3">
-          {modelConfig.faqs.map((faq, i) => (
+          {allFaqs.map((faq, i) => (
             <details
               key={i}
               className="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden shadow-2xs transition-all"
