@@ -18,6 +18,8 @@ export interface ModelRegistryEntry {
     question: string;
     answer: string;
   }>;
+  metaTitle?: string;
+  metaDescription?: string;
 }
 
 export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
@@ -110,6 +112,8 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     baseMedian: 300,
     baseP25: 240,
     baseP75: 360,
+    metaTitle: 'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits',
+    metaDescription: 'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.',
     popularTrims: [
       { trim: 'XLE AWD (Gas Turbo)', powertrain: 'Gas', spread: '4–6 months (120–180 days)', status: 'Balanced' },
       { trim: 'Limited AWD (Gas Turbo)', powertrain: 'Gas', spread: '5–7 months (150–210 days)', status: 'Balanced' },

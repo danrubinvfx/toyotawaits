@@ -264,9 +264,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  const title = `${modelConfig.name} Wait Times Canada (2026 Tracker) | ToyotaWaits`;
-  const description = `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`;
-  const canonical = `https://toyotawaits.ca/wait-times/${modelConfig.slug}`;
+    const title =
+    modelConfig.slug === 'grand-highlander'
+      ? 'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+      : (modelConfig.metaTitle || `${modelConfig.name} Wait Times Canada (2026 Tracker) | ToyotaWaits`);
+  const description =
+    modelConfig.slug === 'grand-highlander'
+      ? 'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+      : (modelConfig.metaDescription || `Track real-time 2026 ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`);
+  const canonical = `https://www.toyotawaits.ca/wait-times/${modelConfig.slug}`;
 
   return {
     title,

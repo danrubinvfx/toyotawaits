@@ -32,6 +32,34 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(params.some((p) => p.model === 'crown-signia')).toBe(true);
   });
 
+    it('optimizes Grand Highlander dynamic title, description, OpenGraph, and Twitter tags for high CTR', async () => {
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ model: 'grand-highlander' }),
+    });
+
+    expect(metadata.title).toBe(
+      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+    );
+    expect(metadata.description).toBe(
+      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+    );
+    expect(metadata.openGraph?.title).toBe(
+      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+    );
+    expect(metadata.openGraph?.description).toBe(
+      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+    );
+    expect((metadata.twitter as any)?.title).toBe(
+      'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits'
+    );
+    expect((metadata.twitter as any)?.description).toBe(
+      'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.'
+    );
+    expect(metadata.alternates?.canonical).toBe(
+      'https://www.toyotawaits.ca/wait-times/grand-highlander'
+    );
+  });
+
   it('generates high-intent dynamic metadata with canonical URL and 2026 tracker copy', async () => {
     const metadata = await generateMetadata({
       params: Promise.resolve({ model: 'rav4' }),
@@ -43,7 +71,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(metadata.description).toBe(
       'Track real-time 2026 Toyota RAV4 delivery wait times across Canada. Compare crowdsourced lead times by trim and province.'
     );
-    expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/wait-times/rav4');
+    expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/rav4');
   });
 
   it('renders exact <h1>, fast summary grid, breakdown sections, and Sienna hitch guide banner', async () => {

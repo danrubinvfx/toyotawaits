@@ -42,6 +42,24 @@ describe('Middleware Multi-Domain Routing (.ca vs .com)', () => {
     expect(response.headers.get('x-domain')).toBe('toyotawaits.ca');
   });
 
+    it('enforces 301 permanent redirect from apex domain to www in production', () => {
+    const originalEnv = process.env.NODE_ENV;
+    try {
+      (process.env as any).NODE_ENV = 'production';
+      const request = new NextRequest('http://toyotawaits.ca/wait-times/grand-highlander', {
+        headers: {
+          host: 'toyotawaits.ca',
+        },
+      });
+
+      const response = middleware(request);
+      expect(response.status).toBe(301);
+      expect(response.headers.get('location')).toBe('https://www.toyotawaits.ca/wait-times/grand-highlander');
+    } finally {
+      (process.env as any).NODE_ENV = originalEnv;
+    }
+  });
+
   it('defaults to Canadian domain for localhost and local development fallback', () => {
     const request = new NextRequest('http://localhost:3000/', {
       headers: {
