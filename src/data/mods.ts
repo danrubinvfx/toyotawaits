@@ -73,7 +73,7 @@ export const MODS_CONFIG: ModItem[] = [
   {
     id: 'rav4-padded-armrest-cover',
     slug: 'rav4-padded-armrest-cover',
-    models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    models: ['rav4', 'rav4-hybrid', 'rav4-prime'],
     category: 'Interior Protection',
     categories: ['Interior Protection'],
     title: 'Custom-Fit Padded Center Console Armrest Cover',

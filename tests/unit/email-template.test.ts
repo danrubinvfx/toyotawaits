@@ -193,5 +193,140 @@ describe('Notification Email Engine & Template Generator', () => {
         expect(pick.url).toContain('tag=toyotawaits07-20');
       }
     });
+
+    it('renders articulate vehicle dossier with header, status badge, pricing, dealership, and stock # for single vehicle', () => {
+      const email = generateAllocationDropAlertEmail({
+        model: 'Corolla Hatchback',
+        trim: 'SE Upgrade',
+        modelYear: 2026,
+        powertrain: '2.0L',
+        drivetrain: 'FWD',
+        vin: '2T1BURHE7TC123456',
+        status: 'in_transit',
+        stockNumber: 'STK-2026-CH',
+        dealerName: 'Jim Pattison Toyota Surrey',
+        dealerCity: 'Surrey, BC',
+        sellingPrice: 31796,
+        vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/corolla-hatch-1',
+      });
+
+      // Subject format: Allocation Alert: ${vehicle.model} (${vehicle.trim}) at ${vehicle.dealerName}
+      expect(email.subject).toBe('Allocation Alert: Corolla Hatchback (SE Upgrade) at Jim Pattison Toyota Surrey');
+
+      // Header: 2026 Corolla Hatchback SE Upgrade - 2.0L FWD
+      expect(email.html).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
+      expect(email.text).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
+
+      // Status Badge: In Transit
+      expect(email.html).toContain('In Transit');
+      expect(email.text).toContain('Status: In Transit');
+
+      // Key details grid: VIN, Pricing ($31,796 CAD), Dealership, Stock #
+      expect(email.html).toContain('2T1BURHE7TC123456');
+      expect(email.html).toContain('$31,796 CAD');
+      expect(email.html).toContain('Jim Pattison Toyota Surrey · Surrey, BC');
+      expect(email.html).toContain('STK-2026-CH');
+
+      // Direct Action
+      expect(email.html).toContain('View Dealer Listing');
+      expect(email.html).toContain('https://www.jptoyota-surrey.com/vehicles/corolla-hatch-1');
+    });
+
+    it('renders multi-vehicle batch digest with consolidated subject and distinct cards', () => {
+      const email = generateAllocationDropAlertEmail({
+        recipientEmail: 'buyer@example.ca',
+        vehicles: [
+          {
+            vin: '2T1BURHE7TC111111',
+            model: 'Corolla Hatchback',
+            trim: 'SE Upgrade',
+            modelYear: 2026,
+            powertrain: '2.0L FWD',
+            status: 'in_transit',
+            stockNumber: 'STK-01',
+            dealerName: 'Jim Pattison Toyota Surrey',
+            dealerCity: 'Surrey, BC',
+            sellingPrice: 31796,
+            vdpUrl: 'https://dealer.ca/v1',
+          },
+          {
+            vin: '2T3P1RFV5TC222222',
+            model: 'RAV4',
+            trim: 'XSE',
+            modelYear: 2025,
+            powertrain: 'Hybrid AWD',
+            status: 'on_lot',
+            dealerName: 'OpenRoad Toyota Richmond',
+            dealerCity: 'Richmond, BC',
+            sellingPrice: 42500,
+            vdpUrl: 'https://dealer.ca/v2',
+          },
+        ],
+      });
+
+      // Subject format: Allocation Alert: ${vehicles.length} New Toyota Matches Observed (${distinctModels.join(', ')})
+      expect(email.subject).toBe('Allocation Alert: 2 New Toyota Matches Observed (Corolla Hatchback, RAV4)');
+
+      // Both vehicles present in HTML and plain-text
+      expect(email.html).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
+      expect(email.html).toContain('2025 RAV4 XSE - Hybrid AWD');
+      expect(email.html).toContain('2T1BURHE7TC111111');
+      expect(email.html).toContain('2T3P1RFV5TC222222');
+      expect(email.html).toContain('Jim Pattison Toyota Surrey · Surrey, BC');
+      expect(email.html).toContain('OpenRoad Toyota Richmond · Richmond, BC');
+
+      expect(email.text).toContain('2T1BURHE7TC111111');
+      expect(email.text).toContain('2T3P1RFV5TC222222');
+    });
+
+    it('renders Corolla Hatchback hero gear essentials without copy-paste bleed (FitcamX, Floor Liners, Console Tray)', () => {
+      const email = generateAllocationDropAlertEmail({
+        model: 'Corolla Hatchback',
+        trim: 'SE Upgrade',
+        vin: '2T1BURHE7TC123456',
+        dealerName: 'Jim Pattison Toyota Surrey',
+      });
+
+      // 3 Curated Hero Essentials for Corolla Hatchback
+      expect(email.gearPicks).toHaveLength(3);
+
+      const [dashcam, floorLiners, consoleTray] = email.gearPicks;
+
+      // 1. FitcamX OEM 4K Integrated Dashcam
+      expect(dashcam.title).toBe('FitcamX OEM-Integrated 4K Dashcam');
+      expect(dashcam.description).toBe(
+        'Clean factory-look dashcam drawing power directly from the TSS rearview mirror harness without exposed wires.'
+      );
+      expect(dashcam.searchQuery).toBe('Fitcamx dash cam Toyota Corolla Hatchback 2020-2026 OEM 4K');
+      expect(dashcam.url).toContain('https://www.amazon.ca/s?k=');
+      expect(dashcam.url).toContain('tag=toyotawaits-20');
+
+      // 2. Laser-Measured All-Weather Floor Liners
+      expect(floorLiners.title).toBe('Custom-Fit All-Weather Floor Liners');
+      expect(floorLiners.description).toBe(
+        'High-wall TPE waterproof liners engineered for Corolla Hatchback floor wells and retention clips.'
+      );
+      expect(floorLiners.searchQuery).toBe(
+        'Toyota Corolla Hatchback custom all weather floor mats liners'
+      );
+      expect(floorLiners.url).toContain('https://www.amazon.ca/s?k=');
+      expect(floorLiners.url).toContain('tag=toyotawaits-20');
+
+      // 3. Center Console Drop-In Divider Tray
+      expect(consoleTray.title).toBe('Center Console Armrest Organizer Tray');
+      expect(consoleTray.description).toBe(
+        'Dual-tier organizer tray dividing the deep armrest compartment with coin and cable slots.'
+      );
+      expect(consoleTray.searchQuery).toBe(
+        'Toyota Corolla Hatchback center console organizer tray 2020-2026'
+      );
+      expect(consoleTray.url).toContain('https://www.amazon.ca/s?k=');
+      expect(consoleTray.url).toContain('tag=toyotawaits-20');
+
+      // Zero copy-paste bleed: NO knee cushions or generic armrest covers
+      expect(email.html).not.toContain('knee cushion');
+      expect(email.html).not.toContain('Stops right knee soreness');
+      expect(email.text).not.toContain('knee cushion');
+    });
   });
 });

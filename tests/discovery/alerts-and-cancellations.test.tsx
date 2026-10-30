@@ -447,5 +447,126 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
 
       logSpy.mockRestore();
     });
+
+    it('consolidates multiple vehicle matches into a single batch digest email per subscriber and audit dispatches per VIN', async () => {
+      const dispatchedRows: any[] = [];
+      const mockSubscriptions = [
+        {
+          id: 'sub-corolla-1',
+          email: 'corolla-buyer@example.ca',
+          model: 'Corolla Hatchback',
+          trim: 'ALL',
+          powertrain: 'ALL',
+          is_active: true,
+          token: 'tok-corolla-1',
+        },
+      ];
+
+      const mockSupabase = {
+        from: (table: string) => {
+          if (table === 'inventory_alert_subscriptions') {
+            return {
+              select: () => ({
+                eq: async () => ({ data: mockSubscriptions, error: null }),
+              }),
+              update: () => ({
+                eq: async () => ({ data: null, error: null }),
+              }),
+            };
+          }
+          if (table === 'inventory_alert_dispatches') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    maybeSingle: async () => ({ data: null, error: null }),
+                  }),
+                }),
+              }),
+              upsert: async (payload: any) => {
+                dispatchedRows.push(payload);
+                return { error: null };
+              },
+            };
+          }
+          return {};
+        },
+      };
+
+      const mockFetcher = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ id: 'resend-msg-batch-999' }),
+      });
+
+      const summary = await dispatchPendingAlerts(
+        [
+          {
+            vin: '2T1BURHE7TC111111',
+            model: 'Corolla Hatchback',
+            trim: 'SE Upgrade',
+            powertrain: '2.0L FWD',
+            modelYear: 2026,
+            dealerName: 'Jim Pattison Toyota Surrey',
+            dealerCity: 'Surrey, BC',
+            sellingPrice: 31796,
+            vdpUrl: 'https://dealer.ca/ch-1',
+          },
+          {
+            vin: '2T1BURHE7TC222222',
+            model: 'Corolla Hatchback',
+            trim: 'XSE',
+            powertrain: '2.0L FWD',
+            modelYear: 2026,
+            dealerName: 'Jim Pattison Toyota Downtown',
+            dealerCity: 'Vancouver, BC',
+            sellingPrice: 34500,
+            vdpUrl: 'https://dealer.ca/ch-2',
+          },
+        ],
+        {
+          supabaseClient: mockSupabase,
+          resendApiKey: 're_valid_test_key_123',
+          fetcher: mockFetcher,
+        }
+      );
+
+      expect(summary.vehiclesEvaluated).toBe(2);
+      expect(summary.emailsSent).toBe(1); // 1 single batch digest email sent to subscriber
+      expect(mockFetcher).toHaveBeenCalledTimes(1);
+
+      // Verify sent email payload structure
+      const fetchCallBody = JSON.parse(mockFetcher.mock.calls[0][1].body);
+      expect(fetchCallBody.to).toEqual(['corolla-buyer@example.ca']);
+      expect(fetchCallBody.subject).toBe(
+        'Allocation Alert: 2 New Toyota Matches Observed (Corolla Hatchback)'
+      );
+      expect(fetchCallBody.html).toContain('2T1BURHE7TC111111');
+      expect(fetchCallBody.html).toContain('2T1BURHE7TC222222');
+      expect(fetchCallBody.html).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
+      expect(fetchCallBody.html).toContain('2026 Corolla Hatchback XSE - 2.0L FWD');
+
+      // Database Audit Dispatches: 2 individual rows inserted with shared Resend provider_message_id
+      expect(dispatchedRows).toHaveLength(2);
+      expect(dispatchedRows[0]).toEqual(
+        expect.objectContaining({
+          email: 'corolla-buyer@example.ca',
+          vin: '2T1BURHE7TC111111',
+          model: 'Corolla Hatchback',
+          trim: 'SE Upgrade',
+          dealer_name: 'Jim Pattison Toyota Surrey',
+          provider_message_id: 'resend-msg-batch-999',
+        })
+      );
+      expect(dispatchedRows[1]).toEqual(
+        expect.objectContaining({
+          email: 'corolla-buyer@example.ca',
+          vin: '2T1BURHE7TC222222',
+          model: 'Corolla Hatchback',
+          trim: 'XSE',
+          dealer_name: 'Jim Pattison Toyota Downtown',
+          provider_message_id: 'resend-msg-batch-999',
+        })
+      );
+    });
   });
 });

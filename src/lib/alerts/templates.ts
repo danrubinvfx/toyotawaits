@@ -26,7 +26,7 @@ export interface DropAlertEnrichment {
   modelSlug: string;
   calculatorUrl: string;
   calculatorBannerText: string;
-  gearPicks: [DropAlertGearPick, DropAlertGearPick];
+  gearPicks: DropAlertGearPick[];
   guideUrl: string;
   guideTitle: string;
   guideDescription: string;
@@ -35,9 +35,28 @@ export interface DropAlertEnrichment {
   textSection: string;
 }
 
+export interface AllocationDropAlertVehicle {
+  vin?: string | null;
+  provisionalId?: string | null;
+  model: string;
+  trim?: string | null;
+  powertrain?: string | null;
+  drivetrain?: string | null;
+  engine?: string | null;
+  status?: string | null;
+  stockNumber?: string | null;
+  modelYear?: number | null;
+  dealerId?: string | null;
+  dealerName?: string | null;
+  dealerCity?: string | null;
+  vdpUrl?: string | null;
+  sellingPrice?: number | null;
+  msrp?: number | null;
+}
+
 export interface AllocationDropAlertEmailInput {
   recipientEmail?: string;
-  model: string;
+  model?: string;
   modelSlug?: string | null;
   trim?: string | null;
   powertrain?: string | null;
@@ -47,9 +66,15 @@ export interface AllocationDropAlertEmailInput {
   vdpUrl?: string | null;
   sellingPrice?: number | null;
   msrp?: number | null;
+  status?: string | null;
+  stockNumber?: string | null;
+  drivetrain?: string | null;
+  engine?: string | null;
+  modelYear?: number | null;
   unsubscribeToken?: string | null;
   unsubscribeUrl?: string | null;
   market?: 'CA' | 'US';
+  vehicles?: AllocationDropAlertVehicle[];
 }
 
 export interface GeneratedDropAlertEmail {
@@ -59,7 +84,7 @@ export interface GeneratedDropAlertEmail {
   headers: Record<string, string>;
   calculatorUrl: string;
   guideUrl: string;
-  gearPicks: [DropAlertGearPick, DropAlertGearPick];
+  gearPicks: DropAlertGearPick[];
 }
 
 /**
@@ -110,7 +135,7 @@ export function buildZero404AmazonSearchUrl(
 export function getCuratedGearForDropAlert(
   modelOrSlug?: string | null,
   market: 'CA' | 'US' = 'CA'
-): [DropAlertGearPick, DropAlertGearPick] {
+): DropAlertGearPick[] {
   const slug = resolveAlertModelSlug(modelOrSlug);
   const isUs = market === 'US';
 
@@ -286,6 +311,47 @@ export function getCuratedGearForDropAlert(
     ];
   }
 
+  if (
+    slug === 'corolla-hatchback' ||
+    slug === 'corolla' ||
+    slug.includes('corolla-hatchback') ||
+    (slug.includes('corolla') && !slug.includes('corolla-cross'))
+  ) {
+    const dashcamQuery = 'Fitcamx dash cam Toyota Corolla Hatchback 2020-2026 OEM 4K';
+    const linersQuery = 'Toyota Corolla Hatchback custom all weather floor mats liners';
+    const trayQuery = 'Toyota Corolla Hatchback center console organizer tray 2020-2026';
+
+    return [
+      {
+        id: 'fitcamx-corolla-hatchback',
+        title: 'FitcamX OEM-Integrated 4K Dashcam',
+        description:
+          'Clean factory-look dashcam drawing power directly from the TSS rearview mirror harness without exposed wires.',
+        searchQuery: dashcamQuery,
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
+        buttonLabel: 'Check on Amazon ↗',
+      },
+      {
+        id: 'corolla-hatchback-all-weather-liners',
+        title: 'Custom-Fit All-Weather Floor Liners',
+        description:
+          'High-wall TPE waterproof liners engineered for Corolla Hatchback floor wells and retention clips.',
+        searchQuery: linersQuery,
+        url: buildZero404AmazonSearchUrl(linersQuery, market),
+        buttonLabel: 'Check on Amazon ↗',
+      },
+      {
+        id: 'console-tray-corolla-hatchback',
+        title: 'Center Console Armrest Organizer Tray',
+        description:
+          'Dual-tier organizer tray dividing the deep armrest compartment with coin and cable slots.',
+        searchQuery: trayQuery,
+        url: buildZero404AmazonSearchUrl(trayQuery, market),
+        buttonLabel: 'Check on Amazon ↗',
+      },
+    ];
+  }
+
   // Fallback for other Toyota models (Tacoma, Corolla Cross, Land Cruiser, Sequoia, Highlander, etc.)
   const modelDisplay = getModelDisplayName(slug);
   const accessories = getAccessoriesForModel(modelDisplay);
@@ -302,20 +368,20 @@ export function getCuratedGearForDropAlert(
   return [
     {
       id: pick1Source?.id || `${slug}-dashcam`,
-      title: pick1Source?.title || `FitcamX OEM 4K Dashcam (${modelDisplay})`,
+      title: pick1Source?.title || `FitcamX OEM-Integrated 4K Dashcam (${modelDisplay})`,
       description:
         pick1Source?.description ||
-        `OEM-integrated rearview mirror power tap with zero visible wiring for ${modelDisplay}.`,
+        `Clean factory-look dashcam drawing power directly from the TSS rearview mirror harness without exposed wires for ${modelDisplay}.`,
       searchQuery: query1,
       url: buildZero404AmazonSearchUrl(query1, market),
       buttonLabel: 'Check on Amazon ↗',
     },
     {
       id: pick2Source?.id || `${slug}-floor-liners`,
-      title: pick2Source?.title || `TPE All-Weather Floor Liners (${modelDisplay})`,
+      title: pick2Source?.title || `Custom-Fit All-Weather Floor Liners (${modelDisplay})`,
       description:
         pick2Source?.description ||
-        `Laser-fit floor & trunk spill protection engineered for ${modelDisplay}.`,
+        `High-wall TPE waterproof liners engineered for ${modelDisplay} floor wells and retention clips.`,
       searchQuery: query2,
       url: buildZero404AmazonSearchUrl(query2, market),
       buttonLabel: 'Check on Amazon ↗',
@@ -424,13 +490,13 @@ ${calculatorBannerText}
 
 --------------------------------------------------
 DELIVERY DAY ESSENTIALS (${modelDisplay}):
-1. ${gearPicks[0].title}
-   ${gearPicks[0].description}
-   ${gearPicks[0].buttonLabel}: ${gearPicks[0].url}
-
-2. ${gearPicks[1].title}
-   ${gearPicks[1].description}
-   ${gearPicks[1].buttonLabel}: ${gearPicks[1].url}
+${gearPicks
+  .map(
+    (pick, i) => `${i + 1}. ${pick.title}
+   ${pick.description}
+   ${pick.buttonLabel}: ${pick.url}`
+  )
+  .join('\n\n')}
 
 ${AMAZON_ASSOCIATES_DISCLOSURE}
 
@@ -456,22 +522,138 @@ ${guideUrl}
 }
 
 /**
+ * Formats an articulate vehicle header line (Year, Model, Trim, Powertrain/Drivetrain).
+ * e.g., "2026 Corolla Hatchback SE Upgrade - 2.0L FWD"
+ */
+export function formatVehicleHeader(v: AllocationDropAlertVehicle): string {
+  const yearStr = v.modelYear ? `${v.modelYear} ` : '';
+  const modelStr = v.model || 'Toyota';
+  const trimStr = v.trim ? ` ${v.trim}` : '';
+
+  const specsParts: string[] = [];
+  const engineStr = (v.engine || '').trim();
+  const ptStr = (v.powertrain || '').trim();
+  const dtStr = (v.drivetrain || '').trim();
+
+  if (ptStr && ptStr.toLowerCase() !== 'all') {
+    specsParts.push(ptStr);
+  } else if (engineStr) {
+    specsParts.push(engineStr);
+  }
+
+  if (dtStr && !specsParts.some((p) => p.toLowerCase().includes(dtStr.toLowerCase()))) {
+    specsParts.push(dtStr);
+  }
+
+  const specsStr = specsParts.join(' ');
+  const suffix = specsStr ? ` - ${specsStr}` : '';
+  return `${yearStr}${modelStr}${trimStr}${suffix}`.trim();
+}
+
+/**
+ * Resolves high-contrast status badge properties for email display.
+ */
+export function resolveVehicleStatusBadge(status?: string | null): {
+  label: string;
+  bg: string;
+  color: string;
+  border: string;
+} {
+  const lower = (status || '').toLowerCase().trim();
+  if (lower.includes('transit') || lower.includes('incoming')) {
+    return {
+      label: 'In Transit',
+      bg: 'rgba(56, 189, 248, 0.15)',
+      color: '#38bdf8',
+      border: 'rgba(56, 189, 248, 0.3)',
+    };
+  }
+  if (lower.includes('allocat') || lower.includes('order')) {
+    return {
+      label: 'Allocated',
+      bg: 'rgba(167, 139, 250, 0.15)',
+      color: '#c084fc',
+      border: 'rgba(167, 139, 250, 0.3)',
+    };
+  }
+  return {
+    label: 'Available on Lot',
+    bg: 'rgba(52, 211, 153, 0.15)',
+    color: '#34d399',
+    border: 'rgba(52, 211, 153, 0.3)',
+  };
+}
+
+/**
+ * Formats vehicle pricing with currency badge.
+ * e.g. "$31,796 CAD"
+ */
+export function formatVehiclePricing(
+  sellingPrice?: number | null,
+  msrp?: number | null
+): string | null {
+  if (sellingPrice != null && Number(sellingPrice) > 0) {
+    return `$${Number(sellingPrice).toLocaleString('en-CA')} CAD`;
+  }
+  if (msrp != null && Number(msrp) > 0) {
+    return `$${Number(msrp).toLocaleString('en-CA')} CAD`;
+  }
+  return null;
+}
+
+/**
+ * Formats dealership name and city.
+ * e.g., "Jim Pattison Toyota Surrey · Surrey, BC"
+ */
+export function formatVehicleDealership(
+  dealerName?: string | null,
+  dealerCity?: string | null
+): string {
+  const name = dealerName?.trim() || 'Lower Mainland Toyota Dealer';
+  const city = dealerCity?.trim();
+  if (city && !name.toLowerCase().includes(city.toLowerCase())) {
+    return `${name} · ${city}`;
+  }
+  return name;
+}
+
+/**
  * Generates the complete responsive HTML and plain-text Allocation Drop Alert email
- * sent to verified subscribers when a matching unreserved vehicle is observed.
+ * sent to verified subscribers when matching unreserved vehicles are observed.
+ * Supports batch digests (multiple vehicles) and articulate vehicle dossiers.
  */
 export function generateAllocationDropAlertEmail(
   input: AllocationDropAlertEmailInput
 ): GeneratedDropAlertEmail {
+  const vehicles: AllocationDropAlertVehicle[] =
+    input.vehicles && input.vehicles.length > 0
+      ? input.vehicles
+      : [
+          {
+            vin: input.vin,
+            model: input.model || 'Toyota',
+            trim: input.trim,
+            powertrain: input.powertrain,
+            drivetrain: input.drivetrain,
+            engine: input.engine,
+            status: input.status,
+            stockNumber: input.stockNumber,
+            modelYear: input.modelYear,
+            dealerName: input.dealerName,
+            dealerCity: input.dealerCity,
+            vdpUrl: input.vdpUrl,
+            sellingPrice: input.sellingPrice,
+            msrp: input.msrp,
+          },
+        ];
+
+  const primaryModel = (vehicles[0] && vehicles[0].model) || input.model || 'rav4';
   const enrichment = buildDropAlertEnrichment({
-    model: input.model,
+    model: primaryModel,
     modelSlug: input.modelSlug,
     market: input.market || 'CA',
   });
 
-  const displayTrim = input.trim || 'Base';
-  const displayVin = input.vin || 'PROVISIONAL';
-  const dealerName = input.dealerName || 'Lower Mainland Toyota Dealer';
-  const vdpUrl = input.vdpUrl || 'https://www.toyotawaits.ca/inventory';
   const unsubToken = input.unsubscribeToken || '';
   const unsubscribeUrl =
     input.unsubscribeUrl ||
@@ -479,22 +661,106 @@ export function generateAllocationDropAlertEmail(
       unsubToken
     )}&action=unsubscribe`;
 
-  const priceLine =
-    input.sellingPrice != null
-      ? `$${input.sellingPrice.toLocaleString('en-CA')}`
-      : input.msrp != null
-      ? `$${input.msrp.toLocaleString('en-CA')}`
-      : null;
+  let subject: string;
+  if (vehicles.length === 1) {
+    const v = vehicles[0];
+    const trimStr = v.trim ? ` (${v.trim})` : '';
+    const dealerStr = v.dealerName || 'Toyota Dealer';
+    subject = `Allocation Alert: ${v.model}${trimStr} at ${dealerStr}`;
+  } else {
+    const distinctModels = Array.from(new Set(vehicles.map((v) => v.model).filter(Boolean)));
+    subject = `Allocation Alert: ${vehicles.length} New Toyota Matches Observed (${distinctModels.join(', ')})`;
+  }
 
-  const subject = `🔔 New ${input.model} (${displayTrim}) Drop Observed at ${dealerName}`;
+  const vehiclesHtml = vehicles
+    .map((v) => {
+      const headerText = formatVehicleHeader(v);
+      const statusBadge = resolveVehicleStatusBadge(v.status);
+      const priceFormatted = formatVehiclePricing(v.sellingPrice, v.msrp);
+      const dealerFormatted = formatVehicleDealership(v.dealerName, v.dealerCity);
+      const displayVin = v.vin || v.provisionalId || 'PROVISIONAL';
+      const vdpUrl = v.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+
+      return `
+    <!-- Articulate Vehicle Dossier Card -->
+    <div style="margin-top: 20px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px;">
+      <div style="margin-bottom: 14px; border-bottom: 1px solid #27272a; padding-bottom: 12px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+          <tr>
+            <td style="vertical-align: middle;">
+              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #ffffff;">
+                ${headerText}
+              </h3>
+            </td>
+            <td style="vertical-align: middle; text-align: right; width: 130px;">
+              <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; background-color: ${statusBadge.bg}; color: ${statusBadge.color}; border: 1px solid ${statusBadge.border}; text-transform: uppercase; letter-spacing: 0.5px;">
+                ${statusBadge.label}
+              </span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin-bottom: 16px; font-size: 13px;">
+        <tr>
+          <td style="padding: 4px 0; color: #a1a1aa; width: 100px;">VIN:</td>
+          <td style="padding: 4px 0; color: #f4f4f5; font-family: monospace, Courier, monospace; font-weight: 600;">${displayVin}</td>
+        </tr>
+        ${
+          v.stockNumber
+            ? `
+        <tr>
+          <td style="padding: 4px 0; color: #a1a1aa;">Stock #:</td>
+          <td style="padding: 4px 0; color: #f4f4f5; font-weight: 600;">${v.stockNumber}</td>
+        </tr>`
+            : ''
+        }
+        ${
+          priceFormatted
+            ? `
+        <tr>
+          <td style="padding: 4px 0; color: #a1a1aa;">Pricing:</td>
+          <td style="padding: 4px 0; color: #34d399; font-weight: 700;">${priceFormatted}</td>
+        </tr>`
+            : ''
+        }
+        <tr>
+          <td style="padding: 4px 0; color: #a1a1aa;">Dealership:</td>
+          <td style="padding: 4px 0; color: #f4f4f5; font-weight: 500;">${dealerFormatted}</td>
+        </tr>
+      </table>
+
+      <div>
+        <a href="${vdpUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 18px; background-color: #dc2626; color: #ffffff; font-weight: 700; font-size: 13px; border-radius: 6px; text-decoration: none;">
+          View Dealer Listing &rarr;
+        </a>
+      </div>
+    </div>`;
+    })
+    .join('');
+
+  const vehiclesText = vehicles
+    .map((v) => {
+      const h = formatVehicleHeader(v);
+      const b = resolveVehicleStatusBadge(v.status);
+      const p = formatVehiclePricing(v.sellingPrice, v.msrp);
+      const d = formatVehicleDealership(v.dealerName, v.dealerCity);
+      const vinStr = v.vin || v.provisionalId || 'PROVISIONAL';
+      const vUrl = v.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+
+      return `==================================================
+${h}
+Status: ${b.label}
+VIN: ${vinStr}
+${v.stockNumber ? `Stock #: ${v.stockNumber}\n` : ''}${p ? `Pricing: ${p}\n` : ''}Dealership: ${d}
+View Dealer Listing:
+${vUrl}`;
+    })
+    .join('\n\n');
 
   const text = `
 ToyotaWaits.ca 🍁 Allocation Drop Alert
-==================================================
-A matching ${input.model} ${displayTrim} (VIN: ${displayVin}) was just observed at ${dealerName}.
-${priceLine ? `Advertised Price: ${priceLine}\n` : ''}
-View Dealer Listing:
-${vdpUrl}
+${vehiclesText}
 
 ${enrichment.textSection}
 
@@ -519,19 +785,7 @@ Contact: hello@toyotawaits.ca
       <span style="display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">Allocation Drop Alert</span>
     </div>
 
-    <div style="margin-top: 20px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px;">
-      <p style="margin: 0 0 12px 0; font-size: 15px; line-height: 1.5; color: #f4f4f5;">
-        A matching <strong>${input.model} ${displayTrim}</strong> (VIN: <code>${displayVin}</code>) was just observed at <strong>${dealerName}</strong>.
-      </p>
-      ${
-        priceLine
-          ? `<p style="margin: 0 0 14px 0; font-size: 14px; color: #34d399; font-weight: 700;">Advertised Price: ${priceLine}</p>`
-          : ''
-      }
-      <p style="margin: 0;">
-        <a href="${vdpUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 20px; background-color: #dc2626; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Dealer Listing</a>
-      </p>
-    </div>
+    ${vehiclesHtml}
 
     ${enrichment.htmlSection}
 

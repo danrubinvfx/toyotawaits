@@ -32,7 +32,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Soft memory-foam padded neoprene/leatherette slip cover that relieves forearm fatigue on long trips and protects the factory armrest from sweat, pets, and wear.',
     estimatedPriceCad: '$24 – $32 CAD',
     url: buildAmazonCaSearchUrl('Toyota RAV4 2019-2026 center console armrest cover cushion pad'),
-    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime'],
     badge: 'Long-Drive Pick',
     isDeliveryDayEssential: true,
     imageUrl: '/assets/gear/armrest-cover.webp',
@@ -42,10 +42,10 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     id: 'lateral-console-knee-cushion',
     title: 'Driver Side Console Edge Leather Knee Cushion',
     category: 'comfort',
-    description: 'Stops right knee soreness.',
+    description: 'Ergonomic leather knee rest providing cushioned contact against the hard center console transmission tunnel.',
     estimatedPriceCad: '$14 – $19 CAD',
     url: buildAmazonCaSearchUrl('car center console knee cushion pad'),
-    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-prime'],
     badge: 'Road Trip Essential',
     isDeliveryDayEssential: true,
     imageUrl: '/assets/gear/knee-cushion.webp',
@@ -58,7 +58,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Laser-fit floor & trunk spill protection for Canadian winters',
     estimatedPriceCad: '$120 – $189 CAD',
     url: buildAmazonCaSearchUrl('Toyota all weather floor mats liners TPE'),
-    applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Corolla Cross', 'universal'],
+    applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Corolla', 'Corolla Hatchback', 'Corolla Cross', 'universal'],
     badge: 'Essential',
     isDeliveryDayEssential: true,
     imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
@@ -71,7 +71,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'OEM-integrated rearview mirror power tap with zero visible wiring',
     estimatedPriceCad: '$169 – $289 CAD',
     url: buildAmazonCaSearchUrl('Fitcamx dash cam Toyota RAV4 OEM 4K'),
-    applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla'],
+    applicableModels: ['universal', 'RAV4', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Camry', 'Corolla', 'Corolla Hatchback'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
     imageUrl: '/assets/gear/fitcamx-rav4.webp',
@@ -119,7 +119,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     id: 'fast-usbc-pd-car-charger',
     title: 'Dual-Port 65W Fast USB-C PD Car Charger',
     category: 'tech',
-    description: 'Ultra-fast dual phone charging.',
+    description: 'High-speed 65W dual USB-C Power Delivery metal car charger engineered for flush 12V console fitment.',
     estimatedPriceCad: '$19 – $32 CAD',
     url: buildAmazonCaSearchUrl('65W dual USB-C PD metal car charger flush'),
     applicableModels: ['universal'],
@@ -135,7 +135,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Drop-in dual tray with OEM-style USB-C fast charging',
     estimatedPriceCad: '$18 – $29 CAD',
     url: buildAmazonCaSearchUrl('Toyota RAV4 center console organizer tray 2019-2026'),
-    applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'universal'],
+    applicableModels: ['RAV4', 'RAV4 Hybrid', 'Sienna', 'Grand Highlander', 'Tacoma', 'Highlander', 'Tundra', 'Corolla', 'Corolla Hatchback', 'universal'],
     badge: 'Top Pick',
     isDeliveryDayEssential: true,
     imageUrl: '/assets/gear/console-tray-organizer.webp',
@@ -157,6 +157,7 @@ function normalizeModelName(model?: string | null): string {
   if (clean === 'tundra' || clean.includes('tundra')) return 'Tundra';
   if (clean === 'camry' || clean.includes('camry')) return 'Camry';
   if (clean === 'corolla-cross' || clean.includes('corolla cross')) return 'Corolla Cross';
+  if (clean === 'corolla-hatchback' || clean.includes('corolla hatchback')) return 'Corolla Hatchback';
   if (clean === 'corolla' || clean.includes('corolla')) return 'Corolla';
   if (clean === 'prius' || clean.includes('prius')) return 'Prius';
   if (clean === 'land-cruiser' || clean.includes('land cruiser')) return 'Land Cruiser';
@@ -273,6 +274,8 @@ export function getAccessoriesForModel(
         ? 'Toyota Grand Highlander all weather floor mats liners'
         : normalized?.toLowerCase() === 'rav4'
         ? 'TuxMat Toyota RAV4 custom all weather floor mats'
+        : normalized?.toLowerCase().includes('corolla')
+        ? 'Toyota Corolla Hatchback custom all weather floor mats liners'
         : `Toyota ${normalized || 'universal'} all weather floor mats liners TPE`;
       return {
         ...item,
@@ -280,7 +283,9 @@ export function getAccessoriesForModel(
       };
     }
     if (item.id === '4k-front-rear-dash-cam') {
-      const q = normalized?.toLowerCase().includes('rav4')
+      const q = normalized?.toLowerCase().includes('corolla')
+        ? 'Fitcamx dash cam Toyota Corolla Hatchback 2020-2026 OEM 4K'
+        : normalized?.toLowerCase().includes('rav4')
         ? 'Fitcamx dash cam Toyota RAV4 OEM 4K'
         : `Fitcamx dash cam Toyota ${normalized || 'OEM'} 4K`;
       return {
@@ -295,7 +300,9 @@ export function getAccessoriesForModel(
       };
     }
     if (item.id === 'center-console-organizer-tray') {
-      const q = normalized?.toLowerCase().includes('rav4')
+      const q = normalized?.toLowerCase().includes('corolla')
+        ? 'Toyota Corolla Hatchback center console organizer tray 2020-2026'
+        : normalized?.toLowerCase().includes('rav4')
         ? 'Toyota RAV4 center console organizer tray 2019-2026'
         : `Toyota ${normalized || 'universal'} center console organizer tray`;
       return {

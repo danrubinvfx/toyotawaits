@@ -64,6 +64,10 @@ export interface AlertDispatchVehicle {
   model: string;
   trim?: string | null;
   powertrain?: string | null;
+  drivetrain?: string | null;
+  engine?: string | null;
+  status?: string | null;
+  stockNumber?: string | null;
   modelYear?: number;
   dealerId?: string;
   dealerName?: string;
@@ -406,6 +410,7 @@ export async function dispatchPendingAlerts(
   const isDryRun = Boolean(options.dryRun);
   const nowIso = new Date().toISOString();
   const seenEmailVinPairs = new Set<string>();
+  const subscriberMatches = new Map<string, { subscriber: any; vehicles: AlertDispatchVehicle[] }>();
 
   for (const item of items) {
     const displayVin = item.vin || item.provisionalId || 'PROVISIONAL';
@@ -542,86 +547,136 @@ export async function dispatchPendingAlerts(
         `[Alert Match] VIN: ${displayVin} | Model: ${item.model} | Recipient: ${sub.email} | Status: ELIGIBLE`
       );
 
-      const unsubToken = sub.verification_token || sub.token || '';
-      const unsubscribeUrl = `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
-        unsubToken
-      )}&action=unsubscribe`;
-      const fromSender =
-        process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
-
-      const dealerName = item.dealerName || 'Lower Mainland Toyota Dealer';
-      const vdpUrl = item.vdpUrl || 'https://www.toyotawaits.ca/inventory';
-      const emailMessage = generateAllocationDropAlertEmail({
-        recipientEmail: sub.email,
-        model: item.model,
-        trim: displayTrim,
-        powertrain: item.powertrain,
-        vin: displayVin,
-        dealerName,
-        dealerCity: item.dealerCity,
-        vdpUrl,
-        sellingPrice: item.sellingPrice,
-        msrp: item.msrp,
-        unsubscribeToken: unsubToken,
-        unsubscribeUrl,
-      });
-
-      const dispatchPayload = {
-        from: fromSender,
-        email: sub.email,
-        vin: displayVin,
-        model: item.model,
-        trim: displayTrim,
-        dealerName,
-        vdpUrl,
-        sellingPrice: item.sellingPrice ?? item.msrp ?? null,
-        calculatorUrl: emailMessage.calculatorUrl,
-        guideUrl: emailMessage.guideUrl,
-        gearPicks: emailMessage.gearPicks,
-        token: sub.token || sub.verification_token,
-        dispatchedAt: nowIso,
-        dryRun: isDryRun,
-      };
-
-      const hasResendKey = Boolean(
-        resendApiKey &&
-          resendApiKey.trim() !== '' &&
-          !resendApiKey.includes('placeholder') &&
-          !resendApiKey.includes('mock-')
-      );
-
-      if (!isDryRun && hasResendKey && typeof fetchFn === 'function') {
-        try {
-          const res = await fetchFn('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${resendApiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: fromSender,
-              to: [sub.email],
-              subject: emailMessage.subject,
-              html: emailMessage.html,
-              text: emailMessage.text,
-              headers: emailMessage.headers,
-            }),
-          });
-          if (res.ok) {
-            summary.emailsSent++;
-          }
-        } catch (emailErr: unknown) {
-          const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
-          console.warn(`[Alert Worker] Resend email dispatch failed for ${sub.email}:`, msg);
-        }
-      } else {
-        console.log('[Alert Worker] Alert dispatch payload:', JSON.stringify(dispatchPayload));
+      const emailKey = String(sub.email).toLowerCase();
+      if (!subscriberMatches.has(emailKey)) {
+        subscriberMatches.set(emailKey, { subscriber: sub, vehicles: [] });
       }
+      subscriberMatches.get(emailKey)!.vehicles.push(item);
+    }
+  }
 
-      summary.loggedPayloads.push(dispatchPayload);
+  // Dispatch consolidated batch digests per subscriber
+  for (const { subscriber: sub, vehicles: matchedVehicles } of subscriberMatches.values()) {
+    if (matchedVehicles.length === 0) continue;
 
-      if (!isDryRun) {
-        // Record in inventory_alert_dispatches so the same VIN is never emailed twice to the same recipient
+    const unsubToken = sub.verification_token || sub.token || '';
+    const unsubscribeUrl = `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
+      unsubToken
+    )}&action=unsubscribe`;
+    const fromSender =
+      process.env.RESEND_FROM_EMAIL?.trim() || 'ToyotaWaits.ca <hello@toyotawaits.ca>';
+
+    const firstVehicle = matchedVehicles[0];
+    const displayVin = firstVehicle.vin || firstVehicle.provisionalId || 'PROVISIONAL';
+    const displayTrim = firstVehicle.trim || 'Base';
+    const dealerName = firstVehicle.dealerName || 'Lower Mainland Toyota Dealer';
+    const vdpUrl = firstVehicle.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+
+    const emailMessage = generateAllocationDropAlertEmail({
+      recipientEmail: sub.email,
+      vehicles: matchedVehicles,
+      model: firstVehicle.model,
+      trim: displayTrim,
+      powertrain: firstVehicle.powertrain,
+      drivetrain: firstVehicle.drivetrain,
+      engine: firstVehicle.engine,
+      status: firstVehicle.status,
+      stockNumber: firstVehicle.stockNumber,
+      modelYear: firstVehicle.modelYear,
+      vin: displayVin,
+      dealerName,
+      dealerCity: firstVehicle.dealerCity,
+      vdpUrl,
+      sellingPrice: firstVehicle.sellingPrice,
+      msrp: firstVehicle.msrp,
+      unsubscribeToken: unsubToken,
+      unsubscribeUrl,
+    });
+
+    let providerMessageId: string | null = null;
+    const hasResendKey = Boolean(
+      resendApiKey &&
+        resendApiKey.trim() !== '' &&
+        !resendApiKey.includes('placeholder') &&
+        !resendApiKey.includes('mock-')
+    );
+
+    if (!isDryRun && hasResendKey && typeof fetchFn === 'function') {
+      try {
+        const res = await fetchFn('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromSender,
+            to: [sub.email],
+            subject: emailMessage.subject,
+            html: emailMessage.html,
+            text: emailMessage.text,
+            headers: emailMessage.headers,
+          }),
+        });
+        if (res.ok) {
+          summary.emailsSent++;
+          try {
+            const resJson = await res.json();
+            if (resJson && typeof resJson === 'object' && resJson.id) {
+              providerMessageId = String(resJson.id);
+            }
+          } catch {
+            // Optional json parse
+          }
+        }
+      } catch (emailErr: unknown) {
+        const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
+        console.warn(`[Alert Worker] Resend email dispatch failed for ${sub.email}:`, msg);
+      }
+    }
+
+    const dispatchPayload = {
+      from: fromSender,
+      email: sub.email,
+      vin: displayVin,
+      model: firstVehicle.model,
+      trim: displayTrim,
+      dealerName,
+      vdpUrl,
+      sellingPrice: firstVehicle.sellingPrice ?? firstVehicle.msrp ?? null,
+      subject: emailMessage.subject,
+      vehicles: matchedVehicles.map((v) => ({
+        vin: v.vin || v.provisionalId || 'PROVISIONAL',
+        model: v.model,
+        trim: v.trim || 'Base',
+        dealerName: v.dealerName || dealerName,
+        vdpUrl: v.vdpUrl || vdpUrl,
+        sellingPrice: v.sellingPrice ?? v.msrp ?? null,
+        stockNumber: v.stockNumber || null,
+        status: v.status || null,
+      })),
+      calculatorUrl: emailMessage.calculatorUrl,
+      guideUrl: emailMessage.guideUrl,
+      gearPicks: emailMessage.gearPicks,
+      token: sub.token || sub.verification_token,
+      dispatchedAt: nowIso,
+      dryRun: isDryRun,
+      providerMessageId,
+    };
+
+    if (isDryRun || !hasResendKey) {
+      console.log('[Alert Worker] Alert dispatch payload:', JSON.stringify(dispatchPayload));
+    }
+
+    summary.loggedPayloads.push(dispatchPayload);
+
+    if (!isDryRun) {
+      // Record in inventory_alert_dispatches for EACH individual VIN notified in the digest
+      for (const v of matchedVehicles) {
+        const vVin = v.vin || v.provisionalId || 'PROVISIONAL';
+        const vTrim = v.trim || 'Base';
+        const vDealerName = v.dealerName || dealerName;
+
         try {
           const dispatchTable = supabase.from('inventory_alert_dispatches');
           if (dispatchTable && typeof dispatchTable.upsert === 'function') {
@@ -629,10 +684,11 @@ export async function dispatchPendingAlerts(
               {
                 subscription_id: sub.id || null,
                 email: sub.email,
-                vin: displayVin,
-                model: item.model,
-                trim: displayTrim,
-                dealer_name: dispatchPayload.dealerName,
+                vin: vVin,
+                model: v.model,
+                trim: vTrim,
+                dealer_name: vDealerName,
+                provider_message_id: providerMessageId,
                 dispatched_at: nowIso,
               },
               { onConflict: 'email,vin' }
@@ -641,18 +697,18 @@ export async function dispatchPendingAlerts(
         } catch {
           // Non-fatal in mock test environments
         }
+      }
 
-        // Update last_notified_at on subscription
-        try {
-          if (sub.id) {
-            await supabase
-              .from('inventory_alert_subscriptions')
-              .update({ last_notified_at: nowIso })
-              .eq('id', sub.id);
-          }
-        } catch {
-          // Non-fatal update error
+      // Update last_notified_at on subscription
+      try {
+        if (sub.id) {
+          await supabase
+            .from('inventory_alert_subscriptions')
+            .update({ last_notified_at: nowIso })
+            .eq('id', sub.id);
         }
+      } catch {
+        // Non-fatal update error
       }
     }
   }

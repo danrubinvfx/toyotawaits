@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   AllocationDropAlertEmailInput,
+  AllocationDropAlertVehicle,
   AMAZON_ASSOCIATES_DISCLOSURE,
   buildDropAlertEnrichment,
   generateAllocationDropAlertEmail,
@@ -8,6 +9,10 @@ import {
   resolveAlertModelDisplay,
   resolveAlertModelSlug,
   SIENNA_HITCH_GUIDE_URL,
+  formatVehicleHeader,
+  resolveVehicleStatusBadge,
+  formatVehiclePricing,
+  formatVehicleDealership,
 } from '@/lib/alerts/templates';
 
 export {
@@ -18,8 +23,12 @@ export {
   getCuratedGearForDropAlert,
   resolveAlertModelDisplay,
   resolveAlertModelSlug,
+  formatVehicleHeader,
+  resolveVehicleStatusBadge,
+  formatVehiclePricing,
+  formatVehicleDealership,
 };
-export type { AllocationDropAlertEmailInput };
+export type { AllocationDropAlertEmailInput, AllocationDropAlertVehicle };
 
 export function AllocationDropAlertEmail(props: AllocationDropAlertEmailInput) {
   const email = generateAllocationDropAlertEmail(props);

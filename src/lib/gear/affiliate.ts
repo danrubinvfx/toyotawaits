@@ -28,6 +28,7 @@ export const KNOWN_MODEL_NAMES: Record<string, string> = {
   'land-cruiser': 'Land Cruiser',
   prius: 'Prius',
   corolla: 'Corolla',
+  'corolla-hatchback': 'Corolla Hatchback',
   'corolla-cross': 'Corolla Cross',
   camry: 'Camry',
   tacoma: 'Tacoma',
