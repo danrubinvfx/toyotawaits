@@ -112,7 +112,7 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     adapter: 'convertus',
     baseUrl: 'https://www.openroadtoyotaportmoody.com',
     apiEndpoint:
-      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
+      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
     latitude: 49.2772,
     longitude: -122.8366,
     lat: 49.2772,

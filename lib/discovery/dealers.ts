@@ -154,21 +154,27 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
   },
   {
     dealerCode: 'openroad-toyota-port-moody',
-    aliases: ['openroad-toyota-port-moody', 'openroad-port-moody', 'openroadtoyotaportmoody', 'port-moody'],
+    aliases: [
+      'openroad-toyota-port-moody',
+      'openroad port moody',
+      'openroad toyota port moody',
+      'openroad-port-moody',
+      'openroadtoyotaportmoody',
+      'port-moody',
+    ],
     dealerName: 'OpenRoad Toyota Port Moody',
     sourceCode: 'openroad-toyota-port-moody-convertus',
     platform: 'convertus',
     baseUrl: 'https://www.openroadtoyotaportmoody.com',
-    // NOTE: As of 2026-10-29 this proxy returns HTTP 404 (site runs the eDealer platform, same as
-    // OpenRoad Richmond). sweepSingleDealer() falls back to the public /sitemap.xml
-    // (`/new/<year>-toyota-<slug>/<VIN>` entries), which parsePublicSitemapToConvertusItems handles.
+    // Convertus VMS proxy with sc=new&pc=100. sweepSingleDealer() uses this or gracefully falls
+    // back to the public /sitemap.xml if the host proxy returns 404.
     endpointUrl:
-      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data',
-    address: '3166 St Johns Street',
+      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '3266 St Johns St',
     city: 'Port Moody',
     province: 'BC',
-    postalCode: 'V3H 2H7',
-    phone: '(604) 461-3656',
+    postalCode: 'V3H 2C9',
+    phone: '(604) 461-2711',
     websiteUrl: 'https://www.openroadtoyotaportmoody.com/',
   },
   {

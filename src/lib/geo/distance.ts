@@ -16,6 +16,7 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Surrey: { lat: 49.1913, lng: -122.8490 },
   Richmond: { lat: 49.1666, lng: -123.1336 },
   'Coquitlam / Tri-Cities': { lat: 49.2838, lng: -122.7932 },
+  'Port Moody': { lat: 49.2772, lng: -122.8366 },
   Langley: { lat: 49.1042, lng: -122.6604 },
   Abbotsford: { lat: 49.0504, lng: -122.3045 },
   Chilliwack: { lat: 49.1628, lng: -121.9589 },
@@ -75,6 +76,11 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
     ) {
       return coords;
     }
+  }
+
+  // Handle Port Moody and Tri-Cities aliases
+  if (lower.includes('port moody') || lower.includes('port-moody') || lower.includes('portmoody')) {
+    return LOWER_MAINLAND_PRESETS['Port Moody'];
   }
 
   // Handle Pitt Meadows as proximity to Tri-Cities / Maple Ridge area if requested

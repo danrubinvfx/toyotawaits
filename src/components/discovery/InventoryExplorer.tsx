@@ -425,6 +425,7 @@ export function InventoryExplorer({
       ['Surrey', 'Surrey (Guildford)'],
       ['Richmond', 'Richmond'],
       ['Coquitlam', 'Coquitlam / Tri-Cities'],
+      ['Port Moody', 'Port Moody (Tri-Cities)'],
       ['Pitt Meadows', 'Pitt Meadows (West Coast)'],
       ['Langley', 'Langley'],
       ['Abbotsford', 'Abbotsford'],
@@ -440,6 +441,8 @@ export function InventoryExplorer({
           ? 'Surrey'
           : lowerDealer.includes('west coast')
           ? 'Pitt Meadows'
+          : lowerDealer.includes('port moody') || lowerDealer.includes('port-moody')
+          ? 'Port Moody'
           : lowerDealer.includes('richmond') || lowerDealer.includes('openroad')
           ? 'Richmond'
           : lowerDealer.includes('valley') || lowerDealer.includes('chilliwack')

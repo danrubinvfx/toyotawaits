@@ -60,6 +60,7 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Surrey', label: 'Surrey (Guildford)' },
   { value: 'Richmond', label: 'Richmond' },
   { value: 'Coquitlam', label: 'Coquitlam / Tri-Cities' },
+  { value: 'Port Moody', label: 'Port Moody (Tri-Cities)' },
   { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' },
   { value: 'Langley', label: 'Langley' },
   { value: 'Abbotsford', label: 'Abbotsford' },

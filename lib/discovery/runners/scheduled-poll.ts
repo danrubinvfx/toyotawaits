@@ -20,6 +20,7 @@ export const USER_AGENT_AUDITOR =
   'Mozilla/5.0 (compatible; ToyotaWaitsLocalAuditor/1.0; +https://toyotawaits.ca/source-register)';
 export const DEFAULT_TIMEOUT_MS = 6000;
 export const DEFAULT_SWEEP_CADENCE_HOURS = 12;
+export const POLITE_DEALER_COOLDOWN_MS = Number(process.env.POLITE_DEALER_COOLDOWN_MS) || 4000;
 
 export interface SweepSourceConfig {
   sourceId: string;
@@ -38,6 +39,7 @@ export interface SweepOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db?: any; // SupabaseClient or mock client
   fetcher?: (url: string, init?: RequestInit) => Promise<Response>;
+  cooldownMs?: number;
   now?: Date;
 }
 
@@ -51,6 +53,15 @@ export interface SweepExecutionSummary {
 }
 
 export const PILOT_SOURCES: SweepSourceConfig[] = [
+  {
+    sourceId: 'source-openroad-port-moody-convertus',
+    sourceCode: 'openroad-toyota-port-moody-convertus',
+    dealerId: 'dealer-openroad-toyota-port-moody',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.openroadtoyotaportmoody.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
   {
     sourceId: 'source-jp-convertus',
     sourceCode: 'jp-toyota-downtown-convertus',
@@ -270,6 +281,10 @@ export async function runScheduledSweep(
     };
 
     summary.telemetryLogs.push(healthLog);
+    const cooldown = options.cooldownMs ?? (process.env.NODE_ENV === 'test' || process.env.VITEST ? 0 : POLITE_DEALER_COOLDOWN_MS);
+    if (sources.indexOf(source) < sources.length - 1 && cooldown > 0) {
+      await new Promise((r) => setTimeout(r, cooldown));
+    }
 
     // Persist to source_health_logs table
     if (db) {
