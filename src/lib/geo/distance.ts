@@ -21,6 +21,7 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Abbotsford: { lat: 49.0504, lng: -122.3045 },
   Chilliwack: { lat: 49.1628, lng: -121.9589 },
   Victoria: { lat: 48.4284, lng: -123.3656 },
+  Duncan: { lat: 48.8071, lng: -123.7160 },
   'Vancouver Island': { lat: 48.4284, lng: -123.3656 },
 };
 
@@ -88,7 +89,10 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
     return { lat: 49.2217, lng: -122.6881 };
   }
 
-  // Handle Vancouver Island / Victoria aliases
+  // Handle Vancouver Island / Victoria / Duncan aliases
+  if (lower.includes('duncan')) {
+    return LOWER_MAINLAND_PRESETS['Duncan'];
+  }
   if (lower.includes('victoria') || lower.includes('island')) {
     return { lat: 48.4284, lng: -123.3656 };
   }

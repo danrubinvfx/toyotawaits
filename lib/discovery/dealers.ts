@@ -241,6 +241,22 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(250) 386-3516',
     websiteUrl: 'https://www.jptoyotavictoria.com/',
   },
+  {
+    dealerCode: 'jptoyota-duncan',
+    aliases: ['jptoyota-duncan', 'jp-toyota-duncan', 'jim pattison toyota duncan'],
+    dealerName: 'Jim Pattison Toyota Duncan',
+    sourceCode: 'jp-toyota-duncan-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.jptoyota-duncan.com',
+    endpointUrl:
+      'https://www.jptoyota-duncan.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1254%26sc%3Dnew%26pc%3D100',
+    address: '6529 Trans-Canada Hwy',
+    city: 'Duncan',
+    province: 'BC',
+    postalCode: 'V9L 6C2',
+    phone: '(250) 746-5111',
+    websiteUrl: 'https://www.jptoyota-duncan.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {

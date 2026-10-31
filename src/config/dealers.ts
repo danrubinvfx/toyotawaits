@@ -187,6 +187,23 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -123.3683,
     enabled: true,
   },
+  // 8. Jim Pattison Toyota Duncan (Duncan / Trans-Canada Hwy)
+  'jptoyota-duncan': {
+    id: 'jptoyota-duncan',
+    name: 'Jim Pattison Toyota Duncan',
+    city: 'Duncan',
+    province: 'BC',
+    area: 'Duncan / Trans-Canada Hwy',
+    adapter: 'convertus',
+    baseUrl: 'https://www.jptoyota-duncan.com',
+    apiEndpoint:
+      'https://www.jptoyota-duncan.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1254%26sc%3Dnew%26pc%3D100',
+    latitude: 48.8071,
+    longitude: -123.7160,
+    lat: 48.8071,
+    lng: -123.7160,
+    enabled: true,
+  },
 };
 
 /**
@@ -262,6 +279,14 @@ export function getDealerCoordinates(
     query.includes('abbotsford-toyota')
   ) {
     return { lat: DEALERS['abbotsford-toyota'].lat, lng: DEALERS['abbotsford-toyota'].lng };
+  }
+
+  // Jim Pattison Toyota Duncan (Vancouver Island)
+  if (
+    query.includes('duncan') ||
+    query.includes('jptoyota-duncan')
+  ) {
+    return { lat: DEALERS['jptoyota-duncan'].lat, lng: DEALERS['jptoyota-duncan'].lng };
   }
 
   // Jim Pattison Toyota Victoria (Vancouver Island)

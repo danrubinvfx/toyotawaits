@@ -66,6 +66,7 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Abbotsford', label: 'Abbotsford' },
   { value: 'Chilliwack', label: 'Chilliwack' },
   { value: 'Victoria', label: 'Victoria (Vancouver Island)' },
+  { value: 'Duncan', label: 'Duncan (Vancouver Island)' },
   { value: 'Vancouver Island', label: 'Vancouver Island' },
 ];
 

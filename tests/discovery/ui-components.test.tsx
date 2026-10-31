@@ -655,7 +655,9 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByRole('option', { name: 'Valley Toyota' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Abbotsford Toyota' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Victoria' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Duncan' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Victoria (Vancouver Island)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Duncan (Vancouver Island)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Vancouver Island' })).toBeInTheDocument();
     });
 
