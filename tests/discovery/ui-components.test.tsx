@@ -647,6 +647,15 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
+    it('ensures Granville Toyota, Valley Toyota, and Abbotsford Toyota appear in the inventory explorer dealership selector', () => {
+      render(<InventoryExplorer />);
+
+      const locationSelect = screen.getByTestId('filter-location-select');
+      expect(screen.getByRole('option', { name: 'Granville Toyota' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Valley Toyota' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Abbotsford Toyota' })).toBeInTheDocument();
+    });
+
     it('supports proximity filtering and distance calculation when municipality is selected', () => {
       render(<InventoryExplorer />);
 

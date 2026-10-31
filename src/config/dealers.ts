@@ -119,6 +119,57 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -122.8366,
     enabled: true,
   },
+  // 4. Granville Toyota (Vancouver / Marpole)
+  'granville-toyota': {
+    id: 'granville-toyota',
+    name: 'Granville Toyota',
+    city: 'Vancouver',
+    province: 'BC',
+    area: 'Marpole / Granville St',
+    adapter: 'convertus',
+    baseUrl: 'https://www.granvilletoyota.ca',
+    apiEndpoint:
+      'https://www.granvilletoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.2114,
+    longitude: -123.1402,
+    lat: 49.2114,
+    lng: -123.1402,
+    enabled: true,
+  },
+  // 5. Valley Toyota (Chilliwack / Young Rd)
+  'valley-toyota': {
+    id: 'valley-toyota',
+    name: 'Valley Toyota',
+    city: 'Chilliwack',
+    province: 'BC',
+    area: 'Chilliwack / Young Rd',
+    adapter: 'convertus',
+    baseUrl: 'https://www.valleytoyota.ca',
+    apiEndpoint:
+      'https://www.valleytoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.1824,
+    longitude: -121.9547,
+    lat: 49.1824,
+    lng: -121.9547,
+    enabled: true,
+  },
+  // 6. Abbotsford Toyota (Abbotsford / Mt. Lehman Rd)
+  'abbotsford-toyota': {
+    id: 'abbotsford-toyota',
+    name: 'Abbotsford Toyota',
+    city: 'Abbotsford',
+    province: 'BC',
+    area: 'Mt. Lehman Rd',
+    adapter: 'convertus',
+    baseUrl: 'https://www.abbotsfordtoyota.com',
+    apiEndpoint:
+      'https://www.abbotsfordtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.0601,
+    longitude: -122.3789,
+    lat: 49.0601,
+    lng: -122.3789,
+    enabled: true,
+  },
 };
 
 /**
@@ -168,6 +219,32 @@ export function getDealerCoordinates(
       lat: DEALERS['openroad-toyota-richmond'].lat,
       lng: DEALERS['openroad-toyota-richmond'].lng,
     };
+  }
+
+  // Granville Toyota (Vancouver / Marpole) — check before generic 'vancouver'
+  if (
+    query.includes('granville') ||
+    query.includes('granville-toyota') ||
+    query.includes('marpole')
+  ) {
+    return { lat: DEALERS['granville-toyota'].lat, lng: DEALERS['granville-toyota'].lng };
+  }
+
+  // Valley Toyota (Chilliwack)
+  if (
+    query.includes('valley') ||
+    query.includes('valley-toyota') ||
+    query.includes('chilliwack')
+  ) {
+    return { lat: DEALERS['valley-toyota'].lat, lng: DEALERS['valley-toyota'].lng };
+  }
+
+  // Abbotsford Toyota
+  if (
+    query.includes('abbotsford') ||
+    query.includes('abbotsford-toyota')
+  ) {
+    return { lat: DEALERS['abbotsford-toyota'].lat, lng: DEALERS['abbotsford-toyota'].lng };
   }
 
   // Downtown / Vancouver

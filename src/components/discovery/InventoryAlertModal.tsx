@@ -47,11 +47,16 @@ const REGION_OPTIONS = [
   'Richmond, BC',
   'Pitt Meadows, BC',
   'Burnaby, BC',
+  'Chilliwack, BC',
+  'Abbotsford, BC',
   'Jim Pattison Toyota Downtown',
   'Jim Pattison Toyota Surrey',
   'West Coast Toyota',
   'Regency Toyota',
   'OpenRoad Toyota Richmond',
+  'Granville Toyota',
+  'Valley Toyota',
+  'Abbotsford Toyota',
 ];
 
 export function InventoryAlertModal({

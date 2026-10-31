@@ -699,13 +699,17 @@ export function parseConvertusPayload(
   } else if (Array.isArray(dataObj.data)) {
     rawItems = dataObj.data;
   } else {
+    const errorMsg =
+      typeof dataObj.msg === 'string'
+        ? dataObj.msg
+        : "Payload missing vehicle results array (checked 'results', 'vehicles', 'data')";
     return {
       success: false,
       count: 0,
       totalInPayload: 0,
       records: [],
       quarantined: [],
-      error: "Payload missing vehicle results array (checked 'results', 'vehicles', 'data')",
+      error: errorMsg,
     };
   }
 

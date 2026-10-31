@@ -83,7 +83,7 @@ Usage:
 
 Options:
   --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
-                             Supported: jptoyota-downtown, jptoyota-surrey, jptoyota-northshore, destination-toyota-burnaby, west-coast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, all
+                             Supported: jptoyota-downtown, jptoyota-surrey, jptoyota-northshore, destination-toyota-burnaby, west-coast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, granville-toyota, valley-toyota, abbotsford-toyota, all
   --all                      Sweep all registered active pilot dealers sequentially
   --dry-run                  Execute sweep, parse and validate without persisting to Supabase
   --fixture                  Use local offline fixture instead of fetching live endpoint
@@ -368,10 +368,10 @@ if (
   runSweep()
     .then((summary) => {
       console.log('Sweep finished successfully:', summary);
-      process.exit(0);
+      process.exitCode = 0;
     })
     .catch((err) => {
       console.error('Fatal sweep error:', err);
-      process.exit(1);
+      process.exitCode = 1;
     });
 }

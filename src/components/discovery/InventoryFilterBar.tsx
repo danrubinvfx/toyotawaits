@@ -88,20 +88,10 @@ export function InventoryFilterBar({
         rawLocations.push(loc);
       }
     }
-  } else if (availableDealers && availableDealers.length > 0) {
+  }
+  if (availableDealers && availableDealers.length > 0) {
     for (const d of availableDealers) {
-      const lowerD = d.toLowerCase();
-      if (lowerD.includes('surrey')) {
-        rawLocations.push({ value: 'Surrey', label: 'Surrey (Guildford)' });
-      } else if (lowerD.includes('west coast') || lowerD.includes('pitt meadows')) {
-        rawLocations.push({ value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' });
-      } else if (lowerD.includes('richmond') || lowerD.includes('openroad')) {
-        rawLocations.push({ value: 'Richmond', label: 'Richmond' });
-      } else if (lowerD.includes('downtown') || lowerD.includes('regency') || lowerD.includes('vancouver')) {
-        rawLocations.push({ value: 'Vancouver', label: 'Vancouver (Downtown)' });
-      } else {
-        rawLocations.push({ value: d, label: d });
-      }
+      rawLocations.push({ value: d, label: d });
     }
   }
 

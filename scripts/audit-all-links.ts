@@ -169,7 +169,10 @@ async function runAudit() {
             const responseText = await res.text().catch(() => '');
             const lowerText = responseText.toLowerCase();
 
-            if (
+            if (res.status === 503) {
+              // 503 indicates automated bot challenge/rate-limiting by Amazon, not a dead 404 page
+              issue = 'OK';
+            } else if (
               res.status === 404 ||
               res.status === 405 ||
               res.status === 410 ||

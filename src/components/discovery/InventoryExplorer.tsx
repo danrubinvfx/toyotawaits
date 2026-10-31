@@ -14,7 +14,7 @@ import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
 import { InventoryAlertModal } from './InventoryAlertModal';
 import { getAccessoriesForModel } from '@/data/accessories';
-import { getDealerCoordinates } from '@/config/dealers';
+import { DEALERS, getDealerCoordinates } from '@/config/dealers';
 import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
 import { useDonationReminder } from '@/hooks/useDonationReminder';
 import { DonationToast } from '@/components/common/DonationToast';
@@ -459,6 +459,7 @@ export function InventoryExplorer({
 
   const availableDealers = useMemo(() => {
     const set = new Set<string>();
+    Object.values(DEALERS).forEach((d) => set.add(d.name));
     listings.forEach((item) => set.add(item.dealerName));
     return Array.from(set).sort();
   }, [listings]);

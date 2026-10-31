@@ -171,6 +171,54 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 461-3656',
     websiteUrl: 'https://www.openroadtoyotaportmoody.com/',
   },
+  {
+    dealerCode: 'granville-toyota',
+    aliases: ['granville-toyota', 'granville toyota'],
+    dealerName: 'Granville Toyota',
+    sourceCode: 'granville-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.granvilletoyota.ca',
+    endpointUrl:
+      'https://www.granvilletoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '8224 Granville St',
+    city: 'Vancouver',
+    province: 'BC',
+    postalCode: 'V6P 4Z4',
+    phone: '(604) 263-2711',
+    websiteUrl: 'https://www.granvilletoyota.ca/',
+  },
+  {
+    dealerCode: 'valley-toyota',
+    aliases: ['valley-toyota', 'valley toyota'],
+    dealerName: 'Valley Toyota',
+    sourceCode: 'valley-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.valleytoyota.ca',
+    endpointUrl:
+      'https://www.valleytoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '8750 Young Rd',
+    city: 'Chilliwack',
+    province: 'BC',
+    postalCode: 'V2P 4P4',
+    phone: '(604) 792-1167',
+    websiteUrl: 'https://www.valleytoyota.ca/',
+  },
+  {
+    dealerCode: 'abbotsford-toyota',
+    aliases: ['abbotsford-toyota', 'abbotsford toyota'],
+    dealerName: 'Abbotsford Toyota',
+    sourceCode: 'abbotsford-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.abbotsfordtoyota.com',
+    endpointUrl:
+      'https://www.abbotsfordtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '1215 Mt. Lehman Rd',
+    city: 'Abbotsford',
+    province: 'BC',
+    postalCode: 'V2T 6H7',
+    phone: '(604) 857-2658',
+    websiteUrl: 'https://www.abbotsfordtoyota.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -346,6 +394,35 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       continue;
     }
 
+    const edealerMatch = loc.match(/\/inventory\/((?:202\d)-toyota-[a-z0-9-]+)-([A-Za-z0-9]+)vdp\/?$/i);
+    if (edealerMatch) {
+      const slug = edealerMatch[1];
+      const vdpId = edealerMatch[2];
+      const spec = parseToyotaSlugSpec(slug);
+      if (spec) {
+        items.push({
+          ad_id: `ED-${vdpId}`,
+          vehicle_id: `ED-${vdpId}`,
+          vin: null,
+          stock_number: `ED-${vdpId.slice(-6).toUpperCase()}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: 'New',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+      continue;
+    }
+
     const regencyMatch = loc.match(/\/en\/new-catalog\/toyota\/([a-z0-9-]+)-id(\d+)\/?$/i);
     if (regencyMatch) {
       const slug = regencyMatch[1];
@@ -456,6 +533,7 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
   let attempt = 0;
   let lastError: unknown = null;
   let httpStatus: number | null = null;
+  let currentUrl = url;
 
   while (attempt <= MAX_RETRIES) {
     attempt++;
@@ -463,7 +541,7 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
     const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const res = await fetch(url, {
+      const res = await fetch(currentUrl, {
         headers: {
           'User-Agent': USER_AGENT_AUDITOR,
           Accept: 'application/json, text/plain, */*',
@@ -494,6 +572,17 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
         (httpStatus != null && httpStatus >= 500);
 
       if (attempt <= MAX_RETRIES && isTransient) {
+        const errMsg = (err as { message?: string })?.message || '';
+        if (
+          errMsg.includes('ENOTFOUND') ||
+          (err as { cause?: { code?: string } })?.cause?.code === 'ENOTFOUND'
+        ) {
+          if (currentUrl.includes('granvilletoyota.ca')) {
+            currentUrl = currentUrl.replace('granvilletoyota.ca', 'granvilletoyota.com');
+          } else if (currentUrl.includes('abbotsfordtoyota.com')) {
+            currentUrl = currentUrl.replace('abbotsfordtoyota.com', 'openroadtoyotaabbotsford.com');
+          }
+        }
         const delay = INITIAL_BACKOFF_MS * Math.pow(2, attempt - 1);
         await new Promise((r) => setTimeout(r, delay));
       } else {
@@ -536,15 +625,13 @@ export async function sweepSingleDealer(
       const initialUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, 1, 100);
       let cachedSitemapItems: Array<Record<string, unknown>> | null = null;
 
-      try {
-        const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
-        rawPayload = fetchResult.body;
-      } catch (primaryErr: unknown) {
-        const pMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
-        if (pMsg.includes('429')) {
-          throw primaryErr;
+      const fetchSitemapFallback = async (baseUrl: string): Promise<Array<Record<string, unknown>>> => {
+        let sitemapUrl = `${baseUrl.replace(/\/+$/, '')}/sitemap.xml`;
+        if (sitemapUrl.includes('granvilletoyota.ca')) {
+          sitemapUrl = sitemapUrl.replace('granvilletoyota.ca', 'granvilletoyota.com');
+        } else if (sitemapUrl.includes('abbotsfordtoyota.com')) {
+          sitemapUrl = 'https://openroadtoyotaabbotsford.com/sitemap.xml';
         }
-        const sitemapUrl = `${dealerConfig.baseUrl.replace(/\/+$/, '')}/sitemap.xml`;
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
         try {
@@ -556,18 +643,67 @@ export async function sweepSingleDealer(
             signal: controller.signal,
           });
           clearTimeout(timer);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+          if (!res.ok) return [];
+          let xmlText = await res.text();
+          const subMatch = xmlText.match(/<loc>([^<]*inventory-listing-sitemap\.xml)<\/loc>/i);
+          if (subMatch) {
+            const subController = new AbortController();
+            const subTimer = setTimeout(() => subController.abort(), DEFAULT_TIMEOUT_MS);
+            try {
+              const subRes = await fetch(subMatch[1], {
+                headers: {
+                  'User-Agent': USER_AGENT_AUDITOR,
+                  Accept: 'application/xml, text/xml, */*',
+                },
+                signal: subController.signal,
+              });
+              clearTimeout(subTimer);
+              if (subRes.ok) {
+                xmlText = await subRes.text();
+              }
+            } catch {
+              clearTimeout(subTimer);
+            }
           }
-          const xmlText = await res.text();
-          cachedSitemapItems = parsePublicSitemapToConvertusItems(xmlText);
+          return parsePublicSitemapToConvertusItems(xmlText);
+        } catch {
+          clearTimeout(timer);
+          return [];
+        }
+      };
+
+      try {
+        const fetchResult = await fetchWithRetry(initialUrl, DEFAULT_TIMEOUT_MS);
+        rawPayload = fetchResult.body;
+      } catch (primaryErr: unknown) {
+        const pMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
+        if (pMsg.includes('429')) {
+          throw primaryErr;
+        }
+        const sitemapItems = await fetchSitemapFallback(dealerConfig.baseUrl);
+        if (sitemapItems.length > 0) {
+          cachedSitemapItems = sitemapItems;
           rawPayload = {
             summary: { total_vehicles: cachedSitemapItems.length },
             results: cachedSitemapItems.slice(0, 100),
           };
-        } catch {
-          clearTimeout(timer);
+        } else {
           throw primaryErr;
+        }
+      }
+
+      if (
+        rawPayload &&
+        (rawPayload.success === false ||
+          (rawPayload.msg && String(rawPayload.msg).includes('Querystring')))
+      ) {
+        const sitemapItems = await fetchSitemapFallback(dealerConfig.baseUrl);
+        if (sitemapItems.length > 0) {
+          cachedSitemapItems = sitemapItems;
+          rawPayload = {
+            summary: { total_vehicles: cachedSitemapItems.length },
+            results: cachedSitemapItems.slice(0, 100),
+          };
         }
       }
 
@@ -652,7 +788,7 @@ export async function sweepSingleDealer(
         listingsUpdated: 0,
         observationsStored: 0,
         durationMs: Date.now() - startTime,
-        errorMessage: 'Zero valid vehicles found in feed',
+        errorMessage: parseResult.error || 'Zero valid vehicles found in feed',
         unreservedVehicles: [],
       };
     }
