@@ -13,6 +13,11 @@
  *   npm run sweep:dealer -- --help
  */
 
+import * as fs from 'fs';
+import * as path from 'path';
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import {
   detectAndTransitionSoldUnits,
   dispatchPendingAlerts,
@@ -78,7 +83,7 @@ Usage:
 
 Options:
   --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
-                             Supported: jptoyota-downtown, jptoyota-surrey, westcoast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, all
+                             Supported: jptoyota-downtown, jptoyota-surrey, jptoyota-northshore, destination-toyota-burnaby, west-coast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, all
   --all                      Sweep all registered active pilot dealers sequentially
   --dry-run                  Execute sweep, parse and validate without persisting to Supabase
   --fixture                  Use local offline fixture instead of fetching live endpoint
@@ -100,6 +105,10 @@ Operating Safeguards:
  * and process.env.SUPABASE_SERVICE_ROLE_KEY provided by the workflow environment.
  */
 function loadEnv(): void {
+  dotenv.config({ path: '.env.local' });
+  dotenv.config({ path: '.env.production' });
+  dotenv.config({ path: '.env' });
+
   if (process.env.CI === 'true') {
     return;
   }
@@ -167,8 +176,19 @@ export async function runSweep(): Promise<SweepRunSummary> {
   const isAll = args.includes('--all');
 
   // Secrets validation: Fail fast in headless CI if NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+  let serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+
+  if ((!supabaseUrl || !serviceKey) && fs.existsSync('.env.local')) {
+    dotenv.config({ path: '.env.local' });
+    supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+    serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  }
+  if ((!supabaseUrl || !serviceKey) && fs.existsSync('.env.production')) {
+    dotenv.config({ path: '.env.production' });
+    supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+    serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  }
 
   const isUrlConfigured = Boolean(
     supabaseUrl &&

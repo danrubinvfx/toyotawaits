@@ -9,6 +9,10 @@ export interface AccessoryItem {
   url: string;
   applicableModels: string[];
   badge?: string;
+  brand?: string;
+  destinationType?: 'amazon' | 'direct_partner' | string;
+  discountCode?: string;
+  discountText?: string;
   isDeliveryDayEssential?: boolean;
   imageUrl?: string;
   fallbackIcon?: string;

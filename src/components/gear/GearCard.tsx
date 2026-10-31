@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Check,
+  Copy,
   Play,
   ShieldCheck,
   Layers,
@@ -36,6 +37,10 @@ export interface GearCardItem {
   slug: string;
   title: string;
   name?: string;
+  brand?: string;
+  destinationType?: 'direct_partner' | 'amazon' | string;
+  discountCode?: string;
+  discountText?: string;
   category: string;
   categories?: string[];
   models?: string[];
@@ -105,6 +110,20 @@ export function getAffiliateUrl(
     item.activeModel ||
     (item.models?.length === 1 && item.models[0] !== 'all' ? item.models[0] : undefined);
   const config = getGearMarketConfig(item.slug || item.id, targetModel);
+
+  // Direct partner items (e.g. Muslogy authorized gear) route cleanly to /out/[slug]
+  if (
+    item.destinationType === 'direct_partner' ||
+    config?.destinationType === 'direct_partner' ||
+    item.slug === 'muslogy-rav4' ||
+    item.slug === 'muslogy-console' ||
+    item.slug === 'muslogy-armrest-cover' ||
+    item.slug?.startsWith('muslogy-') ||
+    item.brand === 'Muslogy' ||
+    config?.brand === 'Muslogy'
+  ) {
+    return item.destinationUrl || config?.destinationUrl || (item.slug ? `/out/${item.slug}` : '/out/muslogy-rav4');
+  }
 
   const rawAsin = isUs
     ? item.asin_us || config?.asin_us || item.asin || config?.asin
@@ -253,6 +272,7 @@ export function GearCard({
   buttonLabel,
 }: GearCardProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const { market, isUs } = useMarket();
   const currentModel =
     activeModel ||
@@ -267,6 +287,27 @@ export function GearCard({
     currentModel
   );
 
+  const isDirectPartner =
+    item.destinationType === 'direct_partner' ||
+    config?.destinationType === 'direct_partner' ||
+    item.slug === 'muslogy-rav4' ||
+    item.slug === 'muslogy-console' ||
+    item.slug === 'muslogy-armrest-cover' ||
+    item.slug?.startsWith('muslogy-') ||
+    item.brand === 'Muslogy' ||
+    config?.brand === 'Muslogy';
+
+  const discountCode = item.discountCode || config?.discountCode || (isDirectPartner ? 'Toyotawaits' : undefined);
+  const discountText = item.discountText || config?.discountText || (isDirectPartner ? '2% OFF' : undefined);
+
+  const handleCopyCode = (codeToCopy: string = discountCode || 'Toyotawaits') => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(codeToCopy).catch(() => {});
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   const directAsin = isUsMarket
     ? item.asin_us || config?.asin_us || item.asin || config?.asin
     : item.asin_ca || config?.asin_ca || item.asin || config?.asin;
@@ -274,9 +315,22 @@ export function GearCard({
   const isDirectAsin = isDirectValidAsin;
   const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
-  const buttonText = buttonLabel || item.buttonLabel || config?.buttonLabel || (isDirectAsin ? 'View on Amazon ↗' : 'Search Amazon ↗');
-  const imageAriaLabel = getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
-  const effectiveBadge = item.badge || config?.badge || (hasDirectAsin ? 'Direct Fit' : undefined);
+  const buttonText =
+    buttonLabel ||
+    item.buttonLabel ||
+    config?.buttonLabel ||
+    (isDirectPartner
+      ? 'Get 2% Off on Muslogy ↗'
+      : isDirectAsin
+      ? 'View on Amazon ↗'
+      : 'Search Amazon ↗');
+  const imageAriaLabel = isDirectPartner
+    ? `View ${item.title} on Muslogy (2% Off with code ${discountCode})`
+    : getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
+  const effectiveBadge =
+    item.badge ||
+    config?.badge ||
+    (isDirectPartner ? 'Partner Deal 2% Off' : hasDirectAsin ? 'Direct Fit' : undefined);
 
   const imageSource = resolveVerifiedGearImageSrc(
     item.imageUrl || item.imageSrc || item.image,
@@ -285,6 +339,10 @@ export function GearCard({
   const fallbackIcon = item.fallbackIcon || config?.fallbackIcon;
   const price = item.priceEst || item.priceEstCad;
   const note = config?.description || item.description || item.whyBuy || item.utilityNote || config?.whyBuy;
+
+  const outboundRel = isDirectPartner
+    ? 'sponsored noopener noreferrer'
+    : 'sponsored noopener noreferrer nofollow';
 
   const handleAffiliateClick = () => {
     if (placement) {
@@ -301,6 +359,11 @@ export function GearCard({
     if (isDragging) {
       e.preventDefault();
       e.stopPropagation();
+      return;
+    }
+    handleAffiliateClick();
+    if (isDirectPartner && discountCode) {
+      handleCopyCode(discountCode);
     }
   };
 
@@ -340,7 +403,7 @@ export function GearCard({
 
       {/* Top Section: Media + Badges + Title + Savings Callout + Note */}
       <div className="flex-1 flex flex-col">
-        {/* Compact Product Image / Preview Container with Clickable Amazon Outbound Affiliate Link */}
+        {/* Compact Product Image / Preview Container with Clickable Outbound Affiliate Link */}
         <GearImage
           src={imageSource}
           alt={item.title}
@@ -350,6 +413,7 @@ export function GearCard({
           ariaLabel={imageAriaLabel}
           testId={item.slug}
           isChecked={isChecked}
+          rel={outboundRel}
           onClick={handleImageClick}
           className="mb-2"
           containerClassName="h-32 sm:h-44"
@@ -363,7 +427,9 @@ export function GearCard({
                 variant="outline"
                 className={cn(
                   'text-[10px] font-semibold px-2 py-0.5 border shrink-0',
-                  effectiveBadge === 'Essential'
+                  effectiveBadge.includes('Partner') || effectiveBadge.includes('2%')
+                    ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
+                    : effectiveBadge === 'Essential'
                     ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
                     : effectiveBadge === 'Direct Fit'
                     ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
@@ -397,6 +463,38 @@ export function GearCard({
           {item.title}
         </h4>
 
+        {/* Muslogy Partner 2% Discount Pill & One-Tap Copy */}
+        {isDirectPartner && (
+          <div className="flex items-center justify-between gap-1.5 px-2 py-1 my-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+            <span className="tracking-tight">
+              CODE: <span className="underline decoration-amber-500/60 font-mono">{discountCode || 'Toyotawaits'}</span> ({discountText || '2% OFF'})
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleCopyCode(discountCode || 'Toyotawaits');
+              }}
+              className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-amber-300 hover:text-amber-200 transition-colors bg-amber-500/10 hover:bg-amber-500/20 px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+              title="Copy discount code"
+              aria-label={`Copy discount code ${discountCode || 'Toyotawaits'}`}
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-400 shrink-0" />
+                  <span className="text-emerald-400 font-semibold">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3 shrink-0" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
+
         {/* ROI / Value Prop Pill: text-[11px] px-2 py-0.5 my-1.5 */}
         {price && (
           <span className="text-[11px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 my-1.5 rounded-md inline-block w-fit">
@@ -419,18 +517,32 @@ export function GearCard({
           asChild
           size="sm"
           variant="outline"
-          className="w-full h-9 text-xs font-medium py-1.5 gap-1.5 border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 transition-all cursor-pointer"
+          className={cn(
+            "w-full h-9 text-xs font-medium py-1.5 gap-1.5 transition-all cursor-pointer",
+            isDirectPartner
+              ? "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-semibold"
+              : "border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10"
+          )}
         >
           <a
             href={amazonAffiliateUrl}
             target="_blank"
-            rel="sponsored noopener noreferrer nofollow"
+            rel={outboundRel}
             draggable={false}
-            onClick={handleAffiliateClick}
+            onClick={() => {
+              handleAffiliateClick();
+              if (isDirectPartner && discountCode) {
+                handleCopyCode(discountCode);
+              }
+            }}
           >
             <span>{buttonText}</span>
             <span className="sr-only">
-              {buttonText.startsWith('View on Amazon') ? ' (View on Amazon)' : ' (Search Amazon)'}
+              {isDirectPartner
+                ? ' (Get 2% Off on Muslogy)'
+                : buttonText.startsWith('View on Amazon')
+                ? ' (View on Amazon)'
+                : ' (Search Amazon)'}
             </span>
           </a>
         </Button>

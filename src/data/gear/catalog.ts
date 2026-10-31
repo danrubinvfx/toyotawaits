@@ -11,6 +11,11 @@ export interface GearItem {
   title: string;
   category: string;
   description: string;
+  brand?: string;
+  destinationType?: 'amazon' | 'direct_partner' | string;
+  discountCode?: string;
+  discountText?: string;
+  destinationUrl?: string;
   imageUrl?: string;         // e.g. '/assets/gear/fitcamx-rav4.webp'
   fallbackIcon?: string;     // e.g. 'camera' | 'layers' | 'lock' | 'layout-grid'
   searchQuery: string;
@@ -24,6 +29,11 @@ export interface GearItem {
 export interface GearMarketConfig {
   slug: string;
   title: string;
+  brand?: string;
+  destinationType?: 'amazon' | 'direct_partner' | string;
+  discountCode?: string;
+  discountText?: string;
+  destinationUrl?: string;
   asin?: string;
   asin_ca?: string;
   asin_us?: string;
@@ -50,6 +60,72 @@ export interface GearMarketConfig {
 }
 
 export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
+  'muslogy-rav4': {
+    slug: 'muslogy-rav4',
+    title: 'Muslogy Center Console Organizer Tray (RAV4)',
+    brand: 'Muslogy',
+    category: 'Cabin Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal 2% Off',
+    destinationUrl: '/out/muslogy-rav4',
+    searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
+    searchKeywordsCA: 'Muslogy center console organizer tray Toyota RAV4',
+    searchKeywordsUS: 'Muslogy center console organizer tray Toyota RAV4',
+    compatibility: 'Toyota RAV4 (2019–2026)',
+    fitment: 'RAV4 Direct Fit',
+    description: 'Precision OEM-fit dual-tier drop-in tray that organizes the deep RAV4 center console with anti-slip silicone coin/phone pads.',
+    whyBuy: 'Official Muslogy authorized gear with an exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  'muslogy-console': {
+    slug: 'muslogy-console',
+    title: 'Muslogy Center Console & Bridge Organizer (Sienna & Grand Highlander)',
+    brand: 'Muslogy',
+    category: 'Cabin Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal 2% Off',
+    destinationUrl: '/out/muslogy-console',
+    searchQuery: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
+    searchKeywordsCA: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
+    searchKeywordsUS: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
+    compatibility: 'Toyota Sienna & Grand Highlander',
+    fitment: 'Direct Fit',
+    description: 'Custom-engineered sliding upper divider and bridge organizer tailored for Sienna and Grand Highlander cabins.',
+    whyBuy: 'Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  'muslogy-armrest-cover': {
+    slug: 'muslogy-armrest-cover',
+    title: 'Muslogy Custom-Fit Padded Center Console Armrest Cover',
+    brand: 'Muslogy',
+    category: 'Comfort & Protection',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal 2% Off',
+    destinationUrl: '/out/muslogy-rav4',
+    searchQuery: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
+    searchKeywordsCA: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
+    searchKeywordsUS: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
+    compatibility: 'Toyota RAV4, Sienna, Grand Highlander',
+    fitment: 'Custom Fit',
+    description: 'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.',
+    whyBuy: 'Official Muslogy authorized padded armrest cover with exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-armrest-cover.webp',
+    fallbackIcon: 'layers',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
   'level-2-evse-charger': {
     slug: 'level-2-evse-charger',
     title: 'Level 2 Home EVSE 40A Fast Charger (NEMA 14-50 J1772)',
@@ -1196,6 +1272,20 @@ export function resolveGearLocalImage(
   const clean = (slugOrId || '').toLowerCase();
   const t = (title || '').toLowerCase();
   const c = (category || '').toLowerCase();
+
+  // Muslogy Partner Items
+  if (clean.includes('muslogy-rav4') || clean.includes('muslogy-organizer-rav4')) {
+    return { imageUrl: '/assets/gear/muslogy-rav4-organizer.webp', fallbackIcon: 'layout-grid' };
+  }
+  if (clean.includes('muslogy-sienna') || clean.includes('muslogy-console-sienna')) {
+    return { imageUrl: '/assets/gear/muslogy-sienna-organizer.webp', fallbackIcon: 'layout-grid' };
+  }
+  if (clean.includes('muslogy-armrest')) {
+    return { imageUrl: '/assets/gear/muslogy-armrest-cover.webp', fallbackIcon: 'layers' };
+  }
+  if (clean.includes('muslogy-console') || clean.includes('muslogy')) {
+    return { imageUrl: '/assets/gear/muslogy-rav4-organizer.webp', fallbackIcon: 'layout-grid' };
+  }
 
   // 1. FitcamX Dash Cam
   if (

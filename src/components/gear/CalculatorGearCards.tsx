@@ -16,10 +16,13 @@ import {
   Compass,
   Gauge,
   Radio,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import { cn } from '@/lib/utils';
 
 export interface VettedProduct {
   id: string;
@@ -29,6 +32,11 @@ export interface VettedProduct {
   description: string;
   asin?: string;
   searchQuery?: string;
+  destinationType?: 'direct_partner' | 'amazon' | string;
+  destinationUrl?: string;
+  discountCode?: string;
+  discountText?: string;
+  badge?: string;
   bullets: string[];
   buttonText: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -133,7 +141,12 @@ const RAV4_PRODUCTS: VettedProduct[] = [
   {
     id: 'rav4-console-organizer',
     category: 'Interior Storage',
-    brand: 'Muslogy / EDBETOS',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-rav4',
+    discountCode: 'Toyotawaits',
+    discountText: '2% OFF',
+    badge: 'Partner Deal 2% Off',
     title: 'Center Console Armrest Organizer Tray',
     description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
@@ -143,7 +156,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
       'Leaves full access to 12V power port and cable pass-through',
       'Factory-matched matte black textured ABS plastic',
     ],
-    buttonText: 'View Console Organizer',
+    buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
     iconColor: 'text-amber-600 dark:text-amber-400',
@@ -172,7 +185,12 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
   {
     id: 'sienna-console-organizer',
     category: 'Storage & Organization',
-    brand: 'Vehicle OCD / Muslogy',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-console',
+    discountCode: 'Toyotawaits',
+    discountText: '2% OFF',
+    badge: 'Partner Deal 2% Off',
     title: 'Center Console Sliding Organizer & Bridge Box',
     description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
     searchQuery: 'Toyota Sienna 2021-2026 center console bridge organizer tray',
@@ -182,7 +200,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
       'OEM-matched texture and sound-deadening rubber mats',
       'Prevents items from sliding into pedals during braking',
     ],
-    buttonText: 'View Console Organizer',
+    buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
     iconColor: 'text-amber-600 dark:text-amber-400',
@@ -283,7 +301,12 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
   {
     id: 'gh-console-divider',
     category: 'Cabin Storage',
-    brand: 'Vehicle OCD',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-console',
+    discountCode: 'Toyotawaits',
+    discountText: '2% OFF',
+    badge: 'Partner Deal 2% Off',
     title: 'Center Console Dual-Tier Divider Tray',
     description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
     searchQuery: 'Toyota Grand Highlander center console organizer tray divider',
@@ -293,7 +316,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
       'High-density matte black ABS plastic matching interior trim',
       'Anti-rattle non-slip removable rubber base inserts',
     ],
-    buttonText: 'View Console Tray',
+    buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
     iconColor: 'text-amber-600 dark:text-amber-400',
@@ -581,7 +604,30 @@ export function CalculatorGearCards({
     return list.slice(0, 4);
   }, [modelKey, effectiveIsPhev]);
 
-    const getAffiliateUrl = (prod: VettedProduct) => {
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyCode = (code: string, id: string) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(code).catch(() => {});
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
+
+  const handleProductLinkClick = (prod: VettedProduct) => {
+    if (prod.destinationType === 'direct_partner' && prod.discountCode) {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        navigator.clipboard.writeText(prod.discountCode).catch(() => {});
+        setCopiedId(prod.id);
+        setTimeout(() => setCopiedId(null), 2000);
+      }
+    }
+  };
+
+  const getAffiliateUrl = (prod: VettedProduct) => {
+    if (prod.destinationType === 'direct_partner') {
+      return prod.destinationUrl || `/out/${prod.id}`;
+    }
     const market = isUs ? 'US' : 'CA';
     return buildAmazonAffiliateUrl({
       asin: prod.asin,
@@ -630,9 +676,13 @@ export function CalculatorGearCards({
                   </div>
                   <Badge
                     variant="outline"
-                    className="text-[10px] font-medium border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400"
+                    className={
+                      prod.destinationType === 'direct_partner'
+                        ? "text-[10px] font-bold border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        : "text-[10px] font-medium border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400"
+                    }
                   >
-                    {prod.category}
+                    {prod.badge || prod.category}
                   </Badge>
                 </div>
 
@@ -644,12 +694,45 @@ export function CalculatorGearCards({
                     <a
                       href={affiliateUrl}
                       target="_blank"
-                      rel="sponsored noopener noreferrer nofollow"
+                      rel={prod.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "sponsored noopener noreferrer nofollow"}
+                      onClick={() => handleProductLinkClick(prod)}
                       className="hover:text-red-600 dark:hover:text-red-400 transition-colors"
                     >
                       {prod.title}
                     </a>
                   </CardTitle>
+
+                  {/* Muslogy Partner 2% Discount Pill & One-Tap Copy */}
+                  {prod.destinationType === 'direct_partner' && (
+                    <div className="flex items-center justify-between gap-1.5 px-2 py-1 mt-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[11px] font-bold">
+                      <span className="tracking-tight">
+                        CODE: <span className="underline decoration-amber-500/60 font-mono">{prod.discountCode || 'Toyotawaits'}</span> (2% OFF)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleCopyCode(prod.discountCode || 'Toyotawaits', prod.id);
+                        }}
+                        className="inline-flex items-center gap-1 text-[10px] uppercase font-bold text-amber-700 dark:text-amber-300 hover:text-amber-600 dark:hover:text-amber-200 transition-colors bg-amber-500/10 hover:bg-amber-500/20 px-1.5 py-0.5 rounded cursor-pointer shrink-0"
+                        title="Copy discount code"
+                        aria-label="Copy discount code Toyotawaits"
+                      >
+                        {copiedId === prod.id ? (
+                          <>
+                            <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3 shrink-0" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
 
@@ -668,12 +751,18 @@ export function CalculatorGearCards({
                     asChild
                     variant="outline"
                     size="sm"
-                    className="w-full h-8 min-h-[32px] text-xs font-semibold flex items-center justify-center gap-1.5 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 cursor-pointer"
+                    className={cn(
+                      "w-full h-8 min-h-[32px] text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer",
+                      prod.destinationType === 'direct_partner'
+                        ? "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold"
+                        : "border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                    )}
                   >
                     <a
                       href={affiliateUrl}
                       target="_blank"
-                      rel="sponsored noopener noreferrer nofollow"
+                      rel={prod.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "sponsored noopener noreferrer nofollow"}
+                      onClick={() => handleProductLinkClick(prod)}
                     >
                       <span>{prod.buttonText}</span>
                       <ExternalLink className="w-3 h-3 opacity-60" />

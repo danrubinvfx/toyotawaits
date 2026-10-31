@@ -26,7 +26,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     ).toBeDefined();
   });
 
-  it('routes to Amazon.ca with tag=toyotawaits-20 and sponsored rel attribute for Canadian users', () => {
+  it('routes to Amazon.ca with tag=toyotawaits-20 for Amazon items and /out/ proxy for Muslogy partner items for Canadian users', () => {
     render(
       <MarketProvider initialMarket="CA">
         <CalculatorGearCards activeModel="rav4" />
@@ -37,15 +37,21 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     expect(links.length).toBeGreaterThanOrEqual(4);
 
     links.forEach((link) => {
-      const href = link.getAttribute('href');
-      expect(href).toContain('amazon.ca');
-      expect(href).toContain('tag=toyotawaits-20');
-      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
+      const href = link.getAttribute('href') || '';
       expect(link.getAttribute('target')).toBe('_blank');
+
+      if (href.startsWith('/out/')) {
+        expect(href).toBe('/out/muslogy-rav4');
+        expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer');
+      } else {
+        expect(href).toContain('amazon.ca');
+        expect(href).toContain('tag=toyotawaits-20');
+        expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
+      }
     });
   });
 
-  it('routes to Amazon.com with tag=toyotawaits07-20 for US users', () => {
+  it('routes to Amazon.com with tag=toyotawaits07-20 for US users and /out/ proxy for Muslogy partner items', () => {
     render(
       <MarketProvider initialMarket="US">
         <CalculatorGearCards activeModel="sienna" />
@@ -56,12 +62,38 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
     expect(links.length).toBeGreaterThanOrEqual(4);
 
     links.forEach((link) => {
-      const href = link.getAttribute('href');
-      expect(href).toContain('amazon.com');
-      expect(href).toContain('tag=toyotawaits07-20');
-      expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
+      const href = link.getAttribute('href') || '';
       expect(link.getAttribute('target')).toBe('_blank');
+
+      if (href.startsWith('/out/')) {
+        expect(href).toBe('/out/muslogy-console');
+        expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer');
+      } else {
+        expect(href).toContain('amazon.com');
+        expect(href).toContain('tag=toyotawaits07-20');
+        expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
+      }
     });
+  });
+
+  it('renders Muslogy partner card with 2% discount pill, code Toyotawaits, and copy button', () => {
+    render(
+      <MarketProvider initialMarket="CA">
+        <CalculatorGearCards activeModel="rav4" />
+      </MarketProvider>
+    );
+
+    // Verify discount pill and code
+    expect(screen.getByText(/CODE:/i)).toBeDefined();
+    expect(screen.getByText('Toyotawaits')).toBeDefined();
+    expect(screen.getByText(/\(2% OFF\)/i)).toBeDefined();
+
+    // Verify copy button
+    const copyBtn = screen.getByRole('button', { name: /Copy discount code/i });
+    expect(copyBtn).toBeDefined();
+
+    // Verify direct partner CTA button text
+    expect(screen.getByText(/Get 2% Off on Muslogy/i)).toBeDefined();
   });
 
   it('displays curated accessories for Sienna including 3-row high-wall liners and hitch', () => {

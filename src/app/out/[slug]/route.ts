@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { affiliateSlugSchema } from '@/lib/validations/schemas';
 import { getAffiliateRedirect } from '@/lib/db/affiliates';
+import { createServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
+
+const MUSLOGY_DISCOUNT_URL = 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA';
 
 export async function GET(
   request: NextRequest,
@@ -26,8 +29,19 @@ export async function GET(
       );
     }
 
-    // 2. Query target redirect URL
-    let destinationUrl = await getAffiliateRedirect(validation.data.slug);
+    const validatedSlug = validation.data.slug;
+
+    // 2. Query target redirect URL (with direct Muslogy partner checkout mapping)
+    let destinationUrl: string | null = null;
+    if (
+      validatedSlug === 'muslogy-rav4' ||
+      validatedSlug === 'muslogy-console' ||
+      validatedSlug === 'muslogy-armrest-cover'
+    ) {
+      destinationUrl = MUSLOGY_DISCOUNT_URL;
+    } else {
+      destinationUrl = await getAffiliateRedirect(validatedSlug);
+    }
 
     if (!destinationUrl) {
       // Safe fallback for unmapped or unknown slugs:
@@ -48,6 +62,28 @@ export async function GET(
       return NextResponse.redirect(new URL('/winter-prep', request.url), 307);
     }
 
+    // Telemetry click logging: ensure telemetry clicks log to telemetry_affiliate_clicks
+    const searchParams = request.nextUrl.searchParams;
+    try {
+      const placementParam = searchParams.get('placement');
+      const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait'];
+      const effectivePlacement = (placementParam && validPlacements.includes(placementParam)) ? placementParam : 'while_you_wait';
+      const modelContext = searchParams.get('model') || null;
+
+      const supabase = createServerClient();
+      supabase
+        .from('telemetry_affiliate_clicks')
+        .insert({
+          accessory_id: validatedSlug,
+          placement: effectivePlacement,
+          model_context: modelContext,
+          target_url: destinationUrl,
+        })
+        .then();
+    } catch {
+      // Non-blocking telemetry delivery
+    }
+
     // Eliminate any Google Search wrapping on destination URL
     if (destinationUrl.includes('google.com/search')) {
       try {
@@ -62,7 +98,6 @@ export async function GET(
     }
 
     // Detect market context from URL param, cookie, or hostname
-    const searchParams = request.nextUrl.searchParams;
     const marketParam = searchParams.get('market')?.toUpperCase();
     const cookieMarket = request.cookies.get('toyotawaits_market')?.value?.toUpperCase();
     const host = request.headers.get('host') || '';

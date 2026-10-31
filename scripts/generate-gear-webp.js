@@ -522,6 +522,120 @@ const GEAR_ITEMS = [
       <text x="400" y="295" fill="#fafafa" font-family="-apple-system, sans-serif" font-size="13" font-weight="800" text-anchor="middle">ERGONOMIC KNEE REST</text>
       <text x="400" y="315" fill="#fbbf24" font-family="monospace" font-size="10" text-anchor="middle">SOFT LEATHERETTE • 3M VHB MOUNT</text>
     `
+  },
+
+  // 14. Muslogy RAV4 Center Console Organizer
+  {
+    fileName: 'muslogy-rav4-organizer.webp',
+    brand: 'MUSLOGY • DIRECT FIT 2% OFF',
+    subtitle: 'MUSLOGY TOYOTA RAV4 CONSOLE TRAY & DIVIDER',
+    svg: `
+      <!-- Console Outer Tray Flange -->
+      <rect x="195" y="115" width="410" height="280" rx="18" fill="url(#matteBlack)" stroke="#f59e0b" stroke-width="3"/>
+      <rect x="210" y="130" width="380" height="250" rx="12" fill="#141416" stroke="#3f3f46" stroke-width="2"/>
+
+      <!-- Left Compartment: Coin, Key & Card Caddy -->
+      <rect x="225" y="145" width="120" height="110" rx="8" fill="#1e1e24" stroke="#52525b" stroke-width="1.5"/>
+      <circle cx="255" cy="180" r="16" fill="#09090b" stroke="#fbbf24" stroke-width="1.5"/>
+      <circle cx="255" cy="180" r="11" fill="#fbbf24" opacity="0.25"/>
+      <circle cx="290" cy="180" r="13" fill="#09090b" stroke="#fbbf24" stroke-width="1.5"/>
+      <circle cx="290" cy="180" r="8" fill="#fbbf24" opacity="0.25"/>
+      <text x="285" y="235" fill="#fbbf24" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">COINS / KEYS</text>
+
+      <!-- Bottom Left Section: Card / Badge slot -->
+      <rect x="225" y="265" width="120" height="100" rx="8" fill="#1e1e24" stroke="#52525b" stroke-width="1.5"/>
+      <rect x="240" y="285" width="90" height="48" rx="4" fill="#27272a" stroke="#fbbf24" stroke-width="1"/>
+      <path d="M 250 309 L 320 309" stroke="#fbbf24" stroke-width="2"/>
+      <text x="285" y="352" fill="#a1a1aa" font-family="monospace" font-size="9" text-anchor="middle">CARD VAULT</text>
+
+      <!-- Right Compartment: Large Phone & Sunglasses Bed -->
+      <rect x="355" y="145" width="225" height="220" rx="8" fill="#1e1e24" stroke="#52525b" stroke-width="1.5"/>
+      <rect x="365" y="155" width="205" height="200" rx="6" fill="#101014"/>
+      <!-- Textured Non-Slip Rubber Mat Pattern -->
+      <g stroke="#27272a" stroke-width="2.5">
+        <line x1="385" y1="175" x2="550" y2="175"/>
+        <line x1="385" y1="200" x2="550" y2="200"/>
+        <line x1="385" y1="225" x2="550" y2="225"/>
+        <line x1="385" y1="250" x2="550" y2="250"/>
+        <line x1="385" y1="275" x2="550" y2="275"/>
+        <line x1="385" y1="300" x2="550" y2="300"/>
+        <line x1="385" y1="325" x2="550" y2="325"/>
+      </g>
+      <!-- Amber Accent Perimeter Trim -->
+      <rect x="370" y="160" width="195" height="190" rx="4" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.7"/>
+
+      <!-- Muslogy Official Brand Inscription -->
+      <g transform="translate(468, 245)">
+        <rect x="-65" y="-12" width="130" height="24" rx="4" fill="#09090b" stroke="#f59e0b" stroke-width="1.2"/>
+        <text x="0" y="4" fill="#fafafa" font-family="-apple-system, sans-serif" font-size="12" font-weight="900" letter-spacing="1.5" text-anchor="middle">MUSLOGY</text>
+      </g>
+
+      <!-- USB Pass-Through Cable Notch -->
+      <rect x="565" y="230" width="18" height="34" rx="4" fill="#09090b" stroke="#fbbf24" stroke-width="1.5"/>
+      <circle cx="574" cy="247" r="3.5" fill="#38bdf8"/>
+    `
+  },
+
+  // 15. Muslogy Sienna Center Console Bridge Organizer
+  {
+    fileName: 'muslogy-sienna-organizer.webp',
+    brand: 'MUSLOGY • DIRECT FIT 2% OFF',
+    subtitle: 'MUSLOGY TOYOTA SIENNA CONSOLE & BRIDGE ORGANIZER',
+    svg: `
+      <!-- Sienna Cavernous Dual-Tier Bridge Housing -->
+      <path d="M 180 130 L 620 130 L 640 370 C 640 395 590 405 530 405 L 270 405 C 210 405 160 395 160 370 Z" fill="url(#matteBlack)" stroke="#f59e0b" stroke-width="3.5"/>
+      <path d="M 195 145 L 605 145 L 620 360 C 620 380 575 390 520 390 L 280 390 C 225 390 180 380 180 360 Z" fill="#141416" stroke="#3f3f46" stroke-width="2"/>
+
+      <!-- Sliding Upper Tray Carrier -->
+      <rect x="220" y="165" width="360" height="95" rx="8" fill="#1e1e24" stroke="#52525b" stroke-width="1.8"/>
+      <!-- Left Sub-tray: Sunglasses / Pens -->
+      <rect x="235" y="177" width="150" height="70" rx="6" fill="#101014" stroke="#f59e0b" stroke-width="1"/>
+      <path d="M 255 212 C 275 195 305 195 325 212" stroke="#fbbf24" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <circle cx="270" cy="216" r="12" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <circle cx="310" cy="216" r="12" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <!-- Right Sub-tray: Mobile & Keys -->
+      <rect x="400" y="177" width="165" height="70" rx="6" fill="#101014" stroke="#f59e0b" stroke-width="1"/>
+      <rect x="420" y="190" width="125" height="44" rx="4" fill="#1a1a20" stroke="#3f3f46" stroke-width="1"/>
+      <text x="482" y="217" fill="#fbbf24" font-family="monospace" font-size="10" font-weight="700" text-anchor="middle">FAST GRAB</text>
+
+      <!-- Lower Bridge Wide Compartment (Holds Bags & Tablets) -->
+      <rect x="220" y="275" width="360" height="90" rx="8" fill="#19191e" stroke="#3f3f46" stroke-width="1.5"/>
+      <g stroke="#27272a" stroke-width="2">
+        <line x1="240" y1="295" x2="560" y2="295"/>
+        <line x1="240" y1="315" x2="560" y2="315"/>
+        <line x1="240" y1="335" x2="560" y2="335"/>
+      </g>
+      <text x="400" y="325" fill="#fafafa" font-family="-apple-system, sans-serif" font-size="13" font-weight="900" letter-spacing="2" text-anchor="middle">MUSLOGY SIENNA BRIDGE</text>
+      <text x="400" y="345" fill="#a1a1aa" font-family="monospace" font-size="9" text-anchor="middle">ANTI-SLIP MATTED LOWER DECK</text>
+    `
+  },
+
+  // 16. Muslogy Custom Padded Armrest Cover
+  {
+    fileName: 'muslogy-armrest-cover.webp',
+    brand: 'MUSLOGY • ERGONOMIC COMFORT 2% OFF',
+    subtitle: 'MUSLOGY CUSTOM-FIT PADDED ARMREST COVER',
+    svg: `
+      <!-- Soft Memory-Foam Contour Cushion -->
+      <path d="M 220 150 L 580 150 C 610 150 630 175 620 280 C 615 330 580 355 540 355 L 260 355 C 220 355 185 330 180 280 C 170 175 190 150 220 150 Z" fill="url(#matteBlack)" stroke="#f59e0b" stroke-width="3"/>
+      <!-- Amber French Double Stitching -->
+      <path d="M 235 170 L 565 170 C 585 170 600 190 595 265 C 590 305 565 335 530 335 L 270 335 C 235 335 210 305 205 265 C 200 190 215 170 235 170 Z" fill="#141416" stroke="#fbbf24" stroke-width="2" stroke-dasharray="6 4"/>
+
+      <!-- Diamond-Quilted Breathable Center Section -->
+      <rect x="280" y="195" width="240" height="115" rx="10" fill="#1a1a20" stroke="#3f3f46" stroke-width="1.2"/>
+      <g stroke="#3f3f46" stroke-width="1.5" opacity="0.7">
+        <path d="M 300 215 L 340 295 M 340 195 L 380 275 M 380 195 L 420 275 M 420 195 L 460 275 M 460 195 L 500 275"/>
+        <path d="M 500 215 L 460 295 M 460 195 L 420 275 M 420 195 L 380 275 M 380 195 L 340 275 M 340 195 L 300 275"/>
+      </g>
+
+      <!-- Center Metallic Muslogy Brand Emblem -->
+      <g transform="translate(400, 252)">
+        <rect x="-60" y="-14" width="120" height="28" rx="6" fill="#09090b" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="0" y="5" fill="#fafafa" font-family="-apple-system, sans-serif" font-size="12" font-weight="900" letter-spacing="1.5" text-anchor="middle">MUSLOGY</text>
+      </g>
+
+      <text x="400" y="380" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">SOFTEX LEATHERETTE • SUB-ZERO FLEXIBLE</text>
+    `
   }
 ];
 

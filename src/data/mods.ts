@@ -34,6 +34,10 @@ export interface ModItem {
   categories?: ModCategory[];
   subCategory?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
+  brand?: string;
+  destinationType?: 'amazon' | 'direct_partner' | string;
+  discountCode?: string;
+  discountText?: string;
   compatibility: string;
   fitment?: string;
   amazonCaAsinOrUrl: string;
@@ -70,6 +74,96 @@ export interface ModItem {
 }
 
 export const MODS_CONFIG: ModItem[] = [
+  {
+    id: 'muslogy-rav4-organizer',
+    slug: 'muslogy-rav4',
+    models: ['rav4', 'rav4-hybrid', 'rav4-prime'],
+    category: 'Organization',
+    categories: ['Organization'],
+    badge: 'Partner Deal 2% Off',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    compatibility: 'Toyota RAV4 (2019–2026)',
+    fitment: 'RAV4 Direct Fit',
+    title: 'Muslogy Center Console Organizer Tray (RAV4)',
+    name: 'Muslogy Center Console Organizer Tray (RAV4)',
+    description:
+      'Precision OEM-fit dual-tier drop-in tray that organizes the deep RAV4 center console with anti-slip silicone coin/phone pads.',
+    whyBuy:
+      'Official Muslogy authorized gear with an exclusive 2% discount with code Toyotawaits.',
+    utilityNote:
+      'Official Muslogy authorized gear with an exclusive 2% discount with code Toyotawaits.',
+    priceEst: 'Partner Deal 2% Off',
+    priceEstCad: 'Partner Deal 2% Off',
+    image: '/assets/gear/muslogy-rav4-organizer.webp',
+    imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+    amazonCaAsinOrUrl: '/out/muslogy-rav4',
+    destinationUrl: '/out/muslogy-rav4',
+    affiliateUrl: '/out/muslogy-rav4',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  {
+    id: 'muslogy-console-organizer',
+    slug: 'muslogy-console',
+    models: ['sienna', 'grand-highlander'],
+    category: 'Organization',
+    categories: ['Organization'],
+    badge: 'Partner Deal 2% Off',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    compatibility: 'Toyota Sienna & Grand Highlander',
+    fitment: 'Direct Fit',
+    title: 'Muslogy Center Console & Bridge Organizer (Sienna & Grand Highlander)',
+    name: 'Muslogy Center Console & Bridge Organizer',
+    description:
+      'Custom-engineered sliding upper divider and bridge organizer tailored for Sienna and Grand Highlander cabins.',
+    whyBuy:
+      'Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.',
+    utilityNote:
+      'Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.',
+    priceEst: 'Partner Deal 2% Off',
+    priceEstCad: 'Partner Deal 2% Off',
+    image: '/assets/gear/muslogy-sienna-organizer.webp',
+    imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
+    amazonCaAsinOrUrl: '/out/muslogy-console',
+    destinationUrl: '/out/muslogy-console',
+    affiliateUrl: '/out/muslogy-console',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  {
+    id: 'muslogy-armrest-cover',
+    slug: 'muslogy-armrest-cover',
+    models: ['rav4', 'grand-highlander', 'sienna', 'universal'],
+    category: 'Interior Protection',
+    categories: ['Interior Protection'],
+    badge: 'Partner Deal 2% Off',
+    brand: 'Muslogy',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    compatibility: 'Toyota RAV4, Sienna & Grand Highlander',
+    fitment: 'Custom Fit',
+    title: 'Muslogy Custom-Fit Padded Center Console Armrest Cover',
+    name: 'Muslogy Padded Armrest Cover',
+    description:
+      'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.',
+    whyBuy:
+      'Official Muslogy authorized padded armrest cover with exclusive 2% discount with code Toyotawaits.',
+    utilityNote:
+      'Official Muslogy authorized padded armrest cover with exclusive 2% discount with code Toyotawaits.',
+    priceEst: 'Partner Deal 2% Off',
+    priceEstCad: 'Partner Deal 2% Off',
+    image: '/assets/gear/muslogy-armrest-cover.webp',
+    imageUrl: '/assets/gear/muslogy-armrest-cover.webp',
+    amazonCaAsinOrUrl: '/out/muslogy-rav4',
+    destinationUrl: '/out/muslogy-rav4',
+    affiliateUrl: '/out/muslogy-rav4',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
   {
     id: 'rav4-padded-armrest-cover',
     slug: 'rav4-padded-armrest-cover',

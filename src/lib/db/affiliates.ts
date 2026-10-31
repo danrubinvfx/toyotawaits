@@ -12,6 +12,24 @@ export interface AffiliateRecord {
 
 // Fallback registry matching 004_seed_canadian_data.sql and 006_se_mods_affiliates.sql
 export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
+  'muslogy-rav4': {
+    id: 'f9000001-0001-4001-8001-000000000001',
+    slug: 'muslogy-rav4',
+    destinationUrl: 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA',
+    title: 'Muslogy Center Console Organizer Tray (RAV4)',
+    category: 'accessories',
+    clickCount: 0,
+    isActive: true,
+  },
+  'muslogy-console': {
+    id: 'f9000002-0002-4002-8002-000000000002',
+    slug: 'muslogy-console',
+    destinationUrl: 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA',
+    title: 'Muslogy Center Console & Bridge Organizer',
+    category: 'accessories',
+    clickCount: 0,
+    isActive: true,
+  },
   'rav4-padded-armrest-cover': {
     id: 'fbaaaaaa-1111-4111-8111-111111111111',
     slug: 'rav4-padded-armrest-cover',

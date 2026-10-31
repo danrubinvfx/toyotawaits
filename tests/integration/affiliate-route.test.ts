@@ -246,5 +246,22 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     const location = response.headers.get('Location');
     expect(location).toContain('amazon.com');
   });
+
+  it('correctly redirects Muslogy partner items (muslogy-rav4, muslogy-console, muslogy-armrest-cover) to Shopify discount checkout endpoint with 307 status', async () => {
+    const muslogySlugs = ['muslogy-rav4', 'muslogy-console', 'muslogy-armrest-cover'];
+    const expectedTarget = 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA';
+
+    for (const slug of muslogySlugs) {
+      const request = new NextRequest(`http://localhost:3000/out/${slug}`);
+      const response = await GET(request, {
+        params: Promise.resolve({ slug }),
+      });
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get('Location')).toBe(expectedTarget);
+      expect(response.headers.get('Cache-Control')).toContain('no-store');
+      expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
+    }
+  });
 });
 
