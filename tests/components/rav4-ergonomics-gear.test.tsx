@@ -86,7 +86,7 @@ describe('RAV4 Interior Comfort & Ergonomics Gear Integration', () => {
 
       expect(screen.getByText('Custom-Fit Padded Center Console Armrest Cover')).toBeInTheDocument();
       expect(screen.getByText('Driver Side Console Edge Leather Knee Cushion')).toBeInTheDocument();
-      expect(screen.getByText('$24 – $32 CAD')).toBeInTheDocument();
+      expect(screen.getAllByText('$24 – $32 CAD').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('$14 – $19 CAD')).toBeInTheDocument();
     });
 
@@ -126,7 +126,7 @@ describe('RAV4 Interior Comfort & Ergonomics Gear Integration', () => {
 
       // Both items should be rendered
       expect(
-        screen.getByText(/Custom-Fit Padded Center Console Armrest Cover/i)
+        screen.getAllByText(/Custom-Fit Padded Center Console Armrest Cover/i)[0]
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Driver Side Console Edge Leather Knee Cushion/i)

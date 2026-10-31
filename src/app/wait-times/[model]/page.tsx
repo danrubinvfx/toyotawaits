@@ -6,6 +6,7 @@ import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/ser
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { PartnerDealBanner } from '@/components/gear/PartnerDealBanner';
+import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSection';
 import {
   MODEL_REGISTRY,
   getModelConfig,
@@ -22,9 +23,7 @@ import {
   TrendingUp,
   Users,
   ChevronRight,
-  ChevronDown,
   PlusCircle,
-  HelpCircle,
   ShieldCheck,
   AlertCircle,
   Calendar,
@@ -474,6 +473,17 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     }),
   ];
 
+  const faqData: ModelFAQData = {
+    modelName: modelConfig.name,
+    slug: modelConfig.slug,
+    overallMedianMonths: stats.medianMonths,
+    fastestProvince: stats.fastestProvince,
+    slowestProvince: stats.slowestProvince,
+    powertrainBreakdown: stats.powertrainGrid,
+    totalReports: stats.sampleSize,
+    additionalFaqs: modelConfig.faqs,
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -854,32 +864,8 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         <DeliveryPrepChecklist model={modelConfig.slug} powertrain={modelConfig.slug === 'sienna' ? 'hev' : undefined} />
       </section>
 
-      {/* Section 5: FAQ Accordion Section */}
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="h-5 w-5 text-red-600" />
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
-            Frequently Asked Questions: {modelConfig.name} Wait Times
-          </h2>
-        </div>
-
-        <div className="space-y-3">
-          {allFaqs.map((faq, i) => (
-            <details
-              key={i}
-              className="group border border-zinc-200 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden shadow-2xs transition-all"
-            >
-              <summary className="flex items-center justify-between p-4 cursor-pointer font-bold text-sm sm:text-base text-zinc-900 dark:text-zinc-100 select-none hover:text-red-600 dark:hover:text-red-400 transition-colors">
-                <span>{faq.question}</span>
-                <ChevronDown className="h-4 w-4 text-zinc-400 group-open:rotate-180 transition-transform duration-200 shrink-0 ml-2" />
-              </summary>
-              <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed border-t border-zinc-100 dark:border-zinc-800/60">
-                {faq.answer}
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
+      {/* Section 5: FAQ Accordion Section with Schema.org JSON-LD */}
+      <ModelFAQSection faqData={faqData} />
     </div>
   );
 }

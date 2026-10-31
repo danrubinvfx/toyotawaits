@@ -50,8 +50,7 @@ export function InventoryGearCard({
   const config = getGearMarketConfig(item.id);
   const resolvedLocal = resolveGearLocalImage(item.id, item.category, item.title);
   const imageSource = resolveVerifiedGearImageSrc(
-    item.imageUrl,
-    config?.imageUrl,
+    item.imageUrl || config?.imageUrl,
     resolvedLocal?.imageUrl
   );
   const fallbackIcon = item.fallbackIcon || config?.fallbackIcon || resolvedLocal?.fallbackIcon;
