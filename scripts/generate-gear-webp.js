@@ -642,8 +642,19 @@ const GEAR_ITEMS = [
 async function generateAll() {
   console.log(`Generating ${GEAR_ITEMS.length} high-res WebP gear visuals in ${outDir}...`);
   for (const item of GEAR_ITEMS) {
-    const svgStr = getCardFrameSvg(item.svg, item.brand, item.subtitle);
+    // Official partner studio photography must not be overwritten by synthetic SVG mockups
     const dest = path.join(outDir, item.fileName);
+    if (
+      ['muslogy-rav4-organizer.webp', 'muslogy-sienna-organizer.webp', 'muslogy-armrest-cover.webp'].includes(
+        item.fileName
+      ) &&
+      fs.existsSync(dest)
+    ) {
+      console.log(`Preserving official photography: ${item.fileName}`);
+      continue;
+    }
+
+    const svgStr = getCardFrameSvg(item.svg, item.brand, item.subtitle);
     await sharp(Buffer.from(svgStr))
       .webp({ quality: 95, effort: 6 })
       .toFile(dest);

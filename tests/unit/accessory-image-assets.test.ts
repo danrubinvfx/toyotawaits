@@ -48,4 +48,18 @@ describe('Accessory & Gear Local Image Asset Audit', () => {
     expect(resolved).toBe('/assets/gear/tuxmat-floor-liners.webp');
     expect(fs.existsSync(path.join(publicDir, resolved!))).toBe(true);
   });
+
+  it('ensures official Muslogy product photography assets exist in public/assets/gear/', () => {
+    const muslogyAssets = [
+      'muslogy-rav4-organizer.webp',
+      'muslogy-armrest-cover.webp',
+      'muslogy-sienna-organizer.webp',
+    ];
+    for (const fileName of muslogyAssets) {
+      const filePath = path.join(publicDir, 'assets', 'gear', fileName);
+      expect(fs.existsSync(filePath), `Missing official Muslogy asset: ${fileName}`).toBe(true);
+      const stat = fs.statSync(filePath);
+      expect(stat.size).toBeGreaterThan(1000);
+    }
+  });
 });
