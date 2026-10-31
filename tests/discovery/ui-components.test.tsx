@@ -924,12 +924,20 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const gearCards = screen.getAllByTestId('inventory-gear-card');
       expect(gearCards.length).toBe(3); // floor(6 / 2) = 3
 
-      // Verify outbound links use toyotawaits-20
+      // Verify outbound links use toyotawaits-20 or /out/ partner proxy
       const links = screen.getAllByTestId('gear-strip-action-btn');
       expect(links.length).toBe(3);
-      expect(links[0].getAttribute('href')).toContain('tag=toyotawaits-20');
-      expect(links[0]).toHaveAttribute('target', '_blank');
-      expect(links[0]).toHaveAttribute('rel', 'noopener noreferrer');
+      links.forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        expect(link).toHaveAttribute('target', '_blank');
+        if (href.startsWith('/out/')) {
+          expect(href).toMatch(/^\/out\/muslogy/);
+          expect(link.getAttribute('rel')).toContain('noopener noreferrer');
+        } else {
+          expect(href).toContain('tag=toyotawaits-20');
+          expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+        }
+      });
     });
 
     it('injects top-ranked gear items into interleaved strips in popularity order', () => {

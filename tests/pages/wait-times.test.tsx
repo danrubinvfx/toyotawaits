@@ -184,6 +184,48 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     tacomaRender.unmount();
   });
 
+  it('renders Delivery Day Upgrades & Partner Deals section with Muslogy partner items for rav4, sienna, and grand-highlander', async () => {
+    // 1. RAV4 Wait Times Page
+    const rav4Jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'rav4' }),
+    });
+    const rav4Render = render(rav4Jsx);
+    expect(rav4Render.getByTestId('partner-deals-section')).toBeInTheDocument();
+    expect(rav4Render.getAllByText(/Delivery Day Upgrades & Partner Deals/i).length).toBeGreaterThan(0);
+    expect(rav4Render.getAllByText(/Muslogy Center Console Organizer Tray/i).length).toBeGreaterThan(0);
+    expect(rav4Render.getAllByText('Toyotawaits').length).toBeGreaterThan(0);
+    expect(rav4Render.getAllByText(/Partner Deal · 2% Off/i).length).toBeGreaterThan(0);
+
+    const rav4Link = rav4Render.getAllByRole('link', { name: /Get 2% Off on Muslogy/i })[0];
+    expect(rav4Link).toHaveAttribute('href', '/out/muslogy-rav4');
+    expect(rav4Link).toHaveAttribute('target', '_blank');
+    expect(rav4Link).toHaveAttribute('rel', 'sponsored noopener noreferrer');
+    rav4Render.unmount();
+
+    // 2. Sienna Wait Times Page
+    const siennaJsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'sienna' }),
+    });
+    const siennaRender = render(siennaJsx);
+    expect(siennaRender.getByTestId('partner-deals-section')).toBeInTheDocument();
+    expect(siennaRender.getAllByText(/Delivery Day Upgrades & Partner Deals/i).length).toBeGreaterThan(0);
+    expect(siennaRender.getAllByText(/Muslogy Sliding Center Console & Bridge Organizer/i).length).toBeGreaterThan(0);
+
+    const siennaLink = siennaRender.getAllByRole('link', { name: /Get 2% Off on Muslogy/i })[0];
+    expect(siennaLink).toHaveAttribute('href', '/out/muslogy-console');
+    siennaRender.unmount();
+
+    // 3. Grand Highlander Wait Times Page
+    const ghJsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'grand-highlander' }),
+    });
+    const ghRender = render(ghJsx);
+    expect(ghRender.getByTestId('partner-deals-section')).toBeInTheDocument();
+    expect(ghRender.getAllByText(/Delivery Day Upgrades & Partner Deals/i).length).toBeGreaterThan(0);
+    expect(ghRender.getAllByText(/Muslogy Center Console Dual-Tier Divider Tray/i).length).toBeGreaterThan(0);
+    ghRender.unmount();
+  });
+
   it('triggers notFound() when an invalid slug is requested', async () => {
     await expect(
       ModelWaitTimePage({

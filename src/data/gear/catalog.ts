@@ -5,6 +5,7 @@
  */
 
 import { injectActiveModelIntoQuery } from '@/lib/gear/affiliate';
+export { ESSENTIAL_ACCESSORIES } from '@/data/accessories';
 
 export interface GearItem {
   id: string;
@@ -60,6 +61,28 @@ export interface GearMarketConfig {
 }
 
 export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
+  'muslogy-rav4-organizer': {
+    slug: 'muslogy-rav4',
+    title: 'Muslogy Center Console Organizer Tray (RAV4)',
+    brand: 'Muslogy',
+    category: 'Cabin Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-rav4',
+    searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
+    searchKeywordsCA: 'Muslogy center console organizer tray Toyota RAV4',
+    searchKeywordsUS: 'Muslogy center console organizer tray Toyota RAV4',
+    compatibility: 'Toyota RAV4 (2019–2026)',
+    fitment: 'RAV4 Direct Fit',
+    description: 'Precision OEM-fit dual-tier drop-in tray that organizes the deep RAV4 center console with anti-slip silicone coin/phone pads.',
+    whyBuy: 'Official Muslogy authorized gear with an exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
   'muslogy-rav4': {
     slug: 'muslogy-rav4',
     title: 'Muslogy Center Console Organizer Tray (RAV4)',

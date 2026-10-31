@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ import {
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import { resolveGearLocalImage } from '@/data/gear/catalog';
 import { cn } from '@/lib/utils';
 
 export interface VettedProduct {
@@ -42,6 +44,47 @@ export interface VettedProduct {
   icon: React.ComponentType<{ className?: string }>;
   iconBg: string;
   iconColor: string;
+  imageUrl?: string;
+}
+
+function CalculatorProductMedia({
+  imageUrl,
+  title,
+  Icon,
+  iconBg,
+  iconColor,
+}: {
+  imageUrl?: string;
+  title: string;
+  Icon: React.ComponentType<{ className?: string }>;
+  iconBg: string;
+  iconColor: string;
+}) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  if (imageUrl && !imageFailed) {
+    return (
+      <div className="relative w-full h-36 sm:h-44 mb-2.5 rounded-lg overflow-hidden bg-zinc-950/60 border border-zinc-800/80 group">
+        <Image
+          src={imageUrl}
+          alt={title}
+          fill
+          unoptimized
+          sizes="(max-width: 640px) 100vw, 320px"
+          className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+          onError={() => setImageFailed(true)}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-36 sm:h-44 mb-2.5 rounded-lg overflow-hidden bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-center">
+      <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>
+        <Icon className="w-8 h-8" />
+      </div>
+    </div>
+  );
 }
 
 const UNIVERSAL_FALLBACKS: VettedProduct[] = [
@@ -89,6 +132,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     category: 'Vehicle Safety & Electronics',
     brand: 'FITCAMX / VIOFO',
     title: 'Integrated OEM-Fit 4K Dashcam',
+    imageUrl: '/assets/gear/fitcamx-rav4.webp',
     description: 'Factory-appearance dual dashcam replacing the rear-view mirror housing with no exposed dangling cords.',
     searchQuery: 'FITCAMX 4K dash cam Toyota RAV4 2019-2026',
     bullets: [
@@ -107,6 +151,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     category: 'Interior Protection',
     brand: 'TuxMat / 3D MAXpider',
     title: 'All-Weather Custom-Fit TPE Floor Liners',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Laser-measured precision tub coverage engineered to protect carpets from Canadian winter slush and salt.',
     searchQuery: 'TuxMat Toyota RAV4 custom all weather floor mats',
     bullets: [
@@ -125,6 +170,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Accessories',
     brand: 'Spigen / Muslogy',
     title: 'Matte Anti-Glare Infotainment Screen Protector',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
     description: 'Essential 9H oleophobic tempered glass to eliminate fingerprint smudges and harsh sunlight glare.',
     searchQuery: 'Spigen matte screen protector Toyota RAV4',
     bullets: [
@@ -148,6 +194,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     discountText: '2% OFF',
     badge: 'Partner Deal 2% Off',
     title: 'Center Console Armrest Organizer Tray',
+    imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
     description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
     bullets: [
@@ -169,6 +216,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     category: 'Interior Protection',
     brand: 'TuxMat / 3D MAXpider',
     title: '3-Row All-Weather High-Wall Floor Liners',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Complete 3-row laser-scanned floor liners engineered specifically for Sienna Super-Long Slide seats.',
     searchQuery: 'Toyota Sienna 2021-2026 all weather floor mats liners 7 8 passenger',
     bullets: [
@@ -192,6 +240,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     discountText: '2% OFF',
     badge: 'Partner Deal 2% Off',
     title: 'Center Console Sliding Organizer & Bridge Box',
+    imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
     description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
     searchQuery: 'Toyota Sienna 2021-2026 center console bridge organizer tray',
     bullets: [
@@ -210,6 +259,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Protection',
     brand: 'JoyTutus / Powerty',
     title: 'Rear Seatback & Kick Mat Protectors',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Durable anti-scuff backrest protectors shielding 2nd and 3rd row seatbacks from kids and cargo.',
     searchQuery: 'Toyota Sienna seat back protectors kick mats',
     bullets: [
@@ -228,6 +278,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     category: 'Towing & Hauling',
     brand: 'Curt 13470 / EcoHitch',
     title: 'Class III 2-Inch Trailer Hitch Receiver',
+    imageUrl: '/assets/gear/curt-trailer-hitch.webp',
     description: 'Heavy-duty 3,500 lb rated hitch engineered for Sienna hybrid bumper clearance and bike racks.',
     searchQuery: 'Curt 13470 Toyota Sienna trailer hitch receiver class 3',
     bullets: [
@@ -249,6 +300,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Protection',
     brand: 'Spigen / YEE PIN',
     title: '12.3" Matte Anti-Glare Infotainment Glass',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
     description: 'Ultra-thin 9H tempered glass custom cut for the expansive 12.3" Grand Highlander center screen.',
     searchQuery: 'Toyota Grand Highlander 12.3 screen protector tempered glass',
     bullets: [
@@ -267,6 +319,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     category: 'Interior Protection',
     brand: 'Powerty / TuxMat',
     title: 'High-Wall 3-Row Cargo & Seatback Liner',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Full-coverage trunk tub liner that covers trunk floor and fold-flat 3rd row seatbacks.',
     searchQuery: 'Toyota Grand Highlander 3 row cargo liner trunk mat',
     bullets: [
@@ -285,6 +338,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     category: 'Vehicle Safety',
     brand: 'FITCAMX',
     title: 'Integrated OEM-Fit 4K Dashcam (TSS 3.0)',
+    imageUrl: '/assets/gear/fitcamx-rav4.webp',
     description: 'Factory-style front dashcam replacing the TSS 3.0 sensor housing without trailing wires.',
     searchQuery: 'FITCAMX 4K dash cam Toyota Grand Highlander TSS 3.0',
     bullets: [
@@ -308,6 +362,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     discountText: '2% OFF',
     badge: 'Partner Deal 2% Off',
     title: 'Center Console Dual-Tier Divider Tray',
+    imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
     description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
     searchQuery: 'Toyota Grand Highlander center console organizer tray divider',
     bullets: [
@@ -329,6 +384,7 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Protection',
     brand: 'Spigen / YEE PIN',
     title: 'Anti-Glare 12.3" Tempered Glass Screen Protector',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
     description: 'Ultra-clear 9H hardness tempered glass custom made for the updated Camry widescreen display.',
     searchQuery: 'Toyota Camry 12.3 inch screen protector tempered glass',
     bullets: [
@@ -347,6 +403,7 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Storage',
     brand: 'EDBETOS',
     title: 'Center Console Organizer & Armrest Tray',
+    imageUrl: '/assets/gear/console-tray-organizer.webp',
     description: 'Custom-molded tray maximizing storage utility in the Camry center armrest console.',
     searchQuery: 'Toyota Camry center console organizer tray',
     bullets: [
@@ -365,6 +422,7 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     category: 'Interior Protection',
     brand: 'TuxMat / WeatherTech',
     title: 'All-Weather Custom TPE Floor Mats',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Heavy-duty laser-fit floor mats protecting front and rear footwells from Canadian road salt.',
     searchQuery: 'Toyota Camry all weather floor mats TPE',
     bullets: [
@@ -383,6 +441,7 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Power',
     brand: 'Anker / Baseus',
     title: 'Dual-Port 65W USB-C Fast Car Charger',
+    imageUrl: '/assets/gear/fast-usbc-charger.webp',
     description: 'Compact metal 12V adapter with 65W Power Delivery to rapidly charge laptops and phones.',
     searchQuery: 'Anker 65W fast USB-C PD car charger',
     bullets: [
@@ -404,6 +463,7 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     category: 'Cabin Protection',
     brand: 'Spigen',
     title: 'Anti-Glare 12.3" Infotainment Screen Protector',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
     description: 'Premium tempered glass engineered for the 5th-gen Prius center multimedia display.',
     searchQuery: 'Spigen Toyota Prius 12.3 inch screen protector',
     bullets: [
@@ -422,6 +482,7 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     category: 'Storage & Organization',
     brand: 'EDBETOS',
     title: 'Center Console Organizer & Coin Tray',
+    imageUrl: '/assets/gear/console-tray-organizer.webp',
     description: 'Precision molded drop-in organizer tailored for the 5th-gen Prius center armrest.',
     searchQuery: 'Toyota Prius 2023-2026 center console organizer tray',
     bullets: [
@@ -440,6 +501,7 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     category: 'Interior Protection',
     brand: '3D MAXpider / TuxMat',
     title: 'All-Weather Heavy-Duty TPE Liners',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
     description: 'Laser-measured floor protection customized for the Prius hybrid cabin layout.',
     searchQuery: 'Toyota Prius 2023-2026 all weather floor mats TPE',
     bullets: [
@@ -478,6 +540,7 @@ const PHEV_EVSE_CHARGER: VettedProduct = {
   category: 'EV Home Charging',
   brand: 'Grizzl-E Classic 40A / Emporia',
   title: 'Level 2 Home EVSE 40A Fast Charger',
+  imageUrl: '/assets/gear/grizzl-e-charger.webp',
   description: 'Heavy-duty 40A / 9.6 kW fast charger to fully recharge your Toyota PHEV in under 2.5 hours.',
   searchQuery: 'Grizzl-E Classic 40A Level 2 EVSE home charger NEMA 14-50',
   bullets: [
@@ -670,10 +733,19 @@ export function CalculatorGearCards({
               className="flex flex-col justify-between border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
             >
               <CardHeader className="p-3.5 pb-2 space-y-2">
+                {/* Product Image Visual with Graceful Category Icon Fallback */}
+                <CalculatorProductMedia
+                  imageUrl={prod.imageUrl || resolveGearLocalImage(prod.id, prod.category, prod.title)?.imageUrl}
+                  title={prod.title}
+                  Icon={Icon}
+                  iconBg={prod.iconBg}
+                  iconColor={prod.iconColor}
+                />
+
                 <div className="flex items-center justify-between gap-2">
-                  <div className={`p-1.5 rounded-lg ${prod.iconBg} ${prod.iconColor}`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
+                  <span className="text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wide">
+                    {prod.brand}
+                  </span>
                   <Badge
                     variant="outline"
                     className={

@@ -1,5 +1,107 @@
 [
   {
+    "id": "prod-muslogy-rav4",
+    "slug": "muslogy-rav4",
+    "models": [
+      "rav4",
+      "all"
+    ],
+    "brand": "Muslogy",
+    "destinationType": "direct_partner",
+    "discountCode": "Toyotawaits",
+    "discountText": "2% off",
+    "category": "Organization",
+    "categories": [
+      "Organization",
+      "cabin_organization",
+      "comfort"
+    ],
+    "title": "Muslogy Center Console Organizer Tray (RAV4)",
+    "name": "Muslogy Center Console Organizer Tray",
+    "priceEst": "Dual-tier drop-in storage",
+    "priceEstCad": "Dual-tier drop-in storage",
+    "whyBuy": "Official Muslogy authorized gear with an exclusive 2% discount with code Toyotawaits.",
+    "utilityNote": "Precision OEM-fit dual-tier drop-in tray that organizes the deep RAV4 center console with anti-slip silicone pads.",
+    "image": "/assets/gear/muslogy-rav4-organizer.webp",
+    "imageUrl": "/assets/gear/muslogy-rav4-organizer.webp",
+    "amazonCaAsinOrUrl": "/out/muslogy-rav4",
+    "destinationUrl": "/out/muslogy-rav4",
+    "affiliateUrl": "/out/muslogy-rav4",
+    "badge": "Partner Deal · 2% Off",
+    "compatibility": "Toyota RAV4 (2019–2026)",
+    "isDeliveryDayEssential": true,
+    "buttonLabel": "Get 2% Off on Muslogy ↗"
+  },
+  {
+    "id": "prod-muslogy-armrest-cover",
+    "slug": "muslogy-armrest-cover",
+    "models": [
+      "rav4",
+      "sienna",
+      "grand-highlander",
+      "all"
+    ],
+    "brand": "Muslogy",
+    "destinationType": "direct_partner",
+    "discountCode": "Toyotawaits",
+    "discountText": "2% off",
+    "category": "Comfort & Protection",
+    "categories": [
+      "Comfort & Protection",
+      "comfort",
+      "cabin_organization"
+    ],
+    "title": "Muslogy Custom-Fit Padded Center Console Armrest Cover",
+    "name": "Muslogy Padded Console Armrest Cover",
+    "priceEst": "Ergonomic leatherette arm cushion",
+    "priceEstCad": "Ergonomic leatherette arm cushion",
+    "whyBuy": "Official Muslogy authorized padded armrest cover with exclusive 2% discount with code Toyotawaits.",
+    "utilityNote": "Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.",
+    "image": "/assets/gear/muslogy-armrest-cover.webp",
+    "imageUrl": "/assets/gear/muslogy-armrest-cover.webp",
+    "amazonCaAsinOrUrl": "/out/muslogy-rav4",
+    "destinationUrl": "/out/muslogy-rav4",
+    "affiliateUrl": "/out/muslogy-rav4",
+    "badge": "Partner Deal · 2% Off",
+    "compatibility": "Custom Fit (RAV4, Sienna, Grand Highlander)",
+    "isDeliveryDayEssential": true,
+    "buttonLabel": "Get 2% Off on Muslogy ↗"
+  },
+  {
+    "id": "prod-muslogy-sienna",
+    "slug": "muslogy-console",
+    "models": [
+      "sienna",
+      "grand-highlander",
+      "all"
+    ],
+    "brand": "Muslogy",
+    "destinationType": "direct_partner",
+    "discountCode": "Toyotawaits",
+    "discountText": "2% off",
+    "category": "Organization",
+    "categories": [
+      "Organization",
+      "cabin_organization",
+      "comfort"
+    ],
+    "title": "Muslogy Center Console Sliding Organizer & Bridge Box",
+    "name": "Muslogy Center Console Sliding Organizer",
+    "priceEst": "Sliding upper tray & bridge divider",
+    "priceEstCad": "Sliding upper tray & bridge divider",
+    "whyBuy": "Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.",
+    "utilityNote": "Custom-engineered sliding upper divider and bridge organizer tailored for Sienna and Grand Highlander cabins.",
+    "image": "/assets/gear/muslogy-sienna-organizer.webp",
+    "imageUrl": "/assets/gear/muslogy-sienna-organizer.webp",
+    "amazonCaAsinOrUrl": "/out/muslogy-console",
+    "destinationUrl": "/out/muslogy-console",
+    "affiliateUrl": "/out/muslogy-console",
+    "badge": "Partner Deal · 2% Off",
+    "compatibility": "Toyota Sienna & Grand Highlander",
+    "isDeliveryDayEssential": true,
+    "buttonLabel": "Get 2% Off on Muslogy ↗"
+  },
+  {
     "id": "prod-beat-sonic-ena-3t3",
     "slug": "beat-sonic-ena-3t3",
     "models": [
