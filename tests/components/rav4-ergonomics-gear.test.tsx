@@ -176,6 +176,31 @@ describe('RAV4 Interior Comfort & Ergonomics Gear Integration', () => {
       ).toBeInTheDocument();
     });
 
+    it('renders Muslogy partner items in Section 1.5 with 2% discount code and official deep-links', () => {
+      render(
+        <MarketProvider>
+          <Rav4ModsGuidePage />
+        </MarketProvider>
+      );
+
+      // Verify Muslogy items rendered in Section 1.5
+      expect(
+        screen.getByText('Muslogy Custom-Fit Padded Center Console Armrest Cover')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Muslogy Dual-Tier Drop-In Organizer Tray (RAV4)')
+      ).toBeInTheDocument();
+
+      // Verify discount pills and CTAs
+      const muslogyButtons = screen.getAllByRole('link', { name: /Get 2% Off on Muslogy ↗/i });
+      expect(muslogyButtons.length).toBeGreaterThanOrEqual(2);
+      muslogyButtons.forEach((link) => {
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer');
+        expect(link.getAttribute('href')).toMatch(/\/out\/muslogy-(rav4|armrest-cover)/);
+      });
+    });
+
     it('triggers telemetry with placement "guide_rav4_mods" when clicking guide gear cards', () => {
       render(
         <MarketProvider>

@@ -171,6 +171,50 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     isDeliveryDayEssential: true,
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
+  'muslogy-grand-highlander': {
+    slug: 'muslogy-grand-highlander',
+    title: 'Muslogy Grand Highlander Console Divider Tray',
+    brand: 'Muslogy',
+    category: 'Interior & Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-grand-highlander',
+    searchQuery: 'Muslogy Grand Highlander console organizer tray',
+    searchKeywordsCA: 'Muslogy Grand Highlander console organizer tray',
+    searchKeywordsUS: 'Muslogy Grand Highlander console organizer tray',
+    compatibility: 'Toyota Grand Highlander (2024–2026)',
+    fitment: 'Grand Highlander Custom Fit',
+    description: 'Precision direct-fit interior organizer and console divider tray tailored for Grand Highlander.',
+    whyBuy: 'Official Muslogy direct-fit console organizer with exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-grand-highlander-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  'muslogy-grand-highlander-organizer': {
+    slug: 'muslogy-grand-highlander',
+    title: 'Muslogy Grand Highlander Console Divider Tray',
+    brand: 'Muslogy',
+    category: 'Interior & Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-grand-highlander',
+    searchQuery: 'Muslogy Grand Highlander console organizer tray',
+    searchKeywordsCA: 'Muslogy Grand Highlander console organizer tray',
+    searchKeywordsUS: 'Muslogy Grand Highlander console organizer tray',
+    compatibility: 'Toyota Grand Highlander (2024–2026)',
+    fitment: 'Grand Highlander Custom Fit',
+    description: 'Precision direct-fit interior organizer and console divider tray tailored for Grand Highlander.',
+    whyBuy: 'Official Muslogy direct-fit console organizer with exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-grand-highlander-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
   'level-2-evse-charger': {
     slug: 'level-2-evse-charger',
     title: 'Level 2 Home EVSE 40A Fast Charger (NEMA 14-50 J1772)',
@@ -1324,6 +1368,9 @@ export function resolveGearLocalImage(
   }
   if (clean.includes('muslogy-sienna') || clean.includes('muslogy-console-sienna')) {
     return { imageUrl: '/assets/gear/muslogy-sienna-organizer.webp', fallbackIcon: 'layout-grid' };
+  }
+  if (clean.includes('muslogy-grand-highlander')) {
+    return { imageUrl: '/assets/gear/muslogy-grand-highlander-organizer.webp', fallbackIcon: 'layout-grid' };
   }
   if (clean.includes('muslogy-armrest')) {
     return { imageUrl: '/assets/gear/muslogy-armrest-cover.webp', fallbackIcon: 'layers' };

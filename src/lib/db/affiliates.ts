@@ -48,6 +48,15 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
     clickCount: 0,
     isActive: true,
   },
+  'muslogy-grand-highlander': {
+    id: 'f9000005-0005-4005-8005-000000000005',
+    slug: 'muslogy-grand-highlander',
+    destinationUrl: 'https://muslogy.net/discount/Toyotawaits?redirect=/collections/highlander&rs_ref=3f6lkniA',
+    title: 'Muslogy Grand Highlander Console Divider Tray',
+    category: 'accessories',
+    clickCount: 0,
+    isActive: true,
+  },
   'rav4-padded-armrest-cover': {
     id: 'fbaaaaaa-1111-4111-8111-111111111111',
     slug: 'rav4-padded-armrest-cover',

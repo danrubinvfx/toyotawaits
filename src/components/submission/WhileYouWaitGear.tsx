@@ -72,13 +72,50 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
   const effectiveCounts = popularityCounts || fetchedCounts;
   const rawAccessories = React.useMemo(() => getAccessoriesForModel(modelName, effectiveCounts), [modelName, effectiveCounts]);
   const accessories = React.useMemo(() => {
-    return (rawAccessories || []).filter(
+    const filtered = (rawAccessories || []).filter(
       (item) =>
         !/speaker|audio|amplifier|subwoofer|beat-sonic|tweeter/i.test(
           `${item.id} ${item.title} ${item.category}`
         )
     );
-  }, [rawAccessories]);
+
+    if (!modelName) return filtered;
+
+    const lower = modelName.toLowerCase();
+    let priorityIds: string[] = [];
+
+    if (lower.includes('rav4')) {
+      priorityIds = [
+        'all-weather-floor-liners',
+        'muslogy-rav4-organizer',
+        'muslogy-armrest-cover',
+        '4k-front-rear-dash-cam',
+      ];
+    } else if (lower.includes('sienna')) {
+      priorityIds = [
+        'muslogy-sienna-organizer',
+        'all-weather-floor-liners',
+        '4k-front-rear-dash-cam',
+      ];
+    } else if (lower.includes('grand highlander') || lower.includes('grand-highlander')) {
+      priorityIds = [
+        'muslogy-grand-highlander-organizer',
+        'all-weather-floor-liners',
+        '4k-front-rear-dash-cam',
+      ];
+    }
+
+    if (priorityIds.length === 0) return filtered;
+
+    return [...filtered].sort((a, b) => {
+      const idxA = priorityIds.indexOf(a.id);
+      const idxB = priorityIds.indexOf(b.id);
+      if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+      if (idxA !== -1) return -1;
+      if (idxB !== -1) return 1;
+      return 0;
+    });
+  }, [rawAccessories, modelName]);
 
   if (!accessories || accessories.length === 0) {
     return null;
@@ -236,8 +273,8 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
                       }
                     }}
                   >
-                    <span>{item.destinationType === 'direct_partner' ? 'Get 2% Off' : 'View on Amazon'}</span>
-                    <ExternalLink className="h-3 w-3 opacity-70" />
+                    <span>{item.destinationType === 'direct_partner' ? 'Get 2% Off on Muslogy ↗' : 'View on Amazon'}</span>
+                    {item.destinationType !== 'direct_partner' && <ExternalLink className="h-3 w-3 opacity-70" />}
                   </a>
                 </Button>
               </div>

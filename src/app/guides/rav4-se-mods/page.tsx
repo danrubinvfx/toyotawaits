@@ -180,6 +180,70 @@ export default function Rav4SeModsGuidePage() {
           </div>
         </div>
 
+        {/* Featured Muslogy Authorized Upgrades */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
+              <span>Partner Spotlight: Muslogy Direct-Fit Cabin Solutions</span>
+            </h3>
+            <span className="text-[11px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+              Exclusive 2% Off • Code: Toyotawaits
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <GearCard
+              item={{
+                id: 'muslogy-armrest-cover',
+                slug: 'muslogy-armrest-cover',
+                title: 'Muslogy Custom-Fit Padded Center Console Armrest Cover',
+                category: 'comfort',
+                brand: 'Muslogy',
+                destinationType: 'direct_partner',
+                discountCode: 'Toyotawaits',
+                discountText: '2% off',
+                badge: 'Partner Deal · 2% Off',
+                priceEstCad: '$24 – $32 CAD',
+                description: 'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery without replacing the lid.',
+                whyBuy: 'Solves hard OEM armrest fatigue on multi-hour road trips without replacing the lid. Verified direct fit for 2019-2026 RAV4.',
+                buttonLabel: 'Get 2% Off on Muslogy ↗',
+                destinationUrl: '/out/muslogy-armrest-cover',
+                imageUrl: '/assets/gear/muslogy-armrest-cover.webp',
+                models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+                activeModel: 'rav4',
+              }}
+              placement="guide_rav4_mods"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+            <GearCard
+              item={{
+                id: 'muslogy-rav4-organizer',
+                slug: 'muslogy-rav4',
+                title: 'Muslogy Dual-Tier Drop-In Organizer Tray (RAV4)',
+                category: 'comfort',
+                brand: 'Muslogy',
+                destinationType: 'direct_partner',
+                discountCode: 'Toyotawaits',
+                discountText: '2% off',
+                badge: 'Partner Deal · 2% Off',
+                priceEstCad: '$22 – $28 CAD',
+                description: 'Precision OEM-fit dual-tier drop-in tray that organizes the deep, disorganized factory console bin with anti-slip silicone pads.',
+                whyBuy: 'Divides the deep, disorganized factory console bin into accessible dual tiers with dedicated coin and phone slots.',
+                buttonLabel: 'Get 2% Off on Muslogy ↗',
+                destinationUrl: '/out/muslogy-rav4',
+                imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+                models: ['rav4', 'rav4-hybrid', 'rav4-prime', 'universal'],
+                activeModel: 'rav4',
+              }}
+              placement="guide_rav4_mods"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+          </div>
+        </div>
+
         {/* Embedded Gear Cards with Direct "Check Price ↗" buttons */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">

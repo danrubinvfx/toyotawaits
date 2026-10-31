@@ -127,5 +127,43 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       expect(screen.getAllByText('🔥 Community Top Pick')).toHaveLength(1);
       expect(screen.queryByText('Community Top Pick')).not.toBeInTheDocument();
     });
+
+    it('renders Muslogy direct-fit partner gear in top slots for RAV4 with discount badge and partner CTA', () => {
+      render(<WhileYouWaitGear modelName="RAV4" />);
+
+      // Verify Muslogy items rendered
+      expect(screen.getByText('Muslogy Center Console Organizer Tray (RAV4)')).toBeInTheDocument();
+      expect(screen.getByText('Muslogy Custom-Fit Padded Center Console Armrest Cover')).toBeInTheDocument();
+
+      // Verify discount pills and copy buttons
+      const discountPills = screen.getAllByText(/Toyotawaits/i);
+      expect(discountPills.length).toBeGreaterThanOrEqual(2);
+
+      // Verify Muslogy action buttons and sponsored link attributes
+      const partnerButtons = screen.getAllByRole('link', { name: /View .* on Muslogy/i });
+      expect(partnerButtons.length).toBeGreaterThanOrEqual(2);
+      partnerButtons.forEach((link) => {
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer');
+        expect(link.getAttribute('href')).toMatch(/\/out\/muslogy-(rav4|armrest-cover)/);
+      });
+    });
+
+    it('renders Muslogy partner gear in top slots for Sienna and Grand Highlander', () => {
+      // Sienna
+      const { unmount: unmountSienna } = render(<WhileYouWaitGear modelName="Sienna" />);
+      expect(screen.getByText('Muslogy Sienna Center Console Sliding Organizer & Bridge Box')).toBeInTheDocument();
+      const siennaPartnerLink = screen.getByRole('link', { name: /View Muslogy Sienna Center Console Sliding Organizer & Bridge Box on Muslogy/i });
+      expect(siennaPartnerLink).toHaveAttribute('href', '/out/muslogy-sienna');
+      expect(siennaPartnerLink).toHaveAttribute('rel', 'sponsored noopener noreferrer');
+      unmountSienna();
+
+      // Grand Highlander
+      render(<WhileYouWaitGear modelName="Grand Highlander" />);
+      expect(screen.getByText('Muslogy Grand Highlander Console Divider Tray')).toBeInTheDocument();
+      const ghPartnerLink = screen.getByRole('link', { name: /View Muslogy Grand Highlander Console Divider Tray on Muslogy/i });
+      expect(ghPartnerLink).toHaveAttribute('href', '/out/muslogy-grand-highlander');
+      expect(ghPartnerLink).toHaveAttribute('rel', 'sponsored noopener noreferrer');
+    });
   });
 });

@@ -14,6 +14,8 @@ export const MUSLOGY_DIRECT_URLS: Record<string, string> = {
     'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
   'muslogy-console':
     'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
+  'muslogy-grand-highlander':
+    'https://muslogy.net/discount/Toyotawaits?redirect=/collections/highlander&rs_ref=3f6lkniA',
 };
 
 export async function GET(
