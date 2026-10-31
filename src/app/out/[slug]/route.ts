@@ -5,7 +5,16 @@ import { createServerClient } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 
-const MUSLOGY_DISCOUNT_URL = 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA';
+export const MUSLOGY_DIRECT_URLS: Record<string, string> = {
+  'muslogy-rav4':
+    'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-center-console-organizer-for-2026-toyota-rav4-accessories-black&rs_ref=3f6lkniA',
+  'muslogy-armrest-cover':
+    'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-center-console-armrest-cover-compatible-with-toyota-rav4-2019-2025-comfort-armrest-pad-arm-rest-cushion-vegan-leather-protector-1-inch-extra-thick&rs_ref=3f6lkniA',
+  'muslogy-sienna':
+    'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
+  'muslogy-console':
+    'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
+};
 
 export async function GET(
   request: NextRequest,
@@ -33,12 +42,8 @@ export async function GET(
 
     // 2. Query target redirect URL (with direct Muslogy partner checkout mapping)
     let destinationUrl: string | null = null;
-    if (
-      validatedSlug === 'muslogy-rav4' ||
-      validatedSlug === 'muslogy-console' ||
-      validatedSlug === 'muslogy-armrest-cover'
-    ) {
-      destinationUrl = MUSLOGY_DISCOUNT_URL;
+    if (MUSLOGY_DIRECT_URLS[validatedSlug]) {
+      destinationUrl = MUSLOGY_DIRECT_URLS[validatedSlug];
     } else {
       destinationUrl = await getAffiliateRedirect(validatedSlug);
     }

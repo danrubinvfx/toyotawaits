@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { cn } from '@/lib/utils';
 
@@ -110,20 +111,53 @@ export function BenchmarkFeed({
   onSelectModel,
   className,
 }: BenchmarkFeedProps) {
-  const [selectedModel, setSelectedModel] = useState<string>(defaultModelId);
+  const searchParams = useSearchParams();
+  const paramModel = searchParams ? searchParams.get('model') : null;
+
+  const resolveModelSlug = (raw?: string | null): string | null => {
+    if (!raw) return null;
+    const lower = raw.toLowerCase().trim();
+    const matched = VEHICLE_OPTIONS.find((v) => v.id === lower || lower.includes(v.id));
+    if (matched) return matched.id;
+    if (lower.includes('sienna')) return 'sienna';
+    if (lower.includes('grand') || lower.includes('highlander')) return 'grand-highlander';
+    if (lower.includes('rav4') || lower.includes('prime')) return 'rav4';
+    if (lower.includes('prius')) return lower.includes('prime') ? 'prius-prime' : 'prius';
+    if (lower.includes('corolla')) return lower.includes('cross') ? 'corolla-cross' : 'corolla';
+    if (lower.includes('land') || lower.includes('cruiser')) return 'land-cruiser';
+    if (lower.includes('tacoma')) return 'tacoma';
+    if (lower.includes('sequoia')) return 'sequoia';
+    return lower;
+  };
+
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    const fromParam = resolveModelSlug(paramModel);
+    if (fromParam) return fromParam;
+    if (typeof window !== 'undefined') {
+      const urlParam = new URLSearchParams(window.location.search).get('model');
+      const resolved = resolveModelSlug(urlParam);
+      if (resolved) return resolved;
+    }
+    return defaultModelId;
+  });
   const [showUniversalGear, setShowUniversalGear] = useState<boolean>(false);
+
+  // Sync state if URL search param changes
+  useEffect(() => {
+    const fromParam = resolveModelSlug(paramModel);
+    if (fromParam) {
+      setSelectedModel(fromParam);
+    }
+  }, [paramModel]);
 
   // Listen for global vehicle model changes from StickyVehiclePills or WaitTimeEstimator
   useEffect(() => {
     const handleSync = (e: Event) => {
       const customEvent = e as CustomEvent<{ model: string }>;
       if (customEvent.detail?.model) {
-        const slug = customEvent.detail.model;
-        const matched = VEHICLE_OPTIONS.find((v) => v.id === slug);
-        if (matched) {
-          setSelectedModel(matched.id);
-        } else if (slug === 'prius' || slug === 'prius-prime') {
-          setSelectedModel(slug);
+        const resolved = resolveModelSlug(customEvent.detail.model);
+        if (resolved) {
+          setSelectedModel(resolved);
         }
       }
     };

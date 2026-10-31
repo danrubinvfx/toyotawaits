@@ -247,11 +247,19 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
     expect(location).toContain('amazon.com');
   });
 
-  it('correctly redirects Muslogy partner items (muslogy-rav4, muslogy-console, muslogy-armrest-cover) to Shopify discount checkout endpoint with 307 status', async () => {
-    const muslogySlugs = ['muslogy-rav4', 'muslogy-console', 'muslogy-armrest-cover'];
-    const expectedTarget = 'https://muslogy.myshopify.com/discount/Toyotawaits?rs_ref=3f6lkniA';
+  it('correctly redirects Muslogy partner items to product deep-link discount endpoints with 307 status', async () => {
+    const muslogyMap: Record<string, string> = {
+      'muslogy-rav4':
+        'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-center-console-organizer-for-2026-toyota-rav4-accessories-black&rs_ref=3f6lkniA',
+      'muslogy-armrest-cover':
+        'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-center-console-armrest-cover-compatible-with-toyota-rav4-2019-2025-comfort-armrest-pad-arm-rest-cushion-vegan-leather-protector-1-inch-extra-thick&rs_ref=3f6lkniA',
+      'muslogy-sienna':
+        'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
+      'muslogy-console':
+        'https://muslogy.net/discount/Toyotawaits?redirect=/products/muslogy-hidden-storage-compartment-for-2021-2025-2026-toyota-sienna-2pcs&rs_ref=3f6lkniA',
+    };
 
-    for (const slug of muslogySlugs) {
+    for (const [slug, expectedTarget] of Object.entries(muslogyMap)) {
       const request = new NextRequest(`http://localhost:3000/out/${slug}`);
       const response = await GET(request, {
         params: Promise.resolve({ slug }),

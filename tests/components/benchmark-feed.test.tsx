@@ -97,4 +97,29 @@ describe('BenchmarkFeed Component', () => {
 
     expect(screen.getAllByText(/Tacoma/i).length).toBeGreaterThanOrEqual(1);
   });
+
+  it('strictly isolates gear by active model (Sienna vs RAV4)', async () => {
+    // 1. Initial render with RAV4: should show Muslogy RAV4 gear and NOT Sienna bridge organizer
+    render(<BenchmarkFeed defaultModelId="rav4" />);
+
+    expect(screen.getByText(/Muslogy Center Console Organizer Tray \(RAV4\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Muslogy Custom-Fit Padded Center Console Armrest Cover/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Muslogy Sienna Center Console Sliding Organizer & Bridge Box/i)).toBeNull();
+
+    // 2. Switch to Sienna
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent('toyotawait:model-change', { detail: { model: 'sienna' } })
+      );
+    });
+
+    // Should NOT render RAV4 organizer or armrest cover
+    expect(screen.queryByText(/Muslogy Center Console Organizer Tray \(RAV4\)/i)).toBeNull();
+    expect(screen.queryByText(/Muslogy Custom-Fit Padded Center Console Armrest Cover/i)).toBeNull();
+
+    // Should render Sienna-compatible items
+    expect(screen.getByText(/Muslogy Sienna Center Console Sliding Organizer & Bridge Box/i)).toBeInTheDocument();
+    expect(screen.getByText(/3-Row Heavy Duty All-Weather Floor Liners/i)).toBeInTheDocument();
+    expect(screen.getByText(/FitcamX OEM Integrated 4K Mirror Dashcam \(Sienna\)/i)).toBeInTheDocument();
+  });
 });

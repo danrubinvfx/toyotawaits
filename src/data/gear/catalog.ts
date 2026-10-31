@@ -105,22 +105,44 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     isDeliveryDayEssential: true,
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
-  'muslogy-console': {
-    slug: 'muslogy-console',
-    title: 'Muslogy Center Console & Bridge Organizer (Sienna & Grand Highlander)',
+  'muslogy-sienna': {
+    slug: 'muslogy-sienna',
+    title: 'Muslogy Sienna Center Console Sliding Organizer & Bridge Box',
     brand: 'Muslogy',
     category: 'Cabin Organization',
     destinationType: 'direct_partner',
     discountCode: 'Toyotawaits',
     discountText: '2% off',
-    badge: 'Partner Deal 2% Off',
-    destinationUrl: '/out/muslogy-console',
-    searchQuery: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
-    searchKeywordsCA: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
-    searchKeywordsUS: 'Muslogy Toyota Sienna Grand Highlander center console bridge organizer',
-    compatibility: 'Toyota Sienna & Grand Highlander',
-    fitment: 'Direct Fit',
-    description: 'Custom-engineered sliding upper divider and bridge organizer tailored for Sienna and Grand Highlander cabins.',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-sienna',
+    searchQuery: 'Muslogy Toyota Sienna center console organizer tray',
+    searchKeywordsCA: 'Muslogy Toyota Sienna center console organizer tray',
+    searchKeywordsUS: 'Muslogy Toyota Sienna center console organizer tray',
+    compatibility: 'Toyota Sienna (2021–2026)',
+    fitment: 'Sienna Direct Fit',
+    description: 'Custom-engineered sliding upper divider and bridge organizer tailored for Sienna cabins.',
+    whyBuy: 'Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
+    fallbackIcon: 'layout-grid',
+    isDeliveryDayEssential: true,
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  'muslogy-console': {
+    slug: 'muslogy-console',
+    title: 'Muslogy Sienna Center Console Sliding Organizer & Bridge Box',
+    brand: 'Muslogy',
+    category: 'Cabin Organization',
+    destinationType: 'direct_partner',
+    discountCode: 'Toyotawaits',
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-sienna',
+    searchQuery: 'Muslogy Toyota Sienna center console bridge organizer',
+    searchKeywordsCA: 'Muslogy Toyota Sienna center console bridge organizer',
+    searchKeywordsUS: 'Muslogy Toyota Sienna center console bridge organizer',
+    compatibility: 'Toyota Sienna (2021–2026)',
+    fitment: 'Sienna Direct Fit',
+    description: 'Custom-engineered sliding upper divider and bridge organizer tailored for Sienna cabins.',
     whyBuy: 'Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.',
     imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
     fallbackIcon: 'layout-grid',
@@ -135,13 +157,13 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     destinationType: 'direct_partner',
     discountCode: 'Toyotawaits',
     discountText: '2% off',
-    badge: 'Partner Deal 2% Off',
-    destinationUrl: '/out/muslogy-rav4',
-    searchQuery: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
-    searchKeywordsCA: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
-    searchKeywordsUS: 'Muslogy Toyota RAV4 Grand Highlander padded armrest cover',
-    compatibility: 'Toyota RAV4, Sienna, Grand Highlander',
-    fitment: 'Custom Fit',
+    badge: 'Partner Deal · 2% Off',
+    destinationUrl: '/out/muslogy-armrest-cover',
+    searchQuery: 'Muslogy Toyota RAV4 padded armrest cover',
+    searchKeywordsCA: 'Muslogy Toyota RAV4 padded armrest cover',
+    searchKeywordsUS: 'Muslogy Toyota RAV4 padded armrest cover',
+    compatibility: 'Toyota RAV4 (2019–2026)',
+    fitment: 'RAV4 Custom Fit',
     description: 'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.',
     whyBuy: 'Official Muslogy authorized padded armrest cover with exclusive 2% discount with code Toyotawaits.',
     imageUrl: '/assets/gear/muslogy-armrest-cover.webp',
@@ -1477,14 +1499,25 @@ const LEGACY_MISSING_ACCESSORY_IMAGE_MAP: Record<string, string> = {
  */
 export function resolveVerifiedGearImageSrc(
   candidateSrc?: string,
-  fallbackSrc?: string
+  ...fallbackSrcs: (string | undefined)[]
 ): string | undefined {
   const raw = candidateSrc?.trim();
-  if (!raw) return fallbackSrc;
-  if (LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw]) {
-    return LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw];
+  if (raw) {
+    if (LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw]) {
+      return LEGACY_MISSING_ACCESSORY_IMAGE_MAP[raw];
+    }
+    return raw;
   }
-  return raw;
+  for (const fallback of fallbackSrcs) {
+    const trimmed = fallback?.trim();
+    if (trimmed) {
+      if (LEGACY_MISSING_ACCESSORY_IMAGE_MAP[trimmed]) {
+        return LEGACY_MISSING_ACCESSORY_IMAGE_MAP[trimmed];
+      }
+      return trimmed;
+    }
+  }
+  return undefined;
 }
 
 /**

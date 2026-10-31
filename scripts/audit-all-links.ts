@@ -1,5 +1,12 @@
 import fs from 'fs';
 import path from 'path';
+import dns from 'node:dns';
+
+// Ensure fast IPv4 resolution on Windows environments where IPv6 route stalling occurs
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 import { FALLBACK_AFFILIATES } from '../src/lib/db/affiliates';
 import { GEAR_MARKET_CATALOG } from '../src/data/gear/catalog';
 import { ALL_CALCULATOR_PRODUCTS } from '../src/components/gear/CalculatorGearCards';
@@ -138,41 +145,51 @@ async function runAudit() {
           issue = 'WRONG/MISSING US TAG (expected tag=toyotawaits07-20)';
         }
 
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 10000);
-          const res = await fetch(url, {
-            method: 'GET',
-            headers: {
-              'User-Agent':
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              Accept:
-                'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-              'Accept-Language': 'en-US,en;q=0.9',
-            },
-            redirect: 'follow',
-            signal: controller.signal,
-          });
-          clearTimeout(timeoutId);
-          status = res.status;
+        let attempts = 0;
+        while (attempts < 2) {
+          attempts++;
+          try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+            const res = await fetch(url, {
+              method: 'GET',
+              headers: {
+                'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+                Accept:
+                  'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+              },
+              redirect: 'follow',
+              signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            status = res.status;
 
-          const responseText = await res.text().catch(() => '');
-          const lowerText = responseText.toLowerCase();
+            const responseText = await res.text().catch(() => '');
+            const lowerText = responseText.toLowerCase();
 
-          if (
-            res.status === 404 ||
-            res.status === 405 ||
-            res.status === 410 ||
-            lowerText.includes('dogs of amazon') ||
-            lowerText.includes("couldn't find that page") ||
-            res.url.includes('/dogsofamazon')
-          ) {
-            issue = 'DEAD_ASIN_404';
-          }
-        } catch (err: any) {
-          status = 'FAILED';
-          if (issue === 'OK') {
-            issue = `Network error: ${err.message}`;
+            if (
+              res.status === 404 ||
+              res.status === 405 ||
+              res.status === 410 ||
+              lowerText.includes('dogs of amazon') ||
+              lowerText.includes("couldn't find that page") ||
+              res.url.includes('/dogsofamazon')
+            ) {
+              issue = 'DEAD_ASIN_404';
+            } else {
+              issue = 'OK';
+            }
+            break;
+          } catch (err: any) {
+            status = 'FAILED';
+            if (issue === 'OK') {
+              issue = `Network error: ${err.message}`;
+            }
+            if (attempts < 2) {
+              await new Promise((r) => setTimeout(r, 600));
+            }
           }
         }
 

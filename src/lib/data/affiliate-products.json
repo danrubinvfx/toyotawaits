@@ -3,8 +3,7 @@
     "id": "prod-muslogy-rav4",
     "slug": "muslogy-rav4",
     "models": [
-      "rav4",
-      "all"
+      "rav4"
     ],
     "brand": "Muslogy",
     "destinationType": "direct_partner",
@@ -36,10 +35,7 @@
     "id": "prod-muslogy-armrest-cover",
     "slug": "muslogy-armrest-cover",
     "models": [
-      "rav4",
-      "sienna",
-      "grand-highlander",
-      "all"
+      "rav4"
     ],
     "brand": "Muslogy",
     "destinationType": "direct_partner",
@@ -59,21 +55,19 @@
     "utilityNote": "Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.",
     "image": "/assets/gear/muslogy-armrest-cover.webp",
     "imageUrl": "/assets/gear/muslogy-armrest-cover.webp",
-    "amazonCaAsinOrUrl": "/out/muslogy-rav4",
-    "destinationUrl": "/out/muslogy-rav4",
-    "affiliateUrl": "/out/muslogy-rav4",
+    "amazonCaAsinOrUrl": "/out/muslogy-armrest-cover",
+    "destinationUrl": "/out/muslogy-armrest-cover",
+    "affiliateUrl": "/out/muslogy-armrest-cover",
     "badge": "Partner Deal · 2% Off",
-    "compatibility": "Custom Fit (RAV4, Sienna, Grand Highlander)",
+    "compatibility": "Toyota RAV4 (2019–2026)",
     "isDeliveryDayEssential": true,
     "buttonLabel": "Get 2% Off on Muslogy ↗"
   },
   {
     "id": "prod-muslogy-sienna",
-    "slug": "muslogy-console",
+    "slug": "muslogy-sienna",
     "models": [
-      "sienna",
-      "grand-highlander",
-      "all"
+      "sienna"
     ],
     "brand": "Muslogy",
     "destinationType": "direct_partner",
@@ -85,21 +79,47 @@
       "cabin_organization",
       "comfort"
     ],
-    "title": "Muslogy Center Console Sliding Organizer & Bridge Box",
-    "name": "Muslogy Center Console Sliding Organizer",
+    "title": "Muslogy Sienna Center Console Sliding Organizer & Bridge Box",
+    "name": "Muslogy Sienna Center Console Sliding Organizer",
     "priceEst": "Sliding upper tray & bridge divider",
     "priceEstCad": "Sliding upper tray & bridge divider",
     "whyBuy": "Official Muslogy authorized partner organizer with an exclusive 2% discount with code Toyotawaits.",
-    "utilityNote": "Custom-engineered sliding upper divider and bridge organizer tailored for Sienna and Grand Highlander cabins.",
+    "utilityNote": "Custom-engineered sliding upper divider and bridge organizer tailored for Sienna cabins.",
     "image": "/assets/gear/muslogy-sienna-organizer.webp",
     "imageUrl": "/assets/gear/muslogy-sienna-organizer.webp",
-    "amazonCaAsinOrUrl": "/out/muslogy-console",
-    "destinationUrl": "/out/muslogy-console",
-    "affiliateUrl": "/out/muslogy-console",
+    "amazonCaAsinOrUrl": "/out/muslogy-sienna",
+    "destinationUrl": "/out/muslogy-sienna",
+    "affiliateUrl": "/out/muslogy-sienna",
     "badge": "Partner Deal · 2% Off",
-    "compatibility": "Toyota Sienna & Grand Highlander",
+    "compatibility": "Toyota Sienna (2021–2026)",
     "isDeliveryDayEssential": true,
     "buttonLabel": "Get 2% Off on Muslogy ↗"
+  },
+  {
+    "id": "prod-curt-13470-sienna",
+    "slug": "curt-13470",
+    "models": [
+      "sienna"
+    ],
+    "category": "Cargo & Utility",
+    "categories": [
+      "Cargo & Utility",
+      "cargo_utility"
+    ],
+    "title": "CURT 13470 Class 3 Trailer Hitch Receiver (2-Inch, Sienna)",
+    "name": "CURT 13470 Class 3 Trailer Hitch Receiver",
+    "priceEst": "Class 3 2-inch receiver",
+    "priceEstCad": "Class 3 2-inch receiver",
+    "whyBuy": "Direct bolt-on Class 3 2-inch receiver hitch for Toyota Sienna 2021-2026 for bike racks and light towing.",
+    "utilityNote": "Engineered for 2021-2026 Sienna with 3,500 lbs gross trailer weight rating and dual-coat anti-rust finish.",
+    "image": "/assets/gear/curt-trailer-hitch.webp",
+    "imageUrl": "/assets/gear/curt-trailer-hitch.webp",
+    "amazonCaAsinOrUrl": "https://www.amazon.ca/s?k=CURT+13470+Class+3+Trailer+Hitch+Receiver+Toyota+Sienna&tag=toyotawaits-20",
+    "destinationUrl": "https://www.amazon.ca/s?k=CURT+13470+Class+3+Trailer+Hitch+Receiver+Toyota+Sienna&tag=toyotawaits-20",
+    "badge": "Recommended Upgrade",
+    "compatibility": "Toyota Sienna (2021–2026)",
+    "isDeliveryDayEssential": true,
+    "buttonLabel": "Check Price on Amazon"
   },
   {
     "id": "prod-beat-sonic-ena-3t3",
@@ -384,13 +404,14 @@
     "categories": [
       "Interior Protection"
     ],
-    "title": "Matte Anti-Glare Screen Protector (Toyota Sienna 2021–2025)",
-    "name": "Matte Anti-Glare Screen Protector",
+    "title": "Spigen Matte Anti-Glare 9H Screen Protector (Sienna 2021–2026)",
+    "name": "Spigen Matte Anti-Glare Screen Protector",
     "priceEst": "High-ROI scratch defense",
     "priceEstCad": "High-ROI scratch defense",
     "whyBuy": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
     "utilityNote": "Cuts blinding reflection from the panoramic rear glass and resists sticky toddler fingers.",
-    "image": "/images/accessories/screen-protector-sienna.png",
+    "image": "/assets/gear/spigen-screen-protector.webp",
+    "imageUrl": "/assets/gear/spigen-screen-protector.webp",
     "amazonCaAsinOrUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+2021-2025+screen+protector+tempered+glass&tag=toyotawaits-20",
     "destinationUrl": "https://www.amazon.ca/s?k=Toyota+Sienna+2021-2025+screen+protector+tempered+glass&tag=toyotawaits-20",
     "affiliateUrl": "/out/screen-protector-sienna",
