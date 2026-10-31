@@ -170,6 +170,23 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -122.3789,
     enabled: true,
   },
+  // 7. Jim Pattison Toyota Victoria (Victoria / Douglas St)
+  'jptoyota-victoria': {
+    id: 'jptoyota-victoria',
+    name: 'Jim Pattison Toyota Victoria',
+    city: 'Victoria',
+    province: 'BC',
+    area: 'Victoria / Douglas St',
+    adapter: 'convertus',
+    baseUrl: 'https://www.jptoyotavictoria.com',
+    apiEndpoint:
+      'https://www.jptoyotavictoria.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1230%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    latitude: 48.4419,
+    longitude: -123.3683,
+    lat: 48.4419,
+    lng: -123.3683,
+    enabled: true,
+  },
 };
 
 /**
@@ -245,6 +262,15 @@ export function getDealerCoordinates(
     query.includes('abbotsford-toyota')
   ) {
     return { lat: DEALERS['abbotsford-toyota'].lat, lng: DEALERS['abbotsford-toyota'].lng };
+  }
+
+  // Jim Pattison Toyota Victoria (Vancouver Island)
+  if (
+    query.includes('victoria') ||
+    query.includes('jptoyota-victoria') ||
+    (query.includes('island') && !query.includes('richmond'))
+  ) {
+    return { lat: DEALERS['jptoyota-victoria'].lat, lng: DEALERS['jptoyota-victoria'].lng };
   }
 
   // Downtown / Vancouver

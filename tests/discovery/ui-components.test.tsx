@@ -647,13 +647,80 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
-    it('ensures Granville Toyota, Valley Toyota, and Abbotsford Toyota appear in the inventory explorer dealership selector', () => {
+    it('ensures Granville Toyota, Valley Toyota, Abbotsford Toyota, and Jim Pattison Toyota Victoria appear in the inventory explorer dealership selector', () => {
       render(<InventoryExplorer />);
 
       const locationSelect = screen.getByTestId('filter-location-select');
       expect(screen.getByRole('option', { name: 'Granville Toyota' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Valley Toyota' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Abbotsford Toyota' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Victoria' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Victoria (Vancouver Island)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Vancouver Island' })).toBeInTheDocument();
+    });
+
+    it('calculates proximity for Vancouver Island / Victoria location filters correctly', () => {
+      const victoriaListings: VehicleListingCardProps[] = [
+        {
+          id: 'jp-vic-crown-01',
+          make: 'Toyota',
+          model: 'Crown',
+          trim: 'Platinum',
+          modelYear: 2025,
+          vin: 'JTDAFAAF0S3010816',
+          isProvisionalVin: false,
+          dealerName: 'Jim Pattison Toyota Victoria',
+          dealerCity: 'Victoria',
+          dealerProvince: 'BC',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://www.jptoyotavictoria.com/vehicles/2025/Toyota/Crown/Victoria/BC/63071262/?sale_class=New',
+          msrp: 67261,
+          sellingPrice: 67261,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Hybrid',
+          stockNumber: 'V-63071',
+        },
+        {
+          id: 'jp-dt-rav4-01',
+          make: 'Toyota',
+          model: 'RAV4 Hybrid',
+          trim: 'XSE',
+          modelYear: 2026,
+          vin: 'JTDACAAJ0T3038212',
+          isProvisionalVin: false,
+          dealerName: 'Jim Pattison Toyota Downtown',
+          dealerCity: 'Vancouver',
+          dealerProvince: 'BC',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/Toyota/RAV4/',
+          msrp: 61285,
+          sellingPrice: 63957,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Hybrid',
+          stockNumber: 'T26-1044',
+        },
+      ];
+
+      render(<InventoryExplorer initialListings={victoriaListings} />);
+
+      const locationSelect = screen.getByTestId('filter-location-select');
+
+      // Select "Victoria" -> Jim Pattison Victoria is ~1.5 km away, Downtown Vancouver is > 90 km away
+      fireEvent.change(locationSelect, { target: { value: 'Victoria' } });
+      expect(screen.getByText(/\(1\.5 km away\)/i)).toBeInTheDocument();
+      expect(screen.getByText(/\(95(\.1)? km away\)/i)).toBeInTheDocument();
+
+      const cardsFromVictoria = screen.getAllByTestId(/^listing-card-/);
+      expect(cardsFromVictoria[0]).toHaveAttribute('data-testid', 'listing-card-jp-vic-crown-01');
+      expect(cardsFromVictoria[1]).toHaveAttribute('data-testid', 'listing-card-jp-dt-rav4-01');
+
+      // Select "Vancouver Island" -> Should resolve to Victoria coordinates as well
+      fireEvent.change(locationSelect, { target: { value: 'Vancouver Island' } });
+      expect(screen.getByText(/\(1\.5 km away\)/i)).toBeInTheDocument();
     });
 
     it('supports proximity filtering and distance calculation when municipality is selected', () => {

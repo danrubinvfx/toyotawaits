@@ -219,6 +219,22 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 857-2658',
     websiteUrl: 'https://www.abbotsfordtoyota.com/',
   },
+  {
+    dealerCode: 'jptoyota-victoria',
+    aliases: ['jptoyota-victoria', 'jp-toyota-victoria', 'jim pattison toyota victoria'],
+    dealerName: 'Jim Pattison Toyota Victoria',
+    sourceCode: 'jp-toyota-victoria-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.jptoyotavictoria.com',
+    endpointUrl:
+      'https://www.jptoyotavictoria.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1230%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    address: '3050 Douglas St',
+    city: 'Victoria',
+    province: 'BC',
+    postalCode: 'V8T 4N4',
+    phone: '(250) 386-3516',
+    websiteUrl: 'https://www.jptoyotavictoria.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {

@@ -429,6 +429,8 @@ export function InventoryExplorer({
       ['Langley', 'Langley'],
       ['Abbotsford', 'Abbotsford'],
       ['Chilliwack', 'Chilliwack'],
+      ['Victoria', 'Victoria (Vancouver Island)'],
+      ['Vancouver Island', 'Vancouver Island'],
     ]);
     listings.forEach((item) => {
       const lowerDealer = item.dealerName.toLowerCase();
@@ -444,6 +446,8 @@ export function InventoryExplorer({
           ? 'Chilliwack'
           : lowerDealer.includes('abbotsford')
           ? 'Abbotsford'
+          : lowerDealer.includes('victoria')
+          ? 'Victoria'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
@@ -454,6 +458,8 @@ export function InventoryExplorer({
         locMap.set('Richmond', 'Richmond');
       } else if (city.toLowerCase() === 'pitt meadows' || city.toLowerCase().includes('pitt')) {
         locMap.set('Pitt Meadows', 'Pitt Meadows (West Coast)');
+      } else if (city.toLowerCase() === 'victoria' || city.toLowerCase().includes('island')) {
+        locMap.set('Victoria', 'Victoria (Vancouver Island)');
       } else if (!locMap.has(city)) {
         locMap.set(city, city);
       }

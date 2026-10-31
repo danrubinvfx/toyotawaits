@@ -64,6 +64,8 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Langley', label: 'Langley' },
   { value: 'Abbotsford', label: 'Abbotsford' },
   { value: 'Chilliwack', label: 'Chilliwack' },
+  { value: 'Victoria', label: 'Victoria (Vancouver Island)' },
+  { value: 'Vancouver Island', label: 'Vancouver Island' },
 ];
 
 export function InventoryFilterBar({
