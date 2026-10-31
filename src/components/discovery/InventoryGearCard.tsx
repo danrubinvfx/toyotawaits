@@ -49,6 +49,7 @@ export function InventoryGearCard({
 
   const config = getGearMarketConfig(item.id);
   const resolvedLocal = resolveGearLocalImage(item.id, item.category, item.title);
+  // Ensure candidate image and fallback image arguments strictly adhere to resolveVerifiedGearImageSrc signature
   const imageSource = resolveVerifiedGearImageSrc(
     item.imageUrl || config?.imageUrl,
     resolvedLocal?.imageUrl
