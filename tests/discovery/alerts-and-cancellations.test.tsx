@@ -252,11 +252,16 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
       vi.restoreAllMocks();
     });
 
-    it('opens InventoryAlertModal from "🔔 Get Drop Alerts" button in InventoryExplorer with pre-filled filter criteria', () => {
+    it('opens InventoryAlertModal from elevated Alerts button in InventoryExplorer with pre-filled filter criteria', () => {
       render(<InventoryExplorer initialModel="Sienna" />);
 
       const alertBtn = screen.getByTestId('get-drop-alerts-btn');
-      expect(alertBtn).toHaveTextContent('🔔 Get Drop Alerts');
+      expect(alertBtn).toHaveTextContent('Alerts');
+      expect(alertBtn).toHaveAttribute('aria-label', 'Get Toyota Allocation Drop Alerts');
+
+      // Tapping Alerts opens modal immediately without opening filters tray
+      const filterTray = screen.getByTestId('collapsible-filter-tray');
+      expect(filterTray).toHaveClass('hidden');
 
       fireEvent.click(alertBtn);
 
@@ -269,6 +274,43 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
       expect(screen.getByTestId('alert-zero-pii-disclaimer')).toHaveTextContent(
         'We only use your email to alert you when a matching vehicle lands. Zero spam, unsubscribe anytime.'
       );
+    });
+
+    it('renders in-feed alert subbar when filtered results are found for a specific model', () => {
+      render(<InventoryExplorer initialModel="Sienna" />);
+
+      const subbar = screen.getByTestId('in-feed-alert-subbar');
+      expect(subbar).toBeInTheDocument();
+      expect(subbar).toHaveTextContent('Want an alert when a new Sienna drops? Set Drop Alert');
+
+      const setAlertBtn = screen.getByTestId('in-feed-alert-btn');
+      fireEvent.click(setAlertBtn);
+
+      const modal = screen.getByTestId('inventory-alert-modal');
+      expect(modal).toBeInTheDocument();
+      const modelSelect = screen.getByTestId('alert-model-select') as HTMLSelectElement;
+      expect(modelSelect.value).toBe('Sienna');
+    });
+
+    it('renders high-intent CTA in empty state when zero allocations are found for a selected model', () => {
+      render(<InventoryExplorer initialModel="Land Cruiser" initialListings={[]} />);
+
+      expect(screen.getByTestId('no-results-message')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'No active allocations found for this model right now. Be the first to know when a dealer lists one:'
+        )
+      ).toBeInTheDocument();
+
+      const emptyAlertBtn = screen.getByTestId('empty-state-alert-btn');
+      expect(emptyAlertBtn).toHaveTextContent('Set Drop Alert for Land Cruiser');
+
+      fireEvent.click(emptyAlertBtn);
+
+      const modal = screen.getByTestId('inventory-alert-modal');
+      expect(modal).toBeInTheDocument();
+      const modelSelect = screen.getByTestId('alert-model-select') as HTMLSelectElement;
+      expect(modelSelect.value).toBe('Land Cruiser');
     });
 
     it('submits alert subscription via InventoryAlertModal and displays confirmation state', async () => {

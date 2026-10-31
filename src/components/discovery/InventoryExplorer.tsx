@@ -18,7 +18,7 @@ import { DEALERS, getDealerCoordinates } from '@/config/dealers';
 import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
 import { useDonationReminder } from '@/hooks/useDonationReminder';
 import { DonationToast } from '@/components/common/DonationToast';
-import { Car, AlertCircle } from 'lucide-react';
+import { Car, AlertCircle, Bell } from 'lucide-react';
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   {
@@ -811,6 +811,29 @@ export function InventoryExplorer({
         onOpenAlertModal={() => setIsAlertModalOpen(true)}
       />
 
+      {/* Contextual In-Feed Drop Alert Prompt for Specific Searches */}
+      {filters.model && filters.model.toLowerCase() !== 'all' && filteredListings.length > 0 && (
+        <div
+          data-testid="in-feed-alert-subbar"
+          className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-zinc-300"
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            <Bell className="h-3.5 w-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+            <span className="truncate">
+              Want an alert when a new {filters.model} drops?{' '}
+            </span>
+          </div>
+          <button
+            type="button"
+            data-testid="in-feed-alert-btn"
+            onClick={() => setIsAlertModalOpen(true)}
+            className="text-amber-400 hover:text-amber-300 font-semibold underline underline-offset-2 shrink-0 transition-colors"
+          >
+            Set Drop Alert
+          </button>
+        </div>
+      )}
+
       {/* Listings Grid (Rendered immediately below filter bar for mobile visibility above the fold) */}
       {filteredListings.length > 0 ? (
         <>
@@ -881,9 +904,28 @@ export function InventoryExplorer({
             <Car className="h-6 w-6" aria-hidden="true" />
           </div>
           <h3 className="text-sm font-semibold text-zinc-200">No matching listings observed</h3>
-          <p className="text-xs text-zinc-500 max-w-md mx-auto">
-            Try adjusting your model or price filters. Remember our pilot is currently monitoring validated Lower Mainland dealer feeds.
-          </p>
+          {filters.model && filters.model.toLowerCase() !== 'all' ? (
+            <div className="space-y-3 max-w-md mx-auto">
+              <p className="text-xs text-zinc-300 leading-relaxed">
+                No active allocations found for this model right now. Be the first to know when a dealer lists one:
+              </p>
+              <div>
+                <button
+                  type="button"
+                  data-testid="empty-state-alert-btn"
+                  onClick={() => setIsAlertModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 active:scale-95 transition-all shadow-sm"
+                >
+                  <Bell className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span>Set Drop Alert for {filters.model}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-zinc-500 max-w-md mx-auto">
+              Try adjusting your model or price filters. Remember our pilot is currently monitoring validated Lower Mainland dealer feeds.
+            </p>
+          )}
         </div>
       )}
 
