@@ -35,7 +35,8 @@ export interface ChecklistProduct {
     | 'Cargo & Utility'
     | 'Electronics & Safety'
     | 'Organization'
-    | 'Battery & Emergency';
+    | 'Battery & Emergency'
+    | 'cargo';
   categories?: string[];
   title: string;
   name?: string;
@@ -84,6 +85,7 @@ const PRIMARY_FILTER_TABS = [
   { id: 'delivery_day_1', label: '📦 Delivery Day 1 Checklist' },
   { id: 'protection', label: '🛡️ Protection' },
   { id: 'comfort', label: '🛋️ Comfort' },
+  { id: 'cargo_utility', label: '🧳 Cargo & Utility' },
   { id: 'tech_comfort', label: '⚡ Tech & Comfort' },
 ] as const;
 
@@ -236,7 +238,7 @@ function matchesCategory(item: ChecklistProduct, selectedCategory: string): bool
       return true;
     if (
       selectedCategory === 'cargo_utility' &&
-      item.categories.includes('Cargo & Utility')
+      (item.categories.includes('Cargo & Utility') || item.categories.includes('cargo_utility' as any) || item.categories.includes('cargo' as any))
     )
       return true;
     if (
@@ -267,7 +269,8 @@ function matchesCategory(item: ChecklistProduct, selectedCategory: string): bool
   if (selectedCategory === 'cargo_utility') {
     return (
       itemCategory === 'cargo_utility' ||
-      itemCategory === 'Cargo & Utility'
+      itemCategory === 'Cargo & Utility' ||
+      itemCategory === 'cargo'
     );
   }
   if (selectedCategory === 'roadside_winter') {

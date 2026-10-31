@@ -4,7 +4,8 @@ import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { PickupChecklist } from '@/components/delivery-prep/pickup-checklist';
 import { PrintButton } from '@/components/delivery-prep/print-button';
-import { ShieldCheck, Car, KeyRound, Wrench } from 'lucide-react';
+import { ShieldCheck, Car, KeyRound, Wrench, Luggage } from 'lucide-react';
+import { GearCard } from '@/components/gear/GearCard';
 import Link from 'next/link';
 
 export const revalidate = 60;
@@ -110,6 +111,100 @@ export default function DeliveryPrepPage() {
         {/* Interactive Checklist Component */}
         <section className="space-y-4">
           <PickupChecklist defaultOpen={true} />
+        </section>
+
+        {/* Cargo & Trunk Organization Section */}
+        <section className="space-y-4 pt-2" id="cargo-trunk-organization">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
+              <Luggage className="h-3.5 w-3.5" />
+              <span>Day-One Utility</span>
+              <span className="text-zinc-600">•</span>
+              <span>2% Off with Code: Toyotawaits</span>
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              <Luggage className="h-5 w-5 text-amber-500 shrink-0" />
+              <span>Cargo &amp; Trunk Organization</span>
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-2xl">
+              High-utility day-one essentials to secure groceries, sports gear, and tools upright against factory tie-down D-rings from day one.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <GearCard
+              item={{
+                id: 'muslogy-rav4-cargo-net',
+                slug: 'muslogy-rav4-cargo-net',
+                title: 'Muslogy Heavy-Duty Trunk Cargo Net (RAV4)',
+                category: 'cargo',
+                brand: 'Muslogy',
+                destinationType: 'direct_partner',
+                discountCode: 'Toyotawaits',
+                discountText: '2% off',
+                badge: 'Partner Deal · 2% Off',
+                priceEstCad: '$24 – $30 CAD',
+                description: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
+                whyBuy: 'Official Muslogy direct-fit trunk cargo net with exclusive 2% discount with code Toyotawaits.',
+                buttonLabel: 'Get 2% Off on Muslogy ↗',
+                destinationUrl: '/out/muslogy-rav4-cargo-net',
+                imageUrl: '/assets/gear/muslogy-rav4-cargo-net.webp',
+                models: ['rav4', 'rav4-hybrid', 'rav4-prime'],
+                activeModel: 'rav4',
+              }}
+              placement="delivery_prep_cargo"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+            <GearCard
+              item={{
+                id: 'muslogy-sienna-cargo-net',
+                slug: 'muslogy-sienna-cargo-net',
+                title: 'Muslogy Heavy-Duty Trunk Cargo Net (Sienna)',
+                category: 'cargo',
+                brand: 'Muslogy',
+                destinationType: 'direct_partner',
+                discountCode: 'Toyotawaits',
+                discountText: '2% off',
+                badge: 'Partner Deal · 2% Off',
+                priceEstCad: '$26 – $34 CAD',
+                description: 'Custom-fit elastic envelope trunk cargo net securing groceries and luggage in the deep Sienna rear cargo well.',
+                whyBuy: 'Official Muslogy direct-fit cargo organizer with exclusive 2% discount with code Toyotawaits.',
+                buttonLabel: 'Get 2% Off on Muslogy ↗',
+                destinationUrl: '/out/muslogy-sienna-cargo-net',
+                imageUrl: '/assets/gear/muslogy-sienna-cargo-net.webp',
+                models: ['sienna', 'sienna-hybrid'],
+                activeModel: 'sienna',
+              }}
+              placement="delivery_prep_cargo"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+            <GearCard
+              item={{
+                id: 'muslogy-grand-highlander-cargo-net',
+                slug: 'muslogy-grand-highlander-cargo-net',
+                title: 'Muslogy Heavy-Duty Trunk Cargo Net (Grand Highlander)',
+                category: 'cargo',
+                brand: 'Muslogy',
+                destinationType: 'direct_partner',
+                discountCode: 'Toyotawaits',
+                discountText: '2% off',
+                badge: 'Partner Deal · 2% Off',
+                priceEstCad: '$26 – $34 CAD',
+                description: 'Custom-fit envelope trunk cargo net securing groceries and camping equipment upright behind the 3rd row.',
+                whyBuy: 'Official Muslogy direct-fit trunk cargo net with exclusive 2% discount with code Toyotawaits.',
+                buttonLabel: 'Get 2% Off on Muslogy ↗',
+                destinationUrl: '/out/muslogy-grand-highlander-cargo-net',
+                imageUrl: '/assets/gear/muslogy-grand-highlander-cargo-net.webp',
+                models: ['grand-highlander'],
+                activeModel: 'grand-highlander',
+              }}
+              placement="delivery_prep_cargo"
+              showCheckbox={false}
+              className="w-full max-w-none"
+            />
+          </div>
         </section>
 
         {/* Additional Guides Link */}

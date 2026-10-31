@@ -122,10 +122,11 @@ export function getAssociateTag(
  * Ensures model-specific part numbers (like RAV4 G92DH-42010) are NOT assumed to fit other vehicles.
  */
 export function injectActiveModelIntoQuery(
-  query: string,
+  query?: string,
   activeModel?: string,
   slug?: string
 ): string {
+  if (!query) return '';
   if (!activeModel || activeModel === 'all') return query;
   const cleanModel = activeModel.toLowerCase().trim();
   const modelName = getModelDisplayName(cleanModel);

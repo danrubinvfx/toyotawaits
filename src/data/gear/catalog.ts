@@ -28,19 +28,27 @@ export interface GearItem {
 }
 
 export interface GearMarketConfig {
+  id?: string;
+  name?: string;
   slug: string;
   title: string;
   brand?: string;
   destinationType?: 'amazon' | 'direct_partner' | string;
+  directUrl?: string;
+  proxySlug?: string;
   discountCode?: string;
+  discountPercent?: number;
   discountText?: string;
   destinationUrl?: string;
+  modelSlug?: string;
+  models?: string[];
+  inStock?: boolean;
   asin?: string;
   asin_ca?: string;
   asin_us?: string;
   searchQuery?: string;
-  searchKeywordsCA: string;
-  searchKeywordsUS: string;
+  searchKeywordsCA?: string;
+  searchKeywordsUS?: string;
   category?: string;
   compatibility?: string;
   fitment?: string;
@@ -214,6 +222,126 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     fallbackIcon: 'layout-grid',
     isDeliveryDayEssential: true,
     buttonLabel: 'Get 2% Off on Muslogy ↗',
+  },
+  'muslogy-rav4-cargo-net': {
+    id: 'muslogy-rav4-cargo-net',
+    slug: 'muslogy-rav4-cargo-net',
+    title: 'Muslogy Heavy-Duty Trunk Cargo Net (RAV4)',
+    name: 'Muslogy Heavy-Duty Trunk Cargo Net',
+    brand: 'Muslogy',
+    modelSlug: 'rav4',
+    models: ['rav4', 'rav4-hybrid', 'rav4-prime'],
+    category: 'Cargo & Utility',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-rav4-cargo-net',
+    directUrl: 'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
+    proxySlug: 'muslogy-rav4-cargo-net',
+    discountCode: 'Toyotawaits',
+    discountPercent: 2,
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+    searchQuery: 'Muslogy Toyota RAV4 trunk cargo net envelope',
+    searchKeywordsCA: 'Muslogy Toyota RAV4 trunk cargo net envelope',
+    searchKeywordsUS: 'Muslogy Toyota RAV4 trunk cargo net envelope',
+    description: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
+    whyBuy: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
+    imageUrl: '/assets/gear/muslogy-rav4-cargo-net.webp',
+    fallbackIcon: 'luggage',
+    isDeliveryDayEssential: true,
+    inStock: true,
+    compatibility: 'Toyota RAV4 (2019–2026)',
+    fitment: 'RAV4 Custom Envelope Fit',
+  },
+  'muslogy-sienna-cargo-net': {
+    id: 'muslogy-sienna-cargo-net',
+    slug: 'muslogy-sienna-cargo-net',
+    title: 'Muslogy Heavy-Duty Trunk Cargo Net (Sienna)',
+    name: 'Muslogy Heavy-Duty Trunk Cargo Net',
+    brand: 'Muslogy',
+    modelSlug: 'sienna',
+    models: ['sienna', 'sienna-hybrid'],
+    category: 'Cargo & Utility',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-sienna-cargo-net',
+    directUrl: 'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
+    proxySlug: 'muslogy-sienna-cargo-net',
+    discountCode: 'Toyotawaits',
+    discountPercent: 2,
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+    searchQuery: 'Muslogy Toyota Sienna trunk cargo net envelope',
+    searchKeywordsCA: 'Muslogy Toyota Sienna trunk cargo net envelope',
+    searchKeywordsUS: 'Muslogy Toyota Sienna trunk cargo net envelope',
+    description: 'Custom-fit elastic envelope trunk cargo net securing groceries and luggage in the deep Sienna rear cargo well.',
+    whyBuy: 'Official Muslogy direct-fit cargo organizer with exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-sienna-cargo-net.webp',
+    fallbackIcon: 'luggage',
+    isDeliveryDayEssential: true,
+    inStock: true,
+    compatibility: 'Toyota Sienna (2021–2026)',
+    fitment: 'Sienna Deep Cargo Well Fit',
+  },
+  'muslogy-cargo-net': {
+    id: 'muslogy-cargo-net',
+    slug: 'muslogy-cargo-net',
+    title: 'Muslogy Heavy-Duty Trunk Cargo Net',
+    name: 'Muslogy Heavy-Duty Trunk Cargo Net',
+    brand: 'Muslogy',
+    modelSlug: 'universal',
+    models: ['universal', 'rav4', 'sienna', 'grand-highlander'],
+    category: 'Cargo & Utility',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-cargo-net',
+    directUrl: 'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
+    proxySlug: 'muslogy-cargo-net',
+    discountCode: 'Toyotawaits',
+    discountPercent: 2,
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+    searchQuery: 'Muslogy trunk cargo net envelope',
+    searchKeywordsCA: 'Muslogy trunk cargo net envelope',
+    searchKeywordsUS: 'Muslogy trunk cargo net envelope',
+    description: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
+    whyBuy: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
+    imageUrl: '/assets/gear/muslogy-cargo-net.webp',
+    fallbackIcon: 'luggage',
+    isDeliveryDayEssential: true,
+    inStock: true,
+    compatibility: 'Toyota RAV4, Sienna, Grand Highlander',
+    fitment: 'Direct D-Ring Hook Fit',
+  },
+  'muslogy-grand-highlander-cargo-net': {
+    id: 'muslogy-grand-highlander-cargo-net',
+    slug: 'muslogy-grand-highlander-cargo-net',
+    title: 'Muslogy Heavy-Duty Trunk Cargo Net (Grand Highlander)',
+    name: 'Muslogy Heavy-Duty Trunk Cargo Net',
+    brand: 'Muslogy',
+    modelSlug: 'grand-highlander',
+    models: ['grand-highlander'],
+    category: 'Cargo & Utility',
+    destinationType: 'direct_partner',
+    destinationUrl: '/out/muslogy-grand-highlander-cargo-net',
+    directUrl: 'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
+    proxySlug: 'muslogy-grand-highlander-cargo-net',
+    discountCode: 'Toyotawaits',
+    discountPercent: 2,
+    discountText: '2% off',
+    badge: 'Partner Deal · 2% Off',
+    buttonLabel: 'Get 2% Off on Muslogy ↗',
+    searchQuery: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
+    searchKeywordsCA: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
+    searchKeywordsUS: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
+    description: 'Custom-fit envelope trunk cargo net securing groceries and camping equipment upright behind the 3rd row.',
+    whyBuy: 'Official Muslogy direct-fit trunk cargo net with exclusive 2% discount with code Toyotawaits.',
+    imageUrl: '/assets/gear/muslogy-grand-highlander-cargo-net.webp',
+    fallbackIcon: 'luggage',
+    isDeliveryDayEssential: true,
+    inStock: true,
+    compatibility: 'Toyota Grand Highlander (2024–2026)',
+    fitment: 'Grand Highlander 3rd-Row Trunk Fit',
   },
   'level-2-evse-charger': {
     slug: 'level-2-evse-charger',
@@ -1362,6 +1490,20 @@ export function resolveGearLocalImage(
   const t = (title || '').toLowerCase();
   const c = (category || '').toLowerCase();
 
+  // Muslogy Partner Items - Cargo Nets
+  if (clean.includes('muslogy-rav4-cargo-net')) {
+    return { imageUrl: '/assets/gear/muslogy-rav4-cargo-net.webp', fallbackIcon: 'luggage' };
+  }
+  if (clean.includes('muslogy-sienna-cargo-net')) {
+    return { imageUrl: '/assets/gear/muslogy-sienna-cargo-net.webp', fallbackIcon: 'luggage' };
+  }
+  if (clean.includes('muslogy-grand-highlander-cargo-net')) {
+    return { imageUrl: '/assets/gear/muslogy-grand-highlander-cargo-net.webp', fallbackIcon: 'luggage' };
+  }
+  if (clean.includes('muslogy-cargo-net')) {
+    return { imageUrl: '/assets/gear/muslogy-cargo-net.webp', fallbackIcon: 'luggage' };
+  }
+
   // Muslogy Partner Items
   if (clean.includes('muslogy-rav4') || clean.includes('muslogy-organizer-rav4')) {
     return { imageUrl: '/assets/gear/muslogy-rav4-organizer.webp', fallbackIcon: 'layout-grid' };
@@ -1591,6 +1733,9 @@ export function getGearMarketConfig(
 
   // Dynamically adapt multi-vehicle cards to the active vehicle context
   if (activeModel && activeModel !== 'all') {
+    if (config.destinationType === 'direct_partner') {
+      return config;
+    }
     const cleanModel = activeModel.toLowerCase().trim();
 
     if (config.slug === '3-row-all-weather-liners') {
@@ -1630,8 +1775,8 @@ export function getGearMarketConfig(
 
     return {
       ...config,
-      searchKeywordsCA: injectActiveModelIntoQuery(config.searchKeywordsCA, activeModel, config.slug),
-      searchKeywordsUS: injectActiveModelIntoQuery(config.searchKeywordsUS, activeModel, config.slug),
+      searchKeywordsCA: injectActiveModelIntoQuery(config.searchKeywordsCA || '', activeModel, config.slug),
+      searchKeywordsUS: injectActiveModelIntoQuery(config.searchKeywordsUS || '', activeModel, config.slug),
     };
   }
 
