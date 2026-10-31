@@ -7,6 +7,7 @@ import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { PartnerDealBanner } from '@/components/gear/PartnerDealBanner';
 import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSection';
+import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
 import {
   MODEL_REGISTRY,
   getModelConfig,
@@ -639,6 +640,15 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             Timelines vary considerably by powertrain variant (Gas vs. Hybrid vs. Plug-in Hybrid) and provincial allocation policies.
           </p>
         </div>
+      </section>
+
+      {/* Inline Benchmark My Order Acquisition Widget */}
+      <section aria-label="Benchmark My Order Queue Placement">
+        <BenchmarkMyOrderWidget
+          modelSlug={modelConfig.slug}
+          modelName={modelConfig.name}
+          medianWaitDays={stats.medianDays}
+        />
       </section>
 
       {/* Fast Summary Grid: Powertrain | National Median | BC Lead Time | Ontario Lead Time */}

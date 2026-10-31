@@ -1261,8 +1261,13 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
         }
       }
       if (data.notes !== undefined) updatePayload.notes = data.notes;
+      if (data.dealerMarkupAdm !== undefined) {
+        updatePayload.dealer_markup_adm = data.dealerMarkupAdm;
+        updatePayload.adm_markup = data.dealerMarkupAdm;
+        updatePayload.pricing = data.dealerMarkupAdm && data.dealerMarkupAdm > 0 ? 'above_msrp' : 'at_msrp';
+      }
 
-      if (data.modelId || data.modelSlug || data.model) {
+      if (data.modelId || data.modelSlug || data.model || data.trimId || data.trimSlug) {
         const resolved = await resolveDatabaseVehicleIds(supabase, {
           modelId: data.modelId,
           powertrainId: data.powertrainId,
@@ -1272,7 +1277,7 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
           trimSlug: data.trimSlug,
           modelName: data.model,
         });
-        updatePayload.model_id = resolved.modelId;
+        if (resolved.modelId) updatePayload.model_id = resolved.modelId;
         if (resolved.powertrainId) updatePayload.powertrain_id = resolved.powertrainId;
         if (resolved.trimId) updatePayload.trim_id = resolved.trimId;
       }
@@ -1334,6 +1339,24 @@ export async function updateSubmission(data: SubmissionUpdateData): Promise<any 
   }
   if (data.notes !== undefined) {
     record.notes = data.notes;
+  }
+  if (data.dealerMarkupAdm !== undefined) {
+    record.dealer_markup_adm = data.dealerMarkupAdm;
+    record.adm_markup = data.dealerMarkupAdm;
+    record.pricing = data.dealerMarkupAdm && data.dealerMarkupAdm > 0 ? 'above_msrp' : 'at_msrp';
+  }
+  if (data.trimId) {
+    record.trim_id = data.trimId;
+    for (const m of CANADIAN_VEHICLE_CATALOG) {
+      for (const p of m.powertrains) {
+        const found = p.trims.find((t) => t.id === data.trimId || t.slug === data.trimSlug);
+        if (found) {
+          record.trim_slug = found.slug;
+          record.trim_name = found.name;
+          break;
+        }
+      }
+    }
   }
   record.updated_at = new Date().toISOString();
 

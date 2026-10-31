@@ -227,6 +227,13 @@ export const submissionUpdateSchema = z.object({
   editKey: z.string().min(16, 'Valid edit key is required').optional(),
   stage: submissionStageSchema.optional(),
   status: z.enum(['pending', 'delivered', 'cancelled']).optional(),
+  trimId: z.string().optional().nullable(),
+  trimSlug: z.string().optional().nullable(),
+  admMarkup: z.number().min(0).max(100000).optional().nullable(),
+  dealerMarkupAdm: z.number().min(0).max(100000).optional().nullable(),
+  dealer_markup_adm: z.number().min(0).max(100000).optional().nullable(),
+  pricing: z.union([pricingTypeSchema, z.enum(['at_msrp', 'markup', 'discount', 'mandatory_addons'])]).optional().nullable(),
+  tradeInRequired: z.boolean().optional().nullable(),
   deliveryDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, 'Delivery date must be YYYY-MM-DD')
@@ -236,8 +243,6 @@ export const submissionUpdateSchema = z.object({
     .optional()
     .nullable(),
   notes: sanitizedNotesSchema,
-  dealerMarkupAdm: z.number().min(0).max(100000).optional().nullable(),
-  dealer_markup_adm: z.number().min(0).max(100000).optional().nullable(),
   portDestination: z.string().trim().max(100).optional().nullable(),
   port_destination: z.string().trim().max(100).optional().nullable(),
   state: usStateSchema.optional().nullable(),

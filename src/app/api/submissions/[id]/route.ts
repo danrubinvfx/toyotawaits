@@ -74,6 +74,10 @@ export async function PATCH(
       currentStage: validData.stage,
       deliveryDate: validData.deliveryDate,
       notes: validData.notes,
+      trimId: validData.trimId || undefined,
+      trimSlug: validData.trimSlug || undefined,
+      dealerMarkupAdm: validData.dealerMarkupAdm ?? validData.dealer_markup_adm ?? validData.admMarkup ?? undefined,
+      dealer_markup_adm: validData.dealerMarkupAdm ?? validData.dealer_markup_adm ?? validData.admMarkup ?? undefined,
     });
 
     if (result === 'unauthorized') {

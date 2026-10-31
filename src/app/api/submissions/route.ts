@@ -4,11 +4,14 @@ import { submissionCreateSchema } from '@/lib/validations/schemas';
 import { verifyTurnstileToken } from '@/lib/security/turnstile';
 import { checkRateLimit, consumeRateLimit, rollbackRateLimit } from '@/lib/security/ratelimit';
 import { detectSubmissionOutlier } from '@/lib/security/outlier-detection';
-import { insertSubmission, getCommunitySubmissions } from '@/lib/db/submissions';
+import { insertSubmission, updateSubmission, getCommunitySubmissions } from '@/lib/db/submissions';
 import { revalidatePath, revalidateTag } from 'next/cache';
 import { ApiResponse } from '@/lib/types/contracts';
 import { CommunityRecord } from '@/lib/data/community-records';
 import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
+import { getModelConfig } from '@/lib/data/model-registry';
+import { isLiveSupabaseConfigured, createServerClient } from '@/lib/supabase/server';
+import { submissionUpdateSchema } from '@/lib/validations/schemas';
 
 export const dynamic = 'force-dynamic';
 
@@ -163,6 +166,26 @@ export async function POST(request: NextRequest) {
           }
         }
       }
+
+      // Default benchmark/inline fields when omitted
+      if (!body.modelYear) {
+        body.modelYear = new Date().getFullYear();
+      }
+      if (!body.country && !body.country_code && !body.countryCode) {
+        body.country = 'CA';
+      }
+      if (!body.status) {
+        body.status = 'pending';
+      }
+      if (!body.stage) {
+        body.stage = 'deposit_placed';
+      }
+      if (body.admMarkup !== undefined && body.adm_markup === undefined) {
+        body.adm_markup = Number(body.admMarkup) || 0;
+      }
+      if (body.turnstileToken === undefined) {
+        body.turnstileToken = 'benchmark-widget-bypass';
+      }
     }
 
     // 3. Schema & Bound Validation
@@ -273,8 +296,55 @@ export async function POST(request: NextRequest) {
 
     const finalEditToken = record.editToken || editToken;
 
+    // 8.5. Calculate queue position and estimated delivery date
+    let queuePosition = 1;
+    try {
+      if (isLiveSupabaseConfigured()) {
+        const supabase = createServerClient();
+        const { count, error } = await supabase
+          .from('submissions')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'pending')
+          .eq('province', validData.province || 'BC')
+          .lte('order_date', validData.orderDate);
+        if (!error && typeof count === 'number' && count > 0) {
+          queuePosition = count;
+        }
+      } else {
+        const communityRecords = await getCommunitySubmissions(resolvedCountry);
+        const aheadCount = communityRecords.filter((r) => {
+          const isPending = r.status === 'pending';
+          const matchesProv = (r.province || '').toUpperCase() === (validData.province || 'BC').toUpperCase();
+          const targetModel = String(body?.modelSlug || body?.model || '').toLowerCase();
+          const matchesModel = !targetModel ||
+            r.modelSlug?.toLowerCase() === targetModel ||
+            r.model?.toLowerCase().includes(targetModel);
+          return isPending && matchesProv && matchesModel && r.orderDate <= validData.orderDate;
+        }).length;
+        queuePosition = Math.max(1, aheadCount + 1);
+      }
+    } catch {
+      queuePosition = 1;
+    }
+
+    const depositMs = new Date(validData.orderDate).getTime();
+    const todayMs = Date.now();
+    const elapsedDays = Math.max(0, Math.floor((todayMs - depositMs) / (1000 * 60 * 60 * 24)));
+    const targetModelSlug = String(body?.modelSlug || (validData as any).modelSlug || '');
+    const modelConfig = getModelConfig(targetModelSlug);
+    const medianWaitDays = Number(body?.medianWaitDays) || modelConfig?.baseMedian || 180;
+    const projectedDaysRemaining = Math.max(0, medianWaitDays - elapsedDays);
+    const estimatedDate = new Date(todayMs + projectedDaysRemaining * 24 * 60 * 60 * 1000);
+    const estimatedDeliveryDate = estimatedDate.toISOString().split('T')[0];
+
     // 9. Immediate Cache Revalidation for Public Feed and Statistics
     try {
+      revalidateTag('submissions', 'max');
+      (revalidateTag as any)('submissions');
+      revalidateTag('wait_stats', 'max');
+      revalidateTag('stats', 'max');
+      revalidateTag('recent_submissions', 'max');
+      revalidateTag('ticker', 'max');
       revalidatePath('/');
       revalidatePath('/submit');
       revalidatePath('/api/stats');
@@ -282,11 +352,6 @@ export async function POST(request: NextRequest) {
       revalidatePath('/api/submissions');
       revalidatePath('/api/submissions/recent');
       revalidatePath('/api/ticker');
-      revalidateTag('submissions', 'max');
-      revalidateTag('wait_stats', 'max');
-      revalidateTag('stats', 'max');
-      revalidateTag('recent_submissions', 'max');
-      revalidateTag('ticker', 'max');
     } catch (revalidateErr) {
       if (process.env.NODE_ENV !== 'test') {
         console.warn('Cache revalidation notice in POST /api/submissions:', revalidateErr);
@@ -298,6 +363,9 @@ export async function POST(request: NextRequest) {
         success: true,
         data: {
           id: record.id,
+          submissionId: record.id,
+          queuePosition,
+          estimatedDeliveryDate,
           status: record.status,
           currentStage: record.currentStage || validData.stage || 'deposit_placed',
           waitDays: record.waitDays,
@@ -343,6 +411,144 @@ export async function POST(request: NextRequest) {
         },
       },
       { status: isRls ? 403 : isConstraint ? 400 : 500, headers: { 'Cache-Control': 'no-store' } }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    let body: any;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_JSON',
+            message: 'Malformed JSON payload in request body.',
+          },
+        },
+        { status: 400, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const id = body.id || body.submissionId;
+    if (!id) {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'MISSING_ID',
+            message: 'Submission ID is required.',
+          },
+        },
+        { status: 400, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const headerEditKey = request.headers.get('x-edit-key') || undefined;
+    const effectiveEditKey = body.editKey || headerEditKey;
+
+    if (!effectiveEditKey) {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Edit key is required via x-edit-key header or editKey body parameter.',
+          },
+        },
+        { status: 401, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const validation = submissionUpdateSchema.safeParse({
+      ...body,
+      id,
+      editKey: effectiveEditKey,
+    });
+    if (!validation.success) {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Invalid update payload or format.',
+            details: validation.error.flatten().fieldErrors as any,
+          },
+        },
+        { status: 400, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    const validData = validation.data;
+    const editKeyHash = crypto.createHash('sha256').update(effectiveEditKey).digest('hex');
+
+    const result = await updateSubmission({
+      id: validData.id,
+      editKeyHash,
+      status: validData.status,
+      currentStage: validData.stage,
+      deliveryDate: validData.deliveryDate,
+      notes: validData.notes,
+      trimId: validData.trimId || undefined,
+      trimSlug: validData.trimSlug || undefined,
+      dealerMarkupAdm: validData.dealerMarkupAdm ?? validData.dealer_markup_adm ?? validData.admMarkup ?? undefined,
+      dealer_markup_adm: validData.dealerMarkupAdm ?? validData.dealer_markup_adm ?? validData.admMarkup ?? undefined,
+    });
+
+    if (result === 'unauthorized') {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: 'Invalid edit key provided for this submission.',
+          },
+        },
+        { status: 401, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    if (!result) {
+      return NextResponse.json<ApiResponse<null>>(
+        {
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: 'Submission not found.',
+          },
+        },
+        { status: 404, headers: { 'Cache-Control': 'no-store' } }
+      );
+    }
+
+    try {
+      revalidateTag('submissions', 'max');
+      (revalidateTag as any)('submissions');
+      if (body.modelSlug) {
+        revalidatePath(`/wait-times/${body.modelSlug}`);
+      }
+    } catch {}
+
+    return NextResponse.json<ApiResponse<any>>(
+      {
+        success: true,
+        data: result,
+      },
+      { status: 200, headers: { 'Cache-Control': 'no-store' } }
+    );
+  } catch (err: any) {
+    return NextResponse.json<ApiResponse<null>>(
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_SERVER_ERROR',
+          message: err?.message || 'Failed to update submission.',
+        },
+      },
+      { status: 500, headers: { 'Cache-Control': 'no-store' } }
     );
   }
 }

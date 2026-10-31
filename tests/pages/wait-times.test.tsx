@@ -105,6 +105,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(screen.getByText(/Fastest:/i)).toBeInTheDocument();
     expect(screen.getByText(/Slowest:/i)).toBeInTheDocument();
 
+    // Verify Benchmark My Order Acquisition Widget is mounted
+    const benchmarkWidget = screen.getByTestId('benchmark-order-widget');
+    expect(benchmarkWidget).toBeInTheDocument();
+    expect(screen.getByText('Where Do You Stand in Line?')).toBeInTheDocument();
+
     // Verify fast summary grid columns
     expect(screen.getAllByText('Powertrain').length).toBeGreaterThan(0);
     expect(screen.getByText('National Median')).toBeInTheDocument();
