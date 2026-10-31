@@ -63,6 +63,7 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' },
   { value: 'Langley', label: 'Langley' },
   { value: 'Abbotsford', label: 'Abbotsford' },
+  { value: 'Chilliwack', label: 'Chilliwack' },
 ];
 
 export function InventoryFilterBar({

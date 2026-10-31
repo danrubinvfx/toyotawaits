@@ -428,6 +428,7 @@ export function InventoryExplorer({
       ['Pitt Meadows', 'Pitt Meadows (West Coast)'],
       ['Langley', 'Langley'],
       ['Abbotsford', 'Abbotsford'],
+      ['Chilliwack', 'Chilliwack'],
     ]);
     listings.forEach((item) => {
       const lowerDealer = item.dealerName.toLowerCase();
@@ -439,6 +440,10 @@ export function InventoryExplorer({
           ? 'Pitt Meadows'
           : lowerDealer.includes('richmond') || lowerDealer.includes('openroad')
           ? 'Richmond'
+          : lowerDealer.includes('valley') || lowerDealer.includes('chilliwack')
+          ? 'Chilliwack'
+          : lowerDealer.includes('abbotsford')
+          ? 'Abbotsford'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {

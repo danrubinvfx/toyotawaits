@@ -89,6 +89,7 @@ describe('Geo Distance & Preset Utilities', () => {
       });
       expect(getPresetCoordinates('Langley')).toEqual({ lat: 49.1042, lng: -122.6604 });
       expect(getPresetCoordinates('Abbotsford')).toEqual({ lat: 49.0504, lng: -122.3045 });
+      expect(getPresetCoordinates('Chilliwack')).toEqual({ lat: 49.1628, lng: -121.9589 });
     });
 
     it('handles case-insensitivity and aliases', () => {
@@ -110,6 +111,8 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getDealerCoordinates('jptoyota-surrey')).toEqual({ lat: 49.1912, lng: -122.8024 });
       expect(getDealerCoordinates('westcoast-toyota')).toEqual({ lat: 49.2217, lng: -122.6881 });
       expect(getDealerCoordinates('regency-toyota')).toEqual({ lat: 49.2394, lng: -123.0450 });
+      expect(getDealerCoordinates('valley-toyota')).toEqual({ lat: 49.1824, lng: -121.9547 });
+      expect(getDealerCoordinates('abbotsford-toyota')).toEqual({ lat: 49.0601, lng: -122.3789 });
       expect(getDealerCoordinates('openroad-toyota-richmond')).toEqual({
         lat: 49.1711,
         lng: -123.0722,

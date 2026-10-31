@@ -18,6 +18,7 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   'Coquitlam / Tri-Cities': { lat: 49.2838, lng: -122.7932 },
   Langley: { lat: 49.1042, lng: -122.6604 },
   Abbotsford: { lat: 49.0504, lng: -122.3045 },
+  Chilliwack: { lat: 49.1628, lng: -121.9589 },
 };
 
 /**
