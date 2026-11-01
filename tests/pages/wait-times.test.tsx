@@ -142,6 +142,16 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     const hitchLink = screen.getByRole('link', { name: /View Sienna Hitch Guide ->/i });
     expect(hitchLink).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
 
+    // Verify 2026 vs 2027 Sienna Guide Callout Banner
+    expect(screen.getByText('Allocated a 2026 or 2027 Model?')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /The 2027 Sienna is a direct mechanical carryover\. Compare the trim differences and learn how dealer queue rollovers work before passing on a build slot\./i
+      )
+    ).toBeInTheDocument();
+    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
+    expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-sienna-2026-vs-2027');
+
     // Verify JSON-LD Schema
     const script = container.querySelector('script[type="application/ld+json"]');
     expect(script).not.toBeNull();

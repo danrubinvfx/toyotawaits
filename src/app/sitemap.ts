@@ -114,6 +114,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/guides/toyota-sienna-2026-vs-2027`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+
+    {
       url: `${baseUrl}/guides/grand-highlander-mods`,
       lastModified: now,
       changeFrequency: 'monthly',

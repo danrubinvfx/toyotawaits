@@ -83,6 +83,19 @@ const MOD_GUIDES = [
     href: '/guides/toyota-sienna-trailer-hitch-guide',
   },
   {
+    slug: 'toyota-sienna-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota Sienna: Key Differences & Trim Matrix',
+    tagline: 'Carryover engineering, full trim matrix, Indiana queue rollovers, and delivery day gear.',
+    badge: '2026 vs. 2027',
+    model: 'Toyota Sienna Hybrid',
+    highlights: [
+      'Side-by-side carryover specs & 0% mechanical delta',
+      'Indiana factory queue rollover explanation',
+      'Direct-fit delivery day gear shelf & live stock bridge',
+    ],
+    href: '/guides/toyota-sienna-2026-vs-2027',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',
