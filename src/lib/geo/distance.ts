@@ -24,6 +24,8 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Duncan: { lat: 48.8071, lng: -123.7160 },
   'Vancouver Island': { lat: 48.4284, lng: -123.3656 },
   Kelowna: { lat: 49.8919, lng: -119.4194 },
+  Vernon: { lat: 50.2801, lng: -119.2749 },
+  'New Westminster': { lat: 49.1977, lng: -122.9366 },
   'Interior BC': { lat: 49.8919, lng: -119.4194 },
   Okanagan: { lat: 49.8919, lng: -119.4194 },
 };
@@ -90,6 +92,16 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
   // Handle Pitt Meadows as proximity to Tri-Cities / Maple Ridge area if requested
   if (lower.includes('pitt')) {
     return { lat: 49.2217, lng: -122.6881 };
+  }
+
+  // Handle New Westminster aliases
+  if (lower.includes('westminster') || lower.includes('new west')) {
+    return LOWER_MAINLAND_PRESETS['New Westminster'];
+  }
+
+  // Handle Vernon / North Okanagan
+  if (lower.includes('vernon')) {
+    return LOWER_MAINLAND_PRESETS['Vernon'];
   }
 
   // Handle Kelowna / Okanagan / Interior BC aliases

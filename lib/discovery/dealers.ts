@@ -275,6 +275,38 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(250) 491-2475',
     websiteUrl: 'https://www.kelownatoyota.com/',
   },
+  {
+    dealerCode: 'vernon-toyota',
+    aliases: ['vernon-toyota', 'vernon toyota'],
+    dealerName: 'Vernon Toyota',
+    sourceCode: 'vernon-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.vernontoyota.com',
+    endpointUrl:
+      'https://www.vernontoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '3401 48 Ave',
+    city: 'Vernon',
+    province: 'BC',
+    postalCode: 'V1T 9B9',
+    phone: '(250) 545-0687',
+    websiteUrl: 'https://www.vernontoyota.com/',
+  },
+  {
+    dealerCode: 'westminster-toyota',
+    aliases: ['westminster-toyota', 'westminster toyota'],
+    dealerName: 'Westminster Toyota',
+    sourceCode: 'westminster-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.westminstertoyota.com',
+    endpointUrl:
+      'https://www.westminstertoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '1050 Boyd St',
+    city: 'New Westminster',
+    province: 'BC',
+    postalCode: 'V3M 6B9',
+    phone: '(604) 520-3333',
+    websiteUrl: 'https://www.westminstertoyota.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -450,7 +482,38 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       continue;
     }
 
-    const edealerMatch = loc.match(/\/inventory\/((?:202\d)-toyota-[a-z0-9-]+)-([A-Za-z0-9]+)vdp\/?$/i);
+    // Vernon pattern: /inventory/New-2027-Toyota-.../12345
+    const vernonMatch = loc.match(/\/inventory\/([A-Za-z]+)-((?:202\d)-Toyota-[A-Za-z0-9-]+)\/(\d+)\/?$/i);
+    if (vernonMatch) {
+      const saleClass = vernonMatch[1];
+      const rawSlug = vernonMatch[2].toLowerCase();
+      const id = vernonMatch[3];
+      const spec = parseToyotaSlugSpec(rawSlug);
+      if (spec) {
+        items.push({
+          ad_id: `VT-${id}`,
+          vehicle_id: `VT-${id}`,
+          vin: null,
+          stock_number: `VT-${id}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: saleClass.toLowerCase() === 'new' ? 'New' : 'Used',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+      continue;
+    }
+
+    const edealerMatch = loc.match(/\/inventory\/((?:202\d)-toyota-[a-z0-9-]+)-([A-Za-z0-9_-]+)vdp\/?$/i);
     if (edealerMatch) {
       const slug = edealerMatch[1];
       const vdpId = edealerMatch[2];
@@ -761,6 +824,10 @@ export async function sweepSingleDealer(
           sitemapUrl = sitemapUrl.replace('granvilletoyota.ca', 'granvilletoyota.com');
         } else if (sitemapUrl.includes('abbotsfordtoyota.com')) {
           sitemapUrl = 'https://openroadtoyotaabbotsford.com/sitemap.xml';
+        } else if (sitemapUrl.includes('westminstertoyota.com')) {
+          sitemapUrl = 'https://www.westminstertoyota.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('vernontoyota.com')) {
+          sitemapUrl = 'https://www.vernontoyota.com/sitemap-vehicles.xml';
         }
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
@@ -775,7 +842,7 @@ export async function sweepSingleDealer(
           clearTimeout(timer);
           if (!res.ok) return [];
           let xmlText = await res.text();
-          const subMatch = xmlText.match(/<loc>([^<]*inventory-listing-sitemap\.xml)<\/loc>/i);
+          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles)[^<]*\.xml)<\/loc>/i);
           if (subMatch) {
             const subController = new AbortController();
             const subTimer = setTimeout(() => subController.abort(), DEFAULT_TIMEOUT_MS);

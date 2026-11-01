@@ -124,6 +124,24 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.kelownatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1935%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-vernon-toyota-convertus',
+    sourceCode: 'vernon-toyota-convertus',
+    dealerId: 'dealer-vernon-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.vernontoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-westminster-toyota-convertus',
+    sourceCode: 'westminster-toyota-convertus',
+    dealerId: 'dealer-westminster-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.westminstertoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**

@@ -221,6 +221,40 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -119.4194,
     enabled: true,
   },
+  // 10. Vernon Toyota (North Okanagan / Interior BC)
+  'vernon-toyota': {
+    id: 'vernon-toyota',
+    name: 'Vernon Toyota',
+    city: 'Vernon',
+    province: 'BC',
+    area: 'Vernon / 48 Ave',
+    adapter: 'convertus',
+    baseUrl: 'https://www.vernontoyota.com',
+    apiEndpoint:
+      'https://www.vernontoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 50.2801,
+    longitude: -119.2749,
+    lat: 50.2801,
+    lng: -119.2749,
+    enabled: true,
+  },
+  // 11. Westminster Toyota (New Westminster / Metro Vancouver)
+  'westminster-toyota': {
+    id: 'westminster-toyota',
+    name: 'Westminster Toyota',
+    city: 'New Westminster',
+    province: 'BC',
+    area: 'Queensborough / Boyd St',
+    adapter: 'convertus',
+    baseUrl: 'https://www.westminstertoyota.com',
+    apiEndpoint:
+      'https://www.westminstertoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.1977,
+    longitude: -122.9366,
+    lat: 49.1977,
+    lng: -122.9366,
+    enabled: true,
+  },
 };
 
 /**
@@ -296,6 +330,23 @@ export function getDealerCoordinates(
     query.includes('abbotsford-toyota')
   ) {
     return { lat: DEALERS['abbotsford-toyota'].lat, lng: DEALERS['abbotsford-toyota'].lng };
+  }
+
+  // Westminster Toyota (New Westminster / Queensborough)
+  if (
+    query.includes('westminster') ||
+    query.includes('westminster-toyota') ||
+    query.includes('new west')
+  ) {
+    return { lat: DEALERS['westminster-toyota'].lat, lng: DEALERS['westminster-toyota'].lng };
+  }
+
+  // Vernon Toyota (North Okanagan / Interior BC)
+  if (
+    query.includes('vernon') ||
+    query.includes('vernon-toyota')
+  ) {
+    return { lat: DEALERS['vernon-toyota'].lat, lng: DEALERS['vernon-toyota'].lng };
   }
 
   // Kelowna Toyota (Interior BC / Okanagan)

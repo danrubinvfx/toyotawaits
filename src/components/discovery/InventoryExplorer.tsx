@@ -433,7 +433,9 @@ export function InventoryExplorer({
       ['Victoria', 'Victoria (Vancouver Island)'],
       ['Duncan', 'Duncan (Vancouver Island)'],
       ['Vancouver Island', 'Vancouver Island'],
+      ['New Westminster', 'New Westminster'],
       ['Kelowna', 'Kelowna (Interior BC / Okanagan)'],
+      ['Vernon', 'Vernon (North Okanagan / Interior BC)'],
       ['Interior BC', 'Interior BC'],
     ]);
     listings.forEach((item) => {
@@ -458,6 +460,10 @@ export function InventoryExplorer({
           ? 'Victoria'
           : lowerDealer.includes('kelowna')
           ? 'Kelowna'
+          : lowerDealer.includes('vernon')
+          ? 'Vernon'
+          : lowerDealer.includes('westminster')
+          ? 'New Westminster'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
@@ -472,8 +478,14 @@ export function InventoryExplorer({
         locMap.set('Duncan', 'Duncan (Vancouver Island)');
       } else if (city.toLowerCase() === 'victoria' || city.toLowerCase().includes('island')) {
         locMap.set('Victoria', 'Victoria (Vancouver Island)');
-      } else if (city.toLowerCase() === 'kelowna' || city.toLowerCase().includes('okanagan') || city.toLowerCase().includes('interior')) {
+      } else if (city.toLowerCase() === 'kelowna') {
         locMap.set('Kelowna', 'Kelowna (Interior BC / Okanagan)');
+      } else if (city.toLowerCase() === 'vernon') {
+        locMap.set('Vernon', 'Vernon (North Okanagan / Interior BC)');
+      } else if (city.toLowerCase() === 'new westminster' || city.toLowerCase().includes('westminster')) {
+        locMap.set('New Westminster', 'New Westminster');
+      } else if (city.toLowerCase().includes('okanagan') || city.toLowerCase().includes('interior')) {
+        locMap.set('Interior BC', 'Interior BC');
       } else if (!locMap.has(city)) {
         locMap.set(city, city);
       }

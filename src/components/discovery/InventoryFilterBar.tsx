@@ -68,7 +68,9 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Victoria', label: 'Victoria (Vancouver Island)' },
   { value: 'Duncan', label: 'Duncan (Vancouver Island)' },
   { value: 'Vancouver Island', label: 'Vancouver Island' },
+  { value: 'New Westminster', label: 'New Westminster' },
   { value: 'Kelowna', label: 'Kelowna (Interior BC / Okanagan)' },
+  { value: 'Vernon', label: 'Vernon (North Okanagan / Interior BC)' },
   { value: 'Interior BC', label: 'Interior BC' },
 ];
 
