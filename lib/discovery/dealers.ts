@@ -6,6 +6,8 @@
  */
 
 import * as crypto from 'crypto';
+import * as http from 'http';
+import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parseConvertusPayload } from './adapters/convertus';
@@ -256,6 +258,22 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'V9L 6C2',
     phone: '(250) 746-5111',
     websiteUrl: 'https://www.jptoyota-duncan.com/',
+  },
+  {
+    dealerCode: 'kelowna-toyota',
+    aliases: ['kelowna-toyota', 'kelowna toyota'],
+    dealerName: 'Kelowna Toyota',
+    sourceCode: 'kelowna-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.kelownatoyota.com',
+    endpointUrl:
+      'https://www.kelownatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1935%26sc%3Dnew%26pc%3D100',
+    address: '1624 Cary Rd',
+    city: 'Kelowna',
+    province: 'BC',
+    postalCode: 'V1X 2B9',
+    phone: '(250) 491-2475',
+    websiteUrl: 'https://www.kelownatoyota.com/',
   },
 ];
 
@@ -567,6 +585,72 @@ export async function seedReferenceEntities(supabase: any, dealerConfig: Registe
   return { sourceId, dealerId };
 }
 
+export function fetchViaHttps(
+  targetUrl: string,
+  timeoutMs: number = DEFAULT_TIMEOUT_MS,
+  maxRedirects: number = 3
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<{ body: any; status: number }> {
+  return new Promise((resolve, reject) => {
+    const timer: NodeJS.Timeout = setTimeout(() => {
+      reject(new Error('Request timeout in https fallback'));
+    }, timeoutMs);
+
+    const makeRequest = (currentUrl: string, redirectsLeft: number) => {
+      if (redirectsLeft < 0) {
+        clearTimeout(timer);
+        return reject(new Error('Too many redirects'));
+      }
+      const client = currentUrl.startsWith('https:') ? https : http;
+      const req = client.get(
+        currentUrl,
+        {
+          headers: {
+            'User-Agent': USER_AGENT_AUDITOR,
+            Accept: 'application/json, text/plain, */*',
+          },
+        },
+        (res) => {
+          if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+            const nextUrl = new URL(res.headers.location, currentUrl).toString();
+            return makeRequest(nextUrl, redirectsLeft - 1);
+          }
+
+          if (res.statusCode === 429) {
+            clearTimeout(timer);
+            return reject(new Error('HTTP 429: Too Many Requests (Rate limited)'));
+          }
+          if (res.statusCode && (res.statusCode < 200 || res.statusCode >= 300)) {
+            clearTimeout(timer);
+            return reject(new Error(`HTTP ${res.statusCode}: ${res.statusMessage}`));
+          }
+
+          let data = '';
+          res.on('data', (chunk) => {
+            data += chunk;
+          });
+          res.on('end', () => {
+            clearTimeout(timer);
+            try {
+              const body = JSON.parse(data);
+              resolve({ body, status: res.statusCode || 200 });
+            } catch (err) {
+              reject(err);
+            }
+          });
+        }
+      );
+
+      req.on('error', (err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+    };
+
+    makeRequest(targetUrl, maxRedirects);
+  });
+}
+
 async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_MS) {
   let attempt = 0;
   let lastError: unknown = null;
@@ -595,6 +679,14 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
       }
 
       if (!res.ok) {
+        if (res.status === 403) {
+          try {
+            const fallback = await fetchViaHttps(currentUrl, timeoutMs);
+            return { body: fallback.body, status: fallback.status, attempts: attempt };
+          } catch {
+            // fallback error ignored, continue to throw HTTP 403
+          }
+        }
         throw new Error(`HTTP ${res.status}: ${res.statusText}`);
       }
 

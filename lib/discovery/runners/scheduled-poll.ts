@@ -10,6 +10,7 @@
  */
 
 import { parseConvertusVmsPayload } from '../adapters/convertus';
+import { fetchViaHttps } from '../dealers';
 import { ingestDealerListings } from '../services/ingestion-service';
 import {
   AdapterParseResult,
@@ -114,6 +115,15 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
     endpointUrl: 'https://www.openroadtoyotarichmond.com/wp-json/convertus/v1/vehicles',
     isActive: true,
   },
+  {
+    sourceId: 'source-kelowna-toyota-convertus',
+    sourceCode: 'kelowna-toyota-convertus',
+    dealerId: 'dealer-kelowna-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.kelownatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1935%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**
@@ -177,6 +187,17 @@ export async function runScheduledSweep(
         }
 
         if (!res.ok) {
+          if (res.status === 403) {
+            try {
+              const fallback = await fetchViaHttps(source.endpointUrl, timeoutMs);
+              responseBody = fallback.body;
+              httpStatus = fallback.status;
+              isSuccess = true;
+              break;
+            } catch {
+              // fallback failed
+            }
+          }
           throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         }
 

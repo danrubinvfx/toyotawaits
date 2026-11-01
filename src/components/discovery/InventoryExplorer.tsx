@@ -433,6 +433,8 @@ export function InventoryExplorer({
       ['Victoria', 'Victoria (Vancouver Island)'],
       ['Duncan', 'Duncan (Vancouver Island)'],
       ['Vancouver Island', 'Vancouver Island'],
+      ['Kelowna', 'Kelowna (Interior BC / Okanagan)'],
+      ['Interior BC', 'Interior BC'],
     ]);
     listings.forEach((item) => {
       const lowerDealer = item.dealerName.toLowerCase();
@@ -454,6 +456,8 @@ export function InventoryExplorer({
           ? 'Duncan'
           : lowerDealer.includes('victoria')
           ? 'Victoria'
+          : lowerDealer.includes('kelowna')
+          ? 'Kelowna'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
@@ -468,6 +472,8 @@ export function InventoryExplorer({
         locMap.set('Duncan', 'Duncan (Vancouver Island)');
       } else if (city.toLowerCase() === 'victoria' || city.toLowerCase().includes('island')) {
         locMap.set('Victoria', 'Victoria (Vancouver Island)');
+      } else if (city.toLowerCase() === 'kelowna' || city.toLowerCase().includes('okanagan') || city.toLowerCase().includes('interior')) {
+        locMap.set('Kelowna', 'Kelowna (Interior BC / Okanagan)');
       } else if (!locMap.has(city)) {
         locMap.set(city, city);
       }

@@ -204,6 +204,23 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -123.7160,
     enabled: true,
   },
+  // 9. Kelowna Toyota (Kelowna / Cary Rd)
+  'kelowna-toyota': {
+    id: 'kelowna-toyota',
+    name: 'Kelowna Toyota',
+    city: 'Kelowna',
+    province: 'BC',
+    area: 'Kelowna / Cary Rd',
+    adapter: 'convertus',
+    baseUrl: 'https://www.kelownatoyota.com',
+    apiEndpoint:
+      'https://www.kelownatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1935%26sc%3Dnew%26pc%3D100',
+    latitude: 49.8919,
+    longitude: -119.4194,
+    lat: 49.8919,
+    lng: -119.4194,
+    enabled: true,
+  },
 };
 
 /**
@@ -279,6 +296,15 @@ export function getDealerCoordinates(
     query.includes('abbotsford-toyota')
   ) {
     return { lat: DEALERS['abbotsford-toyota'].lat, lng: DEALERS['abbotsford-toyota'].lng };
+  }
+
+  // Kelowna Toyota (Interior BC / Okanagan)
+  if (
+    query.includes('kelowna') ||
+    query.includes('kelowna-toyota') ||
+    query.includes('okanagan')
+  ) {
+    return { lat: DEALERS['kelowna-toyota'].lat, lng: DEALERS['kelowna-toyota'].lng };
   }
 
   // Jim Pattison Toyota Duncan (Vancouver Island)
