@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { affiliateSlugSchema } from '@/lib/validations/schemas';
 import { getAffiliateRedirect } from '@/lib/db/affiliates';
 import { createServerClient } from '@/lib/supabase/server';
+import { buildAmazonDeepLinks } from '@/lib/gear/affiliate';
 
 export const dynamic = 'force-dynamic';
 
@@ -143,7 +144,71 @@ export async function GET(
       }
     }
 
-    // 4. Return 307 Temporary Redirect with strict privacy headers
+    // 4. Mobile OS-aware deep-link dispatching for Amazon affiliate destinations
+    const userAgent = request.headers.get('user-agent') || '';
+    const isAndroid = /android/i.test(userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !userAgent.includes('MSStream');
+
+    if (destinationUrl.includes('amazon.')) {
+      const deepLinks = buildAmazonDeepLinks(destinationUrl);
+
+      // Android: Redirect to intent URI with 307 (native app launch or fallback)
+      if (isAndroid) {
+        const androidResponse = NextResponse.redirect(deepLinks.androidIntentUrl, {
+          status: 307,
+        });
+        androidResponse.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+        androidResponse.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        return androidResponse;
+      }
+
+      // iOS: Handle iOS scheme bounce with mobile web fallback
+      if (isIOS) {
+        const acceptHeader = request.headers.get('accept') || '';
+        const shouldBounce =
+          searchParams.get('bounce') !== 'false' &&
+          searchParams.get('direct') !== 'true' &&
+          !acceptHeader.includes('application/json');
+
+        if (shouldBounce) {
+          const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Opening Amazon Shopping...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="2;url=${deepLinks.webUrl}">
+</head>
+<body style="background:#09090b;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;padding:20px;text-align:center;">
+  <div>
+    <p style="font-size:15px;color:#a1a1aa;margin-bottom:12px;">Opening Amazon Shopping app...</p>
+    <a href="${deepLinks.webUrl}" style="color:#f59e0b;font-size:13px;text-decoration:none;">Tap here if you are not redirected</a>
+  </div>
+  <script>
+    var start = Date.now();
+    window.location.href = ${JSON.stringify(deepLinks.iosSchemeUrl)};
+    setTimeout(function() {
+      if (Date.now() - start < 1500) {
+        window.location.href = ${JSON.stringify(deepLinks.webUrl)};
+      }
+    }, 1200);
+  </script>
+</body>
+</html>`;
+
+          return new NextResponse(html, {
+            status: 200,
+            headers: {
+              'Content-Type': 'text/html; charset=utf-8',
+              'Cache-Control': 'no-store, no-cache, must-revalidate',
+              'Referrer-Policy': 'strict-origin-when-cross-origin',
+            },
+          });
+        }
+      }
+    }
+
+    // 5. Return 307 Temporary Redirect with strict privacy headers (desktop & fallback)
     const redirectResponse = NextResponse.redirect(destinationUrl, {
       status: 307,
     });

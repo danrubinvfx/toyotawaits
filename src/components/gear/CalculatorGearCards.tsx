@@ -22,7 +22,12 @@ import {
 } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
-import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import {
+  buildAmazonAffiliateUrl,
+  buildAmazonDeepLinks,
+  type MobileDeepLinkTargets,
+} from '@/lib/gear/affiliate';
+import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 import { resolveGearLocalImage } from '@/data/gear/catalog';
 import { cn } from '@/lib/utils';
 
@@ -668,6 +673,7 @@ export function CalculatorGearCards({
   }, [modelKey, effectiveIsPhev]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const currentMarket = isUs ? 'US' : 'CA';
 
   const handleCopyCode = (code: string, id: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -726,6 +732,18 @@ export function CalculatorGearCards({
         {products.map((prod) => {
           const Icon = prod.icon;
           const affiliateUrl = getAffiliateUrl(prod);
+          const isDirectPartner = prod.destinationType === 'direct_partner';
+          const deepLinkTargets: MobileDeepLinkTargets = buildAmazonDeepLinks({
+            asin: prod.asin,
+            query: prod.searchQuery,
+            searchQuery: prod.searchQuery,
+            market: currentMarket,
+            isUs,
+          });
+          const effectiveWebUrl = isDirectPartner ? affiliateUrl : deepLinkTargets.webUrl;
+          const outboundRel = isDirectPartner
+            ? "sponsored noopener noreferrer"
+            : "sponsored noopener noreferrer nofollow";
 
           return (
             <Card
@@ -734,13 +752,27 @@ export function CalculatorGearCards({
             >
               <CardHeader className="p-3.5 pb-2 space-y-2">
                 {/* Product Image Visual with Graceful Category Icon Fallback */}
-                <CalculatorProductMedia
-                  imageUrl={prod.imageUrl || resolveGearLocalImage(prod.id, prod.category, prod.title)?.imageUrl}
-                  title={prod.title}
-                  Icon={Icon}
-                  iconBg={prod.iconBg}
-                  iconColor={prod.iconColor}
-                />
+                <a
+                  href={effectiveWebUrl}
+                  target="_blank"
+                  rel={outboundRel}
+                  aria-label={`View ${prod.title} on Amazon`}
+                  onClick={(e) => {
+                    handleProductLinkClick(prod);
+                    if (!isDirectPartner) {
+                      handleAmazonNavigation(e, deepLinkTargets);
+                    }
+                  }}
+                  className="block cursor-pointer transition-opacity hover:opacity-90"
+                >
+                  <CalculatorProductMedia
+                    imageUrl={prod.imageUrl || resolveGearLocalImage(prod.id, prod.category, prod.title)?.imageUrl}
+                    title={prod.title}
+                    Icon={Icon}
+                    iconBg={prod.iconBg}
+                    iconColor={prod.iconColor}
+                  />
+                </a>
 
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-[11px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wide">
@@ -764,10 +796,15 @@ export function CalculatorGearCards({
                   </span>
                   <CardTitle className="text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug line-clamp-2">
                     <a
-                      href={affiliateUrl}
+                      href={effectiveWebUrl}
                       target="_blank"
-                      rel={prod.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "sponsored noopener noreferrer nofollow"}
-                      onClick={() => handleProductLinkClick(prod)}
+                      rel={outboundRel}
+                      onClick={(e) => {
+                        handleProductLinkClick(prod);
+                        if (!isDirectPartner) {
+                          handleAmazonNavigation(e, deepLinkTargets);
+                        }
+                      }}
                       className="hover:text-red-600 dark:hover:text-red-400 transition-colors"
                     >
                       {prod.title}
@@ -831,10 +868,15 @@ export function CalculatorGearCards({
                     )}
                   >
                     <a
-                      href={affiliateUrl}
+                      href={effectiveWebUrl}
                       target="_blank"
-                      rel={prod.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "sponsored noopener noreferrer nofollow"}
-                      onClick={() => handleProductLinkClick(prod)}
+                      rel={outboundRel}
+                      onClick={(e) => {
+                        handleProductLinkClick(prod);
+                        if (!isDirectPartner) {
+                          handleAmazonNavigation(e, deepLinkTargets);
+                        }
+                      }}
                     >
                       <span>{prod.buttonText}</span>
                       <ExternalLink className="w-3 h-3 opacity-60" />

@@ -18,11 +18,14 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { MobileDeepLinkTargets } from '@/lib/gear/affiliate';
+import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 
 export interface GearImageProps {
   src?: string;
   alt: string;
   affiliateUrl: string;
+  deepLinkTargets?: MobileDeepLinkTargets;
   fallbackIcon?: string;
   category?: string;
   className?: string;
@@ -179,6 +182,7 @@ export function GearImage({
   src,
   alt,
   affiliateUrl,
+  deepLinkTargets,
   fallbackIcon,
   category,
   className,
@@ -202,13 +206,22 @@ export function GearImage({
 
   const iconType = resolveCategoryIcon(fallbackIcon, category, alt);
 
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (onClick) {
+      onClick(e);
+    }
+    if (!e.defaultPrevented && deepLinkTargets) {
+      handleAmazonNavigation(e, deepLinkTargets);
+    }
+  };
+
   return (
     <a
       href={affiliateUrl}
       target="_blank"
       rel={rel}
       aria-label={ariaLabel || `View ${alt} on Amazon`}
-      onClick={onClick}
+      onClick={handleClick}
       draggable={false}
       className={cn(
         'group cursor-pointer transition-opacity hover:opacity-90 active:opacity-80 block w-full',

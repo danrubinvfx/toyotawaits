@@ -26,11 +26,14 @@ import { getGearMarketConfig, resolveVerifiedGearImageSrc } from '@/data/gear/ca
 import { GearImage } from '@/components/gear/GearImage';
 import {
   buildAmazonAffiliateUrl,
+  buildAmazonDeepLinks,
+  type MobileDeepLinkTargets,
   sanitizeAmazonAffiliateUrl,
   injectActiveModelIntoQuery,
   isAmazonDirectProductUrl,
   getImageLinkAriaLabel,
 } from '@/lib/gear/affiliate';
+import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 
 export interface GearCardItem {
   id: string;
@@ -344,13 +347,31 @@ export function GearCard({
     ? 'sponsored noopener noreferrer'
     : 'sponsored noopener noreferrer nofollow';
 
+  const effectiveSearchQuery = item.searchQuery || config?.searchQuery;
+  const deepLinkTargets: MobileDeepLinkTargets = buildAmazonDeepLinks(
+    amazonAffiliateUrl.startsWith('http')
+      ? amazonAffiliateUrl
+      : {
+          asin: directAsin,
+          asin_ca: item.asin_ca || config?.asin_ca,
+          asin_us: item.asin_us || config?.asin_us,
+          searchQuery: effectiveSearchQuery,
+          query: effectiveSearchQuery,
+          market: activeMarket,
+          isUs: isUsMarket,
+          slug: item.slug,
+        }
+  );
+
+  const effectiveWebUrl = isDirectPartner ? amazonAffiliateUrl : deepLinkTargets.webUrl;
+
   const handleAffiliateClick = () => {
     if (placement) {
       trackAffiliateClick({
         accessory_id: item.id || item.slug,
         placement: placement as any,
         model_context: currentModel || 'RAV4',
-        target_url: amazonAffiliateUrl,
+        target_url: effectiveWebUrl,
       });
     }
   };
@@ -364,6 +385,9 @@ export function GearCard({
     handleAffiliateClick();
     if (isDirectPartner && discountCode) {
       handleCopyCode(discountCode);
+    }
+    if (!isDirectPartner) {
+      handleAmazonNavigation(e, deepLinkTargets);
     }
   };
 
@@ -407,7 +431,8 @@ export function GearCard({
         <GearImage
           src={imageSource}
           alt={item.title}
-          affiliateUrl={amazonAffiliateUrl}
+          affiliateUrl={effectiveWebUrl}
+          deepLinkTargets={!isDirectPartner ? deepLinkTargets : undefined}
           fallbackIcon={fallbackIcon}
           category={item.category}
           ariaLabel={imageAriaLabel}
@@ -525,14 +550,17 @@ export function GearCard({
           )}
         >
           <a
-            href={amazonAffiliateUrl}
+            href={effectiveWebUrl}
             target="_blank"
             rel={outboundRel}
             draggable={false}
-            onClick={() => {
+            onClick={(e) => {
               handleAffiliateClick();
               if (isDirectPartner && discountCode) {
                 handleCopyCode(discountCode);
+              }
+              if (!isDirectPartner) {
+                handleAmazonNavigation(e, deepLinkTargets);
               }
             }}
           >

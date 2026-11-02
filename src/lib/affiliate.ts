@@ -95,3 +95,8 @@ export const AFFILIATE_LINKS = {
     process.env.NEXT_PUBLIC_AFFILIATE_BRAKE_CONTROLLER ||
     'https://www.amazon.com/s?k=CURT+51180+Echo+Mobile+Electric+Trailer+Brake+Controller&tag=toyotawaits07-20',
 } as const;
+
+export {
+  buildAmazonDeepLinks,
+  type MobileDeepLinkTargets,
+} from '@/lib/gear/affiliate';

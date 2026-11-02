@@ -272,3 +272,57 @@ export function buildAmazonAffiliateUrl(
   const cleanQuery = encodeURIComponent((query || searchQuery || 'Toyota accessories').trim());
   return `${domain}/s?k=${cleanQuery}&tag=${tag}`;
 }
+
+export interface MobileDeepLinkTargets {
+  webUrl: string;
+  iosSchemeUrl: string;
+  androidIntentUrl: string;
+}
+
+export function buildAmazonDeepLinks(params: any): MobileDeepLinkTargets {
+  if (typeof params === 'string' && (params.startsWith('http://') || params.startsWith('https://'))) {
+    try {
+      const parsed = new URL(params);
+      const domain = parsed.hostname.replace(/^www\./, '');
+      const pathWithQuery = parsed.pathname.replace(/^\//, '') + parsed.search;
+      const webUrl = params;
+      const iosSchemeUrl = 'com.amazon.mobile.shopping.web://' + domain + '/' + pathWithQuery;
+      const androidIntentUrl =
+        'intent://' +
+        domain +
+        '/' +
+        pathWithQuery +
+        '#Intent;scheme=com.amazon.mobile.shopping.web;package=com.amazon.mShop.android.shopping;S.browser_fallback_url=' +
+        encodeURIComponent(webUrl) +
+        ';end';
+      return { webUrl, iosSchemeUrl, androidIntentUrl };
+    } catch {
+      // fallback
+    }
+  }
+
+  const isUS = params?.market === 'US' || params?.isUs === true;
+  const domain = isUS ? 'amazon.com' : 'amazon.ca';
+  const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
+  const rawAsin = isUS ? (params?.asin_us || params?.asin) : (params?.asin_ca || params?.asin);
+  const activeAsin = typeof rawAsin === 'string' ? rawAsin.trim().toUpperCase() : undefined;
+  let pathWithQuery = '';
+  if (activeAsin && /^[A-Z0-9]{10}$/.test(activeAsin)) {
+    pathWithQuery = 'dp/' + activeAsin + '?tag=' + tag;
+  } else {
+    const rawQuery = params?.query || params?.searchQuery || 'Toyota accessories';
+    const cleanQuery = encodeURIComponent(typeof rawQuery === 'string' ? rawQuery.trim() : 'Toyota accessories');
+    pathWithQuery = 's?k=' + cleanQuery + '&tag=' + tag;
+  }
+  const webUrl = 'https://www.' + domain + '/' + pathWithQuery;
+  const iosSchemeUrl = 'com.amazon.mobile.shopping.web://' + domain + '/' + pathWithQuery;
+  const androidIntentUrl =
+    'intent://' +
+    domain +
+    '/' +
+    pathWithQuery +
+    '#Intent;scheme=com.amazon.mobile.shopping.web;package=com.amazon.mShop.android.shopping;S.browser_fallback_url=' +
+    encodeURIComponent(webUrl) +
+    ';end';
+  return { webUrl, iosSchemeUrl, androidIntentUrl };
+}
