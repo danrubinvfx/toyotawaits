@@ -8,25 +8,27 @@ export const revalidate = 60;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',
+  title: 'Canadian Toyota Winter Prep Guide (2026/2027) | Battery, Liners & Tire Mandates',
   description:
-    'Model-by-model winter survival advice for Canadian Toyota owners: 12V hybrid jump procedures, salt defense liners, and cold-weather gear.',
+    'Essential winter prep for Canadian Toyota owners: BC highway tire laws, Quebec Dec 1 deadlines, hybrid 12V AGM auxiliary battery care, and laser-fit liners.',
   keywords: [
-    'toyota winter prep canada',
+    'canadian toyota winter prep guide 2026 2027',
+    'bc highway tire laws winter 3pmsf',
+    'quebec dec 1 winter tire deadline',
+    'hybrid 12v agm auxiliary battery care',
     'toyota hybrid cold weather start',
-    'toyota 12v jump point',
-    'rav4 hybrid winter floor mats',
+    'toyota 12v jump point fuse box',
+    'rav4 hybrid winter floor mats tuxmat',
     'tuxmat hybrid battery vent clearance',
-    'canadian toyota cold start',
-    'prius prime sub zero heating',
+    'prius prime sub zero heat pump',
   ],
   alternates: {
     canonical: 'https://www.toyotawaits.ca/winter-prep',
   },
   openGraph: {
-    title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',
+    title: 'Canadian Toyota Winter Prep Guide (2026/2027) | Battery, Liners & Tire Mandates',
     description:
-      'Model-by-model winter survival advice for Canadian Toyota owners: 12V hybrid jump procedures, salt defense liners, and cold-weather gear.',
+      'Essential winter prep for Canadian Toyota owners: BC highway tire laws, Quebec Dec 1 deadlines, hybrid 12V AGM auxiliary battery care, and laser-fit liners.',
     url: 'https://www.toyotawaits.ca/winter-prep',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -34,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Canadian Winter Delivery & Prep Guide | ToyotaWaits.ca',
+    title: 'Canadian Toyota Winter Prep Guide (2026/2027) | Battery, Liners & Tire Mandates',
     description:
-      'Model-by-model winter survival advice for Canadian Toyota owners: 12V hybrid jump procedures, salt defense liners, and cold-weather gear.',
+      'Essential winter prep for Canadian Toyota owners: BC highway tire laws, Quebec Dec 1 deadlines, hybrid 12V AGM auxiliary battery care, and laser-fit liners.',
   },
 };
 

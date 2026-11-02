@@ -30,6 +30,7 @@ import {
   Calendar,
   CheckCircle2,
   Calculator,
+  Snowflake,
 } from 'lucide-react';
 
 export const revalidate = 3600; // ISR: revalidate at most once per hour
@@ -689,6 +690,43 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         </Card>
       </section>
+
+      {/* Seasonal Canadian Winter Delivery Alert Banner */}
+      {['rav4', 'sienna', 'camry', 'grand-highlander'].includes(modelConfig.slug) && (
+        <section
+          aria-label="Seasonal Canadian Winter Delivery Alert"
+          data-testid="seasonal-winter-delivery-banner"
+        >
+          <div className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 via-zinc-900/60 to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-xs font-semibold text-cyan-400">
+                  <Snowflake className="h-3.5 w-3.5" />
+                  <span>Seasonal Canadian Delivery Alert &bull; 2026/2027</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Taking winter delivery?
+                </h3>
+                <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                  Taking winter delivery? Check factory OEM tire specs, 17-inch downsizing guides, and BC/Quebec winter tire compliance.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-cyan-600 hover:bg-cyan-500 text-white font-bold shadow-sm">
+                  <Link href="/tires" className="gap-2">
+                    <span>Tire Fitment Guide &rarr;</span>
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/10 font-bold shadow-sm">
+                  <Link href="/winter-prep" className="gap-2">
+                    <span>Winter Prep Checklist &rarr;</span>
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Contextual Calculator Teaser Callout Banner */}
       {['rav4', 'sienna', 'camry'].includes(modelConfig.slug) && (

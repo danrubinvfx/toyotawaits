@@ -18,6 +18,7 @@ export interface WinterRecommendedProduct {
   benefit: string;
   url: string;
   slug?: string;
+  asin?: string;
   badge: 'Essential' | 'Top Pick' | 'Recommended';
 }
 
@@ -90,7 +91,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Delivers the 12V auxiliary surge needed to close hybrid starter relays. Operating range: -20°C to +50°C (device temperature, not outdoor air) — store indoors in extreme cold. Follow your vehicle owner\'s manual and the NOCO manual for the correct 12V jump procedure.',
-        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
+        asin: 'B015TKUPIC',
+        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -106,7 +108,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'TuxMat Custom High-Wall Floor Liners (RAV4)',
         benefit:
           'Maximum edge-to-edge carpet and salt crust protection precision-cut to maintain 100% rear seat battery vent intake clearance.',
-        url: 'https://www.amazon.ca/s?k=TuxMat+Toyota+RAV4+custom+all+weather+floor+mats&tag=toyotawaits-20',
+        asin: 'B0833DT93B',
+        url: 'https://www.amazon.ca/dp/B0833DT93B?tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },
@@ -251,7 +254,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'NOCO Boost Plus GB40 (or GBX45 for extreme cold)',
         benefit:
           'Compact glove box lithium starter that wakes up hybrid power computers even when power sliding doors and hatch latches freeze.',
-        url: 'https://www.amazon.ca/s?k=NOCO+Boost+Plus+GB40+1000A+UltraSafe+jump+starter&tag=toyotawaits-20',
+        asin: 'B015TKUPIC',
+        url: 'https://www.amazon.ca/dp/B015TKUPIC?tag=toyotawaits-20',
         badge: 'Essential',
       },
     },
@@ -267,7 +271,8 @@ export const WINTER_PREP_DATA: Record<WinterModelKey, ModelWinterConfig> = {
         title: 'TuxMat Custom Floor Liners (Sienna 7/8 Passenger)',
         benefit:
           'Tailored rail-channel seals that keep corrosive slush out of Super-Long-Slide tracks while leaving front passenger battery vents free.',
-        url: 'https://www.amazon.ca/s?k=TuxMat+Toyota+Sienna&tag=toyotawaits-20',
+        asin: 'B0CFV5R8QM',
+        url: 'https://www.amazon.ca/dp/B0CFV5R8QM?tag=toyotawaits-20',
         badge: 'Top Pick',
       },
     },

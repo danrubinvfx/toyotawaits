@@ -241,6 +241,25 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     ghRender.unmount();
   });
 
+  it('renders the seasonal Canadian winter delivery alert banner with tire and winter-prep cross-links', async () => {
+    const rav4Jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'rav4' }),
+    });
+    const { getByTestId, getByRole, unmount } = render(rav4Jsx);
+
+    const banner = getByTestId('seasonal-winter-delivery-banner');
+    expect(banner).toBeInTheDocument();
+    expect(banner).toHaveTextContent(/Taking winter delivery\? Check factory OEM tire specs/i);
+
+    const tireLink = getByRole('link', { name: /Tire Fitment Guide →/i });
+    expect(tireLink).toHaveAttribute('href', '/tires');
+
+    const prepLink = getByRole('link', { name: /Winter Prep Checklist →/i });
+    expect(prepLink).toHaveAttribute('href', '/winter-prep');
+
+    unmount();
+  });
+
   it('triggers notFound() when an invalid slug is requested', async () => {
     await expect(
       ModelWaitTimePage({
