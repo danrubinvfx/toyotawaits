@@ -50,7 +50,7 @@ describe('GET /api/ticker Endpoint (4-Stream Interleaved Feed)', () => {
     expect(response.status).toBe(200);
 
     const cacheControl = response.headers.get('Cache-Control');
-    expect(cacheControl).toBe('public, s-maxage=60, stale-while-revalidate=120');
+    expect(cacheControl).toBe('public, s-maxage=120, stale-while-revalidate=600');
 
     const data = await response.json();
     expect(data.success).toBe(true);

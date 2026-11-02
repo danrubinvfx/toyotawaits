@@ -24,11 +24,9 @@ import {
   ClipboardCheck,
   Zap,
 } from 'lucide-react';
-import { headers } from 'next/headers';
 import { Hero } from '@/components/Hero';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 60;
+export const revalidate = 1800; // ISR for 30 minutes
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
@@ -76,11 +74,11 @@ export const metadata: Metadata = {
   },
 };
 
+
+
 export default async function HomePage() {
-  const headersList = await headers();
-  const region = headersList.get('x-region') === 'US' ? 'US' : 'CA';
-  const submissions = await getCommunitySubmissions(region).catch(() => []);
-  const tickerItems = await getTickerItems(16, region).catch(() => []);
+  const submissions = await getCommunitySubmissions('CA', { revalidate: 1800, tags: ['submissions'] }).catch(() => []);
+  const tickerItems = await getTickerItems(16, 'CA').catch(() => []);
 
   return (
     <div className="pb-16">
@@ -106,8 +104,8 @@ export default async function HomePage() {
         {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
         <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-4 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white">
           <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6">
-            {/* Tight Header */}
-            <Hero initialMarket={region} />
+            {/* Tight Header with Suspense for Regional Geolocation */}
+            <Hero initialMarket="CA" />
 
             {/* Estimator Container immediately below header */}
             <div className="mt-2">

@@ -5,7 +5,12 @@ import { VehicleListingCardProps } from '@/components/discovery/VehicleListingCa
 import { evaluateListingLifecycle } from '../../../../lib/discovery/services/lifecycle-service';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
+
+const EDGE_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+};
 
 export async function GET(request?: Request) {
   let isSummary = false;
@@ -75,17 +80,20 @@ export async function GET(request?: Request) {
   if (!isLiveSupabaseConfigured()) {
     const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
     const countsByModel = getFallbackCounts();
-    return NextResponse.json({
-      success: true,
-      count: freshSampleListings.length,
-      countsByModel,
-      ...(isSummary ? {} : { listings: freshSampleListings }),
-      source: 'sample_fallback',
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: freshSampleListings.length,
+        countsByModel,
+        ...(isSummary ? {} : { listings: freshSampleListings }),
+        source: 'sample_fallback',
+      },
+      { headers: EDGE_CACHE_HEADERS }
+    );
   }
 
   try {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ revalidate: 120, tags: ['inventory'] });
     const cutoffIso = new Date(cutoffTime).toISOString();
 
     const selectClause = `
@@ -247,13 +255,16 @@ export async function GET(request?: Request) {
       }
     });
 
-    return NextResponse.json({
-      success: true,
-      count: mappedListings.length,
-      countsByModel,
-      ...(isSummary ? {} : { listings: mappedListings }),
-      source: 'supabase_dealer_listings',
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: mappedListings.length,
+        countsByModel,
+        ...(isSummary ? {} : { listings: mappedListings }),
+        source: 'supabase_dealer_listings',
+      },
+      { headers: EDGE_CACHE_HEADERS }
+    );
   } catch (err) {
     console.error('[/api/inventory] Unexpected catch error:', err);
     return NextResponse.json({

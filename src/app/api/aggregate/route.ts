@@ -6,6 +6,12 @@ import { ACTIVE_TRACKED_MODELS } from '@/lib/db/stats';
 
 export const dynamic = 'force-dynamic';
 
+const EDGE_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+};
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
@@ -99,11 +105,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 200,
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-          'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-          'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-        },
+        headers: EDGE_CACHE_HEADERS,
       }
     );
   } catch (error: any) {

@@ -221,7 +221,7 @@ export async function getAggregateStats(
   // across ALL trims (when trim is omitted, empty, or 'all') so counts and medians match the public log.
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient();
+      const supabase = createServerClient({ revalidate: 120, tags: ['aggregate', 'submissions'] });
       let query = supabase
         .from('submissions')
         .select(`

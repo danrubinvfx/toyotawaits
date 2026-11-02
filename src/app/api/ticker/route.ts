@@ -5,6 +5,12 @@ import { TickerItem } from '@/types/ticker';
 
 export const dynamic = 'force-dynamic';
 
+const EDGE_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+};
+
 export async function GET(request?: NextRequest) {
   try {
     let limit = 16;
@@ -39,9 +45,7 @@ export async function GET(request?: NextRequest) {
       },
       {
         status: 200,
-        headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120',
-        },
+        headers: EDGE_CACHE_HEADERS,
       }
     );
   } catch (error: any) {

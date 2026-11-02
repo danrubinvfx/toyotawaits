@@ -339,7 +339,7 @@ export async function getInventoryTickerItems(limit = 5): Promise<TickerItem[]> 
   const effectiveLimit = Math.max(1, Math.min(limit, 10));
 
   try {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ revalidate: 1800, tags: ['inventory', 'ticker'] });
     const { data: listingsData, error } = await supabase
       .from('discovery_listings')
       .select('id, year, model, trim, exterior_color, dealer_name, dealer_city, vin, status, updated_at')
@@ -383,7 +383,7 @@ export async function getDeliveryTickerItems(
   const effectiveLimit = Math.max(1, Math.min(limit, 10));
 
   try {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ revalidate: 1800, tags: ['submissions', 'ticker'] });
     let query = supabase
       .from('submissions')
       .select(`

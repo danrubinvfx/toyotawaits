@@ -31,7 +31,7 @@ export async function getNewsWireItems(limit = 10): Promise<NewsTickerItem[]> {
   const effectiveLimit = Math.max(1, Math.min(limit, 20));
 
   try {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ revalidate: 1800, tags: ['news_wire', 'ticker'] });
     const { data, error } = await supabase
       .from('news_wire')
       .select('id, created_at, url, headline, category')
@@ -85,7 +85,7 @@ export async function getDeliveredMilestones(
   const effectiveLimit = Math.max(1, Math.min(limit, 20));
 
   try {
-    const supabase = createServerClient();
+    const supabase = createServerClient({ revalidate: 1800, tags: ['submissions', 'ticker'] });
     let query = supabase
       .from('submissions')
       .select(`
