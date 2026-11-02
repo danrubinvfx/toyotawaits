@@ -83,7 +83,7 @@ Usage:
 
 Options:
   --dealer=<code|alias|all>  Specify target dealer (default: jptoyota-downtown)
-                             Supported: jptoyota-downtown, jptoyota-surrey, jptoyota-northshore, destination-toyota-burnaby, west-coast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, granville-toyota, valley-toyota, abbotsford-toyota, jptoyota-victoria, jptoyota-duncan, kelowna-toyota, vernon-toyota, westminster-toyota, all
+                             Supported: jptoyota-downtown, jptoyota-surrey, jptoyota-northshore, destination-toyota-burnaby, west-coast-toyota, regency-toyota, openroad-toyota-richmond, openroad-toyota-port-moody, granville-toyota, valley-toyota, abbotsford-toyota, jptoyota-victoria, jptoyota-duncan, kelowna-toyota, vernon-toyota, westminster-toyota, openroad-toyota-peace-arch, langley-toyota, nanaimo-toyota, all
   --all                      Sweep all registered active pilot dealers sequentially
   --dry-run                  Execute sweep, parse and validate without persisting to Supabase
   --fixture                  Use local offline fixture instead of fetching live endpoint

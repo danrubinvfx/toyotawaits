@@ -11,6 +11,7 @@ import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parseConvertusPayload } from './adapters/convertus';
+import { fetchGoAutoInventory, LANGLEY_CRAFT_SITE_ID } from './adapters/goauto';
 import { ingestDealerListings } from './services/ingestion-service';
 import {
   AlertDispatchVehicle,
@@ -307,6 +308,54 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(604) 520-3333',
     websiteUrl: 'https://www.westminstertoyota.com/',
   },
+  {
+    dealerCode: 'openroad-toyota-peace-arch',
+    aliases: ['openroad-toyota-peace-arch', 'openroad peace arch', 'peace arch toyota'],
+    dealerName: 'OpenRoad Toyota Peace Arch',
+    sourceCode: 'openroad-toyota-peace-arch-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://openroadtoyotapeacearch.com',
+    endpointUrl:
+      'https://openroadtoyotapeacearch.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '3174 King George Boulevard',
+    city: 'Surrey',
+    province: 'BC',
+    postalCode: 'V4P 1A2',
+    phone: '(604) 531-2916',
+    websiteUrl: 'https://openroadtoyotapeacearch.com/',
+  },
+  {
+    dealerCode: 'langley-toyota',
+    aliases: ['langley-toyota', 'langley toyota'],
+    dealerName: 'Langley Toyota',
+    sourceCode: 'langley-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.langleytoyota.com',
+    endpointUrl:
+      'https://www.langleytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '20622 Langley Bypass',
+    city: 'Langley',
+    province: 'BC',
+    postalCode: 'V3A 5E7',
+    phone: '(604) 530-3156',
+    websiteUrl: 'https://www.langleytoyota.com/',
+  },
+  {
+    dealerCode: 'nanaimo-toyota',
+    aliases: ['nanaimo-toyota', 'nanaimo toyota'],
+    dealerName: 'Nanaimo Toyota',
+    sourceCode: 'nanaimo-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.nanaimotoyota.com',
+    endpointUrl:
+      'https://www.nanaimotoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '2487 Bowen Road',
+    city: 'Nanaimo',
+    province: 'BC',
+    postalCode: 'V9T 3L2',
+    phone: '(250) 758-9103',
+    websiteUrl: 'https://www.nanaimotoyota.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -568,6 +617,37 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
           image: imgLoc,
         });
       }
+      continue;
+    }
+
+    // Nanaimo pattern: /new/inventory/2026-Toyota-4Runner-id14454878.html
+    const nanaimoMatch = loc.match(/\/new\/inventory\/((?:202\d)-Toyota-[A-Za-z0-9-]+)-id(\d+)\.html/i);
+    if (nanaimoMatch) {
+      const rawSlug = nanaimoMatch[1].toLowerCase();
+      const id = nanaimoMatch[2];
+      const spec = parseToyotaSlugSpec(rawSlug);
+      if (spec) {
+        items.push({
+          ad_id: `NAN-${id}`,
+          vehicle_id: `NAN-${id}`,
+          vin: null,
+          stock_number: `NAN-${id}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: 'New',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+      continue;
     }
   }
 
@@ -814,6 +894,23 @@ export async function sweepSingleDealer(
         'convertus-vms-sample.json'
       );
       rawPayload = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
+    } else if (dealerConfig.dealerCode === 'langley-toyota') {
+      const goAutoData = await fetchGoAutoInventory(LANGLEY_CRAFT_SITE_ID, { page: 1, limit: 100 });
+      rawPayload = {
+        summary: { total_vehicles: goAutoData.total },
+        results: goAutoData.items,
+      };
+      if (goAutoData.total > 100) {
+        let currentPage = 2;
+        const maxPages = Math.ceil(goAutoData.total / 100);
+        while (rawPayload.results.length < goAutoData.total && currentPage <= maxPages) {
+          await new Promise((r) => setTimeout(r, 1500));
+          const nextBatch = await fetchGoAutoInventory(LANGLEY_CRAFT_SITE_ID, { page: currentPage, limit: 100 });
+          if (!nextBatch.items.length) break;
+          rawPayload.results.push(...nextBatch.items);
+          currentPage++;
+        }
+      }
     } else {
       const initialUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, 1, 100);
       let cachedSitemapItems: Array<Record<string, unknown>> | null = null;
@@ -828,6 +925,8 @@ export async function sweepSingleDealer(
           sitemapUrl = 'https://www.westminstertoyota.com/inventory-listing-sitemap.xml';
         } else if (sitemapUrl.includes('vernontoyota.com')) {
           sitemapUrl = 'https://www.vernontoyota.com/sitemap-vehicles.xml';
+        } else if (sitemapUrl.includes('nanaimotoyota.com')) {
+          sitemapUrl = 'https://www.nanaimotoyota.com/en/sitemap_newinventory.xml';
         }
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
@@ -842,7 +941,7 @@ export async function sweepSingleDealer(
           clearTimeout(timer);
           if (!res.ok) return [];
           let xmlText = await res.text();
-          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles)[^<]*\.xml)<\/loc>/i);
+          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory)[^<]*\.xml)<\/loc>/i);
           if (subMatch) {
             const subController = new AbortController();
             const subTimer = setTimeout(() => subController.abort(), DEFAULT_TIMEOUT_MS);
@@ -862,7 +961,49 @@ export async function sweepSingleDealer(
               clearTimeout(subTimer);
             }
           }
-          return parsePublicSitemapToConvertusItems(xmlText);
+          const parsedItems = parsePublicSitemapToConvertusItems(xmlText);
+          if (baseUrl.includes('nanaimotoyota.com')) {
+            try {
+              const searchRes = await fetch('https://www.nanaimotoyota.com/new/inventory/search.html', {
+                headers: { 'User-Agent': USER_AGENT_AUDITOR },
+              });
+              if (searchRes.ok) {
+                const searchHtml = await searchRes.text();
+                const jsonLd = [...searchHtml.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)].map(m => m[1]);
+                const vinMap = new Map<string, { vin?: string; image?: string; price?: number }>();
+                for (const ld of jsonLd) {
+                  if (ld.includes('vehicleIdentificationNumber')) {
+                    try {
+                      const parsed = JSON.parse(ld);
+                      if (parsed.sku && parsed.vehicleIdentificationNumber) {
+                        vinMap.set(String(parsed.sku), {
+                          vin: parsed.vehicleIdentificationNumber,
+                          image: Array.isArray(parsed.image) ? parsed.image[0] : parsed.image,
+                          price: parsed.offers?.price,
+                        });
+                      }
+                    } catch {}
+                  }
+                }
+                for (const item of parsedItems) {
+                  const rawId = String(item.ad_id || '').replace(/^NAN-/, '');
+                  const extra = vinMap.get(rawId);
+                  if (extra) {
+                    if (extra.vin) item.vin = extra.vin;
+                    if (extra.image) item.image = extra.image;
+                    if (extra.price) {
+                      item.msrp = extra.price;
+                      item.asking_price = extra.price;
+                      item.final_price = extra.price;
+                    }
+                  }
+                }
+              }
+            } catch {
+              // best-effort enrichment
+            }
+          }
+          return parsedItems;
         } catch {
           clearTimeout(timer);
           return [];

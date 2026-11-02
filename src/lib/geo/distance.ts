@@ -14,12 +14,15 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Vancouver: { lat: 49.2827, lng: -123.1207 },
   Burnaby: { lat: 49.2488, lng: -122.9805 },
   Surrey: { lat: 49.1913, lng: -122.8490 },
+  'South Surrey / White Rock': { lat: 49.0601, lng: -122.8123 },
+  'White Rock': { lat: 49.0601, lng: -122.8123 },
   Richmond: { lat: 49.1666, lng: -123.1336 },
   'Coquitlam / Tri-Cities': { lat: 49.2838, lng: -122.7932 },
   'Port Moody': { lat: 49.2772, lng: -122.8366 },
-  Langley: { lat: 49.1042, lng: -122.6604 },
+  Langley: { lat: 49.1128, lng: -122.6517 },
   Abbotsford: { lat: 49.0504, lng: -122.3045 },
   Chilliwack: { lat: 49.1628, lng: -121.9589 },
+  Nanaimo: { lat: 49.1912, lng: -123.9782 },
   Victoria: { lat: 48.4284, lng: -123.3656 },
   Duncan: { lat: 48.8071, lng: -123.7160 },
   'Vancouver Island': { lat: 48.4284, lng: -123.3656 },
@@ -82,6 +85,21 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
     ) {
       return coords;
     }
+  }
+
+  // Handle South Surrey / White Rock aliases
+  if (lower.includes('white rock') || lower.includes('peace arch') || lower.includes('south surrey')) {
+    return LOWER_MAINLAND_PRESETS['South Surrey / White Rock'];
+  }
+
+  // Handle Langley
+  if (lower.includes('langley')) {
+    return LOWER_MAINLAND_PRESETS['Langley'];
+  }
+
+  // Handle Nanaimo
+  if (lower.includes('nanaimo')) {
+    return LOWER_MAINLAND_PRESETS['Nanaimo'];
   }
 
   // Handle Port Moody and Tri-Cities aliases

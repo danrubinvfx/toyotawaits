@@ -442,12 +442,18 @@ export function InventoryExplorer({
       const lowerDealer = item.dealerName.toLowerCase();
       const city =
         item.dealerCity ||
-        (lowerDealer.includes('surrey')
+        (lowerDealer.includes('peace arch') || lowerDealer.includes('white rock')
+          ? 'South Surrey / White Rock'
+          : lowerDealer.includes('surrey')
           ? 'Surrey'
           : lowerDealer.includes('west coast')
           ? 'Pitt Meadows'
           : lowerDealer.includes('port moody') || lowerDealer.includes('port-moody')
           ? 'Port Moody'
+          : lowerDealer.includes('langley')
+          ? 'Langley'
+          : lowerDealer.includes('nanaimo')
+          ? 'Nanaimo'
           : lowerDealer.includes('richmond') || lowerDealer.includes('openroad')
           ? 'Richmond'
           : lowerDealer.includes('valley') || lowerDealer.includes('chilliwack')
@@ -468,8 +474,14 @@ export function InventoryExplorer({
 
       if (city.toLowerCase() === 'vancouver') {
         locMap.set('Vancouver', 'Vancouver (Downtown)');
+      } else if (city.toLowerCase().includes('white rock') || city.toLowerCase().includes('peace arch')) {
+        locMap.set('South Surrey / White Rock', 'South Surrey / White Rock');
       } else if (city.toLowerCase() === 'surrey') {
         locMap.set('Surrey', 'Surrey (Guildford)');
+      } else if (city.toLowerCase() === 'langley') {
+        locMap.set('Langley', 'Langley');
+      } else if (city.toLowerCase() === 'nanaimo') {
+        locMap.set('Nanaimo', 'Nanaimo (Vancouver Island)');
       } else if (city.toLowerCase() === 'richmond') {
         locMap.set('Richmond', 'Richmond');
       } else if (city.toLowerCase() === 'pitt meadows' || city.toLowerCase().includes('pitt')) {

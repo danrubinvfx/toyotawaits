@@ -255,6 +255,57 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -122.9366,
     enabled: true,
   },
+  // 12. OpenRoad Toyota Peace Arch (South Surrey / White Rock)
+  'openroad-toyota-peace-arch': {
+    id: 'openroad-toyota-peace-arch',
+    name: 'OpenRoad Toyota Peace Arch',
+    city: 'Surrey',
+    province: 'BC',
+    area: 'South Surrey / White Rock',
+    adapter: 'convertus',
+    baseUrl: 'https://openroadtoyotapeacearch.com',
+    apiEndpoint:
+      'https://openroadtoyotapeacearch.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.0601,
+    longitude: -122.8123,
+    lat: 49.0601,
+    lng: -122.8123,
+    enabled: true,
+  },
+  // 13. Langley Toyota (Fraser Valley / Langley Bypass)
+  'langley-toyota': {
+    id: 'langley-toyota',
+    name: 'Langley Toyota',
+    city: 'Langley',
+    province: 'BC',
+    area: 'Langley Bypass / Fraser Valley',
+    adapter: 'goauto',
+    baseUrl: 'https://www.langleytoyota.com',
+    apiEndpoint:
+      'https://www.langleytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.1128,
+    longitude: -122.6517,
+    lat: 49.1128,
+    lng: -122.6517,
+    enabled: true,
+  },
+  // 14. Nanaimo Toyota (Central Vancouver Island)
+  'nanaimo-toyota': {
+    id: 'nanaimo-toyota',
+    name: 'Nanaimo Toyota',
+    city: 'Nanaimo',
+    province: 'BC',
+    area: 'Central Vancouver Island',
+    adapter: 'convertus',
+    baseUrl: 'https://www.nanaimotoyota.com',
+    apiEndpoint:
+      'https://www.nanaimotoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 49.1912,
+    longitude: -123.9782,
+    lat: 49.1912,
+    lng: -123.9782,
+    enabled: true,
+  },
 };
 
 /**
@@ -271,6 +322,42 @@ export function getDealerCoordinates(
   if (dealerName && DEALERS[dealerName.toLowerCase()]) {
     const d = DEALERS[dealerName.toLowerCase()];
     return { lat: d.lat, lng: d.lng };
+  }
+
+  // OpenRoad Toyota Peace Arch (South Surrey / White Rock) — check before generic 'openroad' and 'surrey'
+  if (
+    query.includes('peace arch') ||
+    query.includes('peacearch') ||
+    query.includes('openroad-toyota-peace-arch') ||
+    query.includes('white rock') ||
+    query.includes('south surrey')
+  ) {
+    return {
+      lat: DEALERS['openroad-toyota-peace-arch'].lat,
+      lng: DEALERS['openroad-toyota-peace-arch'].lng,
+    };
+  }
+
+  // Langley Toyota (Fraser Valley / Langley Bypass)
+  if (
+    query.includes('langley') ||
+    query.includes('langley-toyota')
+  ) {
+    return {
+      lat: DEALERS['langley-toyota'].lat,
+      lng: DEALERS['langley-toyota'].lng,
+    };
+  }
+
+  // Nanaimo Toyota (Vancouver Island)
+  if (
+    query.includes('nanaimo') ||
+    query.includes('nanaimo-toyota')
+  ) {
+    return {
+      lat: DEALERS['nanaimo-toyota'].lat,
+      lng: DEALERS['nanaimo-toyota'].lng,
+    };
   }
 
   // Regency Toyota (Vancouver / Kingsway) — check before generic 'vancouver'

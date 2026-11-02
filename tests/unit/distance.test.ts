@@ -87,7 +87,15 @@ describe('Geo Distance & Preset Utilities', () => {
         lat: 49.2838,
         lng: -122.7932,
       });
-      expect(getPresetCoordinates('Langley')).toEqual({ lat: 49.1042, lng: -122.6604 });
+      expect(getPresetCoordinates('Langley')).toEqual({ lat: 49.1128, lng: -122.6517 });
+      expect(getPresetCoordinates('South Surrey / White Rock')).toEqual({
+        lat: 49.0601,
+        lng: -122.8123,
+      });
+      expect(getPresetCoordinates('Nanaimo')).toEqual({
+        lat: 49.1912,
+        lng: -123.9782,
+      });
       expect(getPresetCoordinates('Abbotsford')).toEqual({ lat: 49.0504, lng: -122.3045 });
       expect(getPresetCoordinates('Chilliwack')).toEqual({ lat: 49.1628, lng: -121.9589 });
     });
@@ -116,6 +124,18 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getDealerCoordinates('openroad-toyota-richmond')).toEqual({
         lat: 49.1711,
         lng: -123.0722,
+      });
+      expect(getDealerCoordinates('openroad-toyota-peace-arch')).toEqual({
+        lat: 49.0601,
+        lng: -122.8123,
+      });
+      expect(getDealerCoordinates('langley-toyota')).toEqual({
+        lat: 49.1128,
+        lng: -122.6517,
+      });
+      expect(getDealerCoordinates('nanaimo-toyota')).toEqual({
+        lat: 49.1912,
+        lng: -123.9782,
       });
     });
 

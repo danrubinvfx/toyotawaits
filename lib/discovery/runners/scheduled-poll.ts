@@ -142,6 +142,33 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.westminstertoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-openroad-peace-arch-convertus',
+    sourceCode: 'openroad-toyota-peace-arch-convertus',
+    dealerId: 'dealer-openroad-toyota-peace-arch',
+    platform: 'convertus',
+    endpointUrl:
+      'https://openroadtoyotapeacearch.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-langley-toyota-convertus',
+    sourceCode: 'langley-toyota-convertus',
+    dealerId: 'dealer-langley-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.langleytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-nanaimo-toyota-convertus',
+    sourceCode: 'nanaimo-toyota-convertus',
+    dealerId: 'dealer-nanaimo-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.nanaimotoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**
