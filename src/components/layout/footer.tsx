@@ -155,6 +155,16 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/camping/sienna`} className="hover:text-amber-500 transition-colors">
+                  Sienna Camping ⛺
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/camping/rav4`} className="hover:text-amber-500 transition-colors">
+                  RAV4 Camping 🌲
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/rav4-se-mods`} className="hover:text-amber-500 transition-colors">
                   Toyota RAV4 Prime SE to XSE Mod Playbook
                 </Link>

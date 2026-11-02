@@ -21,6 +21,8 @@ import {
   Disc3,
   CheckCircle2,
   Calculator,
+  Tent,
+  Compass,
 } from 'lucide-react';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
@@ -238,7 +240,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               aria-haspopup="true"
               className={cn(
                 'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md px-1',
-                (pathname.startsWith('/guides') || pathname === '/winter-prep') && 'text-amber-500 font-semibold'
+                (pathname.startsWith('/guides') || pathname === '/winter-prep' || pathname.startsWith('/camping')) && 'text-amber-500 font-semibold'
               )}
             >
               <Wrench className="h-4 w-4 text-zinc-400" />
@@ -276,6 +278,38 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <div>
                       <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Winter Prep ❄️</p>
                       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Canadian winter setups &amp; rust prevention</p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/camping/sienna"
+                  onClick={() => setDesktopGuidesOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-emerald-500/10 text-emerald-500 shrink-0">
+                      <Tent className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Sienna Camping ⛺</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Stealth camper conversion &amp; bug screens</p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/camping/rav4"
+                  onClick={() => setDesktopGuidesOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <Compass className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">RAV4 Camping 🌲</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Trail mattress, roof bars &amp; hatch LEDs</p>
                     </div>
                   </div>
                 </Link>
@@ -678,6 +712,49 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     </div>
                   </div>
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Camping & Overland Section */}
+                <Link
+                  href="/camping/sienna"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                      <Tent className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                        Sienna Camping ⛺
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Stealth camper gear, ready mode &amp; screens
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                <Link
+                  href="/camping/rav4"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <Compass className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-400 transition-colors">
+                        RAV4 Camping 🌲
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Fold-flat sleeping, roof racks &amp; hatch LEDs
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
                 {/* Subheading: DIY Mod Guides */}

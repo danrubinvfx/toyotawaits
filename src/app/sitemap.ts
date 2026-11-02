@@ -119,6 +119,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/camping/sienna`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/camping/rav4`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
 
     {
       url: `${baseUrl}/guides/grand-highlander-mods`,
