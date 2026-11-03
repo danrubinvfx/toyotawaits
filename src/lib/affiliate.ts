@@ -111,3 +111,9 @@ export {
   buildAmazonDeepLinks,
   type MobileDeepLinkTargets,
 } from '@/lib/gear/affiliate';
+
+export {
+  getInsuranceAffiliateUrl,
+  ONTARIO_INSURANCE_FALLBACK_URL,
+  INSURANCE_AFFILIATE_URLS,
+} from '@/config/affiliates';

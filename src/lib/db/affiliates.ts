@@ -249,7 +249,7 @@ export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
   'clazzio-leather-covers': {
     id: 'feeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
     slug: 'clazzio-leather-covers',
-    destinationUrl: 'https://www.clazzio.com/',
+    destinationUrl: 'https://www.amazon.ca/s?k=Toyota+RAV4+Prime+Clazzio+custom+leather+seat+covers&tag=toyotawaits-20',
     title: 'Clazzio Custom-Fit Leather / PVC Seat Covers (RAV4 Prime)',
     category: 'interior',
     clickCount: 0,
@@ -1220,7 +1220,7 @@ function isLegacyPlaceholderUrl(url: string): boolean {
     url.includes('B08T1T4Z2M') ||
     url.includes('B08R7C5P1L') ||
     url.includes('404-page-not-found') ||
-    url.includes('clazzio.com/toyota-rav4-prime')
+    url.includes('clazzio.com')
   );
 }
 

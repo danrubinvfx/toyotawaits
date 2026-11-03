@@ -21,6 +21,8 @@ import {
 import { CoverageDisclosureBanner } from '@/components/discovery/CoverageDisclosureBanner';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { InventoryGearCard } from '@/components/discovery/InventoryGearCard';
+import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
+import { getInsuranceAffiliateUrl, ONTARIO_INSURANCE_FALLBACK_URL } from '@/config/affiliates';
 import InventoryPage from '@/app/inventory/page';
 
 describe('Sprint 5: Discovery UI Components & Search Integration', () => {
@@ -1446,6 +1448,56 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         screen.getByText('GEAR PICK')
       ).toBeInTheDocument();
       expect(screen.queryByText(/UNIVERSAL/i)).not.toBeInTheDocument();
+    });
+
+    it('renders OntarioInsuranceCard with Ontario-specific copy and Ratehub affiliate link, and hides for BC', () => {
+      const { rerender } = render(<OntarioInsuranceCard region="ON" modelContext="RAV4 Hybrid" />);
+
+      expect(screen.getByTestId('ontario-insurance-card')).toBeInTheDocument();
+      expect(
+        screen.getByText(/Taking Delivery in Ontario\? Compare 30\+ Auto Quotes/i)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Ontario insurance premiums vary by up to $1,200 across private carriers. Check rates and lock in your policy before delivery.'
+        )
+      ).toBeInTheDocument();
+
+      const cta = screen.getByTestId('ontario-insurance-cta');
+      expect(cta).toHaveTextContent('Compare Ontario Rates ↗');
+      expect(cta).toHaveAttribute('href', getInsuranceAffiliateUrl('ON'));
+      expect(getInsuranceAffiliateUrl('ON')).toBe(ONTARIO_INSURANCE_FALLBACK_URL);
+      expect(cta).toHaveAttribute('target', '_blank');
+      expect(cta).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+      rerender(<OntarioInsuranceCard region="BC" />);
+      expect(screen.queryByTestId('ontario-insurance-card')).not.toBeInTheDocument();
+    });
+
+    it('renders OntarioInsuranceCard every 8 listings in InventoryExplorer only for Ontario region or Ontario dealers', () => {
+      const eightBcListings: VehicleListingCardProps[] = Array.from({ length: 8 }, (_, idx) => ({
+        ...sampleCardProps,
+        id: `bc-listing-${idx + 1}`,
+        dealerName: 'Jim Pattison Toyota Downtown',
+        dealerCity: 'Vancouver',
+        dealerProvince: 'BC',
+        lastChecked: new Date().toISOString(),
+      }));
+
+      const sixteenOnListings: VehicleListingCardProps[] = Array.from({ length: 16 }, (_, idx) => ({
+        ...sampleCardProps,
+        id: `on-listing-${idx + 1}`,
+        dealerName: 'Ken Shaw Toyota',
+        dealerCity: 'Toronto',
+        dealerProvince: 'ON',
+        lastChecked: new Date().toISOString(),
+      }));
+
+      const { rerender } = render(<InventoryExplorer initialListings={eightBcListings} />);
+      expect(screen.queryByTestId('ontario-insurance-card')).not.toBeInTheDocument();
+
+      rerender(<InventoryExplorer initialListings={sixteenOnListings} />);
+      expect(screen.getAllByTestId('ontario-insurance-card').length).toBe(2);
     });
   });
 

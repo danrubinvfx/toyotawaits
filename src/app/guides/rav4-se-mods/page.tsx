@@ -523,7 +523,7 @@ export default function Rav4SeModsGuidePage() {
             'Slide custom headrest covers on and tuck the lower seam flap underneath the plastic bezel.',
           ]}
           affiliateSlug="clazzio-leather-covers"
-          ctaLabel="View Exact Part Listing ↗"
+          ctaLabel="Search Amazon ↗"
           affiliateSublabel="Clazzio Genuine Leather / PVC Custom Covers (~$650 CAD)"
           secondaryActions={[
             {

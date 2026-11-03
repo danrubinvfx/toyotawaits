@@ -12,6 +12,7 @@ import {
 } from './InventoryFilterBar';
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
+import { OntarioInsuranceCard } from './OntarioInsuranceCard';
 import { InventoryAlertModal } from './InventoryAlertModal';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { DEALERS, getDealerCoordinates } from '@/config/dealers';
@@ -650,6 +651,15 @@ export function InventoryExplorer({
     return null;
   }, [filters.userCoordinates, filters.location]);
 
+  const activeRegion = useMemo<'BC' | 'ON' | null>(() => {
+    const fromLocation = getLocationProvince(filters.location);
+    if (fromLocation) return fromLocation;
+    if (userCoordinates) {
+      return userCoordinates.lng > -95 ? 'ON' : 'BC';
+    }
+    return null;
+  }, [filters.location, userCoordinates]);
+
   const filteredListings = useMemo(() => {
     // 1. Calculate distance for each listing if user location coordinates are present
     const withDistance = listings.map((item) => {
@@ -1080,6 +1090,10 @@ export function InventoryExplorer({
               const gearItem = shouldInsertGear
                 ? gearItems[Math.floor(index / 2) % gearItems.length]
                 : null;
+              const isOntarioListingOrRegion =
+                activeRegion === 'ON' || getListingProvince(listing) === 'ON';
+              const shouldInsertOntarioInsurance =
+                (index + 1) % 8 === 0 && isOntarioListingOrRegion;
 
               return (
                 <React.Fragment key={listing.id}>
@@ -1092,6 +1106,13 @@ export function InventoryExplorer({
                       key={`gear-strip-${gearItem.id}-${index}`}
                       item={gearItem}
                       modelContext={filters.model || undefined}
+                    />
+                  )}
+                  {shouldInsertOntarioInsurance && (
+                    <OntarioInsuranceCard
+                      key={`ontario-insurance-${index}`}
+                      region="ON"
+                      modelContext={filters.model || listing.model}
                     />
                   )}
                 </React.Fragment>

@@ -45,7 +45,7 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       { slug: 'jbl-club-dash-speakers', targetDomain: 'amazon.ca' },
       { slug: 'toyota-speaker-harness', targetDomain: 'amazon.ca' },
       { slug: 'trim-removal-tools', targetDomain: 'amazon.ca' },
-      { slug: 'clazzio-leather-covers', targetDomain: 'clazzio.com' },
+      { slug: 'clazzio-leather-covers', targetDomain: 'amazon.ca' },
       { slug: 'ekr-seat-covers', targetDomain: 'amazon.ca' },
     ];
 

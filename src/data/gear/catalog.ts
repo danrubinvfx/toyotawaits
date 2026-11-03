@@ -1475,6 +1475,32 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Rated up to 30,000 lbs breaking strength for vehicle recovery in snow, mud, and trail conditions.',
     badge: 'Essential',
   },
+  'clazzio-leather-covers': {
+    id: 'clazzio-leather-covers',
+    slug: 'clazzio-leather-covers',
+    title: 'Clazzio Custom-Fit Leather / PVC Seat Covers (RAV4 Prime)',
+    searchQuery: 'Toyota RAV4 Prime Clazzio custom leather seat covers',
+    searchKeywordsCA: 'Toyota RAV4 Prime Clazzio custom leather seat covers',
+    searchKeywordsUS: 'Toyota RAV4 Prime Clazzio custom leather seat covers',
+    category: 'Interior Protection',
+    compatibility: 'Toyota RAV4 & RAV4 Prime Gen 5 (2019–2025)',
+    description: 'Tailored slip-over perforated leather and PVC seat covers engineered for 5th Gen RAV4 seating contours.',
+    whyBuy: 'Upgrades standard SE cloth seats to an OEM-style perforated leather appearance and feel at a fraction of re-upholstery costs.',
+    buttonLabel: 'Search Amazon ↗',
+  },
+  'ekr-seat-covers': {
+    id: 'ekr-seat-covers',
+    slug: 'ekr-seat-covers',
+    title: 'EKR Custom Tailored Full Leatherette Seat Covers (RAV4 Prime)',
+    searchQuery: 'EKR custom fit car seat covers Toyota RAV4',
+    searchKeywordsCA: 'EKR custom fit car seat covers Toyota RAV4',
+    searchKeywordsUS: 'EKR custom fit car seat covers Toyota RAV4',
+    category: 'Interior Protection',
+    compatibility: 'Toyota RAV4 & RAV4 Prime Gen 5 (2019–2025)',
+    description: '4-layer waterproof custom-fit leatherette seat covers tailored for 5th Gen RAV4 front and 60/40 rear benches.',
+    whyBuy: 'Waterproof 4-layer tailored leatherette protection against spills, road salt, and pets.',
+    buttonLabel: 'Search Amazon ↗',
+  },
 };
 
 /**
