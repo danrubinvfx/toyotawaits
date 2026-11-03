@@ -7,7 +7,10 @@
 import { describe, it, expect } from 'vitest';
 import {
   calculateDistanceKm,
+  getLocationProvince,
   getPresetCoordinates,
+  GLOBAL_LOCATION_OPTION,
+  GROUPED_LOCATION_PRESETS,
   LOWER_MAINLAND_PRESETS,
 } from '@/lib/geo/distance';
 import { DEALERS, getDealerCoordinates } from '@/config/dealers';
@@ -110,11 +113,33 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getPresetCoordinates('coquitlam')).toEqual({ lat: 49.2838, lng: -122.7932 });
     });
 
-    it('returns null for All or unknown locations', () => {
+    it('returns null for All, province-wide filters, or unknown locations', () => {
       expect(getPresetCoordinates('All')).toBeNull();
       expect(getPresetCoordinates('All Locations')).toBeNull();
+      expect(getPresetCoordinates('All Canada (2,200+ units)')).toBeNull();
+      expect(getPresetCoordinates('All British Columbia')).toBeNull();
+      expect(getPresetCoordinates('All Ontario / GTA')).toBeNull();
       expect(getPresetCoordinates(null)).toBeNull();
       expect(getPresetCoordinates('Tokyo')).toBeNull();
+    });
+
+    it('resolves province group via getLocationProvince and exposes grouped presets', () => {
+      expect(GLOBAL_LOCATION_OPTION).toEqual({
+        value: '',
+        label: 'All Canada (2,200+ units)',
+      });
+      expect(GROUPED_LOCATION_PRESETS.map((g) => g.label)).toEqual([
+        'British Columbia',
+        'Ontario (GTA)',
+      ]);
+      expect(getLocationProvince('')).toBeNull();
+      expect(getLocationProvince('All Canada (2,200+ units)')).toBeNull();
+      expect(getLocationProvince('Near Me (GPS)')).toBeNull();
+      expect(getLocationProvince('All British Columbia')).toBe('BC');
+      expect(getLocationProvince('Vancouver')).toBe('BC');
+      expect(getLocationProvince('All Ontario / GTA')).toBe('ON');
+      expect(getLocationProvince('Toronto')).toBe('ON');
+      expect(getLocationProvince('Mississauga')).toBe('ON');
     });
   });
 

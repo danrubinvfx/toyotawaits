@@ -193,7 +193,7 @@ export default function InventoryPage({
           </div>
 
           <span className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-0.5 text-xs font-medium text-zinc-400">
-            BC Fleet (16 Dealers)
+            BC &amp; ON Fleet (22 Dealers)
           </span>
         </header>
 

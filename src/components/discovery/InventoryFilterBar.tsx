@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp, Navigation, Loader2, AlertCircle, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getPresetCoordinates } from '@/lib/geo/distance';
+import {
+  getPresetCoordinates,
+  GLOBAL_LOCATION_OPTION,
+  GROUPED_LOCATION_PRESETS,
+} from '@/lib/geo/distance';
 
 export interface LocationOption {
   value: string;
   label: string;
+  province?: 'BC' | 'ON';
 }
 
 export type SortOption =
@@ -59,41 +64,10 @@ const DEFAULT_MODELS = [
   'Corolla Cross Hybrid',
 ];
 
-const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
-  { value: '', label: 'All Locations' },
-  { value: 'Vancouver', label: 'Vancouver (Downtown)' },
-  { value: 'Burnaby', label: 'Burnaby' },
-  { value: 'Surrey', label: 'Surrey (Guildford)' },
-  { value: 'South Surrey / White Rock', label: 'South Surrey / White Rock' },
-  { value: 'Richmond', label: 'Richmond' },
-  { value: 'Coquitlam', label: 'Coquitlam / Tri-Cities' },
-  { value: 'Port Moody', label: 'Port Moody (Tri-Cities)' },
-  { value: 'Pitt Meadows', label: 'Pitt Meadows (West Coast)' },
-  { value: 'Langley', label: 'Langley' },
-  { value: 'Abbotsford', label: 'Abbotsford' },
-  { value: 'Chilliwack', label: 'Chilliwack' },
-  { value: 'Nanaimo', label: 'Nanaimo (Vancouver Island)' },
-  { value: 'Victoria', label: 'Victoria (Vancouver Island)' },
-  { value: 'Duncan', label: 'Duncan (Vancouver Island)' },
-  { value: 'Vancouver Island', label: 'Vancouver Island' },
-  { value: 'New Westminster', label: 'New Westminster' },
-  { value: 'Kelowna', label: 'Kelowna (Interior BC / Okanagan)' },
-  { value: 'Vernon', label: 'Vernon (North Okanagan / Interior BC)' },
-  { value: 'Interior BC', label: 'Interior BC' },
-  { value: 'Toronto', label: 'Toronto (GTA / Ontario)' },
-  { value: 'Mississauga', label: 'Mississauga (GTA / Ontario)' },
-  { value: 'Brampton', label: 'Brampton (GTA / Ontario)' },
-  { value: 'Georgetown', label: 'Georgetown (Halton Hills / Ontario)' },
-  { value: 'Simcoe', label: 'Simcoe (Southwestern Ontario)' },
-  { value: 'GTA / Ontario', label: 'GTA / Ontario' },
-];
-
 export function InventoryFilterBar({
   filters,
   onFilterChange,
   availableModels = DEFAULT_MODELS,
-  availableLocations,
-  availableDealers,
   totalResults,
   totalFleetCount,
   totalCount,
@@ -104,32 +78,6 @@ export function InventoryFilterBar({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
-
-  // Combine default municipality presets with any runtime observed locations
-  const rawLocations: LocationOption[] = [...DEFAULT_MUNICIPALITY_LOCATIONS];
-  if (availableLocations && availableLocations.length > 0) {
-    for (const loc of availableLocations) {
-      if (typeof loc === 'string') {
-        rawLocations.push({ value: loc, label: loc });
-      } else {
-        rawLocations.push(loc);
-      }
-    }
-  }
-  if (availableDealers && availableDealers.length > 0) {
-    for (const d of availableDealers) {
-      rawLocations.push({ value: d, label: d });
-    }
-  }
-
-  const uniqueLocations: LocationOption[] = [];
-  const seenValues = new Set<string>();
-  for (const loc of rawLocations) {
-    if (!seenValues.has(loc.value)) {
-      seenValues.add(loc.value);
-      uniqueLocations.push(loc);
-    }
-  }
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ ...filters, model: e.target.value });
@@ -143,14 +91,19 @@ export function InventoryFilterBar({
     const val = e.target.value;
     setLocationError(null);
     const coords = val ? getPresetCoordinates(val) : null;
+    const hasCoords = Boolean(coords);
     onFilterChange({
       ...filters,
       location: val,
       userLocation: val,
       userCoordinates: coords,
-      dealer: val,
-      sortNearest: Boolean(val) ? true : (filters.sortNearest ?? false),
-      sortBy: Boolean(val) ? 'distance_asc' : (filters.sortBy || 'newest'),
+      dealer: hasCoords ? val : '',
+      sortNearest: hasCoords ? true : false,
+      sortBy: hasCoords
+        ? 'distance_asc'
+        : filters.sortBy === 'distance_asc'
+        ? 'newest'
+        : filters.sortBy || 'newest',
     });
   };
 
@@ -203,6 +156,7 @@ export function InventoryFilterBar({
           userCoordinates: coords,
           dealer: '',
           sortNearest: true,
+          sortBy: 'distance_asc',
         });
       },
       (error: GeolocationPositionError) => {
@@ -475,10 +429,17 @@ export function InventoryFilterBar({
               {filters.location === 'Near Me (GPS)' && (
                 <option value="Near Me (GPS)">📍 Near Me (GPS)</option>
               )}
-              {uniqueLocations.map((loc) => (
-                <option key={loc.value || 'all'} value={loc.value}>
-                  {loc.label}
-                </option>
+              <option value={GLOBAL_LOCATION_OPTION.value}>
+                {GLOBAL_LOCATION_OPTION.label}
+              </option>
+              {GROUPED_LOCATION_PRESETS.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.options.map((loc) => (
+                    <option key={loc.value} value={loc.value}>
+                      {loc.label}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
 

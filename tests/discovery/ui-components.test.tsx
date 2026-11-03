@@ -513,7 +513,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(tray.className).toContain('hidden');
     });
 
-    it('renders User Location presets, Near Me GPS button, distance radius filter, and sort toggle', () => {
+    it('renders User Location presets grouped by province, Near Me GPS button, distance radius filter, and sort toggle', () => {
       const onFilterChange = vi.fn();
       render(
         <InventoryFilterBar filters={defaultFilters} onFilterChange={onFilterChange} />
@@ -524,14 +524,27 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByTestId('filter-sort-nearest-toggle')).toBeInTheDocument();
 
       const locationSelect = screen.getByTestId('filter-location-select');
+      const optgroups = Array.from(locationSelect.querySelectorAll('optgroup')).map((og) =>
+        og.getAttribute('label')
+      );
+      expect(optgroups).toEqual(['British Columbia', 'Ontario (GTA)']);
+
+      expect(screen.getByRole('option', { name: 'All Canada (2,200+ units)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'All British Columbia' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Burnaby' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Richmond' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Coquitlam / Tri-Cities' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Pitt Meadows (West Coast)' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Langley' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Abbotsford' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Surrey (Guildford / White Rock)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Coquitlam / Port Moody / Pitt Meadows' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Langley / Abbotsford / Chilliwack' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Vancouver Island (Victoria / Duncan / Nanaimo)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Okanagan (Kelowna / Vernon)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'All Ontario / GTA' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Toronto' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Mississauga' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Brampton' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Georgetown' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Simcoe' })).toBeInTheDocument();
     });
 
     it('triggers onFilterChange with coordinates when municipality preset is selected', () => {
@@ -649,21 +662,112 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.queryByTestId('listing-card-jp-rav4-xse-01')).not.toBeInTheDocument();
     });
 
-    it('ensures Granville Toyota, Valley Toyota, Abbotsford Toyota, and Jim Pattison Toyota Victoria appear in the inventory explorer dealership selector', () => {
-      render(<InventoryExplorer />);
+    it('isolates BC vs Ontario listings when province-wide filters are selected and supports GPS across both provinces', () => {
+      const mixedProvinceListings: VehicleListingCardProps[] = [
+        {
+          id: 'bc-vancouver-rav4-01',
+          make: 'Toyota',
+          model: 'RAV4 Hybrid',
+          trim: 'XSE AWD',
+          modelYear: 2026,
+          vin: 'JTDACAAJ0T3038212',
+          isProvisionalVin: false,
+          dealerName: 'Jim Pattison Toyota Downtown',
+          dealerCity: 'Vancouver',
+          dealerProvince: 'BC',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://www.jptoyota-downtown.com/vehicles/2026/Toyota/RAV4/',
+          msrp: 61285,
+          sellingPrice: 63957,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Hybrid',
+          stockNumber: 'T26-1044',
+        },
+        {
+          id: 'on-toronto-sienna-01',
+          make: 'Toyota',
+          model: 'Sienna',
+          trim: 'XSE AWD',
+          modelYear: 2026,
+          vin: '5TDGSKFC1TS289848',
+          isProvisionalVin: false,
+          dealerName: 'Ken Shaw Toyota',
+          dealerCity: 'Toronto',
+          dealerProvince: 'ON',
+          status: 'Advertised - availability unconfirmed',
+          lastChecked: new Date().toISOString(),
+          vdpUrl: 'https://www.kenshawtoyota.ca/new/vehicle/2026-toyota-sienna-id12345.htm',
+          msrp: 58450,
+          sellingPrice: 58450,
+          mandatoryFees: null,
+          hasUnverifiedFees: true,
+          powertrain: 'Hybrid',
+          stockNumber: 'KS-12345',
+        },
+      ];
+
+      render(<InventoryExplorer initialListings={mixedProvinceListings} />);
 
       const locationSelect = screen.getByTestId('filter-location-select');
-      expect(screen.getByRole('option', { name: 'Granville Toyota' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Valley Toyota' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Abbotsford Toyota' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Victoria' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Jim Pattison Toyota Duncan' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Victoria (Vancouver Island)' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Duncan (Vancouver Island)' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Vancouver Island' })).toBeInTheDocument();
+
+      // Initially All Canada shows both BC and ON listings
+      expect(screen.getByTestId('listing-card-bc-vancouver-rav4-01')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-on-toronto-sienna-01')).toBeInTheDocument();
+
+      // 1. Select "All Ontario / GTA" -> isolates dealer.province === 'ON'
+      fireEvent.change(locationSelect, { target: { value: 'All Ontario / GTA' } });
+      expect(screen.getByTestId('listing-card-on-toronto-sienna-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-bc-vancouver-rav4-01')).not.toBeInTheDocument();
+
+      // 2. Select "All British Columbia" -> isolates dealer.province === 'BC'
+      fireEvent.change(locationSelect, { target: { value: 'All British Columbia' } });
+      expect(screen.getByTestId('listing-card-bc-vancouver-rav4-01')).toBeInTheDocument();
+      expect(screen.queryByTestId('listing-card-on-toronto-sienna-01')).not.toBeInTheDocument();
+
+      // 3. GPS in Ontario (Toronto) -> calculates distance to ON dealer (~0 km) and BC dealer (~3,360 km), sorting ON first
+      let capturedSuccess: PositionCallback | null = null;
+      Object.defineProperty(global.navigator, 'geolocation', {
+        value: {
+          getCurrentPosition: vi.fn((success) => {
+            capturedSuccess = success;
+          }),
+        },
+        configurable: true,
+      });
+
+      fireEvent.click(screen.getByTestId('gps-location-btn'));
+      act(() => {
+        capturedSuccess!({
+          coords: {
+            latitude: 43.6822,
+            longitude: -79.4875,
+            accuracy: 100,
+            altitude: null,
+            altitudeAccuracy: null,
+            heading: null,
+            speed: null,
+            toJSON: () => ({}),
+          },
+          timestamp: Date.now(),
+          toJSON: () => ({}),
+        } as GeolocationPosition);
+      });
+
+      const cardsFromTorontoGps = screen.getAllByTestId(/^listing-card-/);
+      expect(cardsFromTorontoGps[0]).toHaveAttribute(
+        'data-testid',
+        'listing-card-on-toronto-sienna-01'
+      );
+      expect(cardsFromTorontoGps[1]).toHaveAttribute(
+        'data-testid',
+        'listing-card-bc-vancouver-rav4-01'
+      );
+      expect(screen.getByText(/\(0 km away\)/i)).toBeInTheDocument();
     });
 
-    it('calculates proximity for Vancouver Island / Victoria location filters correctly', () => {
+    it('calculates proximity for Vancouver Island location filter correctly', () => {
       const victoriaListings: VehicleListingCardProps[] = [
         {
           id: 'jp-vic-crown-01',
@@ -713,18 +817,14 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       const locationSelect = screen.getByTestId('filter-location-select');
 
-      // Select "Victoria" -> Jim Pattison Victoria is ~1.5 km away, Downtown Vancouver is > 90 km away
-      fireEvent.change(locationSelect, { target: { value: 'Victoria' } });
+      // Select "Vancouver Island" -> Jim Pattison Victoria is ~1.5 km away, Downtown Vancouver is > 90 km away
+      fireEvent.change(locationSelect, { target: { value: 'Vancouver Island' } });
       expect(screen.getByText(/\(1\.5 km away\)/i)).toBeInTheDocument();
       expect(screen.getByText(/\(95(\.1)? km away\)/i)).toBeInTheDocument();
 
       const cardsFromVictoria = screen.getAllByTestId(/^listing-card-/);
       expect(cardsFromVictoria[0]).toHaveAttribute('data-testid', 'listing-card-jp-vic-crown-01');
       expect(cardsFromVictoria[1]).toHaveAttribute('data-testid', 'listing-card-jp-dt-rav4-01');
-
-      // Select "Vancouver Island" -> Should resolve to Victoria coordinates as well
-      fireEvent.change(locationSelect, { target: { value: 'Vancouver Island' } });
-      expect(screen.getByText(/\(1\.5 km away\)/i)).toBeInTheDocument();
     });
 
     it('supports proximity filtering and distance calculation when municipality is selected', () => {
@@ -733,8 +833,8 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const locationSelect = screen.getByTestId('filter-location-select');
       expect(screen.getByRole('option', { name: 'Vancouver (Downtown)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'Burnaby' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Surrey (Guildford)' })).toBeInTheDocument();
-      expect(screen.getByRole('option', { name: 'Pitt Meadows (West Coast)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Surrey (Guildford / White Rock)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Coquitlam / Port Moody / Pitt Meadows' })).toBeInTheDocument();
 
       // Pick "Burnaby"
       fireEvent.change(locationSelect, {
@@ -1375,6 +1475,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByRole('heading', { level: 1, name: /Toyota Public Inventory/i })).toBeInTheDocument();
       expect(screen.getByTestId('unconfirmed-feed-badge')).toBeInTheDocument();
       expect(screen.getByText(/Unconfirmed Dealer Feed/i)).toBeInTheDocument();
+      expect(screen.getByText('BC & ON Fleet (22 Dealers)')).toBeInTheDocument();
     });
 
     it('renders gated preview screen when feature flags and overrides are absent', () => {

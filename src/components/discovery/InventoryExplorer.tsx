@@ -15,10 +15,45 @@ import { InventoryGearCard } from './InventoryGearCard';
 import { InventoryAlertModal } from './InventoryAlertModal';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { DEALERS, getDealerCoordinates } from '@/config/dealers';
-import { calculateDistanceKm, getPresetCoordinates } from '@/lib/geo/distance';
+import {
+  calculateDistanceKm,
+  getLocationProvince,
+  getPresetCoordinates,
+} from '@/lib/geo/distance';
 import { useDonationReminder } from '@/hooks/useDonationReminder';
 import { DonationToast } from '@/components/common/DonationToast';
 import { Car, AlertCircle, Bell } from 'lucide-react';
+
+function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' {
+  if (item.dealerProvince) {
+    const prov = item.dealerProvince.toUpperCase().trim();
+    if (prov === 'ON' || prov === 'ONTARIO') return 'ON';
+    if (prov === 'BC' || prov === 'BRITISH COLUMBIA') return 'BC';
+  }
+  const query = `${item.dealerName || ''} ${item.dealerCity || ''}`.toLowerCase();
+  for (const d of Object.values(DEALERS)) {
+    if (
+      query.includes(d.name.toLowerCase()) ||
+      (item.dealerCity && item.dealerCity.toLowerCase() === d.city.toLowerCase())
+    ) {
+      return d.province.toUpperCase() === 'ON' ? 'ON' : 'BC';
+    }
+  }
+  if (
+    query.includes('toronto') ||
+    query.includes('mississauga') ||
+    query.includes('brampton') ||
+    query.includes('georgetown') ||
+    query.includes('simcoe') ||
+    query.includes('ken shaw') ||
+    query.includes('attrell') ||
+    query.includes('erin park') ||
+    query.includes('ontario')
+  ) {
+    return 'ON';
+  }
+  return 'BC';
+}
 
 export const INITIAL_SAMPLE_LISTINGS: VehicleListingCardProps[] = [
   {
@@ -703,16 +738,29 @@ export function InventoryExplorer({
         }
       }
 
+      // Province / Regional group facet
+      const targetProvince = getLocationProvince(filters.location);
+      if (targetProvince) {
+        if (getListingProvince(item) !== targetProvince) {
+          return false;
+        }
+      }
+
       // Explicit Dealer facet (if separate from location preset)
-      if (filters.dealer && filters.dealer !== filters.location && !userCoordinates) {
+      if (
+        filters.dealer &&
+        filters.dealer !== filters.location &&
+        !userCoordinates &&
+        !targetProvince
+      ) {
         const dQuery = filters.dealer.toLowerCase().trim();
         if (!item.dealerName.toLowerCase().includes(dQuery)) {
           return false;
         }
       }
 
-      // Max Distance radius filter
-      if (filters.maxDistance) {
+      // Max Distance radius filter (only applied when point coordinates are active)
+      if (filters.maxDistance && userCoordinates) {
         const maxDist = parseFloat(filters.maxDistance);
         if (!isNaN(maxDist)) {
           if (item.distanceKm == null || item.distanceKm > maxDist) {
@@ -1092,7 +1140,7 @@ export function InventoryExplorer({
         initialTrim={filters.search || 'ALL'}
         initialRegion={
           filters.location && filters.location !== 'Near Me (GPS)'
-            ? `${filters.location}, BC`
+            ? `${filters.location}, ${getLocationProvince(filters.location) || 'BC'}`
             : 'Lower Mainland, BC'
         }
         availableModels={availableModels}
