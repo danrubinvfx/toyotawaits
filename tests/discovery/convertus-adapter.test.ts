@@ -693,5 +693,26 @@ describe('Convertus Ingestion Adapter', () => {
         'https://www.jptoyota-downtown.com/vehicles/2026/toyota/rav4/vancouver/bc/123456/'
       );
     });
+
+    it('accurately parses 2027 Toyota Corolla feed items without quarantining', () => {
+      const raw = {
+        make: 'Toyota',
+        model: 'Corolla',
+        trim: 'Hybrid LE AWD',
+        year: 2027,
+        vin: '2T1BURHE7SC123456',
+        sale_class: 'New',
+        in_transit: 1,
+        final_price: 29590,
+      };
+      const { record, quarantine } = parseConvertusRecord(raw, 0);
+      expect(quarantine).toBeUndefined();
+      expect(record).toBeDefined();
+      expect(record?.vehicle.make).toBe('Toyota');
+      expect(record?.vehicle.model).toBe('Corolla');
+      expect(record?.vehicle.trim).toBe('Hybrid LE AWD');
+      expect(record?.vehicle.modelYear).toBe(2027);
+      expect(record?.vehicle.vin).toBe('2T1BURHE7SC123456');
+    });
   });
 });

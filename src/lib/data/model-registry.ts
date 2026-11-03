@@ -20,6 +20,8 @@ export interface ModelRegistryEntry {
   }>;
   metaTitle?: string;
   metaDescription?: string;
+  title?: string;
+  h1?: string;
 }
 
 export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
@@ -265,6 +267,45 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
       },
     ],
   },
+  'corolla': {
+    slug: 'corolla',
+    name: 'Toyota Corolla',
+    shortName: 'Corolla',
+    dbFilter: 'corolla',
+    title: 'Toyota Corolla Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Toyota Corolla Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    h1: 'Toyota Corolla Wait Times in Canada (2026–2027 Delivery Tracker)',
+    metaDescription:
+      'Track real-time crowdsourced Toyota Corolla delivery wait times and allocations across Canada. Community timelines for incoming 2027 allocations and remaining 2026 units across Sedan, Hatchback, and Hybrid models.',
+    powertrains: ['Gas', 'Hybrid', 'GR Performance'],
+    baseMedian: 90,
+    baseP25: 45,
+    baseP75: 150,
+    popularTrims: [
+      { trim: 'LE / SE FWD (Gas)', powertrain: 'Gas', spread: '1–3 months (30–90 days)', status: 'Balanced' },
+      { trim: 'LE / SE AWD (Hybrid)', powertrain: 'Hybrid', spread: '4–7 months (120–210 days)', status: 'High Demand' },
+      { trim: 'XSE AWD (Hybrid)', powertrain: 'Hybrid', spread: '5–8 months (150–240 days)', status: 'High Demand' },
+      { trim: 'Hatchback (SE / XSE)', powertrain: 'Gas', spread: '2–4 months (60–120 days)', status: 'Balanced' },
+      { trim: 'GR Corolla (Core / Premium)', powertrain: 'GR Performance', spread: '6–10 months (180–300 days)', status: 'Constrained' },
+    ],
+    allocationTips: [
+      'Dealers are actively logging both remaining 2026 allocations and early 2027 Corolla model year build slots.',
+      'Corolla Hybrid AWD models experience steady demand, while gas Sedan trims frequently arrive within 30 to 60 days.',
+      'Hatchback models and GR Corolla allocations arrive in tighter batch distributions compared to high-volume sedans.',
+    ],
+    faqs: [
+      {
+        question: 'What is the wait time for a Toyota Corolla in Canada?',
+        answer:
+          'Wait times for the Toyota Corolla in Canada range from 1 to 3 months for gas models and 4 to 8 months for Corolla Hybrid AWD configurations, covering both incoming 2027 allocations and remaining 2026 units.',
+      },
+      {
+        question: 'When do 2027 Toyota Corolla allocations arrive at Canadian dealers?',
+        answer:
+          'Canadian dealerships are beginning to receive 2027 Corolla allocations for Sedan, Hatchback, and Hybrid models, with initial deliveries expected through late 2026 and early 2027.',
+      },
+    ],
+  },
   'corolla-cross': {
     slug: 'corolla-cross',
     name: 'Toyota Corolla Cross',
@@ -470,6 +511,7 @@ export function normalizeModelSlug(slug?: string | null): string {
   if (clean.includes('crown')) return 'crown-signia';
   if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
   if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
+  if (clean.includes('corolla')) return 'corolla';
   if (clean.includes('land-cruiser') || clean.includes('landcruiser')) return 'land-cruiser';
   if (clean.includes('sienna')) return 'sienna';
   if (clean.includes('highlander')) return 'highlander';

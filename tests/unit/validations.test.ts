@@ -14,6 +14,30 @@ describe('Zod Validation Schemas (Data Contracts)', () => {
   const validUuid3 = '33333333-3333-4333-8333-333333333333';
 
   describe('submissionCreateSchema', () => {
+    it('accepts incoming 2027 Toyota Corolla allocations', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        province: 'BC',
+        dealershipCity: 'Richmond',
+        modelYear: 2027,
+        orderDate: '2026-11-01',
+        status: 'pending',
+        pricing: 'at_msrp',
+        mandatoryAddonsCad: 0,
+        tradeInRequired: false,
+        notes: 'Deposit on incoming 2027 Corolla allocation.',
+        turnstileToken: 'mock-valid-turnstile-token',
+        honeypot: '',
+      };
+      const result = submissionCreateSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.modelYear).toBe(2027);
+      }
+    });
+
     it('accepts a valid pending submission', () => {
       const input = {
         modelId: validUuid1,

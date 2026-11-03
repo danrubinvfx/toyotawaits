@@ -5,6 +5,7 @@ import {
   SIENNA_HITCH_GUIDE_URL,
   generateAllocationDropAlertEmail,
   getCuratedGearForDropAlert,
+  formatVehicleHeader,
 } from '@/lib/alerts/templates';
 
 describe('Notification Email Engine & Template Generator', () => {

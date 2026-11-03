@@ -276,8 +276,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const currentDate = new Date();
   const currentMonthYear = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
-  const title = `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`;
-  const description = `Track real-time crowdsourced ${modelConfig.name} delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`;
+  const title =
+    modelConfig.title ||
+    `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`;
+  const description =
+    (modelConfig.slug === 'corolla' && modelConfig.metaDescription) ||
+    `Track real-time crowdsourced ${modelConfig.name} delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`;
   const canonical = `https://www.toyotawaits.ca/wait-times/${modelConfig.slug}`;
 
   return {
@@ -542,7 +546,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       <section className="space-y-4">
         <div className="flex items-center gap-2 flex-wrap">
           <Badge className="bg-red-600 text-white font-semibold">
-            🇨🇦 2026 Canadian Delivery Tracker
+            {modelConfig.slug === 'corolla'
+              ? '🇨🇦 2026–2027 Canadian Delivery Tracker'
+              : '🇨🇦 2026 Canadian Delivery Tracker'}
           </Badge>
           <Badge variant="outline" className="text-xs">
             Updated {latestSubmissionDate}
@@ -550,7 +556,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-          {modelConfig.name} Wait Times Canada (Updated {currentMonthYear})
+          {modelConfig.h1 || `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear})`}
         </h1>
 
         {/* Position Zero Featured Snippet Answer Box */}

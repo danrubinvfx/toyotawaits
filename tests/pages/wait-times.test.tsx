@@ -14,7 +14,7 @@ vi.mock('@/context/MarketContext', () => ({
 }));
 
 describe('Dedicated SEO Route: /wait-times/[model]', () => {
-  it('generates static params for all 13 registered Canadian vehicle models', async () => {
+  it('generates static params for all registered Canadian vehicle models', async () => {
     const params = await generateStaticParams();
     expect(params.length).toBe(Object.keys(MODEL_REGISTRY).length);
     expect(params.some((p) => p.model === 'rav4')).toBe(true);
@@ -24,6 +24,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(params.some((p) => p.model === 'prius')).toBe(true);
     expect(params.some((p) => p.model === 'tacoma')).toBe(true);
     expect(params.some((p) => p.model === 'tundra')).toBe(true);
+    expect(params.some((p) => p.model === 'corolla')).toBe(true);
     expect(params.some((p) => p.model === 'corolla-cross')).toBe(true);
     expect(params.some((p) => p.model === 'camry')).toBe(true);
     expect(params.some((p) => p.model === 'land-cruiser')).toBe(true);
@@ -74,6 +75,31 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
       `Track real-time crowdsourced Toyota RAV4 delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/rav4');
+  });
+
+  it('optimizes Corolla dynamic title, h1, and description for 2026–2027 delivery tracking', async () => {
+    const metadata = await generateMetadata({
+      params: Promise.resolve({ model: 'corolla' }),
+    });
+
+    expect(metadata.title).toBe(
+      'Toyota Corolla Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits'
+    );
+    expect(metadata.description).toContain('incoming 2027 allocations');
+    expect(metadata.description).toContain('remaining 2026 units');
+    expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/corolla');
+
+    const jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'corolla' }),
+    });
+    render(jsx);
+
+    expect(
+      screen.getByRole('heading', {
+        level: 1,
+        name: 'Toyota Corolla Wait Times in Canada (2026–2027 Delivery Tracker)',
+      })
+    ).toBeInTheDocument();
   });
 
   it('renders exact <h1>, Position Zero answer box, fast summary grid, calculator banner, and Sienna hitch guide banner', async () => {
