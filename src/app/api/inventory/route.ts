@@ -15,11 +15,15 @@ const EDGE_CACHE_HEADERS = {
 export async function GET(request?: Request) {
   let isSummary = false;
   let includeStale = false;
+  let modelFilter: string | null = null;
+  let regionFilter: string | null = null;
   if (request) {
     try {
       const url = new URL(request.url);
       isSummary = url.searchParams.get('summary') === 'true';
       includeStale = url.searchParams.get('includeStale') === 'true';
+      modelFilter = url.searchParams.get('model');
+      regionFilter = url.searchParams.get('region') || url.searchParams.get('province');
     } catch {
       // Ignored in non-standard request context
     }
@@ -27,6 +31,33 @@ export async function GET(request?: Request) {
 
   const nowMs = Date.now();
   const cutoffTime = nowMs - 48 * 3600 * 1000;
+
+  const applyQueryFilters = <
+    T extends {
+      model?: string | null;
+      dealerProvince?: string | null;
+      dealer?: { province?: string | null } | null;
+    }
+  >(
+    items: T[]
+  ): T[] => {
+    let result = items;
+    if (modelFilter && modelFilter.trim()) {
+      const normModel = modelFilter.trim().toLowerCase();
+      result = result.filter((item) => {
+        const m = (item.model || '').toLowerCase();
+        return m === normModel || m.includes(normModel) || normModel.includes(m);
+      });
+    }
+    if (regionFilter && regionFilter.trim()) {
+      const normRegion = regionFilter.trim().toLowerCase();
+      result = result.filter((item) => {
+        const prov = (item.dealerProvince || item.dealer?.province || '').toLowerCase();
+        return prov === normRegion || normRegion.includes(prov) || prov.includes(normRegion);
+      });
+    }
+    return result;
+  };
 
   const filterFreshListings = <
     T extends {
@@ -79,13 +110,20 @@ export async function GET(request?: Request) {
 
   if (!isLiveSupabaseConfigured()) {
     const freshSampleListings = filterFreshListings(INITIAL_SAMPLE_LISTINGS);
-    const countsByModel = getFallbackCounts();
+    const filteredListings = applyQueryFilters(freshSampleListings);
+    const countsByModel: Record<string, number> = {};
+    filteredListings.forEach((item) => {
+      if (item.model) {
+        countsByModel[item.model] = (countsByModel[item.model] || 0) + 1;
+      }
+    });
+
     return NextResponse.json(
       {
         success: true,
-        count: freshSampleListings.length,
+        count: filteredListings.length,
         countsByModel,
-        ...(isSummary ? {} : { listings: freshSampleListings }),
+        ...(isSummary ? {} : { listings: filteredListings }),
         source: 'sample_fallback',
       },
       { headers: EDGE_CACHE_HEADERS }
@@ -248,8 +286,10 @@ export async function GET(request?: Request) {
       mappedListings = filterFreshListings(mappedListings, enforceTimeCutoff);
     }
 
+    const filteredListings = applyQueryFilters(mappedListings);
+
     const countsByModel: Record<string, number> = {};
-    mappedListings.forEach((item) => {
+    filteredListings.forEach((item) => {
       if (item.model) {
         countsByModel[item.model] = (countsByModel[item.model] || 0) + 1;
       }
@@ -258,9 +298,9 @@ export async function GET(request?: Request) {
     return NextResponse.json(
       {
         success: true,
-        count: mappedListings.length,
+        count: filteredListings.length,
         countsByModel,
-        ...(isSummary ? {} : { listings: mappedListings }),
+        ...(isSummary ? {} : { listings: filteredListings }),
         source: 'supabase_dealer_listings',
       },
       { headers: EDGE_CACHE_HEADERS }

@@ -28,7 +28,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
-import { WhileYouWaitGear } from '@/components/submission/WhileYouWaitGear';
+import { PostSubmissionNextSteps } from '@/components/submission/PostSubmissionNextSteps';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
 
@@ -111,6 +111,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   const [usPricingType, setUsPricingType] = useState<'at_msrp' | 'markup' | 'mandatory_addons'>('at_msrp');
   const [usAdmAmount, setUsAdmAmount] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [honeypot, setHoneypot] = useState<string>('');
 
   // UI States & Double-Submit Protection
@@ -129,6 +130,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     modelSlug?: string;
     modelName?: string;
     province?: string;
+    email?: string;
   } | null>(null);
   const [copiedKey, setCopiedKey] = useState<boolean>(false);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -164,6 +166,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setUsPricingType('at_msrp');
     setUsAdmAmount('');
     setNotes('');
+    setEmail('');
     setHoneypot('');
     setFieldErrors({});
   };
@@ -356,12 +359,14 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
 
       const submittedModelSlug = currentModel.slug;
       const submittedProvince = province;
+      const submittedEmail = email.trim();
 
       setSuccessModalData({
         ...result.data,
         modelSlug: submittedModelSlug,
         modelName: currentModel.name,
         province: submittedProvince,
+        email: submittedEmail,
       });
       setSuccessBanner(
         isUsMarket
@@ -944,6 +949,20 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                     <p className="text-xs text-rose-600">{fieldErrors['notes'][0]}</p>
                   )}
                 </div>
+
+                <div className="space-y-1.5 pt-1">
+                  <Label htmlFor={`${formId}-email`}>Email (Optional — For 1-Click Drop Alerts)</Label>
+                  <Input
+                    id={`${formId}-email`}
+                    type="email"
+                    placeholder="you@example.com (optional)"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <p className="text-[11px] text-zinc-500">
+                    Optional. Reused to enable 1-click allocation drop alerts and order link recovery.
+                  </p>
+                </div>
               </div>
             )}
 
@@ -1047,9 +1066,11 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 </p>
               </div>
 
-              {/* While You Wait Essential Delivery Day Gear */}
-              <WhileYouWaitGear
+              {/* Post-Submission Inventory Bridge & First-Day Buys Conversion Module */}
+              <PostSubmissionNextSteps
                 modelName={successModalData.modelName || currentModel.name || selectedModelSlug}
+                province={successModalData.province || province}
+                email={successModalData.email || email}
               />
 
               {/* Discrete Ko-fi Support Note */}

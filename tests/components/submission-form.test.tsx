@@ -338,9 +338,9 @@ describe('SubmissionForm Component', () => {
     const copyKeyBtn = screen.getByRole('button', { name: /Copy Key/i });
     expect(copyKeyBtn).toBeInTheDocument();
 
-    // 4. Check While You Wait Essential Gear block
-    expect(screen.getByTestId('while-you-wait-gear')).toBeInTheDocument();
-    expect(screen.getByText('While You Wait: Essential Delivery Day Gear')).toBeInTheDocument();
+    // 4. Check Post-Submission Next Steps (Live Inventory Bridge & First-Day Buys)
+    expect(screen.getByTestId('post-submission-next-steps')).toBeInTheDocument();
+    expect(screen.getByText(/First-Day Buys & Essentials/i)).toBeInTheDocument();
 
     // 5. Check primary CTA button and timer text
     const doneBtn = screen.getByRole('button', { name: /Done & View Estimates/i });
