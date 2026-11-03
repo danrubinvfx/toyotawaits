@@ -22,6 +22,7 @@ import { CoverageDisclosureBanner } from '@/components/discovery/CoverageDisclos
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { InventoryGearCard } from '@/components/discovery/InventoryGearCard';
 import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
+import { OntarioAntiTheftCard } from '@/components/discovery/OntarioAntiTheftCard';
 import { getInsuranceAffiliateUrl, ONTARIO_INSURANCE_FALLBACK_URL } from '@/config/affiliates';
 import InventoryPage from '@/app/inventory/page';
 
@@ -1499,6 +1500,73 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       rerender(<InventoryExplorer initialListings={sixteenOnListings} />);
       expect(screen.getAllByTestId('ontario-insurance-card').length).toBe(2);
     });
+
+    it('renders OntarioAntiTheftCard strictly for Ontario RAV4, Highlander, and Grand Highlander models with verified Amazon affiliate links', () => {
+      const { rerender } = render(<OntarioAntiTheftCard province="ON" model="RAV4 Hybrid" />);
+
+      const card = screen.getByTestId('ontario-anti-theft-card');
+      expect(card).toBeInTheDocument();
+      expect(
+        screen.getByText(/🚨 Ontario High-Theft Alert: Avoid the \$500–\$1,500 Insurance Surcharge/i)
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Ontario insurers (Intact, Desjardins, Aviva) impose steep annual surcharges on RAV4 and Highlander models unless equipped with verified tracking (TAG) and physical deterrents. Check your policy for surcharge waiver requirements.'
+        )
+      ).toBeInTheDocument();
+
+      // 1. OBD-II Port Blocker
+      expect(screen.getByText('OBD-II Port Blocker')).toBeInTheDocument();
+      expect(
+        screen.getByText('Blocks CAN-bus key-cloning theft through the diagnostic port.')
+      ).toBeInTheDocument();
+      const obdCta = screen.getByTestId('anti-theft-cta-obd-port-lock');
+      expect(obdCta).toHaveTextContent('Search Amazon ↗');
+      expect(obdCta.getAttribute('href')).toContain(
+        'https://www.amazon.ca/s?k=OBD%20port%20lock%20anti%20theft%20car%20metal&tag=toyotawaits-20'
+      );
+      expect(obdCta).toHaveAttribute('target', '_blank');
+      expect(obdCta).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+      // 2. RFID Faraday Key Blocker
+      expect(screen.getByText('RFID Faraday Key Blocker')).toBeInTheDocument();
+      expect(
+        screen.getByText('Prevents relay attacks from keys resting near front doors.')
+      ).toBeInTheDocument();
+      const faradayCta = screen.getByTestId('anti-theft-cta-rfid-faraday-key-fob-pouch');
+      expect(faradayCta).toHaveTextContent('View on Amazon ↗');
+      expect(faradayCta).toHaveAttribute(
+        'href',
+        'https://www.amazon.ca/dp/B07MDF5TX9?tag=toyotawaits-20'
+      );
+      expect(faradayCta).toHaveAttribute('target', '_blank');
+      expect(faradayCta).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+      // 3. Visible Steering Wheel Lock
+      expect(screen.getByText('Visible Steering Wheel Lock')).toBeInTheDocument();
+      expect(
+        screen.getByText('Primary visual deterrent for driveway parking.')
+      ).toBeInTheDocument();
+      const wheelCta = screen.getByTestId('anti-theft-cta-steering-wheel-lock');
+      expect(wheelCta).toHaveTextContent('Search Amazon ↗');
+      expect(wheelCta.getAttribute('href')).toContain(
+        'https://www.amazon.ca/s?k=steering%20wheel%20lock%20anti-theft%20heavy%20duty&tag=toyotawaits-20'
+      );
+      expect(wheelCta).toHaveAttribute('target', '_blank');
+      expect(wheelCta).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+      // Gated out for BC
+      rerender(<OntarioAntiTheftCard province="BC" model="RAV4 Hybrid" />);
+      expect(screen.queryByTestId('ontario-anti-theft-card')).not.toBeInTheDocument();
+
+      // Gated out for non-high-theft model (Corolla) in Ontario
+      rerender(<OntarioAntiTheftCard province="ON" model="Corolla" />);
+      expect(screen.queryByTestId('ontario-anti-theft-card')).not.toBeInTheDocument();
+
+      // Renders for Grand Highlander in Ontario
+      rerender(<OntarioAntiTheftCard province="ON" model="Grand Highlander Hybrid" />);
+      expect(screen.getByTestId('ontario-anti-theft-card')).toBeInTheDocument();
+    });
   });
 
   // ===========================================================================
@@ -1527,7 +1595,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(screen.getByRole('heading', { level: 1, name: /Toyota Public Inventory/i })).toBeInTheDocument();
       expect(screen.getByTestId('unconfirmed-feed-badge')).toBeInTheDocument();
       expect(screen.getByText(/Unconfirmed Dealer Feed/i)).toBeInTheDocument();
-      expect(screen.getByText('BC & ON Fleet (22 Dealers)')).toBeInTheDocument();
+      expect(screen.getByText('BC & ON Fleet (30 Dealers)')).toBeInTheDocument();
     });
 
     it('renders gated preview screen when feature flags and overrides are absent', () => {

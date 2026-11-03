@@ -13,6 +13,7 @@ import {
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
 import { OntarioInsuranceCard } from './OntarioInsuranceCard';
+import { OntarioAntiTheftCard, isOntarioHighTheftModel } from './OntarioAntiTheftCard';
 import { InventoryAlertModal } from './InventoryAlertModal';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { DEALERS, getDealerCoordinates } from '@/config/dealers';
@@ -1094,6 +1095,16 @@ export function InventoryExplorer({
                 activeRegion === 'ON' || getListingProvince(listing) === 'ON';
               const shouldInsertOntarioInsurance =
                 (index + 1) % 8 === 0 && isOntarioListingOrRegion;
+              const isHighTheftOntario =
+                isOntarioListingOrRegion &&
+                isOntarioHighTheftModel(filters.model || listing.model);
+              const firstHighTheftIndex = displayedListings.findIndex(
+                (item) =>
+                  (activeRegion === 'ON' || getListingProvince(item) === 'ON') &&
+                  isOntarioHighTheftModel(filters.model || item.model)
+              );
+              const shouldInsertOntarioAntiTheft =
+                isHighTheftOntario && index === firstHighTheftIndex;
 
               return (
                 <React.Fragment key={listing.id}>
@@ -1101,6 +1112,13 @@ export function InventoryExplorer({
                     {...listing}
                     onListingClick={recordListingClick}
                   />
+                  {shouldInsertOntarioAntiTheft && (
+                    <OntarioAntiTheftCard
+                      key={`ontario-anti-theft-${index}`}
+                      province="ON"
+                      model={filters.model || listing.model}
+                    />
+                  )}
                   {shouldInsertGear && gearItem && (
                     <InventoryGearCard
                       key={`gear-strip-${gearItem.id}-${index}`}
