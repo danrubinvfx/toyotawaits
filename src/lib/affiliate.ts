@@ -4,6 +4,10 @@
  * with associate tag attribution.
  */
 
+import { shouldStripAffiliateTags } from '@/lib/gear/affiliate';
+
+export { shouldStripAffiliateTags };
+
 export const DEFAULT_AMAZON_AFFILIATE_TAG = 'toyotawaits-20';
 export const DEFAULT_AMAZON_US_AFFILIATE_TAG = 'toyotawaits07-20';
 
@@ -16,6 +20,7 @@ export interface AffiliateParams {
 /**
  * Builds a dynamically localized Amazon affiliate URL for either Canada (amazon.ca)
  * or the United States (amazon.com), with proper associate attribution tags.
+ * If admin opt-out is enabled, the tag parameter is omitted.
  */
 export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateParams): string {
   const isUS = market === 'US';
@@ -23,17 +28,20 @@ export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateP
   const tag = isUS
     ? (process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20')
     : (process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
+  const stripTag = shouldStripAffiliateTags();
 
   const cleanAsin = asin?.trim().toUpperCase();
   if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
-    return `${domain}/dp/${cleanAsin}?tag=${tag}`;
+    return stripTag ? `${domain}/dp/${cleanAsin}` : `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
 
   if (query && query.trim().length > 0) {
-    return `${domain}/s?k=${encodeURIComponent(query.trim())}&tag=${tag}`;
+    return stripTag
+      ? `${domain}/s?k=${encodeURIComponent(query.trim())}`
+      : `${domain}/s?k=${encodeURIComponent(query.trim())}&tag=${tag}`;
   }
 
-  return `${domain}/?tag=${tag}`;
+  return stripTag ? `${domain}/` : `${domain}/?tag=${tag}`;
 }
 
 /**
@@ -56,7 +64,10 @@ export function buildAmazonAffiliateUrl(
       (isUS
         ? process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20'
         : process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
-    return `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
+    const stripTag = shouldStripAffiliateTags();
+    return stripTag
+      ? `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}`
+      : `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
   }
   return getAmazonAffiliateUrl(paramsOrQuery);
 }

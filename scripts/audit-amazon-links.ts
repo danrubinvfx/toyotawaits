@@ -6,7 +6,20 @@ dns.setDefaultResultOrder('ipv4first');
 
 // SET YOUR EXPECTED ASSOCIATE IDS:
 const EXPECTED_CA_TAG = 'toyotawaits-20'; // Amazon.ca Associates Tag
-const EXPECTED_US_TAG = 'toyotawaits-20'; // Amazon.com Associates Tag
+const EXPECTED_US_TAG = 'toyotawaits07-20'; // Amazon.com Associates Tag
+
+export function sanitizeUrlForAudit(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl);
+    // Strip all Amazon associate / tracking query parameters
+    parsed.searchParams.delete('tag');
+    parsed.searchParams.delete('linkCode');
+    parsed.searchParams.delete('ascsubtag');
+    return parsed.toString();
+  } catch {
+    return rawUrl;
+  }
+}
 
 interface AuditEntry {
   title: string;
@@ -93,7 +106,8 @@ async function auditAmazonLinks() {
     try {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 8000);
-      const res = await fetch(rawUrl, {
+      const auditUrl = sanitizeUrlForAudit(rawUrl);
+      const res = await fetch(auditUrl, {
         method: 'HEAD',
         headers: {
           'User-Agent':
@@ -137,4 +151,6 @@ async function auditAmazonLinks() {
   }
 }
 
-auditAmazonLinks();
+if (process.argv[1]?.includes('audit-amazon-links')) {
+  auditAmazonLinks();
+}

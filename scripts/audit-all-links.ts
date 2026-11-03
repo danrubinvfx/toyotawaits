@@ -27,6 +27,19 @@ interface TargetItem {
   url: string;
 }
 
+export function sanitizeUrlForAudit(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl);
+    // Strip all Amazon associate / tracking query parameters
+    parsed.searchParams.delete('tag');
+    parsed.searchParams.delete('linkCode');
+    parsed.searchParams.delete('ascsubtag');
+    return parsed.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
 function extractAmazonUrlsFromDirectory(dirPath: string): TargetItem[] {
   const items: TargetItem[] = [];
   if (!fs.existsSync(dirPath)) return items;
@@ -145,13 +158,16 @@ async function runAudit() {
           issue = 'WRONG/MISSING US TAG (expected tag=toyotawaits07-20)';
         }
 
+        // Strip affiliate tracking query parameters before issuing live HTTP request
+        const auditFetchUrl = sanitizeUrlForAudit(url);
+
         let attempts = 0;
         while (attempts < 2) {
           attempts++;
           try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 12000);
-            const res = await fetch(url, {
+            const res = await fetch(auditFetchUrl, {
               method: 'GET',
               headers: {
                 'User-Agent':
@@ -237,4 +253,6 @@ async function runAudit() {
   }
 }
 
-runAudit();
+if (process.argv[1]?.includes('audit-all-links')) {
+  runAudit();
+}

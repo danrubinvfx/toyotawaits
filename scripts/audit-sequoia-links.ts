@@ -17,12 +17,24 @@ interface AuditItem {
   issues: string[];
 }
 
+function sanitizeUrlForAudit(rawUrl: string): string {
+  try {
+    const parsed = new URL(rawUrl);
+    parsed.searchParams.delete('tag');
+    parsed.searchParams.delete('linkCode');
+    parsed.searchParams.delete('ascsubtag');
+    return parsed.toString();
+  } catch {
+    return rawUrl;
+  }
+}
+
 async function checkUrl(url: string): Promise<{ status: number | string; error?: string }> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 8000);
 
-    const res = await fetch(url, {
+    const res = await fetch(sanitizeUrlForAudit(url), {
       method: 'GET',
       headers: {
         'User-Agent':

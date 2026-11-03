@@ -113,6 +113,13 @@ export async function GET(
       }
     }
 
+    // Detect admin opt-out flag from query params or cookies
+    const isOptOut =
+      searchParams.get('opt_out') === 'true' ||
+      searchParams.get('tw_admin_opt_out') === 'true' ||
+      request.cookies.get('opt_out')?.value === 'true' ||
+      request.cookies.get('tw_admin_opt_out')?.value === 'true';
+
     // Detect market context from URL param, cookie, or hostname
     const marketParam = searchParams.get('market')?.toUpperCase();
     const cookieMarket = request.cookies.get('toyotawaits_market')?.value?.toUpperCase();
@@ -122,22 +129,38 @@ export async function GET(
     // 3. Safe Outbound Link Handler & Geolocation Strategy:
     // Route to Amazon.com with US tag (toyotawaits07-20) for US visitors,
     // Amazon.ca with CA tag (toyotawaits-20) for CA visitors.
-    // Enforce associate tag hygiene and eliminate legacy tags.
+    // If admin opt-out is present, strip affiliate tracking tags completely.
     if (destinationUrl.includes('amazon.')) {
       try {
         const urlObj = new URL(destinationUrl);
         urlObj.hostname = isUS ? 'www.amazon.com' : 'www.amazon.ca';
 
-        const marketTag = isUS
-          ? process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
-            process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
-            'toyotawaits07-20'
-          : process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
-            process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
-            process.env.AMAZON_AFFILIATE_TAG ||
-            'toyotawaits-20';
+        if (isOptOut) {
+          urlObj.searchParams.delete('tag');
+          urlObj.searchParams.delete('linkCode');
+          urlObj.searchParams.delete('ascsubtag');
+        } else {
+          const marketTag = isUS
+            ? process.env.NEXT_PUBLIC_AMAZON_US_TAG ||
+              process.env.NEXT_PUBLIC_AMAZON_US_AFFILIATE_TAG ||
+              'toyotawaits07-20'
+            : process.env.NEXT_PUBLIC_AMAZON_CA_TAG ||
+              process.env.NEXT_PUBLIC_AMAZON_AFFILIATE_TAG ||
+              process.env.AMAZON_AFFILIATE_TAG ||
+              'toyotawaits-20';
 
-        urlObj.searchParams.set('tag', marketTag);
+          urlObj.searchParams.set('tag', marketTag);
+        }
+        destinationUrl = urlObj.toString();
+      } catch {
+        // preserve original URL if parsing fails
+      }
+    } else if (isOptOut) {
+      try {
+        const urlObj = new URL(destinationUrl);
+        urlObj.searchParams.delete('tag');
+        urlObj.searchParams.delete('linkCode');
+        urlObj.searchParams.delete('ascsubtag');
         destinationUrl = urlObj.toString();
       } catch {
         // preserve original URL if parsing fails

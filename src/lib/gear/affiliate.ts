@@ -10,6 +10,19 @@ export const PRIUS_SPECIAL_TAG = 'toyotawaits-20';
 export const DEFAULT_CA_AFFILIATE_TAG = CA_ASSOCIATE_TAG;
 export const DEFAULT_US_AFFILIATE_TAG = US_ASSOCIATE_TAG;
 
+/**
+ * Checks for the admin affiliate opt-out flag in browser sessions.
+ * When enabled, affiliate tracking query parameters are stripped during internal testing.
+ */
+export function shouldStripAffiliateTags(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem('tw_admin_opt_out') === 'true';
+  } catch {
+    return false;
+  }
+}
+
 export const PRIUS_GUIDE_SLUGS = new Set([
   'fitcamx-prius',
   'prius-mud-flaps',
@@ -191,6 +204,7 @@ export function sanitizeAmazonAffiliateUrl(
     }
   }
 
+  const stripTag = shouldStripAffiliateTags();
   const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
   const targetTag = getAssociateTag(marketOrIsUs, slug);
   const targetDomain = isUs ? 'www.amazon.com' : 'www.amazon.ca';
@@ -199,7 +213,13 @@ export function sanitizeAmazonAffiliateUrl(
     const parsed = new URL(cleanUrl);
     if (parsed.hostname.includes('amazon.')) {
       parsed.hostname = targetDomain;
-      parsed.searchParams.set('tag', targetTag);
+      if (stripTag) {
+        parsed.searchParams.delete('tag');
+        parsed.searchParams.delete('linkCode');
+        parsed.searchParams.delete('ascsubtag');
+      } else {
+        parsed.searchParams.set('tag', targetTag);
+      }
       return parsed.toString();
     }
   } catch {
@@ -207,10 +227,10 @@ export function sanitizeAmazonAffiliateUrl(
     let result = cleanUrl;
     if (isUs) {
       result = result.replace(/amazon\.ca/g, 'amazon.com');
-      result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
+      result = stripTag ? result.replace(/[?&]tag=[^&]+/g, '') : result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
     } else {
       result = result.replace(/amazon\.com/g, 'amazon.ca');
-      result = result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
+      result = stripTag ? result.replace(/[?&]tag=[^&]+/g, '') : result.replace(/tag=[^&]+/g, `tag=${targetTag}`);
     }
     return result;
   }
@@ -235,18 +255,20 @@ export type BuildAmazonAffiliateUrlParams = AffiliateParams;
  * Builds standard Amazon affiliate URL with market domain and associate tag routing.
  * US: amazon.com with tag 'toyotawaits07-20'
  * CA: amazon.ca with tag 'toyotawaits-20'
+ * If admin opt-out is active, the tag parameter is omitted.
  */
 export function buildAmazonAffiliateUrl(
   paramsOrQuery: AffiliateParams | string,
   tagOrMarket?: string,
   marketFallback: 'CA' | 'US' = 'CA'
 ): string {
+  const stripTag = shouldStripAffiliateTags();
   if (typeof paramsOrQuery === 'string') {
     const isUS = tagOrMarket === 'US' || marketFallback === 'US';
     const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
     const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
     const cleanQuery = encodeURIComponent(paramsOrQuery.trim() || 'Toyota accessories');
-    return `${domain}/s?k=${cleanQuery}&tag=${tag}`;
+    return stripTag ? `${domain}/s?k=${cleanQuery}` : `${domain}/s?k=${cleanQuery}&tag=${tag}`;
   }
 
   const {
@@ -266,11 +288,11 @@ export function buildAmazonAffiliateUrl(
 
   const cleanAsin = activeAsin?.trim().toUpperCase();
   if (cleanAsin && /^[A-Z0-9]{10}$/.test(cleanAsin)) {
-    return `${domain}/dp/${cleanAsin}?tag=${tag}`;
+    return stripTag ? `${domain}/dp/${cleanAsin}` : `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
 
   const cleanQuery = encodeURIComponent((query || searchQuery || 'Toyota accessories').trim());
-  return `${domain}/s?k=${cleanQuery}&tag=${tag}`;
+  return stripTag ? `${domain}/s?k=${cleanQuery}` : `${domain}/s?k=${cleanQuery}&tag=${tag}`;
 }
 
 export interface MobileDeepLinkTargets {
@@ -280,12 +302,18 @@ export interface MobileDeepLinkTargets {
 }
 
 export function buildAmazonDeepLinks(params: any): MobileDeepLinkTargets {
+  const stripTag = shouldStripAffiliateTags();
   if (typeof params === 'string' && (params.startsWith('http://') || params.startsWith('https://'))) {
     try {
       const parsed = new URL(params);
+      if (stripTag) {
+        parsed.searchParams.delete('tag');
+        parsed.searchParams.delete('linkCode');
+        parsed.searchParams.delete('ascsubtag');
+      }
       const domain = parsed.hostname.replace(/^www\./, '');
       const pathWithQuery = parsed.pathname.replace(/^\//, '') + parsed.search;
-      const webUrl = params;
+      const webUrl = parsed.toString();
       const iosSchemeUrl = 'com.amazon.mobile.shopping.web://' + domain + '/' + pathWithQuery;
       const androidIntentUrl =
         'intent://' +
@@ -308,11 +336,11 @@ export function buildAmazonDeepLinks(params: any): MobileDeepLinkTargets {
   const activeAsin = typeof rawAsin === 'string' ? rawAsin.trim().toUpperCase() : undefined;
   let pathWithQuery = '';
   if (activeAsin && /^[A-Z0-9]{10}$/.test(activeAsin)) {
-    pathWithQuery = 'dp/' + activeAsin + '?tag=' + tag;
+    pathWithQuery = stripTag ? ('dp/' + activeAsin) : ('dp/' + activeAsin + '?tag=' + tag);
   } else {
     const rawQuery = params?.query || params?.searchQuery || 'Toyota accessories';
     const cleanQuery = encodeURIComponent(typeof rawQuery === 'string' ? rawQuery.trim() : 'Toyota accessories');
-    pathWithQuery = 's?k=' + cleanQuery + '&tag=' + tag;
+    pathWithQuery = stripTag ? ('s?k=' + cleanQuery) : ('s?k=' + cleanQuery + '&tag=' + tag);
   }
   const webUrl = 'https://www.' + domain + '/' + pathWithQuery;
   const iosSchemeUrl = 'com.amazon.mobile.shopping.web://' + domain + '/' + pathWithQuery;

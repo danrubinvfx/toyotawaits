@@ -2,10 +2,12 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import {
   getAmazonAffiliateUrl,
   buildAmazonAffiliateUrl,
+  shouldStripAffiliateTags,
   DEFAULT_AMAZON_AFFILIATE_TAG,
   DEFAULT_AMAZON_US_AFFILIATE_TAG,
   AFFILIATE_LINKS,
 } from '@/lib/affiliate';
+import { sanitizeUrlForAudit } from '../../scripts/audit-all-links';
 
 describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
   const originalEnv = { ...process.env };
@@ -111,6 +113,65 @@ describe('Affiliate URL Utility (src/lib/affiliate.ts)', () => {
       expect(AFFILIATE_LINKS.TEKONSHA_WIRING).toBe('https://www.amazon.com/s?k=Tekonsha+118844&tag=toyotawaits07-20');
       expect(AFFILIATE_LINKS.ANTI_RATTLE_CLAMP).toBe('https://www.amazon.com/s?k=2+inch+anti+rattle+hitch+tightener&tag=toyotawaits07-20');
       expect(AFFILIATE_LINKS.AIR_LIFT_1000).toBe('https://www.amazon.com/s?k=Air+Lift+60858&tag=toyotawaits07-20');
+    });
+  });
+
+  describe('Admin Opt-Out (tw_admin_opt_out in localStorage)', () => {
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    afterEach(() => {
+      localStorage.clear();
+    });
+
+    it('returns shouldStripAffiliateTags() as false when tw_admin_opt_out is not set', () => {
+      expect(shouldStripAffiliateTags()).toBe(false);
+    });
+
+    it('returns shouldStripAffiliateTags() as true when tw_admin_opt_out is true', () => {
+      localStorage.setItem('tw_admin_opt_out', 'true');
+      expect(shouldStripAffiliateTags()).toBe(true);
+    });
+
+    it('omits tag from buildAmazonAffiliateUrl when opt-out is enabled', () => {
+      localStorage.setItem('tw_admin_opt_out', 'true');
+      const url = buildAmazonAffiliateUrl('Dashcam');
+      expect(url).toBe('https://www.amazon.ca/s?k=Dashcam');
+      expect(url).not.toContain('tag=');
+    });
+
+    it('omits tag from direct ASIN URL when opt-out is enabled', () => {
+      localStorage.setItem('tw_admin_opt_out', 'true');
+      const url = buildAmazonAffiliateUrl({ asin: 'B09GLVMB76', market: 'US' });
+      expect(url).toBe('https://www.amazon.com/dp/B09GLVMB76');
+      expect(url).not.toContain('tag=');
+    });
+
+    it('omits tag from getAmazonAffiliateUrl when opt-out is enabled', () => {
+      localStorage.setItem('tw_admin_opt_out', 'true');
+      const url = getAmazonAffiliateUrl({ query: 'NOCO GB40', market: 'CA' });
+      expect(url).toBe('https://www.amazon.ca/s?k=NOCO%20GB40');
+      expect(url).not.toContain('tag=');
+    });
+  });
+
+  describe('Audit Sanitization (sanitizeUrlForAudit)', () => {
+    it('strips tag, linkCode, and ascsubtag from Amazon URLs', () => {
+      const raw = 'https://www.amazon.ca/s?k=TuxMat&tag=toyotawaits-20&linkCode=ll2&ascsubtag=12345';
+      const clean = sanitizeUrlForAudit(raw);
+      expect(clean).toBe('https://www.amazon.ca/s?k=TuxMat');
+      expect(clean).not.toContain('tag=');
+      expect(clean).not.toContain('linkCode=');
+      expect(clean).not.toContain('ascsubtag=');
+    });
+
+    it('handles direct product URLs cleanly without tracking parameters', () => {
+      const raw = 'https://www.amazon.com/dp/B0BJ5928HS?tag=toyotawaits07-20&linkCode=as2';
+      const clean = sanitizeUrlForAudit(raw);
+      expect(clean).toBe('https://www.amazon.com/dp/B0BJ5928HS');
+      expect(clean).not.toContain('tag=');
+      expect(clean).not.toContain('linkCode=');
     });
   });
 });

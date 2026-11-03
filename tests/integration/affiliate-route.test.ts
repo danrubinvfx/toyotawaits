@@ -271,5 +271,64 @@ describe('GET /out/[slug] (Cloaked Affiliate Redirect Handler)', () => {
       expect(response.headers.get('Referrer-Policy')).toBe('strict-origin-when-cross-origin');
     }
   });
+
+  describe('Admin Opt-Out (/out/[slug])', () => {
+    it('strips tag query parameter when opt_out=true is in query string', async () => {
+      const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4?opt_out=true');
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('amazon.ca');
+      expect(location).not.toContain('tag=');
+      expect(location).not.toContain('toyotawaits-20');
+    });
+
+    it('strips tag query parameter when tw_admin_opt_out=true is in query string', async () => {
+      const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4?tw_admin_opt_out=true');
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('amazon.ca');
+      expect(location).not.toContain('tag=');
+    });
+
+    it('strips tag query parameter when opt_out=true cookie is present', async () => {
+      const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4', {
+        headers: {
+          cookie: 'opt_out=true',
+        },
+      });
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('amazon.ca');
+      expect(location).not.toContain('tag=');
+    });
+
+    it('strips tag query parameter when tw_admin_opt_out=true cookie is present', async () => {
+      const request = new NextRequest('http://localhost:3000/out/tuxmat-rav4', {
+        headers: {
+          cookie: 'tw_admin_opt_out=true',
+        },
+      });
+      const response = await GET(request, {
+        params: Promise.resolve({ slug: 'tuxmat-rav4' }),
+      });
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('Location') || '';
+      expect(location).toContain('amazon.ca');
+      expect(location).not.toContain('tag=');
+    });
+  });
 });
 
