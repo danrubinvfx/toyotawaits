@@ -452,6 +452,140 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(888) 856-8221',
     websiteUrl: 'https://www.simcoetoyota.ca/',
   },
+  {
+    dealerCode: 'downtown-toyota',
+    aliases: ['downtown-toyota', 'downtown toyota', 'downtowntoyota'],
+    dealerName: 'Downtown Toyota',
+    sourceCode: 'downtown-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.downtowntoyota.ca',
+    endpointUrl:
+      'https://www.downtowntoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '677 Queen St E',
+    city: 'Toronto',
+    province: 'ON',
+    postalCode: 'M4M 1G6',
+    phone: '(416) 465-5471',
+    websiteUrl: 'https://www.downtowntoyota.ca/',
+  },
+  {
+    dealerCode: 'don-valley-north-toyota',
+    aliases: [
+      'don-valley-north-toyota',
+      'don valley north toyota',
+      'dvn-toyota',
+      'dvntoyota',
+      'donvalleynorthtoyota',
+    ],
+    dealerName: 'Don Valley North Toyota',
+    sourceCode: 'don-valley-north-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.donvalleynorthtoyota.com',
+    endpointUrl:
+      'https://www.donvalleynorthtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '3300 Steeles Ave E',
+    city: 'Markham',
+    province: 'ON',
+    postalCode: 'L3R 1G9',
+    phone: '(905) 475-0722',
+    websiteUrl: 'https://www.donvalleynorthtoyota.com/',
+  },
+  {
+    dealerCode: 'thornhill-toyota',
+    aliases: ['thornhill-toyota', 'thornhill toyota', 'thornhilltoyota'],
+    dealerName: 'Thornhill Toyota',
+    sourceCode: 'thornhill-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.thornhilltoyota.com',
+    endpointUrl:
+      'https://www.thornhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '7800 Yonge St',
+    city: 'Vaughan',
+    province: 'ON',
+    postalCode: 'L4J 1W3',
+    phone: '(905) 889-2660',
+    websiteUrl: 'https://www.thornhilltoyota.com/',
+  },
+  {
+    dealerCode: 'richmond-hill-toyota',
+    aliases: ['richmond-hill-toyota', 'richmond hill toyota', 'richmondhilltoyota'],
+    dealerName: 'Richmond Hill Toyota',
+    sourceCode: 'richmond-hill-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.richmondhilltoyota.com',
+    endpointUrl:
+      'https://www.richmondhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '11240 Yonge St',
+    city: 'Richmond Hill',
+    province: 'ON',
+    postalCode: 'L4S 1K9',
+    phone: '(905) 884-9907',
+    websiteUrl: 'https://www.richmondhilltoyota.com/',
+  },
+  {
+    dealerCode: 'oakville-toyota',
+    aliases: ['oakville-toyota', 'oakville toyota', 'oakvilletoyota'],
+    dealerName: 'Oakville Toyota',
+    sourceCode: 'oakville-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.oakvilletoyota.ca',
+    endpointUrl:
+      'https://www.oakvilletoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '2375 Wyecroft Rd',
+    city: 'Oakville',
+    province: 'ON',
+    postalCode: 'L6L 6L4',
+    phone: '(905) 827-2228',
+    websiteUrl: 'https://www.oakvilletoyota.ca/',
+  },
+  {
+    dealerCode: 'upper-james-toyota',
+    aliases: ['upper-james-toyota', 'upper james toyota', 'upperjamestoyota'],
+    dealerName: 'Upper James Toyota',
+    sourceCode: 'upper-james-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.upperjamestoyota.ca',
+    endpointUrl:
+      'https://www.upperjamestoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '999 Upper James St',
+    city: 'Hamilton',
+    province: 'ON',
+    postalCode: 'L9C 3A6',
+    phone: '(905) 387-9287',
+    websiteUrl: 'https://www.upperjamestoyota.ca/',
+  },
+  {
+    dealerCode: 'pickering-toyota',
+    aliases: ['pickering-toyota', 'pickering toyota', 'pickeringtoyota'],
+    dealerName: 'Pickering Toyota',
+    sourceCode: 'pickering-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.pickeringtoyota.com',
+    endpointUrl:
+      'https://www.pickeringtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '557 Kingston Rd',
+    city: 'Pickering',
+    province: 'ON',
+    postalCode: 'L1V 3N7',
+    phone: '(905) 420-9000',
+    websiteUrl: 'https://www.pickeringtoyota.com/',
+  },
+  {
+    dealerCode: 'whitby-toyota',
+    aliases: ['whitby-toyota', 'whitby toyota', 'whitbytoyota'],
+    dealerName: 'Whitby Toyota',
+    sourceCode: 'whitby-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.whitbytoyota.com',
+    endpointUrl:
+      'https://www.whitbytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '1025 Dundas St W',
+    city: 'Whitby',
+    province: 'ON',
+    postalCode: 'L1P 1Z1',
+    phone: '(905) 668-4792',
+    websiteUrl: 'https://www.whitbytoyota.com/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -667,6 +801,9 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
         let prefix = 'ED';
         if (loc.includes('kenshawtoyota')) prefix = 'KS';
         else if (loc.includes('attrelltoyota')) prefix = 'ATT';
+        else if (loc.includes('downtowntoyota')) prefix = 'DT';
+        else if (loc.includes('donvalleynorthtoyota') || loc.includes('dvntoyota')) prefix = 'DVN';
+        else if (loc.includes('thornhilltoyota')) prefix = 'TH';
         items.push({
           ad_id: `${prefix}-${vdpId}`,
           vehicle_id: `${prefix}-${vdpId}`,
@@ -699,6 +836,8 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
         let prefix = 'REG';
         if (loc.includes('georgetowntoyota')) prefix = 'GT';
         else if (loc.includes('erinparktoyota')) prefix = 'EP';
+        else if (loc.includes('oakvilletoyota')) prefix = 'OAK';
+        else if (loc.includes('whitbytoyota')) prefix = 'WH';
         items.push({
           ad_id: `${prefix}-${catalogId}`,
           vehicle_id: `${prefix}-${catalogId}`,
@@ -722,18 +861,19 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       continue;
     }
 
-    // Nanaimo pattern: /new/inventory/2026-Toyota-4Runner-id14454878.html
+    // Nanaimo / Upper James pattern: /new/inventory/2026-Toyota-4Runner-id14454878.html
     const nanaimoMatch = loc.match(/\/new\/inventory\/((?:202\d)-Toyota-[A-Za-z0-9-]+)-id(\d+)\.html/i);
     if (nanaimoMatch) {
       const rawSlug = nanaimoMatch[1].toLowerCase();
       const id = nanaimoMatch[2];
       const spec = parseToyotaSlugSpec(rawSlug);
       if (spec) {
+        const prefix = loc.includes('upperjamestoyota') ? 'UJ' : 'NAN';
         items.push({
-          ad_id: `NAN-${id}`,
-          vehicle_id: `NAN-${id}`,
+          ad_id: `${prefix}-${id}`,
+          vehicle_id: `${prefix}-${id}`,
           vin: null,
-          stock_number: `NAN-${id}`,
+          stock_number: `${prefix}-${id}`,
           year: spec.year,
           make: 'Toyota',
           model: spec.model,
@@ -1018,6 +1158,131 @@ export async function sweepSingleDealer(
       let cachedSitemapItems: Array<Record<string, unknown>> | null = null;
 
       const fetchSitemapFallback = async (baseUrl: string): Promise<Array<Record<string, unknown>>> => {
+        if (baseUrl.includes('richmondhilltoyota.com')) {
+          const seenIds = new Set<string>();
+          const rhItems: Array<Record<string, unknown>> = [];
+          for (let page = 1; page <= 3; page++) {
+            const rhController = new AbortController();
+            const rhTimer = setTimeout(() => rhController.abort(), DEFAULT_TIMEOUT_MS);
+            try {
+              const rhRes = await fetch(`https://www.richmondhilltoyota.com/inventory/new?page=${page}`, {
+                headers: { 'User-Agent': USER_AGENT_AUDITOR },
+                signal: rhController.signal,
+              });
+              clearTimeout(rhTimer);
+              if (!rhRes.ok) break;
+              const html = await rhRes.text();
+              const blocks = [
+                ...html.matchAll(/<div class="hidden-item-prop"[\s\S]*?<input type="hidden" id="vehicle-makes"/gi),
+              ].map((m) => m[0]);
+              for (const block of blocks) {
+                const vdpUrl = block.match(/<link itemprop="url" href="([^"]+)"/i)?.[1]?.trim();
+                const vehicleId = block.match(/id="vehicle_id" value="(\d+)"/i)?.[1]?.trim();
+                if (!vdpUrl || !vehicleId || seenIds.has(vehicleId)) continue;
+                seenIds.add(vehicleId);
+                const yearStr = block.match(/id="vehicle_year" value="(\d{4})"/i)?.[1] || '2026';
+                const rawModel = block.match(/id="vehicle_model" value="([^"]+)"/i)?.[1] || 'RAV4';
+                const priceStr = block.match(/id="vehicle_price" value="(\d+)"/i)?.[1] || '0';
+                const vin =
+                  block.match(/<span itemprop="vehicleIdentificationNumber">([A-HJ-NPR-Z0-9]{17})<\/span>/i)?.[1] ||
+                  null;
+                const sku =
+                  block.match(/<span itemprop="sku">([^<]+)<\/span>/i)?.[1]?.trim() || `RH-${vehicleId}`;
+                const color = block.match(/id="vehicle_ext_color" value="([^"]*)"/i)?.[1]?.trim() || null;
+                const fuel = block.match(/id="vehicle_fuel_type" value="([^"]*)"/i)?.[1]?.trim() || 'Gas';
+                const year = parseInt(yearStr, 10);
+                const slugAttempt = `${year}-toyota-${rawModel.toLowerCase().replace(/\s+/g, '-')}`;
+                const spec = parseToyotaSlugSpec(slugAttempt);
+                const model = spec ? spec.model : rawModel;
+                const parsedPrice = parseInt(priceStr, 10);
+                const finalPrice = parsedPrice > 10000 ? parsedPrice : spec ? spec.msrp : 42000;
+                rhItems.push({
+                  ad_id: `RH-${vehicleId}`,
+                  vehicle_id: `RH-${vehicleId}`,
+                  vin,
+                  stock_number: sku,
+                  year,
+                  make: 'Toyota',
+                  model,
+                  trim: spec?.trim || 'Base',
+                  exterior_color: color,
+                  fuel_type: fuel.toLowerCase().includes('hybrid') ? 'Hybrid' : spec?.fuelType || 'Gas',
+                  sale_class: 'New',
+                  in_transit: 0,
+                  on_order: 0,
+                  msrp: finalPrice,
+                  asking_price: finalPrice,
+                  final_price: finalPrice,
+                  vdp_url: vdpUrl,
+                });
+              }
+            } catch {
+              clearTimeout(rhTimer);
+              break;
+            }
+          }
+          return rhItems;
+        }
+
+        if (baseUrl.includes('pickeringtoyota.com')) {
+          const pkController = new AbortController();
+          const pkTimer = setTimeout(() => pkController.abort(), DEFAULT_TIMEOUT_MS);
+          try {
+            const pkRes = await fetch('https://www.pickeringtoyota.com/toyota-new-inventory', {
+              headers: { 'User-Agent': USER_AGENT_AUDITOR },
+              signal: pkController.signal,
+            });
+            clearTimeout(pkTimer);
+            if (!pkRes.ok) return [];
+            const html = await pkRes.text();
+            const cardMatches = [
+              ...html.matchAll(
+                /<img src="([^"]+)" class="pt-menu-card-img-top"[\s\S]*?<p class="pt-menu-card-title">\s*(202\d)\s+([^<]+)<\/p>\s*<p class="pt-menu-card-price[^>]*>From <strong>\$([0-9,.]+)<\/strong><\/p>[\s\S]*?href="(toyota-[^"]+)"/gi
+              ),
+            ];
+            const seen = new Set<string>();
+            const pkItems: Array<Record<string, unknown>> = [];
+            for (const m of cardMatches) {
+              const imgRel = m[1].trim();
+              const year = parseInt(m[2], 10);
+              const rawModelTitle = m[3].trim();
+              const priceNum = Math.round(parseFloat(m[4].replace(/,/g, '')));
+              const hrefRel = m[5].trim();
+              const key = `${year}-${hrefRel}`;
+              if (seen.has(key)) continue;
+              seen.add(key);
+
+              const modelSlug = hrefRel.replace(/^toyota-/, '').replace(/-for-sale-\d{4}$/, '');
+              const spec = parseToyotaSlugSpec(`${year}-toyota-${modelSlug}`);
+              const model = spec ? spec.model : rawModelTitle;
+              const idSlug = `${year}-${modelSlug}`.toUpperCase();
+              pkItems.push({
+                ad_id: `PK-${idSlug}`,
+                vehicle_id: `PK-${idSlug}`,
+                vin: null,
+                stock_number: `PK-${idSlug.slice(0, 12)}`,
+                year,
+                make: 'Toyota',
+                model,
+                trim: spec?.trim || 'Base',
+                fuel_type: spec?.fuelType || 'Gas',
+                sale_class: 'New',
+                in_transit: 0,
+                on_order: 0,
+                msrp: priceNum || spec?.msrp || 40000,
+                asking_price: priceNum || spec?.msrp || 40000,
+                final_price: priceNum || spec?.msrp || 40000,
+                vdp_url: `https://www.pickeringtoyota.com/${hrefRel}`,
+                image: `https://www.pickeringtoyota.com/${imgRel.replace(/^\/+/, '')}`,
+              });
+            }
+            return pkItems;
+          } catch {
+            clearTimeout(pkTimer);
+            return [];
+          }
+        }
+
         let sitemapUrl = `${baseUrl.replace(/\/+$/, '')}/sitemap.xml`;
         if (sitemapUrl.includes('granvilletoyota.ca')) {
           sitemapUrl = sitemapUrl.replace('granvilletoyota.ca', 'granvilletoyota.com');
@@ -1029,14 +1294,26 @@ export async function sweepSingleDealer(
           sitemapUrl = 'https://www.kenshawtoyota.ca/inventory-listing-sitemap.xml';
         } else if (sitemapUrl.includes('attrelltoyota.com')) {
           sitemapUrl = 'https://www.attrelltoyota.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('downtowntoyota.ca')) {
+          sitemapUrl = 'https://www.downtowntoyota.ca/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('donvalleynorthtoyota.com') || sitemapUrl.includes('dvntoyota.com')) {
+          sitemapUrl = 'https://www.donvalleynorthtoyota.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('thornhilltoyota.com')) {
+          sitemapUrl = 'https://www.thornhilltoyota.com/inventory-listing-sitemap.xml';
         } else if (sitemapUrl.includes('georgetowntoyota.com')) {
           sitemapUrl = 'https://www.georgetowntoyota.com/en/sitemap-xml';
         } else if (sitemapUrl.includes('erinparktoyota.com')) {
           sitemapUrl = 'https://www.erinparktoyota.com/en/sitemap-xml';
+        } else if (sitemapUrl.includes('oakvilletoyota.ca')) {
+          sitemapUrl = 'https://www.oakvilletoyota.ca/en/sitemap-xml';
+        } else if (sitemapUrl.includes('whitbytoyota.com')) {
+          sitemapUrl = 'https://www.whitbytoyota.com/en/sitemap-xml';
         } else if (sitemapUrl.includes('vernontoyota.com')) {
           sitemapUrl = 'https://www.vernontoyota.com/sitemap-vehicles.xml';
         } else if (sitemapUrl.includes('nanaimotoyota.com')) {
           sitemapUrl = 'https://www.nanaimotoyota.com/en/sitemap_newinventory.xml';
+        } else if (sitemapUrl.includes('upperjamestoyota.ca')) {
+          sitemapUrl = 'https://www.upperjamestoyota.ca/en/sitemap_newinventory.xml';
         }
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
@@ -1072,9 +1349,12 @@ export async function sweepSingleDealer(
             }
           }
           const parsedItems = parsePublicSitemapToConvertusItems(xmlText);
-          if (baseUrl.includes('nanaimotoyota.com')) {
+          if (baseUrl.includes('nanaimotoyota.com') || baseUrl.includes('upperjamestoyota.ca')) {
             try {
-              const searchRes = await fetch('https://www.nanaimotoyota.com/new/inventory/search.html', {
+              const searchUrl = baseUrl.includes('upperjamestoyota.ca')
+                ? 'https://www.upperjamestoyota.ca/new/inventory/search.html'
+                : 'https://www.nanaimotoyota.com/new/inventory/search.html';
+              const searchRes = await fetch(searchUrl, {
                 headers: { 'User-Agent': USER_AGENT_AUDITOR },
               });
               if (searchRes.ok) {
@@ -1096,7 +1376,7 @@ export async function sweepSingleDealer(
                   }
                 }
                 for (const item of parsedItems) {
-                  const rawId = String(item.ad_id || '').replace(/^NAN-/, '');
+                  const rawId = String(item.ad_id || '').replace(/^(?:NAN|UJ)-/, '');
                   const extra = vinMap.get(rawId);
                   if (extra) {
                     if (extra.vin) item.vin = extra.vin;

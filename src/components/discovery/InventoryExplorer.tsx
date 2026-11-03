@@ -43,11 +43,23 @@ function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' {
     query.includes('toronto') ||
     query.includes('mississauga') ||
     query.includes('brampton') ||
+    query.includes('markham') ||
+    query.includes('vaughan') ||
+    query.includes('thornhill') ||
+    query.includes('richmond hill') ||
+    query.includes('richmond-hill') ||
+    query.includes('oakville') ||
+    query.includes('hamilton') ||
+    query.includes('upper james') ||
+    query.includes('pickering') ||
+    query.includes('whitby') ||
+    query.includes('don valley') ||
     query.includes('georgetown') ||
     query.includes('simcoe') ||
     query.includes('ken shaw') ||
     query.includes('attrell') ||
     query.includes('erin park') ||
+    query.includes('downtown toyota') ||
     query.includes('ontario')
   ) {
     return 'ON';
@@ -510,6 +522,13 @@ export function InventoryExplorer({
       ['Toronto', 'Toronto (GTA / Ontario)'],
       ['Mississauga', 'Mississauga (GTA / Ontario)'],
       ['Brampton', 'Brampton (GTA / Ontario)'],
+      ['Markham', 'Markham (GTA / Ontario)'],
+      ['Vaughan', 'Vaughan (GTA / Ontario)'],
+      ['Richmond Hill', 'Richmond Hill (GTA / Ontario)'],
+      ['Oakville', 'Oakville (GTA / Ontario)'],
+      ['Hamilton', 'Hamilton (Golden Horseshoe / Ontario)'],
+      ['Pickering', 'Pickering (Durham / Ontario)'],
+      ['Whitby', 'Whitby (Durham / Ontario)'],
       ['Georgetown', 'Georgetown (Halton Hills / Ontario)'],
       ['Simcoe', 'Simcoe (Southwestern Ontario)'],
       ['GTA / Ontario', 'GTA / Ontario'],
@@ -530,6 +549,8 @@ export function InventoryExplorer({
           ? 'Langley'
           : lowerDealer.includes('nanaimo')
           ? 'Nanaimo'
+          : lowerDealer.includes('richmond hill') || lowerDealer.includes('richmond-hill')
+          ? 'Richmond Hill'
           : lowerDealer.includes('richmond') || lowerDealer.includes('openroad')
           ? 'Richmond'
           : lowerDealer.includes('valley') || lowerDealer.includes('chilliwack')
@@ -546,12 +567,24 @@ export function InventoryExplorer({
           ? 'Vernon'
           : lowerDealer.includes('westminster')
           ? 'New Westminster'
-          : lowerDealer.includes('ken shaw') || lowerDealer.includes('toronto')
+          : lowerDealer.includes('ken shaw') || lowerDealer.includes('downtown toyota') || lowerDealer.includes('toronto')
           ? 'Toronto'
           : lowerDealer.includes('erin park') || lowerDealer.includes('mississauga')
           ? 'Mississauga'
           : lowerDealer.includes('attrell') || lowerDealer.includes('brampton')
           ? 'Brampton'
+          : lowerDealer.includes('don valley') || lowerDealer.includes('markham')
+          ? 'Markham'
+          : lowerDealer.includes('thornhill') || lowerDealer.includes('vaughan')
+          ? 'Vaughan'
+          : lowerDealer.includes('oakville')
+          ? 'Oakville'
+          : lowerDealer.includes('upper james') || lowerDealer.includes('hamilton')
+          ? 'Hamilton'
+          : lowerDealer.includes('pickering')
+          ? 'Pickering'
+          : lowerDealer.includes('whitby')
+          ? 'Whitby'
           : lowerDealer.includes('georgetown')
           ? 'Georgetown'
           : lowerDealer.includes('simcoe')

@@ -63,6 +63,13 @@ export const GROUPED_LOCATION_PRESETS: LocationPresetGroup[] = [
       { value: 'Toronto', label: 'Toronto', province: 'ON' },
       { value: 'Mississauga', label: 'Mississauga', province: 'ON' },
       { value: 'Brampton', label: 'Brampton', province: 'ON' },
+      { value: 'Markham', label: 'Markham', province: 'ON' },
+      { value: 'Vaughan', label: 'Vaughan', province: 'ON' },
+      { value: 'Richmond Hill', label: 'Richmond Hill', province: 'ON' },
+      { value: 'Oakville', label: 'Oakville', province: 'ON' },
+      { value: 'Hamilton', label: 'Hamilton', province: 'ON' },
+      { value: 'Pickering', label: 'Pickering', province: 'ON' },
+      { value: 'Whitby', label: 'Whitby', province: 'ON' },
       { value: 'Georgetown', label: 'Georgetown', province: 'ON' },
       { value: 'Simcoe', label: 'Simcoe', province: 'ON' },
     ],
@@ -77,6 +84,7 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   'Surrey (Guildford / White Rock)': { lat: 49.1913, lng: -122.8490 },
   'South Surrey / White Rock': { lat: 49.0601, lng: -122.8123 },
   'White Rock': { lat: 49.0601, lng: -122.8123 },
+  'Richmond Hill': { lat: 43.9038, lng: -79.4426 },
   Richmond: { lat: 49.1666, lng: -123.1336 },
   'Coquitlam / Tri-Cities': { lat: 49.2838, lng: -122.7932 },
   'Coquitlam / Port Moody / Pitt Meadows': { lat: 49.2838, lng: -122.7932 },
@@ -99,10 +107,18 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Toronto: { lat: 43.6822, lng: -79.4875 },
   Mississauga: { lat: 43.5296, lng: -79.6763 },
   Brampton: { lat: 43.7119, lng: -79.8266 },
+  Markham: { lat: 43.8161, lng: -79.3422 },
+  Vaughan: { lat: 43.8172, lng: -79.4241 },
+  Oakville: { lat: 43.4139, lng: -79.7267 },
+  Hamilton: { lat: 43.2208, lng: -79.8842 },
+  Pickering: { lat: 43.8144, lng: -79.1206 },
+  Whitby: { lat: 43.8732, lng: -78.9675 },
   Georgetown: { lat: 43.6497, lng: -79.8935 },
   Simcoe: { lat: 42.8428, lng: -80.2942 },
   'GTA / Ontario': { lat: 43.6822, lng: -79.4875 },
 };
+
+export const PRESET_LOCATIONS = LOWER_MAINLAND_PRESETS;
 
 /**
  * Calculates great-circle distance between two coordinates in kilometers using the Haversine formula.
@@ -162,11 +178,23 @@ export function getLocationProvince(name?: string | null): 'BC' | 'ON' | null {
     lower.includes('toronto') ||
     lower.includes('mississauga') ||
     lower.includes('brampton') ||
+    lower.includes('markham') ||
+    lower.includes('vaughan') ||
+    lower.includes('thornhill') ||
+    lower.includes('richmond hill') ||
+    lower.includes('richmond-hill') ||
+    lower.includes('oakville') ||
+    lower.includes('hamilton') ||
+    lower.includes('upper james') ||
+    lower.includes('pickering') ||
+    lower.includes('whitby') ||
+    lower.includes('don valley') ||
     lower.includes('georgetown') ||
     lower.includes('simcoe') ||
     lower.includes('ken shaw') ||
     lower.includes('attrell') ||
-    lower.includes('erin park')
+    lower.includes('erin park') ||
+    lower.includes('downtown toyota')
   ) {
     return 'ON';
   }
@@ -284,6 +312,27 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
   }
 
   // Handle Ontario / GTA dealer and municipality aliases
+  if (lower.includes('richmond hill') || lower.includes('richmond-hill') || lower.includes('richmondhill')) {
+    return LOWER_MAINLAND_PRESETS['Richmond Hill'];
+  }
+  if (lower.includes('don valley') || lower.includes('dvntoyota') || lower.includes('markham')) {
+    return LOWER_MAINLAND_PRESETS['Markham'];
+  }
+  if (lower.includes('thornhill') || lower.includes('vaughan')) {
+    return LOWER_MAINLAND_PRESETS['Vaughan'];
+  }
+  if (lower.includes('oakville')) {
+    return LOWER_MAINLAND_PRESETS['Oakville'];
+  }
+  if (lower.includes('upper james') || lower.includes('upper-james') || lower.includes('hamilton')) {
+    return LOWER_MAINLAND_PRESETS['Hamilton'];
+  }
+  if (lower.includes('pickering')) {
+    return LOWER_MAINLAND_PRESETS['Pickering'];
+  }
+  if (lower.includes('whitby')) {
+    return LOWER_MAINLAND_PRESETS['Whitby'];
+  }
   if (lower.includes('erin park') || lower.includes('erin-park') || lower.includes('mississauga')) {
     return LOWER_MAINLAND_PRESETS['Mississauga'];
   }
@@ -296,7 +345,15 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
   if (lower.includes('simcoe')) {
     return LOWER_MAINLAND_PRESETS['Simcoe'];
   }
-  if (lower.includes('ken shaw') || lower.includes('ken-shaw') || lower.includes('toronto') || lower.includes('gta') || lower.includes('ontario')) {
+  if (
+    lower.includes('downtown toyota') ||
+    lower.includes('downtown-toyota') ||
+    lower.includes('ken shaw') ||
+    lower.includes('ken-shaw') ||
+    lower.includes('toronto') ||
+    lower.includes('gta') ||
+    lower.includes('ontario')
+  ) {
     return LOWER_MAINLAND_PRESETS['Toronto'];
   }
 

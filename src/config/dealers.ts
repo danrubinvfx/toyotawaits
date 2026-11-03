@@ -408,6 +408,142 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -80.2942,
     enabled: true,
   },
+  // 21. Downtown Toyota (Toronto / Queen St E)
+  'downtown-toyota': {
+    id: 'downtown-toyota',
+    name: 'Downtown Toyota',
+    city: 'Toronto',
+    province: 'ON',
+    area: 'Toronto / Queen St E',
+    adapter: 'convertus',
+    baseUrl: 'https://www.downtowntoyota.ca',
+    apiEndpoint:
+      'https://www.downtowntoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.6589,
+    longitude: -79.3507,
+    lat: 43.6589,
+    lng: -79.3507,
+    enabled: true,
+  },
+  // 22. Don Valley North Toyota (Markham / Steeles Ave E)
+  'don-valley-north-toyota': {
+    id: 'don-valley-north-toyota',
+    name: 'Don Valley North Toyota',
+    city: 'Markham',
+    province: 'ON',
+    area: 'Markham / Steeles Ave E',
+    adapter: 'convertus',
+    baseUrl: 'https://www.donvalleynorthtoyota.com',
+    apiEndpoint:
+      'https://www.donvalleynorthtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.8161,
+    longitude: -79.3422,
+    lat: 43.8161,
+    lng: -79.3422,
+    enabled: true,
+  },
+  // 23. Thornhill Toyota (Vaughan / Yonge & Steeles)
+  'thornhill-toyota': {
+    id: 'thornhill-toyota',
+    name: 'Thornhill Toyota',
+    city: 'Vaughan',
+    province: 'ON',
+    area: 'Vaughan / Thornhill',
+    adapter: 'convertus',
+    baseUrl: 'https://www.thornhilltoyota.com',
+    apiEndpoint:
+      'https://www.thornhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.8172,
+    longitude: -79.4241,
+    lat: 43.8172,
+    lng: -79.4241,
+    enabled: true,
+  },
+  // 24. Richmond Hill Toyota (Richmond Hill / Mayfield Ave)
+  'richmond-hill-toyota': {
+    id: 'richmond-hill-toyota',
+    name: 'Richmond Hill Toyota',
+    city: 'Richmond Hill',
+    province: 'ON',
+    area: 'Richmond Hill / York Region',
+    adapter: 'convertus',
+    baseUrl: 'https://www.richmondhilltoyota.com',
+    apiEndpoint:
+      'https://www.richmondhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.9038,
+    longitude: -79.4426,
+    lat: 43.9038,
+    lng: -79.4426,
+    enabled: true,
+  },
+  // 25. Oakville Toyota (Oakville / Wyecroft Rd)
+  'oakville-toyota': {
+    id: 'oakville-toyota',
+    name: 'Oakville Toyota',
+    city: 'Oakville',
+    province: 'ON',
+    area: 'Oakville / Halton Region',
+    adapter: 'convertus',
+    baseUrl: 'https://www.oakvilletoyota.ca',
+    apiEndpoint:
+      'https://www.oakvilletoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.4139,
+    longitude: -79.7267,
+    lat: 43.4139,
+    lng: -79.7267,
+    enabled: true,
+  },
+  // 26. Upper James Toyota (Hamilton / Upper James St)
+  'upper-james-toyota': {
+    id: 'upper-james-toyota',
+    name: 'Upper James Toyota',
+    city: 'Hamilton',
+    province: 'ON',
+    area: 'Hamilton / Golden Horseshoe',
+    adapter: 'convertus',
+    baseUrl: 'https://www.upperjamestoyota.ca',
+    apiEndpoint:
+      'https://www.upperjamestoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.2208,
+    longitude: -79.8842,
+    lat: 43.2208,
+    lng: -79.8842,
+    enabled: true,
+  },
+  // 27. Pickering Toyota (Pickering / Kingston Rd)
+  'pickering-toyota': {
+    id: 'pickering-toyota',
+    name: 'Pickering Toyota',
+    city: 'Pickering',
+    province: 'ON',
+    area: 'Pickering / Durham Region',
+    adapter: 'convertus',
+    baseUrl: 'https://www.pickeringtoyota.com',
+    apiEndpoint:
+      'https://www.pickeringtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.8144,
+    longitude: -79.1206,
+    lat: 43.8144,
+    lng: -79.1206,
+    enabled: true,
+  },
+  // 28. Whitby Toyota (Whitby / Dundas St W)
+  'whitby-toyota': {
+    id: 'whitby-toyota',
+    name: 'Whitby Toyota',
+    city: 'Whitby',
+    province: 'ON',
+    area: 'Whitby / Durham Region',
+    adapter: 'convertus',
+    baseUrl: 'https://www.whitbytoyota.com',
+    apiEndpoint:
+      'https://www.whitbytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.8732,
+    longitude: -78.9675,
+    lat: 43.8732,
+    lng: -78.9675,
+    enabled: true,
+  },
 };
 
 /**
@@ -426,7 +562,97 @@ export function getDealerCoordinates(
     return { lat: d.lat, lng: d.lng };
   }
 
-  // Ontario / GTA Dealers — check Erin Park before generic Mississauga
+  // Ontario / GTA Dealers — check specific dealers before generic city names
+  if (
+    query.includes('downtown toyota') ||
+    query.includes('downtown-toyota') ||
+    query.includes('downtowntoyota') ||
+    (query.includes('downtown') && query.includes('toronto'))
+  ) {
+    return {
+      lat: DEALERS['downtown-toyota'].lat,
+      lng: DEALERS['downtown-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('don valley') ||
+    query.includes('don-valley') ||
+    query.includes('dvntoyota') ||
+    query.includes('donvalleynorth') ||
+    query.includes('markham')
+  ) {
+    return {
+      lat: DEALERS['don-valley-north-toyota'].lat,
+      lng: DEALERS['don-valley-north-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('thornhill') ||
+    query.includes('thornhill-toyota') ||
+    query.includes('vaughan')
+  ) {
+    return {
+      lat: DEALERS['thornhill-toyota'].lat,
+      lng: DEALERS['thornhill-toyota'].lng,
+    };
+  }
+
+  // Check Richmond Hill BEFORE generic Richmond (BC)!
+  if (
+    query.includes('richmond hill') ||
+    query.includes('richmond-hill') ||
+    query.includes('richmondhill')
+  ) {
+    return {
+      lat: DEALERS['richmond-hill-toyota'].lat,
+      lng: DEALERS['richmond-hill-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('oakville') ||
+    query.includes('oakville-toyota')
+  ) {
+    return {
+      lat: DEALERS['oakville-toyota'].lat,
+      lng: DEALERS['oakville-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('upper james') ||
+    query.includes('upper-james') ||
+    query.includes('upperjames') ||
+    query.includes('hamilton')
+  ) {
+    return {
+      lat: DEALERS['upper-james-toyota'].lat,
+      lng: DEALERS['upper-james-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('pickering') ||
+    query.includes('pickering-toyota')
+  ) {
+    return {
+      lat: DEALERS['pickering-toyota'].lat,
+      lng: DEALERS['pickering-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('whitby') ||
+    query.includes('whitby-toyota')
+  ) {
+    return {
+      lat: DEALERS['whitby-toyota'].lat,
+      lng: DEALERS['whitby-toyota'].lng,
+    };
+  }
+
   if (
     query.includes('erin park') ||
     query.includes('erin-park') ||

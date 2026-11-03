@@ -104,6 +104,13 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getPresetCoordinates('Toronto')).toEqual({ lat: 43.6822, lng: -79.4875 });
       expect(getPresetCoordinates('Mississauga')).toEqual({ lat: 43.5296, lng: -79.6763 });
       expect(getPresetCoordinates('Brampton')).toEqual({ lat: 43.7119, lng: -79.8266 });
+      expect(getPresetCoordinates('Markham')).toEqual({ lat: 43.8161, lng: -79.3422 });
+      expect(getPresetCoordinates('Vaughan')).toEqual({ lat: 43.8172, lng: -79.4241 });
+      expect(getPresetCoordinates('Richmond Hill')).toEqual({ lat: 43.9038, lng: -79.4426 });
+      expect(getPresetCoordinates('Oakville')).toEqual({ lat: 43.4139, lng: -79.7267 });
+      expect(getPresetCoordinates('Hamilton')).toEqual({ lat: 43.2208, lng: -79.8842 });
+      expect(getPresetCoordinates('Pickering')).toEqual({ lat: 43.8144, lng: -79.1206 });
+      expect(getPresetCoordinates('Whitby')).toEqual({ lat: 43.8732, lng: -78.9675 });
       expect(getPresetCoordinates('Georgetown')).toEqual({ lat: 43.6497, lng: -79.8935 });
       expect(getPresetCoordinates('Simcoe')).toEqual({ lat: 42.8428, lng: -80.2942 });
     });
@@ -190,6 +197,38 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getDealerCoordinates('simcoe-toyota')).toEqual({
         lat: 42.8428,
         lng: -80.2942,
+      });
+      expect(getDealerCoordinates('downtown-toyota')).toEqual({
+        lat: 43.6589,
+        lng: -79.3507,
+      });
+      expect(getDealerCoordinates('don-valley-north-toyota')).toEqual({
+        lat: 43.8161,
+        lng: -79.3422,
+      });
+      expect(getDealerCoordinates('thornhill-toyota')).toEqual({
+        lat: 43.8172,
+        lng: -79.4241,
+      });
+      expect(getDealerCoordinates('richmond-hill-toyota')).toEqual({
+        lat: 43.9038,
+        lng: -79.4426,
+      });
+      expect(getDealerCoordinates('oakville-toyota')).toEqual({
+        lat: 43.4139,
+        lng: -79.7267,
+      });
+      expect(getDealerCoordinates('upper-james-toyota')).toEqual({
+        lat: 43.2208,
+        lng: -79.8842,
+      });
+      expect(getDealerCoordinates('pickering-toyota')).toEqual({
+        lat: 43.8144,
+        lng: -79.1206,
+      });
+      expect(getDealerCoordinates('whitby-toyota')).toEqual({
+        lat: 43.8732,
+        lng: -78.9675,
       });
     });
 

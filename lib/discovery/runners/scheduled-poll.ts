@@ -223,6 +223,78 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.simcoetoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1559%26ln%3Den%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-downtown-toyota-convertus',
+    sourceCode: 'downtown-toyota-convertus',
+    dealerId: 'dealer-downtown-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.downtowntoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-don-valley-north-toyota-convertus',
+    sourceCode: 'don-valley-north-toyota-convertus',
+    dealerId: 'dealer-don-valley-north-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.donvalleynorthtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-thornhill-toyota-convertus',
+    sourceCode: 'thornhill-toyota-convertus',
+    dealerId: 'dealer-thornhill-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.thornhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-richmond-hill-toyota-convertus',
+    sourceCode: 'richmond-hill-toyota-convertus',
+    dealerId: 'dealer-richmond-hill-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.richmondhilltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-oakville-toyota-convertus',
+    sourceCode: 'oakville-toyota-convertus',
+    dealerId: 'dealer-oakville-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.oakvilletoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-upper-james-toyota-convertus',
+    sourceCode: 'upper-james-toyota-convertus',
+    dealerId: 'dealer-upper-james-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.upperjamestoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-pickering-toyota-convertus',
+    sourceCode: 'pickering-toyota-convertus',
+    dealerId: 'dealer-pickering-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.pickeringtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-whitby-toyota-convertus',
+    sourceCode: 'whitby-toyota-convertus',
+    dealerId: 'dealer-whitby-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.whitbytoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**
