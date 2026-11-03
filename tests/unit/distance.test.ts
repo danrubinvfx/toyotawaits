@@ -98,6 +98,11 @@ describe('Geo Distance & Preset Utilities', () => {
       });
       expect(getPresetCoordinates('Abbotsford')).toEqual({ lat: 49.0504, lng: -122.3045 });
       expect(getPresetCoordinates('Chilliwack')).toEqual({ lat: 49.1628, lng: -121.9589 });
+      expect(getPresetCoordinates('Toronto')).toEqual({ lat: 43.6822, lng: -79.4875 });
+      expect(getPresetCoordinates('Mississauga')).toEqual({ lat: 43.5296, lng: -79.6763 });
+      expect(getPresetCoordinates('Brampton')).toEqual({ lat: 43.7119, lng: -79.8266 });
+      expect(getPresetCoordinates('Georgetown')).toEqual({ lat: 43.6497, lng: -79.8935 });
+      expect(getPresetCoordinates('Simcoe')).toEqual({ lat: 42.8428, lng: -80.2942 });
     });
 
     it('handles case-insensitivity and aliases', () => {
@@ -136,6 +141,30 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getDealerCoordinates('nanaimo-toyota')).toEqual({
         lat: 49.1912,
         lng: -123.9782,
+      });
+      expect(getDealerCoordinates('ken-shaw-toyota')).toEqual({
+        lat: 43.6822,
+        lng: -79.4875,
+      });
+      expect(getDealerCoordinates('attrell-toyota')).toEqual({
+        lat: 43.7119,
+        lng: -79.8266,
+      });
+      expect(getDealerCoordinates('georgetown-toyota')).toEqual({
+        lat: 43.6497,
+        lng: -79.8935,
+      });
+      expect(getDealerCoordinates('erin-park-toyota')).toEqual({
+        lat: 43.5296,
+        lng: -79.6763,
+      });
+      expect(getDealerCoordinates('mississauga-toyota')).toEqual({
+        lat: 43.6156,
+        lng: -79.5697,
+      });
+      expect(getDealerCoordinates('simcoe-toyota')).toEqual({
+        lat: 42.8428,
+        lng: -80.2942,
       });
     });
 

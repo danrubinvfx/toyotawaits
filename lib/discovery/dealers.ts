@@ -356,6 +356,102 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(250) 758-9103',
     websiteUrl: 'https://www.nanaimotoyota.com/',
   },
+  {
+    dealerCode: 'ken-shaw-toyota',
+    aliases: ['ken-shaw-toyota', 'kenshaw-toyota', 'ken shaw toyota', 'kenshawtoyota'],
+    dealerName: 'Ken Shaw Toyota',
+    sourceCode: 'ken-shaw-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.kenshawtoyota.ca',
+    endpointUrl:
+      'https://www.kenshawtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '2336 St Clair Ave W',
+    city: 'Toronto',
+    province: 'ON',
+    postalCode: 'M6N 1K8',
+    phone: '(416) 766-1155',
+    websiteUrl: 'https://www.kenshawtoyota.ca/',
+  },
+  {
+    dealerCode: 'attrell-toyota',
+    aliases: ['attrell-toyota', 'attrell toyota', 'attrelltoyota'],
+    dealerName: 'Attrell Toyota',
+    sourceCode: 'attrell-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.attrelltoyota.com',
+    endpointUrl:
+      'https://www.attrelltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '110 Canam Crescent',
+    city: 'Brampton',
+    province: 'ON',
+    postalCode: 'L7A 1A9',
+    phone: '(905) 451-7235',
+    websiteUrl: 'https://www.attrelltoyota.com/',
+  },
+  {
+    dealerCode: 'georgetown-toyota',
+    aliases: ['georgetown-toyota', 'georgetown toyota', 'georgetowntoyota'],
+    dealerName: 'Georgetown Toyota',
+    sourceCode: 'georgetown-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.georgetowntoyota.com',
+    endpointUrl:
+      'https://www.georgetowntoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '312 Guelph St',
+    city: 'Georgetown',
+    province: 'ON',
+    postalCode: 'L7G 4B5',
+    phone: '(905) 877-2296',
+    websiteUrl: 'https://www.georgetowntoyota.com/',
+  },
+  {
+    dealerCode: 'erin-park-toyota',
+    aliases: ['erin-park-toyota', 'erinpark-toyota', 'erin park toyota', 'erinparktoyota'],
+    dealerName: 'Erin Park Toyota',
+    sourceCode: 'erin-park-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.erinparktoyota.com',
+    endpointUrl:
+      'https://www.erinparktoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '2411 Motorway Blvd',
+    city: 'Mississauga',
+    province: 'ON',
+    postalCode: 'L5L 3R2',
+    phone: '(905) 828-7711',
+    websiteUrl: 'https://www.erinparktoyota.com/',
+  },
+  {
+    dealerCode: 'mississauga-toyota',
+    aliases: ['mississauga-toyota', 'mississauga toyota', 'mississaugatoyota'],
+    dealerName: 'Mississauga Toyota',
+    sourceCode: 'mississauga-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.mississaugatoyota.com',
+    endpointUrl:
+      'https://www.mississaugatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D4092%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    address: '2215 Dundas Street East',
+    city: 'Mississauga',
+    province: 'ON',
+    postalCode: 'L4X 2X2',
+    phone: '(905) 625-3420',
+    websiteUrl: 'https://www.mississaugatoyota.com/',
+  },
+  {
+    dealerCode: 'simcoe-toyota',
+    aliases: ['simcoe-toyota', 'simcoe toyota', 'simcoetoyota'],
+    dealerName: 'Simcoe Toyota',
+    sourceCode: 'simcoe-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.simcoetoyota.ca',
+    endpointUrl:
+      'https://www.simcoetoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1559%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    address: '150 Queensway E',
+    city: 'Simcoe',
+    province: 'ON',
+    postalCode: 'N3Y 4K4',
+    phone: '(888) 856-8221',
+    websiteUrl: 'https://www.simcoetoyota.ca/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -567,12 +663,15 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       const slug = edealerMatch[1];
       const vdpId = edealerMatch[2];
       const spec = parseToyotaSlugSpec(slug);
-      if (spec) {
+      if (spec && spec.year >= 2025) {
+        let prefix = 'ED';
+        if (loc.includes('kenshawtoyota')) prefix = 'KS';
+        else if (loc.includes('attrelltoyota')) prefix = 'ATT';
         items.push({
-          ad_id: `ED-${vdpId}`,
-          vehicle_id: `ED-${vdpId}`,
+          ad_id: `${prefix}-${vdpId}`,
+          vehicle_id: `${prefix}-${vdpId}`,
           vin: null,
-          stock_number: `ED-${vdpId.slice(-6).toUpperCase()}`,
+          stock_number: `${prefix}-${vdpId.slice(-6).toUpperCase()}`,
           year: spec.year,
           make: 'Toyota',
           model: spec.model,
@@ -597,11 +696,14 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       const catalogId = regencyMatch[2];
       const spec = parseToyotaSlugSpec(slug);
       if (spec) {
+        let prefix = 'REG';
+        if (loc.includes('georgetowntoyota')) prefix = 'GT';
+        else if (loc.includes('erinparktoyota')) prefix = 'EP';
         items.push({
-          ad_id: `REG-${catalogId}`,
-          vehicle_id: `REG-${catalogId}`,
+          ad_id: `${prefix}-${catalogId}`,
+          vehicle_id: `${prefix}-${catalogId}`,
           vin: null,
-          stock_number: `REG-${catalogId}`,
+          stock_number: `${prefix}-${catalogId}`,
           year: spec.year,
           make: 'Toyota',
           model: spec.model,
@@ -923,6 +1025,14 @@ export async function sweepSingleDealer(
           sitemapUrl = 'https://openroadtoyotaabbotsford.com/sitemap.xml';
         } else if (sitemapUrl.includes('westminstertoyota.com')) {
           sitemapUrl = 'https://www.westminstertoyota.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('kenshawtoyota.com') || sitemapUrl.includes('kenshawtoyota.ca')) {
+          sitemapUrl = 'https://www.kenshawtoyota.ca/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('attrelltoyota.com')) {
+          sitemapUrl = 'https://www.attrelltoyota.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('georgetowntoyota.com')) {
+          sitemapUrl = 'https://www.georgetowntoyota.com/en/sitemap-xml';
+        } else if (sitemapUrl.includes('erinparktoyota.com')) {
+          sitemapUrl = 'https://www.erinparktoyota.com/en/sitemap-xml';
         } else if (sitemapUrl.includes('vernontoyota.com')) {
           sitemapUrl = 'https://www.vernontoyota.com/sitemap-vehicles.xml';
         } else if (sitemapUrl.includes('nanaimotoyota.com')) {

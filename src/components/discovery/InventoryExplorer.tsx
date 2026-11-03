@@ -472,6 +472,12 @@ export function InventoryExplorer({
       ['Kelowna', 'Kelowna (Interior BC / Okanagan)'],
       ['Vernon', 'Vernon (North Okanagan / Interior BC)'],
       ['Interior BC', 'Interior BC'],
+      ['Toronto', 'Toronto (GTA / Ontario)'],
+      ['Mississauga', 'Mississauga (GTA / Ontario)'],
+      ['Brampton', 'Brampton (GTA / Ontario)'],
+      ['Georgetown', 'Georgetown (Halton Hills / Ontario)'],
+      ['Simcoe', 'Simcoe (Southwestern Ontario)'],
+      ['GTA / Ontario', 'GTA / Ontario'],
     ]);
     listings.forEach((item) => {
       const lowerDealer = item.dealerName.toLowerCase();
@@ -505,6 +511,16 @@ export function InventoryExplorer({
           ? 'Vernon'
           : lowerDealer.includes('westminster')
           ? 'New Westminster'
+          : lowerDealer.includes('ken shaw') || lowerDealer.includes('toronto')
+          ? 'Toronto'
+          : lowerDealer.includes('erin park') || lowerDealer.includes('mississauga')
+          ? 'Mississauga'
+          : lowerDealer.includes('attrell') || lowerDealer.includes('brampton')
+          ? 'Brampton'
+          : lowerDealer.includes('georgetown')
+          ? 'Georgetown'
+          : lowerDealer.includes('simcoe')
+          ? 'Simcoe'
           : 'Vancouver');
 
       if (city.toLowerCase() === 'vancouver') {
@@ -533,6 +549,16 @@ export function InventoryExplorer({
         locMap.set('New Westminster', 'New Westminster');
       } else if (city.toLowerCase().includes('okanagan') || city.toLowerCase().includes('interior')) {
         locMap.set('Interior BC', 'Interior BC');
+      } else if (city.toLowerCase() === 'toronto') {
+        locMap.set('Toronto', 'Toronto (GTA / Ontario)');
+      } else if (city.toLowerCase() === 'mississauga') {
+        locMap.set('Mississauga', 'Mississauga (GTA / Ontario)');
+      } else if (city.toLowerCase() === 'brampton') {
+        locMap.set('Brampton', 'Brampton (GTA / Ontario)');
+      } else if (city.toLowerCase() === 'georgetown') {
+        locMap.set('Georgetown', 'Georgetown (Halton Hills / Ontario)');
+      } else if (city.toLowerCase() === 'simcoe') {
+        locMap.set('Simcoe', 'Simcoe (Southwestern Ontario)');
       } else if (!locMap.has(city)) {
         locMap.set(city, city);
       }

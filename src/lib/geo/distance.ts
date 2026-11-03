@@ -31,6 +31,12 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   'New Westminster': { lat: 49.1977, lng: -122.9366 },
   'Interior BC': { lat: 49.8919, lng: -119.4194 },
   Okanagan: { lat: 49.8919, lng: -119.4194 },
+  Toronto: { lat: 43.6822, lng: -79.4875 },
+  Mississauga: { lat: 43.5296, lng: -79.6763 },
+  Brampton: { lat: 43.7119, lng: -79.8266 },
+  Georgetown: { lat: 43.6497, lng: -79.8935 },
+  Simcoe: { lat: 42.8428, lng: -80.2942 },
+  'GTA / Ontario': { lat: 43.6822, lng: -79.4875 },
 };
 
 /**
@@ -133,6 +139,23 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
   }
   if (lower.includes('victoria') || lower.includes('island')) {
     return { lat: 48.4284, lng: -123.3656 };
+  }
+
+  // Handle Ontario / GTA dealer and municipality aliases
+  if (lower.includes('erin park') || lower.includes('erin-park') || lower.includes('mississauga')) {
+    return LOWER_MAINLAND_PRESETS['Mississauga'];
+  }
+  if (lower.includes('attrell') || lower.includes('brampton')) {
+    return LOWER_MAINLAND_PRESETS['Brampton'];
+  }
+  if (lower.includes('georgetown')) {
+    return LOWER_MAINLAND_PRESETS['Georgetown'];
+  }
+  if (lower.includes('simcoe')) {
+    return LOWER_MAINLAND_PRESETS['Simcoe'];
+  }
+  if (lower.includes('ken shaw') || lower.includes('ken-shaw') || lower.includes('toronto') || lower.includes('gta') || lower.includes('ontario')) {
+    return LOWER_MAINLAND_PRESETS['Toronto'];
   }
 
   return null;

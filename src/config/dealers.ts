@@ -306,6 +306,108 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -123.9782,
     enabled: true,
   },
+  // 15. Ken Shaw Toyota (Toronto / St. Clair W)
+  'ken-shaw-toyota': {
+    id: 'ken-shaw-toyota',
+    name: 'Ken Shaw Toyota',
+    city: 'Toronto',
+    province: 'ON',
+    area: 'Toronto / St. Clair Ave W',
+    adapter: 'convertus',
+    baseUrl: 'https://www.kenshawtoyota.ca',
+    apiEndpoint:
+      'https://www.kenshawtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.6822,
+    longitude: -79.4875,
+    lat: 43.6822,
+    lng: -79.4875,
+    enabled: true,
+  },
+  // 16. Attrell Toyota (Brampton / Canam Crescent)
+  'attrell-toyota': {
+    id: 'attrell-toyota',
+    name: 'Attrell Toyota',
+    city: 'Brampton',
+    province: 'ON',
+    area: 'Brampton / GTA West',
+    adapter: 'convertus',
+    baseUrl: 'https://www.attrelltoyota.com',
+    apiEndpoint:
+      'https://www.attrelltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.7119,
+    longitude: -79.8266,
+    lat: 43.7119,
+    lng: -79.8266,
+    enabled: true,
+  },
+  // 17. Georgetown Toyota (Georgetown / Halton Hills)
+  'georgetown-toyota': {
+    id: 'georgetown-toyota',
+    name: 'Georgetown Toyota',
+    city: 'Georgetown',
+    province: 'ON',
+    area: 'Georgetown / Halton Hills',
+    adapter: 'convertus',
+    baseUrl: 'https://www.georgetowntoyota.com',
+    apiEndpoint:
+      'https://www.georgetowntoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.6497,
+    longitude: -79.8935,
+    lat: 43.6497,
+    lng: -79.8935,
+    enabled: true,
+  },
+  // 18. Erin Park Toyota (Mississauga / Erin Mills Auto Centre)
+  'erin-park-toyota': {
+    id: 'erin-park-toyota',
+    name: 'Erin Park Toyota',
+    city: 'Mississauga',
+    province: 'ON',
+    area: 'Mississauga / Erin Mills Auto Centre',
+    adapter: 'convertus',
+    baseUrl: 'https://www.erinparktoyota.com',
+    apiEndpoint:
+      'https://www.erinparktoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 43.5296,
+    longitude: -79.6763,
+    lat: 43.5296,
+    lng: -79.6763,
+    enabled: true,
+  },
+  // 19. Mississauga Toyota (Mississauga / Dundas St E)
+  'mississauga-toyota': {
+    id: 'mississauga-toyota',
+    name: 'Mississauga Toyota',
+    city: 'Mississauga',
+    province: 'ON',
+    area: 'Mississauga / Dundas St E',
+    adapter: 'convertus',
+    baseUrl: 'https://www.mississaugatoyota.com',
+    apiEndpoint:
+      'https://www.mississaugatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D4092%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    latitude: 43.6156,
+    longitude: -79.5697,
+    lat: 43.6156,
+    lng: -79.5697,
+    enabled: true,
+  },
+  // 20. Simcoe Toyota (Simcoe / Norfolk County)
+  'simcoe-toyota': {
+    id: 'simcoe-toyota',
+    name: 'Simcoe Toyota',
+    city: 'Simcoe',
+    province: 'ON',
+    area: 'Simcoe / Southwestern Ontario',
+    adapter: 'convertus',
+    baseUrl: 'https://www.simcoetoyota.ca',
+    apiEndpoint:
+      'https://www.simcoetoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1559%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    latitude: 42.8428,
+    longitude: -80.2942,
+    lat: 42.8428,
+    lng: -80.2942,
+    enabled: true,
+  },
 };
 
 /**
@@ -322,6 +424,71 @@ export function getDealerCoordinates(
   if (dealerName && DEALERS[dealerName.toLowerCase()]) {
     const d = DEALERS[dealerName.toLowerCase()];
     return { lat: d.lat, lng: d.lng };
+  }
+
+  // Ontario / GTA Dealers — check Erin Park before generic Mississauga
+  if (
+    query.includes('erin park') ||
+    query.includes('erin-park') ||
+    query.includes('erinpark')
+  ) {
+    return {
+      lat: DEALERS['erin-park-toyota'].lat,
+      lng: DEALERS['erin-park-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('mississauga') ||
+    query.includes('mississauga-toyota')
+  ) {
+    return {
+      lat: DEALERS['mississauga-toyota'].lat,
+      lng: DEALERS['mississauga-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('ken shaw') ||
+    query.includes('ken-shaw') ||
+    query.includes('kenshaw') ||
+    query.includes('toronto')
+  ) {
+    return {
+      lat: DEALERS['ken-shaw-toyota'].lat,
+      lng: DEALERS['ken-shaw-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('attrell') ||
+    query.includes('attrell-toyota') ||
+    query.includes('brampton')
+  ) {
+    return {
+      lat: DEALERS['attrell-toyota'].lat,
+      lng: DEALERS['attrell-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('georgetown') ||
+    query.includes('georgetown-toyota')
+  ) {
+    return {
+      lat: DEALERS['georgetown-toyota'].lat,
+      lng: DEALERS['georgetown-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('simcoe') ||
+    query.includes('simcoe-toyota')
+  ) {
+    return {
+      lat: DEALERS['simcoe-toyota'].lat,
+      lng: DEALERS['simcoe-toyota'].lng,
+    };
   }
 
   // OpenRoad Toyota Peace Arch (South Surrey / White Rock) — check before generic 'openroad' and 'surrey'

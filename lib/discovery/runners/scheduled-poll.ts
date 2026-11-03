@@ -169,6 +169,60 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
       'https://www.nanaimotoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
     isActive: true,
   },
+  {
+    sourceId: 'source-ken-shaw-toyota-convertus',
+    sourceCode: 'ken-shaw-toyota-convertus',
+    dealerId: 'dealer-ken-shaw-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.kenshawtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-attrell-toyota-convertus',
+    sourceCode: 'attrell-toyota-convertus',
+    dealerId: 'dealer-attrell-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.attrelltoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-georgetown-toyota-convertus',
+    sourceCode: 'georgetown-toyota-convertus',
+    dealerId: 'dealer-georgetown-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.georgetowntoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-erin-park-toyota-convertus',
+    sourceCode: 'erin-park-toyota-convertus',
+    dealerId: 'dealer-erin-park-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.erinparktoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-mississauga-toyota-convertus',
+    sourceCode: 'mississauga-toyota-convertus',
+    dealerId: 'dealer-mississauga-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.mississaugatoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D4092%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-simcoe-toyota-convertus',
+    sourceCode: 'simcoe-toyota-convertus',
+    dealerId: 'dealer-simcoe-toyota',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.simcoetoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26cp%3D1559%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
 ];
 
 /**

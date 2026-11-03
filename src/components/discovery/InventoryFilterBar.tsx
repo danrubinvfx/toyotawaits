@@ -80,6 +80,12 @@ const DEFAULT_MUNICIPALITY_LOCATIONS: LocationOption[] = [
   { value: 'Kelowna', label: 'Kelowna (Interior BC / Okanagan)' },
   { value: 'Vernon', label: 'Vernon (North Okanagan / Interior BC)' },
   { value: 'Interior BC', label: 'Interior BC' },
+  { value: 'Toronto', label: 'Toronto (GTA / Ontario)' },
+  { value: 'Mississauga', label: 'Mississauga (GTA / Ontario)' },
+  { value: 'Brampton', label: 'Brampton (GTA / Ontario)' },
+  { value: 'Georgetown', label: 'Georgetown (Halton Hills / Ontario)' },
+  { value: 'Simcoe', label: 'Simcoe (Southwestern Ontario)' },
+  { value: 'GTA / Ontario', label: 'GTA / Ontario' },
 ];
 
 export function InventoryFilterBar({
