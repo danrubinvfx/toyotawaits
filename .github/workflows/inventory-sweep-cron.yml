@@ -1,8 +1,9 @@
-name: Scheduled 6-Hour Inventory Sweep
+name: Scheduled 12-Hour Alert Dispatcher
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '30 14 * * *'
+    - cron: '30 2 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -25,7 +26,7 @@ jobs:
             exit 1
           fi
 
-          TARGET_URL="https://www.toyotawaits.ca/api/cron/check-alerts?key=${CRON_SECRET}"
+          TARGET_URL="https://www.toyotawaits.ca/api/cron/check-alerts"
           echo "Triggering $TARGET_URL..."
 
           HTTP_STATUS=$(curl -s -o /tmp/cron_response.json -w "%{http_code}" -X POST "$TARGET_URL" \
