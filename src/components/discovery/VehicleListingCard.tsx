@@ -449,8 +449,10 @@ export function VehicleListingCard(rawProps: VehicleListingCardProps) {
 
   const explicitDays = days_on_lot ?? daysOnLot;
   const resolvedDaysOnLot =
-    explicitDays != null ? explicitDays : computedDaysFromDate > 0 ? computedDaysFromDate : 5;
-  const showLikelyCancellation = Boolean(is_likely_cancellation ?? isLikelyCancellation);
+    explicitDays != null && explicitDays > 0 ? explicitDays : computedDaysFromDate > 0 ? computedDaysFromDate : 5;
+  const isCancellationFlagged = Boolean(is_likely_cancellation ?? isLikelyCancellation);
+  const showLikelyCancellation =
+    isCancellationFlagged || (explicitDays != null && explicitDays >= 5) || computedDaysFromDate >= 5;
 
   return (
     <article
@@ -513,16 +515,16 @@ export function VehicleListingCard(rawProps: VehicleListingCardProps) {
           <div className="mb-2 space-y-1" data-testid="likely-cancellation-section">
             <span
               data-testid="likely-cancellation-badge"
-              title="Vehicles on lot over 5 days are frequently canceled customer allocations ready for immediate deposit."
+              title="Units on lot >= 5 days are frequently unclaimed allocations from buyers who backed out."
               className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400 border border-amber-500/30"
             >
-              ⚡ Likely Available Cancellation ({resolvedDaysOnLot}d on lot)
+              ⚡ Likely Available Cancellation ({resolvedDaysOnLot || 5}d on lot)
             </span>
             <p
               data-testid="likely-cancellation-subnote"
               className="text-[11px] text-amber-300/80 italic leading-snug"
             >
-              Vehicles on lot over 5 days are frequently canceled customer allocations ready for immediate deposit.
+              Units on lot &gt;= 5 days are frequently unclaimed allocations from buyers who backed out.
             </p>
           </div>
         )}

@@ -3,7 +3,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -49,6 +48,8 @@ export interface InventoryPageProps {
     | Promise<{ [key: string]: string | string[] | undefined }>
     | { [key: string]: string | string[] | undefined };
   initialListings?: VehicleListingCardProps[];
+  totalFleetCount?: number;
+  totalCount?: number;
 }
 
 type SearchParamsRecord = { [key: string]: string | string[] | undefined };
@@ -95,7 +96,12 @@ function parseModelParam(
   return undefined;
 }
 
-export default function InventoryPage({ searchParams, initialListings }: InventoryPageProps = {}) {
+export default function InventoryPage({
+  searchParams,
+  initialListings,
+  totalFleetCount,
+  totalCount,
+}: InventoryPageProps = {}) {
   // Extract preview query parameter and initial model filter from searchParams
   const isPreviewParam = parsePreviewParam(searchParams);
   const initialModel = parseModelParam(searchParams);
@@ -186,17 +192,21 @@ export default function InventoryPage({ searchParams, initialListings }: Invento
             </span>
           </div>
 
-          <Badge
-            variant="outline"
-            className="bg-red-950/50 text-red-400 border-red-800 text-[10px] font-mono hidden sm:inline-flex"
+          <span
+            className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-0.5 text-xs font-medium text-zinc-400"
+
           >
-            Pilot
-          </Badge>
+            BC Fleet (16 Dealers)
+          </span>
         </header>
 
         {/* Interactive Explorer Client Component */}
         <Suspense fallback={<div className="h-48 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
-          <InventoryExplorer initialListings={initialListings} initialModel={initialModel} />
+          <InventoryExplorer
+            initialListings={initialListings}
+            initialModel={initialModel}
+            totalFleetCount={totalFleetCount ?? totalCount}
+          />
         </Suspense>
 
         {/* Footer Disclaimer & Transparency Notice */}

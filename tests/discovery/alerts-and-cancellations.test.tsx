@@ -226,11 +226,24 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
 
       const subnote = screen.getByTestId('likely-cancellation-subnote');
       expect(subnote).toHaveTextContent(
-        'Vehicles on lot over 5 days are frequently canceled customer allocations ready for immediate deposit.'
+        'Units on lot >= 5 days are frequently unclaimed allocations from buyers who backed out.'
       );
     });
 
-    it('does not render cancellation badge when is_likely_cancellation is false', () => {
+    it('renders cancellation badge when days_on_lot >= 5 even if is_likely_cancellation is not set', () => {
+      render(
+        <InventoryVehicleCard
+          {...baseProps}
+          days_on_lot={6}
+        />
+      );
+
+      const badge = screen.getByTestId('likely-cancellation-badge');
+      expect(badge).toBeInTheDocument();
+      expect(badge).toHaveTextContent('⚡ Likely Available Cancellation (6d on lot)');
+    });
+
+    it('does not render cancellation badge when is_likely_cancellation is false and days_on_lot < 5', () => {
       render(
         <InventoryVehicleCard
           {...baseProps}
@@ -678,6 +691,133 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
         cooldown: 0,
       });
       expect(bypassedSummary.subscribersMatched).toBe(1);
+    });
+  });
+
+  // ===========================================================================
+  // 7. 5+ Day Ghost Allocation Filter Toggle and Velocity Sorting
+  // ===========================================================================
+  describe('7. Ghost Allocation Quick-Toggle Pill and Velocity Sorting', () => {
+    beforeEach(() => {
+      process.env.NEXT_PUBLIC_ENABLE_INVENTORY_DISCOVERY = 'true';
+    });
+
+    const mockGhostListings = [
+      {
+        id: 'fresh-on-lot-01',
+        make: 'Toyota',
+        model: 'RAV4 Hybrid',
+        trim: 'LE AWD',
+        modelYear: 2026,
+        vin: '2T3TEST001',
+        isProvisionalVin: false,
+        dealerName: 'Jim Pattison Toyota Downtown',
+        dealerCity: 'Vancouver',
+        dealerProvince: 'BC',
+        status: 'Advertised - availability unconfirmed',
+        lastChecked: new Date().toISOString(),
+        postedAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+        firstSeenAt: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString(),
+        daysOnLot: 2,
+        days_on_lot: 2,
+        isLikelyCancellation: false,
+        is_likely_cancellation: false,
+        lifecycleStatus: 'active',
+        lifecycle_status: 'active',
+        msrp: 38000,
+        sellingPrice: 38000,
+      },
+      {
+        id: 'ghost-alloc-02',
+        make: 'Toyota',
+        model: 'RAV4 Hybrid',
+        trim: 'XSE AWD',
+        modelYear: 2026,
+        vin: '2T3TEST002',
+        isProvisionalVin: false,
+        dealerName: 'Jim Pattison Toyota Downtown',
+        dealerCity: 'Vancouver',
+        dealerProvince: 'BC',
+        status: 'Advertised - availability unconfirmed',
+        lastChecked: new Date().toISOString(),
+        postedAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
+        firstSeenAt: new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString(),
+        daysOnLot: 7,
+        days_on_lot: 7,
+        isLikelyCancellation: true,
+        is_likely_cancellation: true,
+        lifecycleStatus: 'active',
+        lifecycle_status: 'active',
+        msrp: 48000,
+        sellingPrice: 48000,
+      },
+      {
+        id: 'ghost-days-03',
+        make: 'Toyota',
+        model: 'Sienna',
+        trim: 'Limited AWD',
+        modelYear: 2026,
+        vin: '5TDTEST003',
+        isProvisionalVin: false,
+        dealerName: 'West Coast Toyota',
+        dealerCity: 'Pitt Meadows',
+        dealerProvince: 'BC',
+        status: 'on_lot',
+        lastChecked: new Date().toISOString(),
+        postedAt: new Date(Date.now() - 11 * 24 * 3600 * 1000).toISOString(),
+        firstSeenAt: new Date(Date.now() - 11 * 24 * 3600 * 1000).toISOString(),
+        daysOnLot: 11,
+        days_on_lot: 11,
+        isLikelyCancellation: false,
+        is_likely_cancellation: false,
+        lifecycleStatus: 'active',
+        lifecycle_status: 'active',
+        msrp: 65000,
+        sellingPrice: 65000,
+      },
+    ];
+
+    it('renders quick-toggle pill with count and filters to ghost allocations when toggled', () => {
+      render(<InventoryExplorer initialListings={mockGhostListings} />);
+
+      const pill = screen.getByTestId('cancellations-toggle-pill');
+      expect(pill).toBeInTheDocument();
+      expect(pill).toHaveTextContent('⚡ Likely Cancellations (2)');
+      expect(pill).not.toHaveClass('border-amber-500');
+
+      // Before toggle: all 3 listings visible
+      expect(screen.getByTestId('listing-card-fresh-on-lot-01')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-ghost-alloc-02')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-ghost-days-03')).toBeInTheDocument();
+
+      // Click pill to activate filter
+      fireEvent.click(pill);
+
+      expect(pill).toHaveClass('border-amber-500');
+      expect(pill).toHaveClass('bg-amber-500/20');
+      expect(screen.queryByTestId('listing-card-fresh-on-lot-01')).not.toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-ghost-alloc-02')).toBeInTheDocument();
+      expect(screen.getByTestId('listing-card-ghost-days-03')).toBeInTheDocument();
+
+      // Click again to deactivate
+      fireEvent.click(pill);
+      expect(screen.getByTestId('listing-card-fresh-on-lot-01')).toBeInTheDocument();
+    });
+
+    it('sorts listings by cancellation velocity: prioritizing likely cancellations then descending by days on lot', () => {
+      render(<InventoryExplorer initialListings={mockGhostListings} />);
+
+      const sortSelect = screen.getByTestId('filter-sort-select');
+      expect(screen.getByRole('option', { name: 'Likely Cancellations (Longest on Lot First)' })).toBeInTheDocument();
+
+      fireEvent.change(sortSelect, { target: { value: 'cancellations' } });
+
+      const cards = screen.getAllByTestId(/^listing-card-/);
+      // ghost-alloc-02 has isLikelyCancellation: true, so it comes first
+      expect(cards[0]).toHaveAttribute('data-testid', 'listing-card-ghost-alloc-02');
+      // ghost-days-03 has daysOnLot: 11 (vs fresh-on-lot-01 daysOnLot: 2), so it comes second
+      expect(cards[1]).toHaveAttribute('data-testid', 'listing-card-ghost-days-03');
+      expect(cards[2]).toHaveAttribute('data-testid', 'listing-card-fresh-on-lot-01');
     });
   });
 });

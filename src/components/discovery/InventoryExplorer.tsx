@@ -314,6 +314,8 @@ export interface InventoryExplorerProps {
   previewOverride?: boolean;
   initialModel?: string;
   popularityCounts?: Record<string, number>;
+  totalFleetCount?: number;
+  totalCount?: number;
 }
 
 export function InventoryExplorer({
@@ -321,11 +323,14 @@ export function InventoryExplorer({
   previewOverride,
   initialModel,
   popularityCounts,
+  totalFleetCount: initialTotalFleetCount,
+  totalCount: initialTotalCount,
 }: InventoryExplorerProps) {
   let isPreviewQuery = false;
   let queryModel = initialModel || '';
   let isAlertVerifiedQuery = false;
   let isAlertUnsubscribedQuery = false;
+  let isCancellationsOnlyQuery = false;
 
   try {
     const sp = useSearchParams();
@@ -338,6 +343,9 @@ export function InventoryExplorer({
     if (sp?.get('alert_unsubscribed') === 'true') {
       isAlertUnsubscribedQuery = true;
     }
+    if (sp?.get('cancellationsOnly') === 'true' || sp?.get('cancellations') === 'true') {
+      isCancellationsOnlyQuery = true;
+    }
     const paramModel = sp?.get('model');
     if (paramModel && !queryModel) {
       queryModel = paramModel.trim();
@@ -347,6 +355,9 @@ export function InventoryExplorer({
   }
 
   const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
+  const [totalFleetCount, setTotalFleetCount] = useState<number | null>(
+    initialTotalFleetCount ?? initialTotalCount ?? null
+  );
   const [currentTime] = useState(() => Date.now());
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -366,8 +377,13 @@ export function InventoryExplorer({
     fetch('/api/inventory', { cache: 'no-store' })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (isMounted && data && Array.isArray(data.listings) && data.listings.length > 0) {
-          setListings(data.listings);
+        if (isMounted && data) {
+          if (Array.isArray(data.listings) && data.listings.length > 0) {
+            setListings(data.listings);
+          }
+          if (typeof data.totalCount === 'number') {
+            setTotalFleetCount(data.totalCount);
+          }
         }
       })
       .catch(() => {
@@ -382,6 +398,7 @@ export function InventoryExplorer({
   const [filters, setFilters] = useState<FilterState>({
     model: queryModel || '',
     status: 'advertised',
+    cancellationsOnly: isCancellationsOnlyQuery,
     dealer: '',
     location: '',
     minPrice: '',
@@ -389,6 +406,24 @@ export function InventoryExplorer({
     search: '',
     sortBy: 'newest',
   });
+
+  const cancellationsCount = useMemo(() => {
+    return listings.filter((item) => {
+      const lc = (item.lifecycleStatus || item.lifecycle_status || 'active').toLowerCase();
+      if (lc === 'sold' || lc === 'unlisted') return false;
+      const isCancel = Boolean(item.is_likely_cancellation || item.isLikelyCancellation);
+      const days = item.days_on_lot ?? item.daysOnLot ?? 0;
+      return isCancel || days >= 5;
+    }).length;
+  }, [listings]);
+
+  const handleToggleCancellations = () => {
+    setFilters((prev) => ({
+      ...prev,
+      cancellationsOnly: !prev.cancellationsOnly,
+    }));
+    setVisibleCount(PAGE_SIZE);
+  };
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
@@ -681,6 +716,13 @@ export function InventoryExplorer({
         if (!fullSpec.includes(q)) return false;
       }
 
+      // Cancellations-only filter
+      if (filters.cancellationsOnly) {
+        const isCancel = Boolean(item.is_likely_cancellation || item.isLikelyCancellation);
+        const days = item.days_on_lot ?? item.daysOnLot ?? 0;
+        if (!isCancel && days < 5) return false;
+      }
+
       return true;
     });
 
@@ -690,6 +732,20 @@ export function InventoryExplorer({
       filters.sortBy || (shouldSortNearest && userCoordinates ? 'distance_asc' : 'newest');
 
     filtered.sort((a, b) => {
+      if (activeSort === 'cancellations') {
+        const cancelA = Boolean(a.is_likely_cancellation || a.isLikelyCancellation);
+        const cancelB = Boolean(b.is_likely_cancellation || b.isLikelyCancellation);
+        if (cancelA !== cancelB) {
+          return cancelB ? 1 : -1;
+        }
+        const daysA = a.days_on_lot ?? a.daysOnLot ?? 0;
+        const daysB = b.days_on_lot ?? b.daysOnLot ?? 0;
+        if (daysB !== daysA) {
+          return daysB - daysA;
+        }
+        return a.id.localeCompare(b.id);
+      }
+
       if (activeSort === 'newest') {
         const dateA = new Date(a.postedAt || a.firstSeenAt || a.lastChecked || 0).getTime();
         const dateB = new Date(b.postedAt || b.firstSeenAt || b.lastChecked || 0).getTime();
@@ -807,6 +863,23 @@ export function InventoryExplorer({
     );
   }
 
+  const isFiltered = Boolean(
+    (filters.model && filters.model.toLowerCase() !== 'all') ||
+    (filters.status && filters.status !== 'advertised' && filters.status !== 'active') ||
+    filters.location ||
+    filters.dealer ||
+    filters.minPrice ||
+    filters.maxPrice ||
+    filters.search
+  );
+
+  const displayCount =
+    !isFiltered && totalFleetCount != null
+      ? totalFleetCount
+      : filteredListings.length >= 1000 && totalFleetCount != null
+      ? totalFleetCount
+      : filteredListings.length;
+
   return (
     <div className="space-y-3 sm:space-y-4" data-testid="inventory-explorer">
       {!dismissedBanner && isAlertVerifiedQuery && (
@@ -856,8 +929,12 @@ export function InventoryExplorer({
         availableModels={availableModels}
         availableLocations={availableLocations}
         availableDealers={availableDealers}
-        totalResults={filteredListings.length}
+        totalResults={displayCount}
+        totalFleetCount={totalFleetCount ?? undefined}
+        totalCount={totalFleetCount ?? undefined}
         onOpenAlertModal={() => setIsAlertModalOpen(true)}
+        cancellationsCount={cancellationsCount}
+        onToggleCancellations={handleToggleCancellations}
       />
 
       {/* Contextual In-Feed Drop Alert Prompt for Specific Searches */}
@@ -939,7 +1016,7 @@ export function InventoryExplorer({
                 data-testid="showing-all-message"
                 className="text-xs text-neutral-400"
               >
-                Showing all {filteredListings.length} observed vehicles
+                Showing all {filteredListings.length.toLocaleString('en-CA')} observed vehicles
               </p>
             )}
           </div>

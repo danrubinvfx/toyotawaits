@@ -351,6 +351,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
     const defaultFilters: FilterState = {
       model: '',
       status: 'advertised',
+      cancellationsOnly: false,
       dealer: '',
       location: '',
       userLocation: '',
@@ -456,6 +457,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
 
       expect(options).toEqual([
         { value: 'newest', text: 'Newest Listing (Dealer Posted Date)' },
+        { value: 'cancellations', text: 'Likely Cancellations (Longest on Lot First)' },
         { value: 'price_asc', text: 'Price: Low to High' },
         { value: 'price_desc', text: 'Price: High to Low' },
         { value: 'distance_asc', text: 'Distance: Closest First' },

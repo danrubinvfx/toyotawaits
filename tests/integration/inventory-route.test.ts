@@ -83,4 +83,70 @@ describe('GET /api/inventory Endpoint', () => {
     expect(json.listings[0].sellingPrice).toBe(48995);
     expect(json.listings[0].hasUnverifiedFees).toBe(false);
   });
+  it('uncaps inventory beyond 1,000 rows by requesting exact count from Supabase', async () => {
+    vi.spyOn(serverSupabase, 'isLiveSupabaseConfigured').mockReturnValue(true);
+
+    const mockOrder = vi.fn().mockResolvedValue({
+      data: Array(1000).fill({
+        id: 'mock-listing',
+        current_status: 'Advertised',
+        last_observed_at: new Date().toISOString(),
+        vehicle: { model: 'RAV4' },
+      }),
+      count: 1642,
+      error: null,
+    });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === 'dealer_listings') {
+          return { select: mockSelect };
+        }
+        return { select: vi.fn().mockReturnThis() };
+      }),
+    } as any);
+
+    const response = await GET();
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.totalCount).toBe(1642);
+    expect(json.count).toBe(1000);
+
+    expect(mockSelect).toHaveBeenCalledWith(expect.any(String), { count: 'exact' });
+    expect(mockEq).toHaveBeenCalledWith('lifecycle_status', 'active');
+  });
+
+  it('returns totalCount when summary=true is requested', async () => {
+    vi.spyOn(serverSupabase, 'isLiveSupabaseConfigured').mockReturnValue(true);
+
+    const mockOrder = vi.fn().mockResolvedValue({
+      data: [],
+      count: 1642,
+      error: null,
+    });
+    const mockEq = vi.fn().mockReturnValue({ order: mockOrder });
+    const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
+
+    vi.spyOn(serverSupabase, 'createServerClient').mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === 'dealer_listings') {
+          return { select: mockSelect };
+        }
+        return { select: vi.fn().mockReturnThis() };
+      }),
+    } as any);
+
+    const req = new Request('http://localhost:3000/api/inventory?summary=true');
+    const response = await GET(req);
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.totalCount).toBe(1642);
+    expect(json.listings).toBeUndefined();
+  });
 });

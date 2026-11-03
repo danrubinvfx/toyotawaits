@@ -15,6 +15,7 @@ const EDGE_CACHE_HEADERS = {
 export async function GET(request?: Request) {
   let isSummary = false;
   let includeStale = false;
+  let cancellationsOnly = false;
   let modelFilter: string | null = null;
   let regionFilter: string | null = null;
   if (request) {
@@ -22,6 +23,9 @@ export async function GET(request?: Request) {
       const url = new URL(request.url);
       isSummary = url.searchParams.get('summary') === 'true';
       includeStale = url.searchParams.get('includeStale') === 'true';
+      cancellationsOnly =
+        url.searchParams.get('cancellationsOnly') === 'true' ||
+        url.searchParams.get('cancellations') === 'true';
       modelFilter = url.searchParams.get('model');
       regionFilter = url.searchParams.get('region') || url.searchParams.get('province');
     } catch {
@@ -37,6 +41,13 @@ export async function GET(request?: Request) {
       model?: string | null;
       dealerProvince?: string | null;
       dealer?: { province?: string | null } | null;
+      lifecycleStatus?: string | null;
+      lifecycle_status?: string | null;
+      isLikelyCancellation?: boolean | null;
+      is_likely_cancellation?: boolean | null;
+      status?: string | null;
+      daysOnLot?: number | null;
+      days_on_lot?: number | null;
     }
   >(
     items: T[]
@@ -54,6 +65,20 @@ export async function GET(request?: Request) {
       result = result.filter((item) => {
         const prov = (item.dealerProvince || item.dealer?.province || '').toLowerCase();
         return prov === normRegion || normRegion.includes(prov) || prov.includes(normRegion);
+      });
+    }
+    if (cancellationsOnly) {
+      result = result.filter((item) => {
+        const lc = (item.lifecycleStatus || item.lifecycle_status || 'active').toLowerCase();
+        if (lc !== 'active') return false;
+        const isCancel = Boolean(item.isLikelyCancellation || item.is_likely_cancellation);
+        const st = (item.status || '').toLowerCase();
+        const days = item.daysOnLot ?? item.days_on_lot ?? 0;
+        return (
+          isCancel ||
+          (st === 'on_lot' && days >= 5) ||
+          ((st.includes('on_lot') || st.includes('on lot')) && days >= 5)
+        );
       });
     }
     return result;
@@ -122,6 +147,7 @@ export async function GET(request?: Request) {
       {
         success: true,
         count: filteredListings.length,
+        totalCount: filteredListings.length,
         countsByModel,
         ...(isSummary ? {} : { listings: filteredListings }),
         source: 'sample_fallback',
@@ -148,7 +174,11 @@ export async function GET(request?: Request) {
     `;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let query: any = supabase.from('dealer_listings').select(selectClause);
+    let query: any = supabase.from('dealer_listings').select(selectClause, { count: 'exact' });
+
+    if (typeof query.eq === 'function') {
+      query = query.eq('lifecycle_status', 'active');
+    }
 
     // Strict 48h staleness cutoff: exclude older than 48h and stale/removed/quarantined unless includeStale=true
     if (!includeStale) {
@@ -166,13 +196,19 @@ export async function GET(request?: Request) {
 
     const initialResult = await query.order('last_observed_at', { ascending: false });
     let data = initialResult.data;
+    let totalCount = initialResult.count;
     const error = initialResult.error;
     let enforceTimeCutoff = true;
 
     // If strict 48h window yielded 0 rows on live DB (e.g. between sweeps), query all active rows without 48h cutoff
     if (!includeStale && !error && (!data || data.length === 0)) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let fallbackActiveQuery: any = supabase.from('dealer_listings').select(selectClause);
+      let fallbackActiveQuery: any = supabase
+        .from('dealer_listings')
+        .select(selectClause, { count: 'exact' });
+      if (typeof fallbackActiveQuery.eq === 'function') {
+        fallbackActiveQuery = fallbackActiveQuery.eq('lifecycle_status', 'active');
+      }
       if (typeof fallbackActiveQuery.not === 'function') {
         fallbackActiveQuery = fallbackActiveQuery.not(
           'current_status',
@@ -186,6 +222,7 @@ export async function GET(request?: Request) {
         });
         if (!fallbackResult.error && Array.isArray(fallbackResult.data) && fallbackResult.data.length > 0) {
           data = fallbackResult.data;
+          totalCount = fallbackResult.count;
           enforceTimeCutoff = false;
         }
       }
@@ -196,6 +233,7 @@ export async function GET(request?: Request) {
       return NextResponse.json({
         success: false,
         count: 0,
+        totalCount: 0,
         countsByModel: {},
         ...(isSummary ? {} : { listings: [] }),
         source: 'supabase_error',
@@ -295,10 +333,13 @@ export async function GET(request?: Request) {
       }
     });
 
+    const resolvedTotalCount = totalCount ?? (Array.isArray(data) ? data.length : 0);
+
     return NextResponse.json(
       {
         success: true,
         count: filteredListings.length,
+        totalCount: resolvedTotalCount,
         countsByModel,
         ...(isSummary ? {} : { listings: filteredListings }),
         source: 'supabase_dealer_listings',
@@ -310,6 +351,7 @@ export async function GET(request?: Request) {
     return NextResponse.json({
       success: false,
       count: 0,
+      totalCount: 0,
       countsByModel: {},
       ...(isSummary ? {} : { listings: [] }),
       source: 'supabase_catch_error',

@@ -10,6 +10,7 @@ export interface LocationOption {
 
 export type SortOption =
   | 'newest'
+  | 'cancellations'
   | 'price_asc'
   | 'price_desc'
   | 'distance_asc'
@@ -18,6 +19,7 @@ export type SortOption =
 export interface FilterState {
   model: string;
   status: string;
+  cancellationsOnly?: boolean;
   dealer?: string;
   location?: string;
   minPrice: string;
@@ -37,7 +39,11 @@ export interface InventoryFilterBarProps {
   availableLocations?: (LocationOption | string)[];
   availableDealers?: string[];
   totalResults?: number;
+  totalFleetCount?: number;
+  totalCount?: number;
   onOpenAlertModal?: () => void;
+  cancellationsCount?: number;
+  onToggleCancellations?: () => void;
 }
 
 const DEFAULT_MODELS = [
@@ -83,7 +89,11 @@ export function InventoryFilterBar({
   availableLocations,
   availableDealers,
   totalResults,
+  totalFleetCount,
+  totalCount,
   onOpenAlertModal,
+  cancellationsCount = 0,
+  onToggleCancellations,
 }: InventoryFilterBarProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
@@ -217,12 +227,24 @@ export function InventoryFilterBar({
     onFilterChange({ ...filters, search: e.target.value });
   };
 
+  const handleToggleCancellations = () => {
+    if (onToggleCancellations) {
+      onToggleCancellations();
+    } else {
+      onFilterChange({
+        ...filters,
+        cancellationsOnly: !filters.cancellationsOnly,
+      });
+    }
+  };
+
   const handleReset = () => {
     setLocationError(null);
     setIsLocating(false);
     onFilterChange({
       model: '',
       status: 'advertised',
+      cancellationsOnly: false,
       dealer: '',
       location: '',
       userLocation: '',
@@ -239,6 +261,7 @@ export function InventoryFilterBar({
   const activeFacetCount = [
     Boolean(filters.model),
     Boolean(filters.status && filters.status !== 'advertised'),
+    Boolean(filters.cancellationsOnly),
     Boolean(filters.location || filters.dealer || filters.userCoordinates),
     Boolean(filters.maxDistance),
     Boolean(filters.minPrice || filters.maxPrice),
@@ -248,6 +271,7 @@ export function InventoryFilterBar({
   const hasActiveFilters = Boolean(
     filters.model ||
       (filters.status && filters.status !== 'advertised') ||
+      filters.cancellationsOnly ||
       filters.location ||
       filters.dealer ||
       filters.userCoordinates ||
@@ -258,13 +282,19 @@ export function InventoryFilterBar({
       filters.search
   );
 
+  const effectiveFleetCount = totalFleetCount ?? totalCount;
+  const countToDisplay =
+    effectiveFleetCount != null && (!hasActiveFilters || (totalResults !== undefined && totalResults >= 1000))
+      ? effectiveFleetCount
+      : totalResults;
+
   return (
     <section
       data-testid="inventory-filter-bar"
       aria-label="Filter inventory listings"
       className="rounded-xl border border-zinc-800 bg-zinc-900/90 p-2.5 sm:p-3 shadow-sm backdrop-blur-sm relative z-10"
     >
-      {/* Primary Row (Always Visible): Search + Alerts + Mobile Filter Toggle + Results Count + Clear */}
+      {/* Primary Row (Always Visible): Search + Alerts + Cancellations Pill + Mobile Filter Toggle + Results Count + Clear */}
       <div className="flex items-center gap-2">
         <div className="relative flex-1 min-w-0">
           <input
@@ -293,6 +323,21 @@ export function InventoryFilterBar({
             <span>Alerts</span>
           </button>
         )}
+
+        {/* Quick-toggle Pill for Likely Cancellations */}
+        <button
+          type="button"
+          data-testid="cancellations-toggle-pill"
+          aria-pressed={Boolean(filters.cancellationsOnly)}
+          onClick={handleToggleCancellations}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all shrink-0 ${
+            filters.cancellationsOnly
+              ? 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-sm'
+              : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-amber-400 hover:border-amber-500/40'
+          }`}
+        >
+          <span>⚡ Likely Cancellations ({cancellationsCount})</span>
+        </button>
 
         {/* Mobile Toggle Button */}
         <button
@@ -323,12 +368,12 @@ export function InventoryFilterBar({
         </button>
 
         {/* Total Results Count */}
-        {totalResults !== undefined && (
+        {countToDisplay !== undefined && (
           <span
             data-testid="filter-results-count"
             className="hidden sm:inline-block text-xs text-zinc-400 font-mono bg-zinc-950 border border-zinc-800/80 px-2 py-1.5 rounded-lg shrink-0 whitespace-nowrap"
           >
-            {totalResults} {totalResults === 1 ? 'unit' : 'units'} <span className="hidden sm:inline">observed</span>
+            {countToDisplay.toLocaleString('en-CA')} {countToDisplay === 1 ? 'unit' : 'units'} <span className="hidden sm:inline">observed</span>
           </span>
         )}
 
@@ -477,6 +522,7 @@ export function InventoryFilterBar({
               className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
             >
               <option value="newest">Newest Listing (Dealer Posted Date)</option>
+              <option value="cancellations">Likely Cancellations (Longest on Lot First)</option>
               <option value="price_asc">Price: Low to High</option>
               <option value="price_desc">Price: High to Low</option>
               <option value="distance_asc">Distance: Closest First</option>
