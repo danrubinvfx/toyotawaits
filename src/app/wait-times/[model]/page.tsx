@@ -280,7 +280,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     modelConfig.title ||
     `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`;
   const description =
-    (modelConfig.slug === 'corolla' && modelConfig.metaDescription) ||
+    (['corolla', 'sienna', 'rav4'].includes(modelConfig.slug) && modelConfig.metaDescription) ||
     `Track real-time crowdsourced ${modelConfig.name} delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`;
   const canonical = `https://www.toyotawaits.ca/wait-times/${modelConfig.slug}`;
 

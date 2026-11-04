@@ -39,7 +39,7 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   describe('1. Programmatic Model Routes', () => {
     it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
       expect(rav4Metadata.title).toBe(
-        '2026 Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+        'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
       );
       expect(rav4Metadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/rav4-hybrid'

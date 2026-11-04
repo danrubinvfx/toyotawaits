@@ -12,9 +12,9 @@ export const revalidate = 3600; // 1 hour ISR
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
+  title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
   description:
-    'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
+    'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
   keywords: [
     'toyota savings calculator',
     'toyota hybrid fuel savings canada',
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
+    title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
     description:
-      'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
+      'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
     url: 'https://toyotawaits.ca/calculator',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Hybrid Fuel Savings & Payback Calculator (Canada & US) | ToyotaWaits',
+    title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
     description:
-      'Calculate real annual gas savings and break-even payback timelines for Toyota Hybrid (HEV) and Plug-in Hybrid (PHEV) models using official NRCan & EPA ratings.',
+      'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
   },
 };
 

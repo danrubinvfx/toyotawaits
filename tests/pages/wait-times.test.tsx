@@ -63,18 +63,29 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
   });
 
   it('generates high-intent dynamic metadata with canonical URL and dynamic freshness date', async () => {
-    const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const metadata = await generateMetadata({
       params: Promise.resolve({ model: 'rav4' }),
     });
 
     expect(metadata.title).toBe(
-      `Toyota RAV4 Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
+      'Toyota RAV4 Wait Times Canada (Nov 2026 Updated) — Hybrid & PHEV | ToyotaWaits'
     );
     expect(metadata.description).toBe(
-      `Track real-time crowdsourced Toyota RAV4 delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
+      'Track 2026 Toyota RAV4 Hybrid and Plug-in Hybrid wait times across Canada. Real community delivery reports for Ontario, BC, Alberta, and Quebec.'
     );
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/rav4');
+
+    const siennaMetadata = await generateMetadata({
+      params: Promise.resolve({ model: 'sienna' }),
+    });
+
+    expect(siennaMetadata.title).toBe(
+      'Toyota Sienna Wait Times Canada (2026 Tracker) — Ontario & BC Backlog | ToyotaWaits'
+    );
+    expect(siennaMetadata.description).toBe(
+      'Real-time delivery wait times for 2026 Toyota Sienna Hybrid across Canada. Verified lead times and allocation queues for Ontario (GTA), British Columbia, and Alberta.'
+    );
+    expect(siennaMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/sienna');
   });
 
   it('optimizes Corolla dynamic title, h1, and description for 2026–2027 delivery tracking', async () => {

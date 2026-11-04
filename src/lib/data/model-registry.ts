@@ -30,6 +30,10 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     name: 'Toyota RAV4',
     shortName: 'RAV4',
     dbFilter: 'rav4',
+    title: 'Toyota RAV4 Wait Times Canada (Nov 2026 Updated) — Hybrid & PHEV | ToyotaWaits',
+    metaTitle: 'Toyota RAV4 Wait Times Canada (Nov 2026 Updated) — Hybrid & PHEV | ToyotaWaits',
+    metaDescription:
+      'Track 2026 Toyota RAV4 Hybrid and Plug-in Hybrid wait times across Canada. Real community delivery reports for Ontario, BC, Alberta, and Quebec.',
     powertrains: ['Gas', 'Hybrid', 'Plug-in Hybrid'],
     baseMedian: 240,
     baseP25: 150,
@@ -70,6 +74,10 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     name: 'Toyota Sienna',
     shortName: 'Sienna',
     dbFilter: 'sienna',
+    title: 'Toyota Sienna Wait Times Canada (2026 Tracker) — Ontario & BC Backlog | ToyotaWaits',
+    metaTitle: 'Toyota Sienna Wait Times Canada (2026 Tracker) — Ontario & BC Backlog | ToyotaWaits',
+    metaDescription:
+      'Real-time delivery wait times for 2026 Toyota Sienna Hybrid across Canada. Verified lead times and allocation queues for Ontario (GTA), British Columbia, and Alberta.',
     powertrains: ['Hybrid AWD / FWD'],
     baseMedian: 410,
     baseP25: 350,

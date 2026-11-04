@@ -64,6 +64,21 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'toyotawaits.ca',
+          },
+        ],
+        destination: 'https://www.toyotawaits.ca/:path*',
+        permanent: true,
+      },
+      { source: '/rav4', destination: '/wait-times/rav4', permanent: true },
+      { source: '/sienna', destination: '/wait-times/sienna', permanent: true },
+      { source: '/rav4/:powertrain/:province', destination: '/wait-times/rav4', permanent: true },
+      { source: '/sienna/:powertrain/:province', destination: '/wait-times/sienna', permanent: true },
       { source: '/mods/rav4', destination: '/guides/rav4-se-mods', permanent: false },
       { source: '/mods/sienna', destination: '/guides/sienna-mods', permanent: false },
       { source: '/mods/grand-highlander', destination: '/guides/grand-highlander-mods', permanent: false },

@@ -200,8 +200,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { model } = await params;
   const info = resolveModelInfo(model);
 
-  const title = `${info.year} Toyota ${info.name} Fuel Savings & Payback Calculator | ToyotaWaits`;
-  const description = `Compare Toyota ${info.name} Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.`;
+  const isRav4Hybrid = model.toLowerCase().trim() === 'rav4-hybrid';
+  const title = isRav4Hybrid
+    ? 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+    : `${info.year} Toyota ${info.name} Fuel Savings & Payback Calculator | ToyotaWaits`;
+  const description = isRav4Hybrid
+    ? 'Calculate RAV4 Hybrid and Plug-in Hybrid fuel savings vs gas. Real Canadian gas prices, BC/Ontario hydro rates, and wait-time trade-off math.'
+    : `Compare Toyota ${info.name} Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.`;
 
   return {
     metadataBase: new URL('https://toyotawaits.ca'),
