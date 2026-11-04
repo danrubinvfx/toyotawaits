@@ -22,6 +22,7 @@ interface RouteCheckResult {
 const STATIC_NAVIGATION_ROUTES = [
   '/',
   '/calculator',
+  '/tools/omvic-checker',
   '/inventory',
   '/delivery-prep',
   '/winter-prep',

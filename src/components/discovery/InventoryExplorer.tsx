@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
   VehicleListingCard,
@@ -1075,6 +1076,22 @@ export function InventoryExplorer({
           >
             Set Drop Alert
           </button>
+        </div>
+      )}
+
+      {/* Ontario OMVIC All-In Price Checker Contextual Banner */}
+      {(activeRegion === 'ON' ||
+        displayedListings.some((item) => getListingProvince(item) === 'ON')) && (
+        <div
+          data-testid="ontario-omvic-banner"
+          className="flex items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-zinc-900/90 border border-amber-500/30 text-xs text-zinc-200"
+        >
+          <Link
+            href="/tools/omvic-checker"
+            className="text-amber-300 hover:text-amber-200 font-medium transition-colors"
+          >
+            📋 Verifying an Ontario quote? Audit your bill of sale with our free OMVIC All-In Price Checker →
+          </Link>
         </div>
       )}
 
