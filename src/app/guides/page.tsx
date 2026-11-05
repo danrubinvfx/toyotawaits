@@ -52,6 +52,36 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'toyota-rav4-must-have-accessories',
+    title: 'Top 7 Must-Have Toyota RAV4 Accessories (2026)',
+    tagline: 'Community-vetted delivery day gear for 2019–2026 RAV4 Hybrid & PHEV owners: TuxMat, FitcamX 4K, Spigen 9H, and faraday defense.',
+    badge: 'Delivery Day Gear',
+    model: 'RAV4 Hybrid & Prime',
+    tags: ['Accessories', 'Gear'],
+    highlights: [
+      'TuxMat custom-fit high-wall floor liners (Full Dead Pedal)',
+      'FitcamX 4K OEM-look integrated mirror dashcam (TSS tap)',
+      'Spigen 9H anti-glare tempered screen protector (10.5" / 12.3")',
+      'Grizzl-E Level 2 40A sub-zero winter home charger',
+    ],
+    href: '/guides/toyota-rav4-must-have-accessories',
+  },
+  {
+    slug: 'best-toyota-all-weather-floor-mats',
+    title: 'Best Toyota All-Weather Floor Mats: TuxMat vs. WeatherTech vs. OEM',
+    tagline: 'Head-to-head comparison for Canadian winters: dead pedal coverage, slush containment, and multi-row minivan fitment.',
+    badge: 'Floor Mat Comparison',
+    model: 'Multi-Model Benchmark',
+    tags: ['Accessories', 'Gear'],
+    highlights: [
+      'TuxMat vs WeatherTech dead pedal containment breakdown',
+      'Sienna Super Long Slide 2nd-row track compatibility',
+      'Hybrid battery cooling intake vent obstruction warnings',
+      'Model-specific high-wall search cards for RAV4, Sienna & Grand Highlander',
+    ],
+    href: '/guides/best-toyota-all-weather-floor-mats',
+  },
+  {
     slug: 'rav4-se-mods',
     title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',
     tagline: 'Skip the 12-month queue: Drop-in audio, tailored leather, and trim tools for ~$700 CAD.',
@@ -261,10 +291,17 @@ export default function GuidesIndexPage() {
               className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm flex flex-col justify-between hover:border-amber-500/50 transition-colors"
             >
               <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400 bg-amber-500/5">
-                    {guide.model}
-                  </Badge>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400 bg-amber-500/5">
+                      {guide.model}
+                    </Badge>
+                    {guide.tags?.map((t) => (
+                      <Badge key={t} variant="secondary" className="text-[10px] font-semibold">
+                        [{t}]
+                      </Badge>
+                    ))}
+                  </div>
                   <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-semibold">
                     {guide.badge}
                   </Badge>

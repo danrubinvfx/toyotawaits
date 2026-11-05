@@ -98,6 +98,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/guides/toyota-rav4-must-have-accessories`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/guides/best-toyota-all-weather-floor-mats`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/guides/rav4-se-mods`,
       lastModified: now,
       changeFrequency: 'monthly',

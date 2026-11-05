@@ -30,6 +30,7 @@ import {
   Calendar,
   CheckCircle2,
   Snowflake,
+  Package,
 } from 'lucide-react';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
@@ -661,6 +662,88 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </p>
         </div>
       </section>
+
+      {/* Model Delivery Prep Teaser Cards */}
+      {modelConfig.slug === 'rav4' && (
+        <section
+          aria-label="RAV4 Delivery Prep Callout"
+          data-testid="delivery-prep-teaser-rav4"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/40 to-zinc-950 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-500 uppercase tracking-wider">
+              <Package className="h-4 w-4" />
+              <span>Delivery Day Prep</span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              Prepping for Delivery Day?
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Waiting on your allocation? Review the 7 community-recommended accessories to order before picking up your RAV4 at the dealership.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-rav4-must-have-accessories"
+            className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            <span>View RAV4 Delivery Gear Guide -&gt;</span>
+          </Link>
+        </section>
+      )}
+
+      {modelConfig.slug === 'sienna' && (
+        <section
+          aria-label="Sienna Delivery Prep Callout"
+          data-testid="delivery-prep-teaser-sienna"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/40 to-zinc-950 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-500 uppercase tracking-wider">
+              <Package className="h-4 w-4" />
+              <span>Hitch &amp; Gear Prep</span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              Planning Bike Racks, Hitches, or Mats?
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              See how the Torklift and Curt hitches fit with hands-free kick sensors, plus long-slide 3-row mat recommendations.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-sienna-trailer-hitch-guide"
+            className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            <span>View Sienna Hitch &amp; Gear Guide -&gt;</span>
+          </Link>
+        </section>
+      )}
+
+      {modelConfig.slug === 'grand-highlander' && (
+        <section
+          aria-label="Grand Highlander Delivery Prep Callout"
+          data-testid="delivery-prep-teaser-grand-highlander"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/40 to-zinc-950 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-500 uppercase tracking-wider">
+              <Package className="h-4 w-4" />
+              <span>3-Row Delivery Essentials</span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+              Delivery Prep Essentials
+            </h3>
+            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+              Check out custom-fit 3-row floor liners, 12.3-inch screen protectors, and TSS 3.0 dashcam kits.
+            </p>
+          </div>
+          <Link
+            href="/guides/grand-highlander-mods"
+            className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            <span>View Grand Highlander Mods Guide -&gt;</span>
+          </Link>
+        </section>
+      )}
 
       {/* Inline Benchmark My Order Acquisition Widget */}
       <section aria-label="Benchmark My Order Queue Placement">
