@@ -4,6 +4,7 @@ import { AnalyticsWrapper } from '@/components/analytics/AnalyticsWrapper';
 import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
+import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
 
@@ -131,6 +132,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <MarketProvider>
+          <WSJCalloutBanner />
           <Header />
           <main className="flex-1">
             {children}

@@ -949,6 +949,32 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
       </section>
 
+      {/* 2026 vs 2027 RAV4 Guide Callout Banner */}
+      {modelConfig.slug === 'rav4' && (
+        <section aria-label="2026 vs 2027 RAV4 Guide Callout">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027?
+                </h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  The 2027 RAV4 brings major hardware changes including native NACS Supercharging and upgraded PHEV output. Read our breakdown before deciding to pass on an incoming allocation.
+                </p>
+              </div>
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shrink-0 shadow-sm">
+                <Link href="/guides/toyota-rav4-2026-vs-2027" className="gap-2">
+                  Read 2026 vs. 2027 RAV4 Guide →
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 2026 vs 2027 Sienna Guide Callout Banner */}
       {modelConfig.slug === 'sienna' && (
         <section aria-label="2026 vs 2027 Sienna Guide Callout">

@@ -11,6 +11,15 @@ export interface ModelNewsTickerItem extends NewsTickerItem {
 
 export const CALCULATOR_NEWS_ITEMS: ModelNewsTickerItem[] = [
   {
+    id: 'news-rav4-2027',
+    type: 'news',
+    category: 'ALLOCATION',
+    title: 'Official Update: Toyota announces 2027 RAV4 with native NACS port, 321-hp PHEV, and 9.1" Woodland lift',
+    headline: 'Official Update: Toyota announces 2027 RAV4 with native NACS port, 321-hp PHEV, and 9.1" Woodland lift',
+    timestamp: new Date().toISOString(),
+    applicableModels: ['rav4', 'rav4-hybrid', 'rav4-phev'],
+  },
+  {
     id: 'news-rav4-1',
     type: 'news',
     category: 'ALLOCATION',

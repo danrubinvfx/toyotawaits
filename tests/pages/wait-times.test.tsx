@@ -227,6 +227,23 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(faqPage.mainEntity[1].name).toBe('Which Canadian province has the shortest wait time for the Sienna?');
   });
 
+  it('renders 2026 vs 2027 comparison card for RAV4 wait times page', async () => {
+    const jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'rav4' }),
+    });
+
+    render(jsx);
+
+    expect(screen.getByText('Allocated a 2026 or Waiting for a 2027?')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /The 2027 RAV4 brings major hardware changes including native NACS Supercharging and upgraded PHEV output\. Read our breakdown before deciding to pass on an incoming allocation\./i
+      )
+    ).toBeInTheDocument();
+    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 RAV4 Guide →/i });
+    expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-rav4-2026-vs-2027');
+  });
+
   it('renders distinct data separation for rav4, sienna, and tacoma', async () => {
     const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     // 1. RAV4

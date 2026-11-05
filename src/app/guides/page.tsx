@@ -126,6 +126,19 @@ const MOD_GUIDES = [
     href: '/guides/toyota-sienna-2026-vs-2027',
   },
   {
+    slug: 'toyota-rav4-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota RAV4: Key Differences & NACS Upgrade',
+    tagline: 'Native NACS Supercharger port, 321-hp PHEV upgrade, 9.1" Woodland lift, and queue rollovers.',
+    badge: '2026 vs. 2027',
+    model: 'RAV4 Hybrid & PHEV',
+    highlights: [
+      'Native NACS (J3400) + Level 3 DC fast charging',
+      '6th-gen 321-hp PHEV upgrade & 11 kW AC home charging',
+      'Nagakusa/Takaoka/TMMK factory queue rollover mechanics',
+    ],
+    href: '/guides/toyota-rav4-2026-vs-2027',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',
