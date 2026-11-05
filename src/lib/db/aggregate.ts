@@ -221,7 +221,7 @@ export async function getAggregateStats(
   // across ALL trims (when trim is omitted, empty, or 'all') so counts and medians match the public log.
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient({ revalidate: 120, tags: ['aggregate', 'submissions'] });
+      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
       let query = supabase
         .from('submissions')
         .select(`
@@ -252,6 +252,10 @@ export async function getAggregateStats(
         query = query.eq('country_code', 'US');
       } else {
         query = query.or('country_code.eq.CA,country_code.is.null');
+      }
+
+      if (typeof (query as any).limit === 'function') {
+        query = (query as any).limit(50);
       }
 
       const { data: rawRows, error } = await query;

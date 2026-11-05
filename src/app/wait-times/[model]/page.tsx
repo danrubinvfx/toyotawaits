@@ -33,7 +33,7 @@ import {
   Snowflake,
 } from 'lucide-react';
 
-export const revalidate = 3600; // ISR: revalidate at most once per hour
+export const revalidate = 3600; // Cache on edge for 1 hour
 
 interface PageProps {
   params: Promise<{
@@ -69,13 +69,13 @@ async function fetchModelSubmissions(modelConfig: ModelRegistryEntry): Promise<{
 
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions'] });
+      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
       const { data, error } = await supabase
         .from('wait_times')
         .select('id, created_at, order_date, delivery_date, wait_days, province, city, model, powertrain, trim, pricing, status')
         .ilike('model', `%${modelConfig.dbFilter}%`)
         .order('created_at', { ascending: false })
-        .limit(500);
+        .limit(50);
 
       if (!error && Array.isArray(data) && data.length > 0) {
         records = data;
@@ -88,7 +88,7 @@ async function fetchModelSubmissions(modelConfig: ModelRegistryEntry): Promise<{
 
   if (records.length === 0) {
     try {
-      const allSubmissions = await getCommunitySubmissions('CA', { revalidate: 3600, tags: ['submissions', 'benchmarks'], limit: 500 });
+      const allSubmissions = await getCommunitySubmissions('CA', { revalidate: 3600, tags: ['submissions', 'benchmarks'], limit: 50 });
       const filtered = allSubmissions.filter((s) => {
         const slugMatch = s.modelSlug?.toLowerCase() === modelConfig.slug.toLowerCase();
         const nameMatch = s.model?.toLowerCase().includes(modelConfig.dbFilter.toLowerCase());

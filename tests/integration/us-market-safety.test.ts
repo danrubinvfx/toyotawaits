@@ -54,9 +54,9 @@ describe('US Market Safety & Reference Data Verification', () => {
 
     // Verify edge caching headers
     expect(response.headers.get('Cache-Control')).toContain('public');
-    expect(response.headers.get('Cache-Control')).toContain('s-maxage=120');
-    expect(response.headers.get('CDN-Cache-Control')).toContain('s-maxage=120');
-    expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('s-maxage=120');
+    expect(response.headers.get('Cache-Control')).toContain('s-maxage=300');
+    expect(response.headers.get('CDN-Cache-Control')).toContain('s-maxage=300');
+    expect(response.headers.get('Vercel-CDN-Cache-Control')).toContain('s-maxage=300');
 
     const json = await response.json();
     expect(json.success).toBe(true);

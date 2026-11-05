@@ -34,15 +34,14 @@ export function isLiveSupabaseConfigured(): boolean {
 }
 
 export interface ServerClientOptions {
-  /** Opt in to Next.js Data Cache for read-only queries. Omit for uncached (
-o-store) mutations and sensitive reads. */
+  /** Opt in to Next.js Data Cache for read-only queries. Omit for uncached (no-store) mutations and sensitive reads. */
   revalidate?: number | false;
   tags?: string[];
 }
 
 export function createServerClient(options?: ServerClientOptions) {
   const cachedFetch: typeof fetch = (url, init) =>
-    options?.revalidate !== undefined
+    options?.revalidate !== undefined || options?.tags !== undefined
       ? fetch(url, { ...init, next: { revalidate: options.revalidate, tags: options.tags } })
       : fetch(url, { ...init, cache: 'no-store' });
 

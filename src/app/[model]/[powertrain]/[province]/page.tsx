@@ -31,7 +31,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 3600; // ISR: revalidate at most once per hour
+export const revalidate = 3600; // Cache on edge for 1 hour
 
 // Generate static params for common deep-link target paths (Reddit top targets)
 export async function generateStaticParams() {

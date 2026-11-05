@@ -7,9 +7,9 @@ import { evaluateListingLifecycle } from '../../../../lib/discovery/services/lif
 export const dynamic = 'force-dynamic';
 
 const EDGE_CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
-  'CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
-  'Vercel-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
 };
 
 export async function GET(request?: Request) {
@@ -157,7 +157,7 @@ export async function GET(request?: Request) {
   }
 
   try {
-    const supabase = createServerClient({ revalidate: 120, tags: ['inventory'] });
+    const supabase = createServerClient({ revalidate: 300, tags: ['inventory'] });
     const cutoffIso = new Date(cutoffTime).toISOString();
 
     const selectClause = `

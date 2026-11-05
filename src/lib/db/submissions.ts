@@ -1552,7 +1552,7 @@ export async function getRecentActivity(limit = 10, countryCode?: CountryCode | 
 
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient();
+      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
       let query = supabase
         .from('submissions')
         .select(`
@@ -1719,7 +1719,10 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
   const isUs = countryCode === 'US';
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient(options?.revalidate !== undefined ? { revalidate: options.revalidate, tags: options.tags } : undefined);
+      const supabase = createServerClient({
+        revalidate: options?.revalidate ?? 3600,
+        tags: options?.tags ?? ['submissions', 'benchmarks'],
+      });
       let query = supabase
         .from('submissions')
         .select(`
@@ -1758,7 +1761,10 @@ export async function getCommunitySubmissions(countryCode?: CountryCode | string
       }
 
       let ordered = query.order('order_date', { ascending: false });
-      if (options?.limit) ordered = ordered.limit(options.limit);
+      const rowLimit = options?.limit ?? 50;
+      if (typeof (ordered as any).limit === 'function') {
+        ordered = ordered.limit(rowLimit);
+      }
       const { data, error } = await ordered;
 
       if (!error && Array.isArray(data) && data.length > 0) {

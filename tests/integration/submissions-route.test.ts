@@ -727,13 +727,13 @@ describe('GET /api/submissions', () => {
     const response = await GET();
 
     expect(response.headers.get('Cache-Control')).toBe(
-      'public, s-maxage=120, stale-while-revalidate=600'
+      'public, s-maxage=300, stale-while-revalidate=3600'
     );
     expect(response.headers.get('CDN-Cache-Control')).toBe(
-      'public, s-maxage=120, stale-while-revalidate=600'
+      'public, s-maxage=300, stale-while-revalidate=3600'
     );
     expect(response.headers.get('Vercel-CDN-Cache-Control')).toBe(
-      'public, s-maxage=120, stale-while-revalidate=600'
+      'public, s-maxage=300, stale-while-revalidate=3600'
     );
 
     const json = await response.json();

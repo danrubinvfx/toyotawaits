@@ -326,10 +326,14 @@ export async function fetchRawModelWaitBenchmarks(): Promise<Record<string, Mode
     !process.env.NEXT_PUBLIC_SUPABASE_URL.includes('mock-')
   ) {
     try {
-      const supabase = createServerClient({ revalidate: 3600, tags: ['benchmarks'] });
-      const { data, error } = await supabase
+      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
+      let query: any = supabase
         .from('model_wait_benchmarks')
         .select('model, sample_size, min_days, p25_days, median_days, p75_days, max_days, mean_days');
+      if (typeof query.limit === 'function') {
+        query = query.limit(50);
+      }
+      const { data, error } = await query;
 
       if (!error && Array.isArray(data) && data.length > 0) {
         for (const row of data) {
@@ -359,11 +363,11 @@ export async function fetchRawModelWaitBenchmarks(): Promise<Record<string, Mode
   return result;
 }
 
-// Cached helper with 3600s TTL and 'wait_stats' tag
+// Cached helper with 3600s TTL and 'submissions', 'benchmarks' tags
 const cachedModelWaitBenchmarks = unstable_cache(
   async () => fetchRawModelWaitBenchmarks(),
   ['model_wait_benchmarks_cache'],
-  { revalidate: 3600, tags: ['wait_stats'] }
+  { revalidate: 3600, tags: ['submissions', 'benchmarks', 'wait_stats'] }
 );
 
 /**

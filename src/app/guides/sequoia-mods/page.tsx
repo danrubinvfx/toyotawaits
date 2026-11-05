@@ -25,8 +25,7 @@ import {
   Compass,
 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
-export const revalidate = 60;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Must-Have Toyota Sequoia (XK80) Mods & Practical Upgrades (2023–2026) | ToyotaWaits.ca',

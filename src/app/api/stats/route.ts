@@ -5,6 +5,12 @@ import { ModelWaitBenchmark } from '@/lib/db/stats';
 
 export const dynamic = 'force-dynamic';
 
+const EDGE_CACHE_HEADERS = {
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+};
+
 export async function GET() {
   try {
     const benchmarks = await getModelWaitBenchmarks();
@@ -25,11 +31,7 @@ export async function GET() {
       },
       {
         status: 200,
-        headers: {
-          'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-          'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-          'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-        },
+        headers: EDGE_CACHE_HEADERS,
       }
     );
   } catch (error: any) {

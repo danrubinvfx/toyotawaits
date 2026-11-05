@@ -22,7 +22,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 3600; // ISR: revalidate at most once per hour
+export const revalidate = 3600; // Cache on edge for 1 hour
 
 export async function generateStaticParams() {
   const params: Array<{ model: string; powertrain: string }> = [];

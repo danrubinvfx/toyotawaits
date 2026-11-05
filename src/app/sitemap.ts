@@ -6,6 +6,8 @@ import {
 } from '@/lib/data/vehicles';
 import { getAllModelConfigs } from '@/lib/data/model-registry';
 
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.toyotawaits.ca';
   const now = new Date();
@@ -202,16 +204,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Query Supabase for distinct models, powertrains, and submitted provinces
   if (isLiveSupabaseConfigured()) {
     try {
-      const supabase = createServerClient();
+      const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
       const [modelsResult, submissionsResult] = await Promise.all([
         supabase
           .from('vehicle_models')
           .select('slug, vehicle_powertrains(slug)')
-          .eq('is_active', true),
+          .eq('is_active', true)
+          .limit(50),
         supabase
           .from('submissions')
           .select('province')
-          .not('province', 'is', null),
+          .not('province', 'is', null)
+          .limit(50),
       ]);
 
       if (!modelsResult.error && Array.isArray(modelsResult.data)) {

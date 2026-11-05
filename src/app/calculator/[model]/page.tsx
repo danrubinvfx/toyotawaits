@@ -10,7 +10,7 @@ import { ShieldCheck, Fuel, Zap, HelpCircle, Calculator } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { NEW_VEHICLE_PRESETS, getVehiclePresetById } from '@/data/vehicle-presets';
 
-export const revalidate = 3600; // 1 hour ISR
+export const revalidate = 3600; // Cache on edge for 1 hour
 
 interface ModelInfo {
   name: string;

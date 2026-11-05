@@ -17,7 +17,7 @@ interface RouteProps {
   }>;
 }
 
-export const revalidate = 3600; // ISR: revalidate at most once per hour
+export const revalidate = 3600; // Cache on edge for 1 hour
 
 export async function generateStaticParams() {
   return CANADIAN_VEHICLE_CATALOG.map((m) => ({ model: m.slug }));

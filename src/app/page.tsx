@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { Hero } from '@/components/Hero';
 
-export const revalidate = 1800; // ISR for 30 minutes
+export const revalidate = 1800; // Cache on edge for 30 minutes
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
 
 
 export default async function HomePage() {
-  const submissions = await getCommunitySubmissions('CA', { revalidate: 1800, tags: ['submissions'] }).catch(() => []);
+  const submissions = await getCommunitySubmissions('CA', { revalidate: 3600, tags: ['submissions', 'benchmarks'], limit: 50 }).catch(() => []);
   const tickerItems = await getTickerItems(16, 'CA').catch(() => []);
 
   return (

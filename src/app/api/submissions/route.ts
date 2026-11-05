@@ -16,9 +16,9 @@ import { submissionUpdateSchema } from '@/lib/validations/schemas';
 export const dynamic = 'force-dynamic';
 
 const EDGE_CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
-  'CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
-  'Vercel-CDN-Cache-Control': 'public, s-maxage=120, stale-while-revalidate=600',
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
 };
 
 export async function GET(request?: NextRequest) {
@@ -34,7 +34,7 @@ export async function GET(request?: NextRequest) {
         // fallback
       }
     }
-    const submissions = await getCommunitySubmissions(targetCountry, { revalidate: 120, tags: ['submissions'] });
+    const submissions = await getCommunitySubmissions(targetCountry, { revalidate: 3600, tags: ['submissions', 'benchmarks'], limit: 50 });
     return NextResponse.json<ApiResponse<CommunityRecord[]>>(
       {
         success: true,
