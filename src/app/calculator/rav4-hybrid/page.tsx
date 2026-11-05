@@ -12,9 +12,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+  title: 'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
   description:
-    'Calculate RAV4 Hybrid and Plug-in Hybrid fuel savings vs gas. Real Canadian gas prices, BC/Ontario hydro rates, and wait-time trade-off math.',
+    'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.',
   keywords: [
     'toyota rav4 hybrid fuel savings',
     'rav4 hybrid vs gas savings canada',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/rav4-hybrid',
   },
   openGraph: {
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: 'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
     description:
-      'Calculate RAV4 Hybrid and Plug-in Hybrid fuel savings vs gas. Real Canadian gas prices, BC/Ontario hydro rates, and wait-time trade-off math.',
+      'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.',
     url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: 'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
     description:
-      'Calculate RAV4 Hybrid and Plug-in Hybrid fuel savings vs gas. Real Canadian gas prices, BC/Ontario hydro rates, and wait-time trade-off math.',
+      'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.',
   },
 };
 

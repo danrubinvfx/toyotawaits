@@ -12,9 +12,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+  title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
   description:
-    'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
+    'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
   keywords: [
     'toyota sienna hybrid fuel savings',
     'sienna hybrid vs gas minivan canada',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/sienna-hybrid',
   },
   openGraph: {
-    title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
     description:
-      'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
+      'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
     url: 'https://toyotawaits.ca/calculator/sienna-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits',
+    title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
     description:
-      'Compare Toyota Sienna Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.',
+      'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
   },
 };
 

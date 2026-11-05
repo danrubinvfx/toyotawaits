@@ -12,9 +12,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
+  title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
   description:
-    'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
+    'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
   keywords: [
     'toyota savings calculator',
     'toyota hybrid fuel savings canada',
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
+    title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
     description:
-      'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
+      'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
     url: 'https://toyotawaits.ca/calculator',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Hybrid Savings & Payback Calculator (Canada) | ToyotaWaits',
+    title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
     description:
-      'Calculate realistic fuel savings, home charging costs, and payback timelines for Toyota Hybrids and PHEVs in Canada. Compare hybrid vs gas break-even across BC, ON, and AB.',
+      'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
   },
 };
 

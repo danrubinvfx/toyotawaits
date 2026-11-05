@@ -39,7 +39,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   describe('1. Programmatic Model Routes', () => {
     it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
       expect(rav4Metadata.title).toBe(
-        'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+        'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits'
+      );
+      expect(rav4Metadata.description).toBe(
+        'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.'
       );
       expect(rav4Metadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/rav4-hybrid'
@@ -62,7 +65,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
 
     it('verifies Sienna Hybrid page metadata, canonical, and static table', () => {
       expect(siennaMetadata.title).toBe(
-        '2025 Toyota Sienna Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+        'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits'
+      );
+      expect(siennaMetadata.description).toBe(
+        'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.'
       );
       expect(siennaMetadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/sienna-hybrid'
@@ -85,7 +91,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
 
     it('verifies Grand Highlander Hybrid page metadata, canonical, and static table', () => {
       expect(ghMetadata.title).toBe(
-        '2025 Toyota Grand Highlander Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+        'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits'
+      );
+      expect(ghMetadata.description).toBe(
+        'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.'
       );
       expect(ghMetadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/grand-highlander'

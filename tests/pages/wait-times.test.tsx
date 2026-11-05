@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 import ModelWaitTimePage, {
   generateMetadata,
   generateStaticParams,
+  getCalculatorBridgeHref,
 } from '@/app/wait-times/[model]/page';
 import { MODEL_REGISTRY } from '@/lib/data/model-registry';
 
@@ -154,13 +155,30 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(screen.getByText('Ontario Lead Time')).toBeInTheDocument();
     expect(screen.getAllByText('Hybrid AWD / FWD').length).toBeGreaterThan(0);
 
-    // Verify Contextual Calculator Teaser Callout Banner for high-volume model (Sienna)
+    // Verify Contextual Calculator Bridge & Delivery Day Preparation Bridge Cards
     const calcBanner = screen.getByTestId('calculator-teaser-banner');
     expect(calcBanner).toBeInTheDocument();
-    expect(screen.getAllByText(/Weighing Gas vs\. Hybrid\?/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Calculate your annual fuel savings and the extra energy cost of waiting/i)).toBeInTheDocument();
-    const calcCta = screen.getByRole('link', { name: /Calculate Payback & Waiting Cost →/i });
+    expect(screen.getByText(/⚡ Financial Break-Even Analysis/i)).toBeInTheDocument();
+    expect(screen.getByText(/Weighing Gas vs\. Hybrid while you wait\?/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Calculate your annual fuel savings and determine if paying the hybrid premium or waiting out the queue makes financial sense\./i
+      )
+    ).toBeInTheDocument();
+    const calcCta = screen.getByRole('link', { name: /Calculate Payback & Savings →/i });
     expect(calcCta).toHaveAttribute('href', '/calculator/sienna-hybrid');
+
+    const deliveryPrepBanner = screen.getByTestId('delivery-prep-teaser-banner');
+    expect(deliveryPrepBanner).toBeInTheDocument();
+    expect(screen.getByText(/📋 Delivery Day Prep/i)).toBeInTheDocument();
+    expect(screen.getByText(/Taking delivery in the next 30–90 days\?/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Avoid unexpected dealer doc fees, unverified accessory packages, and inspect fit-and-finish before signing\./i
+      )
+    ).toBeInTheDocument();
+    const deliveryPrepCta = screen.getByRole('link', { name: /View Delivery Checklist →/i });
+    expect(deliveryPrepCta).toHaveAttribute('href', '/delivery-prep');
 
     // Verify Breakdown sections (<h2>)
     expect(screen.getByText(/Trim & Powertrain Delivery Spreads/i)).toBeInTheDocument();
@@ -219,8 +237,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(rav4Render.getByRole('heading', { level: 1, name: `Toyota RAV4 Wait Times Canada (Updated ${currentMonthYear})` })).toBeInTheDocument();
     expect(rav4Render.getAllByText('Gas').length).toBeGreaterThan(0);
     expect(rav4Render.getAllByText('Plug-in Hybrid').length).toBeGreaterThan(0);
-    // RAV4 has calculator banner
+    // RAV4 has calculator banner linking to /calculator/rav4-hybrid
     expect(rav4Render.getByTestId('calculator-teaser-banner')).toBeInTheDocument();
+    expect(
+      rav4Render.getByRole('link', { name: /Calculate Payback & Savings →/i })
+    ).toHaveAttribute('href', '/calculator/rav4-hybrid');
     rav4Render.unmount();
 
     // 2. Tacoma
@@ -231,8 +252,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(tacomaRender.getByRole('heading', { level: 1, name: `Toyota Tacoma Wait Times Canada (Updated ${currentMonthYear})` })).toBeInTheDocument();
     expect(tacomaRender.getAllByText('i-FORCE').length).toBeGreaterThan(0);
     expect(tacomaRender.getAllByText('i-FORCE MAX').length).toBeGreaterThan(0);
-    // Tacoma is not in rav4, sienna, camry, so calculator teaser is omitted
-    expect(tacomaRender.queryByTestId('calculator-teaser-banner')).toBeNull();
+    // Tacoma routes calculator bridge to fallback /calculator?model=tacoma
+    expect(tacomaRender.getByTestId('calculator-teaser-banner')).toBeInTheDocument();
+    expect(
+      tacomaRender.getByRole('link', { name: /Calculate Payback & Savings →/i })
+    ).toHaveAttribute('href', '/calculator?model=tacoma');
     tacomaRender.unmount();
   });
 
@@ -275,7 +299,18 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(ghRender.getByTestId('partner-deals-section')).toBeInTheDocument();
     expect(ghRender.getAllByText(/Delivery Day Upgrades & Partner Deals/i).length).toBeGreaterThan(0);
     expect(ghRender.getAllByText(/Muslogy Center Console Dual-Tier Divider Tray/i).length).toBeGreaterThan(0);
+    expect(
+      ghRender.getByRole('link', { name: /Calculate Payback & Savings →/i })
+    ).toHaveAttribute('href', '/calculator/grand-highlander');
     ghRender.unmount();
+
+    // Verify dynamic model context mapping helper
+    expect(getCalculatorBridgeHref('rav4')).toBe('/calculator/rav4-hybrid');
+    expect(getCalculatorBridgeHref('rav4-hybrid')).toBe('/calculator/rav4-hybrid');
+    expect(getCalculatorBridgeHref('sienna')).toBe('/calculator/sienna-hybrid');
+    expect(getCalculatorBridgeHref('grand-highlander')).toBe('/calculator/grand-highlander');
+    expect(getCalculatorBridgeHref('camry')).toBe('/calculator?model=camry');
+    expect(getCalculatorBridgeHref('corolla')).toBe('/calculator?model=corolla');
   });
 
   it('renders the seasonal Canadian winter delivery alert banner with tire and winter-prep cross-links', async () => {

@@ -200,12 +200,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { model } = await params;
   const info = resolveModelInfo(model);
 
-  const isRav4Hybrid = model.toLowerCase().trim() === 'rav4-hybrid';
+  const clean = model.toLowerCase().trim();
+  const isRav4Hybrid = clean === 'rav4' || clean === 'rav4-hybrid';
+  const isSiennaHybrid = clean === 'sienna' || clean === 'sienna-hybrid' || clean === 'sienna-hev';
+  const isGrandHighlander = clean === 'grand-highlander' || clean === 'grand-highlander-hybrid';
   const title = isRav4Hybrid
-    ? 'Toyota RAV4 Hybrid Fuel Savings & Payback Calculator | ToyotaWaits'
+    ? 'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits'
+    : isSiennaHybrid
+      ? 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits'
+      : isGrandHighlander
+        ? 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits'
     : `${info.year} Toyota ${info.name} Fuel Savings & Payback Calculator | ToyotaWaits`;
   const description = isRav4Hybrid
-    ? 'Calculate RAV4 Hybrid and Plug-in Hybrid fuel savings vs gas. Real Canadian gas prices, BC/Ontario hydro rates, and wait-time trade-off math.'
+    ? 'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.'
+    : isSiennaHybrid
+      ? 'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.'
+      : isGrandHighlander
+        ? 'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.'
     : `Compare Toyota ${info.name} Hybrid vs gas operating costs. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.`;
 
   return {

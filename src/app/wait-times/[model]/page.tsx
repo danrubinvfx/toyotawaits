@@ -29,7 +29,6 @@ import {
   AlertCircle,
   Calendar,
   CheckCircle2,
-  Calculator,
   Snowflake,
 } from 'lucide-react';
 
@@ -43,6 +42,20 @@ interface PageProps {
 
 export async function generateStaticParams() {
   return Object.keys(MODEL_REGISTRY).map((model) => ({ model }));
+}
+
+export function getCalculatorBridgeHref(modelSlug: string): string {
+  const clean = modelSlug.toLowerCase().trim();
+  if (clean === 'rav4' || clean === 'rav4-hybrid') {
+    return '/calculator/rav4-hybrid';
+  }
+  if (clean === 'sienna' || clean === 'sienna-hybrid') {
+    return '/calculator/sienna-hybrid';
+  }
+  if (clean === 'grand-highlander' || clean === 'grand-highlander-hybrid') {
+    return '/calculator/grand-highlander';
+  }
+  return `/calculator?model=${clean}`;
 }
 
 interface RawSubmissionRecord {
@@ -697,6 +710,57 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </Card>
       </section>
 
+      {/* Cross-Sell Teaser Cards: Calculator Bridge & Delivery Day Preparation Bridge */}
+      <section aria-label="Calculator and Delivery Preparation Resources">
+        {/* A. "Is the Hybrid Worth the Wait?" Calculator Bridge */}
+        <div
+          data-testid="calculator-teaser-banner"
+          className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+              ⚡ Financial Break-Even Analysis
+            </div>
+            <h3 className="text-sm font-bold text-white">
+              Weighing Gas vs. Hybrid while you wait?
+            </h3>
+            <p className="text-xs text-neutral-300">
+              Calculate your annual fuel savings and determine if paying the hybrid premium or waiting out the queue makes financial sense.
+            </p>
+          </div>
+          <Link
+            href={getCalculatorBridgeHref(modelConfig.slug)}
+            className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            Calculate Payback &amp; Savings →
+          </Link>
+        </div>
+
+        {/* B. "Delivery Day Preparation" Checklist Bridge */}
+        <div
+          data-testid="delivery-prep-teaser-banner"
+          className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-4 my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-sky-400">
+              📋 Delivery Day Prep
+            </div>
+            <h3 className="text-sm font-bold text-white">
+              Taking delivery in the next 30–90 days?
+            </h3>
+            <p className="text-xs text-neutral-300">
+              Avoid unexpected dealer doc fees, unverified accessory packages, and inspect fit-and-finish before signing.
+            </p>
+          </div>
+          <Link
+            href="/delivery-prep"
+            className="px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            View Delivery Checklist →
+          </Link>
+        </div>
+      </section>
+
       {/* Seasonal Canadian Winter Delivery Alert Banner */}
       {['rav4', 'sienna', 'camry', 'grand-highlander'].includes(modelConfig.slug) && (
         <section
@@ -729,33 +793,6 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   </Link>
                 </Button>
               </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Contextual Calculator Teaser Callout Banner */}
-      {['rav4', 'sienna', 'camry'].includes(modelConfig.slug) && (
-        <section aria-label="Hybrid Savings Calculator Teaser" data-testid="calculator-teaser-banner">
-          <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-zinc-50 dark:from-emerald-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
-                <Badge className="bg-emerald-600 text-white font-bold text-xs gap-1.5 shadow-xs">
-                  <Calculator className="h-3.5 w-3.5" />
-                  Fuel Savings &amp; Energy Analysis
-                </Badge>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-                  Weighing Gas vs. Hybrid?
-                </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                  Weighing Gas vs. Hybrid? Calculate your annual fuel savings and the extra energy cost of waiting.
-                </p>
-              </div>
-              <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold shrink-0 shadow-sm">
-                <Link href={`/calculator/${modelConfig.slug}-hybrid`} className="gap-2">
-                  Calculate Payback &amp; Waiting Cost &rarr;
-                </Link>
-              </Button>
             </div>
           </div>
         </section>
