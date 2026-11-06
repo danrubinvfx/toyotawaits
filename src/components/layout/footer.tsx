@@ -205,6 +205,36 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/guides/toyota-rav4-must-have-accessories`} className="hover:text-amber-500 transition-colors">
+                  Must-Have RAV4 Accessories
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/best-toyota-all-weather-floor-mats`} className="hover:text-amber-500 transition-colors">
+                  Best All-Weather Floor Mats Shootout
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/rav4-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota RAV4 DIY Mods Hub
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/prius-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Prius &amp; Prime Gen 5 Mods
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/corolla-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Corolla &amp; Cross Mods
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/sequoia-mods`} className="hover:text-amber-500 transition-colors">
+                  Toyota Sequoia Practical Upgrades
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/ev-charging`} className="hover:text-amber-500 transition-colors">
                   Toyota Level 2 EV &amp; PHEV Charging
                 </Link>

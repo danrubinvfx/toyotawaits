@@ -629,6 +629,51 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
+            {/* Guides & Resources Section */}
+            <div className="py-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 px-3">
+                Guides &amp; Seasonal Prep
+              </span>
+              <div className="mt-1 flex flex-col space-y-1">
+                <Link
+                  href="/guides"
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-neutral-800/50 rounded-lg"
+                >
+                  All Guides &amp; Playbooks Hub -&gt;
+                </Link>
+                <Link
+                  href="/winter-prep"
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-sm text-amber-600 dark:text-amber-400 font-medium hover:bg-zinc-100 dark:hover:bg-neutral-800/50 rounded-lg flex items-center justify-between"
+                >
+                  <span>Winter Prep &amp; Mandates</span>
+                  <span className="text-[10px] bg-amber-500/20 text-amber-600 dark:text-amber-300 px-1.5 py-0.5 rounded font-semibold">BC / QC</span>
+                </Link>
+                <Link
+                  href="/tires"
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-neutral-800/50 rounded-lg"
+                >
+                  Tire Sizing &amp; 17&quot; Downsizing
+                </Link>
+                <Link
+                  href="/delivery-prep"
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-neutral-800/50 rounded-lg"
+                >
+                  Delivery Day PDI Checklist
+                </Link>
+                <Link
+                  href="/guides/toyota-sienna-trailer-hitch-guide"
+                  onClick={() => setIsOpen(false)}
+                  className="px-3 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-neutral-800/50 rounded-lg"
+                >
+                  Sienna Hitch &amp; Sensor Guide
+                </Link>
+              </div>
+            </div>
+
             {/* 2. Guides & Delivery Prep Section */}
             <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
               <div className="flex items-center justify-between px-1">

@@ -22,6 +22,7 @@ import {
   ExternalLink,
   ClipboardCheck,
   Play,
+  Disc3,
 } from 'lucide-react';
 import { PopularGearCard } from '@/components/guides/popular-gear-card';
 
@@ -52,6 +53,51 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'winter-prep',
+    title: 'Canadian Winter Prep & Salt Protection Guide',
+    tagline: "BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don'ts.",
+    badge: 'Seasonal Prep',
+    model: 'Universal Canadian Guide',
+    tags: ['Seasonal', 'Winter', 'Essential'],
+    highlights: [
+      'BC highway tire laws & Quebec Dec 1 winter mandates',
+      '12V AGM hybrid auxiliary battery winter survival & jump procedures',
+      'Anti-corrosion undercoating dos and don\'ts for high-voltage harnesses',
+      'Winter prep checklist: block heaters, winter wipers & frost shields',
+    ],
+    href: '/winter-prep',
+  },
+  {
+    slug: 'tires',
+    title: 'OEM Tire Sizing & 17-Inch Downsizing Guide',
+    tagline: 'Confirmed bolt patterns (5x114.3 / 5x120), center bore offsets, and 3PMSF winter rubber for RAV4, Sienna, Grand Highlander, and Corolla.',
+    badge: 'Tire & Wheel DB',
+    model: 'RAV4, Sienna, Grand Highlander, Corolla',
+    tags: ['Tires', 'Wheels', 'Specs'],
+    highlights: [
+      'Confirmed bolt patterns (5x114.3 / 5x120) and center bore offsets',
+      '17-inch downsizing fitment clearing front brake calipers',
+      'Top 3PMSF severe snow tires: Michelin X-Ice Snow vs Blizzak WS90',
+      'Seasonal tire changeover math & steel wheel downsizing savings',
+    ],
+    href: '/tires',
+  },
+  {
+    slug: 'delivery-prep',
+    title: 'Zero-Mile Dealership Delivery Inspection',
+    tagline: 'PDI checklist: transit fuse seating, overinflated shipping tires, hybrid cable inspection, and factory accessories check.',
+    badge: 'Delivery Checklist',
+    model: 'Universal Delivery Checklist',
+    tags: ['Checklist', 'Delivery'],
+    highlights: [
+      'Pre-Delivery Inspection (PDI) fuse seating & spring spacer removal',
+      'Shipping tire pressure deflation (dropping from 45+ PSI)',
+      'High-voltage orange cable corroded connector inspection',
+      'OMVIC/VSA bill of sale add-on audit & dual key fob verification',
+    ],
+    href: '/delivery-prep',
+  },
+  {
     slug: 'toyota-rav4-must-have-accessories',
     title: 'Top 7 Must-Have Toyota RAV4 Accessories (2026)',
     tagline: 'Community-vetted delivery day gear for 2019–2026 RAV4 Hybrid & PHEV owners: TuxMat, FitcamX 4K, Spigen 9H, and faraday defense.',
@@ -80,6 +126,21 @@ const MOD_GUIDES = [
       'Model-specific high-wall search cards for RAV4, Sienna & Grand Highlander',
     ],
     href: '/guides/best-toyota-all-weather-floor-mats',
+  },
+  {
+    slug: 'rav4-mods',
+    title: 'Must-Have Toyota RAV4 Mods & DIY Upgrades',
+    tagline: 'Comprehensive mod playbook for Canadian RAV4 Hybrid, Prime, and Gas owners: dashcams, high-wall liners, and speaker swaps.',
+    badge: 'RAV4 Master Playbook',
+    model: 'RAV4 Hybrid, Prime & Gas',
+    tags: ['Accessories', 'Mods'],
+    highlights: [
+      'FitcamX OEM 4K Integrated Mirror Dashcam',
+      'TuxMat High-Wall Canadian Winter Floor Liners',
+      'JBL Club 3.5" Dash Corner Speaker Upgrade',
+      'Anti-Glare 9H Tempered Glass Display Shield',
+    ],
+    href: '/guides/rav4-mods',
   },
   {
     slug: 'rav4-se-mods',
@@ -200,6 +261,27 @@ const MOD_GUIDES = [
 ];
 
 const PREP_GUIDES = [
+  {
+    slug: 'winter-prep',
+    title: 'Winter Prep & Salt Protection Guide',
+    description: 'BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don\'ts.',
+    icon: Snowflake,
+    href: '/winter-prep',
+  },
+  {
+    slug: 'tires',
+    title: 'OEM Tire Sizing & 17" Downsizing Guide',
+    description: 'Confirmed bolt patterns (5x114.3 / 5x120), center bore offsets, and 3PMSF winter rubber for all hybrid models.',
+    icon: Disc3,
+    href: '/tires',
+  },
+  {
+    slug: 'delivery-prep',
+    title: 'Zero-Mile Dealership Delivery Inspection',
+    description: 'PDI checklist: transit fuse seating, overinflated shipping tires, hybrid cable inspection, and factory accessories check.',
+    icon: ClipboardCheck,
+    href: '/delivery-prep',
+  },
   {
     slug: 'ev-charging',
     title: 'Level 2 Home EVSE Charging Guide',

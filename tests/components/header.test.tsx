@@ -383,6 +383,35 @@ describe('Header Component', () => {
     expect(winterGuide).toHaveAttribute('href', '/winter-prep');
   });
 
+  it('renders quick-access Guides & Seasonal Prep section in the mobile drawer', () => {
+    render(<Header />);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    expect(screen.getByText(/Guides & Seasonal Prep/i)).toBeInTheDocument();
+
+    const allGuidesQuick = screen.getByRole('link', { name: /All Guides & Playbooks Hub/i });
+    expect(allGuidesQuick).toBeInTheDocument();
+    expect(allGuidesQuick).toHaveAttribute('href', '/guides');
+
+    const winterQuick = screen.getByRole('link', { name: /Winter Prep & Mandates/i });
+    expect(winterQuick).toBeInTheDocument();
+    expect(winterQuick).toHaveAttribute('href', '/winter-prep');
+
+    const tiresQuick = screen.getByRole('link', { name: /Tire Sizing & 17" Downsizing/i });
+    expect(tiresQuick).toBeInTheDocument();
+    expect(tiresQuick).toHaveAttribute('href', '/tires');
+
+    const deliveryQuick = screen.getByRole('link', { name: /Delivery Day PDI Checklist/i });
+    expect(deliveryQuick).toBeInTheDocument();
+    expect(deliveryQuick).toHaveAttribute('href', '/delivery-prep');
+
+    const siennaHitchQuick = screen.getByRole('link', { name: /Sienna Hitch & Sensor Guide/i });
+    expect(siennaHitchQuick).toBeInTheDocument();
+    expect(siennaHitchQuick).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
+  });
+
   it('renders all 12 vehicle model landing page links in the mobile drawer', () => {
     render(<Header />);
 

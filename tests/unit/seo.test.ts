@@ -45,6 +45,23 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(priusGuideEntry?.priority).toBe(0.8);
     expect(priusGuideEntry?.changeFrequency).toBe('weekly');
 
+    // Guides & Prep Hub Entries
+    const winterPrepEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/winter-prep');
+    expect(winterPrepEntry).toBeDefined();
+    expect(winterPrepEntry?.priority).toBe(0.8);
+
+    const tiresEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/tires');
+    expect(tiresEntry).toBeDefined();
+    expect(tiresEntry?.priority).toBe(0.8);
+
+    const deliveryPrepEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/delivery-prep');
+    expect(deliveryPrepEntry).toBeDefined();
+    expect(deliveryPrepEntry?.priority).toBe(0.7);
+
+    const guidesMainEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/guides');
+    expect(guidesMainEntry).toBeDefined();
+    expect(guidesMainEntry?.priority).toBe(0.9);
+
     // Dynamic vehicle model and province routes (priority 0.7 - 0.9)
     const siennaEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/sienna');
     expect(siennaEntry).toBeDefined();
