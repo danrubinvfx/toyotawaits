@@ -24,7 +24,7 @@ describe('MobileBottomDock Component & Dynamic Gear Drawer', () => {
     vi.restoreAllMocks();
   });
 
-  it('renders fixed bottom dock on mobile with 4 thumb slots and responsive classes', () => {
+  it('renders fixed bottom dock on mobile with 5 thumb slots and responsive classes', () => {
     render(
       <MarketProvider>
         <MobileBottomDock />
@@ -46,15 +46,17 @@ describe('MobileBottomDock Component & Dynamic Gear Drawer', () => {
       'pb-safe'
     );
 
-    // 4 Slots
+    // 5 Slots
     expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-dock-inventory')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-dock-guides')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-dock-gear')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-dock-calculator')).toBeInTheDocument();
 
-    // Default universal label
+    // Default universal labels
     expect(screen.getByText('Tracker')).toBeInTheDocument();
     expect(screen.getByText('Live Stock')).toBeInTheDocument();
+    expect(screen.getByText('Guides')).toBeInTheDocument();
     expect(screen.getByText('Gear')).toBeInTheDocument();
     expect(screen.getByText('Calculator')).toBeInTheDocument();
   });

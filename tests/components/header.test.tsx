@@ -318,4 +318,118 @@ describe('Header Component', () => {
     expect(screen.queryByRole('link', { name: /Update Status/i })).not.toBeInTheDocument();
     expect(screen.getAllByRole('link', { name: /\+ Log Order/i }).length).toBeGreaterThanOrEqual(1);
   });
+
+  it('renders mobile hamburger toggle with accessibility attributes and touch-manipulation', () => {
+    render(<Header />);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    expect(toggle).toBeInTheDocument();
+    expect(toggle).toHaveAttribute('type', 'button');
+    expect(toggle).toHaveAttribute('aria-label', 'Open Navigation Menu');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveClass('relative', 'z-50', 'cursor-pointer', 'p-2', 'touch-manipulation', 'shrink-0');
+
+    // Click to open
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-label', 'Open Navigation Menu');
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    // Drawer top bar close button
+    const closeBtn = screen.getByRole('button', { name: /Close navigation menu/i });
+    expect(closeBtn).toBeInTheDocument();
+    expect(closeBtn).toHaveClass('touch-manipulation');
+    fireEvent.click(closeBtn);
+
+    // Drawer should be closed
+    expect(screen.queryByTestId('mobile-menu-drawer')).not.toBeInTheDocument();
+    expect(toggle).toHaveAttribute('aria-label', 'Open Navigation Menu');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('renders all featured Buyer & Owner Guides in the mobile drawer', () => {
+    render(<Header />);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    // Guides Hub
+    const guidesHub = screen.getByRole('link', { name: /All Guides Hub/i });
+    expect(guidesHub).toBeInTheDocument();
+    expect(guidesHub).toHaveAttribute('href', '/guides');
+
+    // Sienna Hitch & Kick-Sensor Guide
+    const hitchGuide = screen.getByRole('link', { name: /Sienna Hitch & Kick-Sensor Guide/i });
+    expect(hitchGuide).toBeInTheDocument();
+    expect(hitchGuide).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
+
+    // 2026 vs 2027 Sienna Guide
+    const siennaCompGuide = screen.getByRole('link', { name: /2026 vs. 2027 Sienna Guide/i });
+    expect(siennaCompGuide).toBeInTheDocument();
+    expect(siennaCompGuide).toHaveAttribute('href', '/guides/toyota-sienna-2026-vs-2027');
+
+    // RAV4 Must-Have Accessories
+    const rav4AccGuide = screen.getByRole('link', { name: /RAV4 Must-Have Accessories/i });
+    expect(rav4AccGuide).toBeInTheDocument();
+    expect(rav4AccGuide).toHaveAttribute('href', '/guides/toyota-rav4-must-have-accessories');
+
+    // Best All-Weather Floor Mats
+    const matsGuide = screen.getByRole('link', { name: /Best All-Weather Floor Mats/i });
+    expect(matsGuide).toBeInTheDocument();
+    expect(matsGuide).toHaveAttribute('href', '/guides/best-toyota-all-weather-floor-mats');
+
+    // Winter Prep Guide
+    const winterGuide = screen.getByRole('link', { name: /Winter Prep Guide ❄️/i });
+    expect(winterGuide).toBeInTheDocument();
+    expect(winterGuide).toHaveAttribute('href', '/winter-prep');
+  });
+
+  it('renders all 12 vehicle model landing page links in the mobile drawer', () => {
+    render(<Header />);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    const expectedModels = [
+      { name: 'RAV4', href: '/wait-times/rav4' },
+      { name: 'Sienna', href: '/wait-times/sienna' },
+      { name: 'Grand Highlander', href: '/wait-times/grand-highlander' },
+      { name: 'Highlander', href: '/wait-times/highlander' },
+      { name: 'Prius', href: '/wait-times/prius' },
+      { name: 'Camry', href: '/wait-times/camry' },
+      { name: 'Tacoma', href: '/wait-times/tacoma' },
+      { name: 'Tundra', href: '/wait-times/tundra' },
+      { name: 'Corolla', href: '/wait-times/corolla' },
+      { name: 'Corolla Cross', href: '/wait-times/corolla-cross' },
+      { name: 'Land Cruiser', href: '/wait-times/land-cruiser' },
+      { name: '4Runner', href: '/wait-times/4runner' },
+    ];
+
+    for (const model of expectedModels) {
+      const link = screen.getByRole('link', { name: new RegExp('^' + model.name + '$', 'i') });
+      expect(link).toBeInTheDocument();
+      expect(link).toHaveAttribute('href', model.href);
+    }
+  });
+
+  it('renders core Buyer Tools in the mobile drawer', () => {
+    render(<Header />);
+
+    const toggle = screen.getByTestId('mobile-menu-toggle');
+    fireEvent.click(toggle);
+
+    // Fuel Savings Calculator
+    const calcLink = screen.getByRole('link', { name: /Savings & Payback Calculator/i });
+    expect(calcLink).toBeInTheDocument();
+    expect(calcLink).toHaveAttribute('href', '/calculator');
+
+    // Live Inventory / Live Stock
+    const liveStockLink = screen.getByTestId('mobile-nav-inventory');
+    expect(liveStockLink).toBeInTheDocument();
+    expect(liveStockLink).toHaveAttribute('href', '/inventory');
+
+    // Day-One Prep Pickup Checklist
+    const pickupLink = screen.getByRole('link', { name: /Pickup Checklist/i });
+    expect(pickupLink).toBeInTheDocument();
+    expect(pickupLink).toHaveAttribute('href', '/delivery-prep');
+  });
 });

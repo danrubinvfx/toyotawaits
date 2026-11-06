@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Clock, Ship, Package, Calculator, X, Check, Copy, Tag, ExternalLink } from 'lucide-react';
+import { Clock, Ship, Package, Calculator, BookOpen, X, Check, Copy, Tag, ExternalLink } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
 import { buildAmazonAffiliateUrl, getModelDisplayName } from '@/lib/gear/affiliate';
@@ -494,6 +494,7 @@ export function MobileBottomDock() {
   // Active state matching
   const isTrackerActive = pathname === '/' || pathname === '';
   const isInventoryActive = pathname === '/inventory';
+  const isGuidesActive = pathname.startsWith('/guides') || pathname === '/winter-prep' || pathname.startsWith('/camping');
   const isCalculatorActive = pathname.startsWith('/calculator');
 
   return (
@@ -503,12 +504,12 @@ export function MobileBottomDock() {
         aria-label="Mobile Navigation Dock"
         className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-zinc-950/95 border-t border-zinc-800/80 backdrop-blur-lg pb-safe"
       >
-        <div className="grid grid-cols-4 items-center h-14 px-1 max-w-md mx-auto">
+        <div className="grid grid-cols-5 items-center h-14 px-0.5 sm:px-1 max-w-md mx-auto">
           {/* Slot 1: Tracker */}
           <Link
             href="/"
             data-testid="mobile-dock-tracker"
-            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
               isTrackerActive && !isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
@@ -522,7 +523,7 @@ export function MobileBottomDock() {
           <Link
             href="/inventory"
             data-testid="mobile-dock-inventory"
-            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
               isInventoryActive && !isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
@@ -532,12 +533,26 @@ export function MobileBottomDock() {
             <span className="text-[10px] tracking-tight truncate max-w-full">Live Stock</span>
           </Link>
 
-          {/* Slot 3: Model Gear (Opens Drawer) */}
+          {/* Slot 3: Guides */}
+          <Link
+            href="/guides"
+            data-testid="mobile-dock-guides"
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
+              isGuidesActive && !isGearDrawerOpen
+                ? 'text-amber-400 font-bold'
+                : 'text-zinc-400 hover:text-zinc-200 font-medium'
+            }`}
+          >
+            <BookOpen className="h-4 w-4" aria-hidden="true" />
+            <span className="text-[10px] tracking-tight truncate max-w-full">Guides</span>
+          </Link>
+
+          {/* Slot 4: Model Gear (Opens Drawer) */}
           <button
             type="button"
             data-testid="mobile-dock-gear"
             onClick={() => setIsGearDrawerOpen(true)}
-            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors cursor-pointer ${
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors cursor-pointer px-0.5 ${
               isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
@@ -549,11 +564,11 @@ export function MobileBottomDock() {
             </span>
           </button>
 
-          {/* Slot 4: Calculator */}
+          {/* Slot 5: Calculator */}
           <Link
             href="/calculator"
             data-testid="mobile-dock-calculator"
-            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
               isCalculatorActive && !isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'

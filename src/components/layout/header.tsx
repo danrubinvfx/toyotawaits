@@ -23,6 +23,8 @@ import {
   Calculator,
   Tent,
   Compass,
+  BookOpen,
+  ShieldCheck,
 } from 'lucide-react';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
@@ -51,7 +53,9 @@ export function Header({ initialRegion }: HeaderProps = {}) {
     ctxSetMarket(newM);
   };
   const isUs = market === 'US';
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const mobileMenuOpen = isOpen;
+  const setMobileMenuOpen = setIsOpen;
   const [desktopGuidesOpen, setDesktopGuidesOpen] = useState(false);
   const [desktopToolsOpen, setDesktopToolsOpen] = useState(false);
   const guidesDropdownRef = React.useRef<HTMLDivElement>(null);
@@ -141,7 +145,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
     : '/submit';
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
-    setMobileMenuOpen(false);
+    setIsOpen(false);
     if (targetId === 'checklist' && typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('toyotawait:open-checklist'));
     }
@@ -501,44 +505,61 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           {hasActiveOrder ? (
             <Link
               href={editHref}
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2 py-1.5 min-[400px]:px-2.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
             >
               <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
               <span className="hidden xs:inline">Update Status</span>
-              <span className="xs:hidden">Status</span>
+              <span className="xs:hidden max-[399px]:hidden">Status</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
             </Link>
           ) : (
             <Link
               href="/submit"
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2 py-1.5 min-[400px]:px-2.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
             >
               <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
               <span className="hidden xs:inline">+ Log Order</span>
-              <span className="xs:hidden">+ Order</span>
+              <span className="xs:hidden max-[399px]:hidden">+ Order</span>
             </Link>
           )}
 
           {/* Mobile Menu Button */}
           <button
             type="button"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 text-neutral-400 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white rounded-lg focus:outline-none lg:hidden shrink-0"
-            aria-label="Toggle menu"
+            onClick={() => setIsOpen(!isOpen)}
+            className="relative z-50 cursor-pointer p-2 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 lg:hidden shrink-0"
+            aria-label="Open Navigation Menu"
+            aria-expanded={isOpen}
             data-testid="mobile-menu-toggle"
           >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
-      {mobileMenuOpen && (
+      {isOpen && (
         <div
           data-testid="mobile-menu-drawer"
-          className="lg:hidden border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 px-4 py-5 shadow-2xl animate-in slide-in-from-top-2 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
+          className="lg:hidden border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 px-4 py-4 shadow-2xl animate-in slide-in-from-top-2 max-h-[calc(100vh-4.5rem)] overflow-y-auto"
         >
-          <div className="flex flex-col space-y-6 pb-4">
+          <div className="flex flex-col space-y-5 pb-6">
+            {/* Mobile Drawer Top Bar with Close Button */}
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                <Menu className="h-4 w-4 text-amber-500" />
+                Navigation Menu
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors cursor-pointer touch-manipulation"
+                aria-label="Close navigation menu"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
             {/* Mobile Regional Switcher */}
             <div className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
               <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Market / Region</span>
@@ -608,78 +629,16 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
-            {/* Live Inventory (Prominently featured) */}
-            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
-                Dealer Inventory
-              </span>
-              <div className="grid grid-cols-1 gap-1">
-                <Link
-                  href="/inventory"
-                  data-testid="mobile-nav-inventory"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname === '/inventory'
-                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                      <Car className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors flex items-center gap-1.5">
-                        <span>Live Inventory</span>
-                        <span className="text-xs">🇨🇦</span>
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        In-transit &amp; lot-ready vehicles to skip the wait
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-                {/* Savings Calculator Mobile Link */}
-                <Link
-                  href="/calculator"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname.startsWith('/calculator')
-                      ? 'bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-600 dark:text-red-400">
-                      <Calculator className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-red-500 transition-colors">
-                        Savings &amp; Payback Calculator
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        Gas vs. Hybrid fuel savings &amp; break-even
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-              </div>
-            </div>
-
-            {/* 2. Guides Section */}
+            {/* 2. Guides & Delivery Prep Section */}
             <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
               <div className="flex items-center justify-between px-1">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
-                  <Wrench className="h-3 w-3 text-amber-500" />
-                  Guides &amp; Accessories
+                  <BookOpen className="h-3.5 w-3.5 text-amber-500" />
+                  Guides &amp; Delivery Prep
                 </span>
                 <Link
                   href="/guides"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="text-[11px] font-semibold text-amber-500 hover:underline"
                 >
                   View All Guides →
@@ -687,10 +646,145 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
 
               <div className="grid grid-cols-1 gap-1">
+                {/* All Guides Hub */}
+                <Link
+                  href="/guides"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/guides'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <BookOpen className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        All Guides Hub
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Comprehensive model guides, roadmaps &amp; checklists
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Sienna Trailer Hitch & Kick-Sensor Guide */}
+                <Link
+                  href="/guides/toyota-sienna-trailer-hitch-guide"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/guides/toyota-sienna-trailer-hitch-guide'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-zinc-100 dark:bg-neutral-800 flex items-center justify-center text-zinc-700 dark:text-zinc-300">
+                      <Wrench className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Sienna Hitch &amp; Kick-Sensor Guide
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        OEM vs aftermarket receiver &amp; kick sensor bracket fix
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* 2026 vs. 2027 Sienna Guide */}
+                <Link
+                  href="/guides/toyota-sienna-2026-vs-2027"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/guides/toyota-sienna-2026-vs-2027'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-purple-100 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                      <Car className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-purple-400 transition-colors">
+                        2026 vs. 2027 Sienna Guide
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Wait times, mid-cycle updates &amp; allocation strategy
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* RAV4 Must-Have Accessories */}
+                <Link
+                  href="/guides/toyota-rav4-must-have-accessories"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/guides/toyota-rav4-must-have-accessories'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <ShoppingBag className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        RAV4 Must-Have Accessories
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Day-one dashcams, high-wall liners &amp; console trays
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Best All-Weather Floor Mats */}
+                <Link
+                  href="/guides/best-toyota-all-weather-floor-mats"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/guides/best-toyota-all-weather-floor-mats'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-emerald-100 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-400 transition-colors">
+                        Best All-Weather Floor Mats
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        TuxMat vs WeatherTech vs OEM winter salt test
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
                 {/* Winter Prep Guide */}
                 <Link
                   href="/winter-prep"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className={cn(
                     'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
                     pathname === '/winter-prep'
@@ -714,10 +808,10 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-all" />
                 </Link>
 
-                {/* Camping & Overland Section */}
+                {/* Camping Guides */}
                 <Link
                   href="/camping/sienna"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
@@ -738,7 +832,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
                 <Link
                   href="/camping/rav4"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
                 >
                   <div className="flex items-center gap-3">
@@ -765,7 +859,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                 </div>
                 <Link
                   href="/guides/rav4-se-mods"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="space-y-0.5">
@@ -785,7 +879,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
                 <Link
                   href="/guides/sienna-mods"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="space-y-0.5">
@@ -805,7 +899,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
                 <Link
                   href="/guides/grand-highlander-mods"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="space-y-0.5">
@@ -825,7 +919,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
                 <Link
                   href="/guides/land-cruiser-mods"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="space-y-0.5">
@@ -845,7 +939,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
                 <Link
                   href="/guides/prius-mods"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group"
                 >
                   <div className="space-y-0.5">
@@ -865,7 +959,211 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
-            {/* 3. Delivery Prep & Recommended Product Links */}
+            {/* 3. Tools Section */}
+            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+                Tools &amp; Delivery Prep
+              </span>
+              <div className="grid grid-cols-1 gap-1">
+                {/* Fuel Savings Calculator */}
+                <Link
+                  href="/calculator"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname.startsWith('/calculator')
+                      ? 'bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-red-100 dark:bg-red-950/60 flex items-center justify-center text-red-600 dark:text-red-400">
+                      <Calculator className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-red-500 transition-colors">
+                        Savings &amp; Payback Calculator
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Gas vs. Hybrid fuel savings &amp; break-even payback
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-red-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Live Stock / Dealer Inventory */}
+                <Link
+                  href="/inventory"
+                  data-testid="mobile-nav-inventory"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/inventory'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-zinc-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-blue-100 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <Car className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors flex items-center gap-1.5">
+                        <span>Live Inventory</span>
+                        <span className="text-xs">🇨🇦</span>
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        In-transit &amp; lot-ready vehicles to skip the wait
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Day-One Prep / Pickup Checklist */}
+                <Link
+                  href="/delivery-prep"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/delivery-prep'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <ClipboardCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Pickup Checklist
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Bill of sale, key fobs &amp; PDI spacer inspection
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Analytics & Wait Trends */}
+                <Link
+                  href="/#community-log"
+                  onClick={(e) => handleAnchorClick(e, 'community-log')}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <BarChart3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Analytics &amp; Wait Trends
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Quebec &amp; BC allocation trends
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Tire Guide */}
+                <Link
+                  href="/tires"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/tires'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <Disc3 className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Tire Guide &amp; Reviews 🛞
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        OEM sizes, 3PMSF winter rubber &amp; wheel downsizing
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Export Raw Data */}
+                <Link
+                  href="/api/export"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-zinc-100 dark:bg-neutral-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
+                      <FileSpreadsheet className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Export Raw Data (CSV)
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        RFC 4180 open community dataset
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+              </div>
+            </div>
+
+            {/* 4. Vehicle Models (Wait Times) Section */}
+            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
+                  <Car className="h-3 w-3 text-amber-500" />
+                  Vehicle Wait Trackers
+                </span>
+                <span className="text-[10px] text-zinc-500">12 Models</span>
+              </div>
+              <div className="grid grid-cols-2 xs:grid-cols-3 gap-1.5 pt-1">
+                {[
+                  { slug: 'rav4', name: 'RAV4' },
+                  { slug: 'sienna', name: 'Sienna' },
+                  { slug: 'grand-highlander', name: 'Grand Highlander' },
+                  { slug: 'highlander', name: 'Highlander' },
+                  { slug: 'prius', name: 'Prius' },
+                  { slug: 'camry', name: 'Camry' },
+                  { slug: 'tacoma', name: 'Tacoma' },
+                  { slug: 'tundra', name: 'Tundra' },
+                  { slug: 'corolla', name: 'Corolla' },
+                  { slug: 'corolla-cross', name: 'Corolla Cross' },
+                  { slug: 'land-cruiser', name: 'Land Cruiser' },
+                  { slug: '4runner', name: '4Runner' },
+                ].map((vehicle) => (
+                  <Link
+                    key={vehicle.slug}
+                    href={`/wait-times/${vehicle.slug}`}
+                    onClick={() => setIsOpen(false)}
+                    className={cn(
+                      'flex items-center justify-between px-2.5 py-2 rounded-lg border text-xs font-medium transition-all group',
+                      pathname === `/wait-times/${vehicle.slug}`
+                        ? 'border-amber-500/50 bg-amber-500/10 text-amber-500 font-bold'
+                        : 'border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/40 text-zinc-700 dark:text-zinc-300 hover:border-amber-500/40 hover:text-amber-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                    )}
+                  >
+                    <span className="truncate">{vehicle.name}</span>
+                    <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* 5. Delivery Prep & Recommended Product Links */}
             <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-zinc-800/80">
               <div className="flex items-center justify-between px-1">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
@@ -901,7 +1199,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   href="/out/fitcamx-rav4"
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
                   <div className="flex items-center gap-2">
@@ -919,7 +1217,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   href="/out/noco-gb40-jump-pack"
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
                   <div className="flex items-center gap-2">
@@ -937,7 +1235,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   href="/out/screen-protector-rav4"
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
                   <div className="flex items-center gap-2">
@@ -955,7 +1253,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   href="/out/console-tray-rav4"
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
                   <div className="flex items-center gap-2">
@@ -973,7 +1271,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   href="/out/j1772-charger-lock"
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={() => setIsOpen(false)}
                   className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors group text-xs"
                 >
                   <div className="flex items-center gap-2">
@@ -989,119 +1287,14 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               </div>
             </div>
 
-            {/* 3. Tools Section */}
-            <div className="space-y-1.5 pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
-                Tools
-              </span>
-              <div className="grid grid-cols-1 gap-1">
-                <Link
-                  href="/#community-log"
-                  onClick={(e) => handleAnchorClick(e, 'community-log')}
-                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <BarChart3 className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Analytics &amp; Wait Trends
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        Quebec &amp; BC allocation trends
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-
-                {/* Tire Guide */}
-                <Link
-                  href="/tires"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname === '/tires'
-                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <Disc3 className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Tire Guide &amp; Reviews 🛞
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        OEM sizes, 3PMSF winter rubber &amp; wheel downsizing
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-
-                {/* Dealership Pickup Checklist */}
-                <Link
-                  href="/delivery-prep"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={cn(
-                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
-                    pathname === '/delivery-prep'
-                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
-                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
-                      <ClipboardCheck className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Pickup Checklist
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        Bill of sale, key fobs &amp; PDI spacer inspection
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-
-                {/* Export Raw Data */}
-                <Link
-                  href="/api/export"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-900 transition-colors group"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-md bg-zinc-100 dark:bg-neutral-800 flex items-center justify-center text-zinc-600 dark:text-zinc-400">
-                      <FileSpreadsheet className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
-                        Export Raw Data (CSV)
-                      </p>
-                      <p className="text-[11px] text-zinc-500">
-                        RFC 4180 open community dataset
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
-                </Link>
-              </div>
-            </div>
-
-            {/* 4. Community Action & Open Data */}
+            {/* 6. Community Action & Open Data */}
             <div className="pt-2 border-t border-zinc-200 dark:border-neutral-800/80 space-y-2">
               {hasActiveOrder ? (
                 <div className="space-y-2">
                   <Link
                     href={editHref}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                   >
                     <CheckCircle2 className="h-4 w-4 text-black shrink-0" />
                     <span>Update Status {submission?.model ? `(${submission.model})` : ''}</span>
@@ -1109,8 +1302,8 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                   </Link>
                   <Link
                     href="/submit"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 py-1 font-medium transition-colors"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 dark:text-zinc-400 dark:hover:text-amber-400 py-1 font-medium transition-colors cursor-pointer touch-manipulation"
                   >
                     + Log another vehicle
                   </Link>
@@ -1118,8 +1311,8 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               ) : (
                 <Link
                   href="/submit"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full bg-amber-500 text-black font-bold px-3.5 py-2.5 rounded-xl text-sm hover:bg-amber-400 transition-all shadow-sm ring-1 ring-amber-400/50 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                 >
                   <PlusCircle className="h-4 w-4 text-black shrink-0" />
                   <span>+ Log Order (Anonymous)</span>
@@ -1128,8 +1321,8 @@ export function Header({ initialRegion }: HeaderProps = {}) {
 
               <Link
                 href="/api/export"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 py-1"
+                onClick={() => setIsOpen(false)}
+                className="flex items-center justify-center gap-1.5 text-xs text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 py-1 cursor-pointer touch-manipulation"
               >
                 <FileSpreadsheet className="h-3.5 w-3.5" />
                 Export Community Data (RFC 4180 CSV)
