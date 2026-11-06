@@ -1,36 +1,41 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { PickupChecklist } from '@/components/delivery-prep/pickup-checklist';
 import { PrintButton } from '@/components/delivery-prep/print-button';
-import { ShieldCheck, Car, KeyRound, Wrench, Luggage } from 'lucide-react';
+import { FactoryStatusTracker } from '@/components/delivery-prep/factory-status-tracker';
+import { DealerTrackingTips } from '@/components/delivery-prep/dealer-tracking-tips';
+import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard } from '@/components/gear/GearCard';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',
+  title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
   description:
-    'Comprehensive Canadian Toyota delivery day inspection checklist: bill of sale verification, PDI suspension shipping spacer removal, key fob count audits, and hybrid battery intake checks.',
+    'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
   keywords: [
-    'toyota delivery day checklist',
-    'toyota pickup day inspection',
-    'toyota pdi shipping spacers',
-    'toyota smart key shortage canada',
-    'rav4 hybrid pickup inspection',
-    'toyota bill of sale omvic amvic',
+    'toyota canada delivery tracking',
+    'toyota order status codes canada',
+    'toyota status a freight status f',
+    'toyota status g ground delivery',
+    'dealer daily logistics tracking cn rail',
     'canadian toyota delivery checklist',
+    'toyota pickup day inspection pdi',
+    'toyota bill of sale omvic amvic',
   ],
   alternates: {
     canonical: 'https://www.toyotawaits.ca/delivery-prep',
   },
   openGraph: {
-    title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',
+    title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
     description:
-      'Comprehensive Canadian Toyota delivery day inspection checklist: bill of sale verification, PDI suspension shipping spacer removal, key fob count audits, and hybrid battery intake checks.',
+      'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
     url: 'https://www.toyotawaits.ca/delivery-prep',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -38,16 +43,72 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Canadian Dealership Pickup Day Checklist & PDI Audit | ToyotaWaits.ca',
+    title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
     description:
-      'Comprehensive Canadian Toyota delivery day inspection checklist: bill of sale verification, PDI suspension shipping spacer removal, key fob count audits, and hybrid battery intake checks.',
+      'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
   },
 };
+
+const DELIVERY_FAQ_ITEMS = [
+  {
+    question: 'What does Toyota Status F mean?',
+    answer:
+      'Toyota Status F stands for Freight / In-Transit. It means your vehicle has officially completed factory assembly, passed final quality assurance inspection, and is loaded onto a freight railcar (CN or CPKC) or ocean carrier bound for regional distribution hubs or the Port of Vancouver (Annacis Island auto terminal). At this stage, a permanent 17-digit VIN is assigned.',
+  },
+  {
+    question: 'How long does a Toyota take to arrive once in transit?',
+    answer:
+      'Once reaching Status F (Freight), rail and road transit typically takes 5 to 14 days for vehicles manufactured in Ontario (Cambridge/Woodstock) delivering within Ontario or Quebec. For shipments traveling to Western Canada (British Columbia and Alberta) or coming from US plants (Princeton, Indiana for Sienna/Grand Highlander), rail transit typically requires 12 to 21 days.',
+  },
+  {
+    question: 'Can my dealer track the train carrying my Toyota?',
+    answer:
+      'Yes. Dealership Sales Managers and inventory controllers have access to Toyota’s internal Dealer Daily logistics portal. The system provides real-time tracking with the exact CN or CPKC railcar number, current railway interchange checkpoint, and projected ETA arrival window for dealership compound delivery (Status G).',
+  },
+  {
+    question: 'When do I get a VIN for my Toyota order in Canada?',
+    answer:
+      'Your dealership will provide a temporary spec/allocation code while your order is in Status A. A permanent 17-character vehicle identification number (VIN) is usually generated approximately 7 to 14 days before scheduled physical assembly at the plant. Once Status F is reached, your dealer can print the full factory VIN build sheet.',
+  },
+  {
+    question: 'What should I inspect during Toyota delivery day PDI?',
+    answer:
+      'Before handing over final certified funds or signing delivery acceptance: (1) Ensure front suspension shipping spacer blocks were removed by the PDI technician; (2) Check for paint chips, rock dings, and panel gaps under bright daylight; (3) Verify the number of smart keys provided (obtain an official Toyota 2nd key IOU voucher if affected by chip shortages); and (4) Audit your final bill of sale to verify no unrequested dealer add-ons (nitrogen, security etching, paint protection packs) were added.',
+  },
+];
+
+const deliveryFaqPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: DELIVERY_FAQ_ITEMS.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+
+function ChecklistLoadingFallback() {
+  return (
+    <div className="p-8 rounded-2xl border border-zinc-800 bg-zinc-950/50 flex flex-col items-center justify-center space-y-3">
+      <Loader2 className="w-8 h-8 animate-spin text-emerald-400" />
+      <p className="text-sm text-zinc-400">Loading delivery day inspection checkpoints...</p>
+    </div>
+  );
+}
 
 export default function DeliveryPrepPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6 pb-16">
-      <div className="container mx-auto max-w-5xl px-4 sm:px-6 space-y-6">
+      {/* FAQPage JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(deliveryFaqPageSchema) }}
+      />
+
+      <div className="container mx-auto max-w-5xl px-4 sm:px-6 space-y-8">
         <BackButton className="mb-2" />
 
         {/* Page Hero */}
@@ -58,14 +119,14 @@ export default function DeliveryPrepPage() {
                 <ShieldCheck className="h-3.5 w-3.5" />
                 <span>Pickup Day Inspection</span>
                 <span className="text-zinc-600">•</span>
-                <span>Pre-Delivery Audit</span>
+                <span>Pre-Delivery Audit &amp; Status Tracking</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                Dealership Pickup Day Checklist
+                Toyota Canada Delivery Tracking &amp; Pickup Day Checklist
               </h1>
               <p className="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
-                Step-by-step pre-delivery inspection checkpoints to review before handing over certified funds
-                or signing your final vehicle handover acceptance.
+                Track your Toyota order through factory allocation, rail logistics (Status A, F, G), and conduct
+                a rigorous pre-delivery inspection before signing your final handover agreement.
               </p>
             </div>
 
@@ -108,12 +169,20 @@ export default function DeliveryPrepPage() {
           </div>
         </div>
 
-        {/* Interactive Checklist Component */}
-        <section className="space-y-4">
-          <PickupChecklist defaultOpen={true} />
+        {/* 1. Toyota Canada Order Status Codes (Status A, F, G) */}
+        <FactoryStatusTracker />
+
+        {/* 2. Dealer Tracking FAQ & Pro-Tips + Cross-Link Hub */}
+        <DealerTrackingTips />
+
+        {/* 3. Interactive Checklist Component wrapped in Suspense */}
+        <section className="space-y-4 pt-2">
+          <Suspense fallback={<ChecklistLoadingFallback />}>
+            <PickupChecklist defaultOpen={true} />
+          </Suspense>
         </section>
 
-        {/* Cargo & Trunk Organization Section */}
+        {/* 4. Cargo & Trunk Organization Section */}
         <section className="space-y-4 pt-2" id="cargo-trunk-organization">
           <div className="space-y-1">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
@@ -205,6 +274,40 @@ export default function DeliveryPrepPage() {
               className="w-full max-w-none"
             />
           </div>
+        </section>
+
+        {/* 5. Frequently Asked Questions Section */}
+        <section
+          aria-label="Frequently Asked Questions: Toyota Canada Delivery Tracking"
+          className="py-4"
+        >
+          <Card className="border-zinc-800 bg-zinc-900/60 shadow-xl overflow-hidden">
+            <CardHeader className="p-5 sm:p-6 pb-3 border-b border-zinc-800">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-400">
+                <HelpCircle className="w-4 h-4" />
+                <span>Tracking &amp; Logistics FAQs • 2026 Guide</span>
+              </div>
+              <CardTitle className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
+                Toyota Canada Order Tracking &amp; PDI FAQs
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-5 sm:p-6 space-y-4">
+              {DELIVERY_FAQ_ITEMS.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl border border-zinc-800 bg-zinc-950/60 space-y-2"
+                >
+                  <h3 className="text-sm sm:text-base font-bold text-white flex items-start gap-2">
+                    <span className="text-emerald-400 font-mono text-sm shrink-0">Q:</span>
+                    <span>{faq.question}</span>
+                  </h3>
+                  <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed pl-5">
+                    {faq.answer}
+                  </p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </section>
 
         {/* Additional Guides Link */}
