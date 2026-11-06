@@ -265,7 +265,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           </p>
 
           {/* Independence / Non-Dealership Community Disclaimer Note */}
-          <div className="rounded-lg border border-zinc-200/80 bg-zinc-100/60 dark:border-zinc-800/80 dark:bg-zinc-900/60 p-3.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          <div className="rounded-lg border border-zinc-200/80 bg-zinc-100/60 dark:border-zinc-800/80 dark:bg-zinc-900/60 p-3.5 text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
             <p data-testid="community-disclaimer">
               ToyotaWaits is an independent, community-driven tracker and is not affiliated with Toyota Motor Corporation. We cannot look up individual factory orders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email{' '}
               <a
@@ -278,37 +278,37 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           </div>
 
           {/* Global Footer Quick Navigation & Community Contact */}
-          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-slate-400">
+          <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-slate-300 dark:text-zinc-300">
             <Link
               href={`${baseUrl}/privacy`}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
+              className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
             >
               Privacy
             </Link>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <Link
               href={`${baseUrl}/legal`}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
+              className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
             >
               Legal
             </Link>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <a
               href={`${baseUrl}/sitemap.xml`}
-              className="text-slate-400 hover:text-slate-200 transition-colors"
+              className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
             >
               Sitemap
             </a>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <a
               href="mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry"
-              className="text-slate-400 hover:text-slate-200 transition-colors"
+              className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
             >
               Contact &amp; Feedback
             </a>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-400 gap-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-600 dark:text-zinc-300 gap-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
             <span>© 2026 {isUs ? 'ToyotaWaits.com. U.S. Community Data Initiative.' : 'ToyotaWaits.ca. Canadian Community Data Initiative.'}</span>
             <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-0">
               <a

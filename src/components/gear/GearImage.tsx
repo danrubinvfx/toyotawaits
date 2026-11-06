@@ -172,7 +172,7 @@ export function isAmazonImageDomain(url?: string): boolean {
  * Resilient, Amazon-compliant gear product image component.
  * Features:
  * - Wrap image in clickable link pointing to Amazon affiliate URL
- * - Next.js <Image /> with fill, sizes="(max-width: 640px) 100vw, 320px", object-contain p-2
+ * - Next.js <Image /> with fill, sizes="(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px", object-contain p-2
  * - Fixed aspect ratio (aspect-video)
  * - Local WebP rendering with state-based fallback
  * - Ambient dark-mode gradient backdrop (bg-zinc-950/80)
@@ -189,7 +189,7 @@ export function GearImage({
   imageClassName,
   containerClassName,
   aspectRatioClass = 'aspect-video',
-  sizes = '(max-width: 640px) 100vw, 320px',
+  sizes = '(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px',
   ariaLabel,
   testId,
   isChecked = false,

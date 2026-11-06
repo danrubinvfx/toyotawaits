@@ -75,7 +75,7 @@ function CalculatorProductMedia({
           alt={title}
           fill
           unoptimized
-          sizes="(max-width: 640px) 100vw, 320px"
+          sizes="(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px"
           className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
           onError={() => setImageFailed(true)}
         />

@@ -103,13 +103,13 @@ describe('Footer Component', () => {
       );
     });
 
-    // Check muted styling token
+    // Check accessible contrast styling token
     const mutedContactLink = contactLinks.find((link) =>
-      link.className.includes('text-slate-400')
+      link.className.includes('text-slate-300')
     );
     expect(mutedContactLink).toBeDefined();
-    expect(mutedContactLink?.className).toContain('text-slate-400');
-    expect(mutedContactLink?.className).toContain('hover:text-slate-200');
+    expect(mutedContactLink?.className).toContain('text-slate-300');
+    expect(mutedContactLink?.className).toContain('hover:text-white');
   });
 
   it('renders clear independence and non-dealership community disclaimer', () => {

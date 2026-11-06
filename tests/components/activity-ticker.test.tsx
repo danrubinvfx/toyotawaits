@@ -272,6 +272,7 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
     expect(clone).toBeInTheDocument();
     expect(clone).toHaveAttribute('aria-hidden', 'true');
     expect(clone).toHaveAttribute('inert');
+    expect(clone).toHaveAttribute('tabindex', '-1');
 
     const cloneLinks = clone.querySelectorAll('a');
     expect(cloneLinks.length).toBeGreaterThan(0);

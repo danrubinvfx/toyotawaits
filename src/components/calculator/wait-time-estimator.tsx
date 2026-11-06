@@ -879,7 +879,7 @@ export function WaitTimeEstimator({
               {multiplierBreakdown && (
                 <div
                   data-testid="multiplier-breakdown-note"
-                  className="text-xs text-amber-600/90 dark:text-amber-400/90 font-medium text-center max-w-xl px-2"
+                  className="text-xs text-amber-700 dark:text-amber-300 font-medium text-center max-w-xl px-2"
                 >
                   {multiplierBreakdown}
                 </div>
@@ -921,7 +921,7 @@ export function WaitTimeEstimator({
                 {modelSlug === 'tacoma' ? (
                   <span data-testid="tacoma-benchmark-badge">
                     10 Historical Dealer Benchmarks (Community submissions opening soon).
-                    <span data-testid="tacoma-methodology-note" className="block text-[10px] text-zinc-400 mt-0.5">
+                    <span data-testid="tacoma-methodology-note" className="block text-[10px] text-zinc-700 dark:text-zinc-300 mt-0.5">
                       Historical dealer benchmarks collected Q4 2024–Q1 2025 across {isUs ? 'U.S.' : 'Canadian'} dealerships (n=10). Median baseline calculation methodology excludes outlier custom factory orders.
                     </span>
                   </span>
@@ -929,7 +929,7 @@ export function WaitTimeEstimator({
                   <span>Based on {verifiedSampleSize} verified deliveries</span>
                 )}
                 {modelSlug !== 'tacoma' && stats?.sampleCounts?.pending ? (
-                  <span className="text-[10px] text-zinc-400">
+                  <span className="text-[10px] text-zinc-700 dark:text-zinc-300">
                     ({stats.sampleCounts.pending} active queue)
                   </span>
                 ) : null}
@@ -941,7 +941,7 @@ export function WaitTimeEstimator({
               {/* Single 3-Column Metric Card */}
               <div className="grid grid-cols-3 gap-2 bg-neutral-900/70 border border-neutral-800 rounded-2xl p-3 sm:p-4 text-center">
                 <div className="border-r border-neutral-800/60 pr-1 sm:pr-2 flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs text-neutral-400 font-medium inline-flex items-center justify-center gap-1">
+                  <div className="text-[11px] sm:text-xs text-neutral-300 font-medium inline-flex items-center justify-center gap-1">
                     <span>Optimistic</span>
                     <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-semibold bg-neutral-800 text-neutral-300 border border-neutral-700/60">
                       P25
@@ -950,7 +950,7 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
                     {p25Days} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
+                  <p className="text-[10px] sm:text-xs text-neutral-300 mt-0.5 truncate" suppressHydrationWarning>
                     ~{optimisticDate}
                   </p>
                 </div>
@@ -965,13 +965,13 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-extrabold tracking-tight text-amber-400">
                     {medianDays} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
+                  <p className="text-[10px] sm:text-xs text-neutral-300 mt-0.5 truncate" suppressHydrationWarning>
                     ~{calculateProjectedDate(medianDays)}
                   </p>
                 </div>
 
                 <div className="flex flex-col items-center pl-1 sm:pl-2">
-                  <div className="text-[11px] sm:text-xs text-neutral-400 font-medium inline-flex items-center justify-center gap-1">
+                  <div className="text-[11px] sm:text-xs text-neutral-300 font-medium inline-flex items-center justify-center gap-1">
                     <span>Conservative</span>
                     <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-semibold bg-neutral-800 text-neutral-300 border border-neutral-700/60">
                       P75
@@ -980,7 +980,7 @@ export function WaitTimeEstimator({
                   <div className="mt-1 text-lg sm:text-2xl font-bold tracking-tight text-white">
                     {p75Days} Days
                   </div>
-                  <p className="text-[10px] sm:text-xs text-neutral-400 mt-0.5 truncate" suppressHydrationWarning>
+                  <p className="text-[10px] sm:text-xs text-neutral-300 mt-0.5 truncate" suppressHydrationWarning>
                     ~{conservativeDate}
                   </p>
                 </div>
@@ -1159,10 +1159,10 @@ export function WaitTimeEstimator({
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 !mt-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
                   <div>
-                    <h4 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
+                    <h3 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
                       <Zap className="h-4 w-4 text-amber-500" />
                       {`Powertrain Wait-Time Comparison in ${provinceName} (${province})`}
-                    </h4>
+                    </h3>
                     <p className="text-xs text-zinc-500 mt-0.5">
                       Side-by-side empirical wait times for available {currentModel.name} powertrains across {provinceName}.
                     </p>

@@ -243,7 +243,7 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
         className="inline-flex items-center gap-2 shrink-0 text-xs sm:text-sm font-medium"
       >
         {item.type === 'inventory' ? (
-          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-500/20 px-1.5 py-0.5 rounded border border-emerald-500/30">
             {item.badge}
           </span>
         ) : (
@@ -331,7 +331,13 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
             {displayItems.map((item, idx) => renderTickerItem(item, `orig-${idx}`))}
           </div>
           {/* Set 2 (Clone for infinite loop) */}
-          <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden="true" inert data-testid="ticker-marquee-clone">
+          <div
+            className="flex shrink-0 items-center gap-8 px-4"
+            aria-hidden="true"
+            inert={true}
+            tabIndex={-1}
+            data-testid="ticker-marquee-clone"
+          >
             {displayItems.map((item, idx) => renderTickerItem(item, `clone-${idx}`, true))}
           </div>
         </div>
