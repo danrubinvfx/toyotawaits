@@ -149,6 +149,16 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
 
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
+    window.matchMedia = vi.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
   });
 
   afterEach(() => {
@@ -254,5 +264,19 @@ describe('TickerWire & ActivityTicker — 4-Stream Interleaved Marquee', () => {
   it('returns null cleanly when no items are provided', () => {
     const { container } = render(<ActivityTicker initialData={[]} />);
     expect(container.firstChild).toBeNull();
+  });
+
+  it('ensures ticker marquee clone has inert attribute and interactive links have tabIndex -1', () => {
+    render(<ActivityTicker initialData={mockFourStreamData} />);
+    const clone = screen.getByTestId('ticker-marquee-clone');
+    expect(clone).toBeInTheDocument();
+    expect(clone).toHaveAttribute('aria-hidden', 'true');
+    expect(clone).toHaveAttribute('inert');
+
+    const cloneLinks = clone.querySelectorAll('a');
+    expect(cloneLinks.length).toBeGreaterThan(0);
+    cloneLinks.forEach((link) => {
+      expect(link).toHaveAttribute('tabindex', '-1');
+    });
   });
 });

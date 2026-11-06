@@ -158,7 +158,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full max-w-full overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
+    <header className="sticky top-0 z-50 w-full max-w-full min-h-14 sm:min-h-16 h-14 sm:h-16 overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
       {/* Fixed h-14 / sm:h-16 so sticky bars below can use matching top-14 / sm:top-16 offsets */}
       <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible h-14 sm:h-16 px-3 sm:px-4 py-2.5 flex items-center justify-between">
         {/* Brand Logo */}

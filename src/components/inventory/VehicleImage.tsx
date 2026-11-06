@@ -16,6 +16,8 @@ export interface VehicleImageProps {
   className?: string;
   isInTransit?: boolean;
   status?: string;
+  aspectRatioClass?: string;
+  sizes?: string;
 }
 
 const PLACEHOLDER_PATTERNS = [
@@ -65,6 +67,8 @@ export function VehicleImage({
   className = '',
   isInTransit = false,
   status,
+  aspectRatioClass = 'aspect-[16/10]',
+  sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
 }: VehicleImageProps) {
   const trimSlug = generateTrimSlug(model, trim) || 'base';
   const factoryTrimUrl = `/assets/models/${modelYear}/${trimSlug}.webp`;
@@ -134,7 +138,7 @@ export function VehicleImage({
       data-testid="vehicle-image-container"
       data-tier={currentTier}
       data-source={imageSource || undefined}
-      className={`relative w-full aspect-[16/10] overflow-hidden bg-zinc-950 rounded-lg border border-zinc-800/80 group ${className}`}
+      className={`relative w-full ${aspectRatioClass} overflow-hidden bg-zinc-950 rounded-lg border border-zinc-800/80 group ${className}`}
     >
       <Image
         key={resolvedSrc}
@@ -142,7 +146,7 @@ export function VehicleImage({
         alt={alt}
         fill
         unoptimized
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+        sizes={sizes}
         priority={priority}
         className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
         onError={handleError}

@@ -69,7 +69,7 @@ function CalculatorProductMedia({
 
   if (imageUrl && !imageFailed) {
     return (
-      <div className="relative w-full h-36 sm:h-44 mb-2.5 rounded-lg overflow-hidden bg-zinc-950/60 border border-zinc-800/80 group">
+      <div className="relative w-full aspect-video mb-2.5 rounded-lg overflow-hidden bg-zinc-950/60 border border-zinc-800/80 group">
         <Image
           src={imageUrl}
           alt={title}
@@ -84,7 +84,7 @@ function CalculatorProductMedia({
   }
 
   return (
-    <div className="relative w-full h-36 sm:h-44 mb-2.5 rounded-lg overflow-hidden bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-center">
+    <div className="relative w-full aspect-video mb-2.5 rounded-lg overflow-hidden bg-zinc-950/40 border border-zinc-800/60 flex items-center justify-center">
       <div className={`p-3 rounded-xl ${iconBg} ${iconColor}`}>
         <Icon className="w-8 h-8" />
       </div>

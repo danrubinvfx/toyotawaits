@@ -182,7 +182,7 @@ export function PartnerDealBanner({
           >
             <div className="space-y-3">
               {/* Product Visual Container with Fallback */}
-              <div className="relative w-full h-40 sm:h-44 rounded-lg overflow-hidden bg-zinc-900/80 border border-zinc-800 flex items-center justify-center group">
+              <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-zinc-900/80 border border-zinc-800 flex items-center justify-center group">
                 <Image
                   src={deal.imageUrl}
                   alt={deal.title}

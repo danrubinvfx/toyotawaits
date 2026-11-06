@@ -86,9 +86,11 @@ export default async function HomePage() {
       <HashScrollHandler />
 
       {/* Live Activity Ticker directly below top navigation/header banner */}
-      <React.Suspense fallback={<div className="h-9 bg-zinc-950 border-b border-zinc-800" />}>
-        <ActivityTicker initialData={tickerItems} />
-      </React.Suspense>
+      <div className="w-full h-10 min-h-[40px]">
+        <React.Suspense fallback={<div className="h-10 min-h-[40px] bg-zinc-950 border-b border-zinc-800" />}>
+          <ActivityTicker initialData={tickerItems} />
+        </React.Suspense>
+      </div>
 
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />

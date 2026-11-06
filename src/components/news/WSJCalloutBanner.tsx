@@ -49,9 +49,9 @@ export function WSJCalloutBanner({ className = '', forceShow = false }: WSJCallo
     <aside
       aria-label="Official RAV4 2027 Announcement Banner"
       data-testid="wsj-callout-banner"
-      className={`relative z-40 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 text-white text-xs sm:text-sm font-semibold shadow-xs ${className}`}
+      className={`relative z-40 bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 text-white text-xs sm:text-sm font-semibold shadow-xs min-h-[40px] flex items-center ${className}`}
     >
-      <div className="container mx-auto max-w-7xl px-4 py-2 sm:py-2.5 flex items-center justify-between gap-3">
+      <div className="container mx-auto max-w-7xl px-4 py-2 sm:py-2.5 flex items-center justify-between gap-3 min-h-[40px] w-full">
         <Link
           href="/guides/toyota-rav4-2026-vs-2027"
           className="flex-1 flex items-center justify-center sm:justify-start gap-1.5 hover:opacity-95 transition-opacity text-center sm:text-left group"

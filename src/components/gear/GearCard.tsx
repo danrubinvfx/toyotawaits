@@ -441,7 +441,8 @@ export function GearCard({
           rel={outboundRel}
           onClick={handleImageClick}
           className="mb-2"
-          containerClassName="h-32 sm:h-44"
+          aspectRatioClass="aspect-video"
+          containerClassName="aspect-video"
         />
 
         {/* Group badges into a single line (text-[10px] px-2 py-0.5) */}

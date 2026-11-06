@@ -114,7 +114,7 @@ export function CalculatorNewsWire({
 
   return (
     <div
-      className={`rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40 shadow-xs ${className ?? ''}`}
+      className={`rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40 shadow-xs min-h-[40px] ${className ?? ''}`}
       aria-label="Toyota allocation and production news ticker"
     >
       <ActivityTicker initialData={sortedItems} />

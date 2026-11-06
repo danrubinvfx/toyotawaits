@@ -127,7 +127,7 @@ class TickerErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return <div className="h-9 bg-zinc-950 border-b border-zinc-800" />;
+      return <div className="h-10 min-h-[40px] bg-zinc-950 border-b border-zinc-800" />;
     }
     return this.props.children;
   }
@@ -218,7 +218,7 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
     }
   };
 
-  const renderTickerItem = (item: TickerItem, prefix = 'item') => {
+  const renderTickerItem = (item: TickerItem, prefix = 'item', isClone = false) => {
     if (!item || typeof item !== 'object') return null;
     const key = `${prefix}-${item.id || ''}`;
     const badgeColorClass = resolveBadgeColor(item.badgeColor, item.type);
@@ -256,6 +256,7 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
         {item.linkUrl ? (
           <a
             href={item.linkUrl}
+            tabIndex={isClone ? -1 : undefined}
             target={item.isExternal ? '_blank' : undefined}
             rel={item.isExternal ? 'noopener noreferrer' : undefined}
             onClick={() => handleItemClick(item)}
@@ -273,7 +274,7 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
 
   return (
     <div
-      className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none"
+      className="relative w-full overflow-hidden border-b border-white/10 bg-black/40 py-2.5 whitespace-nowrap text-zinc-200 select-none h-10 min-h-[40px] flex items-center"
       aria-live="polite"
       role="region"
       aria-label={isUs ? 'Live U.S. Toyota news wire' : 'Live Canadian Toyota news wire'}
@@ -330,8 +331,8 @@ function TickerWireInner({ initialData = [] }: TickerWireProps) {
             {displayItems.map((item, idx) => renderTickerItem(item, `orig-${idx}`))}
           </div>
           {/* Set 2 (Clone for infinite loop) */}
-          <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden="true" data-testid="ticker-marquee-clone">
-            {displayItems.map((item, idx) => renderTickerItem(item, `clone-${idx}`))}
+          <div className="flex shrink-0 items-center gap-8 px-4" aria-hidden="true" inert data-testid="ticker-marquee-clone">
+            {displayItems.map((item, idx) => renderTickerItem(item, `clone-${idx}`, true))}
           </div>
         </div>
       )}

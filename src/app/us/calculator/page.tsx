@@ -97,7 +97,7 @@ export default function USCalculatorPage() {
         </div>
 
         {/* News Wire Ticker below interactive cockpit */}
-        <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40">
+        <div className="rounded-xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-black/40 min-h-[40px]">
           <ActivityTicker initialData={US_CALCULATOR_NEWS_ITEMS} />
         </div>
 
