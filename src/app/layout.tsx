@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import React, { Suspense } from 'react';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { AnalyticsWrapper } from '@/components/analytics/AnalyticsWrapper';
 import './globals.css';
@@ -7,6 +8,7 @@ import { Footer } from '@/components/layout/footer';
 import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
+import { MobileBottomDock } from '@/components/layout/MobileBottomDock';
 
 // Geist is a variable font: a single file covers every weight (incl. font-black used site-wide),
 // so no explicit `weight` list is needed. Preloading is disabled to stop the
@@ -134,11 +136,14 @@ export default function RootLayout({
         <MarketProvider>
           <WSJCalloutBanner />
           <Header />
-          <main className="flex-1">
+          <main className="flex-1 pb-16 md:pb-0">
             {children}
           </main>
-          <KofiFloatingPill />
+          <KofiFloatingPill className="bottom-20 sm:bottom-4" />
           <Footer />
+          <Suspense fallback={null}>
+            <MobileBottomDock />
+          </Suspense>
         </MarketProvider>
         <AnalyticsWrapper />
       </body>

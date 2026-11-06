@@ -74,6 +74,7 @@ export interface AllocationDropAlertEmailInput {
   unsubscribeToken?: string | null;
   unsubscribeUrl?: string | null;
   market?: 'CA' | 'US';
+  region?: string | null;
   vehicles?: AllocationDropAlertVehicle[];
 }
 
@@ -85,6 +86,7 @@ export interface GeneratedDropAlertEmail {
   calculatorUrl: string;
   guideUrl: string;
   gearPicks: DropAlertGearPick[];
+  primaryInventoryUrl: string;
 }
 
 /**
@@ -353,37 +355,26 @@ export function getCuratedGearForDropAlert(
   }
 
   // Fallback for other Toyota models (Tacoma, Corolla Cross, Land Cruiser, Sequoia, Highlander, etc.)
-  const modelDisplay = getModelDisplayName(slug);
-  const accessories = getAccessoriesForModel(modelDisplay);
-  const pick1Source = accessories[0];
-  const pick2Source = accessories[1];
-
-  const query1 =
-    pick1Source?.searchQuery ||
-    `Fitcamx dash cam Toyota ${modelDisplay} OEM 4K`;
-  const query2 =
-    pick2Source?.searchQuery ||
-    `Toyota ${modelDisplay} custom all weather floor mats liners`;
+  const faradayQuery = 'TICONN Faraday bag key fob signal protector pouch';
+  const inflatorQuery = 'portable cordless tire inflator 150 psi';
 
   return [
     {
-      id: pick1Source?.id || `${slug}-dashcam`,
-      title: pick1Source?.title || `FitcamX OEM-Integrated 4K Dashcam (${modelDisplay})`,
+      id: 'ticonn-faraday-pouches',
+      title: 'TICONN Faraday Pouches',
       description:
-        pick1Source?.description ||
-        `Clean factory-look dashcam drawing power directly from the TSS rearview mirror harness without exposed wires for ${modelDisplay}.`,
-      searchQuery: query1,
-      url: buildZero404AmazonSearchUrl(query1, market),
+        'Dual-layer RFID & BLE signal blocking pouches preventing relay theft and key fob signal cloning.',
+      searchQuery: faradayQuery,
+      url: buildZero404AmazonSearchUrl(faradayQuery, market),
       buttonLabel: 'Check on Amazon ↗',
     },
     {
-      id: pick2Source?.id || `${slug}-floor-liners`,
-      title: pick2Source?.title || `Custom-Fit All-Weather Floor Liners (${modelDisplay})`,
+      id: 'cordless-tire-inflator',
+      title: 'Cordless Tire Inflator',
       description:
-        pick2Source?.description ||
-        `High-wall TPE waterproof liners engineered for ${modelDisplay} floor wells and retention clips.`,
-      searchQuery: query2,
-      url: buildZero404AmazonSearchUrl(query2, market),
+        'Compact rechargeable digital air pump with auto-shutoff for rapid seasonal tire pressure management.',
+      searchQuery: inflatorQuery,
+      url: buildZero404AmazonSearchUrl(inflatorQuery, market),
       buttonLabel: 'Check on Amazon ↗',
     },
   ];
@@ -403,7 +394,7 @@ export function buildDropAlertEnrichment(params: {
   const market = params.market || 'CA';
 
   const calculatorUrl = `https://www.toyotawaits.ca/calculator/${modelSlug}`;
-  const calculatorBannerText = `Planning your budget? Calculate your annual fuel savings and break-even timeline for this ${modelDisplay} on our Hybrid Savings Calculator: ${calculatorUrl}`;
+  const calculatorBannerText = `Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement → ${calculatorUrl}`;
 
   const gearPicks = getCuratedGearForDropAlert(modelSlug, market);
 
@@ -425,10 +416,10 @@ export function buildDropAlertEnrichment(params: {
         ⛽ Hybrid &amp; PHEV Savings Calculator
       </div>
       <p style="margin: 0 0 12px 0; font-size: 13px; line-height: 1.5; color: #e4e4e7;">
-        Planning your budget? Calculate your annual fuel savings and break-even timeline for this ${modelDisplay} on our Hybrid Savings Calculator: <a href="${calculatorUrl}" target="_blank" rel="noopener noreferrer" style="color: #fbbf24; font-weight: 600; text-decoration: underline;">${calculatorUrl}</a>
+        Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement &rarr; <a href="${calculatorUrl}" target="_blank" rel="noopener noreferrer" style="color: #fbbf24; font-weight: 600; text-decoration: underline;">${calculatorUrl}</a>
       </p>
       <a href="${calculatorUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 16px; background-color: #f59e0b; color: #09090b; font-weight: 700; font-size: 13px; border-radius: 6px; text-decoration: none;">
-        Calculate ${modelDisplay} Fuel Savings &rarr;
+        Calculate ${modelDisplay} Fuel Payback &rarr;
       </a>
     </div>
 
@@ -654,46 +645,86 @@ export function generateAllocationDropAlertEmail(
     market: input.market || 'CA',
   });
 
+  const count = vehicles.length;
+  const matchSummary = `${count} Matching ${count === 1 ? 'Allocation' : 'Allocations'} Observed`;
+  const targetModelName = primaryModel
+    ? resolveAlertModelDisplay(primaryModel, input.modelSlug)
+    : 'Toyota';
+
+  // Region resolution: input.region -> vehicle city -> default Lower Mainland, BC
+  const rawCity = vehicles[0]?.dealerCity;
+  const region =
+    input.region ||
+    (rawCity ? (rawCity.includes(',') ? rawCity : `${rawCity}, BC`) : 'Lower Mainland, BC');
+
+  // Pipeline Stage resolution
+  const isInTransit = vehicles.some((v) => {
+    const s = (v.status || '').toLowerCase();
+    return s.includes('transit') || s.includes('incoming') || s.includes('port');
+  });
+  const pipelineStage = isInTransit
+    ? '[ 🚢 In-Transit / Destination Port ]'
+    : '[ ⚡ Fresh Allocation ]';
+
+  // High-contrast pricing badge
+  const firstPrice =
+    vehicles[0]?.sellingPrice ?? vehicles[0]?.msrp ?? input.sellingPrice ?? input.msrp;
+  const baseMsrpCad =
+    firstPrice != null && Number(firstPrice) > 0
+      ? Number(firstPrice).toLocaleString('en-CA')
+      : null;
+  const pricingBadge = baseMsrpCad
+    ? `At MSRP ($${baseMsrpCad} CAD) • Zero Added Dealer Markups`
+    : 'At MSRP • Zero Added Dealer Markups';
+
+  // Deep-link primary inventory destination
+  const commaSeparatedVins = vehicles
+    .map((v) => v.vin || v.provisionalId)
+    .filter(Boolean)
+    .join(',');
+  const primaryInventoryUrl = `https://www.toyotawaits.ca/inventory?vins=${encodeURIComponent(
+    commaSeparatedVins
+  )}&model=${encodeURIComponent(enrichment.modelSlug)}&utm_source=alert_drop`;
+
   const unsubToken = input.unsubscribeToken || '';
   const unsubscribeUrl =
     input.unsubscribeUrl ||
-    `https://www.toyotawaits.ca/api/alerts/verify?token=${encodeURIComponent(
-      unsubToken
-    )}&action=unsubscribe`;
+    (unsubToken
+      ? `https://www.toyotawaits.ca/api/alerts/unsubscribe?token=${encodeURIComponent(unsubToken)}`
+      : 'https://www.toyotawaits.ca/api/alerts/unsubscribe');
 
   let subject: string;
   if (vehicles.length === 1) {
     const v = vehicles[0];
     const trimStr = v.trim ? ` (${v.trim})` : '';
-    const dealerStr = v.dealerName || 'Toyota Dealer';
-    subject = `Allocation Alert: ${v.model}${trimStr} at ${dealerStr}`;
+    subject = `Allocation Alert: ${v.model}${trimStr} Observed (${region})`;
   } else {
     const distinctModels = Array.from(new Set(vehicles.map((v) => v.model).filter(Boolean)));
     subject = `Allocation Alert: ${vehicles.length} New Toyota Matches Observed (${distinctModels.join(', ')})`;
   }
 
+  // Information-Gap Gatekeeping: Masked vehicle cards withholding dealer name and full VIN
   const vehiclesHtml = vehicles
-    .map((v) => {
+    .map((v, idx) => {
       const headerText = formatVehicleHeader(v);
       const statusBadge = resolveVehicleStatusBadge(v.status);
       const priceFormatted = formatVehiclePricing(v.sellingPrice, v.msrp);
-      const dealerFormatted = formatVehicleDealership(v.dealerName, v.dealerCity);
-      const displayVin = v.vin || v.provisionalId || 'PROVISIONAL';
-      const vdpUrl = v.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+      const rawVin = v.vin || v.provisionalId || '';
+      const maskedVin = rawVin.length >= 6 ? `••••••••••••${rawVin.slice(-4)}` : '•••••••••••••••••';
 
       return `
-    <!-- Articulate Vehicle Dossier Card -->
-    <div style="margin-top: 20px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 20px;">
-      <div style="margin-bottom: 14px; border-bottom: 1px solid #27272a; padding-bottom: 12px;">
+    <!-- Teaser Allocation Card ${idx + 1} (Information-Gap Gatekept) -->
+    <div style="margin-top: 16px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 18px;">
+      <div style="margin-bottom: 12px; border-bottom: 1px solid #27272a; padding-bottom: 10px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
           <tr>
             <td style="vertical-align: middle;">
-              <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #ffffff;">
+              <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: #ffffff;">
                 ${headerText}
               </h3>
             </td>
-            <td style="vertical-align: middle; text-align: right; width: 130px;">
-              <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; background-color: ${statusBadge.bg}; color: ${statusBadge.color}; border: 1px solid ${statusBadge.border}; text-transform: uppercase; letter-spacing: 0.5px;">
+            <td style="vertical-align: middle; text-align: right; width: 140px;">
+              <span style="display: inline-block; padding: 3px 8px; border-radius: 9999px; font-size: 10px; font-weight: 700; background-color: ${statusBadge.bg}; color: ${statusBadge.color}; border: 1px solid ${statusBadge.border}; text-transform: uppercase; letter-spacing: 0.5px;">
                 ${statusBadge.label}
               </span>
             </td>
@@ -701,16 +732,19 @@ export function generateAllocationDropAlertEmail(
         </table>
       </div>
 
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin-bottom: 16px; font-size: 13px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin-bottom: 14px; font-size: 13px;">
         <tr>
-          <td style="padding: 4px 0; color: #a1a1aa; width: 100px;">VIN:</td>
-          <td style="padding: 4px 0; color: #f4f4f5; font-family: monospace, Courier, monospace; font-weight: 600;">${displayVin}</td>
+          <td style="padding: 4px 0; color: #a1a1aa; width: 130px;">Allocation VIN:</td>
+          <td style="padding: 4px 0; color: #e4e4e7; font-family: monospace, Courier, monospace; font-weight: 600;">
+            <span style="letter-spacing: 2px;">${maskedVin}</span>
+            <span style="display: inline-block; margin-left: 6px; font-size: 10px; color: #f59e0b; background-color: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 4px; padding: 1px 5px; font-family: sans-serif;">Full VIN Isolated</span>
+          </td>
         </tr>
         ${
           v.stockNumber
             ? `
         <tr>
-          <td style="padding: 4px 0; color: #a1a1aa;">Stock #:</td>
+          <td style="padding: 4px 0; color: #a1a1aa;">Stock Reference:</td>
           <td style="padding: 4px 0; color: #f4f4f5; font-weight: 600;">${v.stockNumber}</td>
         </tr>`
             : ''
@@ -725,14 +759,16 @@ export function generateAllocationDropAlertEmail(
             : ''
         }
         <tr>
-          <td style="padding: 4px 0; color: #a1a1aa;">Dealership:</td>
-          <td style="padding: 4px 0; color: #f4f4f5; font-weight: 500;">${dealerFormatted}</td>
+          <td style="padding: 4px 0; color: #a1a1aa;">Dealer &amp; Location:</td>
+          <td style="padding: 4px 0; color: #fbbf24; font-weight: 600;">
+            🔒 Locked &bull; Revealed on Live Inventory Feed
+          </td>
         </tr>
       </table>
 
       <div>
-        <a href="${vdpUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 18px; background-color: #dc2626; color: #ffffff; font-weight: 700; font-size: 13px; border-radius: 6px; text-decoration: none;">
-          View Dealer Listing &rarr;
+        <a href="${primaryInventoryUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 18px; background-color: #dc2626; color: #ffffff; font-weight: 700; font-size: 13px; border-radius: 6px; text-decoration: none;">
+          View Allocations &amp; Dealer Details &nearr;
         </a>
       </div>
     </div>`;
@@ -740,34 +776,43 @@ export function generateAllocationDropAlertEmail(
     .join('');
 
   const vehiclesText = vehicles
-    .map((v) => {
-      const h = formatVehicleHeader(v);
-      const b = resolveVehicleStatusBadge(v.status);
-      const p = formatVehiclePricing(v.sellingPrice, v.msrp);
-      const d = formatVehicleDealership(v.dealerName, v.dealerCity);
-      const vinStr = v.vin || v.provisionalId || 'PROVISIONAL';
-      const vUrl = v.vdpUrl || 'https://www.toyotawaits.ca/inventory';
+    .map((v, idx) => {
+      const headerText = formatVehicleHeader(v);
+      const statusBadge = resolveVehicleStatusBadge(v.status);
+      const priceFormatted = formatVehiclePricing(v.sellingPrice, v.msrp);
+      const rawVin = v.vin || v.provisionalId || '';
+      const maskedVin = rawVin.length >= 6 ? `••••••••••••${rawVin.slice(-4)}` : '•••••••••••••••••';
 
       return `==================================================
-${h}
-Status: ${b.label}
-VIN: ${vinStr}
-${v.stockNumber ? `Stock #: ${v.stockNumber}\n` : ''}${p ? `Pricing: ${p}\n` : ''}Dealership: ${d}
-View Dealer Listing:
-${vUrl}`;
+Match #${idx + 1}: ${headerText}
+Status: ${statusBadge.label}
+Allocation VIN: ${maskedVin} (Full 17-digit VIN locked)
+${priceFormatted ? `Pricing: ${priceFormatted}\n` : ''}Dealer & Location: 🔒 Locked (Revealed on Live Feed)`;
     })
     .join('\n\n');
 
   const text = `
-ToyotaWaits.ca 🍁 Allocation Drop Alert
+⚡ ALLOCATION RADAR: ${region}
+${matchSummary}
+Prepping for: ${targetModelName}
+Pipeline Stage: ${pipelineStage}
+Pricing: ${pricingBadge}
+
+Primary Link:
+[ View Allocations & Dealer Details ↗ ]
+${primaryInventoryUrl}
+
 ${vehiclesText}
 
 ${enrichment.textSection}
 
 --------------------------------------------------
-Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership).
-Contact: hello@toyotawaits.ca
+Sender: ToyotaWaits Alerts <hello@toyotawaits.ca>, Burnaby, BC
 1-Click Unsubscribe: ${unsubscribeUrl}
+
+Independent Platform Disclaimer: ToyotaWaits.ca is an independent community research platform not affiliated with Toyota Canada Inc., Toyota Motor Sales, U.S.A., or any franchised dealership.
+Vehicle Availability Disclaimer: Observed allocations and transit statuses are collected via automated sweeps. Allocations are subject to prior sale, dealer reservation policies, and inventory updates.
+${AMAZON_ASSOCIATES_DISCLOSURE}
 `.trim();
 
   const html = `
@@ -780,19 +825,70 @@ Contact: hello@toyotawaits.ca
 </head>
 <body style="margin: 0; padding: 0; background-color: #09090b; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #f4f4f5;">
   <div style="max-width: 600px; margin: 0 auto; padding: 24px 16px; background-color: #09090b;">
-    <div style="padding-bottom: 16px; border-bottom: 1px solid #27272a;">
-      <span style="font-size: 18px; font-weight: 800; color: #ffffff;">ToyotaWaits.ca 🍁</span>
-      <span style="display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 600; background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3);">Allocation Drop Alert</span>
+    <!-- Top Radar Eyebrow & Branding Header -->
+    <div style="padding-bottom: 14px; border-bottom: 1px solid #27272a;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+        <tr>
+          <td>
+            <span style="font-size: 18px; font-weight: 800; color: #ffffff;">ToyotaWaits.ca 🍁</span>
+          </td>
+          <td style="text-align: right;">
+            <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); text-transform: uppercase; letter-spacing: 0.5px;">
+              ⚡ ALLOCATION RADAR: ${region}
+            </span>
+          </td>
+        </tr>
+      </table>
     </div>
 
+    <!-- Match Summary & Target Model Pill -->
+    <div style="margin-top: 18px;">
+      <h2 style="margin: 0 0 8px 0; font-size: 20px; font-weight: 800; color: #ffffff; line-height: 1.3;">
+        ${matchSummary}
+      </h2>
+      <div style="margin-bottom: 12px;">
+        <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; background-color: #27272a; color: #f4f4f5; border: 1px solid #3f3f46;">
+          Prepping for: ${targetModelName}
+        </span>
+        <span style="display: inline-block; margin-left: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; background-color: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);">
+          ${pipelineStage}
+        </span>
+      </div>
+      <div style="margin-bottom: 18px; padding: 8px 12px; border-radius: 6px; background-color: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.25); color: #34d399; font-size: 12px; font-weight: 700;">
+        ${pricingBadge}
+      </div>
+    </div>
+
+    <!-- Primary CTA Hero Button (Directs to isolated inventory allocations) -->
+    <div style="margin-bottom: 24px; text-align: center;">
+      <a href="${primaryInventoryUrl}" target="_blank" rel="noopener noreferrer" style="display: block; width: 100%; box-sizing: border-box; padding: 14px 20px; background-color: #dc2626; color: #ffffff; font-weight: 800; font-size: 15px; border-radius: 8px; text-decoration: none; text-align: center; letter-spacing: 0.3px; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);">
+        View Allocations &amp; Dealer Details &nearr;
+      </a>
+    </div>
+
+    <!-- Teaser Vehicle Allocations Grid -->
     ${vehiclesHtml}
 
+    <!-- Secondary Engagement Bridges (Fuel Payback & Curated Delivery Gear) -->
     ${enrichment.htmlSection}
 
-    <hr style="border: 0; border-top: 1px solid #27272a; margin: 24px 0 16px 0;" />
-    <p style="font-size: 11px; color: #71717a; line-height: 1.5; margin: 0;">
-      Sent by ToyotaWaits.ca (Independent research platform not affiliated with Toyota Canada Inc. or any dealership). Contact: <a href="mailto:hello@toyotawaits.ca" style="color: #a1a1aa;">hello@toyotawaits.ca</a> &bull; <a href="${unsubscribeUrl}" style="color: #a1a1aa;">1-Click Unsubscribe</a>
-    </p>
+    <hr style="border: 0; border-top: 1px solid #27272a; margin: 28px 0 16px 0;" />
+
+    <!-- Compliance Footer -->
+    <div style="font-size: 11px; color: #71717a; line-height: 1.5;">
+      <p style="margin: 0 0 8px 0; color: #a1a1aa;">
+        Sender: <strong>ToyotaWaits Alerts</strong> &lt;hello@toyotawaits.ca&gt;, Burnaby, BC &bull; <a href="${unsubscribeUrl}" style="color: #fbbf24; text-decoration: underline;">1-Click Unsubscribe</a>
+      </p>
+      <p style="margin: 0 0 6px 0; font-size: 10px; color: #52525b; line-height: 1.4;">
+        <strong>Independent Platform Disclaimer:</strong> ToyotaWaits.ca is an independent community research platform not affiliated with Toyota Canada Inc., Toyota Motor Sales, U.S.A., or any franchised dealership.
+      </p>
+      <p style="margin: 0 0 6px 0; font-size: 10px; color: #52525b; line-height: 1.4;">
+        <strong>Vehicle Availability Disclaimer:</strong> Observed allocations and transit statuses are collected via automated sweeps. Allocations are subject to prior sale, dealer reservation policies, and inventory updates.
+      </p>
+      <p style="margin: 0; font-size: 10px; color: #52525b; line-height: 1.4;">
+        ${AMAZON_ASSOCIATES_DISCLOSURE}
+      </p>
+    </div>
   </div>
 </body>
 </html>
@@ -809,5 +905,6 @@ Contact: hello@toyotawaits.ca
     calculatorUrl: enrichment.calculatorUrl,
     guideUrl: enrichment.guideUrl,
     gearPicks: enrichment.gearPicks,
+    primaryInventoryUrl,
   };
 }

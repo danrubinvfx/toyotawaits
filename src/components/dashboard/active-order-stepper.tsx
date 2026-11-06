@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import { SubmissionStage } from '@/lib/types/contracts';
 import { generateCalendarReminder, downloadCalendarEvent } from '@/lib/utils/calendar';
 import { RedditShareModal } from '@/components/modals/reddit-share-modal';
+import { WhileYouWaitGear } from '@/components/submission/WhileYouWaitGear';
 
 const STAGES: Array<{
   key: SubmissionStage;
@@ -75,6 +76,14 @@ const STAGES: Array<{
   },
 ];
 
+export function calculateDaysWaited(orderDate?: string, deliveryDate?: string): number {
+  if (!orderDate) return 0;
+  const start = new Date(orderDate).getTime();
+  const end = deliveryDate ? new Date(deliveryDate).getTime() : Date.now();
+  if (isNaN(start) || isNaN(end) || end < start) return 0;
+  return Math.max(1, Math.round((end - start) / (1000 * 60 * 60 * 24)));
+}
+
 export function normalizeStepperStage(stage?: string | null, status?: string | null): SubmissionStage {
   if (status === 'delivered' || stage === 'delivered') return 'delivered';
   if (stage === 'arrived_at_dealer') return 'arrived_at_dealer';
@@ -93,6 +102,9 @@ interface LocalSubmission {
   orderDate: string;
   currentStage: SubmissionStage;
   status: string;
+  year?: number | string;
+  daysWaited?: number;
+  deliveryDate?: string;
 }
 
 export interface ActiveOrderStepperProps {
@@ -129,29 +141,44 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
         // Check for saved local submission in browser
         const saved =
           localStorage.getItem('toyotawait_pending_submission') ||
-          localStorage.getItem('toyotawaits_submission');
+          localStorage.getItem('toyotawaits_submission') ||
+          localStorage.getItem('toyotawaits_saved_order');
         if (saved) {
           const parsed = JSON.parse(saved);
-          const resolvedEditKey = parsed.editKey || parsed.edit_key || parsed.editToken;
-          if (parsed.id && resolvedEditKey) {
-            const normalizedStage = normalizeStepperStage(
-              parsed.currentStage || parsed.stage,
-              parsed.status
-            );
-            if (parsed.status === 'cancelled' || normalizedStage === 'cancelled') {
-              setLocalOrder(null as any);
-              return;
-            }
+          const resolvedEditKey = parsed.editKey || parsed.edit_key || parsed.editToken || '';
+          const normalizedStage = normalizeStepperStage(
+            parsed.currentStage || parsed.stage,
+            parsed.status
+          );
+          if (parsed.status === 'cancelled' || normalizedStage === 'cancelled') {
+            setLocalOrder(null as any);
+            return;
+          }
+          const isDelivered = parsed.status === 'delivered' || normalizedStage === 'delivered';
+          if ((parsed.id && resolvedEditKey) || isDelivered) {
+            const today = new Date().toISOString().split('T')[0];
+            const resolvedOrderDate = parsed.orderDate || today;
+            const resolvedDeliveryDate = parsed.deliveryDate || (isDelivered ? today : undefined);
+            const calculatedWait = calculateDaysWaited(resolvedOrderDate, resolvedDeliveryDate);
+            const resolvedDaysWaited =
+              parsed.daysWaited ??
+              parsed.waitDays ??
+              parsed.totalWaitDays ??
+              calculatedWait;
+
             setLocalOrder({
-              id: parsed.id,
+              id: parsed.id || '',
               editKey: resolvedEditKey,
               modelName: parsed.modelName || parsed.model || 'RAV4',
               powertrainName: parsed.powertrainName || parsed.powertrain || 'Prime / Plug-in Hybrid',
               trimName: parsed.trimName || parsed.trim || 'XSE AWD',
               province: parsed.province || 'BC',
-              orderDate: parsed.orderDate || new Date().toISOString().split('T')[0],
+              orderDate: resolvedOrderDate,
               currentStage: normalizedStage,
-              status: parsed.status || 'pending',
+              status: isDelivered ? 'delivered' : (parsed.status || 'pending'),
+              year: parsed.year || parsed.modelYear || 2026,
+              daysWaited: resolvedDaysWaited,
+              deliveryDate: resolvedDeliveryDate,
             });
             setSelectedStep(normalizedStage);
             return;
@@ -196,6 +223,26 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
     }
   };
 
+  const handleClearSavedOrder = () => {
+    try {
+      localStorage.removeItem('toyotawait_pending_submission');
+      localStorage.removeItem('toyotawaits_submission');
+      localStorage.removeItem('toyotawaits_saved_order');
+      localStorage.removeItem('toyota_submission_token');
+      localStorage.removeItem('toyota_edit_token');
+      localStorage.removeItem('toyotawait_my_submissions');
+      localStorage.removeItem('toyotawait_tracker_dismissed');
+      localStorage.removeItem('toyotawait_tracker_collapsed');
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('toyotawaits:submission-updated'));
+        window.dispatchEvent(new Event('storage'));
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+    setLocalOrder(null);
+  };
+
   if (
     isDismissed ||
     !localOrder ||
@@ -203,6 +250,53 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
     (localOrder.currentStage as string) === 'cancelled'
   ) {
     return null;
+  }
+
+  // 1. Celebratory delivery banner when status is 'delivered'
+  if (localOrder.status === 'delivered' || localOrder.currentStage === 'delivered') {
+    const order = {
+      year: localOrder.year || 2026,
+      model: localOrder.modelName || 'Toyota',
+      daysWaited:
+        localOrder.daysWaited ??
+        calculateDaysWaited(localOrder.orderDate, localOrder.deliveryDate),
+      status: 'delivered',
+    };
+
+    return (
+      <div
+        data-testid="delivery-congratulations-banner"
+        className="rounded-xl border border-emerald-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/90 to-emerald-950/20 p-4 mb-6 shadow-sm"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-1.5">
+              🎉 Delivery Confirmed • {order.year} {order.model}
+            </span>
+            <h3 className="text-sm font-semibold text-white mt-0.5">
+              Congratulations on your new Toyota!
+            </h3>
+            <p className="text-xs text-neutral-300 mt-0.5">
+              Your wait time ({order.daysWaited} days) is now live in the community ticker. Protect your interior before day one.
+            </p>
+          </div>
+          <button
+            onClick={handleClearSavedOrder}
+            className="text-xs text-neutral-400 hover:text-white underline underline-offset-2 shrink-0 cursor-pointer"
+          >
+            Dismiss / Clear from device
+          </button>
+        </div>
+
+        {/* Model-Tailored Day-One Gear Grid */}
+        <div className="mt-4 pt-3 border-t border-zinc-800">
+          <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-300 mb-2">
+            📦 Recommended Day-One Protection Gear
+          </h4>
+          <WhileYouWaitGear isDeliveryDay={true} modelName={order.model} />
+        </div>
+      </div>
+    );
   }
 
   const effectiveStage = selectedStep || normalizeStepperStage(localOrder.currentStage, localOrder.status);
@@ -217,10 +311,18 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
     setSelectedStep(normalizedNext);
     setUpdateError(null);
 
+    const today = new Date().toISOString().split('T')[0];
+    const resolvedDeliveryDate = isDelivered ? today : localOrder.deliveryDate;
+    const resolvedDaysWaited = isDelivered
+      ? (localOrder.daysWaited ?? calculateDaysWaited(localOrder.orderDate, today))
+      : localOrder.daysWaited;
+
     const updatedOrder: LocalSubmission = {
       ...localOrder,
       currentStage: normalizedNext,
       status: isDelivered ? 'delivered' : 'pending',
+      deliveryDate: resolvedDeliveryDate,
+      daysWaited: resolvedDaysWaited,
     };
     setLocalOrder(updatedOrder);
     try {
@@ -547,3 +649,5 @@ export function ActiveOrderStepper({ defaultExpanded, className }: ActiveOrderSt
     </div>
   );
 }
+
+export { ActiveOrderStepper as ActiveOrderTracker };

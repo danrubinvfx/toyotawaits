@@ -5,7 +5,7 @@ import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { PostEstimateSubmissionCta } from '@/components/calculator/post-estimate-submission-cta';
 import { StickyVehiclePills } from '@/components/calculator/sticky-vehicle-pills';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
-import { ActiveOrderStepper } from '@/components/dashboard/active-order-stepper';
+import { ActiveOrderTracker } from '@/components/tracking/ActiveOrderTracker';
 import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
 import { HashScrollHandler } from '@/components/common/hash-scroll-handler';
 import { ActivityTicker } from '@/components/feed/ActivityTicker';
@@ -99,7 +99,7 @@ export default async function HomePage() {
         {/* Active Order Stepper: Compact Pull-Down Banner / Drawer for returning users */}
         <section className="container mx-auto max-w-6xl px-4 sm:px-6 empty:hidden">
           <React.Suspense fallback={null}>
-            <ActiveOrderStepper />
+            <ActiveOrderTracker />
           </React.Suspense>
         </section>
 

@@ -7,12 +7,14 @@ import { getAccessoriesForModel, AccessoryItem } from '@/data/accessories';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trackAffiliateClick } from '@/lib/gear';
+import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export interface WhileYouWaitGearProps {
   modelName?: string | null;
   className?: string;
   popularityCounts?: Record<string, number>;
   placement?: string;
+  isDeliveryDay?: boolean;
 }
 
 const CATEGORY_META: Record<
@@ -41,7 +43,95 @@ const CATEGORY_META: Record<
   },
 };
 
-export function WhileYouWaitGear({ modelName, className = '', popularityCounts, placement = 'while_you_wait' }: WhileYouWaitGearProps) {
+export function getDayOneProtectionGear(modelName?: string | null): AccessoryItem[] {
+  const cleanModel = modelName ? modelName.trim() : 'Toyota';
+  const lower = cleanModel.toLowerCase();
+
+  const consoleTrayImg = lower.includes('sienna')
+    ? '/assets/gear/muslogy-sienna-organizer.webp'
+    : lower.includes('grand highlander') || lower.includes('grand-highlander')
+    ? '/assets/gear/muslogy-grand-highlander-organizer.webp'
+    : '/assets/gear/muslogy-rav4-organizer.webp';
+
+  return [
+    {
+      id: 'tuxmat-floor-liners',
+      title: `TuxMat Custom All-Weather Floor Liners (${cleanModel})`,
+      category: 'protection',
+      brand: 'TuxMat',
+      description: 'Laser-measured maximum-coverage all-weather floor liners engineered for Canadian winter snow and slush.',
+      estimatedPriceCad: '$240 – $310 CAD',
+      searchQuery: `TuxMat Toyota ${cleanModel} custom all weather floor mats liners`,
+      url: buildAmazonAffiliateUrl({
+        query: `TuxMat Toyota ${cleanModel} custom all weather floor mats liners`,
+        market: 'CA',
+      }),
+      badge: 'Day-One Essential',
+      imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+      applicableModels: [cleanModel, 'universal'],
+      destinationType: 'amazon',
+    },
+    {
+      id: 'spigen-screen-protector',
+      title: `Spigen GlasTR Tempered Glass Screen Protector (${cleanModel})`,
+      category: 'protection',
+      brand: 'Spigen',
+      description: '9H tempered glass screen protector with oleophobic coating to prevent fingerprints and scratches.',
+      estimatedPriceCad: '$24 – $35 CAD',
+      searchQuery: `Spigen tempered glass screen protector Toyota ${cleanModel}`,
+      url: buildAmazonAffiliateUrl({
+        query: `Spigen tempered glass screen protector Toyota ${cleanModel}`,
+        market: 'CA',
+      }),
+      badge: 'Screen Glass',
+      imageUrl: '/assets/gear/spigen-screen-protector.webp',
+      applicableModels: [cleanModel, 'universal'],
+      destinationType: 'amazon',
+    },
+    {
+      id: 'muslogy-console-tray',
+      title: `Muslogy Center Console Organizer Tray (${cleanModel})`,
+      category: 'comfort',
+      brand: 'Muslogy',
+      description: 'Precision drop-in dual-tier console divider tray with textured non-slip silicone pads.',
+      estimatedPriceCad: '$22 – $32 CAD',
+      searchQuery: `Muslogy center console organizer tray Toyota ${cleanModel}`,
+      url: buildAmazonAffiliateUrl({
+        query: `Muslogy center console organizer tray Toyota ${cleanModel}`,
+        market: 'CA',
+      }),
+      badge: 'Console Tray',
+      imageUrl: consoleTrayImg,
+      applicableModels: [cleanModel, 'universal'],
+      destinationType: 'amazon',
+    },
+    {
+      id: 'fitcamx-4k-dashcam',
+      title: `FitcamX OEM-Integrated 4K Dashcam (${cleanModel})`,
+      category: 'tech',
+      brand: 'FitcamX',
+      description: 'Stealth OEM-look 4K dashcam drawing power directly from the TSS mirror plug with zero exposed wires.',
+      estimatedPriceCad: '$189 – $289 CAD',
+      searchQuery: `Fitcamx dash cam Toyota ${cleanModel} OEM 4K`,
+      url: buildAmazonAffiliateUrl({
+        query: `Fitcamx dash cam Toyota ${cleanModel} OEM 4K`,
+        market: 'CA',
+      }),
+      badge: 'Plug & Play 4K',
+      imageUrl: '/assets/gear/fitcamx-rav4.webp',
+      applicableModels: [cleanModel, 'universal'],
+      destinationType: 'amazon',
+    },
+  ];
+}
+
+export function WhileYouWaitGear({
+  modelName,
+  className = '',
+  popularityCounts,
+  placement = 'while_you_wait',
+  isDeliveryDay = false,
+}: WhileYouWaitGearProps) {
   const [fetchedCounts, setFetchedCounts] = React.useState<Record<string, number>>({});
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
 
@@ -54,7 +144,7 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
   };
 
   React.useEffect(() => {
-    if (popularityCounts) return;
+    if (popularityCounts || isDeliveryDay) return;
     let isMounted = true;
     fetch('/api/accessories/popular')
       .then((res) => (res.ok ? res.json() : null))
@@ -67,11 +157,19 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
     return () => {
       isMounted = false;
     };
-  }, [popularityCounts]);
+  }, [popularityCounts, isDeliveryDay]);
 
   const effectiveCounts = popularityCounts || fetchedCounts;
-  const rawAccessories = React.useMemo(() => getAccessoriesForModel(modelName, effectiveCounts), [modelName, effectiveCounts]);
+  const rawAccessories = React.useMemo(() => {
+    if (isDeliveryDay) return [];
+    return getAccessoriesForModel(modelName, effectiveCounts);
+  }, [modelName, effectiveCounts, isDeliveryDay]);
+
   const accessories = React.useMemo(() => {
+    if (isDeliveryDay) {
+      return getDayOneProtectionGear(modelName);
+    }
+
     const filtered = (rawAccessories || []).filter(
       (item) =>
         !/speaker|audio|amplifier|subwoofer|beat-sonic|tweeter/i.test(
@@ -124,25 +222,31 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
   return (
     <div
       data-testid="while-you-wait-gear"
-      className={`rounded-xl bg-zinc-900/90 border border-zinc-800 p-3.5 sm:p-4 text-zinc-100 space-y-3 ${className}`}
+      className={
+        isDeliveryDay
+          ? `text-zinc-100 space-y-3 ${className}`
+          : `rounded-xl bg-zinc-900/90 border border-zinc-800 p-3.5 sm:p-4 text-zinc-100 space-y-3 ${className}`
+      }
     >
       {/* Module Header */}
-      <div className="space-y-1">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs sm:text-sm font-semibold tracking-tight text-white flex items-center gap-1.5">
-            <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
-            <span>While You Wait: Essential Delivery Day Gear</span>
-          </h4>
-          {modelName && (
-            <span className="text-[10px] font-medium text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/60 shrink-0 hidden sm:inline">
-              For {modelName}
-            </span>
-          )}
+      {!isDeliveryDay && (
+        <div className="space-y-1">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs sm:text-sm font-semibold tracking-tight text-white flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-amber-400 shrink-0" />
+              <span>While You Wait: Essential Delivery Day Gear</span>
+            </h4>
+            {modelName && (
+              <span className="text-[10px] font-medium text-zinc-400 bg-zinc-800/80 px-2 py-0.5 rounded border border-zinc-700/60 shrink-0 hidden sm:inline">
+                For {modelName}
+              </span>
+            )}
+          </div>
+          <p className="text-[11px] text-zinc-400 leading-relaxed">
+            Recommended by fellow Canadian Toyota owners to protect and set up your new vehicle from day one.
+          </p>
         </div>
-        <p className="text-[11px] text-zinc-400 leading-relaxed">
-          Recommended by fellow Canadian Toyota owners to protect and set up your new vehicle from day one.
-        </p>
-      </div>
+      )}
 
       {/* Grid of Accessories */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -259,12 +363,12 @@ export function WhileYouWaitGear({ modelName, className = '', popularityCounts, 
                   <a
                     href={item.url}
                     target="_blank"
-                    rel={item.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "noopener noreferrer"}
+                    rel={isDeliveryDay || item.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "noopener noreferrer"}
                     aria-label={`View ${item.title} on ${item.destinationType === 'direct_partner' ? 'Muslogy' : 'Amazon'}`}
                     onClick={() => {
                       trackAffiliateClick({
                         accessory_id: item.id,
-                        placement: (placement || 'while_you_wait') as any,
+                        placement: (placement || (isDeliveryDay ? 'delivery_congratulations' : 'while_you_wait')) as any,
                         model_context: modelName || null,
                         target_url: item.url,
                       });

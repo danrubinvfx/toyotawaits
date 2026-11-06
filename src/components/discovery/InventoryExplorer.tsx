@@ -25,7 +25,7 @@ import {
 } from '@/lib/geo/distance';
 import { useDonationReminder } from '@/hooks/useDonationReminder';
 import { DonationToast } from '@/components/common/DonationToast';
-import { Car, AlertCircle, Bell } from 'lucide-react';
+import { Car, AlertCircle, Bell, AlertTriangle } from 'lucide-react';
 
 function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' {
   if (item.dealerProvince) {
@@ -363,6 +363,7 @@ export interface InventoryExplorerProps {
   initialListings?: VehicleListingCardProps[];
   previewOverride?: boolean;
   initialModel?: string;
+  initialVins?: string[];
   popularityCounts?: Record<string, number>;
   totalFleetCount?: number;
   totalCount?: number;
@@ -372,12 +373,14 @@ export function InventoryExplorer({
   initialListings = INITIAL_SAMPLE_LISTINGS,
   previewOverride,
   initialModel,
+  initialVins,
   popularityCounts,
   totalFleetCount: initialTotalFleetCount,
   totalCount: initialTotalCount,
 }: InventoryExplorerProps) {
   let isPreviewQuery = false;
   let queryModel = initialModel || '';
+  let queryVins: string[] = initialVins || [];
   let isAlertVerifiedQuery = false;
   let isAlertUnsubscribedQuery = false;
   let isCancellationsOnlyQuery = false;
@@ -400,9 +403,26 @@ export function InventoryExplorer({
     if (paramModel && !queryModel) {
       queryModel = paramModel.trim();
     }
+    const paramVins = sp?.get('vins') || sp?.get('vin');
+    if (paramVins) {
+      queryVins = paramVins
+        .split(',')
+        .map((v) => v.trim().toUpperCase())
+        .filter(Boolean);
+    }
   } catch {
     // Graceful fallback when rendered without Next.js Navigation context
   }
+
+  const [alertVins, setAlertVins] = useState<string[]>(queryVins);
+  const [isVinFilterCleared, setIsVinFilterCleared] = useState(false);
+
+  useEffect(() => {
+    if (queryVins.length > 0) {
+      setAlertVins(queryVins);
+      setIsVinFilterCleared(false);
+    }
+  }, [queryVins.join(',')]);
 
   const [listings, setListings] = useState<VehicleListingCardProps[]>(initialListings);
   const [totalFleetCount, setTotalFleetCount] = useState<number | null>(
@@ -478,6 +498,32 @@ export function InventoryExplorer({
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
     setVisibleCount(PAGE_SIZE);
+  };
+
+  const { activeAlertMatches, soldCount } = useMemo(() => {
+    if (isVinFilterCleared || alertVins.length === 0) {
+      return { activeAlertMatches: [], soldCount: 0 };
+    }
+    const matches = listings.filter((item) => {
+      const vin = (item.vin || '').toUpperCase();
+      const provId = (item.provisionalId || '').toUpperCase();
+      return alertVins.some((target) => (vin && vin === target) || (provId && provId === target));
+    });
+    const sold = Math.max(0, alertVins.length - matches.length);
+    return { activeAlertMatches: matches, soldCount: sold };
+  }, [listings, alertVins, isVinFilterCleared]);
+
+  const matchedCount = activeAlertMatches.length;
+  const isAlertVinFilterActive = alertVins.length > 0 && !isVinFilterCleared;
+
+  const handleClearAlertVinFilter = () => {
+    setIsVinFilterCleared(true);
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('vins');
+      url.searchParams.delete('vin');
+      window.history.replaceState({}, '', url.toString());
+    }
   };
 
   // Keep filter in sync if queryModel or searchParams update (case-insensitively normalizing e.g. 'sienna' -> 'Sienna')
@@ -703,6 +749,18 @@ export function InventoryExplorer({
 
     // 2. Filter listings based on active facets
     const filtered = withDistance.filter((item) => {
+      // Alert VIN deep-link isolation: filter down to matching alerted records when active
+      if (isAlertVinFilterActive && matchedCount > 0) {
+        const itemVin = (item.vin || '').toUpperCase();
+        const itemProv = (item.provisionalId || '').toUpperCase();
+        const matchesAlertVin = alertVins.some(
+          (target) => (itemVin && itemVin === target) || (itemProv && itemProv === target)
+        );
+        if (!matchesAlertVin) {
+          return false;
+        }
+      }
+
       // Model facet
       if (filters.model) {
         const filterModel = filters.model.toLowerCase().trim();
@@ -921,7 +979,15 @@ export function InventoryExplorer({
     });
 
     return filtered;
-  }, [listings, filters, userCoordinates, currentTime]);
+  }, [
+    listings,
+    filters,
+    userCoordinates,
+    currentTime,
+    isAlertVinFilterActive,
+    matchedCount,
+    alertVins,
+  ]);
 
   const [fetchedGearCounts, setFetchedGearCounts] = useState<Record<string, number>>({});
 
@@ -1038,6 +1104,51 @@ export function InventoryExplorer({
           >
             Dismiss
           </button>
+        </div>
+      )}
+
+      {/* Alert VIN Context Banner & Advisory Notes */}
+      {isAlertVinFilterActive && (
+        <div
+          data-testid="alert-vin-context-banner"
+          role="status"
+          className="rounded-xl border border-blue-500/30 bg-blue-950/40 p-3 sm:p-4 text-xs sm:text-sm text-blue-200 shadow-md space-y-2 backdrop-blur-md"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className="flex h-2.5 w-2.5 rounded-full bg-blue-400 animate-pulse shrink-0"
+                aria-hidden="true"
+              />
+              <span className="font-semibold text-white">
+                {matchedCount > 0
+                  ? `Showing ${matchedCount} matching ${
+                      matchedCount === 1 ? 'allocation' : 'allocations'
+                    } from your alert`
+                  : `Showing active inventory below`}
+              </span>
+            </div>
+            <button
+              type="button"
+              data-testid="clear-vin-filter-btn"
+              onClick={handleClearAlertVinFilter}
+              className="inline-flex items-center gap-1 rounded-lg bg-blue-900/60 hover:bg-blue-800/80 border border-blue-700/50 px-2.5 py-1 text-xs font-semibold text-blue-200 hover:text-white transition cursor-pointer shrink-0"
+            >
+              Clear Filter / View All
+            </button>
+          </div>
+
+          {soldCount > 0 && (
+            <div
+              data-testid="alert-vin-sold-advisory"
+              className="flex items-center gap-1.5 text-xs text-amber-300 pt-1.5 border-t border-blue-900/40"
+            >
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-400 shrink-0" aria-hidden="true" />
+              <span>
+                {soldCount} of your alerted allocations was spoken for today. Showing active units below.
+              </span>
+            </div>
+          )}
         </div>
       )}
 

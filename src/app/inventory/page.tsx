@@ -7,6 +7,19 @@ import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+export function InventoryLoadingSkeleton() {
+  return (
+    <div className="space-y-4 animate-pulse" data-testid="inventory-skeleton">
+      <div className="h-12 rounded-xl bg-zinc-900/80 border border-zinc-800" />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="h-64 rounded-2xl bg-zinc-900/60 border border-zinc-800" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
   title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
@@ -96,6 +109,27 @@ function parseModelParam(
   return undefined;
 }
 
+function parseVinsParam(
+  searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
+): string[] {
+  if (!searchParams) return [];
+  const candidate = searchParams as SearchParamsPromiseLike & SearchParamsRecord;
+  let raw: string | string[] | undefined;
+  if (typeof candidate.then !== 'function') {
+    raw = candidate.vins || candidate.vin;
+  } else {
+    const maybeObj = candidate.value ?? candidate._value;
+    raw = maybeObj?.vins || maybeObj?.vin;
+  }
+  if (typeof raw === 'string') {
+    return raw.split(',').map((v) => v.trim()).filter(Boolean);
+  }
+  if (Array.isArray(raw)) {
+    return raw.flatMap((r) => r.split(',')).map((v) => v.trim()).filter(Boolean);
+  }
+  return [];
+}
+
 export default function InventoryPage({
   searchParams,
   initialListings,
@@ -105,6 +139,7 @@ export default function InventoryPage({
   // Extract preview query parameter and initial model filter from searchParams
   const isPreviewParam = parsePreviewParam(searchParams);
   const initialModel = parseModelParam(searchParams);
+  const initialVins = parseVinsParam(searchParams);
 
 
   // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
@@ -198,10 +233,11 @@ export default function InventoryPage({
         </header>
 
         {/* Interactive Explorer Client Component */}
-        <Suspense fallback={<div className="h-48 rounded-xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />}>
+        <Suspense fallback={<InventoryLoadingSkeleton />}>
           <InventoryExplorer
             initialListings={initialListings}
             initialModel={initialModel}
+            initialVins={initialVins}
             totalFleetCount={totalFleetCount ?? totalCount}
           />
         </Suspense>

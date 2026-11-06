@@ -109,7 +109,7 @@ describe('Notification Email Engine & Template Generator', () => {
       });
 
       const expectedCalcText =
-        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this RAV4 on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/rav4';
+        'Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement → https://www.toyotawaits.ca/calculator/rav4';
       expect(email.text).toContain(expectedCalcText);
       expect(email.html).toContain('https://www.toyotawaits.ca/calculator/rav4');
 
@@ -146,7 +146,7 @@ describe('Notification Email Engine & Template Generator', () => {
       });
 
       expect(email.text).toContain(
-        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this Sienna on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/sienna'
+        'Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement → https://www.toyotawaits.ca/calculator/sienna'
       );
       expect(email.html).toContain('https://www.toyotawaits.ca/calculator/sienna');
 
@@ -171,7 +171,7 @@ describe('Notification Email Engine & Template Generator', () => {
       });
 
       expect(email.text).toContain(
-        'Planning your budget? Calculate your annual fuel savings and break-even timeline for this Grand Highlander on our Hybrid Savings Calculator: https://www.toyotawaits.ca/calculator/grand-highlander'
+        'Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement → https://www.toyotawaits.ca/calculator/grand-highlander'
       );
       expect(email.html).toContain('https://www.toyotawaits.ca/calculator/grand-highlander');
 
@@ -195,7 +195,7 @@ describe('Notification Email Engine & Template Generator', () => {
       }
     });
 
-    it('renders articulate vehicle dossier with header, status badge, pricing, dealership, and stock # for single vehicle', () => {
+    it('renders Homebot-style teaser alert with information-gap gatekeeping, eyebrow tag, pricing badge, and deep-link CTA for single vehicle', () => {
       const email = generateAllocationDropAlertEmail({
         model: 'Corolla Hatchback',
         trim: 'SE Upgrade',
@@ -209,28 +209,58 @@ describe('Notification Email Engine & Template Generator', () => {
         dealerCity: 'Surrey, BC',
         sellingPrice: 31796,
         vdpUrl: 'https://www.jptoyota-surrey.com/vehicles/corolla-hatch-1',
+        unsubscribeToken: 'tok-test-123',
       });
 
-      // Subject format: Allocation Alert: ${vehicle.model} (${vehicle.trim}) at ${vehicle.dealerName}
-      expect(email.subject).toBe('Allocation Alert: Corolla Hatchback (SE Upgrade) at Jim Pattison Toyota Surrey');
+      // Subject format
+      expect(email.subject).toContain('Allocation Alert: Corolla Hatchback');
+      expect(email.subject).toContain('Surrey, BC');
 
-      // Header: 2026 Corolla Hatchback SE Upgrade - 2.0L FWD
-      expect(email.html).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
-      expect(email.text).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
+      // Eyebrow tag in HTML & text
+      expect(email.html).toContain('⚡ ALLOCATION RADAR: Surrey, BC');
+      expect(email.text).toContain('⚡ ALLOCATION RADAR: Surrey, BC');
 
-      // Status Badge: In Transit
-      expect(email.html).toContain('In Transit');
-      expect(email.text).toContain('Status: In Transit');
+      // Target model pill & match summary
+      expect(email.html).toContain('1 Matching Allocation Observed');
+      expect(email.html).toContain('Prepping for: Corolla Hatchback');
+      expect(email.text).toContain('Prepping for: Corolla Hatchback');
 
-      // Key details grid: VIN, Pricing ($31,796 CAD), Dealership, Stock #
-      expect(email.html).toContain('2T1BURHE7TC123456');
-      expect(email.html).toContain('$31,796 CAD');
-      expect(email.html).toContain('Jim Pattison Toyota Surrey · Surrey, BC');
-      expect(email.html).toContain('STK-2026-CH');
+      // Pipeline stage
+      expect(email.html).toContain('[ 🚢 In-Transit / Destination Port ]');
+      expect(email.text).toContain('[ 🚢 In-Transit / Destination Port ]');
 
-      // Direct Action
-      expect(email.html).toContain('View Dealer Listing');
-      expect(email.html).toContain('https://www.jptoyota-surrey.com/vehicles/corolla-hatch-1');
+      // Pricing badge
+      expect(email.html).toContain('At MSRP ($31,796 CAD) • Zero Added Dealer Markups');
+      expect(email.text).toContain('At MSRP ($31,796 CAD) • Zero Added Dealer Markups');
+
+      // Primary CTA button
+      expect(email.html).toContain('View Allocations &amp; Dealer Details &nearr;');
+      expect(email.text).toContain('[ View Allocations & Dealer Details ↗ ]');
+
+      // Primary deep-link destination URL with vins, model, and utm_source
+      const expectedUrl =
+        'https://www.toyotawaits.ca/inventory?vins=2T1BURHE7TC123456&model=corolla-hatchback&utm_source=alert_drop';
+      expect(email.primaryInventoryUrl).toBe(expectedUrl);
+      expect(email.html).toContain(expectedUrl);
+      expect(email.text).toContain(expectedUrl);
+
+      // Information-Gap Gatekeeping: withholds full 17-digit VIN in visible dossier
+      expect(email.text).not.toContain('VIN: 2T1BURHE7TC123456');
+      expect(email.text).not.toContain('Allocation VIN: 2T1BURHE7TC123456');
+      expect(email.html).toContain('••••••••••••3456');
+      expect(email.text).toContain('••••••••••••3456');
+
+      // Information-Gap Gatekeeping: withholds dealer name inline
+      expect(email.html).not.toContain('Jim Pattison Toyota Surrey');
+      expect(email.text).not.toContain('Jim Pattison Toyota Surrey');
+      expect(email.html).toContain('Revealed on Live Inventory Feed');
+
+      // Footer compliance
+      expect(email.html).toContain('Sender: <strong>ToyotaWaits Alerts</strong> &lt;hello@toyotawaits.ca&gt;, Burnaby, BC');
+      expect(email.html).toContain('/api/alerts/unsubscribe?token=tok-test-123');
+      expect(email.html).toContain('Independent Platform Disclaimer:');
+      expect(email.html).toContain('Vehicle Availability Disclaimer:');
+      expect(email.html).toContain(AMAZON_ASSOCIATES_DISCLOSURE);
     });
 
     it('renders multi-vehicle batch digest with consolidated subject and distinct cards', () => {
@@ -265,19 +295,28 @@ describe('Notification Email Engine & Template Generator', () => {
         ],
       });
 
-      // Subject format: Allocation Alert: ${vehicles.length} New Toyota Matches Observed (${distinctModels.join(', ')})
-      expect(email.subject).toBe('Allocation Alert: 2 New Toyota Matches Observed (Corolla Hatchback, RAV4)');
+      // Subject format with consolidated matches
+      expect(email.subject).toBe(
+        'Allocation Alert: 2 New Toyota Matches Observed (Corolla Hatchback, RAV4)'
+      );
 
-      // Both vehicles present in HTML and plain-text
-      expect(email.html).toContain('2026 Corolla Hatchback SE Upgrade - 2.0L FWD');
-      expect(email.html).toContain('2025 RAV4 XSE - Hybrid AWD');
-      expect(email.html).toContain('2T1BURHE7TC111111');
-      expect(email.html).toContain('2T3P1RFV5TC222222');
-      expect(email.html).toContain('Jim Pattison Toyota Surrey · Surrey, BC');
-      expect(email.html).toContain('OpenRoad Toyota Richmond · Richmond, BC');
+      // Consolidated primary URL with comma-separated VINs
+      expect(email.primaryInventoryUrl).toContain('vins=2T1BURHE7TC111111%2C2T3P1RFV5TC222222');
+      expect(email.html).toContain('vins=2T1BURHE7TC111111%2C2T3P1RFV5TC222222');
 
-      expect(email.text).toContain('2T1BURHE7TC111111');
-      expect(email.text).toContain('2T3P1RFV5TC222222');
+      // Both vehicles present as masked teaser cards
+      expect(email.html).toContain('2026 Corolla Hatchback SE Upgrade');
+      expect(email.html).toContain('2025 RAV4 XSE');
+      expect(email.html).toContain('••••••••••••1111');
+      expect(email.html).toContain('••••••••••••2222');
+
+      // Withholds dealer names and full VINs from visible body text
+      expect(email.text).not.toContain('Allocation VIN: 2T1BURHE7TC111111');
+      expect(email.text).not.toContain('Allocation VIN: 2T3P1RFV5TC222222');
+      expect(email.html).not.toContain('Jim Pattison Toyota Surrey');
+      expect(email.text).not.toContain('Jim Pattison Toyota Surrey');
+      expect(email.html).not.toContain('OpenRoad Toyota Richmond');
+      expect(email.text).not.toContain('OpenRoad Toyota Richmond');
     });
 
     it('renders Corolla Hatchback hero gear essentials without copy-paste bleed (FitcamX, Floor Liners, Console Tray)', () => {
