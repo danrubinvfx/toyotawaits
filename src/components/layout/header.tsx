@@ -166,7 +166,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
       {/* Fixed h-14 / sm:h-16 so sticky bars below can use matching top-14 / sm:top-16 offsets */}
       <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible h-14 sm:h-16 px-3 sm:px-4 py-2.5 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2 min-w-0 shrink font-bold text-lg tracking-tight group">
+        <Link href="/" className="flex items-center gap-2 min-w-0 shrink-0 font-bold text-lg tracking-tight group">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-amber-600 text-white shadow-sm group-hover:scale-105 transition-transform shrink-0">
             <Car className="h-5 w-5" />
           </div>
@@ -505,29 +505,29 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           {hasActiveOrder ? (
             <Link
               href={editHref}
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2 py-1.5 min-[400px]:px-2.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 min-h-[36px] sm:min-h-[40px] h-9 sm:h-10 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
             >
               <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
               <span className="hidden xs:inline">Update Status</span>
-              <span className="xs:hidden max-[399px]:hidden">Status</span>
+              <span className="xs:hidden">Status</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
             </Link>
           ) : (
             <Link
               href="/submit"
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2 py-1.5 min-[400px]:px-2.5 sm:px-3 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
+              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 min-h-[36px] sm:min-h-[40px] h-9 sm:h-10 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
             >
               <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
               <span className="hidden xs:inline">+ Log Order</span>
-              <span className="xs:hidden max-[399px]:hidden">+ Order</span>
+              <span className="xs:hidden">+ Order</span>
             </Link>
           )}
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - hidden on mobile viewports (< 768px / md:hidden) */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="relative z-50 cursor-pointer p-2 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 lg:hidden shrink-0"
+            className="relative z-50 cursor-pointer p-2 touch-manipulation min-w-[44px] min-h-[44px] hidden md:hidden items-center justify-center text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 shrink-0"
             aria-label="Open Navigation Menu"
             aria-expanded={isOpen}
             data-testid="mobile-menu-toggle"

@@ -242,8 +242,8 @@ describe('Header Component', () => {
     expect(rightCluster).toBeInTheDocument();
     expect(rightCluster).toHaveClass('flex', 'items-center', 'gap-2', 'shrink-0', 'ml-auto');
 
-    // 2. Hamburger toggle shrink-0
-    expect(toggle).toHaveClass('shrink-0');
+    // 2. Hamburger toggle hidden on mobile and shrink-0
+    expect(toggle).toHaveClass('shrink-0', 'hidden', 'md:hidden');
 
     // 3. Responsive button text spans
     const submitBtn = screen.getAllByRole('link', { name: /\+ Log Order/i })[0];
@@ -257,7 +257,7 @@ describe('Header Component', () => {
 
     // 4. Left brand container restraint
     const brandLink = screen.getByRole('link', { name: /ToyotaWaits/i });
-    expect(brandLink).toHaveClass('flex', 'items-center', 'gap-2', 'min-w-0', 'shrink');
+    expect(brandLink).toHaveClass('flex', 'items-center', 'gap-2', 'min-w-0', 'shrink-0');
 
     // 5. Outer header and inner nav boundary enforcement
     const headerElem = container.querySelector('header');
@@ -327,7 +327,7 @@ describe('Header Component', () => {
     expect(toggle).toHaveAttribute('type', 'button');
     expect(toggle).toHaveAttribute('aria-label', 'Open Navigation Menu');
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(toggle).toHaveClass('relative', 'z-50', 'cursor-pointer', 'p-2', 'touch-manipulation', 'shrink-0');
+    expect(toggle).toHaveClass('relative', 'z-50', 'cursor-pointer', 'p-2', 'touch-manipulation', 'shrink-0', 'hidden', 'md:hidden');
 
     // Click to open
     fireEvent.click(toggle);
