@@ -187,8 +187,8 @@ export function PartnerDealBanner({
                   src={deal.imageUrl}
                   alt={deal.title}
                   fill
-                  unoptimized
-                  sizes="(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px"
+                  unoptimized={process.env.NODE_ENV === 'test'}
+                  sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
                   className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
                 />
               </div>

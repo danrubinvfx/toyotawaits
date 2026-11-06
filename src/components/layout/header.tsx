@@ -172,8 +172,8 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black truncate text-base sm:text-lg">
-              ToyotaWaits<span className="text-amber-500">{isUs ? '.com' : '.ca'}</span>
-              <span className="ml-1.5 hidden xs:inline-flex rounded bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.2 text-[10px] font-semibold text-amber-500 dark:text-amber-400 shrink-0">
+              ToyotaWaits<span className="text-amber-300">{isUs ? '.com' : '.ca'}</span>
+              <span className="ml-1.5 hidden xs:inline-flex rounded bg-amber-500/10 border border-amber-500/30 dark:border-amber-400/40 px-1.5 py-0.2 text-[10px] font-semibold text-amber-700 dark:text-amber-300 shrink-0">
                 {isUs ? '🇺🇸 USA' : '🇨🇦 Canada'}
               </span>
             </span>
@@ -1227,7 +1227,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                 <div className="flex items-center gap-2.5">
                   <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
                   <div>
-                    <p className="text-xs font-bold text-amber-500 dark:text-amber-400">
+                    <p className="text-xs font-bold text-amber-700 dark:text-amber-300">
                       Delivery Day Prep Checklist
                     </p>
                     <p className="text-[11px] text-zinc-400">
@@ -1251,7 +1251,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200 group-hover:text-amber-500">
                       FitcamX 4K Integrated Dashcam
                     </span>
-                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 dark:border-amber-400/40">
                       Saves ~$350+ vs dealer
                     </span>
                   </div>
@@ -1269,7 +1269,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200 group-hover:text-amber-500">
                       NOCO Boost GB40 Jump Starter
                     </span>
-                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 dark:border-amber-400/40">
                       Essential Roadside
                     </span>
                   </div>
@@ -1287,7 +1287,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200 group-hover:text-amber-500">
                       Matte 9H Tempered Glass Screen Protector
                     </span>
-                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 dark:border-amber-400/40">
                       Scratch Shield
                     </span>
                   </div>
@@ -1305,7 +1305,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200 group-hover:text-amber-500">
                       Center Console Organizer Tray
                     </span>
-                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 dark:border-amber-400/40">
                       Laser Fit
                     </span>
                   </div>
@@ -1323,7 +1323,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <span className="font-semibold text-zinc-900 dark:text-zinc-200 group-hover:text-amber-500">
                       J1772 Charger Port Lock Ring (PHEV)
                     </span>
-                    <span className="text-[10px] text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                    <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30 dark:border-amber-400/40">
                       Anti-Theft Lock
                     </span>
                   </div>

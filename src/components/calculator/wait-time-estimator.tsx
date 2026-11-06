@@ -467,7 +467,7 @@ export function WaitTimeEstimator({
       return {
         label: 'Rain Dogs Queue',
         sub: 'Standard Canadian weather; hunkered down in the drizzle',
-        className: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        className: 'bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/30 dark:border-amber-400/40',
       };
     }
     return {
@@ -800,7 +800,7 @@ export function WaitTimeEstimator({
               suppressHydrationWarning
             />
             {isHistoricalOrderDate && (
-              <p className="text-[11px] text-amber-600 dark:text-amber-400 mt-1 leading-tight">
+              <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-1 leading-tight">
                 Historical pricing varies by model year (current 2026 MSRP shown for reference).
               </p>
             )}
@@ -837,7 +837,7 @@ export function WaitTimeEstimator({
                 </Badge>
                 <Badge
                   data-testid="estimator-range-badge"
-                  className="bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[11px] font-bold"
+                  className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/40 text-[11px] font-bold"
                 >
                   Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                 </Badge>
@@ -845,7 +845,7 @@ export function WaitTimeEstimator({
                   <Badge
                     variant="outline"
                     data-testid="planning-benchmark-badge"
-                    className="border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
+                    className="border-amber-500/40 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] font-semibold"
                   >
                     Planning Benchmark (n={verifiedSampleSize})
                   </Badge>
@@ -862,7 +862,7 @@ export function WaitTimeEstimator({
                   <Badge
                     variant="outline"
                     data-testid="regional-baseline-badge"
-                    className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[11px] font-semibold"
+                    className="border-amber-500/30 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] font-semibold"
                   >
                     {isUs ? 'National US baseline' : 'National baseline'} · Limited regional data for {province}
                   </Badge>
@@ -901,7 +901,7 @@ export function WaitTimeEstimator({
               {isLimitedRegionalData ? (
                 <div
                   data-testid="limited-data-fallback-note"
-                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
                 >
                   <Info className="h-3.5 w-3.5 shrink-0" />
                   <span>{regionalFallbackNotice}</span>
@@ -909,7 +909,7 @@ export function WaitTimeEstimator({
               ) : stats?.trimNote ? (
                 <div
                   data-testid="trim-fallback-note"
-                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
+                  className="inline-flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 px-3 py-1.5 rounded-md font-medium text-center"
                 >
                   <Info className="h-3.5 w-3.5 shrink-0" />
                   <span>{stats.trimNote}</span>
@@ -956,13 +956,13 @@ export function WaitTimeEstimator({
                 </div>
 
                 <div className="border-r border-neutral-800/60 pr-1 sm:pr-2 flex flex-col items-center">
-                  <div className="text-[11px] sm:text-xs text-amber-400/90 font-medium inline-flex items-center justify-center gap-1">
+                  <div className="text-[11px] sm:text-xs text-amber-300 font-medium inline-flex items-center justify-center gap-1">
                     <span>Median</span>
                     <span className="inline-flex items-center rounded px-1 py-0.5 text-[9px] sm:text-[10px] font-bold bg-amber-500 text-neutral-950">
                       P50
                     </span>
                   </div>
-                  <div className="mt-1 text-lg sm:text-2xl font-extrabold tracking-tight text-amber-400">
+                  <div className="mt-1 text-lg sm:text-2xl font-extrabold tracking-tight text-amber-300">
                     {medianDays} Days
                   </div>
                   <p className="text-[10px] sm:text-xs text-neutral-300 mt-0.5 truncate" suppressHydrationWarning>
@@ -990,7 +990,7 @@ export function WaitTimeEstimator({
               {p75Days > 400 && (
                 <div
                   data-testid="carryover-allocation-notice"
-                  className="flex items-center justify-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-xl py-2 px-3 text-center font-medium my-2"
+                  className="flex items-center justify-center gap-1.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 rounded-xl py-2 px-3 text-center font-medium my-2"
                 >
                   <Info className="h-4 w-4 shrink-0 text-amber-500" />
                   <span>{CARRYOVER_ALLOCATION_NOTE}</span>
@@ -1012,7 +1012,7 @@ export function WaitTimeEstimator({
                   variant="outline"
                   size="sm"
                   onClick={() => setIsNotifyModalOpen(true)}
-                  className="py-1.5 px-2 text-xs font-semibold rounded-lg border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-400 gap-1 w-full justify-center h-auto"
+                  className="py-1.5 px-2 text-xs font-semibold rounded-lg border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 gap-1 w-full justify-center h-auto"
                 >
                   <Bell className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                   <span className="truncate">Notify Me</span>
@@ -1122,7 +1122,7 @@ export function WaitTimeEstimator({
                   size="sm"
                   variant="outline"
                   onClick={() => setIsNotifyModalOpen(true)}
-                  className="h-7 px-3 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 shrink-0"
+                  className="h-7 px-3 py-1 text-xs font-semibold rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/40 hover:bg-amber-500/20 shrink-0"
                 >
                   Notify Me
                 </Button>
@@ -1159,10 +1159,10 @@ export function WaitTimeEstimator({
               <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/40 p-4 sm:p-5 space-y-4 !mt-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200/60 dark:border-zinc-800/80 pb-3">
                   <div>
-                    <h3 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
+                    <h2 className="text-sm sm:text-base font-bold text-zinc-950 dark:text-zinc-50 flex items-center gap-2">
                       <Zap className="h-4 w-4 text-amber-500" />
                       {`Powertrain Wait-Time Comparison in ${provinceName} (${province})`}
-                    </h3>
+                    </h2>
                     <p className="text-xs text-zinc-500 mt-0.5">
                       Side-by-side empirical wait times for available {currentModel.name} powertrains across {provinceName}.
                     </p>

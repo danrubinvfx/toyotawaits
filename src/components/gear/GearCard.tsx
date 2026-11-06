@@ -435,6 +435,7 @@ export function GearCard({
           deepLinkTargets={!isDirectPartner ? deepLinkTargets : undefined}
           fallbackIcon={fallbackIcon}
           category={item.category}
+          sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
           ariaLabel={imageAriaLabel}
           testId={item.slug}
           isChecked={isChecked}

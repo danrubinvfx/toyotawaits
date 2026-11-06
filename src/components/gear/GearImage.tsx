@@ -189,7 +189,7 @@ export function GearImage({
   imageClassName,
   containerClassName,
   aspectRatioClass = 'aspect-video',
-  sizes = '(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px',
+  sizes = '(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px',
   ariaLabel,
   testId,
   isChecked = false,
@@ -240,7 +240,7 @@ export function GearImage({
             src={src!}
             alt={alt}
             fill
-            unoptimized
+            unoptimized={process.env.NODE_ENV === 'test'}
             sizes={sizes}
             onError={() => setFailedSrc(src ?? null)}
             className={cn(
