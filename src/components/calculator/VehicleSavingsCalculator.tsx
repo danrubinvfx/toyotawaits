@@ -331,3 +331,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
     </div>
   );
 }
+
+
+export { CalculatorSkeleton } from './CalculatorSkeleton';
+export default VehicleSavingsCalculator;

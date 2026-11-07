@@ -129,6 +129,7 @@ export function InventoryGearCard({
             affiliateUrl={item.url}
             fallbackIcon={fallbackIcon}
             category={item.category}
+            sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
             aspectRatioClass="aspect-[16/10]"
             containerClassName="h-14 sm:h-16 rounded-md overflow-hidden"
             testId={item.id}

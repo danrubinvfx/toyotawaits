@@ -1,10 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { VehicleSavingsCalculator } from './VehicleSavingsCalculator';
+import dynamic from 'next/dynamic';
+import { CalculatorSkeleton } from '@/components/calculator/CalculatorSkeleton';
 import { ShopByBudgetCalculator } from './ShopByBudgetCalculator';
 import { TrustCalloutBanner } from './RelatedGuidesHub';
 import { Car, DollarSign } from 'lucide-react';
+
+const VehicleSavingsCalculator = dynamic(
+  () => import('@/components/calculator/VehicleSavingsCalculator'),
+  {
+    ssr: false,
+    loading: () => <CalculatorSkeleton />,
+  }
+);
 
 export type CalculatorViewMode = 'MODEL' | 'BUDGET';
 

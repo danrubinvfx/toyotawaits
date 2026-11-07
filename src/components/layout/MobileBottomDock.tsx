@@ -347,6 +347,7 @@ export function MobileGearDrawer({
                     alt={item.title}
                     affiliateUrl={destinationUrl}
                     fallbackIcon={item.fallbackIcon || 'package'}
+                    sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
                     className="w-full h-full object-cover"
                   />
                 </div>
