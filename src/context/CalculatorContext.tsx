@@ -177,3 +177,5 @@ export function CalculatorProvider({
 export function useCalculatorContext(): CalculatorContextValue | null {
   return useContext(CalculatorContext);
 }
+
+export const useCalculator = useCalculatorContext;

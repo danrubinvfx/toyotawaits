@@ -1838,6 +1838,17 @@ export function resolveGearLocalImage(
   if (clean.includes('dongar') || t.includes('dongar')) {
     return { imageUrl: '/assets/gear/fitcamx-rav4.webp', fallbackIcon: 'camera' };
   }
+  // 15b. Wireless CarPlay / Android Auto adapter
+  if (
+    clean.includes('carplay') ||
+    clean.includes('android-auto') ||
+    clean.includes('wireless-adapter') ||
+    t.includes('carplay') ||
+    t.includes('android auto') ||
+    t.includes('wireless adapter')
+  ) {
+    return { imageUrl: '/assets/gear/wireless-carplay-adapter.webp', fallbackIcon: 'wifi' };
+  }
   // 16. Portable tire inflator / emergency compressor
   if (
     clean.includes('inflator') ||
@@ -1871,6 +1882,12 @@ const LEGACY_MISSING_ACCESSORY_IMAGE_MAP: Record<string, string> = {
   '/images/accessories/crossbars-rav4.png': '/assets/gear/curt-trailer-hitch.webp',
   '/images/accessories/crossbars-grand-highlander.png': '/assets/gear/curt-trailer-hitch.webp',
   '/images/accessories/crossbars-corolla-cross.png': '/assets/gear/curt-trailer-hitch.webp',
+  '/assets/gear/tuxmat-rav4.webp': '/assets/gear/tuxmat-floor-liners.webp',
+  '/assets/gear/tuxmat-sienna.webp': '/assets/gear/tuxmat-floor-liners.webp',
+  '/assets/gear/screen-protector-12-3.webp': '/assets/gear/spigen-screen-protector.webp',
+  '/assets/gear/ticonn-faraday-pouch.webp': '/assets/gear/faraday-pouch.webp',
+  '/assets/gear/battery-jump-starter.webp': '/assets/gear/noco-gb40-jump-pack.webp',
+  '/assets/gear/fast-usbc-pd-car-charger.webp': '/assets/gear/fast-usbc-charger.webp',
 };
 
 /**

@@ -636,6 +636,41 @@ const GEAR_ITEMS = [
 
       <text x="400" y="380" fill="#fbbf24" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">SOFTEX LEATHERETTE • SUB-ZERO FLEXIBLE</text>
     `
+  },
+
+  // 17. Plug-and-Play Wireless CarPlay / Android Auto Adapter
+  {
+    fileName: 'wireless-carplay-adapter.webp',
+    brand: 'CABIN TECH • PLUG & PLAY',
+    subtitle: 'WIRELESS CARPLAY & ANDROID AUTO SMART ADAPTER',
+    svg: `
+      <!-- Sleek Compact Adapter Dongle Body -->
+      <rect x="250" y="160" width="300" height="190" rx="20" fill="url(#matteBlack)" stroke="#38bdf8" stroke-width="3"/>
+      <!-- Inner Bezel -->
+      <rect x="265" y="175" width="270" height="160" rx="14" fill="#141416" stroke="#27272a" stroke-width="2"/>
+
+      <!-- USB-C Braided Cable Lead -->
+      <path d="M 250 255 L 180 255 C 160 255 150 240 150 220 L 150 200" fill="none" stroke="#52525b" stroke-width="12" stroke-linecap="round"/>
+      <!-- USB-C Metal Plug Head -->
+      <rect x="135" y="150" width="30" height="50" rx="6" fill="url(#metalSilver)" stroke="#a1a1aa" stroke-width="2"/>
+      <rect x="142" y="130" width="16" height="20" rx="3" fill="#e4e4e7" stroke="#71717a" stroke-width="1.5"/>
+
+      <!-- Glowing Status Ring / Power Indicator -->
+      <circle cx="480" cy="210" r="12" fill="#09090b" stroke="#22c55e" stroke-width="2.5"/>
+      <circle cx="480" cy="210" r="6" fill="#22c55e"/>
+
+      <!-- Wireless 5.8GHz / Bluetooth Waves Graphic -->
+      <g stroke="#38bdf8" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M 330 225 C 345 205 375 205 390 225"/>
+        <path d="M 320 210 C 345 180 395 180 420 210"/>
+        <path d="M 310 195 C 345 155 415 155 450 195"/>
+      </g>
+      <circle cx="360" cy="235" r="5" fill="#38bdf8"/>
+
+      <!-- Brand / Interface Badges -->
+      <text x="360" y="275" fill="#fafafa" font-family="-apple-system, sans-serif" font-size="16" font-weight="900" text-anchor="middle" letter-spacing="1">WIRELESS AUTO-CONNECT</text>
+      <text x="360" y="300" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">5.8GHz WI-FI • ZERO DELAY</text>
+    `
   }
 ];
 

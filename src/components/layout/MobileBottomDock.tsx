@@ -3,12 +3,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { Clock, Ship, Package, Calculator, BookOpen, X, Check, Copy, Tag, ExternalLink } from 'lucide-react';
+import { Clock, Ship, Package, Calculator, BookOpen, X, Check, Tag, ExternalLink } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { useCalculatorContext } from '@/context/CalculatorContext';
 import { buildAmazonAffiliateUrl, getModelDisplayName } from '@/lib/gear/affiliate';
 import { GearImage } from '@/components/gear/GearImage';
 import { resolveVerifiedGearImageSrc } from '@/data/gear/catalog';
+import { GuidesModal } from '@/components/navigation/GuidesModal';
+import { cn } from '@/lib/utils';
 
 export interface MobileGearItem {
   id: string;
@@ -24,12 +26,14 @@ export interface MobileGearItem {
   imageUrl?: string;
   fallbackIcon?: string;
   badge?: string;
+  tag?: string;
 }
 
 export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): MobileGearItem[] {
   const isUs = market === 'US';
   const clean = modelSlug.toLowerCase().trim();
 
+  // 1. RAV4 Curated Lineup
   if (clean === 'rav4' || clean.includes('rav4')) {
     return [
       {
@@ -44,8 +48,48 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         discountCode: 'Toyotawaits',
         discountText: '2% OFF',
         badge: 'Partner Deal · 2% Off',
+        tag: 'Partner Deal · 2% Off',
         imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
         fallbackIcon: 'layout-grid',
+      },
+      {
+        id: 'spigen-screen-protector-rav4',
+        title: 'Spigen 9H Tempered Glass Screen Protector',
+        brand: 'Spigen',
+        priceText: '~$24 CAD',
+        description: 'Anti-glare oleophobic glass for 8", 10.5" & 12.3" multimedia screens.',
+        destinationType: 'amazon',
+        searchQuery: 'Spigen tempered glass screen protector Toyota RAV4',
+        badge: 'Display Protection',
+        tag: 'Display Protection',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'smartphone',
+      },
+      {
+        id: 'high-wall-floor-liners-rav4',
+        title: 'TuxMat High-Wall TPE Floor Liners',
+        brand: 'TuxMat',
+        priceText: '~$190 - $290 CAD',
+        description: 'Maximum coverage spill & slush protection avoiding 2x dealer markup.',
+        destinationType: 'amazon',
+        searchQuery: isUs ? 'TuxMat Toyota RAV4 custom all weather floor mats' : 'TuxMat Toyota RAV4 custom all weather floor mats',
+        badge: 'Winter Protection',
+        tag: 'Winter Protection',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: 'wireless-carplay-adapter-rav4',
+        title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+        brand: 'CarlinKit / Auto',
+        priceText: '~$50 CAD',
+        description: 'Converts wired factory CarPlay to automatic wireless connection.',
+        destinationType: 'amazon',
+        searchQuery: 'wireless carplay android auto adapter plug and play toyota',
+        badge: 'Cabin Tech',
+        tag: 'Cabin Tech',
+        imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+        fallbackIcon: 'wifi',
       },
       {
         id: 'fitcamx-rav4',
@@ -55,34 +99,15 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         description: 'Discrete OEM look tapping into rearview mirror power with zero dangling cables.',
         destinationType: 'amazon',
         searchQuery: isUs ? 'Fitcamx dash cam Toyota RAV4 OEM 4K' : 'Fitcamx dash cam Toyota RAV4 OEM 4K',
+        badge: 'OEM Integrated',
+        tag: 'OEM Integrated',
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
-      },
-      {
-        id: 'high-wall-floor-liners-rav4',
-        title: 'TuxMat High-Wall TPE Floor Liners',
-        brand: 'TuxMat',
-        priceText: '~$270 CAD',
-        description: 'Maximum high-wall laser-measured coverage containing snow, salt, mud, and water spills.',
-        destinationType: 'amazon',
-        searchQuery: isUs ? 'TuxMat Toyota RAV4 custom all weather floor mats' : 'TuxMat Toyota RAV4 custom all weather floor mats',
-        imageUrl: '/assets/gear/tuxmat-rav4.webp',
-        fallbackIcon: 'layers',
-      },
-      {
-        id: 'ticonn-faraday-pouch-rav4',
-        title: 'TICONN RFID Faraday Key Fob Pouch (2-Pack)',
-        brand: 'TICONN',
-        priceText: '~$15 CAD',
-        description: 'Dual-layer RFID & BLE signal blocking pouches preventing keyless relay theft.',
-        destinationType: 'amazon',
-        searchQuery: 'TICONN Faraday bag key fob signal protector pouch',
-        imageUrl: '/assets/gear/ticonn-faraday-pouch.webp',
-        fallbackIcon: 'lock',
       },
     ];
   }
 
+  // 2. Sienna Curated Lineup
   if (clean === 'sienna' || clean.includes('sienna')) {
     return [
       {
@@ -97,19 +122,48 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         discountCode: 'Toyotawaits',
         discountText: '2% OFF',
         badge: 'Partner Deal · 2% Off',
+        tag: 'Partner Deal · 2% Off',
         imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
         fallbackIcon: 'layout-grid',
       },
       {
+        id: 'spigen-screen-protector-sienna',
+        title: 'Spigen 9H Tempered Glass Screen Protector',
+        brand: 'Spigen',
+        priceText: '~$24 CAD',
+        description: 'Anti-glare oleophobic glass for 8", 10.5" & 12.3" multimedia screens.',
+        destinationType: 'amazon',
+        searchQuery: 'Spigen tempered glass screen protector Toyota Sienna',
+        badge: 'Display Protection',
+        tag: 'Display Protection',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'smartphone',
+      },
+      {
         id: 'sienna-all-weather-liners',
-        title: '3-Row Custom All-Weather Floor Liners',
+        title: 'TuxMat / 3-Row Custom All-Weather Floor Liners',
         brand: 'TuxMat / OEM Fit',
-        priceText: '~$280 CAD',
-        description: 'Maximized spill containment along sliding Super Long Slide tracks and cargo trunk well.',
+        priceText: '~$190 - $290 CAD',
+        description: 'Maximum coverage spill & slush protection avoiding 2x dealer markup.',
         destinationType: 'amazon',
         searchQuery: 'Toyota Sienna all weather floor mats 2021-2026',
-        imageUrl: '/assets/gear/tuxmat-sienna.webp',
+        badge: 'Winter Protection',
+        tag: 'Winter Protection',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
         fallbackIcon: 'layers',
+      },
+      {
+        id: 'wireless-carplay-adapter-sienna',
+        title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+        brand: 'CarlinKit / Auto',
+        priceText: '~$50 CAD',
+        description: 'Converts wired factory CarPlay to automatic wireless connection.',
+        destinationType: 'amazon',
+        searchQuery: 'wireless carplay android auto adapter plug and play toyota',
+        badge: 'Cabin Tech',
+        tag: 'Cabin Tech',
+        imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+        fallbackIcon: 'wifi',
       },
       {
         id: 'fitcamx-sienna',
@@ -119,27 +173,15 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         description: 'Factory-integrated mirror replacement dashcam drawing power directly from the TSS mirror harness.',
         destinationType: 'amazon',
         searchQuery: 'Fitcamx dash cam Toyota Sienna OEM 4K',
+        badge: 'OEM Integrated',
+        tag: 'OEM Integrated',
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
-      },
-      {
-        id: 'muslogy-sienna-cargo-net',
-        title: 'Muslogy Heavy-Duty Trunk Cargo Net (Sienna)',
-        brand: 'Muslogy',
-        priceText: '$26 – $34 CAD',
-        description: 'Custom-fit elastic envelope trunk net securing groceries in the deep Sienna rear cargo well.',
-        destinationType: 'direct_partner',
-        partnerUrl: '/out/muslogy-sienna-cargo-net',
-        searchQuery: 'Toyota Sienna trunk envelope cargo net',
-        discountCode: 'Toyotawaits',
-        discountText: '2% OFF',
-        badge: 'Partner Deal · 2% Off',
-        imageUrl: '/assets/gear/muslogy-sienna-cargo-net.webp',
-        fallbackIcon: 'luggage',
       },
     ];
   }
 
+  // 3. Grand Highlander Curated Lineup
   if (clean === 'grand-highlander' || clean.includes('grand-highlander') || clean.includes('grand highlander')) {
     return [
       {
@@ -154,19 +196,48 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         discountCode: 'Toyotawaits',
         discountText: '2% OFF',
         badge: 'Partner Deal · 2% Off',
+        tag: 'Partner Deal · 2% Off',
         imageUrl: '/assets/gear/muslogy-grand-highlander-organizer.webp',
         fallbackIcon: 'layout-grid',
       },
       {
         id: 'screen-protector-grand-highlander',
-        title: '12.3" Anti-Glare Matte Screen Protector',
+        title: 'Spigen 9H Tempered Glass Screen Protector (Grand Highlander)',
         brand: 'Spigen / Tempered Glass',
-        priceText: '~$25 CAD',
-        description: 'Prevents fingerprint oil buildup and eliminates harsh reflections across wide cabin glass.',
+        priceText: '~$24 CAD',
+        description: 'Anti-glare oleophobic glass for 8", 10.5" & 12.3" multimedia screens.',
         destinationType: 'amazon',
         searchQuery: 'Grand Highlander 2024 2025 2026 12.3-inch screen protector tempered glass',
-        imageUrl: '/assets/gear/screen-protector-12-3.webp',
+        badge: 'Display Protection',
+        tag: 'Display Protection',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
         fallbackIcon: 'smartphone',
+      },
+      {
+        id: 'tuxmat-floor-liners-grand-highlander',
+        title: 'TuxMat High-Wall All-Weather Floor Liners (Grand Highlander)',
+        brand: 'TuxMat',
+        priceText: '~$190 - $290 CAD',
+        description: 'Maximum coverage spill & slush protection avoiding 2x dealer markup.',
+        destinationType: 'amazon',
+        searchQuery: 'Toyota Grand Highlander all weather floor mats TuxMat',
+        badge: 'Winter Protection',
+        tag: 'Winter Protection',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: 'wireless-carplay-adapter-grand-highlander',
+        title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+        brand: 'CarlinKit / Auto',
+        priceText: '~$50 CAD',
+        description: 'Converts wired factory CarPlay to automatic wireless connection.',
+        destinationType: 'amazon',
+        searchQuery: 'wireless carplay android auto adapter plug and play toyota',
+        badge: 'Cabin Tech',
+        tag: 'Cabin Tech',
+        imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+        fallbackIcon: 'wifi',
       },
       {
         id: 'fitcamx-grand-highlander',
@@ -176,70 +247,156 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         description: 'Custom molded mirror housing integrating 4K recording under the digital mirror bracket.',
         destinationType: 'amazon',
         searchQuery: 'Fitcamx dash cam Grand Highlander TSS 3.0',
+        badge: 'OEM Integrated',
+        tag: 'OEM Integrated',
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
-      },
-      {
-        id: 'muslogy-grand-highlander-cargo-net',
-        title: 'Muslogy Heavy-Duty Trunk Cargo Net (GH)',
-        brand: 'Muslogy',
-        priceText: '$26 – $34 CAD',
-        description: 'Custom-fit envelope trunk cargo net securing groceries upright behind the 3rd row.',
-        destinationType: 'direct_partner',
-        partnerUrl: '/out/muslogy-grand-highlander-cargo-net',
-        searchQuery: 'Grand Highlander trunk envelope cargo net',
-        discountCode: 'Toyotawaits',
-        discountText: '2% OFF',
-        badge: 'Partner Deal · 2% Off',
-        imageUrl: '/assets/gear/muslogy-grand-highlander-cargo-net.webp',
-        fallbackIcon: 'luggage',
       },
     ];
   }
 
-  // Universal Toyota Essentials Fallback
+  // 4. Other Specific Models Fallback (e.g. Camry, Tacoma, Prius, Corolla Cross, 4Runner)
+  if (clean) {
+    const modelDisplayName = getModelDisplayName(clean);
+    return [
+      {
+        id: `muslogy-${clean}-organizer`,
+        title: 'Muslogy Center Console Organizer Tray',
+        brand: 'Muslogy',
+        priceText: '$24 – $32 CAD',
+        description: 'Drop-in multi-tier center console armrest divider tray with anti-slip silicone coin pads.',
+        destinationType: 'direct_partner',
+        partnerUrl: clean.includes('sienna') ? '/out/muslogy-sienna' : '/out/muslogy-rav4',
+        searchQuery: `Muslogy center console organizer tray Toyota ${modelDisplayName}`,
+        discountCode: 'Toyotawaits',
+        discountText: '2% OFF',
+        badge: 'Partner Deal · 2% Off',
+        tag: 'Partner Deal · 2% Off',
+        imageUrl: clean.includes('sienna') ? '/assets/gear/muslogy-sienna-organizer.webp' : '/assets/gear/muslogy-rav4-organizer.webp',
+        fallbackIcon: 'layout-grid',
+      },
+      {
+        id: `spigen-screen-protector-${clean}`,
+        title: `Spigen 9H Tempered Glass Screen Protector (${modelDisplayName})`,
+        brand: 'Spigen',
+        priceText: '~$24 CAD',
+        description: 'Anti-glare oleophobic glass for 8", 10.5" & 12.3" multimedia screens.',
+        destinationType: 'amazon',
+        searchQuery: `Spigen tempered glass screen protector Toyota ${modelDisplayName}`,
+        badge: 'Display Protection',
+        tag: 'Display Protection',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'smartphone',
+      },
+      {
+        id: `tuxmat-floor-liners-${clean}`,
+        title: `TuxMat High-Wall All-Weather Floor Liners (${modelDisplayName})`,
+        brand: 'TuxMat',
+        priceText: '~$190 - $290 CAD',
+        description: 'Maximum coverage spill & slush protection avoiding 2x dealer markup.',
+        destinationType: 'amazon',
+        searchQuery: `TuxMat Toyota ${modelDisplayName} custom all weather floor mats`,
+        badge: 'Winter Protection',
+        tag: 'Winter Protection',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: `wireless-carplay-adapter-${clean}`,
+        title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+        brand: 'CarlinKit / Auto',
+        priceText: '~$50 CAD',
+        description: 'Converts wired factory CarPlay to automatic wireless connection.',
+        destinationType: 'amazon',
+        searchQuery: 'wireless carplay android auto adapter plug and play toyota',
+        badge: 'Cabin Tech',
+        tag: 'Cabin Tech',
+        imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+        fallbackIcon: 'wifi',
+      },
+      {
+        id: `fitcamx-${clean}`,
+        title: `FitcamX OEM Factory-Look 4K Dashcam (${modelDisplayName})`,
+        brand: 'FitcamX',
+        priceText: '~$188 CAD',
+        description: 'Clean factory OEM appearance tapping into rearview mirror power without dangling wires.',
+        destinationType: 'amazon',
+        searchQuery: `Fitcamx dash cam Toyota ${modelDisplayName} OEM 4K`,
+        badge: 'OEM Integrated',
+        tag: 'OEM Integrated',
+        imageUrl: '/assets/gear/fitcamx-rav4.webp',
+        fallbackIcon: 'camera',
+      },
+    ];
+  }
+
+  // 5. Universal Deals & Top Bestsellers Lineup (When no model is active)
   return [
     {
-      id: 'universal-faraday-pouches',
-      title: 'TICONN RFID Faraday Key Fob Pouch (2-Pack)',
-      brand: 'TICONN',
-      priceText: '~$15 CAD',
-      description: 'Dual-layer RFID & BLE signal blocking pouches preventing keyless relay attacks and key fob cloning.',
-      destinationType: 'amazon',
-      searchQuery: 'TICONN Faraday bag key fob signal protector pouch',
-      imageUrl: '/assets/gear/ticonn-faraday-pouch.webp',
-      fallbackIcon: 'lock',
+      id: 'muslogy-console-organizer-universal',
+      title: 'Muslogy Center Console Organizer Tray',
+      brand: 'Muslogy',
+      priceText: '$24 – $28 CAD',
+      description: 'Drop-in multi-tier center console armrest divider tray with anti-slip silicone coin pads.',
+      destinationType: 'direct_partner',
+      partnerUrl: '/out/muslogy-rav4',
+      searchQuery: 'Muslogy center console organizer tray Toyota',
+      discountCode: 'Toyotawaits',
+      discountText: '2% OFF',
+      badge: 'Partner Deal · 2% Off',
+      tag: 'Partner Deal · 2% Off',
+      imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+      fallbackIcon: 'layout-grid',
     },
     {
-      id: 'universal-tire-inflator',
-      title: 'Compact Cordless 150 PSI Digital Tire Inflator',
-      brand: 'AstroAI / Portable',
-      priceText: '~$45 – $60 CAD',
-      description: 'Rechargeable digital air pump with auto-shutoff for road trips and cold Canadian winter pressure checks.',
+      id: 'universal-spigen-screen-protector',
+      title: 'Spigen 9H Tempered Glass Screen Protector',
+      brand: 'Spigen',
+      priceText: '~$24 CAD',
+      description: 'Anti-glare oleophobic glass for 8", 10.5" & 12.3" multimedia screens.',
       destinationType: 'amazon',
-      searchQuery: 'portable cordless tire inflator 150 psi',
-      imageUrl: '/assets/gear/battery-jump-starter.webp',
-      fallbackIcon: 'zap',
+      searchQuery: 'Spigen tempered glass screen protector Toyota multimedia screen',
+      badge: 'Display Protection',
+      tag: 'Display Protection',
+      imageUrl: '/assets/gear/spigen-screen-protector.webp',
+      fallbackIcon: 'smartphone',
     },
     {
-      id: 'universal-fast-charger',
-      title: 'Fast 65W Dual USB-C Metal Car Charger',
-      brand: 'Anker / Metal Flush',
-      priceText: '~$25 CAD',
-      description: 'Ultra-compact dual USB-C Power Delivery metal car adapter supporting rapid phone and laptop charging.',
+      id: 'universal-tuxmat-floor-liners',
+      title: 'TuxMat / Custom-Fit All-Weather High-Wall Floor Liners',
+      brand: 'TuxMat',
+      priceText: '~$190 - $290 CAD',
+      description: 'Maximum coverage spill & slush protection avoiding 2x dealer markup.',
       destinationType: 'amazon',
-      searchQuery: '65W dual USB-C PD metal car charger flush fit',
-      imageUrl: '/assets/gear/fast-usbc-pd-car-charger.webp',
-      fallbackIcon: 'battery',
+      searchQuery: 'TuxMat custom all weather high wall floor mats liners Toyota',
+      badge: 'Winter Protection',
+      tag: 'Winter Protection',
+      imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+      fallbackIcon: 'layers',
     },
     {
-      id: 'universal-dashcam',
+      id: 'universal-wireless-carplay',
+      title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+      brand: 'CarlinKit / Auto',
+      priceText: '~$50 CAD',
+      description: 'Converts wired factory CarPlay to automatic wireless connection.',
+      destinationType: 'amazon',
+      searchQuery: 'wireless carplay android auto adapter plug and play',
+      badge: 'Cabin Tech',
+      tag: 'Cabin Tech',
+      imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+      fallbackIcon: 'wifi',
+    },
+    {
+      id: 'universal-fitcamx-dashcam',
       title: 'FitcamX OEM Factory-Look 4K Dashcam',
       brand: 'FitcamX',
       priceText: '~$188 CAD',
       description: 'Clean factory OEM appearance tapping into rearview mirror power without dangling wires.',
       destinationType: 'amazon',
       searchQuery: 'Fitcamx dash cam Toyota OEM 4K',
+      badge: 'OEM Integrated',
+      tag: 'OEM Integrated',
       imageUrl: '/assets/gear/fitcamx-rav4.webp',
       fallbackIcon: 'camera',
     },
@@ -307,7 +464,7 @@ export function MobileGearDrawer({
               Delivery Day Prep: {modelName || 'Toyota Essentials'}
             </h3>
             <p className="text-xs text-zinc-400">
-              Curated day-one protection and partner deals
+              Curated exclusive partner deals and community bestsellers
             </p>
           </div>
           <button
@@ -321,7 +478,7 @@ export function MobileGearDrawer({
           </button>
         </div>
 
-        {/* 3–4 Curated Gear Cards */}
+        {/* Curated Gear Cards */}
         <div className="space-y-3 pt-1">
           {gearItems.map((item) => {
             const isPartner = item.destinationType === 'direct_partner';
@@ -333,6 +490,7 @@ export function MobileGearDrawer({
             const destinationUrl = isPartner && item.partnerUrl ? item.partnerUrl : amazonUrl;
             const isCodeCopied = copiedId === item.id;
             const imgSrc = resolveVerifiedGearImageSrc(item.imageUrl, undefined);
+            const itemTag = item.tag || item.badge;
 
             return (
               <div
@@ -347,23 +505,38 @@ export function MobileGearDrawer({
                     alt={item.title}
                     affiliateUrl={destinationUrl}
                     fallbackIcon={item.fallbackIcon || 'package'}
-                    sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
-                    className="w-full h-full object-cover"
+                    aspectRatioClass="h-16 w-16"
+                    containerClassName="h-16 w-16"
+                    sizes="64px"
+                    className="w-16 h-16"
                   />
                 </div>
 
                 {/* Details & Actions */}
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-start justify-between gap-1.5">
-                    <h4 className="text-xs font-bold text-white leading-snug line-clamp-2">
-                      {item.title}
-                    </h4>
+                  <div className="flex items-center justify-between gap-1.5">
+                    {itemTag && (
+                      <span
+                        className={cn(
+                          'inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wide uppercase',
+                          isPartner
+                            ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                            : 'bg-zinc-800/90 text-zinc-300 border border-zinc-700/60'
+                        )}
+                      >
+                        {itemTag}
+                      </span>
+                    )}
                     {item.priceText && (
-                      <span className="text-[11px] font-semibold text-emerald-400 shrink-0">
+                      <span className="text-[11px] font-semibold text-emerald-400 shrink-0 ml-auto">
                         {item.priceText}
                       </span>
                     )}
                   </div>
+
+                  <h4 className="text-xs font-bold text-white leading-snug line-clamp-2">
+                    {item.title}
+                  </h4>
 
                   <p className="text-[11px] text-zinc-400 leading-normal line-clamp-2">
                     {item.description}
@@ -385,7 +558,7 @@ export function MobileGearDrawer({
                         ) : (
                           <>
                             <Tag className="h-3 w-3" />
-                            <span>CODE: {item.discountCode} ({item.discountText || '2% OFF'})</span>
+                            <span>CODE: {item.discountCode}{item.discountText ? ` (${item.discountText})` : ''}</span>
                           </>
                         )}
                       </button>
@@ -417,6 +590,13 @@ export function MobileBottomDock() {
   const searchParams = useSearchParams();
   const calcContext = useCalculatorContext();
   const [isGearDrawerOpen, setIsGearDrawerOpen] = useState(false);
+  const [isGuidesModalOpen, setIsGuidesModalOpen] = useState(false);
+
+  // Auto-close open drawers/modals on navigation
+  useEffect(() => {
+    setIsGearDrawerOpen(false);
+    setIsGuidesModalOpen(false);
+  }, [pathname]);
   const [eventModel, setEventModel] = useState<string | null>(null);
 
   // Listen to custom model selection events dispatched across pages
@@ -459,14 +639,17 @@ export function MobileBottomDock() {
 
     // 3. Pathname detection (e.g. /calculator/rav4-hybrid, /camping/sienna, /wait-times/sienna)
     const lowerPath = pathname.toLowerCase();
-    if (lowerPath.includes('sienna')) {
-      return { activeModelSlug: 'sienna', activeModelName: 'Sienna' };
-    }
     if (lowerPath.includes('grand-highlander') || lowerPath.includes('grand highlander')) {
       return { activeModelSlug: 'grand-highlander', activeModelName: 'Grand Highlander' };
     }
+    if (lowerPath.includes('sienna')) {
+      return { activeModelSlug: 'sienna', activeModelName: 'Sienna' };
+    }
     if (lowerPath.includes('rav4')) {
       return { activeModelSlug: 'rav4', activeModelName: 'RAV4' };
+    }
+    if (lowerPath.includes('corolla-cross') || lowerPath.includes('corollacross')) {
+      return { activeModelSlug: 'corolla-cross', activeModelName: 'Corolla Cross' };
     }
     if (lowerPath.includes('camry')) {
       return { activeModelSlug: 'camry', activeModelName: 'Camry' };
@@ -476,6 +659,18 @@ export function MobileBottomDock() {
     }
     if (lowerPath.includes('tacoma')) {
       return { activeModelSlug: 'tacoma', activeModelName: 'Tacoma' };
+    }
+    if (lowerPath.includes('highlander')) {
+      return { activeModelSlug: 'highlander', activeModelName: 'Highlander' };
+    }
+    if (lowerPath.includes('4runner')) {
+      return { activeModelSlug: '4runner', activeModelName: '4Runner' };
+    }
+    if (lowerPath.includes('tundra')) {
+      return { activeModelSlug: 'tundra', activeModelName: 'Tundra' };
+    }
+    if (lowerPath.includes('land-cruiser') || lowerPath.includes('landcruiser')) {
+      return { activeModelSlug: 'land-cruiser', activeModelName: 'Land Cruiser' };
     }
 
     // 4. Custom event or fallback
@@ -511,7 +706,7 @@ export function MobileBottomDock() {
             href="/"
             data-testid="mobile-dock-tracker"
             className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
-              isTrackerActive && !isGearDrawerOpen
+              isTrackerActive && !isGearDrawerOpen && !isGuidesModalOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
             }`}
@@ -525,7 +720,7 @@ export function MobileBottomDock() {
             href="/inventory"
             data-testid="mobile-dock-inventory"
             className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
-              isInventoryActive && !isGearDrawerOpen
+              isInventoryActive && !isGearDrawerOpen && !isGuidesModalOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
             }`}
@@ -534,25 +729,32 @@ export function MobileBottomDock() {
             <span className="text-[10px] tracking-tight truncate max-w-full">Live Stock</span>
           </Link>
 
-          {/* Slot 3: Guides */}
-          <Link
-            href="/guides"
+          {/* Slot 3: Guides (Opens Modal) */}
+          <button
+            type="button"
             data-testid="mobile-dock-guides"
-            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
-              isGuidesActive && !isGearDrawerOpen
+            onClick={() => {
+              setIsGearDrawerOpen(false);
+              setIsGuidesModalOpen(true);
+            }}
+            className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors cursor-pointer px-0.5 ${
+              (isGuidesActive || isGuidesModalOpen) && !isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
             }`}
           >
             <BookOpen className="h-4 w-4" aria-hidden="true" />
             <span className="text-[10px] tracking-tight truncate max-w-full">Guides</span>
-          </Link>
+          </button>
 
           {/* Slot 4: Model Gear (Opens Drawer) */}
           <button
             type="button"
             data-testid="mobile-dock-gear"
-            onClick={() => setIsGearDrawerOpen(true)}
+            onClick={() => {
+              setIsGuidesModalOpen(false);
+              setIsGearDrawerOpen(true);
+            }}
             className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors cursor-pointer px-0.5 ${
               isGearDrawerOpen
                 ? 'text-amber-400 font-bold'
@@ -570,7 +772,7 @@ export function MobileBottomDock() {
             href="/calculator"
             data-testid="mobile-dock-calculator"
             className={`flex flex-col items-center justify-center gap-0.5 text-center py-1 transition-colors px-0.5 ${
-              isCalculatorActive && !isGearDrawerOpen
+              isCalculatorActive && !isGearDrawerOpen && !isGuidesModalOpen
                 ? 'text-amber-400 font-bold'
                 : 'text-zinc-400 hover:text-zinc-200 font-medium'
             }`}
@@ -588,8 +790,15 @@ export function MobileBottomDock() {
         modelSlug={activeModelSlug}
         modelName={activeModelName}
       />
+
+      {/* Guides Modal / 2-Column Card Grid */}
+      <GuidesModal
+        isOpen={isGuidesModalOpen}
+        onClose={() => setIsGuidesModalOpen(false)}
+      />
     </>
   );
 }
 
+export { GuidesModal } from '@/components/navigation/GuidesModal';
 export default MobileBottomDock;
