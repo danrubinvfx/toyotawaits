@@ -164,7 +164,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
   return (
     <header className="sticky top-0 z-50 w-full max-w-full min-h-14 sm:min-h-16 h-14 sm:h-16 overflow-x-hidden lg:overflow-visible border-b border-zinc-200 bg-white/95 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/95">
       {/* Fixed h-14 / sm:h-16 so sticky bars below can use matching top-14 / sm:top-16 offsets */}
-      <div className="container mx-auto max-w-6xl w-full max-w-full overflow-x-hidden lg:overflow-visible h-14 sm:h-16 px-3 sm:px-4 py-2.5 flex items-center justify-between">
+      <div className="container mx-auto max-w-6xl w-full max-w-full overflow-hidden lg:overflow-visible h-14 sm:h-16 px-3 py-2 sm:px-4 flex items-center justify-between gap-1.5 sm:gap-3">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 min-w-0 shrink-0 font-bold text-lg tracking-tight group">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-amber-600 text-white shadow-sm group-hover:scale-105 transition-transform shrink-0">
@@ -172,8 +172,8 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black truncate text-base sm:text-lg">
-              ToyotaWaits<span className="text-amber-300">{isUs ? '.com' : '.ca'}</span>
-              <span className="ml-1.5 hidden xs:inline-flex rounded bg-amber-500/10 border border-amber-500/30 dark:border-amber-400/40 px-1.5 py-0.2 text-[10px] font-semibold text-amber-700 dark:text-amber-300 shrink-0">
+              ToyotaWaits<span className="text-amber-300 hidden xs:inline">{isUs ? '.com' : '.ca'}</span>
+              <span className="ml-1.5 hidden sm:inline-flex rounded bg-amber-500/10 border border-amber-500/30 dark:border-amber-400/40 px-1.5 py-0.2 text-[10px] font-semibold text-amber-700 dark:text-amber-300 shrink-0">
                 {isUs ? '🇺🇸 USA' : '🇨🇦 Canada'}
               </span>
             </span>
@@ -505,21 +505,21 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           {hasActiveOrder ? (
             <Link
               href={editHref}
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 min-h-[36px] sm:min-h-[40px] h-9 sm:h-10 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
+              className="shrink-0 whitespace-nowrap inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 sm:text-sm shadow-sm cursor-pointer touch-manipulation min-h-[36px] sm:min-h-[40px]"
             >
               <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
+              <span className="xs:hidden">Update</span>
               <span className="hidden xs:inline">Update Status</span>
-              <span className="xs:hidden">Status</span>
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-700 ring-1 ring-black shrink-0" />
             </Link>
           ) : (
             <Link
               href="/submit"
-              className="shrink-0 whitespace-nowrap text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-2 min-h-[36px] sm:min-h-[40px] h-9 sm:h-10 rounded-lg bg-amber-500 hover:bg-amber-400 text-black transition-all shadow-sm flex items-center gap-1 sm:gap-1.5 cursor-pointer touch-manipulation"
+              className="shrink-0 whitespace-nowrap inline-flex items-center gap-1 sm:gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-semibold px-2.5 py-1 sm:px-3 sm:py-1.5 sm:text-sm shadow-sm cursor-pointer touch-manipulation min-h-[36px] sm:min-h-[40px]"
             >
               <PlusCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-black shrink-0" />
+              <span className="xs:hidden">+ Log</span>
               <span className="hidden xs:inline">+ Log Order</span>
-              <span className="xs:hidden">+ Order</span>
             </Link>
           )}
 

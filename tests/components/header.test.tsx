@@ -253,7 +253,7 @@ describe('Header Component', () => {
     expect(fullTextSpan).toBeInTheDocument();
     expect(fullTextSpan).toHaveTextContent('+ Log Order');
     expect(compactTextSpan).toBeInTheDocument();
-    expect(compactTextSpan).toHaveTextContent('+ Order');
+    expect(compactTextSpan).toHaveTextContent('+ Log');
 
     // 4. Left brand container restraint
     const brandLink = screen.getByRole('link', { name: /ToyotaWaits/i });
@@ -263,7 +263,7 @@ describe('Header Component', () => {
     const headerElem = container.querySelector('header');
     expect(headerElem).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden');
     const innerWrapper = headerElem?.firstElementChild;
-    expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden', 'px-3', 'py-2.5', 'flex', 'items-center', 'justify-between');
+    expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-hidden', 'px-3', 'py-2', 'flex', 'items-center', 'justify-between');
   });
 
   it('renders Live Inventory navigation item in desktop nav and mobile drawer', () => {
@@ -460,5 +460,41 @@ describe('Header Component', () => {
     const pickupLink = screen.getByRole('link', { name: /Pickup Checklist/i });
     expect(pickupLink).toBeInTheDocument();
     expect(pickupLink).toHaveAttribute('href', '/delivery-prep');
+  });
+
+  it('hides duplicate country pill on mobile and supports responsive Update Status labels', () => {
+    localStorage.setItem(
+      'toyotawaits_submission',
+      JSON.stringify({
+        id: 'mock-sub-resp',
+        editKey: 'mock-key-resp',
+        model: 'RAV4 Prime',
+        status: 'pending',
+      })
+    );
+
+    const { container } = render(<Header />);
+
+    // 1. Static country pill is hidden on mobile (< sm)
+    const countryPill = screen.getByText(/Canada/i);
+    expect(countryPill).toHaveClass('hidden', 'sm:inline-flex');
+
+    // 2. Domain suffix (.ca / .com) is hidden on narrow mobile (< xs)
+    const domainSuffix = screen.getByText('.ca');
+    expect(domainSuffix).toHaveClass('hidden', 'xs:inline');
+
+    // 3. Update Status CTA has responsive text spans
+    const updateLink = screen.getByRole('link', { name: /Update Status/i });
+    expect(updateLink).toHaveClass('shrink-0', 'whitespace-nowrap', 'text-xs', 'font-semibold', 'rounded-lg');
+    const compactSpan = updateLink.querySelector('span.xs\\:hidden, span[class*="xs:hidden"]');
+    const fullSpan = updateLink.querySelector('span.xs\\:inline, span[class*="xs:inline"]');
+    expect(compactSpan).toBeInTheDocument();
+    expect(compactSpan).toHaveTextContent('Update');
+    expect(fullSpan).toBeInTheDocument();
+    expect(fullSpan).toHaveTextContent('Update Status');
+
+    // 4. Header inner row padding and gap
+    const headerRow = container.querySelector('header > div');
+    expect(headerRow).toHaveClass('px-3', 'py-2', 'overflow-hidden', 'gap-1.5', 'sm:gap-3');
   });
 });
