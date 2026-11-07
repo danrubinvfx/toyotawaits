@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { NextRequest } from 'next/server';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { calculateEstimatedWaitTime, MAX_WAIT_TIME_DAYS } from '@/lib/estimator';
+import { calculateWait } from '@/lib/estimator/calculateWait';
+import { INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { GET as getSubmissionsRoute } from '@/app/api/submissions/route';
 
 describe('US Market Safety & Reference Data Verification', () => {
@@ -96,5 +98,27 @@ describe('US Market Safety & Reference Data Verification', () => {
         expect(estimate.conservativeDate).not.toContain('2030');
       }
     }
+  });
+
+  it('computes National US Baseline fallback when selected US state (e.g. WY) has 0 matching submissions', () => {
+    const usSubmissions = INITIAL_US_COMMUNITY_RECORDS;
+    const wyResult = calculateWait({
+      market: 'US',
+      state: 'WY',
+      modelSlug: 'rav4',
+      powertrainSlug: 'hev',
+      submissions: usSubmissions,
+      todayDate: new Date('2026-02-01T00:00:00Z'),
+    });
+
+    expect(wyResult.isBaselineFallback).toBe(true);
+    expect(wyResult.isLimitedRegionalData).toBe(true);
+    expect(wyResult.fallbackBadgeText).toBe('National US Baseline · Limited regional data for WY');
+    expect(wyResult.p25Days).toBeGreaterThan(0);
+    expect(wyResult.p25Days).not.toBeNaN();
+    expect(wyResult.medianDays).toBeGreaterThanOrEqual(wyResult.p25Days);
+    expect(wyResult.p75Days).toBeGreaterThanOrEqual(wyResult.medianDays);
+    expect(wyResult.optimisticDate).toBeTruthy();
+    expect(wyResult.conservativeDate).toBeTruthy();
   });
 });

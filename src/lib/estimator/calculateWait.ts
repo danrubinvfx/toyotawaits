@@ -65,6 +65,22 @@ export const US_NATIONAL_BENCHMARKS: Record<
   sequoia: { min_days: 45, p25_days: 60, median_days: 90, p75_days: 135, sample_size: 10 },
 };
 
+function calculatePercentiles(sortedValues: number[]): { p25: number; median: number; p75: number } | null {
+  if (sortedValues.length === 0) return null;
+  const getPercentile = (p: number): number => {
+    const index = (sortedValues.length - 1) * p;
+    const lower = Math.floor(index);
+    const upper = Math.ceil(index);
+    const weight = index - lower;
+    return Math.round(sortedValues[lower] * (1 - weight) + sortedValues[upper] * weight);
+  };
+  return {
+    p25: getPercentile(0.25),
+    median: getPercentile(0.50),
+    p75: getPercentile(0.75),
+  };
+}
+
 export function calculateWait(options: CalculateWaitOptions): CalculateWaitResult {
   const modelSlug = (options.modelSlug || options.model || 'rav4').toLowerCase();
   const powertrainSlug = (options.powertrainSlug || options.powertrain || 'hev').toLowerCase();
@@ -121,15 +137,44 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
 
   // Check matching submissions if passed directly
   let matchingRegionalCount = 0;
+  const countryDeliveredDays: number[] = [];
+
   if (options.submissions && Array.isArray(options.submissions)) {
     const matchingVehicles = options.submissions.filter((s) => {
+      const isRecordUs = Boolean(
+        s.countryCode === 'US' ||
+          s.country_code === 'US' ||
+          (s as any).country === 'US' ||
+          (s.state && (US_STATES as readonly string[]).includes(s.state.toUpperCase()))
+      );
+      if (isUs && !isRecordUs) return false;
+      if (!isUs && isRecordUs) return false;
+
       const mMatch = s.modelSlug === modelSlug || s.model.toLowerCase() === modelSlug;
       const pMatch = !powertrainSlug || s.powertrainSlug === powertrainSlug;
       return mMatch && pMatch;
     });
+
     matchingRegionalCount = matchingVehicles.filter(
       (s) => (s.state || s.province)?.toUpperCase() === regionCode
     ).length;
+
+    for (const s of matchingVehicles) {
+      if (s.status === 'delivered') {
+        if (s.waitDays != null && Number.isFinite(Number(s.waitDays)) && Number(s.waitDays) > 0) {
+          countryDeliveredDays.push(Number(s.waitDays));
+        } else if (s.orderDate && s.deliveryDate) {
+          const diff = Math.round(
+            (new Date(s.deliveryDate).getTime() - new Date(s.orderDate).getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+          if (Number.isFinite(diff) && diff > 0) {
+            countryDeliveredDays.push(diff);
+          }
+        }
+      }
+    }
+    countryDeliveredDays.sort((a, b) => a - b);
   }
 
   // 1. Evaluate whether regional state data has 0 or low samples
@@ -157,10 +202,16 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
   let rawP75: number;
 
   if (isUs) {
-    if (!isZeroMatchingSubmissions && stats?.waitStats?.median) {
+    if (!isBaselineFallback && stats?.waitStats?.median) {
       rawMedian = stats.waitStats.median;
       rawP25 = stats.waitStats.p25;
       rawP75 = stats.waitStats.p75;
+    } else if (countryDeliveredDays.length > 0) {
+      // Compute fallback using country-level aggregate (country === 'US') for that model/powertrain
+      const countryStats = calculatePercentiles(countryDeliveredDays);
+      rawP25 = countryStats?.p25 || usBenchmark.p25_days;
+      rawMedian = countryStats?.median || usBenchmark.median_days;
+      rawP75 = countryStats?.p75 || usBenchmark.p75_days;
     } else if (stats?.waitStats?.median && stats.waitStats.median > 0) {
       // Fallback to national country-wide aggregate returned from API
       rawMedian = stats.waitStats.median;
@@ -187,12 +238,12 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
   }
 
   // Ensure percentiles are authentic and strictly bounded by model ceiling
-  let p75Days = Math.max(30, rawP75 || 90);
+  let p75Days = Math.max(30, rawP75 || (isUs ? usBenchmark.p75_days : 90));
   if (specificCeiling !== null) {
     p75Days = Math.min(specificCeiling, p75Days);
   }
-  const medianDays = Math.min(p75Days, Math.max(30, rawMedian || 65));
-  const p25Days = Math.min(medianDays, Math.max(30, rawP25 || 45));
+  const medianDays = Math.min(p75Days, Math.max(30, rawMedian || (isUs ? usBenchmark.median_days : 65)));
+  const p25Days = Math.min(medianDays, Math.max(30, rawP25 || (isUs ? usBenchmark.p25_days : 45)));
 
   // Months calculated safely (never 0)
   const medianMonths = (medianDays / 30.4).toFixed(1);
@@ -205,13 +256,15 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
 
   const verifiedSampleSize = isBaselineFallback
     ? isUs
-      ? usBenchmark.sample_size
+      ? countryDeliveredDays.length > 0
+        ? countryDeliveredDays.length
+        : usBenchmark.sample_size
       : currentBenchmark?.sample_size || 14
     : stats?.sampleCounts?.delivered || stats?.sampleCounts?.total || regionalCount || 10;
 
   const fallbackBadgeText = isLimitedRegionalData
     ? isUs
-      ? `National US baseline · Limited regional data for ${regionCode}`
+      ? `National US Baseline · Limited regional data for ${regionCode}`
       : `National baseline · Limited regional data for ${regionCode}`
     : null;
 

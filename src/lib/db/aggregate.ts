@@ -237,6 +237,8 @@ export async function getAggregateStats(
           current_stage,
           pricing,
           mandatory_addons_cad,
+          dealer_markup_adm,
+          adm_markup,
           created_at,
           vehicle_models!inner(name, slug),
           vehicle_powertrains!inner(name, slug),
@@ -284,7 +286,7 @@ export async function getAggregateStats(
         let resolvedTrimName: string | null = null;
 
         if (isBaselineFallback) {
-          trimNote = `National US baseline · Limited regional data for ${province}`;
+          trimNote = `National US Baseline · Limited regional data for ${province}`;
         }
 
         if (isTrimSelected && trimSlug) {
@@ -335,7 +337,7 @@ export async function getAggregateStats(
               isTrimFallback = false;
               if (isUs && province !== 'ALL') {
                 isBaselineFallback = true;
-                trimNote = `National US baseline · Limited regional data for ${province}`;
+                trimNote = `National US Baseline · Limited regional data for ${province}`;
               } else {
                 trimNote = `National baseline: Based on ${nationalDeliveredDays.length} deliveries for ${powertrainDisplayName} (limited ${province} data).`;
               }
@@ -352,7 +354,7 @@ export async function getAggregateStats(
             const usBench = US_NATIONAL_BENCHMARKS[modelSlug] || US_NATIONAL_BENCHMARKS.rav4;
             waitStats = calculatePercentiles([usBench.p25_days, usBench.median_days, usBench.p75_days]);
             isBaselineFallback = true;
-            trimNote = `National US baseline · Limited regional data for ${province}`;
+            trimNote = `National US Baseline · Limited regional data for ${province}`;
           } else {
             const fallback = resolveFallbackDataset(
               modelSlug,
@@ -375,7 +377,11 @@ export async function getAggregateStats(
           const pricingTotal = atMsrpCount + aboveMsrpCount || 1;
 
           const addonsValues = pricingPool
-            .map((r: any) => Number(r.mandatory_addons_cad || 0))
+            .map((r: any) =>
+              isUs
+                ? Number(r.dealer_markup_adm ?? r.adm_markup ?? r.mandatory_addons_cad ?? 0)
+                : Number(r.mandatory_addons_cad || 0)
+            )
             .filter((val: number) => val > 0);
           const avgAddonsCad =
             addonsValues.length > 0
@@ -460,7 +466,7 @@ export async function getAggregateStats(
       isBaselineFallback = false;
     } else {
       isBaselineFallback = true;
-      trimNote = `National US baseline · Limited regional data for ${province}`;
+      trimNote = `National US Baseline · Limited regional data for ${province}`;
       if (nationalDelivered.length > 0) {
         dataset = nationalDelivered;
       } else {
@@ -509,6 +515,32 @@ export async function getAggregateStats(
       : Math.round(delivered * 0.35);
   const total = delivered + pending;
 
+  let atMsrpPercent = 85;
+  let aboveMsrpPercent = 15;
+  let avgAddonsCad = 350.0;
+
+  if (isUs) {
+    const matchingUs = INITIAL_US_COMMUNITY_RECORDS.filter(
+      (r) => r.modelSlug === modelSlug && (!powertrainSlug || r.powertrainSlug === powertrainSlug)
+    );
+    const regionalUs =
+      province !== 'ALL'
+        ? matchingUs.filter((r) => (r.state || r.province)?.toUpperCase() === province)
+        : matchingUs;
+    const pool = regionalUs.length > 0 ? regionalUs : matchingUs;
+    if (pool.length > 0) {
+      const atMsrp = pool.filter((r) => r.pricing === 'at_msrp').length;
+      const aboveMsrp = pool.filter((r) => r.pricing === 'above_msrp').length;
+      const count = atMsrp + aboveMsrp || pool.length;
+      atMsrpPercent = Math.round((atMsrp / count) * 100);
+      aboveMsrpPercent = Math.round((aboveMsrp / count) * 100);
+      const markups = pool
+        .map((r) => Number(r.dealerMarkupAdm ?? r.dealer_markup_adm ?? r.addonsCad ?? 0))
+        .filter((v) => v > 0);
+      avgAddonsCad = markups.length > 0 ? Math.round(markups.reduce((a, b) => a + b, 0) / markups.length) : 0;
+    }
+  }
+
   return {
     modelSlug,
     modelName: modelSlug.replace('-', ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -528,9 +560,9 @@ export async function getAggregateStats(
     delivered_median_days: waitStats ? waitStats.median : null,
     waitStats,
     pricingInsights: {
-      atMsrpPercent: 85,
-      aboveMsrpPercent: 15,
-      avgAddonsCad: 350.0,
+      atMsrpPercent,
+      aboveMsrpPercent,
+      avgAddonsCad,
     },
     confidenceRating: isBaselineFallback ? 'low' : delivered >= 20 ? 'high' : delivered >= 8 ? 'medium' : 'low',
     latestSubmissionAt: new Date().toISOString(),

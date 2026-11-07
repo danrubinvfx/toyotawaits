@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { CommunityDataTable } from '@/components/dashboard/community-data-table';
+import { MarketProvider } from '@/context/MarketContext';
 
 describe('CommunityDataTable Component', () => {
   it('renders table headers and initial crowd submissions', () => {
@@ -241,6 +242,70 @@ describe('CommunityDataTable Component', () => {
     // CSV link should reflect powertrain=gas
     const downloadLink = screen.getByText('Download Filtered CSV').closest('a');
     expect(downloadLink).toHaveAttribute('href', expect.stringContaining('powertrain=gas'));
+  });
+
+  it('renders clean 2-letter state codes and USD / ADM pricing terms when market is US', () => {
+    const usRecords = [
+      {
+        id: 'us-rec-1',
+        model: 'RAV4',
+        modelSlug: 'rav4',
+        powertrain: 'Plug-in Hybrid (PHEV)',
+        powertrainSlug: 'phev',
+        trim: 'SE AWD',
+        modelYear: 2026,
+        countryCode: 'US' as const,
+        country_code: 'US' as const,
+        province: 'WA',
+        state: 'WA',
+        city: 'Seattle',
+        orderDate: '2025-12-10',
+        deliveryDate: '2026-02-08',
+        waitDays: 60,
+        status: 'delivered' as const,
+        stage: 'delivered' as const,
+        pricing: 'at_msrp' as const,
+        addonsCad: 0,
+        dealerMarkupAdm: 0,
+      },
+      {
+        id: 'us-rec-2',
+        model: 'RAV4',
+        modelSlug: 'rav4',
+        powertrain: 'Plug-in Hybrid (PHEV)',
+        powertrainSlug: 'phev',
+        trim: 'XSE AWD',
+        modelYear: 2026,
+        countryCode: 'US' as const,
+        country_code: 'US' as const,
+        province: 'CA',
+        state: 'CA',
+        city: 'Los Angeles',
+        orderDate: '2026-01-05',
+        deliveryDate: null,
+        waitDays: null,
+        status: 'pending' as const,
+        stage: 'allocation_confirmed' as const,
+        pricing: 'above_msrp' as const,
+        addonsCad: 0,
+        dealerMarkupAdm: 2500,
+      },
+    ];
+
+    render(
+      <MarketProvider initialMarket="US">
+        <CommunityDataTable initialRecords={usRecords} />
+      </MarketProvider>
+    );
+
+    // Verify 2-letter state codes are rendered cleanly
+    expect(screen.getByText('WA')).toBeInTheDocument();
+    expect(screen.getByText('CA')).toBeInTheDocument();
+
+    // Verify USD / ADM pricing terms
+    expect(screen.getByText('Exact MSRP')).toBeInTheDocument();
+    expect(screen.getByText('Dealer Markup (ADM)')).toBeInTheDocument();
+    expect(screen.getByText('+$2,500 USD ADM')).toBeInTheDocument();
   });
 });
 

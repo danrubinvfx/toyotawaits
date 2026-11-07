@@ -120,4 +120,23 @@ describe('GET /api/aggregate', () => {
     expect(json.success).toBe(false);
     expect(json.error.code).toBe('MODEL_NOT_TRACKED');
   });
+
+  it('returns National US Baseline fallback when unseeded US state is queried', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/aggregate?model=rav4&powertrain=hev&state=WY&country_code=US'
+    );
+    const response = await GET(request);
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json.success).toBe(true);
+    expect(json.data.modelSlug).toBe('rav4');
+    expect(json.data.powertrainSlug).toBe('hev');
+    expect(json.data.state).toBe('WY');
+    expect(json.data.isBaselineFallback).toBe(true);
+    expect(json.data.trimNote).toBe('National US Baseline · Limited regional data for WY');
+    expect(json.data.waitStats.median).toBeGreaterThan(0);
+    expect(json.data.pricingInsights).toBeDefined();
+    expect(json.data.pricingInsights.atMsrpPercent).toBeDefined();
+  });
 });

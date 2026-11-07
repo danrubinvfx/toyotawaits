@@ -537,7 +537,9 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
 
                     {/* Geography */}
                     <td className="py-3 px-3 sm:px-4">
-                      <span className="font-semibold text-zinc-900 dark:text-zinc-100">{r.province || (r as any).state}</span>
+                      <span className="font-semibold text-zinc-900 dark:text-zinc-100">
+                        {((market === 'US' ? (r.state || r.province) : (r.province || (r as any).state)) || '').toUpperCase()}
+                      </span>
                       {r.city && <span className="text-zinc-400 text-xs block">{r.city}</span>}
                     </td>
 
@@ -599,11 +601,16 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                         </span>
                       ) : r.pricing === 'above_msrp' ? (
                         <div className="space-y-0.5">
-                          <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 block" title="The Carny Hustle (Mandatory Add-ons)">
-                            The Carny Hustle
+                          <span
+                            className="text-[11px] font-bold text-rose-600 dark:text-rose-400 block"
+                            title={market === 'US' ? 'Dealer Markup (ADM)' : 'The Carny Hustle (Mandatory Add-ons)'}
+                          >
+                            {market === 'US' ? 'Dealer Markup (ADM)' : 'The Carny Hustle'}
                           </span>
                           <span className="text-[10px] text-zinc-400 block">
-                            +${r.addonsCad} Add-ons
+                            {market === 'US'
+                              ? `+$${Number(r.dealerMarkupAdm ?? r.dealer_markup_adm ?? r.addonsCad ?? 0).toLocaleString()} USD ADM`
+                              : `+$${r.addonsCad} Add-ons`}
                           </span>
                         </div>
                       ) : (

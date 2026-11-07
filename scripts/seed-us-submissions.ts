@@ -289,14 +289,14 @@ export const US_BENCHMARK_SEED_RECORDS: USSeedRecord[] = [
     city: 'San Jose',
     dealerName: 'Capitol Toyota',
     orderDate: '2025-08-15',
-    deliveryDate: '2026-02-11',
-    waitDays: 180,
+    deliveryDate: '2026-01-12',
+    waitDays: 150,
     status: 'delivered',
     stage: 'delivered',
     pricing: 'above_msrp',
     pricingType: 'markup',
     admMarkup: 2500,
-    notes: 'Platinum trim high demand, 6 months wait, $2,500 ADM.',
+    notes: 'Platinum trim high demand, 150-day turnaround, $2,500 ADM.',
     portDestination: 'Benicia, CA',
   },
   {
@@ -499,14 +499,14 @@ export const US_BENCHMARK_SEED_RECORDS: USSeedRecord[] = [
     city: 'San Diego',
     dealerName: 'Toyota of El Cajon',
     orderDate: '2025-09-20',
-    deliveryDate: '2026-03-09',
-    waitDays: 170,
+    deliveryDate: '2026-02-17',
+    waitDays: 150,
     status: 'delivered',
     stage: 'delivered',
     pricing: 'above_msrp',
     pricingType: 'markup',
     admMarkup: 2500,
-    notes: 'Hybrid MAX Platinum with $2,500 ADM. 170 days turnaround.',
+    notes: 'Hybrid MAX Platinum with $2,500 ADM. 150 days turnaround.',
     portDestination: 'Long Beach, CA',
   },
   {
@@ -631,14 +631,14 @@ export const US_BENCHMARK_SEED_RECORDS: USSeedRecord[] = [
     city: 'San Francisco',
     dealerName: 'San Francisco Toyota',
     orderDate: '2026-01-02',
-    deliveryDate: '2026-02-16',
-    waitDays: 45,
+    deliveryDate: '2026-02-01',
+    waitDays: 30,
     status: 'delivered',
     stage: 'delivered',
     pricing: 'at_msrp',
     pricingType: 'at_msrp',
     admMarkup: 0,
-    notes: '45 days from order to delivery at MSRP.',
+    notes: '30 days from order to delivery at MSRP.',
     portDestination: 'Benicia, CA',
   },
   {
@@ -982,6 +982,10 @@ export async function runUSSeed() {
   const deliveredCount = US_BENCHMARK_SEED_RECORDS.filter((r) => r.status === 'delivered').length;
   const allocatedCount = US_BENCHMARK_SEED_RECORDS.filter((r) => r.status === 'pending').length;
 
+  const waitDaysList = US_BENCHMARK_SEED_RECORDS.map((r) => r.waitDays).filter((d): d is number => d !== null);
+  const minWait = waitDaysList.length > 0 ? Math.min(...waitDaysList) : 30;
+  const maxWait = waitDaysList.length > 0 ? Math.max(...waitDaysList) : 150;
+
   console.log('='.repeat(70));
   console.log('📊 US BENCHMARK SEED SUMMARY:');
   console.log(`   Total Prepared:   ${US_BENCHMARK_SEED_RECORDS.length} records`);
@@ -990,7 +994,7 @@ export async function runUSSeed() {
   console.log(`   Allocated/Queue:  ${allocatedCount} records`);
   console.log('   States Covered:   CA, TX, FL, WA, NY, CO, IL');
   console.log('   Pricing Spreads:  MSRP ($0), +$1,000 ADM, +$2,500 ADM');
-  console.log('   Wait Durations:   45 – 180 days');
+  console.log(`   Wait Durations:   ${minWait} – ${maxWait} days`);
   if (errors.length > 0) {
     console.log(`   Warnings:         ${errors.length}`);
     errors.forEach((e) => console.log(`     - ${e}`));

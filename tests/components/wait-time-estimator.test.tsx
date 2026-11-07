@@ -1034,5 +1034,56 @@ describe('WaitTimeEstimator Component', () => {
       expect(screen.queryByTestId('estimator-inventory-zero-callout')).not.toBeInTheDocument();
     });
   });
+
+  it('renders National US Baseline badge with valid estimates and USD / ADM pricing when unseeded US state (WY) is selected', async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (typeof url === 'string' && url.includes('/api/stats')) {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ success: true, data: {} }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            modelSlug: 'rav4',
+            modelName: 'RAV4',
+            powertrainSlug: 'hev',
+            province: 'WY',
+            state: 'WY',
+            isBaselineFallback: true,
+            sampleCounts: { total: 0, delivered: 0, pending: 0 },
+            waitStats: { p25: 45, median: 65, p75: 90, mean: 67, min: 30, max: 110 },
+            pricingInsights: { atMsrpPercent: 80, aboveMsrpPercent: 20, avgAddonsCad: 1000 },
+          },
+        }),
+      });
+    });
+    window.fetch = fetchMock as any;
+    global.fetch = fetchMock as any;
+
+    render(
+      <MarketProvider initialMarket="US">
+        <WaitTimeEstimator initialModel="rav4" initialPowertrain="hev" initialProvince="WY" />
+      </MarketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('regional-baseline-badge')).toBeInTheDocument();
+      expect(
+        screen.getByText(/National US Baseline · Limited regional data for WY/i)
+      ).toBeInTheDocument();
+      // Wait window shows valid national range, never 0 or NaN
+      expect(screen.getAllByText(/45 Days/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/65 Days/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/90 Days/i).length).toBeGreaterThanOrEqual(1);
+      // Retains US-specific pricing labels in USD
+      expect(screen.getByText(/80%/i)).toBeInTheDocument();
+      expect(screen.getByText(/paid exact MSRP/i)).toBeInTheDocument();
+      expect(screen.getByText(/Avg ADM: \$1,000 USD/i)).toBeInTheDocument();
+    });
+  });
 });
 

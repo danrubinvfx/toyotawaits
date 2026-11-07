@@ -409,15 +409,20 @@ export function WaitTimeEstimator({
   // True percentiles: strictly clamped by model-specific ceilings
   const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
   const empiricalMax = stats?.waitStats?.max ?? fallbackBenchmark?.max_days ?? 999;
-  let p75Days = isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax);
+  let computedP75 = isLimitedRegionalData ? rawP75 : Math.min(rawP75, empiricalMax);
   if (specificCeiling !== null) {
-    p75Days = Math.min(specificCeiling, p75Days);
+    computedP75 = Math.min(specificCeiling, computedP75);
   }
-  const medianDays = Math.min(
+  const computedMedian = Math.min(
     isLimitedRegionalData ? rawMedian : Math.min(rawMedian, empiricalMax),
-    p75Days
+    computedP75
   );
-  const p25Days = Math.min(rawP25, medianDays);
+  const computedP25 = Math.min(rawP25, computedMedian);
+
+  // Guarantee valid range (e.g. 45–90 days for US), never 0 or NaN
+  const p75Days = Math.max(30, computedP75 || (isUs ? usBenchmark.p75_days : 90));
+  const medianDays = Math.min(p75Days, Math.max(30, computedMedian || (isUs ? usBenchmark.median_days : 65)));
+  const p25Days = Math.min(medianDays, Math.max(30, computedP25 || (isUs ? usBenchmark.p25_days : 45)));
 
   const verifiedSampleSize = isBaselineFallback
     ? (isUs ? usBenchmark.sample_size : (fallbackBenchmark?.sample_size ?? 10))
@@ -449,7 +454,7 @@ export function WaitTimeEstimator({
       : currentModel.powertrains.map((p) => p.name.split(' ')[0]).join(' & ');
 
   const regionalFallbackNotice = isUs
-    ? `National US baseline: Based on reference deliveries across all US regions (limited regional data for ${province}).`
+    ? `National US Baseline: Based on reference deliveries across all US regions (limited regional data for ${province}).`
     : isPooledAllPowertrains || !isPowertrainSampleSufficient || modelSlug === 'rav4'
     ? `National baseline: Based on ${verifiedSampleSize} deliveries across all ${currentModel.name} powertrains (${modelPowertrainNamesSummary}).`
     : `National baseline: Based on ${verifiedSampleSize} deliveries for ${currentModel.name} ${currentPowertrain.name} (limited regional data in ${province}).`;
@@ -864,7 +869,7 @@ export function WaitTimeEstimator({
                     data-testid="regional-baseline-badge"
                     className="border-amber-500/30 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] sm:text-[11px] font-semibold"
                   >
-                    {isUs ? 'National US baseline' : 'National baseline'} · Limited regional data for {province}
+                    {isUs ? 'National US Baseline' : 'National baseline'} · Limited regional data for {province}
                   </Badge>
                 )}
               </div>
@@ -1141,7 +1146,15 @@ export function WaitTimeEstimator({
                     <div className="flex items-center gap-1.5 text-neutral-300">
                       <TrendingUp className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
                       <span>
-                        Avg Add-ons: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} CAD
+                        {isUs ? (
+                          <>
+                            Avg ADM: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} USD
+                          </>
+                        ) : (
+                          <>
+                            Avg Add-ons: ${Number(stats.pricingInsights.avgAddonsCad.toFixed(0)).toLocaleString()} CAD
+                          </>
+                        )}
                       </span>
                     </div>
                   </div>
