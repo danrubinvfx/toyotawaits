@@ -147,4 +147,55 @@ describe('ModelFAQSection Component', () => {
     const json = JSON.parse(script!.textContent || '{}');
     expect(json.mainEntity.length).toBe(4);
   });
+
+  it('renders US-specific canonical questions and schema when market is US', () => {
+    const { container } = render(<ModelFAQSection faqData={mockFaqData} market="US" />);
+
+    // Check heading
+    expect(
+      screen.getByText('Frequently Asked Questions: Toyota RAV4 Wait Times')
+    ).toBeInTheDocument();
+
+    // 1. Wait time in US
+    expect(
+      screen.getByText('How long is the wait for a Toyota RAV4 in the United States?')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Wait times for a Toyota RAV4 in the United States typically range from 30 to 90 days/i)
+    ).toBeInTheDocument();
+
+    // 2. Markups (ADM)
+    expect(
+      screen.getByText('Are US dealers adding markups to the Toyota RAV4?')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/many US dealerships add Additional Dealer Markup \(ADM\)/i)
+    ).toBeInTheDocument();
+
+    // 3. Allocation system
+    expect(
+      screen.getByText('How does the Toyota allocation system work in the US?')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Toyota Motor North America \(TMNA\) and regional independent distributors/i)
+    ).toBeInTheDocument();
+
+    // 4. Refundable deposits
+    expect(
+      screen.getByText('Are vehicle waitlist deposits refundable in the United States?')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/In states like California, dealer deposits on unsigned purchase agreements are generally fully refundable/i)
+    ).toBeInTheDocument();
+
+    // Check JSON-LD Schema
+    const script = container.querySelector('script[type="application/ld+json"]');
+    expect(script).not.toBeNull();
+    const json = JSON.parse(script!.textContent || '{}');
+    expect(json['@type']).toBe('FAQPage');
+    expect(json.mainEntity[0].name).toBe('How long is the wait for a Toyota RAV4 in the United States?');
+    expect(json.mainEntity[1].name).toBe('Are US dealers adding markups to the Toyota RAV4?');
+    expect(json.mainEntity[2].name).toBe('How does the Toyota allocation system work in the US?');
+    expect(json.mainEntity[3].name).toBe('Are vehicle waitlist deposits refundable in the United States?');
+  });
 });

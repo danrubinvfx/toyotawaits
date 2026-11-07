@@ -1,5 +1,8 @@
+'use client';
+
 import React from 'react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
+import { useMarket } from '@/context/MarketContext';
 
 export interface ModelFAQProvince {
   name: string;
@@ -31,14 +34,19 @@ export interface ModelFAQData {
   powertrainBreakdown?: ModelFAQPowertrainItem[] | string;
   totalReports?: number;
   additionalFaqs?: ModelFAQItem[];
+  market?: 'US' | 'CA';
 }
 
 export interface ModelFAQSectionProps {
   faqData: ModelFAQData;
   className?: string;
+  market?: 'US' | 'CA';
 }
 
-export function ModelFAQSection({ faqData, className = '' }: ModelFAQSectionProps) {
+export function ModelFAQSection({ faqData, className = '', market }: ModelFAQSectionProps) {
+  const { market: contextMarket } = useMarket();
+  const activeMarket = market || faqData.market || contextMarket || 'CA';
+
   const {
     modelName,
     overallMedianMonths,
@@ -89,8 +97,8 @@ export function ModelFAQSection({ faqData, className = '' }: ModelFAQSectionProp
     ptSummary = ` ${powertrainBreakdown.trim()}`;
   }
 
-  // 4 Canonical Canadian Automotive Questions
-  const canonicalFaqs: ModelFAQItem[] = [
+  // Canonical Canadian Automotive Questions
+  const caFaqs: ModelFAQItem[] = [
     {
       question: `What is the average wait time for a ${canonicalModelName} in Canada?`,
       answer: `The Canadian national median wait time for a ${canonicalModelName} is approximately ${overallMedianMonths} months${reportsText}.${ptSummary} Delivery timelines vary based on powertrain choice (gas vs. hybrid vs. plug-in hybrid), package options, and dealership queue volume.`,
@@ -109,13 +117,38 @@ export function ModelFAQSection({ faqData, className = '' }: ModelFAQSectionProp
     },
   ];
 
+  // Canonical US Automotive Questions
+  const usFaqs: ModelFAQItem[] = [
+    {
+      question: `How long is the wait for a ${canonicalModelName} in the United States?`,
+      answer: `Wait times for a ${canonicalModelName} in the United States typically range from 30 to 90 days once an allocation is assigned and built, though high-demand trims and electrified variants (hybrid and plug-in hybrid) can face dealer waitlists of 3 to 9+ months. Unlike build-to-order systems, Toyota Motor North America (TMNA) and regional private distributors distribute vehicles via semi-monthly dealer allocations based on dealer sales velocity and regional market quotas.`,
+    },
+    {
+      question: `Are US dealers adding markups to the ${canonicalModelName}?`,
+      answer: `Yes, depending on regional supply and distributor allocation, many US dealerships add Additional Dealer Markup (ADM) or mandatory dealer accessory packages above MSRP on the ${canonicalModelName}. Unlike Canada where provincial regulations enforce all-in advertised pricing, independent US franchised dealerships are legally free to set their own transaction prices. ToyotaWaits tracks crowdsourced dealer pricing deltas ($0, +$1,000, +$3,000+) so American buyers can identify fair-price dealerships without ADM.`,
+    },
+    {
+      question: `How does the Toyota allocation system work in the US?`,
+      answer: `Toyota Motor North America (TMNA) and regional independent distributors (such as Southeast Toyota and Gulf States Toyota) distribute vehicles twice monthly via dealer allocations rather than true factory orders. Dealerships receive batches of build slots that are matched to buyers in their reservation queue based on requested trim, color, and option packages. Once allocated, transit from assembly or port typically takes 30 to 90 days.`,
+    },
+    {
+      question: `Are vehicle waitlist deposits refundable in the United States?`,
+      answer: `Deposit refundability in the United States varies by state motor vehicle franchise laws and dealer agreements. In states like California, dealer deposits on unsigned purchase agreements are generally fully refundable by law prior to VIN assignment. Always insist on a signed deposit receipt specifying full refundability upon request before placing a hold.`,
+    },
+  ];
+
+  const canonicalFaqs = activeMarket === 'US' ? usFaqs : caFaqs;
+
   // Merge canonical FAQs with any additional modelConfig FAQs, avoiding duplicate questions
   const filteredAdditional = additionalFaqs.filter((faq) => {
     const qLower = faq.question.toLowerCase();
     return (
       !qLower.includes('average wait time') &&
       !qLower.includes('shortest wait time') &&
+      !qLower.includes('how long is the wait') &&
+      !qLower.includes('adding markups') &&
       !qLower.includes('custom factory order') &&
+      !qLower.includes('allocation system work') &&
       !qLower.includes('deposit refundable')
     );
   });

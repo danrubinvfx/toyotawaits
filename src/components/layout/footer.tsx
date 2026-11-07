@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Shield, Lock, Heart, Globe, Scale, Mail } from 'lucide-react';
+import { Shield, Lock, Heart, Globe, Scale, Mail, HelpCircle } from 'lucide-react';
 import { KofiCalloutCard } from '@/components/common/kofi-button';
 import { ModelDirectory } from '@/components/ModelDirectory';
 import { cn } from '@/lib/utils';
@@ -249,6 +249,17 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                   Toyota Level 2 EV &amp; PHEV Charging
                 </Link>
               </li>
+              <li className="pt-2">
+                <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider block mb-1">
+                  Transparency &amp; About
+                </span>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/faq`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors">
+                  <HelpCircle className="h-3.5 w-3.5 text-zinc-400" />
+                  FAQ &amp; Pricing Guide
+                </Link>
+              </li>
               <li>
                 <Link href={`${baseUrl}/privacy`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors pt-1">
                   <Shield className="h-3.5 w-3.5 text-zinc-400" />
@@ -331,6 +342,13 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
               className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
             >
               Legal
+            </Link>
+            <span className="text-zinc-300 dark:text-zinc-700">•</span>
+            <Link
+              href={`${baseUrl}/faq`}
+              className="text-slate-300 hover:text-white dark:text-zinc-300 transition-colors"
+            >
+              FAQ &amp; Pricing Guide
             </Link>
             <span className="text-zinc-300 dark:text-zinc-700">•</span>
             <a

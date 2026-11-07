@@ -41,6 +41,7 @@ const STATIC_NAVIGATION_ROUTES = [
   '/submit',
   '/privacy',
   '/legal',
+  '/faq',
   '/api/export',
 ];
 

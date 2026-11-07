@@ -88,6 +88,14 @@ describe('Footer Component', () => {
   it('renders official community contact channel and mailto link alongside Privacy and Sitemap', () => {
     render(<Footer />);
 
+    // FAQ & Pricing Guide link
+    const faqLinks = screen.getAllByRole('link', { name: /FAQ & Pricing Guide/i });
+    expect(faqLinks.length).toBeGreaterThanOrEqual(1);
+    expect(faqLinks[0]).toHaveAttribute('href', 'https://www.toyotawaits.ca/faq');
+
+    // Transparency & About section heading
+    expect(screen.getByText('Transparency & About')).toBeInTheDocument();
+
     // Privacy link
     const privacyLinks = screen.getAllByRole('link', { name: /^privacy/i });
     expect(privacyLinks.length).toBeGreaterThanOrEqual(1);
