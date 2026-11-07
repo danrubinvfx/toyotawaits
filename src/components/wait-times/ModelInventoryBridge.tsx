@@ -36,8 +36,8 @@ export function ModelInventoryBridge({
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1 sm:space-y-1.5 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-400">
-              <Zap className="h-4 w-4 fill-amber-400" aria-hidden="true" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-300">
+              <Zap className="h-4 w-4 fill-amber-300" aria-hidden="true" />
               <span>⚡ Skip the wait?</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-medium">
@@ -64,7 +64,7 @@ export function ModelInventoryBridge({
               data-testid="bridge-alert-button"
               className="border-zinc-700 hover:border-zinc-500 bg-zinc-800/80 hover:bg-zinc-800 text-zinc-200 font-semibold text-xs sm:text-sm h-10 px-3.5 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
             >
-              <Bell className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />
+              <Bell className="h-3.5 w-3.5 text-amber-300" aria-hidden="true" />
               <span>Set Drop Alert</span>
             </Button>
           </div>

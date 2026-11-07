@@ -45,7 +45,7 @@ function RecommendedGearModule({
   const buttonLabel = getAffiliateButtonLabel(targetUrl);
 
   const badgeColors = {
-    amber: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
+    amber: 'border-amber-800/50 text-amber-300 bg-amber-950/40',
     emerald: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
     cyan: 'border-cyan-500/40 text-cyan-400 bg-cyan-500/10',
   };
@@ -153,14 +153,14 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
               <div className="flex items-center justify-between">
                 <Badge
                   variant="outline"
-                  className="border-amber-500/30 text-amber-400 bg-amber-500/10 text-[10px] font-bold"
+                  className="border-amber-800/50 text-amber-300 bg-amber-950/40 text-[10px] font-bold"
                 >
                   Cold-Start Protocol
                 </Badge>
-                <BatteryCharging className="h-4 w-4 text-amber-400" />
+                <BatteryCharging className="h-4 w-4 text-amber-300" />
               </div>
               <CardTitle className="text-sm font-bold text-zinc-100 flex items-center gap-1.5">
-                <Zap className="h-4 w-4 text-amber-400 shrink-0" />
+                <Zap className="h-4 w-4 text-amber-300 shrink-0" />
                 {batteryTopic.title}
               </CardTitle>
             </CardHeader>
@@ -178,7 +178,7 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
 
               {/* Jump Point Terminal Callout */}
               <div className="bg-zinc-950/70 p-2.5 rounded-lg border border-amber-500/20">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1 mb-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 flex items-center gap-1 mb-0.5">
                   <Zap className="h-3 w-3" />
                   Jump Terminal Callout
                 </span>
@@ -189,7 +189,7 @@ export function WinterGuide({ modelKey = 'rav4', className }: WinterGuideProps) 
 
               {/* Cold Weather Tip / Relay Draining Context */}
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-lg p-2.5 text-zinc-300">
-                <div className="flex items-center gap-1 text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-1">
+                <div className="flex items-center gap-1 text-[10px] font-bold text-amber-300 uppercase tracking-wider mb-1">
                   <AlertTriangle className="h-3 w-3 shrink-0" />
                   <span>Sub-Zero Starter Relay Note</span>
                 </div>

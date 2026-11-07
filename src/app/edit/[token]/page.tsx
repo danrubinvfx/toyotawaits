@@ -364,7 +364,7 @@ export default function EditSubmissionPage({ params }: EditPageProps) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Car className="h-5 w-5 text-amber-500" />
-              <CardTitle className="text-lg font-bold text-zinc-950 dark:text-zinc-50">
+              <CardTitle as="h2" className="text-lg font-bold text-zinc-950 dark:text-zinc-50">
                 {submission?.modelYear} Toyota {submission?.model}
               </CardTitle>
             </div>

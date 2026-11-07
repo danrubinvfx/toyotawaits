@@ -20,10 +20,10 @@ describe('Header Component', () => {
     expect(screen.getByText(/ToyotaWaits/i)).toBeInTheDocument();
     expect(screen.getByText(/🇨🇦 Canada/i)).toBeInTheDocument();
 
-    // Estimator direct nav link
-    const estimatorDesktop = screen.getByRole('link', { name: /Estimator/i });
-    expect(estimatorDesktop).toBeInTheDocument();
-    expect(estimatorDesktop).toHaveAttribute('href', '/#estimator');
+    // Wait Times direct nav link
+    const waitTimesDesktop = screen.getByRole('link', { name: /Wait Times/i });
+    expect(waitTimesDesktop).toBeInTheDocument();
+    expect(waitTimesDesktop).toHaveAttribute('href', '/#estimator');
 
     // Guides & Tools dropdown buttons
     const guidesButton = screen.getByRole('button', { name: /Guides/i });
@@ -31,21 +31,37 @@ describe('Header Component', () => {
     const toolsButton = screen.getByRole('button', { name: /Tools/i });
     expect(toolsButton).toBeInTheDocument();
 
-    // Opening Guides dropdown reveals Winter Prep, Mod Guides, Gear
+    // Opening Guides dropdown reveals Hitch, Warranty, Tires, Winter Prep, Delivery Prep
     fireEvent.click(guidesButton);
-    const winterPrepDesktop = screen.getByRole('link', { name: /Winter Prep ❄️/i });
-    expect(winterPrepDesktop).toBeInTheDocument();
-    expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
+    const hitchDesktop = screen.getByRole('link', { name: /Trailer Hitch Guide/i });
+    expect(hitchDesktop).toBeInTheDocument();
+    expect(hitchDesktop).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
 
-    // Opening Tools dropdown reveals Tires and Pickup Checklist
-    fireEvent.click(toolsButton);
+    const warrantyDesktop = screen.getByRole('link', { name: /ECP Warranty Guide/i });
+    expect(warrantyDesktop).toBeInTheDocument();
+    expect(warrantyDesktop).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
+
     const tiresDesktop = screen.getByRole('link', { name: /Tire Finder & Sizing/i });
     expect(tiresDesktop).toBeInTheDocument();
     expect(tiresDesktop).toHaveAttribute('href', '/tires');
 
-    const pickupDesktop = screen.getByRole('link', { name: /Pickup Checklist/i });
+    const winterPrepDesktop = screen.getByRole('link', { name: /Winter Prep ❄️/i });
+    expect(winterPrepDesktop).toBeInTheDocument();
+    expect(winterPrepDesktop).toHaveAttribute('href', '/winter-prep');
+
+    const pickupDesktop = screen.getByRole('link', { name: /Delivery Pickup Checklist/i });
     expect(pickupDesktop).toBeInTheDocument();
     expect(pickupDesktop).toHaveAttribute('href', '/delivery-prep');
+
+    // Opening Tools dropdown reveals Calculator, Inventory, Quote Auditor
+    fireEvent.click(toolsButton);
+    const calcDesktop = screen.getByRole('link', { name: /Savings & Payback Calculator/i });
+    expect(calcDesktop).toBeInTheDocument();
+    expect(calcDesktop).toHaveAttribute('href', '/calculator');
+
+    const inventoryDesktop = screen.getByRole('link', { name: /Live Inventory Tracker/i });
+    expect(inventoryDesktop).toBeInTheDocument();
+    expect(inventoryDesktop).toHaveAttribute('href', '/inventory');
 
     const quoteAuditorDesktop = screen.getByRole('link', { name: /Quote Auditor & Fee De-Bunker/i });
     expect(quoteAuditorDesktop).toBeInTheDocument();
@@ -177,10 +193,10 @@ describe('Header Component', () => {
   it('renders Pickup Checklist link pointing to /delivery-prep', () => {
     render(<Header />);
 
-    const toolsButton = screen.getByRole('button', { name: /Tools/i });
-    fireEvent.click(toolsButton);
+    const guidesButton = screen.getByRole('button', { name: /Guides/i });
+    fireEvent.click(guidesButton);
 
-    const pickupLink = screen.getByRole('link', { name: /Pickup Checklist/i });
+    const pickupLink = screen.getByRole('link', { name: /Delivery Pickup Checklist/i });
     expect(pickupLink).toBeInTheDocument();
     expect(pickupLink).toHaveAttribute('href', '/delivery-prep');
   });
@@ -272,6 +288,9 @@ describe('Header Component', () => {
 
   it('renders Live Inventory navigation item in desktop nav and mobile drawer', () => {
     render(<Header />);
+
+    const toolsButton = screen.getByRole('button', { name: /Tools/i });
+    fireEvent.click(toolsButton);
 
     const desktopInventoryLink = screen.getByTestId('desktop-nav-inventory');
     expect(desktopInventoryLink).toBeInTheDocument();

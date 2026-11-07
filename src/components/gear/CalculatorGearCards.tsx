@@ -109,7 +109,7 @@ const UNIVERSAL_FALLBACKS: VettedProduct[] = [
     buttonText: 'View Digital Inflator',
     icon: Gauge,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
   {
     id: 'universal-wireless-carplay',
@@ -211,7 +211,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
 ];
 
@@ -257,7 +257,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
   {
     id: 'sienna-seatback-kick-guards',
@@ -379,7 +379,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     buttonText: 'Get 2% Off on Muslogy ↗',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
 ];
 
@@ -420,7 +420,7 @@ const CAMRY_PRODUCTS: VettedProduct[] = [
     buttonText: 'View Console Tray',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
   {
     id: 'camry-floor-mats',
@@ -499,7 +499,7 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
     buttonText: 'View Console Tray',
     icon: Box,
     iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-    iconColor: 'text-amber-600 dark:text-amber-400',
+    iconColor: 'text-amber-700 dark:text-amber-300',
   },
   {
     id: 'prius-floor-liners',
@@ -557,7 +557,7 @@ const PHEV_EVSE_CHARGER: VettedProduct = {
   buttonText: 'View Home EVSE',
   icon: Zap,
   iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
-  iconColor: 'text-amber-600 dark:text-amber-400',
+  iconColor: 'text-amber-700 dark:text-amber-300',
 };
 
 const MODEL_CATALOG: Record<string, VettedProduct[]> = {
@@ -782,7 +782,7 @@ export function CalculatorGearCards({
                     variant="outline"
                     className={
                       prod.destinationType === 'direct_partner'
-                        ? "text-[10px] font-bold border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                        ? "text-[10px] font-bold border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300"
                         : "text-[10px] font-medium border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400"
                     }
                   >
@@ -813,7 +813,7 @@ export function CalculatorGearCards({
 
                   {/* Muslogy Partner 2% Discount Pill & One-Tap Copy */}
                   {prod.destinationType === 'direct_partner' && (
-                    <div className="flex items-center justify-between gap-1.5 px-2 py-1 mt-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[11px] font-bold">
+                    <div className="flex items-center justify-between gap-1.5 px-2 py-1 mt-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-[11px] font-bold">
                       <span className="tracking-tight">
                         CODE: <span className="underline decoration-amber-500/60 font-mono">{prod.discountCode || 'Toyotawaits'}</span> (2% OFF)
                       </span>
@@ -863,7 +863,7 @@ export function CalculatorGearCards({
                     className={cn(
                       "w-full h-8 min-h-[32px] text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer",
                       prod.destinationType === 'direct_partner'
-                        ? "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 font-bold"
+                        ? "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 font-bold"
                         : "border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
                     )}
                   >

@@ -127,9 +127,9 @@ export default async function ModelPage({ params }: RouteProps) {
                 <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
                   Sienna Accessory Guide
                 </Badge>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                   Planning Bike Racks or Towing?
-                </h3>
+                </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   Waiting on your delivery? Read our 2021+ Toyota Sienna Trailer Hitch &amp; Kick-Sensor Guide to pick the right receiver and wiring before taking delivery.
                 </p>
@@ -199,9 +199,9 @@ export default async function ModelPage({ params }: RouteProps) {
                 <Calculator className="w-3.5 h-3.5" />
                 <span>Fuel Savings &amp; Payback Calculator</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+              <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                 Weighing Gas vs. Hybrid? Calculate your fuel break-even and the energy cost of waiting.
-              </h3>
+              </h2>
               <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 Compare actual annual fuel costs and see how long it takes for {model.name} Hybrid fuel savings to pay back the purchase premium, including historical Canadian wait times.
               </p>

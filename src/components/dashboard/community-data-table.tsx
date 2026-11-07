@@ -246,7 +246,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
             <CardDescription className="text-xs sm:text-sm">
               Real-world Canadian order records submitted by verified buyers. Open for auditing.
             </CardDescription>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 flex items-center gap-1.5" data-testid="verification-duplicate-caption">
+            <p className="text-[11px] text-zinc-400 dark:text-zinc-400 mt-1 flex items-center gap-1.5" data-testid="verification-duplicate-caption">
               <Info className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
               <span>Entries are reviewed against standard dealer sheet patterns. Similar configurations ordered around the same allocation cycle represent distinct buyer queue positions.</span>
             </p>
@@ -370,7 +370,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
             </button>
           </div>
 
-          <span className="text-xs text-zinc-500 font-medium">
+          <span className="text-xs text-zinc-400 font-medium">
             Showing verified deliveries &amp; active queue wait times
           </span>
         </div>
@@ -529,7 +529,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                       <div className="font-bold text-zinc-950 dark:text-zinc-50">
                         {r.model} {r.modelYear}
                       </div>
-                      <div className="text-[11px] text-zinc-500">{r.trim}</div>
+                      <div className="text-[11px] text-zinc-400">{r.trim}</div>
                       <Badge variant="secondary" className="text-[9px] py-0 px-1 mt-0.5 font-normal">
                         {r.powertrain}
                       </Badge>
@@ -538,7 +538,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                     {/* Geography */}
                     <td className="py-3 px-3 sm:px-4">
                       <span className="font-semibold text-zinc-900 dark:text-zinc-100">{r.province || (r as any).state}</span>
-                      {r.city && <span className="text-zinc-500 text-xs block">{r.city}</span>}
+                      {r.city && <span className="text-zinc-400 text-xs block">{r.city}</span>}
                     </td>
 
                     {/* Order Date */}
@@ -553,7 +553,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                           <div className="flex items-center gap-1.5 font-bold text-emerald-700 dark:text-emerald-400">
                             <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                             <span>{r.waitDays ?? 0} Days</span>
-                            <span className="text-[10px] text-zinc-500 font-normal">Delivered</span>
+                            <span className="text-[10px] text-zinc-400 font-normal">Delivered</span>
                           </div>
                           <OrderStageIndicator
                             stage={r.stage || 'delivered'}
@@ -578,7 +578,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] font-semibold text-zinc-500 block" suppressHydrationWarning>
+                            <span className="text-[10px] font-semibold text-zinc-400 block" suppressHydrationWarning>
                               {calculateDaysWaitedSoFar(r.orderDate)} days so far
                             </span>
                           </div>
@@ -602,12 +602,12 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
                           <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 block" title="The Carny Hustle (Mandatory Add-ons)">
                             The Carny Hustle
                           </span>
-                          <span className="text-[10px] text-zinc-500 block">
+                          <span className="text-[10px] text-zinc-400 block">
                             +${r.addonsCad} Add-ons
                           </span>
                         </div>
                       ) : (
-                        <span className="text-[11px] text-zinc-500">Undisclosed</span>
+                        <span className="text-[11px] text-zinc-400">Undisclosed</span>
                       )}
                     </td>
                   </tr>
@@ -618,7 +618,7 @@ export function CommunityDataTable({ initialRecords, initialModelFilter }: Commu
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between p-3.5 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-500">
+        <div className="flex items-center justify-between p-3.5 border-t border-zinc-200 dark:border-zinc-800 text-xs text-zinc-400">
           <span>
             Showing {(currentPage - 1) * pageSize + 1}–
             {Math.min(currentPage * pageSize, filteredRecords.length)} of {filteredRecords.length} submissions

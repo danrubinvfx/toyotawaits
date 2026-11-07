@@ -65,7 +65,7 @@ export default function SiennaTrailerHitchGuidePage() {
             <Car className="h-3.5 w-3.5" />
             Sienna Accessory Playbook
           </Badge>
-          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-semibold">
+          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-300 text-xs font-semibold">
             4th Gen Hybrid (2021–2026)
           </Badge>
           <Badge variant="secondary" className="text-xs">
@@ -90,7 +90,7 @@ export default function SiennaTrailerHitchGuidePage() {
         aria-label="Affiliate and Editorial Transparency Notice"
         className="rounded-2xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5 p-4 sm:p-5 text-xs text-zinc-700 dark:text-zinc-300 space-y-2 shadow-xs"
       >
-        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
           <ShieldCheck className="h-4 w-4 shrink-0" />
           <span>Affiliate &amp; Community Transparency Disclosure</span>
         </div>
@@ -109,7 +109,7 @@ export default function SiennaTrailerHitchGuidePage() {
         <CardHeader className="pb-3">
           <div className="flex items-center gap-2">
             <Zap className="h-5 w-5 text-amber-500" />
-            <CardTitle className="text-lg sm:text-xl font-bold">
+            <CardTitle as="h2" className="text-lg sm:text-xl font-bold">
               The 30-Second Verdict: Torklift EcoHitch vs. Curt 13470
             </CardTitle>
           </div>
@@ -240,7 +240,7 @@ export default function SiennaTrailerHitchGuidePage() {
                   </div>
                 </td>
                 <td className="p-3.5 sm:p-4">
-                  <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
+                  <div className="flex items-center gap-1.5 text-amber-600 dark:text-amber-300">
                     <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                     <span>Exposed under bumper</span>
                   </div>
@@ -284,7 +284,7 @@ export default function SiennaTrailerHitchGuidePage() {
                   </span>
                 </td>
                 <td className="p-3.5 sm:p-4">
-                  <span className="text-amber-600 dark:text-amber-400 font-medium">
+                  <span className="text-amber-600 dark:text-amber-300 font-medium">
                     Reduced (~60% reliability)
                   </span>
                   <span className="block text-[11px] text-zinc-500">
@@ -516,7 +516,7 @@ export default function SiennaTrailerHitchGuidePage() {
                   href={AFFILIATE_LINKS.AMAZON_WIRING}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  className="inline-flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 hover:underline"
+                  className="inline-flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-300 hover:underline"
                 >
                   View Curt 56456 Harness <ExternalLink className="h-3 w-3" />
                 </a>
@@ -545,7 +545,7 @@ export default function SiennaTrailerHitchGuidePage() {
                   href={AFFILIATE_LINKS.TEKONSHA_WIRING}
                   target="_blank"
                   rel="noopener noreferrer nofollow sponsored"
-                  className="inline-flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 hover:underline"
+                  className="inline-flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-300 hover:underline"
                 >
                   View Tekonsha 118844 Harness <ExternalLink className="h-3 w-3" />
                 </a>
@@ -569,7 +569,7 @@ export default function SiennaTrailerHitchGuidePage() {
               href={AFFILIATE_LINKS.BRAKE_CONTROLLER}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="text-amber-600 dark:text-amber-400 font-semibold underline hover:text-amber-500"
+              className="text-amber-600 dark:text-amber-300 font-semibold underline hover:text-amber-500"
             >
               Curt Echo Mobile Brake Controller (#51180)
             </a>
@@ -630,7 +630,7 @@ export default function SiennaTrailerHitchGuidePage() {
           </Card>
 
           <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 space-y-2">
-            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>Crucial Tip: Disable the Kick Sensor When Carrying Bike Racks!</span>
             </div>
@@ -712,7 +712,7 @@ export default function SiennaTrailerHitchGuidePage() {
               href={AFFILIATE_LINKS.AIR_LIFT_1000}
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              className="inline-flex items-center gap-1.5 font-bold text-xs text-amber-600 dark:text-amber-400 hover:underline"
+              className="inline-flex items-center gap-1.5 font-bold text-xs text-amber-600 dark:text-amber-300 hover:underline"
             >
               View Air Lift 1000 Kit 60860 <ExternalLink className="h-3 w-3" />
             </a>

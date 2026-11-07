@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import Rav4HybridPage, { metadata as rav4Metadata } from '@/app/calculator/rav4-hybrid/page';
 import SiennaHybridPage, { metadata as siennaMetadata } from '@/app/calculator/sienna-hybrid/page';
 import GrandHighlanderPage, { metadata as ghMetadata } from '@/app/calculator/grand-highlander/page';
@@ -151,15 +151,17 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
     it('renders Calculator link in desktop and mobile header with active state styling', () => {
       render(<Header />);
 
-      // Desktop Link
+      // Desktop Tools Dropdown reveals Calculator
+      const toolsButton = screen.getByRole('button', { name: /Tools/i });
+      expect(toolsButton).toHaveClass('text-amber-500', 'font-semibold');
+      fireEvent.click(toolsButton);
+
       const calcLinks = screen.getAllByRole('link', { name: /Calculator/i });
       expect(calcLinks.length).toBeGreaterThanOrEqual(1);
 
       const desktopCalcLink = calcLinks.find((el) => el.getAttribute('href') === '/calculator');
       expect(desktopCalcLink).toBeDefined();
       expect(desktopCalcLink).toHaveAttribute('href', '/calculator');
-      // Should have active font-bold styling since pathname is '/calculator'
-      expect(desktopCalcLink?.className).toContain('font-bold');
     });
 
     it('renders fuel savings teaser card on RAV4 model page linking to /calculator/rav4-hybrid', async () => {

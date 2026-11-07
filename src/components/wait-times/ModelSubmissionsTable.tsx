@@ -175,7 +175,7 @@ export function ModelSubmissionsTable({
                           {sub.wait_days} Days
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 font-medium text-amber-600 dark:text-amber-400">
+                        <span className="inline-flex items-center gap-1 font-medium text-amber-700 dark:text-amber-300">
                           <Clock className="h-3.5 w-3.5" />
                           In Queue
                         </span>

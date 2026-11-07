@@ -38,7 +38,7 @@ function StatusUpdatedContent() {
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-950/60 text-red-400 mb-3 border border-red-800/60">
             <AlertCircle className="h-7 w-7" />
           </div>
-          <CardTitle className="text-xl font-bold text-zinc-100">
+          <CardTitle as="h1" className="text-xl font-bold text-zinc-100">
             {error === 'not_found' ? 'Order Not Found' : 'Unable to Update Status'}
           </CardTitle>
           <CardDescription className="text-zinc-400 text-sm">
@@ -92,7 +92,7 @@ function StatusUpdatedContent() {
             )}
           </div>
 
-          <CardTitle className="text-2xl font-extrabold tracking-tight text-zinc-50">
+          <CardTitle as="h1" className="text-2xl font-extrabold tracking-tight text-zinc-50">
             {action === 'delivered'
               ? '🎉 Delivery Confirmed!'
               : action === 'cancelled'

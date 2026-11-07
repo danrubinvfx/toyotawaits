@@ -88,7 +88,7 @@ function AdminOptOutContent() {
           }`}>
             <CheckCircle2 className="h-7 w-7" />
           </div>
-          <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+          <CardTitle as="h1" className="text-xl sm:text-2xl font-bold tracking-tight text-white">
             {isOptedOut ? 'Admin Opt-Out Enabled' : 'Opt-Out Disabled'}
           </CardTitle>
           <CardDescription className="text-zinc-400 text-sm max-w-md mx-auto">

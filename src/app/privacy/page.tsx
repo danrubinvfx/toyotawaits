@@ -57,7 +57,7 @@ export default function PrivacyPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <EyeOff className="h-5 w-5 text-emerald-600" />
-            <CardTitle className="text-base font-bold">No Personal Identifiers</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">No Personal Identifiers</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             Order timeline submissions are anonymous and never require government IDs or passwords. Optional email addresses are stored securely solely to deliver order milestone notifications and wait-time status alerts.
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <ServerOff className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-base font-bold">Zero IP Persistence</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Zero IP Persistence</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             Client IP addresses are evaluated ephemerally in RAM sliding windows for spam defense and never saved to Postgres.
@@ -77,7 +77,7 @@ export default function PrivacyPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <KeyRound className="h-5 w-5 text-amber-600" />
-            <CardTitle className="text-base font-bold">Cryptographic Edit Keys</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Cryptographic Edit Keys</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             Order updates use client-side UUID keys hashed via SHA-256. No user accounts or passwords needed.

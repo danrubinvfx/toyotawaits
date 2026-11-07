@@ -60,7 +60,7 @@ function getCategoryIcon(category: string) {
 function getBadgeVariantClass(badge: string) {
   switch (badge) {
     case 'Must-Have':
-      return 'border-amber-500/40 bg-amber-500/10 text-amber-400';
+      return 'border-amber-800/50 bg-amber-950/40 text-amber-300';
     case 'Custom Fit':
       return 'border-cyan-500/40 bg-cyan-500/10 text-cyan-400';
     case 'Overland Ready':
@@ -159,13 +159,13 @@ export function Rav4CampingGrid({ items }: Rav4CampingGridProps) {
                 </div>
 
                 {/* Product Name */}
-                <CardTitle className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors leading-snug">
+                <CardTitle className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
                   {gear.name}
                 </CardTitle>
 
                 {/* Fitment Note */}
-                <div className="flex items-start gap-1.5 text-xs text-amber-400/95 font-medium bg-amber-500/10 border border-amber-500/20 rounded-md p-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="flex items-start gap-1.5 text-xs text-amber-300 font-medium bg-amber-950/40 border border-amber-800/50 rounded-md p-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-300 shrink-0 mt-0.5" />
                   <span className="leading-tight">{gear.fitment}</span>
                 </div>
               </CardHeader>
@@ -175,7 +175,7 @@ export function Rav4CampingGrid({ items }: Rav4CampingGridProps) {
                 <ul className="space-y-2 text-xs text-slate-300">
                   {gear.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2 leading-relaxed">
-                      <Check className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
+                      <Check className="w-3.5 h-3.5 text-amber-300 shrink-0 mt-0.5" />
                       <span>{feature}</span>
                     </li>
                   ))}
@@ -185,7 +185,7 @@ export function Rav4CampingGrid({ items }: Rav4CampingGridProps) {
                 <div className="pt-4 border-t border-slate-800/80 space-y-3">
                   <div className="flex items-baseline justify-between text-xs">
                     <span className="text-slate-400">Est. Price Range</span>
-                    <span className="font-bold text-amber-400 text-sm">{gear.priceCad}</span>
+                    <span className="font-bold text-amber-300 text-sm">{gear.priceCad}</span>
                   </div>
 
                   <a

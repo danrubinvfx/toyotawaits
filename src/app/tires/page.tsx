@@ -156,7 +156,7 @@ export default function TiresPage() {
               <HelpCircle className="w-4 h-4" />
               <span>Winter Tire FAQs • 2026 Guide</span>
             </div>
-            <CardTitle className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
+            <CardTitle as="h2" className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
               Canadian Winter Tire Sizing, Regulations &amp; Insurance FAQs
             </CardTitle>
           </CardHeader>

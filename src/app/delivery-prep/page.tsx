@@ -149,7 +149,7 @@ export default function DeliveryPrepPage() {
             </div>
 
             <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-zinc-950/50 border border-zinc-800/60">
-              <Wrench className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+              <Wrench className="h-4 w-4 text-amber-300 shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-zinc-200">Audit PDI Transport Spacers</p>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
@@ -186,7 +186,7 @@ export default function DeliveryPrepPage() {
         {/* 4. Cargo & Trunk Organization Section */}
         <section className="space-y-4 pt-2" id="cargo-trunk-organization">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-400">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-800/50 bg-amber-950/40 px-3 py-0.5 text-xs font-semibold text-amber-300">
               <Luggage className="h-3.5 w-3.5" />
               <span>Day-One Utility</span>
               <span className="text-zinc-600">•</span>
@@ -291,7 +291,7 @@ export default function DeliveryPrepPage() {
                 <HelpCircle className="w-4 h-4" />
                 <span>Tracking &amp; Logistics FAQs • 2026 Guide</span>
               </div>
-              <CardTitle className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
+              <CardTitle as="h2" className="text-xl sm:text-2xl font-black text-white tracking-tight mt-1">
                 Toyota Canada Order Tracking &amp; PDI FAQs
               </CardTitle>
             </CardHeader>
@@ -331,7 +331,7 @@ export default function DeliveryPrepPage() {
             </Link>
             <Link
               href="/#gear"
-              className="px-3 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-semibold transition-colors"
+              className="px-3 py-1.5 rounded-lg border border-amber-800/50 bg-amber-950/40 hover:bg-amber-900/40 text-amber-300 font-semibold transition-colors"
             >
               Essential Gear 🛡️
             </Link>

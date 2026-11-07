@@ -235,12 +235,12 @@ export function TopRecommendedSolutions() {
         {/* Companion Cold-Weather Tire Pressure & Inflator Banner */}
         <div className="p-4 sm:p-5 rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 via-zinc-900 to-zinc-950 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
+            <div className="p-2.5 rounded-xl bg-amber-950/40 text-amber-300 border border-amber-800/50 shrink-0">
               <Gauge className="w-6 h-6" />
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-300">
                   Sub-Zero Tire Care Alert
                 </span>
                 <span className="text-xs text-zinc-500">•</span>

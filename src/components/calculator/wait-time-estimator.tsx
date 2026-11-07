@@ -827,7 +827,7 @@ export function WaitTimeEstimator({
           >
             {/* Primary KPI Banner - Centered Clean Layout */}
             <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3.5 pb-3 sm:pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <span className="text-[11px] sm:text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
+              <span className="text-[11px] sm:text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
                 {isPlanningBenchmark ? 'Planning Benchmark Window' : 'Empirical Delivery Window'} in {province}
               </span>
 
@@ -885,7 +885,7 @@ export function WaitTimeEstimator({
                 </div>
               )}
 
-              <p className="text-xs text-zinc-500 flex items-center justify-center gap-1.5 flex-wrap">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center justify-center gap-1.5 flex-wrap">
                 <Calendar className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                 <span suppressHydrationWarning>
                   Based on 25th – 75th percentile wait durations
@@ -916,7 +916,7 @@ export function WaitTimeEstimator({
                 </div>
               ) : null}
 
-              <div className="text-[11px] text-zinc-500 flex items-center justify-center gap-1 pt-0.5">
+              <div className="text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center justify-center gap-1 pt-0.5">
                 <CheckCircle className="h-3 w-3 text-emerald-600" />
                 {modelSlug === 'tacoma' ? (
                   <span data-testid="tacoma-benchmark-badge">
@@ -1163,7 +1163,7 @@ export function WaitTimeEstimator({
                       <Zap className="h-4 w-4 text-amber-500" />
                       {`Powertrain Wait-Time Comparison in ${provinceName} (${province})`}
                     </h2>
-                    <p className="text-xs text-zinc-500 mt-0.5">
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
                       Side-by-side empirical wait times for available {currentModel.name} powertrains across {provinceName}.
                     </p>
                   </div>
@@ -1178,7 +1178,7 @@ export function WaitTimeEstimator({
                       <div className="flex items-center justify-between text-xs sm:text-sm font-medium">
                         <div className="flex items-center gap-2">
                           {pt.slug === 'gas' ? (
-                            <Fuel className="h-3.5 w-3.5 text-zinc-500" />
+                            <Fuel className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
                           ) : (
                             <Zap className="h-3.5 w-3.5 text-amber-500" />
                           )}
@@ -1190,7 +1190,7 @@ export function WaitTimeEstimator({
 
                         <div className="flex items-baseline gap-2">
                           <span className="font-bold text-zinc-950 dark:text-zinc-50">{pt.days} Days</span>
-                          <span className="text-[11px] text-zinc-500">(~{pt.months} mos)</span>
+                          <span className="text-[11px] text-zinc-500 dark:text-zinc-400">(~{pt.months} mos)</span>
                         </div>
                       </div>
 
@@ -1206,7 +1206,7 @@ export function WaitTimeEstimator({
                 </div>
 
                 {powertrainComparisonData.length > 1 && (
-                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-3 border border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-500 flex items-center gap-2">
+                  <div className="rounded-lg bg-zinc-100 dark:bg-zinc-900/80 p-3 border border-zinc-200 dark:border-zinc-800 text-[11px] text-zinc-500 dark:text-zinc-400 flex items-center gap-2">
                     <Info className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
                     <span>
                       <strong>Provincial Trend:</strong> In {provinceName},{' '}

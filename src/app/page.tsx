@@ -139,15 +139,15 @@ export default async function HomePage() {
                             <Snowflake className="h-4 w-4" />
                           </div>
                           <div className="min-w-0">
-                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-cyan-400 transition-colors">
+                            <span className="block text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-cyan-400 transition-colors">
                               Winter Prep
-                            </h4>
+                            </span>
                             <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
                               12V &amp; Floor Mats
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
                       </Link>
 
                       <Link
@@ -159,15 +159,15 @@ export default async function HomePage() {
                             <Disc3 className="h-4 w-4" />
                           </div>
                           <div className="min-w-0">
-                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-amber-400 transition-colors">
+                            <span className="block text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-amber-400 transition-colors">
                               Tire Fitment
-                            </h4>
+                            </span>
                             <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
                               OEM Sizes &amp; 3PMSF
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
                       </Link>
 
                       <Link
@@ -179,15 +179,15 @@ export default async function HomePage() {
                             <ClipboardCheck className="h-4 w-4" />
                           </div>
                           <div className="min-w-0">
-                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-emerald-400 transition-colors">
+                            <span className="block text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-emerald-400 transition-colors">
                               Delivery Day Prep
-                            </h4>
+                            </span>
                             <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
                               Inspection Checklist
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
                       </Link>
 
                       <Link
@@ -199,15 +199,15 @@ export default async function HomePage() {
                             <Zap className="h-4 w-4" />
                           </div>
                           <div className="min-w-0">
-                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-purple-400 transition-colors">
+                            <span className="block text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-purple-400 transition-colors">
                               EV Rebates
-                            </h4>
+                            </span>
                             <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
                               Federal &amp; Provincial
                             </p>
                           </div>
                         </div>
-                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
                       </Link>
                     </div>
                   </div>
@@ -230,7 +230,7 @@ export default async function HomePage() {
                         <FileSpreadsheet className="h-6 w-6 text-amber-500" />
                         Community Delivery Log &amp; Audit Trail
                       </h2>
-                      <p className="text-sm text-zinc-500">
+                      <p className="text-sm text-zinc-400">
                         Real-time crowdsourced submissions from verified Canadian buyers across all provinces.
                       </p>
                     </div>
@@ -278,7 +278,7 @@ export default async function HomePage() {
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
             Why Track With ToyotaWaits.ca?
           </h2>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-zinc-400">
             Built by and for Canadian car buyers navigating persistent hybrid vehicle allocation quotas.
           </p>
         </div>

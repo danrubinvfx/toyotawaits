@@ -79,9 +79,9 @@ export default function SiennaModsGuidePage() {
             <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
               New Hitch Playbook
             </Badge>
-            <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
               Planning Bike Racks or Towing?
-            </h3>
+            </h2>
             <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               Waiting on your delivery? Read our 2021+ Toyota Sienna Trailer Hitch &amp; Kick-Sensor Guide to pick the right receiver and wiring before taking delivery.
             </p>

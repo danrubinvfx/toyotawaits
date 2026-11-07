@@ -24,7 +24,7 @@ export function ContextualWinterGear() {
     >
       <div className="space-y-4">
         <div>
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-400">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-amber-300">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Canadian Cold-Weather Gear Essentials</span>
           </div>
@@ -88,13 +88,13 @@ export function ContextualWinterGear() {
           <Card className="flex flex-col justify-between border-zinc-800 bg-zinc-900/70 hover:border-zinc-700 transition-all shadow-xl">
             <CardHeader className="space-y-2 pb-3">
               <div className="flex items-center justify-between gap-2">
-                <Badge variant="outline" className="border-amber-500/40 text-amber-300 bg-amber-950/20 text-[10px] font-bold">
+                <Badge variant="outline" className="border-amber-800/50 text-amber-300 bg-amber-950/40 text-[10px] font-bold">
                   Essential • Hybrid 12V
                 </Badge>
                 <span className="text-[10px] font-mono text-zinc-400">ASIN B015TKUPIC</span>
               </div>
               <CardTitle className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                <BatteryCharging className="w-4 h-4 text-amber-400 shrink-0" />
+                <BatteryCharging className="w-4 h-4 text-amber-300 shrink-0" />
                 <span>NOCO Boost Plus GB40 / GBX45</span>
               </CardTitle>
             </CardHeader>

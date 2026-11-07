@@ -14,7 +14,7 @@ export function ModelDirectory() {
             <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
               Canadian Toyota Wait Time Trackers by Model
             </h3>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
               Crowdsourced 2026 delivery timelines, dealer allocation spreads, and provincial wait times across Canada.
             </p>
           </div>
@@ -31,7 +31,7 @@ export function ModelDirectory() {
               <span className="font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400 truncate">
                 Toyota {m.name} Delivery Wait Times
               </span>
-              <span className="text-[11px] text-zinc-500 truncate mt-0.5">
+              <span className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
                 {m.powertrains.join(', ')}
               </span>
             </Link>

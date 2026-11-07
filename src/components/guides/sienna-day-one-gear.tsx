@@ -93,7 +93,7 @@ export function SiennaDayOneGearShelf() {
     <section className="space-y-6" aria-label="Direct-Fit Delivery Day Gear Shelf">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-2">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800/50 mb-2">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Essential Day-1 Fitments (2021–2027)</span>
           </div>
@@ -143,7 +143,7 @@ export function SiennaDayOneGearShelf() {
                 </CardTitle>
 
                 <div className="flex items-baseline gap-2 pt-1">
-                  <span className="text-base font-extrabold text-amber-600 dark:text-amber-400 font-mono">
+                  <span className="text-base font-extrabold text-amber-700 dark:text-amber-300 font-mono">
                     {price}
                   </span>
                   {item.promoCode && (

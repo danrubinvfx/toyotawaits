@@ -78,7 +78,7 @@ export function DirectFitSizingMatrix() {
                 <span className="text-zinc-600">•</span>
                 <span>Direct-Fit Downsizing</span>
               </div>
-              <CardTitle className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              <CardTitle as="h1" className="text-xl sm:text-2xl font-black text-white tracking-tight">
                 Direct-Fit Sizing Quick-Lookup Matrix
               </CardTitle>
               <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl leading-relaxed">

@@ -98,10 +98,10 @@ export function ModComparisonCard({
           <div className="flex items-center gap-2.5">
             {Icon && (
               <div className="h-9 w-9 rounded-lg bg-amber-500/10 dark:bg-amber-950/40 border border-amber-500/20 flex items-center justify-center shrink-0">
-                <Icon className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <Icon className="h-5 w-5 text-amber-700 dark:text-amber-300" />
               </div>
             )}
-            <CardTitle className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
+            <CardTitle as="h2" className="text-lg sm:text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
               {stepNumber ? `${stepNumber}. ` : ''}
               {title}
             </CardTitle>
@@ -153,7 +153,7 @@ export function ModComparisonCard({
             defaultOpenDesktop={true}
             className="group border border-amber-900/40 bg-amber-950/10 rounded-lg p-3 transition-all"
           >
-            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-400 text-sm font-semibold [&::-webkit-details-marker]:hidden min-h-[40px]">
+            <summary className="flex items-center justify-between cursor-pointer list-none select-none text-amber-300 text-sm font-semibold [&::-webkit-details-marker]:hidden min-h-[40px]">
               <div className="flex items-center gap-2">
                 <span>💡</span>
                 <span>Installer&apos;s Pro-Tip</span>

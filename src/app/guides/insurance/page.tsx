@@ -47,7 +47,7 @@ export default function InsuranceGuidePage() {
         <Card className="border-zinc-800 bg-zinc-950 text-zinc-100">
           <CardHeader className="space-y-1 pb-2">
             <Badge className="bg-red-600 text-white w-fit text-[10px]">Ontario &amp; Quebec</Badge>
-            <CardTitle className="text-base font-bold">The High-Theft Surcharge (TAG Mandate)</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">The High-Theft Surcharge (TAG Mandate)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-zinc-400 leading-relaxed">
             <p>
@@ -59,7 +59,7 @@ export default function InsuranceGuidePage() {
         <Card className="border-zinc-800 bg-zinc-950 text-zinc-100">
           <CardHeader className="space-y-1 pb-2">
             <Badge className="bg-emerald-600 text-white w-fit text-[10px]">Coverage Tip</Badge>
-            <CardTitle className="text-base font-bold">Replacement Value Endorsement (OPCF 43 / QEF 43)</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Replacement Value Endorsement (OPCF 43 / QEF 43)</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-zinc-400 leading-relaxed">
             <p>
@@ -76,7 +76,7 @@ export default function InsuranceGuidePage() {
             <FileText className="h-4 w-4" />
             <span>Canadian Rate Comparison</span>
           </div>
-          <CardTitle className="text-xl font-bold">Compare Provincial Insurance Quotes Before Delivery Day</CardTitle>
+          <CardTitle as="h2" className="text-xl font-bold">Compare Provincial Insurance Quotes Before Delivery Day</CardTitle>
           <CardDescription className="text-zinc-400 text-xs">
             Rates vary by thousands of dollars between insurance providers for identical Toyota hybrid trims. Compare rates 30 days before taking delivery.
           </CardDescription>

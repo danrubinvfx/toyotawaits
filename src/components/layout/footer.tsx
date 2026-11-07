@@ -36,19 +36,19 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 {isUs ? '🇺🇸 U.S. Open Data' : '🇨🇦 Canadian Open Data'}
               </span>
             </div>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-md">
+            <p className="text-sm text-zinc-400 dark:text-zinc-400 leading-relaxed max-w-md">
               {isUs
                 ? 'Crowdsourced U.S. vehicle delivery tracker for RAV4 HEV/PHEV, Sienna, Grand Highlander, and Land Cruiser. Helping American car buyers cut through allocation opacity and dealer markups.'
                 : 'Crowdsourced Canadian vehicle delivery tracker for RAV4 HEV/PHEV, Sienna, Grand Highlander, and Land Cruiser. Helping Canadian car buyers cut through allocation opacity.'}
             </p>
-            <div className="flex items-start space-x-2 text-xs text-zinc-500">
+            <div className="flex items-start space-x-2 text-xs text-zinc-400">
               <Lock className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
               <span>Order timeline submissions are 100% anonymous and never require personal identifiers. Email addresses provided optionally for &apos;Notify Me&apos; delivery alerts are stored strictly in an isolated notification queue and can be deleted at any time.</span>
             </div>
 
             {/* Regional Switcher / Indicator */}
             <div className="pt-2 flex items-center gap-2">
-              <span className="text-xs text-zinc-500 flex items-center gap-1">
+              <span className="text-xs text-zinc-400 flex items-center gap-1">
                 <Globe className="h-3.5 w-3.5 text-zinc-400" />
                 Region:
               </span>
@@ -60,7 +60,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                     'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
                     !isUs
                       ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
-                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                      : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                   )}
                   title="Switch to Canada (CAD)"
                 >
@@ -73,7 +73,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                     'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
                     isUs
                       ? 'bg-white dark:bg-zinc-800 font-bold text-zinc-900 dark:text-zinc-100 shadow-xs'
-                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
+                      : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
                   )}
                   title="Switch to United States (USD)"
                 >
@@ -250,19 +250,19 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
-                <Link href={`${baseUrl}/privacy`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors pt-1">
+                <Link href={`${baseUrl}/privacy`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors pt-1">
                   <Shield className="h-3.5 w-3.5 text-zinc-400" />
                   Zero-PII Privacy Charter
                 </Link>
               </li>
               <li>
-                <Link href={`${baseUrl}/legal`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
+                <Link href={`${baseUrl}/legal`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors">
                   <Scale className="h-3.5 w-3.5 text-zinc-400" />
                   Legal &amp; Pricing Disclosures
                 </Link>
               </li>
               <li>
-                <a href={`${baseUrl}/sitemap.xml`} className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors">
+                <a href={`${baseUrl}/sitemap.xml`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors">
                   <Globe className="h-3.5 w-3.5 text-zinc-400" />
                   Sitemap
                 </a>
@@ -270,7 +270,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
               <li>
                 <a
                   href="mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry"
-                  className="flex items-center gap-1.5 text-xs text-zinc-500 hover:text-amber-500 transition-colors"
+                  className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors"
                 >
                   <Mail className="h-3.5 w-3.5 text-zinc-400" />
                   Contact &amp; Feedback
@@ -289,7 +289,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
         </div>
 
         {/* Disclaimer & Disclosure Section */}
-        <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-500 space-y-3">
+        <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-400 space-y-3">
           <p className="leading-relaxed">
             <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or {isUs ? 'Toyota Motor Sales, U.S.A., Inc.' : 'Toyota Canada Inc.'} All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use. For complete details, see our{' '}
             <Link href="/legal" className="underline hover:text-amber-500">
@@ -367,7 +367,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
         </div>
 
         {/* Amazon Associates / Community Transparency Disclosure */}
-        <p className="text-[11px] text-neutral-500 max-w-xl mx-auto text-center leading-relaxed mt-8 pt-6 border-t border-neutral-800/60">
+        <p className="text-[11px] text-neutral-400 max-w-xl mx-auto text-center leading-relaxed mt-8 pt-6 border-t border-neutral-800/60">
           Some links on this page are affiliate links. If you purchase through them, we may earn a small commission at no additional cost to you, which directly funds hosting, database infrastructure, and keeping this tracker open and ad-free. As an Amazon Associate I earn from qualifying purchases.
         </p>
       </div>

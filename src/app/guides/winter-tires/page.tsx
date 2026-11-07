@@ -47,7 +47,7 @@ export default function WinterTiresGuidePage() {
         <Card className="border-zinc-800 bg-zinc-950 text-zinc-100">
           <CardHeader className="space-y-1 pb-2">
             <Badge className="bg-blue-600 text-white w-fit text-[10px]">British Columbia</Badge>
-            <CardTitle className="text-base font-bold">Mountain Pass Regulations</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Mountain Pass Regulations</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-zinc-400 leading-relaxed">
             <p>
@@ -59,7 +59,7 @@ export default function WinterTiresGuidePage() {
         <Card className="border-zinc-800 bg-zinc-950 text-zinc-100">
           <CardHeader className="space-y-1 pb-2">
             <Badge className="bg-blue-600 text-white w-fit text-[10px]">Quebec</Badge>
-            <CardTitle className="text-base font-bold">Loi sur les pneus d&apos;hiver</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Loi sur les pneus d&apos;hiver</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-zinc-400 leading-relaxed">
             <p>

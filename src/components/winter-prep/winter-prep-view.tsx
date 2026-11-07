@@ -98,7 +98,7 @@ export function WinterPrepView() {
           {/* Quick Realities Ticker */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-3xl mx-auto pt-6 border-t border-zinc-800/80 text-left">
             <div className="bg-zinc-950/60 p-3 rounded-xl border border-zinc-800/80 flex items-start gap-2.5">
-              <BatteryCharging className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+              <BatteryCharging className="h-5 w-5 text-amber-300 shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-xs text-zinc-100">12V Battery Drop</p>
                 <p className="text-[11px] text-zinc-400 leading-snug">
@@ -137,7 +137,7 @@ export function WinterPrepView() {
           className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs"
         >
           <div className="flex items-center gap-2.5 text-zinc-200">
-            <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30 shrink-0">
+            <div className="p-1.5 rounded-lg bg-amber-950/40 text-amber-300 border border-amber-800/50 shrink-0">
               <Disc3 className="h-4 w-4" />
             </div>
             <div>
@@ -205,10 +205,10 @@ export function WinterPrepView() {
         <Card className="border-zinc-800 bg-zinc-900/60 shadow-lg overflow-hidden">
           <CardContent className="p-6 sm:p-8 space-y-6">
             <div className="text-center sm:text-left space-y-1">
-              <h3 className="text-lg sm:text-xl font-bold text-zinc-100 flex items-center justify-center sm:justify-start gap-2">
+              <h2 className="text-lg sm:text-xl font-bold text-zinc-100 flex items-center justify-center sm:justify-start gap-2">
                 <Flame className="h-5 w-5 text-amber-500" />
                 Next Steps for Canadian Toyota Buyers
-              </h3>
+              </h2>
               <p className="text-xs sm:text-sm text-zinc-400">
                 Continue planning your delivery timeline or browse verified trim DIY mods and accessories.
               </p>
@@ -220,11 +220,11 @@ export function WinterPrepView() {
                 className="group flex items-center justify-between p-4 rounded-xl border border-zinc-800 bg-zinc-950/70 hover:border-amber-500/40 hover:bg-zinc-950 transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+                  <div className="h-10 w-10 rounded-lg bg-amber-950/40 text-amber-300 border border-amber-800/50 flex items-center justify-center shrink-0">
                     <Clock className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-zinc-100 group-hover:text-amber-400 transition-colors">
+                    <p className="font-bold text-sm text-zinc-100 group-hover:text-amber-300 transition-colors">
                       Delivery Timeline Calculator
                     </p>
                     <p className="text-xs text-zinc-400">
@@ -232,7 +232,7 @@ export function WinterPrepView() {
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all shrink-0" />
+                <ArrowRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-300 group-hover:translate-x-1 transition-all shrink-0" />
               </Link>
 
               <Link

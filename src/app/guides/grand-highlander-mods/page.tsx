@@ -156,7 +156,7 @@ export default function GrandHighlanderModsGuidePage() {
         {/* Bonus Canadian Road Prep: Windshield & Hood Defense */}
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+            <CardTitle as="h2" className="text-base font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 text-amber-500" />
               Bonus Canadian Prep: Front Fascia &amp; Hood Deflector Armor
             </CardTitle>

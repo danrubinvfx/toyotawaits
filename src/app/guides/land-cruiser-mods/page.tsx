@@ -133,7 +133,7 @@ export default function LandCruiserModsGuidePage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+              <CardTitle as="h2" className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
                 <Snowflake className="h-5 w-5 text-sky-400" />
                 3. Canadian Severe Snow Package: 18-Inch Downsizing Strategy
               </CardTitle>

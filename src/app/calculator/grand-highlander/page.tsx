@@ -89,7 +89,7 @@ export default function GrandHighlanderCalculatorPage() {
         <section aria-labelledby="methodology-heading" className="pt-4">
           <Card className="bg-zinc-100/60 dark:bg-zinc-900/60 border-zinc-200 dark:border-zinc-800">
             <CardHeader className="pb-3">
-              <CardTitle id="methodology-heading" className="text-lg font-bold flex items-center gap-2">
+              <CardTitle id="methodology-heading" as="h2" className="text-lg font-bold flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                 Calculation Methodology &amp; Evidence Provenance
               </CardTitle>

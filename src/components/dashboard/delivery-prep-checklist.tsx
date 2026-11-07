@@ -583,7 +583,7 @@ export function DeliveryPrepChecklist({
               className={cn(
                 'text-xs h-7 sm:h-8 border-zinc-700 transition-all font-medium self-start sm:self-auto cursor-pointer shrink-0',
                 showUniversalGear
-                  ? 'bg-amber-500/15 border-amber-500/50 text-amber-400 hover:bg-amber-500/20'
+                  ? 'bg-amber-500/15 border-amber-500/50 text-amber-300 hover:bg-amber-500/20'
                   : 'bg-zinc-900/80 text-zinc-300 hover:text-amber-400 hover:border-amber-500/40'
               )}
             >
@@ -611,7 +611,7 @@ export function DeliveryPrepChecklist({
                   isDeliveryDayTab
                     ? isSelected
                       ? 'border border-amber-500/40 text-amber-300 bg-amber-950/30 shadow-xs'
-                      : 'border border-amber-500/20 text-amber-400/80 bg-amber-950/10 hover:border-amber-500/40 hover:text-amber-300 hover:bg-amber-950/20'
+                      : 'border border-amber-500/20 text-amber-300/90 bg-amber-950/10 hover:border-amber-500/40 hover:text-amber-300 hover:bg-amber-950/20'
                     : isSelected
                     ? 'bg-zinc-800 text-white font-bold border border-zinc-700 shadow-xs'
                     : 'bg-zinc-900/60 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-800/80'
@@ -660,7 +660,7 @@ export function DeliveryPrepChecklist({
         {/* Swipe Hint / Carousel Indicators */}
         <div className="flex items-center justify-between text-[11px] text-neutral-400 px-1 pt-1 mb-2 print:hidden">
           <span>Showing recommended gear</span>
-          <span className="flex items-center gap-1 font-medium text-amber-400">
+          <span className="flex items-center gap-1 font-semibold text-amber-700 dark:text-amber-300">
             <span className="animate-pulse">Swipe →</span>
           </span>
         </div>

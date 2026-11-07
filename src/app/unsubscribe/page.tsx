@@ -56,7 +56,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <CheckCircle2 className="h-7 w-7" />
             </div>
-            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            <CardTitle as="h1" className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Unsubscribed Successfully
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-zinc-400 max-w-sm mx-auto leading-relaxed">
@@ -85,7 +85,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
               <AlertCircle className="h-7 w-7" />
             </div>
-            <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            <CardTitle as="h1" className="text-xl sm:text-2xl font-bold tracking-tight text-white">
               Invalid or Expired Link
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-zinc-400 max-w-sm mx-auto leading-relaxed">

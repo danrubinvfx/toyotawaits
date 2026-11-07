@@ -49,7 +49,7 @@ export default function EVChargingGuidePage() {
             <ThermometerSnowflake className="h-4 w-4" />
             <span>Canadian Winter Reality</span>
           </div>
-          <CardTitle className="text-xl font-bold">Why Level 1 (120V) Falls Short in Canadian Freezes</CardTitle>
+          <CardTitle as="h2" className="text-xl font-bold">Why Level 1 (120V) Falls Short in Canadian Freezes</CardTitle>
           <CardDescription className="text-zinc-400 text-xs">
             At -20°C, a portion of the 120V wall outlet&apos;s 1.4 kW trickle is diverted simply to warm the traction battery pack, extending full charge times to over 14 hours.
           </CardDescription>

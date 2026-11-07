@@ -211,7 +211,7 @@ export default function SiennaCampingPage() {
                 <BatteryCharging className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <CardTitle as="h2" className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                   <span>Hybrid &apos;Camp Mode&apos;: Running Climate Control Overnight in READY Mode</span>
                 </CardTitle>
                 <p className="text-xs text-emerald-400/90 font-medium mt-0.5">

@@ -174,7 +174,7 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
             <Layers className="h-3.5 w-3.5" />
             Winter Protection Guide
           </Badge>
-          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-semibold">
+          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-300 text-xs font-semibold">
             Canadian Road Salt Benchmark
           </Badge>
           <Badge variant="secondary" className="text-xs">
@@ -197,7 +197,7 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
         aria-label="Affiliate and Editorial Transparency Notice"
         className="rounded-2xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5 p-4 sm:p-5 text-xs text-zinc-700 dark:text-zinc-300 space-y-2 shadow-xs"
       >
-        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
           <ShieldCheck className="h-4 w-4 shrink-0" />
           <span>Affiliate &amp; Community Transparency Disclosure</span>
         </div>
@@ -216,9 +216,9 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
               Delivery Day Playbook
             </span>
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
               Top 7 RAV4 Accessories &rarr;
-            </h4>
+            </h2>
             <p className="text-xs text-zinc-500">
               Explore dashcams, screen protectors, faraday pouches, and console trays.
             </p>
@@ -234,9 +234,9 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-sky-500">
               Pre-Delivery Checklist
             </span>
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-sky-500 transition-colors">
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-sky-500 transition-colors">
               Dealership Delivery Prep &rarr;
-            </h4>
+            </h2>
             <p className="text-xs text-zinc-500">
               25-point inspection guide before signing dealer delivery papers.
             </p>
@@ -335,20 +335,20 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
               <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 space-y-2 text-xs">
-                <h4 className="font-bold text-red-600 dark:text-red-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <h3 className="font-bold text-red-600 dark:text-red-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   Salt-Brine Migration &amp; Wire Corrosion
-                </h4>
+                </h3>
                 <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
                   Municipal road crews spray calcium chloride and liquid brine. Once tracked into the cabin, melted snow saturates carpet mats, soaking down into the vehicle&apos;s underlying polyurethane sound-deadening foam. Because the foam cannot dry during winter, this trapped brine creates a moist, corrosive bath directly over floorpan wiring looms and yaw sensors.
                 </p>
               </div>
 
               <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 space-y-2 text-xs">
-                <h4 className="font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <h3 className="font-bold text-amber-600 dark:text-amber-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
                   <AlertTriangle className="h-4 w-4 shrink-0" />
                   Permanent White Crust &amp; Foam Mildew
-                </h4>
+                </h3>
                 <p className="leading-relaxed text-zinc-600 dark:text-zinc-400">
                   As the moisture evaporates over springtime, calcium salts crystallize into rock-hard white chalk that fuses to carpet fibers. Removing this crust requires intensive hot-water extraction and acid neutralizing rinses that often degrade factory carpet backing and leave permanent musty mildew odors.
                 </p>

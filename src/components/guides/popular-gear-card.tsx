@@ -34,7 +34,7 @@ export function PopularGearCard({ item }: { item: PopularGearItem }) {
     <Card className="border-zinc-200 dark:border-zinc-800 bg-zinc-900/40 p-4 space-y-3 flex flex-col justify-between">
       <div className="space-y-1.5">
         <div className="flex items-center justify-between gap-2">
-          <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[10px]">
+          <Badge className="bg-amber-950/40 text-amber-300 border border-amber-800/50 text-[10px]">
             {item.price}
           </Badge>
           <span className="text-[10px] text-zinc-500">{isUs ? 'Amazon.com' : 'Amazon.ca'}</span>
@@ -57,7 +57,7 @@ export function PopularGearCard({ item }: { item: PopularGearItem }) {
           </div>
         )}
       </div>
-      <Button asChild size="sm" variant="outline" className="w-full text-xs font-semibold border-zinc-700 hover:border-amber-500 hover:text-amber-400 gap-1.5 cursor-pointer">
+      <Button asChild size="sm" variant="outline" className="w-full text-xs font-semibold border-zinc-700 hover:border-amber-500 hover:text-amber-300 gap-1.5 cursor-pointer">
         <a
           href={amazonUrl}
           target="_blank"

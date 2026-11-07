@@ -213,7 +213,7 @@ export default function Rav4CampingPage() {
                 <BatteryCharging className="h-5 w-5" />
               </div>
               <div>
-                <CardTitle className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                <CardTitle as="h2" className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
                   <span>RAV4 Camping Architecture: Fold-Flat Leveling & Hybrid Climate Mode</span>
                 </CardTitle>
                 <p className="text-xs text-amber-400/90 font-medium mt-0.5">

@@ -276,7 +276,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         {/* Title Header */}
         <header className="space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs">
+            <Badge className="bg-amber-950/40 text-amber-300 border border-amber-800/50 text-xs">
               Extended Warranty Analysis
             </Badge>
             <span className="text-xs text-zinc-500 font-mono">Published November 2026 · 14 min read</span>
@@ -350,7 +350,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
             </div>
 
             <div className="mt-6 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-amber-300 shrink-0 mt-0.5" />
               <p className="text-xs sm:text-sm text-amber-200/90 leading-relaxed">
                 <strong className="text-amber-100 font-semibold">The Golden Rule:</strong> Never pay sticker price ($2,800–$3,200 CAD) in the dealership finance office. Dealership cost is roughly 50–60% of retail. If you choose to purchase, counter-offer at <strong>$1,900 – $2,100 CAD</strong> or walk away.
               </p>
@@ -362,7 +362,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <FileText className="h-5 w-5 text-amber-400" />
+              <FileText className="h-5 w-5 text-amber-300" />
               Factory Warranty vs. ECP Gold vs. ECP Platinum
             </h2>
             <p className="text-sm text-zinc-400">
@@ -381,7 +381,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                       ECP Gold
                       <span className="block text-[11px] font-normal text-rose-400">Named Component</span>
                     </th>
-                    <th className="p-3.5 sm:p-4 font-semibold text-amber-400 min-w-[200px] bg-amber-500/10 border-l border-amber-500/30">
+                    <th className="p-3.5 sm:p-4 font-semibold text-amber-300 min-w-[200px] bg-amber-950/40 border-l border-amber-800/50">
                       ECP Platinum
                       <span className="block text-[11px] font-normal text-amber-300">Exclusionary Policy</span>
                     </th>
@@ -394,7 +394,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                       className={row.highlight ? 'bg-zinc-800/30 hover:bg-zinc-800/50' : 'hover:bg-zinc-800/20'}
                     >
                       <td className="p-3.5 sm:p-4 font-medium text-zinc-200 flex items-center gap-2">
-                        {row.highlight && <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />}
+                        {row.highlight && <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />}
                         {row.feature}
                       </td>
                       <td className="p-3.5 sm:p-4 text-zinc-400">{row.factory}</td>
@@ -409,7 +409,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
             </div>
             <div className="p-3.5 bg-zinc-950/60 border-t border-zinc-800 text-[11px] text-zinc-400 flex items-center justify-between flex-wrap gap-2">
               <span>* Terms vary by plan selected (e.g. 7 yr / 120,000 km, 7 yr / 160,000 km, or 8 yr / 200,000 km).</span>
-              <span className="text-amber-400 font-mono">Deductible: $0 on all genuine Toyota ECP plans</span>
+              <span className="text-amber-300 font-mono">Deductible: $0 on all genuine Toyota ECP plans</span>
             </div>
           </div>
         </section>
@@ -473,7 +473,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <Calculator className="h-5 w-5 text-amber-400" />
+              <Calculator className="h-5 w-5 text-amber-300" />
               The Financial Breakdown: The &ldquo;Net Cost&rdquo; Math
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed">
@@ -495,8 +495,8 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 <span className="text-[11px] text-emerald-300/80 mt-1 block">~$700 Maintenance + ~$150 Tire Hazard</span>
               </div>
               <div className="p-4 rounded-xl border border-amber-900/40 bg-amber-950/20">
-                <span className="text-xs text-amber-400 uppercase tracking-wider block">Net Mechanical Risk</span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-1 block">~$1,950 CAD</span>
+                <span className="text-xs text-amber-300 uppercase tracking-wider block">Net Mechanical Risk</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-1 block">~$1,950 CAD</span>
                 <span className="text-[11px] text-amber-300/80 mt-1 block">True mechanical insurance cost</span>
               </div>
             </div>
@@ -533,7 +533,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                       <tr key={idx} className="hover:bg-zinc-800/20">
                         <td className="p-3.5 sm:p-4 font-medium text-zinc-100">{item.component}</td>
                         <td className="p-3.5 sm:p-4 text-zinc-400 hidden md:table-cell text-xs">{item.failureReason}</td>
-                        <td className="p-3.5 sm:p-4 font-mono font-bold text-amber-400">{item.oemCost}</td>
+                        <td className="p-3.5 sm:p-4 font-mono font-bold text-amber-300">{item.oemCost}</td>
                         <td className="p-3.5 sm:p-4 text-xs text-zinc-300">{item.ecpStatus}</td>
                       </tr>
                     ))}
@@ -548,7 +548,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6 pt-4">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <Badge className="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-xs">
+              <Badge className="bg-amber-950/40 text-amber-300 border border-amber-800/50 text-xs">
                 Stage 1 Monetization
               </Badge>
               <span className="text-xs text-zinc-500 uppercase tracking-wider font-mono">Self-Insure &amp; Save</span>
@@ -580,7 +580,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                     </div>
 
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 text-amber-400">
+                      <div className="h-10 w-10 rounded-xl bg-zinc-800 flex items-center justify-center shrink-0 text-amber-300">
                         <IconComp className="h-5 w-5" />
                       </div>
                       <div>
@@ -627,7 +627,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <TrendingDown className="h-5 w-5 text-amber-400" />
+              <TrendingDown className="h-5 w-5 text-amber-300" />
               The Self-Insuring Alternative: Beware the 7% Auto Loan Trap
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed">
@@ -696,7 +696,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-amber-400" />
+              <ShieldCheck className="h-5 w-5 text-amber-300" />
               The Dealership Negotiation Playbook: Never Pay Sticker
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed">
@@ -707,7 +707,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
           <div className="space-y-4">
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 sm:p-6 space-y-2">
               <div className="flex items-center gap-3">
-                <span className="h-7 w-7 rounded-full bg-amber-500/10 text-amber-400 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-500/30">
+                <span className="h-7 w-7 rounded-full bg-amber-950/40 text-amber-300 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-800/50">
                   1
                 </span>
                 <h3 className="font-bold text-zinc-100 text-base">
@@ -721,7 +721,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
 
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 sm:p-6 space-y-2">
               <div className="flex items-center gap-3">
-                <span className="h-7 w-7 rounded-full bg-amber-500/10 text-amber-400 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-500/30">
+                <span className="h-7 w-7 rounded-full bg-amber-950/40 text-amber-300 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-800/50">
                   2
                 </span>
                 <h3 className="font-bold text-zinc-100 text-base">
@@ -735,7 +735,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
 
             <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-5 sm:p-6 space-y-2">
               <div className="flex items-center gap-3">
-                <span className="h-7 w-7 rounded-full bg-amber-500/10 text-amber-400 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-500/30">
+                <span className="h-7 w-7 rounded-full bg-amber-950/40 text-amber-300 font-bold text-sm flex items-center justify-center shrink-0 border border-amber-800/50">
                   3
                 </span>
                 <h3 className="font-bold text-zinc-100 text-base">
@@ -753,7 +753,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
         <section className="space-y-6">
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
-              <HelpCircle className="h-5 w-5 text-amber-400" />
+              <HelpCircle className="h-5 w-5 text-amber-300" />
               Frequently Asked Questions (FAQ)
             </h2>
             <p className="text-sm text-zinc-400">
@@ -768,7 +768,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 className="rounded-xl border border-zinc-800/90 bg-zinc-900/50 p-5 sm:p-6 space-y-2"
               >
                 <h3 className="font-bold text-zinc-100 text-sm sm:text-base flex items-start gap-2">
-                  <span className="text-amber-400 font-mono">Q:</span>
+                  <span className="text-amber-300 font-mono">Q:</span>
                   <span>{faq.q}</span>
                 </h3>
                 <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed pl-5">

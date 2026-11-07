@@ -125,7 +125,7 @@ export default function Rav4MustHaveAccessoriesPage() {
             <Car className="h-3.5 w-3.5" />
             RAV4 Delivery Gear
           </Badge>
-          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-400 text-xs font-semibold">
+          <Badge variant="outline" className="border-amber-500/30 text-amber-500 dark:text-amber-300 text-xs font-semibold">
             2019–2026 Hybrid &amp; Prime
           </Badge>
           <Badge variant="secondary" className="text-xs">
@@ -148,7 +148,7 @@ export default function Rav4MustHaveAccessoriesPage() {
         aria-label="Affiliate and Editorial Transparency Notice"
         className="rounded-2xl border border-amber-500/30 bg-amber-500/10 dark:bg-amber-500/5 p-4 sm:p-5 text-xs text-zinc-700 dark:text-zinc-300 space-y-2 shadow-xs"
       >
-        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
+        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
           <ShieldCheck className="h-4 w-4 shrink-0" />
           <span>Affiliate &amp; Community Transparency Disclosure</span>
         </div>
@@ -167,9 +167,9 @@ export default function Rav4MustHaveAccessoriesPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
               Live Allocation Tracker
             </span>
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
               RAV4 Canadian Wait Times &rarr;
-            </h4>
+            </h2>
             <p className="text-xs text-zinc-500">
               Check median delivery timelines across Ontario, BC, Alberta &amp; Quebec.
             </p>
@@ -185,9 +185,9 @@ export default function Rav4MustHaveAccessoriesPage() {
             <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-500">
               Fuel &amp; Payback Calculator
             </span>
-            <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">
+            <h2 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-500 transition-colors">
               RAV4 Hybrid vs. Gas Break-Even &rarr;
-            </h4>
+            </h2>
             <p className="text-xs text-zinc-500">
               Calculate annual fuel savings and payback timeline against local fuel prices.
             </p>
@@ -214,9 +214,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Why It&apos;s a Day-One Must:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>100% Left Dead Pedal Coverage:</strong> Covers the entire height of the resting pedal where slush melt collects.
@@ -292,9 +292,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Fitment &amp; Installation Highlights:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>TSS Shroud Integration:</strong> Snaps into place replacing the lower camera cover; zero dangling cables across windshield glass.
@@ -364,9 +364,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Screen Size Selection &amp; Features:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>10.5-Inch Screen:</strong> Standard on XLE Premium, Woodland, SE, and XSE packages.
@@ -436,9 +436,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Compartment Specifications:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>Dedicated Coin &amp; Card Slots:</strong> Built-in friction channels stop Canadian loonies, toonies, and garage fobs from sliding.
@@ -579,9 +579,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Theft Defense Protocols for RAV4 Owners:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>100% Signal Attenuation:</strong> Dual metallic fabric shielding stops RFID, NFC, BLE, and keyless entry communication.
@@ -651,9 +651,9 @@ export default function Rav4MustHaveAccessoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           <div className="md:col-span-2 space-y-3">
             <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/40 p-4 text-xs space-y-2">
-              <h4 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
+              <h3 className="font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider text-[11px]">
                 Canadian Winter EVSE Considerations:
-              </h4>
+              </h3>
               <ul className="space-y-1.5 text-zinc-600 dark:text-zinc-400 list-disc list-inside">
                 <li>
                   <strong>Canadian Sub-Zero Performance:</strong> Built with a NEMA 4X / IP67 heavy cast-aluminum casing rated down to -40°C. Heavy rubber output cable remains pliable in freezing blizzards.
@@ -715,9 +715,9 @@ export default function Rav4MustHaveAccessoriesPage() {
               <Package className="h-4 w-4" />
               <span>Dealership Delivery Day Protocol</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-xl sm:text-2xl font-bold text-zinc-900 dark:text-zinc-50">
               Dealership Delivery Day: What to Inspect Before Signing
-            </h3>
+            </h2>
             <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               When your salesperson hands over the keys, complete this 5-minute pre-delivery inspection before signing final delivery paperwork or leaving the dealer lot:
             </p>
@@ -781,10 +781,10 @@ export default function Rav4MustHaveAccessoriesPage() {
 
       {/* Frequently Asked Questions */}
       <section className="space-y-4 pt-4">
-        <h3 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+        <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
           <HelpCircle className="h-5 w-5 text-amber-500" />
           Frequently Asked Questions
-        </h3>
+        </h2>
 
         <div className="space-y-3">
           {rav4FaqData.map((faq, index) => (
@@ -792,9 +792,9 @@ export default function Rav4MustHaveAccessoriesPage() {
               key={index}
               className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 sm:p-5 space-y-2 shadow-2xs"
             >
-              <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 {faq.question}
-              </h4>
+              </h3>
               <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                 {faq.answer}
               </p>

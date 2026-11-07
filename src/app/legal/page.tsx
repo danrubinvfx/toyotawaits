@@ -53,7 +53,7 @@ export default function LegalPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <Building2 className="h-5 w-5 text-amber-600" />
-            <CardTitle className="text-base font-bold">Independent Project</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Independent Project</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             Not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation, Toyota Canada Inc., or Toyota Motor Sales, U.S.A., Inc.
@@ -63,7 +63,7 @@ export default function LegalPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <DollarSign className="h-5 w-5 text-emerald-600" />
-            <CardTitle className="text-base font-bold">Dual-Market Pricing</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Dual-Market Pricing</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             Clear distinction between Canadian provincial all-in pricing rules (OMVIC/AMVIC/VSA) and U.S. dealer market adjustments (ADM).
@@ -73,7 +73,7 @@ export default function LegalPage() {
         <Card className="border-zinc-200 dark:border-zinc-800">
           <CardHeader className="space-y-1 pb-2">
             <AlertTriangle className="h-5 w-5 text-blue-600" />
-            <CardTitle className="text-base font-bold">Estimates Only</CardTitle>
+            <CardTitle as="h2" className="text-base font-bold">Estimates Only</CardTitle>
           </CardHeader>
           <CardContent className="text-xs text-zinc-500 leading-relaxed">
             All wait times and allocation benchmarks are crowdsourced statistical estimates, not guaranteed delivery dates or manufacturer commitments.

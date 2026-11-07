@@ -457,7 +457,7 @@ export function GearCard({
                   effectiveBadge.includes('Partner') || effectiveBadge.includes('2%')
                     ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
                     : effectiveBadge === 'Essential'
-                    ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
+                    ? 'bg-amber-950/40 border-amber-800/50 text-amber-300 font-bold'
                     : effectiveBadge === 'Direct Fit'
                     ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
                     : effectiveBadge === 'Delivery Day 1'
@@ -492,7 +492,7 @@ export function GearCard({
 
         {/* Muslogy Partner 2% Discount Pill & One-Tap Copy */}
         {isDirectPartner && (
-          <div className="flex items-center justify-between gap-1.5 px-2 py-1 my-1.5 rounded-md bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
+          <div className="flex items-center justify-between gap-1.5 px-2 py-1 my-1.5 rounded-md bg-amber-950/40 border border-amber-800/50 text-amber-300 text-[11px] font-bold">
             <span className="tracking-tight">
               CODE: <span className="underline decoration-amber-500/60 font-mono">{discountCode || 'Toyotawaits'}</span> ({discountText || '2% OFF'})
             </span>
@@ -524,7 +524,7 @@ export function GearCard({
 
         {/* ROI / Value Prop Pill: text-[11px] px-2 py-0.5 my-1.5 */}
         {price && (
-          <span className="text-[11px] font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 my-1.5 rounded-md inline-block w-fit">
+          <span className="text-[11px] font-semibold text-amber-300 bg-amber-950/40 border border-amber-800/50 px-2 py-0.5 my-1.5 rounded-md inline-block w-fit">
             {price}
           </span>
         )}
@@ -547,8 +547,8 @@ export function GearCard({
           className={cn(
             "w-full h-9 text-xs font-medium py-1.5 gap-1.5 transition-all cursor-pointer",
             isDirectPartner
-              ? "border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-semibold"
-              : "border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10"
+              ? "border-amber-800/50 bg-amber-950/40 hover:bg-amber-900/50 text-amber-300 font-semibold"
+              : "border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-800/60 hover:text-amber-300 hover:bg-amber-950/30"
           )}
         >
           <a

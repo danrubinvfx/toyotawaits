@@ -97,7 +97,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
             </div>
 
             <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3.5 space-y-1">
-              <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
+              <div className="flex items-center gap-2 text-amber-300 text-xs font-bold">
                 <Sparkles className="h-4 w-4 shrink-0" />
                 <span>Hybrid &amp; EV Range</span>
               </div>
@@ -280,7 +280,7 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
                   'h-7 text-xs px-2.5 rounded-lg cursor-pointer font-semibold gap-1',
                   selectedCategory === 'All-Weather 3PMSF'
                     ? 'bg-amber-500 text-zinc-950 hover:bg-amber-400 font-bold'
-                    : 'text-amber-600 dark:text-amber-400 border-amber-500/30'
+                    : 'text-amber-700 dark:text-amber-300 border-amber-500/30 dark:border-amber-800/50'
                 )}
               >
                 <Mountain className="h-3 w-3" />
@@ -429,7 +429,7 @@ function TireCard({ tire }: TireCardProps) {
               'text-[10px] font-bold px-2.5 py-0.5 gap-1',
               isDedicatedWinter
                 ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-500/30'
-                : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                : 'bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-500/30 dark:border-amber-800/50'
             )}
           >
             {isDedicatedWinter ? (

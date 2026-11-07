@@ -577,9 +577,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               <Package className="h-4 w-4" />
               <span>Delivery Day Prep</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
               Prepping for Delivery Day?
-            </h3>
+            </h2>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               Waiting on your allocation? Review the 7 community-recommended accessories to order before picking up your RAV4 at the dealership.
             </p>
@@ -604,9 +604,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               <Package className="h-4 w-4" />
               <span>Hitch &amp; Gear Prep</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
               Planning Bike Racks, Hitches, or Mats?
-            </h3>
+            </h2>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               See how the Torklift and Curt hitches fit with hands-free kick sensors, plus long-slide 3-row mat recommendations.
             </p>
@@ -631,9 +631,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               <Package className="h-4 w-4" />
               <span>3-Row Delivery Essentials</span>
             </div>
-            <h3 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
+            <h2 className="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-50">
               Delivery Prep Essentials
-            </h3>
+            </h2>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
               Check out custom-fit 3-row floor liners, 12.3-inch screen protectors, and TSS 3.0 dashcam kits.
             </p>
@@ -783,9 +783,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   <Snowflake className="h-3.5 w-3.5" />
                   <span>Seasonal Canadian Delivery Alert &bull; 2026/2027</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                   Taking winter delivery?
-                </h3>
+                </h2>
                 <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
                   Taking winter delivery? Check factory OEM tire specs, 17-inch downsizing guides, and BC/Quebec winter tire compliance.
                 </p>
@@ -816,9 +816,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                 <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
                   Sienna Accessory Guide
                 </Badge>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                   Planning Bike Racks or Towing?
-                </h3>
+                </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   Waiting on your delivery? Read our 2021+ Toyota Sienna Trailer Hitch &amp; Kick-Sensor Guide to pick the right receiver and wiring before taking delivery.
                 </p>
@@ -884,9 +884,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                 <Badge className="bg-red-600 text-white font-bold text-xs">
                   2026 vs. 2027 Model Year
                 </Badge>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                   Allocated a 2026 or Waiting for a 2027?
-                </h3>
+                </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   The 2027 RAV4 brings major hardware changes including native NACS Supercharging and upgraded PHEV output. Read our breakdown before deciding to pass on an incoming allocation.
                 </p>
@@ -910,9 +910,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                 <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
                   2026 vs. 2027 Model Year
                 </Badge>
-                <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                   Allocated a 2026 or 2027 Model?
-                </h3>
+                </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
                   The 2027 Sienna is a direct mechanical carryover. Compare the trim differences and learn how dealer queue rollovers work before passing on a build slot.
                 </p>
