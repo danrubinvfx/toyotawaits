@@ -54,6 +54,10 @@ describe('Footer Component', () => {
     const winterPrepLink = screen.getByRole('link', { name: /Winter Prep & Survival ❄️/i });
     expect(winterPrepLink).toBeInTheDocument();
     expect(winterPrepLink).toHaveAttribute('href', 'https://www.toyotawaits.ca/winter-prep');
+
+    const ecpLink = screen.getByRole('link', { name: /Toyota ECP Warranty Guide/i });
+    expect(ecpLink).toBeInTheDocument();
+    expect(ecpLink).toHaveAttribute('href', 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide');
   });
 
   it('renders standardized Global Nominative Fair Use Disclaimer', () => {

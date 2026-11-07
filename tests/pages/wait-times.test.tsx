@@ -180,6 +180,18 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     const deliveryPrepCta = screen.getByRole('link', { name: /View Delivery Checklist →/i });
     expect(deliveryPrepCta).toHaveAttribute('href', '/delivery-prep');
 
+    const ecpBanner = screen.getByTestId('ecp-warranty-teaser-banner');
+    expect(ecpBanner).toBeInTheDocument();
+    expect(screen.getByText(/🛡️ Finance Office Defense/i)).toBeInTheDocument();
+    expect(screen.getByText(/Quoted \$3,000\+ for Toyota ECP Extended Warranty\?/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Break down factory hybrid coverage overlap, dealer margins, and whether extended protection makes financial sense for your Sienna\./i
+      )
+    ).toBeInTheDocument();
+    const ecpCta = screen.getByRole('link', { name: /Check ECP Warranty Breakdown →/i });
+    expect(ecpCta).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
+
     // Verify Breakdown sections (<h2>)
     expect(screen.getByText(/Trim & Powertrain Delivery Spreads/i)).toBeInTheDocument();
     expect(screen.getByText(/Provincial Allocation Breakdown \(BC, AB, ON, QC\)/i)).toBeInTheDocument();

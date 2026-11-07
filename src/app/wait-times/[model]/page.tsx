@@ -842,6 +842,30 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             View Delivery Checklist →
           </Link>
         </div>
+
+        {/* C. "Finance Office Defense: Toyota ECP Extended Warranty" Bridge */}
+        <div
+          data-testid="ecp-warranty-teaser-banner"
+          className="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <div className="text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              🛡️ Finance Office Defense
+            </div>
+            <h3 className="text-sm font-bold text-white">
+              Quoted $3,000+ for Toyota ECP Extended Warranty?
+            </h3>
+            <p className="text-xs text-neutral-300">
+              Break down factory hybrid coverage overlap, dealer margins, and whether extended protection makes financial sense for your {modelConfig.shortName || modelConfig.name}.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-ecp-warranty-guide"
+            className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
+          >
+            Check ECP Warranty Breakdown →
+          </Link>
+        </div>
       </section>
 
       {/* Seasonal Canadian Winter Delivery Alert Banner */}

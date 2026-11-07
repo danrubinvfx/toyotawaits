@@ -82,4 +82,23 @@ describe('DeliveryPrepPage Route', () => {
     expect(faqScript?.innerHTML).toContain('What does Toyota Status F mean?');
     expect(faqScript?.innerHTML).toContain('How long does a Toyota take to arrive once in transit?');
   });
+
+  it('renders Business Office Extended Warranty (ECP) Defense section with CTA link', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: /Surviving the Business Office: Extended Warranty \(ECP\) Defense/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(screen.getByText(/Never Sign on Delivery Day Under Pressure/i)).toBeInTheDocument();
+    expect(screen.getByText(/The \$1,900–\$2,100 CAD Target/i)).toBeInTheDocument();
+    expect(screen.getByText(/Avoid ECP Gold/i)).toBeInTheDocument();
+
+    const ecpLink = screen.getByRole('link', {
+      name: /Read the Complete Toyota ECP Breakdown & Net Cost Math →/i,
+    });
+    expect(ecpLink).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
+  });
 });
