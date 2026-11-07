@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { affiliateSlugSchema } from '@/lib/validations/schemas';
 import { getAffiliateRedirect } from '@/lib/db/affiliates';
 import { createServerClient } from '@/lib/supabase/server';
-import { buildAmazonDeepLinks } from '@/lib/gear/affiliate';
+import { buildAmazonDeepLinks, buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export const dynamic = 'force-dynamic';
 
@@ -25,6 +25,33 @@ export const MUSLOGY_DIRECT_URLS: Record<string, string> = {
     'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
   'muslogy-grand-highlander-cargo-net':
     'https://muslogy.net/discount/Toyotawaits?redirect=/collections/cargo-net&rs_ref=3f6lkniA',
+};
+
+export const OUT_PROXY_URLS: Record<string, string> = {
+  'spigen-screen-protector': buildAmazonAffiliateUrl(
+    'Toyota tempered glass screen protector matte 9H',
+    'CA'
+  ),
+  'spigen-toyota-screen-protector': buildAmazonAffiliateUrl(
+    'Toyota tempered glass screen protector matte 9H',
+    'CA'
+  ),
+  'faraday-key-pouch': buildAmazonAffiliateUrl(
+    'Faraday pouch for car keys signal blocker 2-pack',
+    'CA'
+  ),
+  'faraday-key-fob-pouch': buildAmazonAffiliateUrl(
+    'Faraday pouch for car keys signal blocker 2-pack',
+    'CA'
+  ),
+  'portable-tire-inflator': buildAmazonAffiliateUrl(
+    'portable cordless tire inflator 150 PSI auto shut off',
+    'CA'
+  ),
+  'fanttik-cordless-tire-inflator': buildAmazonAffiliateUrl(
+    'portable cordless tire inflator 150 PSI auto shut off',
+    'CA'
+  ),
 };
 
 export async function GET(
@@ -55,6 +82,8 @@ export async function GET(
     let destinationUrl: string | null = null;
     if (MUSLOGY_DIRECT_URLS[validatedSlug]) {
       destinationUrl = MUSLOGY_DIRECT_URLS[validatedSlug];
+    } else if (OUT_PROXY_URLS[validatedSlug]) {
+      destinationUrl = OUT_PROXY_URLS[validatedSlug];
     } else {
       destinationUrl = await getAffiliateRedirect(validatedSlug);
     }
@@ -82,7 +111,7 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams;
     try {
       const placementParam = searchParams.get('placement');
-      const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait'];
+      const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait', 'guide_ecp_warranty', 'guide_warranty'];
       const effectivePlacement = (placementParam && validPlacements.includes(placementParam)) ? placementParam : 'while_you_wait';
       const modelContext = searchParams.get('model') || null;
 

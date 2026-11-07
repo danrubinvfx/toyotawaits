@@ -441,6 +441,130 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   },
 
   // ==========================================
+  // Day-1 Replacement Gear & Warranty Defense
+  // ==========================================
+  'spigen-toyota-screen-protector': {
+    id: 'spigen-toyota-screen-protector',
+    slug: 'spigen-toyota-screen-protector',
+    proxySlug: 'spigen-screen-protector',
+    title: 'Spigen Matte 9H Tempered Glass Screen Protector',
+    brand: 'Spigen',
+    category: 'Interior Protection',
+    searchQuery: 'Toyota tempered glass screen protector matte 9H',
+    searchKeywordsCA: 'Toyota tempered glass screen protector matte 9H',
+    searchKeywordsUS: 'Toyota tempered glass screen protector matte 9H',
+    destinationUrl: '/out/spigen-screen-protector',
+    description: 'Precision-cut 9H tempered glass screen protector with anti-glare oleophobic coating for Toyota touchscreen displays.',
+    whyBuy: 'Physical alternative to dealer interior/screen replacement warranties. Shields against scratches, micro-fractures, and fingerprint oil accumulation.',
+    badge: 'Day-1 Essential',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    fallbackIcon: 'layout-grid',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$2,800+ vs. OEM screen replacement',
+  },
+  'spigen-screen-protector': {
+    id: 'spigen-toyota-screen-protector',
+    slug: 'spigen-toyota-screen-protector',
+    proxySlug: 'spigen-screen-protector',
+    title: 'Spigen Matte 9H Tempered Glass Screen Protector',
+    brand: 'Spigen',
+    category: 'Interior Protection',
+    searchQuery: 'Toyota tempered glass screen protector matte 9H',
+    searchKeywordsCA: 'Toyota tempered glass screen protector matte 9H',
+    searchKeywordsUS: 'Toyota tempered glass screen protector matte 9H',
+    destinationUrl: '/out/spigen-screen-protector',
+    description: 'Precision-cut 9H tempered glass screen protector with anti-glare oleophobic coating for Toyota touchscreen displays.',
+    whyBuy: 'Physical alternative to dealer interior/screen replacement warranties. Shields against scratches, micro-fractures, and fingerprint oil accumulation.',
+    badge: 'Day-1 Essential',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    fallbackIcon: 'layout-grid',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$2,800+ vs. OEM screen replacement',
+  },
+  'faraday-key-fob-pouch': {
+    id: 'faraday-key-fob-pouch',
+    slug: 'faraday-key-fob-pouch',
+    proxySlug: 'faraday-key-pouch',
+    title: 'RFID Faraday Key Fob Signal Blocker Pouch (2-Pack)',
+    brand: 'Defender Guard',
+    category: 'Theft & Security',
+    searchQuery: 'Faraday pouch for car keys signal blocker 2-pack',
+    searchKeywordsCA: 'Faraday pouch for car keys signal blocker 2-pack',
+    searchKeywordsUS: 'Faraday pouch for car keys signal blocker 2-pack',
+    destinationUrl: '/out/faraday-key-pouch',
+    description: 'Dual-layer military-grade shielding fabric that blocks 100% of RFID, BLE, and sub-GHz wireless relay signals from car thieves.',
+    whyBuy: 'Inexpensive defense against driveway relay theft and key cloning, saving $600–$1,200 vs dealer tracking, etching, and theft recovery packages.',
+    badge: 'Anti-Theft Guard',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/faraday-pouch.webp',
+    fallbackIcon: 'lock',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$600–$1,200 vs. dealer etching',
+  },
+  'faraday-key-pouch': {
+    id: 'faraday-key-fob-pouch',
+    slug: 'faraday-key-fob-pouch',
+    proxySlug: 'faraday-key-pouch',
+    title: 'RFID Faraday Key Fob Signal Blocker Pouch (2-Pack)',
+    brand: 'Defender Guard',
+    category: 'Theft & Security',
+    searchQuery: 'Faraday pouch for car keys signal blocker 2-pack',
+    searchKeywordsCA: 'Faraday pouch for car keys signal blocker 2-pack',
+    searchKeywordsUS: 'Faraday pouch for car keys signal blocker 2-pack',
+    destinationUrl: '/out/faraday-key-pouch',
+    description: 'Dual-layer military-grade shielding fabric that blocks 100% of RFID, BLE, and sub-GHz wireless relay signals from car thieves.',
+    whyBuy: 'Inexpensive defense against driveway relay theft and key cloning, saving $600–$1,200 vs dealer tracking, etching, and theft recovery packages.',
+    badge: 'Anti-Theft Guard',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/faraday-pouch.webp',
+    fallbackIcon: 'lock',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$600–$1,200 vs. dealer etching',
+  },
+  'fanttik-cordless-tire-inflator': {
+    id: 'fanttik-cordless-tire-inflator',
+    slug: 'fanttik-cordless-tire-inflator',
+    proxySlug: 'portable-tire-inflator',
+    title: 'Fanttik Portable Cordless Tire Inflator & Digital Gauge (150 PSI)',
+    brand: 'Fanttik',
+    category: 'Road Hazard Defense',
+    searchQuery: 'portable cordless tire inflator 150 PSI auto shut off',
+    searchKeywordsCA: 'portable cordless tire inflator 150 PSI auto shut off',
+    searchKeywordsUS: 'portable cordless tire inflator 150 PSI auto shut off',
+    destinationUrl: '/out/portable-tire-inflator',
+    description: 'High-precision rechargeable cordless tire compressor with auto-shutoff, digital pressure readout, and emergency LED flashlight.',
+    whyBuy: 'Self-insure against slow leaks, seasonal temperature pressure drops, and road hazard punctures without dealer tire & wheel warranty markups.',
+    badge: 'Roadside Essential',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
+    fallbackIcon: 'gauge',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$1,200+ vs. dealer tire & wheel plans',
+  },
+  'portable-tire-inflator': {
+    id: 'fanttik-cordless-tire-inflator',
+    slug: 'fanttik-cordless-tire-inflator',
+    proxySlug: 'portable-tire-inflator',
+    title: 'Fanttik Portable Cordless Tire Inflator & Digital Gauge (150 PSI)',
+    brand: 'Fanttik',
+    category: 'Road Hazard Defense',
+    searchQuery: 'portable cordless tire inflator 150 PSI auto shut off',
+    searchKeywordsCA: 'portable cordless tire inflator 150 PSI auto shut off',
+    searchKeywordsUS: 'portable cordless tire inflator 150 PSI auto shut off',
+    destinationUrl: '/out/portable-tire-inflator',
+    description: 'High-precision rechargeable cordless tire compressor with auto-shutoff, digital pressure readout, and emergency LED flashlight.',
+    whyBuy: 'Self-insure against slow leaks, seasonal temperature pressure drops, and road hazard punctures without dealer tire & wheel warranty markups.',
+    badge: 'Roadside Essential',
+    isDeliveryDayEssential: true,
+    imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
+    fallbackIcon: 'gauge',
+    buttonLabel: 'Search Amazon ↗',
+    savingsCad: '$1,200+ vs. dealer tire & wheel plans',
+  },
+
+  // ==========================================
   // RAV4 Cabin Ergonomics & Road-Trip Relief
   // ==========================================
   'rav4-padded-armrest-cover': {
@@ -1713,6 +1837,15 @@ export function resolveGearLocalImage(
   // 15. Dongar mirror power tap harness
   if (clean.includes('dongar') || t.includes('dongar')) {
     return { imageUrl: '/assets/gear/fitcamx-rav4.webp', fallbackIcon: 'camera' };
+  }
+  // 16. Portable tire inflator / emergency compressor
+  if (
+    clean.includes('inflator') ||
+    clean.includes('compressor') ||
+    t.includes('inflator') ||
+    t.includes('tire inflator')
+  ) {
+    return { imageUrl: '/assets/gear/noco-gb40-jump-pack.webp', fallbackIcon: 'gauge' };
   }
 
   return undefined;

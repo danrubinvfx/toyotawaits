@@ -53,6 +53,21 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'toyota-ecp-warranty-guide',
+    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada?',
+    tagline: 'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Real component repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
+    badge: 'Finance Office Guide',
+    model: 'Universal Canadian Guide',
+    tags: ['Finance', 'Warranty', 'Buyer Guide'],
+    highlights: [
+      'Platinum Exclusionary vs Gold Named Component trap analysis',
+      'Factory 8yr/160k km hybrid component overlap breakdown',
+      'Net cost math: $2,800 retail vs. ~$1,950 true mechanical risk',
+      'Dealer negotiation playbook: target wholesale ($1,900–$2,100 CAD)',
+    ],
+    href: '/guides/toyota-ecp-warranty-guide',
+  },
+  {
     slug: 'winter-prep',
     title: 'Canadian Winter Prep & Salt Protection Guide',
     tagline: "BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don'ts.",
