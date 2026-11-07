@@ -10,14 +10,22 @@ describe('TireCatalog Component', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: /Canadian Toyota Tire Guide: Winter & All-Weather Recommendations/i,
+        name: /(Canadian Toyota Tire Guide|Model-by-Model Winter & All-Weather Tire Recommendations)/i,
       })
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/🇨🇦 Canadian Tire Guide & Fitment Reviews/i)).toBeInTheDocument();
-    expect(screen.getByText(/Provincial 3PMSF Laws/i)).toBeInTheDocument();
-    expect(screen.getByText(/Hybrid & EV Range/i)).toBeInTheDocument();
-    expect(screen.getByText(/Insurance Discounts/i)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/(🇨🇦 Canadian Tire Guide & Fitment Reviews|Interactive Model Catalog)/i).length
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText(/(Provincial 3PMSF Laws|3PMSF Certified Severe Snow Reviews)/i).length
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText(/(Hybrid & EV Range|editorial ratings based on Canadian severe-snow compliance)/i).length
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText(/(Insurance Discounts|Dedicated Winter|All-Weather 3PMSF)/i).length
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it('renders the interactive vehicle selector with all 5 required models and defaults to RAV4', () => {

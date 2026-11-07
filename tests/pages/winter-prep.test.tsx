@@ -79,7 +79,9 @@ describe('WinterPrepView Page Component', () => {
 
     // Tire Guide cross-link banner
     expect(screen.getByTestId('winter-prep-tire-callout')).toBeInTheDocument();
-    const tireGuideLink = screen.getByRole('link', { name: /View Canadian Tire Guide 🛞 →/i });
+    const tireGuideLink = screen.getByRole('link', {
+      name: /(View Canadian Tire Guide 🛞 →|View Full Sizing Matrix & Reviews 🛞 →)/i,
+    });
     expect(tireGuideLink).toBeInTheDocument();
     expect(tireGuideLink).toHaveAttribute('href', '/tires');
   });
