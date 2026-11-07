@@ -277,10 +277,10 @@ export function InventoryFilterBar({
             data-testid="get-drop-alerts-btn"
             onClick={onOpenAlertModal}
             aria-label="Get Toyota Allocation Drop Alerts"
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 active:scale-95 transition-all shrink-0"
+            className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 active:scale-95 transition-all shrink-0"
           >
             <Bell className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>Alerts</span>
+            <span className="hidden xs:inline sm:inline">Alerts</span>
           </button>
         )}
 
@@ -290,16 +290,17 @@ export function InventoryFilterBar({
           data-testid="cancellations-toggle-pill"
           aria-pressed={Boolean(filters.cancellationsOnly)}
           onClick={handleToggleCancellations}
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all shrink-0 ${
+          className={`inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all shrink-0 ${
             filters.cancellationsOnly
               ? 'border-amber-500 bg-amber-500/20 text-amber-300 shadow-sm'
               : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:text-amber-400 hover:border-amber-500/40'
           }`}
         >
-          <span>⚡ Likely Cancellations ({cancellationsCount})</span>
+          <span className="hidden sm:inline">⚡ Likely Cancellations ({cancellationsCount})</span>
+          <span className="sm:hidden">⚡ ({cancellationsCount})</span>
         </button>
 
-        {/* Mobile Toggle Button */}
+        {/* Mobile Toggle Button / Compact Filter Bar Trigger */}
         <button
           type="button"
           data-testid="toggle-filters-btn"
@@ -307,16 +308,19 @@ export function InventoryFilterBar({
           aria-expanded={isExpanded}
           aria-controls="collapsible-filter-tray"
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition md:hidden shrink-0 ${
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition md:hidden shrink-0 ${
             isExpanded || activeFacetCount > 0
               ? 'border-red-800/80 bg-red-950/40 text-red-300'
               : 'border-zinc-800 bg-zinc-950 text-zinc-300 hover:text-white hover:border-zinc-700'
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span>Filters</span>
+          <span>{activeFacetCount > 0 ? `Filters (${activeFacetCount})` : 'Filters'}</span>
           {activeFacetCount > 0 && (
-            <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full h-4 min-w-4 px-1">
+            <span
+              data-testid="active-filter-count-badge"
+              className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold rounded-full h-4 min-w-4 px-1"
+            >
               {activeFacetCount}
             </span>
           )}

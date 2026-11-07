@@ -460,7 +460,7 @@ export function VehicleListingCard(rawProps: VehicleListingCardProps) {
       aria-label={`${primaryTitle} ${secondaryTitle || ''} at ${dealerName}`}
       className="flex flex-col h-full rounded-xl border border-zinc-800 bg-zinc-900/80 shadow-md backdrop-blur-sm transition-all hover:border-zinc-700"
     >
-      <CardHeader className="p-3.5 sm:p-4 pb-1.5 sm:pb-2">
+      <CardHeader className="p-3 sm:p-4 pb-1 sm:pb-2">
         {/* Compact Top Row: Status Badge & Observation Timestamp */}
         <div className="flex items-center justify-between gap-2 mb-1.5">
           {isIncoming ? (
@@ -566,7 +566,7 @@ export function VehicleListingCard(rawProps: VehicleListingCardProps) {
       </CardHeader>
 
       {/* Vehicle Image & Transit/Lot Status Badge */}
-      <div className="px-3.5 sm:px-4 pb-2.5">
+      <div className="px-3 sm:px-4 pb-2 sm:pb-2.5">
         <div className="relative">
           <VehicleImage
             imageUrl={imageUrl}
@@ -602,7 +602,7 @@ export function VehicleListingCard(rawProps: VehicleListingCardProps) {
         </div>
       </div>
 
-      <CardContent className="p-3.5 sm:p-4 pt-0 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
+      <CardContent className="p-3 sm:p-4 pt-0 flex-1 flex flex-col justify-between space-y-2 sm:space-y-3">
         {/* Sleek inline metadata wrap: Specs, Color, Stock, and VIN */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-300">
           {powertrain && (

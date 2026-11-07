@@ -215,7 +215,7 @@ export default function InventoryPage({
   return (
     <main
       data-testid="inventory-page-main"
-      className="min-h-screen bg-zinc-950 text-zinc-100 py-3 sm:py-5 px-3 sm:px-6 lg:px-8 pb-16 sm:pb-12 selection:bg-red-500 selection:text-white"
+      className="min-h-screen bg-zinc-950 text-zinc-100 py-2 sm:py-5 px-2.5 sm:px-6 lg:px-8 pb-16 sm:pb-12 selection:bg-red-500 selection:text-white"
     >
       <script
         type="application/ld+json"
@@ -230,10 +230,10 @@ export default function InventoryPage({
           }),
         }}
       />
-      <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
+      <div className="max-w-7xl mx-auto space-y-2 sm:space-y-4">
         {/* Compact Single-Unit Header */}
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-800/80 pb-2.5 sm:pb-3">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <header className="flex flex-wrap items-center justify-between gap-1.5 sm:gap-2 border-b border-zinc-800/80 pb-2 sm:pb-3">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-3">
             <Link
               href="/"
               className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-white transition shrink-0"
@@ -246,20 +246,20 @@ export default function InventoryPage({
 
             <span className="text-zinc-700 hidden sm:inline" aria-hidden="true">•</span>
 
-            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white leading-tight">
               Toyota Public Inventory
             </h1>
 
             <span
               data-testid="unconfirmed-feed-badge"
-              className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-amber-400/90 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded-full"
+              className="inline-flex items-center gap-1 text-[10px] sm:text-xs text-amber-400/90 bg-amber-950/40 border border-amber-800/40 px-2 py-0.5 rounded-full"
             >
               <AlertTriangle className="h-3 w-3 shrink-0 text-amber-400" aria-hidden="true" />
               <span>Unconfirmed Dealer Feed</span>
             </span>
           </div>
 
-          <span className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2.5 py-0.5 text-xs font-medium text-zinc-400">
+          <span className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-zinc-900/80 px-2 py-0.5 text-[11px] sm:text-xs font-medium text-zinc-400">
             BC &amp; ON Fleet (30 Dealers)
           </span>
         </header>

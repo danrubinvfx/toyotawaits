@@ -585,8 +585,8 @@ export function WaitTimeEstimator({
   }, [province, powertrainSlug, stats, isRebateEligible, modelSlug]);
 
   return (
-    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-4 scroll-mt-28">
-      <CardContent className="p-4 sm:p-6 space-y-5">
+    <Card id="estimator" className="w-full max-w-4xl mx-auto shadow-xl border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 mt-1 sm:mt-4 scroll-mt-28">
+      <CardContent className="p-2.5 sm:p-6 space-y-2.5 sm:space-y-5">
         {/* Post-Submission Confirmation Feedback Banner */}
         {showSubmittedBanner && (
           <div
@@ -705,12 +705,12 @@ export function WaitTimeEstimator({
         )}
 
         {/* 2-Column Responsive Grid Layout for Estimator Controls */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           {/* Cell 1: Powertrain */}
           <div>
             <Label
               htmlFor={`${compId}-powertrain`}
-              className="text-xs font-medium text-neutral-400 mb-1 block"
+              className="text-[11px] sm:text-xs font-medium text-neutral-400 mb-0.5 sm:mb-1 block"
             >
               Powertrain
             </Label>
@@ -719,7 +719,7 @@ export function WaitTimeEstimator({
               value={powertrainSlug}
               onChange={(e) => handlePowertrainChange(e.target.value)}
               disabled={currentPowertrains.length === 1}
-              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
+              className="h-9 sm:h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 sm:px-3 pr-7 sm:pr-8 py-1 sm:py-2 text-xs sm:text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               {currentPowertrains.map((p) => (
                 <option key={p.slug} value={p.slug}>
@@ -730,7 +730,7 @@ export function WaitTimeEstimator({
             {currentPowertrains.length === 1 && (
               <p
                 data-testid="single-powertrain-notice"
-                className="text-[11px] text-neutral-400 mt-1 flex items-center gap-1.5 leading-tight"
+                className="text-[10px] sm:text-[11px] text-neutral-400 mt-1 flex items-center gap-1.5 leading-tight"
               >
                 <span>ℹ️</span>
                 <span>Toyota {currentModel.name} is exclusively available with a {currentPowertrains[0].name} powertrain in Canada.</span>
@@ -742,7 +742,7 @@ export function WaitTimeEstimator({
           <div>
             <Label
               htmlFor={`${compId}-trim`}
-              className="text-xs font-medium text-neutral-400 mb-1 block"
+              className="text-[11px] sm:text-xs font-medium text-neutral-400 mb-0.5 sm:mb-1 block"
             >
               Trim Level
             </Label>
@@ -750,7 +750,7 @@ export function WaitTimeEstimator({
               id={`${compId}-trim`}
               value={trimSlug}
               onChange={(e) => setTrimSlug(e.target.value)}
-              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
+              className="h-9 sm:h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 sm:px-3 pr-7 sm:pr-8 py-1 sm:py-2 text-xs sm:text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               <option value="all">All Trims</option>
               {currentTrims.map((t) => (
@@ -765,7 +765,7 @@ export function WaitTimeEstimator({
           <div>
             <Label
               htmlFor={`${compId}-province`}
-              className="text-xs font-medium text-neutral-400 mb-1 block"
+              className="text-[11px] sm:text-xs font-medium text-neutral-400 mb-0.5 sm:mb-1 block"
             >
               {getRegionLabel(market)}
             </Label>
@@ -773,7 +773,7 @@ export function WaitTimeEstimator({
               id={`${compId}-province`}
               value={province}
               onChange={(e) => setProvince(e.target.value)}
-              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 pr-8 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
+              className="h-9 sm:h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 sm:px-3 pr-7 sm:pr-8 py-1 sm:py-2 text-xs sm:text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 font-medium cursor-pointer"
             >
               {getRegionsForMarket(market).map((p) => (
                 <option key={p.code} value={p.code}>
@@ -787,7 +787,7 @@ export function WaitTimeEstimator({
           <div>
             <Label
               htmlFor={`${compId}-deposit-date`}
-              className="text-xs font-medium text-neutral-400 mb-1 block"
+              className="text-[11px] sm:text-xs font-medium text-neutral-400 mb-0.5 sm:mb-1 block"
             >
               Deposit / Order Date
             </Label>
@@ -796,11 +796,11 @@ export function WaitTimeEstimator({
               type="date"
               value={depositDate}
               onChange={(e) => setDepositDate(e.target.value)}
-              className="h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-3 py-2 text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 flex items-center min-h-[44px] max-h-[44px] cursor-pointer"
+              className="h-9 sm:h-11 w-full rounded-lg border border-neutral-800 bg-neutral-900/80 px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm text-neutral-100 focus:outline-none focus:ring-1 focus:ring-amber-500 flex items-center min-h-[36px] sm:min-h-[44px] max-h-[36px] sm:max-h-[44px] cursor-pointer"
               suppressHydrationWarning
             />
             {isHistoricalOrderDate && (
-              <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-1 leading-tight">
+              <p className="text-[10px] sm:text-[11px] text-amber-700 dark:text-amber-300 mt-1 leading-tight">
                 Historical pricing varies by model year (current 2026 MSRP shown for reference).
               </p>
             )}
@@ -809,7 +809,7 @@ export function WaitTimeEstimator({
 
         {/* Results Panel - ESTIMATOR VALUES BROUGHT TO TOP */}
         {isLoading && !stats ? (
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 sm:p-6 space-y-4">
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 p-3 sm:p-6 space-y-3 sm:space-y-4">
             <Skeleton className="h-8 w-1/3" />
             <Skeleton className="h-20 w-full" />
             <div className="grid grid-cols-3 gap-4">
@@ -821,23 +821,23 @@ export function WaitTimeEstimator({
         ) : (
           <div
             className={cn(
-              'rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-6 transition-opacity duration-200',
+              'rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 p-3 sm:p-6 shadow-sm space-y-3 sm:space-y-6 transition-opacity duration-200',
               isLoading && 'opacity-70 pointer-events-none'
             )}
           >
             {/* Primary KPI Banner - Centered Clean Layout */}
-            <div className="flex flex-col items-center text-center space-y-3.5 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-              <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
+            <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3.5 pb-3 sm:pb-6 border-b border-zinc-100 dark:border-zinc-800">
+              <span className="text-[11px] sm:text-xs font-semibold text-zinc-500 uppercase tracking-wider block">
                 {isPlanningBenchmark ? 'Planning Benchmark Window' : 'Empirical Delivery Window'} in {province}
               </span>
 
-              <div className="flex flex-wrap items-center justify-center gap-2">
-                <Badge variant="outline" className={`text-[11px] font-bold ${currentTier.className}`}>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                <Badge variant="outline" className={`text-[10px] sm:text-[11px] font-bold ${currentTier.className}`}>
                   Tier: {currentTier.label}
                 </Badge>
                 <Badge
                   data-testid="estimator-range-badge"
-                  className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/40 text-[11px] font-bold"
+                  className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30 dark:border-amber-400/40 text-[10px] sm:text-[11px] font-bold"
                 >
                   Estimated Wait: {minWaitMonths} – {maxWaitMonths} Months
                 </Badge>
@@ -845,7 +845,7 @@ export function WaitTimeEstimator({
                   <Badge
                     variant="outline"
                     data-testid="planning-benchmark-badge"
-                    className="border-amber-500/40 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] font-semibold"
+                    className="border-amber-500/40 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] sm:text-[11px] font-semibold"
                   >
                     Planning Benchmark (n={verifiedSampleSize})
                   </Badge>
@@ -853,7 +853,7 @@ export function WaitTimeEstimator({
                   <Badge
                     variant="outline"
                     data-testid="empirical-calculation-badge"
-                    className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold"
+                    className="border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] sm:text-[11px] font-semibold"
                   >
                     Empirical Calculation (n={verifiedSampleSize})
                   </Badge>
@@ -862,7 +862,7 @@ export function WaitTimeEstimator({
                   <Badge
                     variant="outline"
                     data-testid="regional-baseline-badge"
-                    className="border-amber-500/30 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[11px] font-semibold"
+                    className="border-amber-500/30 dark:border-amber-400/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] sm:text-[11px] font-semibold"
                   >
                     {isUs ? 'National US baseline' : 'National baseline'} · Limited regional data for {province}
                   </Badge>
@@ -870,7 +870,7 @@ export function WaitTimeEstimator({
               </div>
 
               <div
-                className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight"
+                className="text-xl sm:text-4xl md:text-5xl font-extrabold text-zinc-950 dark:text-zinc-50 tracking-tight"
                 suppressHydrationWarning
               >
                 {optimisticDate} – {conservativeDate}

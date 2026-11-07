@@ -9,6 +9,8 @@ import { ActiveOrderTracker } from '@/components/tracking/ActiveOrderTracker';
 import { ModelGearChecklist } from '@/components/benchmarks/benchmark-feed';
 import { HashScrollHandler } from '@/components/common/hash-scroll-handler';
 import { ActivityTicker } from '@/components/feed/ActivityTicker';
+import { HomeFeedTabs } from '@/components/home/HomeFeedTabs';
+import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { getTickerItems } from '@/lib/db/ticker';
 import { Button } from '@/components/ui/button';
@@ -95,7 +97,7 @@ export default async function HomePage() {
       {/* Sticky Quick-Select Vehicle Model Pills docked directly under navbar */}
       <StickyVehiclePills />
 
-      <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-4 sm:space-y-6">
         {/* Active Order Stepper: Compact Pull-Down Banner / Drawer for returning users */}
         <section className="container mx-auto max-w-6xl px-4 sm:px-6 empty:hidden">
           <React.Suspense fallback={null}>
@@ -103,133 +105,171 @@ export default async function HomePage() {
           </React.Suspense>
         </section>
 
-        {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
-        <section className="relative border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-4 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white">
-          <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6">
-            {/* Tight Header with Suspense for Regional Geolocation */}
-            <Hero initialMarket="CA" />
-
-            {/* Estimator Container immediately below header */}
-            <div className="mt-2">
-              <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
-                <WaitTimeEstimator />
-              </React.Suspense>
-            </div>
-
-            {/* High-Contrast Post-Estimate Crowdsourcing Submission Card */}
-            <PostEstimateSubmissionCta />
-
-            {/* Elevated Compact Guides Grid directly underneath estimator */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full mt-3 mb-0 sm:mt-4 sm:mb-0">
-              <Link
-                href="/winter-prep"
-                className="group rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-950/40 transition-all min-h-[72px]"
-              >
-                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                  <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                    <Snowflake className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-cyan-400 transition-colors">
-                      Winter Prep
-                    </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
-                      12V &amp; Floor Mats
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
-              </Link>
-
-              <Link
-                href="/tires"
-                className="group rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-950/40 transition-all min-h-[72px]"
-              >
-                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                  <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
-                    <Disc3 className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-amber-400 transition-colors">
-                      Tire Fitment
-                    </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
-                      OEM Sizes &amp; 3PMSF
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
-              </Link>
-
-              <Link
-                href="/delivery-prep"
-                className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all min-h-[72px]"
-              >
-                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-                    <ClipboardCheck className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-emerald-400 transition-colors">
-                      Delivery Day Prep
-                    </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
-                      Inspection Checklist
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
-              </Link>
-
-              <Link
-                href="/guides/ev-charging"
-                className="group rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-purple-500/50 hover:bg-purple-950/40 transition-all min-h-[72px]"
-              >
-                <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
-                  <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
-                    <Zap className="h-4 w-4" />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-purple-400 transition-colors">
-                      EV Rebates
-                    </h4>
-                    <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
-                      Federal &amp; Provincial
-                    </p>
-                  </div>
-                </div>
-                <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
-              </Link>
-            </div>
-          </div>
+        {/* Hero Section */}
+        <section className="container mx-auto max-w-6xl px-3 sm:px-6 pt-1 sm:pt-4">
+          <Hero initialMarket="CA" />
         </section>
 
-        {/* 3. Model Gear Checklist */}
-        <section id="gear" className="container mx-auto max-w-6xl px-4 sm:px-6 scroll-mt-24">
-          <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-            <ModelGearChecklist />
-          </React.Suspense>
-        </section>
+        {/* Home Feed Manager: Segmented tab control [ ⏱️ Queue Tracker ] <-> [ 📍 Allocated Pipeline ] */}
+        <section className="container mx-auto max-w-6xl px-3 sm:px-6">
+          <HomeFeedTabs
+            queueContent={
+              <div className="space-y-6 sm:space-y-8">
+                {/* 1. Above-the-Fold Hero Section with Wait Time Estimator */}
+                <section className="relative rounded-2xl border border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 pt-2 pb-4 sm:pt-6 sm:pb-6 dark:border-zinc-800 text-white p-2.5 sm:p-6 shadow-xl">
+                  <div className="space-y-3 sm:space-y-6">
+                    {/* Estimator Container */}
+                    <div className="mt-1 sm:mt-2">
+                      <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
+                        <WaitTimeEstimator />
+                      </React.Suspense>
+                    </div>
 
-        {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
-        <section id="community-log" className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-4 sm:space-y-6 scroll-mt-20">
-          <div id="analytics" className="scroll-mt-24" />
+                    {/* High-Contrast Post-Estimate Crowdsourcing Submission Card */}
+                    <PostEstimateSubmissionCta />
 
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-                <FileSpreadsheet className="h-6 w-6 text-amber-500" />
-                Community Delivery Log &amp; Audit Trail
-              </h2>
-              <p className="text-sm text-zinc-500">
-                Real-time crowdsourced submissions from verified Canadian buyers across all provinces.
-              </p>
-            </div>
+                    {/* Elevated Compact Guides Grid directly underneath estimator */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 w-full mt-3 mb-0 sm:mt-4 sm:mb-0">
+                      <Link
+                        href="/winter-prep"
+                        className="group rounded-xl border border-cyan-500/20 bg-gradient-to-br from-cyan-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-cyan-500/50 hover:bg-cyan-950/40 transition-all min-h-[72px]"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                            <Snowflake className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-cyan-400 transition-colors">
+                              Winter Prep
+                            </h4>
+                            <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                              12V &amp; Floor Mats
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-cyan-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                      </Link>
 
-            <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
-              <CommunityDataTable initialRecords={submissions} />
-            </React.Suspense>
-          </div>
+                      <Link
+                        href="/tires"
+                        className="group rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-amber-500/50 hover:bg-amber-950/40 transition-all min-h-[72px]"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+                            <Disc3 className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-amber-400 transition-colors">
+                              Tire Fitment
+                            </h4>
+                            <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                              OEM Sizes &amp; 3PMSF
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-amber-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                      </Link>
+
+                      <Link
+                        href="/delivery-prep"
+                        className="group rounded-xl border border-emerald-500/20 bg-gradient-to-br from-emerald-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-emerald-500/50 hover:bg-emerald-950/40 transition-all min-h-[72px]"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                            <ClipboardCheck className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-emerald-400 transition-colors">
+                              Delivery Day Prep
+                            </h4>
+                            <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                              Inspection Checklist
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                      </Link>
+
+                      <Link
+                        href="/guides/ev-charging"
+                        className="group rounded-xl border border-purple-500/20 bg-gradient-to-br from-purple-950/30 to-zinc-900/60 p-2.5 sm:p-3 flex items-center justify-between hover:border-purple-500/50 hover:bg-purple-950/40 transition-all min-h-[72px]"
+                      >
+                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+                          <div className="h-8 w-8 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20 flex items-center justify-center shrink-0">
+                            <Zap className="h-4 w-4" />
+                          </div>
+                          <div className="min-w-0">
+                            <h4 className="text-xs sm:text-sm font-semibold text-white whitespace-normal leading-tight group-hover:text-purple-400 transition-colors">
+                              EV Rebates
+                            </h4>
+                            <p className="text-[10px] sm:text-xs text-zinc-400 whitespace-normal leading-tight mt-0.5">
+                              Federal &amp; Provincial
+                            </p>
+                          </div>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-transform shrink-0 ml-1" />
+                      </Link>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3. Model Gear Checklist */}
+                <section id="gear" className="scroll-mt-24">
+                  <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+                    <ModelGearChecklist />
+                  </React.Suspense>
+                </section>
+
+                {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
+                <section id="community-log" className="space-y-4 sm:space-y-6 scroll-mt-20">
+                  <div id="analytics" className="scroll-mt-24" />
+
+                  <div className="space-y-4">
+                    <div>
+                      <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+                        <FileSpreadsheet className="h-6 w-6 text-amber-500" />
+                        Community Delivery Log &amp; Audit Trail
+                      </h2>
+                      <p className="text-sm text-zinc-500">
+                        Real-time crowdsourced submissions from verified Canadian buyers across all provinces.
+                      </p>
+                    </div>
+
+                    <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
+                      <CommunityDataTable initialRecords={submissions} />
+                    </React.Suspense>
+                  </div>
+                </section>
+              </div>
+            }
+            pipelineContent={
+              <div className="space-y-4 pt-1">
+                <div
+                  data-testid="allocated-pipeline-header"
+                  className="rounded-2xl border border-sky-500/30 bg-sky-950/20 p-4 text-xs sm:text-sm text-sky-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs"
+                >
+                  <div className="space-y-1">
+                    <span className="font-bold text-sky-400 uppercase tracking-wider text-[11px] block">
+                      📍 Live Dealer Allocation Pipeline
+                    </span>
+                    <p className="text-neutral-300">
+                      Explore unreserved build slots and incoming lot allocations observed across verified Canadian dealer inventory feeds.
+                    </p>
+                  </div>
+                  <Link
+                    href="/inventory"
+                    className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1 shadow-sm shrink-0 transition-colors"
+                  >
+                    Open Full Explorer ↗
+                  </Link>
+                </div>
+
+                <React.Suspense fallback={<div className="h-96 rounded-xl bg-zinc-900 animate-pulse" />}>
+                  <InventoryExplorer previewOverride={true} />
+                </React.Suspense>
+              </div>
+            }
+          />
         </section>
 
       {/* 5. Secondary Content: FAQ / Crowdsourcing Disclaimer */}

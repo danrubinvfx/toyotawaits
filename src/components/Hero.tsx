@@ -15,10 +15,10 @@ export function Hero({ initialMarket }: HeroProps) {
   const copy = getMarketCopy(currentMarket);
 
   return (
-    <div className="text-center space-y-2 max-w-3xl mx-auto pt-4 sm:pt-6" data-testid="hero-header">
+    <div className="text-center space-y-1 sm:space-y-2 max-w-3xl mx-auto pt-1 sm:pt-6" data-testid="hero-header">
       {/* Eyebrow Pill */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-semibold text-amber-300">
-        <Flame className="h-3.5 w-3.5 text-amber-300" />
+      <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 sm:px-3 py-0.5 text-[10px] sm:text-xs font-semibold text-amber-300">
+        <Flame className="h-3 w-3 sm:h-3.5 sm:text-amber-300" />
         <span data-testid="hero-domain">{copy.domain}</span>
         <span className="text-zinc-600">•</span>
         <span data-testid="hero-eyebrow">{copy.heroEyebrow}</span>
@@ -27,17 +27,17 @@ export function Hero({ initialMarket }: HeroProps) {
       {/* Main H1 Title */}
       <h1
         data-testid="hero-title"
-        className="text-2xl sm:text-4xl font-extrabold tracking-tight text-center text-white leading-tight"
+        className="text-xl sm:text-4xl font-extrabold tracking-tight text-center text-white leading-tight"
       >
         {copy.heroTitle}
       </h1>
 
       {/* Subcopy */}
-      <p data-testid="hero-subtitle" className="text-xs text-neutral-400 font-medium tracking-wide">
+      <p data-testid="hero-subtitle" className="text-[11px] sm:text-xs text-neutral-400 font-medium tracking-wide">
         {copy.heroSubtitle}
       </p>
 
-      <p data-testid="hero-description" className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
+      <p data-testid="hero-description" className="hidden sm:block text-sm sm:text-base text-zinc-300 leading-relaxed max-w-2xl mx-auto">
         {copy.heroDescription}
       </p>
     </div>
