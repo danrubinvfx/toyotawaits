@@ -42,7 +42,7 @@ describe('Middleware Multi-Domain Routing (.ca vs .com)', () => {
     expect(response.headers.get('x-domain')).toBe('toyotawaits.ca');
   });
 
-    it('enforces 301 permanent redirect from apex domain to www in production', () => {
+    it('enforces 301 permanent redirect from apex domain to www in production without creating redirect loops', () => {
     const originalEnv = process.env.NODE_ENV;
     try {
       (process.env as any).NODE_ENV = 'production';
@@ -55,9 +55,33 @@ describe('Middleware Multi-Domain Routing (.ca vs .com)', () => {
       const response = middleware(request);
       expect(response.status).toBe(301);
       expect(response.headers.get('location')).toBe('https://www.toyotawaits.ca/wait-times/grand-highlander');
+
+      // Ensure that when the destination (www.toyotawaits.ca) is requested, it does not loop
+      const wwwRequest = new NextRequest('https://www.toyotawaits.ca/wait-times/grand-highlander', {
+        headers: {
+          host: 'www.toyotawaits.ca',
+        },
+      });
+      const wwwResponse = middleware(wwwRequest);
+      expect(wwwResponse.status).toBe(200);
+      expect(wwwResponse.headers.get('location')).toBeNull();
     } finally {
       (process.env as any).NODE_ENV = originalEnv;
     }
+  });
+
+  it('does not re-intercept or alter /wait-times/* paths on www.toyotawaits.ca', () => {
+    const request = new NextRequest('https://www.toyotawaits.ca/wait-times/rav4', {
+      headers: {
+        host: 'www.toyotawaits.ca',
+      },
+    });
+
+    const response = middleware(request);
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.headers.get('x-region')).toBe('CA');
+    expect(response.headers.get('x-domain')).toBe('toyotawaits.ca');
   });
 
   it('defaults to Canadian domain for localhost and local development fallback', () => {

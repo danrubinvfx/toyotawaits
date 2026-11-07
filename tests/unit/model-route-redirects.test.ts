@@ -65,6 +65,9 @@ describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
       '/api',
       '/api/stats',
       '/api/export',
+      '/tools',
+      '/privacy',
+      '/legal',
     ];
 
     for (const utilityRoute of utilityRoutes) {

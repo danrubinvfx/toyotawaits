@@ -89,23 +89,13 @@ const nextConfig: NextConfig = {
       { source: '/highlander', destination: '/wait-times/highlander', permanent: true },
       { source: '/corolla', destination: '/wait-times/corolla', permanent: true },
       {
-        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|prius|tacoma|tundra|sequoia|4runner|highlander|corolla)/:powertrain/:province',
+        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|prius|tacoma|tundra|sequoia|4runner|highlander|corolla)/:powertrain/:province',
         destination: '/wait-times/:model',
         permanent: true,
       },
       {
-        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|prius|tacoma|tundra|sequoia|4runner|highlander|corolla)/:powertrain',
+        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|prius|tacoma|tundra|sequoia|4runner|highlander|corolla)/:powertrain',
         destination: '/wait-times/:model',
-        permanent: true,
-      },
-      {
-        source: '/land-cruiser/:powertrain/:province',
-        destination: '/wait-times/land-cruiser',
-        permanent: true,
-      },
-      {
-        source: '/land-cruiser/:powertrain',
-        destination: '/wait-times/land-cruiser',
         permanent: true,
       },
       { source: '/mods/rav4', destination: '/guides/rav4-se-mods', permanent: false },
