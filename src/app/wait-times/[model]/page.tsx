@@ -8,6 +8,7 @@ import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-chec
 import { PartnerDealBanner } from '@/components/gear/PartnerDealBanner';
 import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSection';
 import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
+import { ModelInventoryBridge } from '@/components/wait-times/ModelInventoryBridge';
 import {
   MODEL_REGISTRY,
   getModelConfig,
@@ -662,6 +663,12 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </p>
         </div>
       </section>
+
+      {/* "Skip the Wait" Live Inventory Bridge Card */}
+      <ModelInventoryBridge
+        modelSlug={modelConfig.slug}
+        modelName={modelConfig.name}
+      />
 
       {/* Model Delivery Prep Teaser Cards */}
       {modelConfig.slug === 'rav4' && (

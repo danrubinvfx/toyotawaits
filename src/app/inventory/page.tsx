@@ -71,6 +71,23 @@ type SearchParamsPromiseLike = Promise<SearchParamsRecord> & {
   _value?: SearchParamsRecord;
 };
 
+function resolveSearchParams(
+  searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
+): SearchParamsRecord {
+  if (!searchParams) return {};
+  if (typeof (searchParams as any).then === 'function') {
+    try {
+      return React.use(searchParams as Promise<SearchParamsRecord>);
+    } catch {
+      const maybeObj =
+        (searchParams as SearchParamsPromiseLike).value ??
+        (searchParams as SearchParamsPromiseLike)._value;
+      if (maybeObj) return maybeObj;
+    }
+  }
+  return searchParams as SearchParamsRecord;
+}
+
 function parsePreviewParam(
   searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 ): boolean {
@@ -136,11 +153,30 @@ export default function InventoryPage({
   totalFleetCount,
   totalCount,
 }: InventoryPageProps = {}) {
-  // Extract preview query parameter and initial model filter from searchParams
-  const isPreviewParam = parsePreviewParam(searchParams);
-  const initialModel = parseModelParam(searchParams);
-  const initialVins = parseVinsParam(searchParams);
+  const resolved = resolveSearchParams(searchParams);
 
+  // Extract preview query parameter and initial model filter from searchParams
+  const isPreviewParam =
+    resolved.preview === 'true' ||
+    (Array.isArray(resolved.preview) && resolved.preview.includes('true')) ||
+    parsePreviewParam(searchParams);
+
+  const rawModel =
+    typeof resolved.model === 'string'
+      ? resolved.model
+      : Array.isArray(resolved.model) && resolved.model.length > 0
+        ? resolved.model[0]
+        : parseModelParam(searchParams);
+
+  const initialModel = rawModel?.trim() || undefined;
+
+  const rawVins = resolved.vins || resolved.vin;
+  const initialVins =
+    (typeof rawVins === 'string'
+      ? rawVins.split(',').map((v) => v.trim()).filter(Boolean)
+      : Array.isArray(rawVins)
+        ? rawVins.flatMap((r) => r.split(',')).map((v) => v.trim()).filter(Boolean)
+        : undefined) || parseVinsParam(searchParams);
 
   // Feature Flag: Enable if explicitly configured, running in Vercel preview, or preview query override is present
   const isFeatureEnabled =

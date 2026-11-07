@@ -155,6 +155,13 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(screen.getByText('Ontario Lead Time')).toBeInTheDocument();
     expect(screen.getAllByText('Hybrid AWD / FWD').length).toBeGreaterThan(0);
 
+    // Verify "Skip the Wait" Live Inventory Bridge Card
+    const inventoryBridge = screen.getByTestId('model-inventory-bridge');
+    expect(inventoryBridge).toBeInTheDocument();
+    expect(screen.getByText(/⚡ Skip the wait\?/i)).toBeInTheDocument();
+    const liveStockLink = screen.getByRole('link', { name: /View Live (Toyota )?Sienna Stock ↗/i });
+    expect(liveStockLink).toHaveAttribute('href', '/inventory?model=sienna');
+
     // Verify Contextual Calculator Bridge & Delivery Day Preparation Bridge Cards
     const calcBanner = screen.getByTestId('calculator-teaser-banner');
     expect(calcBanner).toBeInTheDocument();

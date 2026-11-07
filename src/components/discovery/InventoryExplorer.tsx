@@ -465,16 +465,34 @@ export function InventoryExplorer({
     };
   }, []);
 
-  const [filters, setFilters] = useState<FilterState>({
-    model: queryModel || '',
-    status: 'advertised',
-    cancellationsOnly: isCancellationsOnlyQuery,
-    dealer: '',
-    location: '',
-    minPrice: '',
-    maxPrice: '',
-    search: '',
-    sortBy: 'newest',
+  const [filters, setFilters] = useState<FilterState>(() => {
+    let initialM = queryModel || '';
+    if (initialM && initialListings && initialListings.length > 0) {
+      const clean = initialM.toLowerCase().trim();
+      const cleanNoHyphen = clean.replace(/-/g, ' ');
+      const matched = initialListings.find((l) => {
+        const itemClean = l.model.toLowerCase().trim();
+        const itemNoHyphen = itemClean.replace(/-/g, ' ');
+        return (
+          itemClean === clean ||
+          itemNoHyphen === cleanNoHyphen ||
+          itemNoHyphen.startsWith(cleanNoHyphen) ||
+          cleanNoHyphen.startsWith(itemNoHyphen)
+        );
+      });
+      if (matched) initialM = matched.model;
+    }
+    return {
+      model: initialM,
+      status: 'advertised',
+      cancellationsOnly: isCancellationsOnlyQuery,
+      dealer: '',
+      location: '',
+      minPrice: '',
+      maxPrice: '',
+      search: '',
+      sortBy: 'newest',
+    };
   });
 
   const cancellationsCount = useMemo(() => {
@@ -529,9 +547,18 @@ export function InventoryExplorer({
   // Keep filter in sync if queryModel or searchParams update (case-insensitively normalizing e.g. 'sienna' -> 'Sienna')
   useEffect(() => {
     if (!queryModel) return;
-    const matched = listings.find(
-      (l) => l.model.toLowerCase() === queryModel.toLowerCase()
-    );
+    const clean = queryModel.toLowerCase().trim();
+    const cleanNoHyphen = clean.replace(/-/g, ' ');
+    const matched = listings.find((l) => {
+      const itemClean = l.model.toLowerCase().trim();
+      const itemNoHyphen = itemClean.replace(/-/g, ' ');
+      return (
+        itemClean === clean ||
+        itemNoHyphen === cleanNoHyphen ||
+        itemNoHyphen.startsWith(cleanNoHyphen) ||
+        cleanNoHyphen.startsWith(itemNoHyphen)
+      );
+    });
     const targetModel = matched ? matched.model : queryModel;
     if (filters.model !== targetModel) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
