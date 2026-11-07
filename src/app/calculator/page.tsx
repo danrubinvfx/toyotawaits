@@ -1,7 +1,8 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
-import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
+import { InteractiveCalculatorHub } from '@/components/calculator/InteractiveCalculatorHub';
+import { RelatedGuidesHub } from '@/components/calculator/RelatedGuidesHub';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
 import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
 import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
@@ -113,7 +114,7 @@ export default function CalculatorPage() {
               Toyota Fuel Savings & Payback Calculator
             </h1>
             <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5 sm:mt-1">
-              Compare actual annual fuel and electricity costs across Toyota Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas models using official NRCan & EPA ratings.
+              Compare actual annual fuel and electricity costs across Toyota Hybrid (HEV), Plug-in Hybrid (PHEV), and Gas models, or reverse-calculate your target monthly budget to eligible vehicles.
             </p>
           </div>
         </div>
@@ -121,14 +122,19 @@ export default function CalculatorPage() {
         {/* News Wire Announcement Ticker mounted directly beneath the header and above cockpit */}
         <CalculatorNewsWire />
 
-        {/* Client-Side Interactive Calculator Cockpit */}
+        {/* Client-Side Interactive Calculator Cockpit with Mode Switcher & Trust Banner */}
         <section aria-label="Interactive Savings Calculator">
-          <VehicleSavingsCalculator />
+          <InteractiveCalculatorHub />
         </section>
 
-        {/* Recommended Products Section placed below the calculator cockpit and collapsed outlay drawer */}
+        {/* Recommended Products Section placed below the calculator cockpit */}
         <div className="pt-2 sm:pt-4">
           <CalculatorGearCards />
+        </div>
+
+        {/* Structured Internal Guide Directory Linking High-Value Guides */}
+        <div className="pt-4 sm:pt-6 border-t border-zinc-200 dark:border-zinc-800">
+          <RelatedGuidesHub />
         </div>
 
         {/* Pre-rendered Static Benchmark Table for SEO & No-JS Fallback */}

@@ -580,3 +580,73 @@ export function evaluateCashFlowTimeline(
     postDeliveryRecoveryYears,
   };
 }
+
+
+/**
+ * Output of the reverse budget affordability calculation.
+ */
+export interface BudgetAffordabilityResult {
+  maxVehiclePrice: number;
+  totalFinancedAmount: number;
+  totalInterestPaid: number;
+  totalLoanCost: number;
+}
+
+/**
+ * Reverse Amortization Calculator
+ * Works backward from target monthly payment, down payment, interest rate, and term
+ * to determine the maximum affordable purchase price and total loan metrics.
+ *
+ * Formula:
+ * r = annualInterestRatePct / 100 / 12
+ * If r === 0: principal = targetMonthlyPayment * termMonths
+ * If r > 0: principal = targetMonthlyPayment * ((1 - (1 + r)^(-termMonths)) / r)
+ * maxVehiclePrice = principal + downPayment
+ *
+ * @param targetMonthlyPayment Target monthly payment in currency unit
+ * @param downPayment Down payment & trade-in equity in currency unit
+ * @param annualInterestRatePct Annual percentage rate (APR) in % (e.g. 5.99)
+ * @param termMonths Loan duration in months (e.g. 36, 48, 60, 72, 84)
+ */
+export function calculateMaxVehiclePrice(
+  targetMonthlyPayment: number,
+  downPayment: number,
+  annualInterestRatePct: number,
+  termMonths: number
+): BudgetAffordabilityResult {
+  assertFiniteNonNegative('targetMonthlyPayment', targetMonthlyPayment);
+  assertFiniteNonNegative('downPayment', downPayment);
+  assertFiniteNonNegative('annualInterestRatePct', annualInterestRatePct);
+
+  if (typeof termMonths !== 'number' || !Number.isFinite(termMonths)) {
+    throw new TypeError(`termMonths must be a finite number. Received: ${String(termMonths)}`);
+  }
+  if (termMonths <= 0) {
+    throw new RangeError(`termMonths must be greater than zero. Received: ${termMonths}`);
+  }
+
+  const r = annualInterestRatePct / 100 / 12;
+  let principal: number;
+
+  if (r === 0) {
+    principal = targetMonthlyPayment * termMonths;
+  } else {
+    principal = targetMonthlyPayment * ((1 - Math.pow(1 + r, -termMonths)) / r);
+  }
+
+  const totalPayments = targetMonthlyPayment * termMonths;
+  const roundedPrincipal = Math.round((principal + Number.EPSILON) * 100) / 100;
+  const maxVehiclePrice = Math.round((principal + downPayment + Number.EPSILON) * 100) / 100;
+  const totalInterestPaid = Math.max(
+    0,
+    Math.round((totalPayments - principal + Number.EPSILON) * 100) / 100
+  );
+  const totalLoanCost = Math.round((totalPayments + downPayment + Number.EPSILON) * 100) / 100;
+
+  return {
+    maxVehiclePrice,
+    totalFinancedAmount: roundedPrincipal,
+    totalInterestPaid,
+    totalLoanCost,
+  };
+}

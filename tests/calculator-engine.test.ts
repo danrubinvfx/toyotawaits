@@ -7,6 +7,7 @@ import {
   calculateExtraEnergyWhileWaiting,
   evaluateSimplePayback,
   evaluateCashFlowTimeline,
+  calculateMaxVehiclePrice,
 } from '@/lib/calculator-engine';
 import {
   VEHICLE_PRESETS,
@@ -381,5 +382,57 @@ describe('ToyotaWaits.ca Savings & Payback Calculator Engine', () => {
       expect(crossover?.consumption.combinedMpg).toBe(25);
     });
   });
-});
+  describe('Reverse Amortization & Budget Affordability Engine', () => {
+    // Fixture: Target $650/mo, $5,000 down, 5.99% APR, 60 months
+    it('calculates reverse affordability for standard fixture ($650/mo, $5,000 down, 5.99% APR, 60m)', () => {
+      const result = calculateMaxVehiclePrice(650, 5000, 5.99, 60);
 
+      // r = 0.0599 / 12 = 0.004991666666666667
+      // principal = 650 * ((1 - (1 + r)^(-60)) / r) = 33629.70
+      expect(result.totalFinancedAmount).toBe(33629.7);
+      expect(result.maxVehiclePrice).toBe(38629.7);
+      expect(result.totalInterestPaid).toBe(5370.3);
+      expect(result.totalLoanCost).toBe(44000);
+    });
+
+    it('handles 0% APR edge case correctly', () => {
+      const result = calculateMaxVehiclePrice(500, 3000, 0, 48);
+
+      expect(result.totalFinancedAmount).toBe(24000);
+      expect(result.maxVehiclePrice).toBe(27000);
+      expect(result.totalInterestPaid).toBe(0);
+      expect(result.totalLoanCost).toBe(27000);
+    });
+
+    it('handles zero down payment edge case correctly', () => {
+      const result = calculateMaxVehiclePrice(600, 0, 6.0, 60);
+
+      expect(result.totalFinancedAmount).toBe(31035.34);
+      expect(result.maxVehiclePrice).toBe(31035.34);
+      expect(result.totalInterestPaid).toBe(4964.66);
+      expect(result.totalLoanCost).toBe(36000);
+    });
+
+    it('handles zero monthly payment edge case', () => {
+      const result = calculateMaxVehiclePrice(0, 5000, 5.99, 60);
+
+      expect(result.totalFinancedAmount).toBe(0);
+      expect(result.maxVehiclePrice).toBe(5000);
+      expect(result.totalInterestPaid).toBe(0);
+      expect(result.totalLoanCost).toBe(5000);
+    });
+
+    it('validates and rejects negative, non-finite, or invalid inputs', () => {
+      expect(() => calculateMaxVehiclePrice(-650, 5000, 5.99, 60)).toThrow(RangeError);
+      expect(() => calculateMaxVehiclePrice(650, -5000, 5.99, 60)).toThrow(RangeError);
+      expect(() => calculateMaxVehiclePrice(650, 5000, -5.99, 60)).toThrow(RangeError);
+      expect(() => calculateMaxVehiclePrice(650, 5000, 5.99, 0)).toThrow(RangeError);
+      expect(() => calculateMaxVehiclePrice(650, 5000, 5.99, -12)).toThrow(RangeError);
+
+      expect(() => calculateMaxVehiclePrice(NaN, 5000, 5.99, 60)).toThrow(TypeError);
+      expect(() => calculateMaxVehiclePrice(650, Infinity, 5.99, 60)).toThrow(TypeError);
+      expect(() => calculateMaxVehiclePrice(650, 5000, NaN, 60)).toThrow(TypeError);
+      expect(() => calculateMaxVehiclePrice(650, 5000, 5.99, NaN)).toThrow(TypeError);
+    });
+  });
+});
