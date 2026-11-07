@@ -464,7 +464,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 <div className="space-y-2 text-xs text-zinc-400">
                   <p className="font-semibold text-zinc-200">What Platinum Actually Covers:</p>
                   <ul className="list-disc list-inside space-y-1">
-                    <li>Entire 12.3" multimedia infotainment display and touch digitizer.</li>
+                    <li>Entire 12.3&quot; multimedia infotainment display and touch digitizer.</li>
                     <li>All radar, sonar, front camera, and blind spot sensor arrays.</li>
                     <li>Instrument cluster LCD screens, wiring harnesses, and control ECUs.</li>
                   </ul>
