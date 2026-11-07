@@ -53,15 +53,15 @@ export function InteractiveCalculatorHub() {
         </span>
       </div>
 
-      {/* Trust Callout Banner (directly above calculator controls) */}
-      <TrustCalloutBanner />
-
       {/* Active Mode Calculator Cockpit */}
       {activeMode === 'MODEL' ? (
         <VehicleSavingsCalculator />
       ) : (
         <ShopByBudgetCalculator />
       )}
+
+      {/* Trust Callout Banner (repositioned directly below interactive calculator cockpit and above recommended products) */}
+      <TrustCalloutBanner />
     </div>
   );
 }

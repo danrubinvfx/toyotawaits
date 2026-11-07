@@ -160,19 +160,62 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
         </div>
       </div>
 
-      {comparisonMode !== 'ENERGY_COMPARISON' && (
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-red-600 dark:text-red-500" />
-          <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
-            Payback Analysis & 7-Year Timeline
-          </h3>
-        </div>
-      )}
-
-      {/* Main 2-Column Desktop Grid (Left: Visuals & Projections, Right: Inputs) */}
+      {/* Main 2-Column Desktop Grid (Left/Top: User Inputs Elevated, Right/Bottom: Visuals & Projections) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-2 sm:gap-4 lg:gap-5 items-start">
-        {/* Left Column (7 cols): Interactive Graph on top, Annual Projections directly underneath */}
+        {/* User Inputs Column (5 cols on desktop, elevated immediately under heading on mobile) */}
+        <div className="lg:col-span-5 flex flex-col gap-2 sm:gap-3.5">
+          {/* 1. Target Toyota Selection */}
+          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
+            <TargetVehicleCard
+              targetVehicle={targetVehicle}
+              onChange={handleTargetVehicleChange}
+              unitSystem={unitSystem}
+            />
+          ) : (
+            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
+                Vehicle B Configured Below
+              </span>
+              In New A vs. New B mode, Vehicle B serves as the comparison target and is selected in the comparison drawer below.
+            </div>
+          )}
+
+          {/* 2. Your Current Ride Baseline */}
+          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
+            <CurrentVehicleCard
+              currentVehicle={currentVehicle}
+              onChange={setCurrentVehicle}
+              unitSystem={unitSystem}
+            />
+          ) : (
+            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
+              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
+                Vehicle A Configured Below
+              </span>
+              In New A vs. New B mode, Vehicle A serves as the baseline reference and is selected in the comparison drawer below.
+            </div>
+          )}
+
+          {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs) */}
+          <DrivingInputsCard
+            inputs={drivingInputs}
+            onChange={setDrivingInputs}
+            isPhev={isTargetPhev}
+            unitSystem={unitSystem}
+          />
+        </div>
+
+        {/* Visuals & Projections Column (7 cols on desktop) */}
         <div className="lg:col-span-7 flex flex-col gap-2 sm:gap-4">
+          {comparisonMode !== 'ENERGY_COMPARISON' && (
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-red-600 dark:text-red-500" />
+              <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                Payback Analysis & 7-Year Timeline
+              </h3>
+            </div>
+          )}
+
           {results.timelineResult ? (
             <PaybackChart
               timeline={results.timelineResult}
@@ -245,49 +288,6 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               waitDays={waitDays}
             />
           )}
-        </div>
-
-        {/* Right Column (5 cols): User inputs stacked cleanly (Target Toyota -> Current Baseline -> Driving Inputs) */}
-        <div className="lg:col-span-5 flex flex-col gap-2 sm:gap-3.5">
-          {/* 1. Target Toyota Selection */}
-          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
-            <TargetVehicleCard
-              targetVehicle={targetVehicle}
-              onChange={handleTargetVehicleChange}
-              unitSystem={unitSystem}
-            />
-          ) : (
-            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
-              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
-                Vehicle B Configured Below
-              </span>
-              In New A vs. New B mode, Vehicle B serves as the comparison target and is selected in the comparison drawer below.
-            </div>
-          )}
-
-          {/* 2. Your Current Ride Baseline */}
-          {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
-            <CurrentVehicleCard
-              currentVehicle={currentVehicle}
-              onChange={setCurrentVehicle}
-              unitSystem={unitSystem}
-            />
-          ) : (
-            <div className="p-3 sm:p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-500">
-              <span className="font-semibold text-zinc-900 dark:text-zinc-100 block mb-1">
-                Vehicle A Configured Below
-              </span>
-              In New A vs. New B mode, Vehicle A serves as the baseline reference and is selected in the comparison drawer below.
-            </div>
-          )}
-
-          {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs) */}
-          <DrivingInputsCard
-            inputs={drivingInputs}
-            onChange={setDrivingInputs}
-            isPhev={isTargetPhev}
-            unitSystem={unitSystem}
-          />
         </div>
       </div>
 
