@@ -69,10 +69,10 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     });
 
     expect(metadata.title).toBe(
-      'Toyota RAV4 Wait Times Canada (Nov 2026 Updated) — Hybrid & PHEV | ToyotaWaits'
+      '2026 Toyota RAV4 Wait Times & Pricing Canada (Nov 2026 Update) | ToyotaWaits'
     );
     expect(metadata.description).toBe(
-      'Track 2026 Toyota RAV4 Hybrid and Plug-in Hybrid wait times across Canada. Real community delivery reports for Ontario, BC, Alberta, and Quebec.'
+      'Real Canadian wait times and MSRP breakdown for the 2026 Toyota RAV4 Gas, Hybrid, and Plug-in Hybrid. Crowdsourced dealer delivery reports for BC, Ontario, and Alberta.'
     );
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/rav4');
 
@@ -84,7 +84,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
       'Toyota Sienna Wait Times Canada (2026 Tracker) — Ontario & BC Backlog | ToyotaWaits'
     );
     expect(siennaMetadata.description).toBe(
-      'Real-time delivery wait times for 2026 Toyota Sienna Hybrid across Canada. Verified lead times and allocation queues for Ontario (GTA), British Columbia, and Alberta.'
+      'Current crowdsourced wait times for the 2026 Toyota Sienna Hybrid across Canada. Check real delivery timelines for Ontario (GTA), British Columbia, and Alberta.'
     );
     expect(siennaMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/wait-times/sienna');
   });
@@ -278,6 +278,18 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(
       rav4Render.getByRole('link', { name: /Calculate Payback & Savings →/i })
     ).toHaveAttribute('href', '/calculator/rav4-hybrid');
+    expect(rav4Render.getByRole('heading', { level: 2, name: '2026 Toyota RAV4 Canada: Estimated Wait Times & Base Pricing' })).toBeInTheDocument();
+    expect(rav4Render.getByTestId('rav4-summary-card')).toBeInTheDocument();
+    expect(rav4Render.getByText('Gas (LE/XLE/Trail)')).toBeInTheDocument();
+    expect(rav4Render.getByText(/MSRP ~\$35,950 CAD/)).toBeInTheDocument();
+    expect(rav4Render.getByText(/Average Wait: ~2–4 months/)).toBeInTheDocument();
+    expect(rav4Render.getByText('Hybrid (LE/XLE/Woodland/Limited)')).toBeInTheDocument();
+    expect(rav4Render.getByText(/MSRP ~\$38,950 CAD/)).toBeInTheDocument();
+    expect(rav4Render.getByText(/Average Wait: ~6–10 months/)).toBeInTheDocument();
+    expect(rav4Render.getByText('Plug-in Hybrid (SE/XSE)')).toBeInTheDocument();
+    expect(rav4Render.getByText(/MSRP ~\$53,150 CAD/)).toBeInTheDocument();
+    expect(rav4Render.getByText(/Average Wait: ~12–18 months/)).toBeInTheDocument();
+    expect(rav4Render.getByText(/In Canada, the average wait time for a 2026 Toyota RAV4 Hybrid is currently .* months, with fastest deliveries reported in Alberta and longer queues in BC and Ontario\./i)).toBeInTheDocument();
     rav4Render.unmount();
 
     // 2. Tacoma

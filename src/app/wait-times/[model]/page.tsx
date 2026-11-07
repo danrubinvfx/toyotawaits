@@ -469,6 +469,72 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           {modelConfig.h1 || `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear})`}
         </h1>
 
+        {/* RAV4 Canadian MSRP & Lead Time Summary Card (Featured Snippet Answer Box) */}
+        {modelConfig.slug === 'rav4' && (
+          <div
+            data-testid="rav4-summary-card"
+            className="rounded-2xl border-2 border-red-500/30 bg-gradient-to-br from-red-50/80 via-white to-zinc-50 dark:from-red-950/20 dark:via-zinc-900/60 dark:to-zinc-950 p-5 sm:p-6 shadow-sm space-y-4"
+          >
+            <div className="flex items-center justify-between gap-2 flex-wrap border-b border-zinc-200/80 dark:border-zinc-800 pb-3">
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white font-black text-xs">
+                  ✓
+                </span>
+                <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-zinc-50 tracking-tight">
+                  2026 Toyota RAV4 Canada: Estimated Wait Times &amp; Base Pricing
+                </h2>
+              </div>
+              <Badge variant="outline" className="text-xs font-semibold text-red-600 dark:text-red-400 border-red-200 dark:border-red-900">
+                Canadian Pricing &amp; Lead Times
+              </Badge>
+            </div>
+
+            {/* Explicit Featured Snippet Answer */}
+            <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
+              In Canada, the average wait time for a 2026 Toyota RAV4 Hybrid is currently {stats.medianMonths} months, with fastest deliveries reported in Alberta and longer queues in BC and Ontario.
+            </p>
+
+            {/* Three-column visual grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+              {/* Column 1: Gas */}
+              <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Gas (LE/XLE/Trail)
+                </span>
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  <span>MSRP ~$35,950 CAD</span>
+                  <span className="text-zinc-400 mx-1.5 font-normal">|</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~2–4 months</span>
+                </div>
+              </div>
+
+              {/* Column 2: Hybrid */}
+              <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-red-200/80 dark:border-red-900/40 space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+                  Hybrid (LE/XLE/Woodland/Limited)
+                </span>
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  <span>MSRP ~$38,950 CAD</span>
+                  <span className="text-zinc-400 mx-1.5 font-normal">|</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~6–10 months</span>
+                </div>
+              </div>
+
+              {/* Column 3: Plug-in Hybrid */}
+              <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  Plug-in Hybrid (SE/XSE)
+                </span>
+                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                  <span>MSRP ~$53,150 CAD</span>
+                  <span className="text-zinc-400 mx-1.5 font-normal">|</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~12–18 months</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Position Zero Featured Snippet Answer Box */}
         <div
           data-testid="featured-snippet-box"
