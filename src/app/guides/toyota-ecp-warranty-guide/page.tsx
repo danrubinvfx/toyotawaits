@@ -6,7 +6,6 @@ import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-  ShieldAlert,
   ShieldCheck,
   CheckCircle2,
   XCircle,
@@ -16,16 +15,12 @@ import {
   Calculator,
   DollarSign,
   FileText,
-  Clock,
-  Car,
   TrendingDown,
   Percent,
   Search,
   Lock,
   Gauge,
   Layers,
-  ChevronRight,
-  Zap,
 } from 'lucide-react';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
@@ -36,13 +31,13 @@ export const metadata: Metadata = {
   description:
     'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Discover real repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
   alternates: {
-    canonical: 'https://toyotawaits.ca/guides/toyota-ecp-warranty-guide',
+    canonical: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
   },
   openGraph: {
     title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? | ToyotaWaits',
     description:
       'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Discover real repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
-    url: 'https://toyotawaits.ca/guides/toyota-ecp-warranty-guide',
+    url: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
     type: 'article',

@@ -71,19 +71,15 @@ type SearchParamsPromiseLike = Promise<SearchParamsRecord> & {
   _value?: SearchParamsRecord;
 };
 
-function resolveSearchParams(
+function useSearchParamsRecord(
   searchParams?: Promise<SearchParamsRecord> | SearchParamsRecord
 ): SearchParamsRecord {
   if (!searchParams) return {};
   if (typeof (searchParams as any).then === 'function') {
-    try {
-      return React.use(searchParams as Promise<SearchParamsRecord>);
-    } catch {
-      const maybeObj =
-        (searchParams as SearchParamsPromiseLike).value ??
-        (searchParams as SearchParamsPromiseLike)._value;
-      if (maybeObj) return maybeObj;
-    }
+    const candidate = searchParams as SearchParamsPromiseLike;
+    const maybeObj = candidate.value ?? candidate._value;
+    if (maybeObj) return maybeObj;
+    return React.use(searchParams as Promise<SearchParamsRecord>);
   }
   return searchParams as SearchParamsRecord;
 }
@@ -153,7 +149,7 @@ export default function InventoryPage({
   totalFleetCount,
   totalCount,
 }: InventoryPageProps = {}) {
-  const resolved = resolveSearchParams(searchParams);
+  const resolved = useSearchParamsRecord(searchParams);
 
   // Extract preview query parameter and initial model filter from searchParams
   const isPreviewParam =
