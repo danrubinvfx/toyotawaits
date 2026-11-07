@@ -116,6 +116,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/tools/quote-auditor`} className="hover:text-amber-500 transition-colors">
+                  Canadian Dealer Quote Auditor (AMVIC / OMVIC / VSA)
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/#community-log`} className="hover:text-amber-500 transition-colors">
                   {isUs ? 'State Analytics & Delivery Log' : 'Canadian Provincial Analytics & Delivery Log'}
                 </Link>

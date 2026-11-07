@@ -23,6 +23,7 @@ const STATIC_NAVIGATION_ROUTES = [
   '/',
   '/calculator',
   '/tools/omvic-checker',
+  '/tools/quote-auditor',
   '/inventory',
   '/delivery-prep',
   '/winter-prep',

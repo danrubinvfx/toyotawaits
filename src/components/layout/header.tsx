@@ -375,7 +375,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
               aria-haspopup="true"
               className={cn(
                 'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md px-1',
-                (pathname === '/tires' || pathname === '/delivery-prep') && 'text-amber-500 font-semibold'
+                (pathname === '/tires' || pathname === '/delivery-prep' || pathname.startsWith('/tools')) && 'text-amber-500 font-semibold'
               )}
             >
               <BarChart3 className="h-4 w-4 text-zinc-400" />
@@ -432,6 +432,22 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <div>
                       <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Delivery Pickup Checklist</p>
                       <p className="text-[11px] text-zinc-500 dark:text-zinc-400">PDI inspection, bill of sale &amp; key fobs</p>
+                    </div>
+                  </div>
+                </Link>
+
+                <Link
+                  href="/tools/quote-auditor"
+                  onClick={() => setDesktopToolsOpen(false)}
+                  className="block p-2.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-neutral-800/80 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-md bg-amber-500/10 text-amber-500 shrink-0">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100">Quote Auditor &amp; Fee De-Bunker</p>
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400">AMVIC, OMVIC &amp; VSA all-in pricing check</p>
                     </div>
                   </div>
                 </Link>
@@ -1087,6 +1103,33 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                       </p>
                       <p className="text-[11px] text-zinc-500">
                         Bill of sale, key fobs &amp; PDI spacer inspection
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-zinc-400 group-hover:text-amber-500 group-hover:translate-x-0.5 transition-all" />
+                </Link>
+
+                {/* Dealer Quote Auditor */}
+                <Link
+                  href="/tools/quote-auditor"
+                  onClick={() => setIsOpen(false)}
+                  className={cn(
+                    'flex items-center justify-between p-2.5 rounded-lg transition-colors group',
+                    pathname === '/tools/quote-auditor'
+                      ? 'bg-amber-500/15 border border-amber-500/30 text-amber-500 font-bold'
+                      : 'hover:bg-zinc-100 dark:hover:bg-neutral-900'
+                  )}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-8 rounded-md bg-amber-100 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                      <ShieldCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors">
+                        Quote Auditor &amp; Fee De-Bunker
+                      </p>
+                      <p className="text-[11px] text-zinc-500">
+                        Audit doc fees, block heaters &amp; add-ons (AMVIC/OMVIC/VSA)
                       </p>
                     </div>
                   </div>

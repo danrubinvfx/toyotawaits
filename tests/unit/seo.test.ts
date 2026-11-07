@@ -58,6 +58,13 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(deliveryPrepEntry).toBeDefined();
     expect(deliveryPrepEntry?.priority).toBe(0.7);
 
+    const quoteAuditorEntry = sitemapEntries.find(
+      (e) => e.url === 'https://www.toyotawaits.ca/tools/quote-auditor'
+    );
+    expect(quoteAuditorEntry).toBeDefined();
+    expect(quoteAuditorEntry?.priority).toBe(0.9);
+    expect(quoteAuditorEntry?.changeFrequency).toBe('monthly');
+
     const guidesMainEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/guides');
     expect(guidesMainEntry).toBeDefined();
     expect(guidesMainEntry?.priority).toBe(0.9);

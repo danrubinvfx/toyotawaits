@@ -1,9 +1,13 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import DeliveryPrepPage, { metadata } from '@/app/delivery-prep/page';
+import DeliveryPrepPage, { metadata, dynamic, instant } from '@/app/delivery-prep/page';
 
 describe('DeliveryPrepPage Route', () => {
+  it('exports force-dynamic and instant=false route segment configuration', () => {
+    expect(dynamic).toBe('force-dynamic');
+    expect(instant).toBe(false);
+  });
   it('defines correct page metadata for Toyota Canada delivery tracking and status codes', () => {
     expect(metadata.title).toBe(
       'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits'
@@ -100,5 +104,100 @@ describe('DeliveryPrepPage Route', () => {
       name: /Read the Complete Toyota ECP Breakdown & Net Cost Math →/i,
     });
     expect(ecpLink).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
+  });
+
+  it('renders Canadian Dealer Fees table with Mandatory vs. Negotiable breakdowns', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: /Canadian Dealer Fees: Mandatory vs\. Negotiable/i,
+      })
+    ).toBeInTheDocument();
+
+    // Mandatory / Statutory items
+    expect(screen.getByText('Freight & PDI')).toBeInTheDocument();
+    expect(screen.getByText(/~\$1,930 – standard across Canada/i)).toBeInTheDocument();
+
+    expect(screen.getByText('Air Tax')).toBeInTheDocument();
+    expect(screen.getByText(/\$100 federal/i)).toBeInTheDocument();
+
+    expect(screen.getByText('Tire Levy')).toBeInTheDocument();
+    expect(screen.getByText(/\$20–\$30 provincial/i)).toBeInTheDocument();
+
+    expect(screen.getByText('AMVIC / OMVIC / VSA council levies')).toBeInTheDocument();
+    expect(screen.getByText(/\$10–\$12 provincial/i)).toBeInTheDocument();
+
+    // 100% Negotiable Margin items
+    expect(screen.getByText('Doc Fee / Admin Fee')).toBeInTheDocument();
+    expect(screen.getAllByText(/\$599–\$999/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/All-in pricing/i).length).toBeGreaterThanOrEqual(1);
+
+    expect(screen.getByText('Block Heater')).toBeInTheDocument();
+    expect(screen.getAllByText(/\$700–\$900/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/OEM part installed is ~\$300–\$350/i)).toBeInTheDocument();
+
+    expect(screen.getByText('Protection Packages')).toBeInTheDocument();
+    expect(screen.getAllByText(/\$1,000–\$2,000/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Rust inhibitor modules/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/unibodies/i).length).toBeGreaterThanOrEqual(1);
+
+    expect(screen.getByText('Etching / Security Packs')).toBeInTheDocument();
+    expect(screen.getAllByText(/\$399–\$699/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Pure profit add-ons/i).length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders ECP Extended Warranty Strategy Box with wholesale benchmarks and 31-day grace window', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(screen.getByText('ECP Extended Warranty Strategy')).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/Platinum 7yr\/120,000km wholesale is ~\$1,700–\$2,000 CAD \(vs\. \$2,600\+ dealer retail\)/i).length
+    ).toBeGreaterThanOrEqual(1);
+
+    expect(
+      screen.getAllByText(/31-day grace window after delivery to shop ECP at ANY Canadian Toyota dealership/i).length
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders Bridge to Day-1 Protection Gear with TuxMat, FitcamX, and Spigen routed via buildAmazonAffiliateUrl', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(
+      screen.getByText(
+        /Put the \$3,500 you saved where it counts: TuxMat floor liners, FitcamX OEM dashcam, and Spigen screen protectors\./i
+      )
+    ).toBeInTheDocument();
+
+    expect(screen.getByText('TuxMat Custom Floor Liners')).toBeInTheDocument();
+    expect(screen.getByText('FitcamX OEM 4K Dashcam')).toBeInTheDocument();
+    expect(screen.getByText('Spigen Screen Protectors')).toBeInTheDocument();
+
+    const gearLinks = screen.getAllByRole('link', { name: /Check on Amazon\.ca/i });
+    expect(gearLinks.length).toBe(3);
+
+    // Verify TuxMat link
+    expect(gearLinks[0]).toHaveAttribute(
+      'href',
+      expect.stringContaining('https://www.amazon.ca/s?k=TuxMat%20Toyota%20RAV4%20custom%20all%20weather%20floor%20mats&tag=toyotawaits-20')
+    );
+    expect(gearLinks[0]).toHaveAttribute('target', '_blank');
+    expect(gearLinks[0]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+    // Verify FitcamX link
+    expect(gearLinks[1]).toHaveAttribute(
+      'href',
+      expect.stringContaining('https://www.amazon.ca/s?k=Fitcamx%20dash%20cam%20Toyota%20OEM%204K&tag=toyotawaits-20')
+    );
+    expect(gearLinks[1]).toHaveAttribute('target', '_blank');
+    expect(gearLinks[1]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+    // Verify Spigen link
+    expect(gearLinks[2]).toHaveAttribute(
+      'href',
+      expect.stringContaining('https://www.amazon.ca/s?k=Spigen%20screen%20protector%20Toyota%20tempered%20glass%20matte%209H&tag=toyotawaits-20')
+    );
+    expect(gearLinks[2]).toHaveAttribute('target', '_blank');
+    expect(gearLinks[2]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
   });
 });

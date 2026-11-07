@@ -47,6 +47,10 @@ describe('Header Component', () => {
     expect(pickupDesktop).toBeInTheDocument();
     expect(pickupDesktop).toHaveAttribute('href', '/delivery-prep');
 
+    const quoteAuditorDesktop = screen.getByRole('link', { name: /Quote Auditor & Fee De-Bunker/i });
+    expect(quoteAuditorDesktop).toBeInTheDocument();
+    expect(quoteAuditorDesktop).toHaveAttribute('href', '/tools/quote-auditor');
+
     // Ko-fi support header pill
     const kofiHeaderLink = screen.getByTestId('kofi-header-pill');
     expect(kofiHeaderLink).toBeInTheDocument();
