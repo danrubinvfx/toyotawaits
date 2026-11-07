@@ -147,6 +147,12 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getLocationProvince('All Ontario / GTA')).toBe('ON');
       expect(getLocationProvince('Toronto')).toBe('ON');
       expect(getLocationProvince('Mississauga')).toBe('ON');
+      expect(getLocationProvince('Markham')).toBe('ON');
+      expect(getLocationProvince('Vaughan')).toBe('ON');
+      expect(getLocationProvince('Richmond Hill')).toBe('ON');
+      expect(getPresetCoordinates('Markham')).toEqual({ lat: 43.8161, lng: -79.3422 });
+      expect(getPresetCoordinates('Vaughan')).toEqual({ lat: 43.8172, lng: -79.4241 });
+      expect(getPresetCoordinates('Richmond Hill')).toEqual({ lat: 43.9038, lng: -79.4426 });
     });
   });
 

@@ -42,6 +42,8 @@ export interface RegisteredDealerSource {
   postalCode: string;
   phone: string;
   websiteUrl: string;
+  lat?: number;
+  lng?: number;
 }
 
 export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
@@ -467,6 +469,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'M4M 1G6',
     phone: '(416) 465-5471',
     websiteUrl: 'https://www.downtowntoyota.ca/',
+    lat: 43.6589,
+    lng: -79.3507,
   },
   {
     dealerCode: 'don-valley-north-toyota',
@@ -489,6 +493,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L3R 1G9',
     phone: '(905) 475-0722',
     websiteUrl: 'https://www.donvalleynorthtoyota.com/',
+    lat: 43.8161,
+    lng: -79.3422,
   },
   {
     dealerCode: 'thornhill-toyota',
@@ -505,6 +511,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L4J 1W3',
     phone: '(905) 889-2660',
     websiteUrl: 'https://www.thornhilltoyota.com/',
+    lat: 43.8172,
+    lng: -79.4241,
   },
   {
     dealerCode: 'richmond-hill-toyota',
@@ -521,6 +529,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L4S 1K9',
     phone: '(905) 884-9907',
     websiteUrl: 'https://www.richmondhilltoyota.com/',
+    lat: 43.9038,
+    lng: -79.4426,
   },
   {
     dealerCode: 'oakville-toyota',
