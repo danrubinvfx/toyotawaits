@@ -56,24 +56,23 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
 
   return (
     <div className={cn('space-y-8 sm:space-y-10 pb-16', className)}>
-      {/* 1. Hero Section */}
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-10 sm:py-16 dark:border-zinc-800 text-white rounded-2xl mx-4 sm:mx-0 shadow-xl">
-        <div className="container mx-auto max-w-5xl px-4 sm:px-6 text-center space-y-5">
-          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-semibold text-cyan-400">
+      {/* 1. Interactive Catalog Header & Methodology */}
+      <section className="relative overflow-hidden border border-zinc-800 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-8 sm:py-10 text-white rounded-2xl mx-4 sm:mx-0 shadow-xl">
+        <div className="container mx-auto max-w-5xl px-4 sm:px-6 text-center space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-xs font-semibold text-cyan-400">
             <Snowflake className="h-3.5 w-3.5 text-cyan-400" />
-            <span>🇨🇦 Canadian Tire Guide &amp; Fitment Reviews</span>
+            <span>Interactive Model Catalog</span>
             <span className="text-zinc-600">•</span>
-            <span>3PMSF Certified</span>
+            <span>3PMSF Certified Severe Snow Reviews</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white max-w-3xl mx-auto leading-tight">
-            Canadian Toyota Tire Guide: Winter &amp; All-Weather Recommendations
-          </h1>
+          <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white max-w-3xl mx-auto">
+            Model-by-Model Winter &amp; All-Weather Tire Recommendations
+          </h2>
 
-          <p className="text-sm sm:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
-            Taking delivery of a new Toyota in Canada? Don&apos;t get stranded on factory all-seasons.
-            Explore OEM factory tire sizes, seasonal wheel downsizing tips, and curated 3PMSF
-            winter and all-weather rubber for Canadian snow, black ice, and mountain passes.
+          <p className="text-xs sm:text-sm text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+            Select your Toyota model below to browse verified tire fitments across Dedicated Winter,
+            All-Weather 3PMSF, and All-Season categories with real-world Canadian cold-weather ratings.
           </p>
 
           <div
@@ -82,39 +81,6 @@ export function TireCatalog({ initialModelId = 'rav4', className }: TireCatalogP
           >
             <Info className="h-4 w-4 text-amber-500 shrink-0" />
             <span>Scores represent editorial ratings based on Canadian severe-snow compliance (3PMSF), compound flexibility below 7°C, and real-world treadwear feedback.</span>
-          </div>
-
-          {/* Canadian Winter Context Ticker */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-3xl mx-auto pt-6 border-t border-zinc-800/80 text-left">
-            <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3.5 space-y-1">
-              <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold">
-                <Mountain className="h-4 w-4 shrink-0" />
-                <span>Provincial 3PMSF Laws</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-snug">
-                Transport Canada 3PMSF severe snow certified. Quebec mandates 3PMSF Dec 1–Mar 15; BC requires on mountain passes Oct 1–Apr 30.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3.5 space-y-1">
-              <div className="flex items-center gap-2 text-amber-300 text-xs font-bold">
-                <Sparkles className="h-4 w-4 shrink-0" />
-                <span>Hybrid &amp; EV Range</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-snug">
-                Rubber hardens below 7°C glass-transition point. 3PMSF silica compounds stay flexible to preserve cold-weather hybrid efficiency and EV range.
-              </p>
-            </div>
-
-            <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-3.5 space-y-1">
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
-                <ShieldCheck className="h-4 w-4 shrink-0" />
-                <span>Insurance Discounts</span>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-snug">
-                Ontario insurers mandate up to ~5% auto policy discounts when certified 3PMSF winter tires are installed.
-              </p>
-            </div>
           </div>
         </div>
       </section>

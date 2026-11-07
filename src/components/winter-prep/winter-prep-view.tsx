@@ -130,35 +130,68 @@ export function WinterPrepView() {
         </div>
       </section>
 
-      {/* 2. Canadian Tire Guide Cross-Link Callout Banner */}
+      {/* 2. Canadian Tire Guide Cross-Link Callout Banner & Mandates Overview */}
       <section className="container mx-auto max-w-6xl px-4 sm:px-6">
         <div
           data-testid="winter-prep-tire-callout"
-          className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3.5 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs shadow-xs"
+          className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-5 sm:p-6 shadow-xl space-y-4"
         >
-          <div className="flex items-center gap-2.5 text-zinc-200">
-            <div className="p-1.5 rounded-lg bg-amber-950/40 text-amber-300 border border-amber-800/50 shrink-0">
-              <Disc3 className="h-4 w-4" />
-            </div>
-            <div>
-              <p className="font-bold text-zinc-100 text-xs sm:text-sm">
-                Need certified 3PMSF winter tires or year-round all-weather rubber?
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-xs font-semibold text-cyan-400">
+                <Disc3 className="h-3.5 w-3.5" />
+                <span>🇨🇦 Winter Tire Mandates &amp; Direct-Fit Sizing</span>
+              </div>
+              <h2 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                Canadian Provincial Tire Mandates &amp; 17&quot; Downsizing Specs
+              </h2>
+              <p className="text-xs sm:text-sm text-zinc-400">
+                Quebec Dec 1 deadlines, BC mountain pass laws, and 17-inch wheel downsizing for RAV4, Sienna, and Corolla Cross.
               </p>
-              <p className="text-zinc-400 text-[11px] sm:text-xs">
-                Check model-specific OEM tire sizes, wheel downsizing advice, and Amazon.ca reviews.
+            </div>
+            <Button
+              asChild
+              size="sm"
+              className="bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-xs h-9 px-4 gap-1.5 shrink-0 self-start sm:self-center cursor-pointer shadow-md"
+            >
+              <Link href="/tires">
+                <span>View Full Sizing Matrix &amp; Reviews 🛞 →</span>
+              </Link>
+            </Button>
+          </div>
+
+          {/* Quick Mandate Reference Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
+            <div className="p-3 rounded-xl border border-rose-500/30 bg-rose-950/20 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-white">British Columbia</span>
+                <span className="text-[10px] font-mono text-rose-300 font-bold">Oct 1 – Apr 30</span>
+              </div>
+              <p className="text-zinc-300 text-[11px] leading-snug">
+                Mandatory M+S or 3PMSF with minimum <strong>3.5mm tread</strong> on designated highways (Coquihalla, Sea-to-Sky, Hwy 1).
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl border border-rose-500/30 bg-rose-950/20 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-white">Quebec</span>
+                <span className="text-[10px] font-mono text-rose-300 font-bold">Dec 1 – Mar 15</span>
+              </div>
+              <p className="text-zinc-300 text-[11px] leading-snug">
+                Mandatory <strong>3PMSF winter tires</strong> on all passenger vehicles province-wide. M+S without mountain snowflake is illegal.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl border border-emerald-500/30 bg-emerald-950/20 space-y-1">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-white">Ontario &amp; Alberta</span>
+                <span className="text-[10px] font-mono text-emerald-300 font-bold">2%–5% Discount</span>
+              </div>
+              <p className="text-zinc-300 text-[11px] leading-snug">
+                Up to <strong>2%–5% annual auto insurance discounts</strong> for certified 4-tire winter setups installed by winter deadlines.
               </p>
             </div>
           </div>
-
-          <Button
-            asChild
-            size="sm"
-            className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs h-8 gap-1.5 shrink-0 self-end sm:self-center cursor-pointer shadow-xs"
-          >
-            <Link href="/tires">
-              <span>View Canadian Tire Guide 🛞 →</span>
-            </Link>
-          </Button>
         </div>
       </section>
 

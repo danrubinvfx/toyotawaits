@@ -1,70 +1,104 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Disc3, CheckCircle2, AlertTriangle, ArrowDownRight } from 'lucide-react';
+import { Disc3, CheckCircle2, AlertTriangle, ArrowDownRight, Layers } from 'lucide-react';
 
 export interface SizingMatrixRow {
   model: string;
-  badge: string;
+  badge?: string;
   trim: string;
-  oemSize: string;
-  recommendedWinterSize: string;
+  factoryOemSize: string;
+  recommendedWinterDownsize: string;
   boltPatternAndBore: string;
   offset: string;
-  notes: string;
+  notes?: string;
 }
 
 export const CANADIAN_WINTER_SIZING_MATRIX: SizingMatrixRow[] = [
   {
-    model: 'RAV4',
-    badge: 'HEV / PHEV / Gas',
-    trim: 'LE, XLE, SE, XSE, Limited, Woodland, Trail / TRD, Prime',
-    oemSize: '225/60R18 or 235/55R19 (225/65R17 on LE)',
-    recommendedWinterSize: '225/65R17 (or 235/60R18)',
-    boltPatternAndBore: '5x114.3, 60.1mm',
+    model: 'Toyota RAV4',
+    badge: 'LE / XLE',
+    trim: 'LE, XLE (Gas & Hybrid)',
+    factoryOemSize: '225/65R17',
+    recommendedWinterDownsize: '225/65R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
     offset: '+35 to +45',
     notes:
-      '17-inch wheels clear front calipers on all models (including RAV4 Prime PHEV). Delivers +18mm extra sidewall cushion against winter potholes and saves $200–$350 CAD per set.',
+      'Direct factory 17" fitment. Maximum sidewall pothole compliance and lowest replacement tire cost.',
   },
   {
-    model: 'Sienna AWD',
-    badge: 'Hybrid AWD / FWD',
-    trim: 'LE, XLE, XSE, Woodland, Limited, Platinum',
-    oemSize: '235/60R18 (235/50R20 on Platinum / XSE FWD)',
-    recommendedWinterSize: '225/65R17 or 235/65R17',
-    boltPatternAndBore: '5x114.3, 60.1mm',
+    model: 'Toyota RAV4',
+    badge: 'Trail / Woodland',
+    trim: 'Trail, Woodland Edition, Adventure',
+    factoryOemSize: '225/60R18',
+    recommendedWinterDownsize: '225/65R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
     offset: '+35 to +45',
     notes:
-      '17-inch downsize clears front brake calipers and rear e-AWD electric motor assembly. Narrower 225 contact patch significantly improves traction through deep slush.',
+      'Downsizing to 17" wheels adds +12mm extra sidewall cushion against curb strikes, hidden ice shelves, and frozen ruts.',
   },
   {
-    model: 'Grand Highlander',
-    badge: 'Hybrid MAX & Standard',
-    trim: 'XLE, Limited, Platinum (Gas, Hybrid, Hybrid MAX)',
-    oemSize: '255/60R18 or 255/50R20',
-    recommendedWinterSize: '255/60R18',
-    boltPatternAndBore: '5x120, 60.1mm',
-    offset: '+40',
+    model: 'Toyota RAV4',
+    badge: 'Limited / PHEV',
+    trim: 'Limited, XSE, RAV4 Prime PHEV',
+    factoryOemSize: '235/55R19',
+    recommendedWinterDownsize: '225/65R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
+    offset: '+35 to +45',
     notes:
-      'Requires heavy-duty 5x120 PCD (differs from RAV4/Sienna 5x114.3). Minimum 18-inch rim diameter required to clear dual-piston front brakes on Hybrid MAX.',
+      '17-inch wheels safely clear RAV4 Prime dual-piston calipers while saving $200–$350 CAD per set compared to 19" rubber.',
   },
   {
-    model: 'Camry Hybrid',
-    badge: '2025–2027 AWD / FWD',
-    trim: 'LE, SE, XSE, XLE',
-    oemSize: '235/45R18 (235/40R19 on XSE)',
-    recommendedWinterSize: '215/55R17',
-    boltPatternAndBore: '5x114.3, 60.1mm',
+    model: 'Toyota Sienna AWD',
+    badge: '2021–2026',
+    trim: 'LE, XLE, XSE, Limited, Platinum',
+    factoryOemSize: '235/60R18',
+    recommendedWinterDownsize: '235/65R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
+    offset: '+35 to +45',
+    notes:
+      '17" wheel clears front brakes and rear e-AWD electric drive unit. Also supports 225/65R17 for narrower slush bite.',
+  },
+  {
+    model: 'Toyota Grand Highlander',
+    badge: 'Gas / HEV / MAX',
+    trim: 'XLE, Limited, Platinum (Gas, Hybrid, MAX)',
+    factoryOemSize: '255/60R18 or 255/50R20',
+    recommendedWinterDownsize: 'Preferred: 255/60R18',
+    boltPatternAndBore: '5x120, 60.1mm bore',
     offset: '+40',
     notes:
-      '215/55R17 maintains factory rolling circumference within +0.2%, dramatically cuts highway hydroplaning risk in freeze-thaw slush, and lowers wheel replacement cost.',
+      'Requires heavy-duty 5x120 PCD (differs from RAV4/Sienna 5x114.3). Minimum 18" rim required to clear Hybrid MAX dual-piston calipers.',
+  },
+  {
+    model: 'Toyota Corolla Cross',
+    badge: 'Gas & Hybrid AWD',
+    trim: 'L, LE, XLE (AWD & Hybrid)',
+    factoryOemSize: '215/65R17 or 225/55R18',
+    recommendedWinterDownsize: '215/65R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
+    offset: '+40',
+    notes:
+      'Downsizing 18" to 215/65R17 slices through dense highway snow tracks without vehicle float.',
+  },
+  {
+    model: 'Toyota Camry Hybrid',
+    badge: '2025/2026',
+    trim: 'LE, SE, XSE, XLE (AWD & FWD)',
+    factoryOemSize: '235/45R18',
+    recommendedWinterDownsize: '215/55R17',
+    boltPatternAndBore: '5x114.3, 60.1mm bore',
+    offset: '+40',
+    notes:
+      '215/55R17 maintains factory rolling circumference within +0.2% and cuts freeze-thaw slush hydroplaning.',
   },
 ];
 
 export function DirectFitSizingMatrix() {
   return (
     <section
-      aria-label="Direct-Fit Toyota Winter Tire Sizing Matrix"
+      aria-label="Direct OEM Toyota Winter Tire Sizing & Downsizing Matrix"
+      id="sizing-matrix"
       data-testid="direct-fit-sizing-matrix"
       className="container mx-auto max-w-6xl px-4 sm:px-6 pt-2 pb-8"
     >
@@ -74,16 +108,16 @@ export function DirectFitSizingMatrix() {
             <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-xs font-semibold text-cyan-400">
                 <Disc3 className="h-3.5 w-3.5" />
-                <span>🇨🇦 2026/2027 Canadian Fitment Matrix</span>
+                <span>🇨🇦 Canadian Direct-Fit Fitment Matrix</span>
                 <span className="text-zinc-600">•</span>
-                <span>Direct-Fit Downsizing</span>
+                <span>Direct OEM &amp; Downsizing Specs</span>
               </div>
-              <CardTitle as="h1" className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                Direct-Fit Sizing Quick-Lookup Matrix
+              <CardTitle as="h2" className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                Direct OEM Sizing &amp; 17&quot; Downsizing Matrix
               </CardTitle>
               <p className="text-xs sm:text-sm text-zinc-400 max-w-3xl leading-relaxed">
-                Confirmed factory OEM sizes, recommended cost-saving 17-inch/18-inch winter downsizing specs,
-                bolt patterns, and center bores for Canadian Toyota deliveries.
+                Factory OEM tire sizes, recommended cost-saving 17-inch winter downsizing specs,
+                bolt patterns, center bores, and offsets for Canadian Toyota deliveries.
               </p>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-center shrink-0">
@@ -100,40 +134,52 @@ export function DirectFitSizingMatrix() {
             <table className="w-full text-left text-xs sm:text-sm border-collapse">
               <thead className="bg-zinc-900/90 border-b border-zinc-800 text-[11px] uppercase tracking-wider text-zinc-400 font-semibold">
                 <tr>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">Model</th>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">Trim / Powertrain</th>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">OEM Size</th>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-cyan-400 bg-cyan-950/20">
-                    Recommended Winter Size (Downsize)
+                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">
+                    Model
                   </th>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">Bolt Pattern &amp; Bore</th>
-                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">Offset (ET)</th>
+                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">
+                    Trim
+                  </th>
+                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">
+                    Factory OEM Size
+                  </th>
+                  <th scope="col" className="py-3.5 px-4 font-bold text-cyan-400 bg-cyan-950/20">
+                    Recommended 17&quot; Winter Downsize
+                  </th>
+                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">
+                    Bolt Pattern &amp; Center Bore
+                  </th>
+                  <th scope="col" className="py-3.5 px-4 font-bold text-zinc-300">
+                    Offset
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-800/80 bg-zinc-950/50">
-                {CANADIAN_WINTER_SIZING_MATRIX.map((row) => (
+                {CANADIAN_WINTER_SIZING_MATRIX.map((row, idx) => (
                   <tr
-                    key={row.model}
+                    key={`${row.model}-${row.trim}-${idx}`}
                     className="hover:bg-zinc-900/50 transition-colors group"
                   >
                     <td className="py-3.5 px-4 font-black text-white whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         <span>{row.model}</span>
-                        <span className="text-[10px] font-medium px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400 group-hover:text-cyan-300">
-                          {row.badge}
-                        </span>
+                        {row.badge && (
+                          <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-zinc-800 text-zinc-300 group-hover:text-cyan-300">
+                            {row.badge}
+                          </span>
+                        )}
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-zinc-300 text-xs max-w-xs">
+                    <td className="py-3.5 px-4 text-zinc-300 text-xs">
                       {row.trim}
                     </td>
                     <td className="py-3.5 px-4 font-mono text-zinc-400 text-xs whitespace-nowrap">
-                      {row.oemSize}
+                      {row.factoryOemSize}
                     </td>
                     <td className="py-3.5 px-4 font-mono font-bold text-cyan-300 bg-cyan-950/10 whitespace-nowrap">
                       <div className="flex items-center gap-1">
                         <ArrowDownRight className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                        <span>{row.recommendedWinterSize}</span>
+                        <span>{row.recommendedWinterDownsize}</span>
                       </div>
                     </td>
                     <td className="py-3.5 px-4 font-mono text-zinc-300 text-xs whitespace-nowrap">
@@ -153,19 +199,19 @@ export function DirectFitSizingMatrix() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/50 space-y-1">
                 <div className="flex items-center gap-2 font-bold text-cyan-400">
-                  <CheckCircle2 className="w-4 h-4" />
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
                   <span>Why Downsize to 17-Inch Wheels in Canada?</span>
                 </div>
                 <p className="text-zinc-400 leading-relaxed text-[11px] sm:text-xs">
                   Narrower tread widths (e.g. 215 or 225 vs 235/255) concentrate vehicle weight onto a smaller footprint,
                   slicing through slush instead of hydroplaning over it. Taller sidewalls cushion expensive alloy rims against
-                  hidden snowbank curb strikes and frozen frost-heave potholes while saving <strong>$200–$400 CAD</strong> per set of 3PMSF tires.
+                  hidden snowbank curb strikes and frozen frost-heave potholes while saving <strong>$200–$350 CAD</strong> per set of 3PMSF tires.
                 </p>
               </div>
 
               <div className="p-3 rounded-xl border border-zinc-800 bg-zinc-900/50 space-y-1">
                 <div className="flex items-center gap-2 font-bold text-amber-400">
-                  <AlertTriangle className="w-4 h-4" />
+                  <AlertTriangle className="w-4 h-4 shrink-0" />
                   <span>Caliper Clearance &amp; Hub-Centric Advisory</span>
                 </div>
                 <p className="text-zinc-400 leading-relaxed text-[11px] sm:text-xs">

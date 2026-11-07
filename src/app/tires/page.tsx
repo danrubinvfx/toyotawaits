@@ -9,7 +9,15 @@ import { ContextualWinterGear } from '@/components/tires/contextual-winter-gear'
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { HelpCircle, Loader2 } from 'lucide-react';
+import {
+  HelpCircle,
+  Loader2,
+  Snowflake,
+  CheckCircle2,
+  Calendar,
+  ShieldCheck,
+  Disc3,
+} from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
@@ -54,9 +62,29 @@ export const metadata: Metadata = {
 
 const FAQ_ITEMS = [
   {
-    question: 'When do I need to switch to winter tires in BC and Quebec?',
+    question: 'Can you downsize 18-inch or 19-inch wheels to 17-inch for winter tires on a Toyota RAV4?',
     answer:
-      'In Quebec, winter tires bearing the 3PMSF (Three-Peak Mountain Snowflake) symbol are legally mandatory on all passenger vehicles from December 1 through March 15. In British Columbia, winter tires marked with either 3PMSF or M+S with minimum 3.5mm tread depth are required by law on designated mountain highways (e.g. Coquihalla, Sea-to-Sky, Hwy 1) from October 1 through April 30 (or March 31 on select southern/coastal routes).',
+      'Yes. Downsizing from factory 18-inch (225/60R18) or 19-inch (235/55R19) wheels to 17-inch wheels with 225/65R17 tires is fully supported and recommended for winter driving on all 5th-Gen and 6th-Gen Toyota RAV4 models, including the RAV4 Prime PHEV. 17-inch rims with a 5x114.3 bolt pattern, 60.1mm center bore, and +35 to +45 offset safely clear the front and rear brake calipers. A 17-inch setup provides a taller sidewall to absorb frost heaves and hidden potholes, cuts through deep snow and slush more effectively, and saves $200 to $350 CAD per set compared to 18-inch or 19-inch winter tires.',
+  },
+  {
+    question: 'What are the legal winter tire requirements in BC and Quebec?',
+    answer:
+      'In Quebec, winter tires bearing the 3PMSF (Three-Peak Mountain Snowflake) symbol are legally mandatory on all passenger vehicles from December 1 through March 15. All-season tires with only an M+S rating do not comply. In British Columbia, winter tires marked with either 3PMSF or M+S with a minimum of 3.5mm remaining tread depth are legally required on designated mountain highways (including the Coquihalla Hwy 5, Sea-to-Sky Hwy 99, Malahat Hwy 1, and Trans-Canada Hwy 1) from October 1 through April 30 (or March 31 on select southern routes). Vehicles without compliant tires face police turnarounds and provincial fines.',
+  },
+  {
+    question: 'Do insurance companies in Ontario give discounts for winter tires?',
+    answer:
+      'Yes. In Ontario, all auto insurance companies are legally mandated by the Financial Services Regulatory Authority of Ontario (FSRA) to offer an annual discount of 2% to 5% on your auto insurance premium if you install four certified winter tires (bearing the 3PMSF Three-Peak Mountain Snowflake symbol). Most insurers require winter tires to be installed between November or December and April, and may request purchase or installation receipts as proof of compliance.',
+  },
+  {
+    question: 'Will 225/65R17 or 235/65R17 tires fit on a Toyota Sienna AWD?',
+    answer:
+      'Yes. Both 225/65R17 and 235/65R17 tires mounted on 17x7J or 17x7.5J wheels (5x114.3 bolt pattern, 60.1mm hub bore, +35 to +45 offset) are a proven direct-fit winter package for the 4th-Gen (2021–2026+) Toyota Sienna AWD and FWD. The 17-inch wheel diameter clears all front brake calipers and rear e-AWD electric motor hardware while delivering taller sidewall protection and a narrower contact patch that bites through Canadian winter slush.',
+  },
+  {
+    question: 'What bolt pattern does the Toyota Grand Highlander use for winter wheels?',
+    answer:
+      'The Toyota Grand Highlander uses a heavy-duty 5x120 PCD bolt pattern with a 60.1mm center bore, differing from the traditional 5x114.3 pattern on RAV4, Sienna, and standard Highlander models. Winter wheels must be at least 18 inches (e.g., 255/60R18) to clear the large dual-piston front brake calipers on Hybrid MAX models.',
   },
   {
     question: 'What tire size fits a Toyota RAV4 Hybrid?',
@@ -64,29 +92,9 @@ const FAQ_ITEMS = [
       'A Toyota RAV4 Hybrid fits factory 225/65R17 on 17x7J ET35 wheels (LE, XLE, Woodland), 225/60R18 on Limited trims, or 235/55R19 on XSE, Prime, and TRD trims. For winter driving, downsizing to 225/65R17 on 17-inch rims (5x114.3 bolt pattern, 60.1mm center bore) is fully supported across all models—including the RAV4 Prime PHEV—and provides superior pothole cushion while saving $200–$350 CAD per set.',
   },
   {
-    question: 'Can you downsize 18-inch wheels to 17-inch for winter tires on a Toyota RAV4?',
-    answer:
-      'Yes. Downsizing from factory 18-inch (225/60R18) or 19-inch (235/55R19) wheels to 17-inch wheels with 225/65R17 tires is fully supported and recommended for winter driving on all 5th-Gen and 6th-Gen Toyota RAV4 models, including the RAV4 Prime PHEV. 17-inch rims (5x114.3 bolt pattern, 60.1mm center bore, +35 to +45 offset) clear front and rear brake calipers, provide a taller sidewall to absorb hidden potholes, cut through deep slush more effectively, and reduce replacement tire costs by $200 to $350 CAD per set.',
-  },
-  {
-    question: 'Will 225/65R17 tires fit on a Toyota Sienna AWD?',
-    answer:
-      'Yes. 225/65R17 and 235/65R17 tires on 17x7 or 17x7.5 wheels (5x114.3 bolt pattern, 60.1mm hub bore, +35 to +45 offset) are a proven direct-fit winter package for the 4th-Gen (2021–2026+) Toyota Sienna AWD and FWD. The 17-inch wheel diameter clears all brake calipers and rear e-AWD electric motor hardware while delivering taller sidewall protection and narrower tread width that bites through Canadian winter slush.',
-  },
-  {
-    question: 'Do Canadian auto insurance companies offer discounts for winter tires?',
-    answer:
-      'Yes. In Ontario, all auto insurance companies are legally mandated by the Financial Services Regulatory Authority (FSRA) to provide a 2% to 5% discount on your policy if you install 4 certified winter tires (typically required from November or December through April). In Alberta and Atlantic Canada, most major insurers offer comparable voluntary premium deductions upon request.',
-  },
-  {
     question: 'Does the Toyota Sienna come with a spare tire for winter emergencies?',
     answer:
       'Most Canadian 4th-Gen Toyota Sienna trims do not come with a physical spare tire; they are equipped from the factory with a 12V inflator and liquid tire sealant kit. Because cold Canadian winters cause severe pressure drops and sealant kits can ruin TPMS sensors, carrying a reliable battery-powered cordless inflator or arranging dedicated seasonal roadside assistance is highly recommended.',
-  },
-  {
-    question: 'What bolt pattern does the Toyota Grand Highlander use for winter wheels?',
-    answer:
-      'The Toyota Grand Highlander uses a heavy-duty 5x120 PCD bolt pattern with a 60.1mm center bore, differing from the traditional 5x114.3 pattern on RAV4, Sienna, and standard Highlander models. Winter wheels must be at least 18 inches (e.g., 255/65R18) to clear the large dual-piston front brake calipers on Hybrid MAX models.',
   },
 ];
 
@@ -125,27 +133,83 @@ export default function TiresPage() {
         <BackButton className="mb-4" />
       </div>
 
-      {/* 1. Above-The-Fold Direct-Fit Sizing Quick-Lookup Matrix */}
+      {/* 1. Server-Rendered Hero Section */}
+      <section className="container mx-auto max-w-6xl px-4 sm:px-6 pt-2 pb-6">
+        <div className="relative overflow-hidden border border-zinc-800 bg-gradient-to-b from-zinc-950 via-zinc-900 to-zinc-950 py-10 sm:py-14 text-white rounded-2xl px-5 sm:px-8 shadow-2xl">
+          <div className="max-w-4xl mx-auto text-center space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3.5 py-1 text-xs font-semibold text-cyan-400">
+              <Snowflake className="h-3.5 w-3.5 text-cyan-400" />
+              <span>🇨🇦 Canadian Toyota Winter &amp; All-Weather Guide</span>
+              <span className="text-zinc-600">•</span>
+              <span>2026/2027 Season</span>
+            </div>
+
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              Toyota Winter Tire Sizing, 17&quot; Downsizing &amp; Provincial Mandates
+            </h1>
+
+            <p className="text-xs sm:text-sm md:text-base text-zinc-300 max-w-2xl mx-auto leading-relaxed">
+              Factory OEM sizing matrices, cost-saving 17-inch winter downsizing specs, Quebec Dec 1 mandates,
+              BC mountain highway rules, and Ontario/Alberta insurance discount guides for Canadian Toyota deliveries.
+            </p>
+
+            {/* Quick Context Highlights */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800/80 text-left text-xs">
+              <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
+                <div className="flex items-center gap-1.5 text-cyan-400 font-bold">
+                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                  <span>17&quot; Downsize Approved</span>
+                </div>
+                <p className="text-zinc-400 text-[11px] leading-snug">
+                  RAV4 (including Prime PHEV) &amp; Sienna safely clear 17&quot; wheels, saving $200–$350 CAD per set.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
+                <div className="flex items-center gap-1.5 text-amber-400 font-bold">
+                  <Calendar className="w-3.5 h-3.5 shrink-0" />
+                  <span>QC Dec 1 &amp; BC Oct 1 Mandates</span>
+                </div>
+                <p className="text-zinc-400 text-[11px] leading-snug">
+                  Quebec mandates 3PMSF Dec 1–Mar 15; BC requires 3PMSF or M+S with ≥3.5mm tread on highways.
+                </p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-zinc-950/70 border border-zinc-800 space-y-1">
+                <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                  <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                  <span>2%–5% Insurance Discount</span>
+                </div>
+                <p className="text-zinc-400 text-[11px] leading-snug">
+                  Ontario FSRA mandates discounts for certified 4-tire winter setups; Alberta insurers offer equal savings.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Direct-Fit Sizing Quick-Lookup Matrix (Server Rendered Directly Beneath Hero) */}
       <DirectFitSizingMatrix />
 
-      {/* 2. Provincial Mandate & Insurance Discount Matrix */}
+      {/* 3. Canadian Provincial Winter Tire Mandate & Insurance Table */}
       <ProvincialMandateMatrix />
 
-      {/* 3. Trim-by-Trim OEM Tire Sizing Reference Table */}
+      {/* 4. Trim-by-Trim OEM Tire Sizing Reference Table */}
       <TrimSizingTable />
 
-      {/* 4. Top 3 Recommended Winter & All-Weather Tire Solutions */}
+      {/* 5. Top Recommended Winter & All-Weather Tire Solutions */}
       <TopRecommendedSolutions />
 
-      {/* 5. Main Interactive Tire Catalog & Reviews wrapped in Suspense */}
+      {/* 6. Main Interactive Tire Catalog & Reviews wrapped in Suspense */}
       <Suspense fallback={<CatalogLoadingFallback />}>
         <TireCatalog />
       </Suspense>
 
-      {/* 6. Contextual Winter Gear Integration */}
+      {/* 7. Contextual Winter Gear Integration */}
       <ContextualWinterGear />
 
-      {/* 7. Frequently Asked Questions Section */}
+      {/* 8. Frequently Asked Questions Section */}
       <section
         aria-label="Frequently Asked Questions: Canadian Toyota Winter Tires"
         className="container mx-auto max-w-6xl px-4 sm:px-6 py-8"
