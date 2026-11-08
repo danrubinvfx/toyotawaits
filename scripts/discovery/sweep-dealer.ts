@@ -259,6 +259,9 @@ export async function runSweep(): Promise<SweepRunSummary> {
         supabase,
         isServiceKeyConfigured,
       });
+      if (!result.success) {
+        console.warn(`  [STORE-LEVEL SKIP] ${dealer.dealerName} skipped politely: ${result.errorMessage}`);
+      }
       results.push(result);
     } catch (storeErr: any) {
       console.error('  [STORE-LEVEL FAILURE] ' + dealer.dealerName + ' threw error:', storeErr?.message || storeErr);

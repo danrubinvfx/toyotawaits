@@ -88,6 +88,7 @@ export async function fetchGoAutoInventory(
     limit?: number;
     stockType?: string;
     userAgent?: string;
+    signal?: AbortSignal;
   } = {}
 ): Promise<{ total: number; items: ConvertusRawVehicle[] }> {
   const {
@@ -95,6 +96,7 @@ export async function fetchGoAutoInventory(
     limit = 100,
     stockType = 'NEW',
     userAgent = 'Mozilla/5.0 (compatible; ToyotaWaitsLocalAuditor/1.0; +https://toyotawaits.ca/source-register)',
+    signal = AbortSignal.timeout(12000),
   } = options;
 
   const url = `${LANGLEY_TYPESENSE_ENDPOINT}?q=*&filter_by=craft_site_ids:=[${siteId}]&&stock_type:=${stockType}&per_page=${limit}&page=${page}&x-typesense-api-key=${LANGLEY_TYPESENSE_API_KEY}`;
@@ -104,6 +106,7 @@ export async function fetchGoAutoInventory(
       'User-Agent': userAgent,
       Accept: 'application/json, text/plain, */*',
     },
+    signal,
   });
 
   if (!res.ok) {

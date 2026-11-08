@@ -23,7 +23,7 @@ import { NormalizedListingStatus } from './types';
 
 export const USER_AGENT_AUDITOR =
   'Mozilla/5.0 (compatible; ToyotaWaitsLocalAuditor/1.0; +https://toyotawaits.ca/source-register)';
-export const DEFAULT_TIMEOUT_MS = 8000;
+export const DEFAULT_TIMEOUT_MS = 12000;
 export const MAX_RETRIES = 2;
 export const INITIAL_BACKOFF_MS = 1000;
 export const POLITE_DEALER_COOLDOWN_MS = Number(process.env.POLITE_DEALER_COOLDOWN_MS) || 4000;
@@ -989,7 +989,7 @@ export function fetchViaHttps(
   return new Promise((resolve, reject) => {
     const timer: NodeJS.Timeout = setTimeout(() => {
       reject(new Error('Request timeout in https fallback'));
-    }, timeoutMs);
+    }, Math.min(timeoutMs, 12000));
 
     const makeRequest = (currentUrl: string, redirectsLeft: number) => {
       if (redirectsLeft < 0) {
@@ -1051,11 +1051,10 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
   let lastError: unknown = null;
   let httpStatus: number | null = null;
   let currentUrl = url;
+  const effectiveTimeout = Math.min(timeoutMs || 12000, 12000);
 
   while (attempt <= MAX_RETRIES) {
     attempt++;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
       const res = await fetch(currentUrl, {
@@ -1063,10 +1062,9 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
           'User-Agent': USER_AGENT_AUDITOR,
           Accept: 'application/json, text/plain, */*',
         },
-        signal: controller.signal,
+        signal: AbortSignal.timeout(effectiveTimeout),
       });
 
-      clearTimeout(timer);
       httpStatus = res.status;
 
       if (res.status === 429) {
@@ -1076,7 +1074,7 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
       if (!res.ok) {
         if (res.status === 403) {
           try {
-            const fallback = await fetchViaHttps(currentUrl, timeoutMs);
+            const fallback = await fetchViaHttps(currentUrl, effectiveTimeout);
             return { body: fallback.body, status: fallback.status, attempts: attempt };
           } catch {
             // fallback error ignored, continue to throw HTTP 403
@@ -1088,10 +1086,10 @@ async function fetchWithRetry(url: string, timeoutMs: number = DEFAULT_TIMEOUT_M
       const body = await res.json();
       return { body, status: res.status, attempts: attempt };
     } catch (err: unknown) {
-      clearTimeout(timer);
       lastError = err;
       const isTransient =
         (err as { name?: string })?.name === 'AbortError' ||
+        (err as { name?: string })?.name === 'TimeoutError' ||
         (err as { message?: string })?.message?.includes('timeout') ||
         (err as { message?: string })?.message?.includes('fetch failed') ||
         (httpStatus != null && httpStatus >= 500);
@@ -1172,14 +1170,11 @@ export async function sweepSingleDealer(
           const seenIds = new Set<string>();
           const rhItems: Array<Record<string, unknown>> = [];
           for (let page = 1; page <= 3; page++) {
-            const rhController = new AbortController();
-            const rhTimer = setTimeout(() => rhController.abort(), DEFAULT_TIMEOUT_MS);
             try {
               const rhRes = await fetch(`https://www.richmondhilltoyota.com/inventory/new?page=${page}`, {
                 headers: { 'User-Agent': USER_AGENT_AUDITOR },
-                signal: rhController.signal,
+                signal: AbortSignal.timeout(12000),
               });
-              clearTimeout(rhTimer);
               if (!rhRes.ok) break;
               const html = await rhRes.text();
               const blocks = [
@@ -1227,7 +1222,6 @@ export async function sweepSingleDealer(
                 });
               }
             } catch {
-              clearTimeout(rhTimer);
               break;
             }
           }
@@ -1235,14 +1229,11 @@ export async function sweepSingleDealer(
         }
 
         if (baseUrl.includes('pickeringtoyota.com')) {
-          const pkController = new AbortController();
-          const pkTimer = setTimeout(() => pkController.abort(), DEFAULT_TIMEOUT_MS);
           try {
             const pkRes = await fetch('https://www.pickeringtoyota.com/toyota-new-inventory', {
               headers: { 'User-Agent': USER_AGENT_AUDITOR },
-              signal: pkController.signal,
+              signal: AbortSignal.timeout(12000),
             });
-            clearTimeout(pkTimer);
             if (!pkRes.ok) return [];
             const html = await pkRes.text();
             const cardMatches = [
@@ -1288,7 +1279,6 @@ export async function sweepSingleDealer(
             }
             return pkItems;
           } catch {
-            clearTimeout(pkTimer);
             return [];
           }
         }
@@ -1325,38 +1315,31 @@ export async function sweepSingleDealer(
         } else if (sitemapUrl.includes('upperjamestoyota.ca')) {
           sitemapUrl = 'https://www.upperjamestoyota.ca/en/sitemap_newinventory.xml';
         }
-        const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT_MS);
         try {
           const res = await fetch(sitemapUrl, {
             headers: {
               'User-Agent': USER_AGENT_AUDITOR,
               Accept: 'application/xml, text/xml, */*',
             },
-            signal: controller.signal,
+            signal: AbortSignal.timeout(12000),
           });
-          clearTimeout(timer);
           if (!res.ok) return [];
           let xmlText = await res.text();
           const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory)[^<]*\.xml)<\/loc>/i);
           if (subMatch) {
-            const subController = new AbortController();
-            const subTimer = setTimeout(() => subController.abort(), DEFAULT_TIMEOUT_MS);
             try {
               const subRes = await fetch(subMatch[1], {
                 headers: {
                   'User-Agent': USER_AGENT_AUDITOR,
                   Accept: 'application/xml, text/xml, */*',
                 },
-                signal: subController.signal,
+                signal: AbortSignal.timeout(12000),
               });
-              clearTimeout(subTimer);
               if (subRes.ok) {
                 xmlText = await subRes.text();
               }
             } catch {
-              clearTimeout(subTimer);
-            }
+              }
           }
           const parsedItems = parsePublicSitemapToConvertusItems(xmlText);
           if (baseUrl.includes('nanaimotoyota.com') || baseUrl.includes('upperjamestoyota.ca')) {
@@ -1366,6 +1349,7 @@ export async function sweepSingleDealer(
                 : 'https://www.nanaimotoyota.com/new/inventory/search.html';
               const searchRes = await fetch(searchUrl, {
                 headers: { 'User-Agent': USER_AGENT_AUDITOR },
+                signal: AbortSignal.timeout(12000),
               });
               if (searchRes.ok) {
                 const searchHtml = await searchRes.text();
@@ -1405,7 +1389,6 @@ export async function sweepSingleDealer(
           }
           return parsedItems;
         } catch {
-          clearTimeout(timer);
           return [];
         }
       };
