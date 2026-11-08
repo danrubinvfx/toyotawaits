@@ -38,6 +38,7 @@ export interface GearImageProps {
   isChecked?: boolean;
   rel?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+  showPreviewCue?: boolean;
 }
 
 /**
@@ -173,9 +174,10 @@ export function isAmazonImageDomain(url?: string): boolean {
  * Features:
  * - Wrap image in clickable link pointing to Amazon affiliate URL
  * - Next.js <Image /> with fill, sizes="(max-width: 640px) 300px, (max-width: 1024px) 380px, 420px", object-contain p-2
- * - Fixed aspect ratio (aspect-video)
+ * - Studio spotlight radial illuminated backdrop
+ * - Drop shadow and subtle hover zoom
+ * - Visual interactive cue ("Preview ↗")
  * - Local WebP rendering with state-based fallback
- * - Ambient dark-mode gradient backdrop (bg-zinc-950/80)
  * - Strict block on Amazon direct hotlinking
  */
 export function GearImage({
@@ -188,13 +190,14 @@ export function GearImage({
   className,
   imageClassName,
   containerClassName,
-  aspectRatioClass = 'aspect-video',
+  aspectRatioClass,
   sizes = '(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px',
   ariaLabel,
   testId,
   isChecked = false,
   rel = 'sponsored noopener noreferrer nofollow',
   onClick,
+  showPreviewCue = true,
 }: GearImageProps) {
   // Track the specific src that failed so a new src (e.g. vehicle switch) gets a fresh attempt
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
@@ -230,7 +233,7 @@ export function GearImage({
     >
       <div
         className={cn(
-          'relative w-full shrink-0 rounded-lg overflow-hidden border border-neutral-800/80 bg-zinc-950/80 flex items-center justify-center shadow-xs transition-colors group-hover:border-neutral-700',
+          'relative w-full h-40 sm:h-44 rounded-xl overflow-hidden border border-zinc-800/80 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-700/35 via-zinc-900/90 to-zinc-950 flex items-center justify-center p-3 group/img',
           aspectRatioClass,
           containerClassName
         )}
@@ -244,15 +247,15 @@ export function GearImage({
             sizes={sizes}
             onError={() => setFailedSrc(src ?? null)}
             className={cn(
-              'object-contain p-2 transition-transform duration-300',
-              isChecked ? 'opacity-60 grayscale' : 'group-hover:scale-105',
+              'object-contain p-2 transition-transform duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.6)] group-hover/img:scale-105 group-hover:scale-105',
+              isChecked ? 'opacity-60 grayscale' : '',
               imageClassName
             )}
           />
         ) : (
           <div
             data-testid={testId ? `fallback-icon-${testId}` : undefined}
-            className="w-full h-full flex flex-col items-center justify-center p-3 text-amber-500/80 bg-gradient-to-b from-zinc-900/60 via-zinc-950/90 to-zinc-950"
+            className="w-full h-full flex flex-col items-center justify-center p-3 text-amber-500/80"
             title={alt}
           >
             {/* Ambient SVG Silhouette Background Accents */}
@@ -268,12 +271,18 @@ export function GearImage({
             </svg>
 
             {React.createElement(iconType, {
-              className: 'h-9 w-9 stroke-[1.5] transition-transform group-hover:scale-110',
+              className: 'h-9 w-9 stroke-[1.5] transition-transform group-hover/img:scale-110 group-hover:scale-110',
             })}
             <span className="mt-2 text-[10px] font-medium tracking-wider text-zinc-400 uppercase font-mono truncate max-w-[85%] text-center opacity-80">
               {fallbackIcon || category || 'Gear Preview'}
             </span>
           </div>
+        )}
+
+        {showPreviewCue && (
+          <span className="absolute bottom-2 right-2 text-[10px] font-medium text-zinc-400 bg-zinc-900/80 backdrop-blur-sm border border-zinc-700/50 rounded px-1.5 py-0.5 flex items-center gap-1 opacity-80 group-hover/img:opacity-100 transition-opacity pointer-events-none">
+            Preview ↗
+          </span>
         )}
       </div>
     </a>

@@ -396,10 +396,10 @@ export function GearCard({
       data-testid={`checklist-item-${item.slug}`}
       className={
         cn(
-          'relative w-[72vw] max-w-[270px] sm:w-[320px] flex-shrink-0 snap-center bg-neutral-900/80 border border-neutral-800 rounded-2xl p-3.5 flex flex-col justify-between transition-all duration-200',
+          'relative w-[72vw] max-w-[270px] sm:w-[320px] flex-shrink-0 snap-center rounded-2xl border border-zinc-800 hover:border-amber-500/40 bg-zinc-900/70 hover:bg-zinc-900/95 transition-all p-4 shadow-lg flex flex-col justify-between',
           isChecked
-            ? 'border-amber-500/40 bg-neutral-900/95 shadow-inner'
-            : 'hover:border-neutral-700 hover:bg-neutral-900/90',
+            ? 'border-amber-500/60 bg-zinc-900/95 shadow-inner'
+            : '',
           className
         ) + (process.env.NODE_ENV === 'test' ? ' w-[82vw] max-w-[300px] sm:w-[280px] snap-start shrink-0' : '')
       }
@@ -442,8 +442,6 @@ export function GearCard({
           rel={outboundRel}
           onClick={handleImageClick}
           className="mb-2"
-          aspectRatioClass="aspect-video"
-          containerClassName="aspect-video"
         />
 
         {/* Group badges into a single line (text-[10px] px-2 py-0.5) */}
@@ -455,18 +453,18 @@ export function GearCard({
                 className={cn(
                   'text-[10px] font-semibold px-2 py-0.5 border shrink-0',
                   effectiveBadge.includes('Partner') || effectiveBadge.includes('2%')
-                    ? 'bg-amber-500/20 border-amber-500/50 text-amber-300 font-bold'
-                    : effectiveBadge === 'Essential'
-                    ? 'bg-amber-950/40 border-amber-800/50 text-amber-300 font-bold'
-                    : effectiveBadge === 'Direct Fit'
-                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold'
+                    : effectiveBadge === 'Essential' || effectiveBadge.includes('MUST-HAVE')
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold'
+                    : effectiveBadge === 'Direct Fit' || effectiveBadge.includes('OEM FIT')
+                    ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 font-semibold'
                     : effectiveBadge === 'Delivery Day 1'
-                    ? 'bg-sky-500/15 border-sky-500/40 text-sky-400'
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20'
                     : effectiveBadge === 'Recommended' || effectiveBadge === 'Recommended Upgrade'
-                    ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                    ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 font-semibold'
                     : effectiveBadge === 'Top Pick'
-                    ? 'bg-cyan-500/15 border-cyan-500/40 text-cyan-400'
-                    : 'bg-sky-500/15 border-sky-500/40 text-sky-400'
+                    ? 'text-amber-400 bg-amber-500/10 border-amber-500/20 font-semibold'
+                    : 'text-amber-400 bg-amber-500/10 border-amber-500/20'
                 )}
               >
                 {effectiveBadge}
@@ -539,16 +537,12 @@ export function GearCard({
 
       {/* Bottom Action Section: Primary CTA + Streamlined Secondary CTA */}
       <div className="pt-2 border-t border-neutral-800/80 mt-auto w-full space-y-1.5 print:hidden">
-        {/* Primary CTA: h-9 text-xs font-medium py-1.5 */}
+        {/* Primary CTA: High-Contrast Standout Button */}
         <Button
           asChild
           size="sm"
-          variant="outline"
           className={cn(
-            "w-full h-9 text-xs font-medium py-1.5 gap-1.5 transition-all cursor-pointer",
-            isDirectPartner
-              ? "border-amber-800/50 bg-amber-950/40 hover:bg-amber-900/50 text-amber-300 font-semibold"
-              : "border-zinc-700 bg-zinc-900/80 text-zinc-200 hover:border-amber-800/60 hover:text-amber-300 hover:bg-amber-950/30"
+            "w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-amber-500 hover:bg-amber-400 active:scale-98 text-zinc-950 shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer"
           )}
         >
           <a

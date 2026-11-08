@@ -121,7 +121,7 @@ export function InventoryGearCard({
 
       {/* 2. Content & Action Row: Thumbnail + Title/Benefit + Action Button */}
       <div className="flex items-center gap-3 pt-0.5">
-        {/* Compact Gear Thumbnail with Local Studio Photo */}
+        {/* Compact Gear Thumbnail with Local Studio Photo & Spotlight Staging */}
         <div className="w-20 sm:w-28 shrink-0">
           <GearImage
             src={imageSource}
@@ -131,7 +131,8 @@ export function InventoryGearCard({
             category={item.category}
             sizes="(max-width: 640px) 340px, (max-width: 1024px) 240px, 300px"
             aspectRatioClass="aspect-[16/10]"
-            containerClassName="h-14 sm:h-16 rounded-md overflow-hidden"
+            containerClassName="h-14 sm:h-16 rounded-lg overflow-hidden border border-zinc-800/80 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-700/35 via-zinc-900/90 to-zinc-950"
+            showPreviewCue={false}
             testId={item.id}
             rel={isDirectPartner ? 'sponsored noopener noreferrer' : 'sponsored noopener noreferrer nofollow'}
           />
