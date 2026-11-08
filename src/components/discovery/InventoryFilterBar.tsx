@@ -47,6 +47,7 @@ export interface InventoryFilterBarProps {
   totalFleetCount?: number;
   totalCount?: number;
   onOpenAlertModal?: () => void;
+  onRequestDealership?: () => void;
   cancellationsCount?: number;
   onToggleCancellations?: () => void;
 }
@@ -72,6 +73,7 @@ export function InventoryFilterBar({
   totalFleetCount,
   totalCount,
   onOpenAlertModal,
+  onRequestDealership,
   cancellationsCount = 0,
   onToggleCancellations,
 }: InventoryFilterBarProps) {
@@ -477,6 +479,20 @@ export function InventoryFilterBar({
                 <span>Sort nearest</span>
               </label>
             </div>
+
+            {onRequestDealership && (
+              <div className="text-[10px] text-zinc-400 pt-0.5">
+                Don&apos;t see your dealer?{' '}
+                <button
+                  type="button"
+                  data-testid="request-dealer-inline-btn"
+                  onClick={onRequestDealership}
+                  className="text-red-400 hover:text-red-300 font-medium underline underline-offset-2 transition-colors cursor-pointer"
+                >
+                  Request store
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Column 3: Sort by */}

@@ -16,6 +16,7 @@ import { InventoryGearCard } from './InventoryGearCard';
 import { OntarioInsuranceCard } from './OntarioInsuranceCard';
 import { OntarioAntiTheftCard, isOntarioHighTheftModel } from './OntarioAntiTheftCard';
 import { InventoryAlertModal } from './InventoryAlertModal';
+import { RequestDealershipModal } from './RequestDealershipModal';
 import { getAccessoriesForModel } from '@/data/accessories';
 import { DEALERS, getDealerCoordinates } from '@/config/dealers';
 import {
@@ -431,6 +432,7 @@ export function InventoryExplorer({
   const [currentTime] = useState(() => Date.now());
   const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [dismissedBanner, setDismissedBanner] = useState(false);
 
   // Sync state if initialListings changes (e.g. tests or SSR)
@@ -1190,6 +1192,7 @@ export function InventoryExplorer({
         totalFleetCount={totalFleetCount ?? undefined}
         totalCount={totalFleetCount ?? undefined}
         onOpenAlertModal={() => setIsAlertModalOpen(true)}
+        onRequestDealership={() => setIsRequestModalOpen(true)}
         cancellationsCount={cancellationsCount}
         onToggleCancellations={handleToggleCancellations}
       />
@@ -1325,13 +1328,13 @@ export function InventoryExplorer({
       ) : (
         <div
           data-testid="no-results-message"
-          className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-8 text-center space-y-3"
+          className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-8 text-center space-y-4"
         >
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-zinc-800 text-zinc-400">
             <Car className="h-6 w-6" aria-hidden="true" />
           </div>
           <h3 className="text-sm font-semibold text-zinc-200">No matching listings observed</h3>
-          {filters.model && filters.model.toLowerCase() !== 'all' ? (
+          {filters.model && filters.model.toLowerCase() !== 'all' && (
             <div className="space-y-3 max-w-md mx-auto">
               <p className="text-xs text-zinc-300 leading-relaxed">
                 No active allocations found for this model right now. Be the first to know when a dealer lists one:
@@ -1348,11 +1351,24 @@ export function InventoryExplorer({
                 </button>
               </div>
             </div>
-          ) : (
-            <p className="text-xs text-zinc-500 max-w-md mx-auto">
-              Try adjusting your model or price filters. Remember our pilot is currently monitoring validated Lower Mainland dealer feeds.
-            </p>
           )}
+
+          {/* Dealership Request Zero-Results Prompt */}
+          <div className="rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-4 max-w-md mx-auto space-y-3">
+            <p className="text-xs text-zinc-400 leading-relaxed">
+              We currently sweep select dealerships across BC and Ontario. If your local store is missing, let us know and we&apos;ll configure its lot feed.
+            </p>
+            <div>
+              <button
+                type="button"
+                data-testid="request-dealership-btn"
+                onClick={() => setIsRequestModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-red-600 hover:bg-red-500 text-white active:scale-95 transition-all shadow-sm"
+              >
+                <span>📍 Request We Add Your Dealership</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -1371,6 +1387,21 @@ export function InventoryExplorer({
             : 'Lower Mainland, BC'
         }
         availableModels={availableModels}
+      />
+
+      {/* Intake Modal: Request Dealership */}
+      <RequestDealershipModal
+        isOpen={isRequestModalOpen}
+        onClose={() => setIsRequestModalOpen(false)}
+        initialCity={
+          filters.location && filters.location !== 'Near Me (GPS)' && filters.location !== 'all'
+            ? filters.location
+            : ''
+        }
+        initialProvince={
+          (filters.location && getLocationProvince(filters.location)) || activeRegion || 'BC'
+        }
+        sourceFilterState={filters}
       />
 
       {/* Non-intrusive Coffee Donation Reminder after 3 listing views */}
