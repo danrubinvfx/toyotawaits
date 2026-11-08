@@ -692,6 +692,214 @@ describe('Allocation Drop Alerts & Likely Cancellation Tracker', () => {
       });
       expect(bypassedSummary.subscribersMatched).toBe(1);
     });
+
+    it('warns and skips DB writes when RESEND_API_KEY is missing', async () => {
+      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const dispatchedRows: any[] = [];
+      const updatedSubscriptions: any[] = [];
+
+      const mockSupabase = {
+        from: (table: string) => {
+          if (table === 'inventory_alert_subscriptions') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    gt: async () => ({
+                      data: [
+                        {
+                          id: 'sub-missing-key-1',
+                          email: 'nokey@example.ca',
+                          model: 'Grand Highlander',
+                          trim: 'ALL',
+                          powertrain: 'ALL',
+                          is_active: true,
+                          is_verified: true,
+                          token: 'tok-missing-key',
+                        },
+                      ],
+                      error: null,
+                    }),
+                  }),
+                }),
+              }),
+              update: (payload: any) => ({
+                eq: async () => {
+                  updatedSubscriptions.push(payload);
+                  return { data: null, error: null };
+                },
+              }),
+            };
+          }
+          if (table === 'inventory_alert_dispatches') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    maybeSingle: async () => ({ data: null, error: null }),
+                  }),
+                }),
+              }),
+              upsert: async (payload: any) => {
+                dispatchedRows.push(payload);
+                return { error: null };
+              },
+            };
+          }
+          return {};
+        },
+      };
+
+      const summary = await dispatchPendingAlerts(
+        [
+          {
+            vin: '4T1TESTVINMISSINGKEY',
+            model: 'Grand Highlander',
+            trim: 'Limited',
+            dealerName: 'Jim Pattison Toyota Downtown',
+          },
+        ],
+        {
+          supabaseClient: mockSupabase,
+          resendApiKey: '',
+        }
+      );
+
+      expect(summary.subscribersMatched).toBe(1);
+      expect(summary.emailsSent).toBe(0);
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[Alert Worker] RESEND_API_KEY missing - skipping outbound send and DB insert.'
+      );
+      expect(dispatchedRows).toHaveLength(0);
+      expect(updatedSubscriptions).toHaveLength(0);
+
+      warnSpy.mockRestore();
+    });
+
+    it('logs error and does not insert dispatch rows when Resend returns an error or throws', async () => {
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const dispatchedRows: any[] = [];
+      const updatedSubscriptions: any[] = [];
+
+      const mockSupabase = {
+        from: (table: string) => {
+          if (table === 'inventory_alert_subscriptions') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    gt: async () => ({
+                      data: [
+                        {
+                          id: 'sub-err-1',
+                          email: 'error-test@example.ca',
+                          model: 'RAV4',
+                          trim: 'ALL',
+                          powertrain: 'ALL',
+                          is_active: true,
+                          is_verified: true,
+                          token: 'tok-err',
+                        },
+                      ],
+                      error: null,
+                    }),
+                  }),
+                }),
+              }),
+              update: (payload: any) => ({
+                eq: async () => {
+                  updatedSubscriptions.push(payload);
+                  return { data: null, error: null };
+                },
+              }),
+            };
+          }
+          if (table === 'inventory_alert_dispatches') {
+            return {
+              select: () => ({
+                eq: () => ({
+                  eq: () => ({
+                    maybeSingle: async () => ({ data: null, error: null }),
+                  }),
+                }),
+              }),
+              upsert: async (payload: any) => {
+                dispatchedRows.push(payload);
+                return { error: null };
+              },
+            };
+          }
+          return {};
+        },
+      };
+
+      // 1. Resend returns an API error object
+      const mockResendClientError = {
+        emails: {
+          send: vi.fn().mockResolvedValue({
+            data: null,
+            error: { message: 'Rate limit exceeded' },
+          }),
+        },
+      };
+
+      const summaryError = await dispatchPendingAlerts(
+        [
+          {
+            vin: '2T3TESTERRVIN01',
+            model: 'RAV4',
+            trim: 'XLE',
+            dealerName: 'Jim Pattison Toyota Downtown',
+          },
+        ],
+        {
+          supabaseClient: mockSupabase,
+          resendClient: mockResendClientError,
+          resendApiKey: 're_valid_key',
+        }
+      );
+
+      expect(summaryError.emailsSent).toBe(0);
+      expect(errorSpy).toHaveBeenCalledWith(
+        '[Alert Worker] Resend transmission failed:',
+        expect.objectContaining({ message: 'Rate limit exceeded' })
+      );
+      expect(dispatchedRows).toHaveLength(0);
+      expect(updatedSubscriptions).toHaveLength(0);
+
+      // 2. Resend throws a network or client error
+      const mockResendClientThrows = {
+        emails: {
+          send: vi.fn().mockRejectedValue(new Error('Network connection timeout')),
+        },
+      };
+
+      const summaryThrows = await dispatchPendingAlerts(
+        [
+          {
+            vin: '2T3TESTERRVIN02',
+            model: 'RAV4',
+            trim: 'XLE',
+            dealerName: 'Jim Pattison Toyota Downtown',
+          },
+        ],
+        {
+          supabaseClient: mockSupabase,
+          resendClient: mockResendClientThrows,
+          resendApiKey: 're_valid_key',
+        }
+      );
+
+      expect(summaryThrows.emailsSent).toBe(0);
+      expect(errorSpy).toHaveBeenCalledWith(
+        '[Alert Worker] Resend transmission failed:',
+        expect.objectContaining({ message: 'Network connection timeout' })
+      );
+      expect(dispatchedRows).toHaveLength(0);
+      expect(updatedSubscriptions).toHaveLength(0);
+
+      errorSpy.mockRestore();
+    });
   });
 
   // ===========================================================================

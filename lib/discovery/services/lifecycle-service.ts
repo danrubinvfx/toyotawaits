@@ -18,6 +18,7 @@
 import { createServerClient } from '../../../src/lib/supabase/server';
 import { generateAllocationDropAlertEmail } from '../../../src/lib/alerts/templates';
 import { NormalizedListingStatus } from '../types';
+import { Resend } from 'resend';
 
 export const LIKELY_CANCELLATION_DAYS_THRESHOLD = 5;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -83,6 +84,7 @@ export interface DispatchPendingAlertsOptions {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   db?: any;
   resendApiKey?: string;
+  resendClient?: any;
   fetcher?: typeof fetch;
   dryRun?: boolean;
   cooldown?: number | string | null;
@@ -619,43 +621,100 @@ export async function dispatchPendingAlerts(
 
     let providerMessageId: string | null = null;
     const hasResendKey = Boolean(
-      resendApiKey &&
+      options.resendClient ||
+      (resendApiKey &&
         resendApiKey.trim() !== '' &&
         !resendApiKey.includes('placeholder') &&
-        !resendApiKey.includes('mock-')
+        !resendApiKey.includes('mock-'))
     );
 
-    if (!isDryRun && hasResendKey && typeof fetchFn === 'function') {
-      try {
-        const res = await fetchFn('https://api.resend.com/emails', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${resendApiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+    if (!isDryRun) {
+      if (!hasResendKey) {
+        console.warn(
+          '[Alert Worker] RESEND_API_KEY missing - skipping outbound send and DB insert.'
+        );
+      } else {
+        const resend = options.resendClient || new Resend(resendApiKey);
+        let resendResult: any = null;
+        let err: any = null;
+
+        const originalFetch = globalThis.fetch;
+        if (options.fetcher && options.fetcher !== globalThis.fetch) {
+          globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+            const res = await options.fetcher!(input, init);
+            if (res && !(res as any).headers) {
+              (res as any).headers = new Headers();
+            }
+            return res;
+          };
+        }
+
+        try {
+          resendResult = await resend.emails.send({
             from: fromSender,
             to: [sub.email],
             subject: emailMessage.subject,
             html: emailMessage.html,
             text: emailMessage.text,
             headers: emailMessage.headers,
-          }),
-        });
-        if (res.ok) {
-          summary.emailsSent++;
-          try {
-            const resJson = await res.json();
-            if (resJson && typeof resJson === 'object' && resJson.id) {
-              providerMessageId = String(resJson.id);
-            }
-          } catch {
-            // Optional json parse
+          });
+        } catch (e: any) {
+          err = e;
+        } finally {
+          if (options.fetcher && options.fetcher !== originalFetch) {
+            globalThis.fetch = originalFetch;
           }
         }
-      } catch (emailErr: unknown) {
-        const msg = emailErr instanceof Error ? emailErr.message : String(emailErr);
-        console.warn(`[Alert Worker] Resend email dispatch failed for ${sub.email}:`, msg);
+
+        if (err || resendResult?.error || !resendResult?.data?.id) {
+          console.error(
+            '[Alert Worker] Resend transmission failed:',
+            resendResult?.error || err
+          );
+        } else {
+          providerMessageId = String(resendResult.data.id);
+          summary.emailsSent++;
+
+          // Record in inventory_alert_dispatches for EACH individual VIN notified in the digest
+          for (const v of matchedVehicles) {
+            const vVin = v.vin || v.provisionalId || 'PROVISIONAL';
+            const vTrim = v.trim || 'Base';
+            const vDealerName = v.dealerName || dealerName;
+
+            try {
+              const dispatchTable = supabase.from('inventory_alert_dispatches');
+              if (dispatchTable && typeof dispatchTable.upsert === 'function') {
+                await dispatchTable.upsert(
+                  {
+                    subscription_id: sub.id || null,
+                    email: sub.email,
+                    vin: vVin,
+                    model: v.model,
+                    trim: vTrim,
+                    dealer_name: vDealerName,
+                    provider_message_id: providerMessageId,
+                    dispatched_at: nowIso,
+                  },
+                  { onConflict: 'email,vin' }
+                );
+              }
+            } catch {
+              // Non-fatal in mock test environments
+            }
+          }
+
+          // Update last_notified_at on subscription
+          try {
+            if (sub.id) {
+              await supabase
+                .from('inventory_alert_subscriptions')
+                .update({ last_notified_at: nowIso })
+                .eq('id', sub.id);
+            }
+          } catch {
+            // Non-fatal update error
+          }
+        }
       }
     }
 
@@ -693,48 +752,6 @@ export async function dispatchPendingAlerts(
     }
 
     summary.loggedPayloads.push(dispatchPayload);
-
-    if (!isDryRun) {
-      // Record in inventory_alert_dispatches for EACH individual VIN notified in the digest
-      for (const v of matchedVehicles) {
-        const vVin = v.vin || v.provisionalId || 'PROVISIONAL';
-        const vTrim = v.trim || 'Base';
-        const vDealerName = v.dealerName || dealerName;
-
-        try {
-          const dispatchTable = supabase.from('inventory_alert_dispatches');
-          if (dispatchTable && typeof dispatchTable.upsert === 'function') {
-            await dispatchTable.upsert(
-              {
-                subscription_id: sub.id || null,
-                email: sub.email,
-                vin: vVin,
-                model: v.model,
-                trim: vTrim,
-                dealer_name: vDealerName,
-                provider_message_id: providerMessageId,
-                dispatched_at: nowIso,
-              },
-              { onConflict: 'email,vin' }
-            );
-          }
-        } catch {
-          // Non-fatal in mock test environments
-        }
-      }
-
-      // Update last_notified_at on subscription
-      try {
-        if (sub.id) {
-          await supabase
-            .from('inventory_alert_subscriptions')
-            .update({ last_notified_at: nowIso })
-            .eq('id', sub.id);
-        }
-      } catch {
-        // Non-fatal update error
-      }
-    }
   }
 
   return summary;
