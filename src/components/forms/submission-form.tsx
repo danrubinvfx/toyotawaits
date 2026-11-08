@@ -108,6 +108,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   const [deliveryDate, setDeliveryDate] = useState<string>('');
   const [pricing, setPricing] = useState<'at_msrp' | 'above_msrp' | 'below_msrp' | 'undisclosed'>('undisclosed');
   const [mandatoryAddonsCad, setMandatoryAddonsCad] = useState<string>('');
+  const [docFeeCharged, setDocFeeCharged] = useState<string>('');
+  const [forcedAddonsAmount, setForcedAddonsAmount] = useState<string>('');
   const [usPricingType, setUsPricingType] = useState<'at_msrp' | 'markup' | 'mandatory_addons'>('at_msrp');
   const [usAdmAmount, setUsAdmAmount] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
@@ -163,6 +165,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setDeliveryDate('');
     setPricing('undisclosed');
     setMandatoryAddonsCad('');
+    setDocFeeCharged('');
+    setForcedAddonsAmount('');
     setUsPricingType('at_msrp');
     setUsAdmAmount('');
     setNotes('');
@@ -273,7 +277,13 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         dealerMarkupAdm: resolvedAdmMarkup,
         mandatoryAddonsCad: isUsMarket
           ? (usPricingType === 'mandatory_addons' ? (Number(usAdmAmount) || 0) : 0)
-          : (Number(mandatoryAddonsCad) || 0),
+          : ((!isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined) ?? (Number(mandatoryAddonsCad) || 0)),
+        doc_fee_charged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
+        docFeeCharged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
+        doc_fee: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
+        forced_addons_amount: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
+        forcedAddonsAmount: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
+        dealer_markup: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
         tradeInRequired: false,
         notes: notes.trim() || undefined,
         turnstileToken: 'mock-valid-turnstile-token', // In test/dev environment fallback
@@ -920,15 +930,33 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor={`${formId}-addons`}>Mandatory Add-ons (CAD $)</Label>
+                    <Label htmlFor={`${formId}-doc-fee`}>Dealer Documentation Fee ($CAD)</Label>
                     <Input
-                      id={`${formId}-addons`}
+                      id={`${formId}-doc-fee`}
+                      name="doc_fee_charged"
                       type="number"
                       min="0"
                       step="50"
-                      placeholder="0"
-                      value={mandatoryAddonsCad}
-                      onChange={(e) => setMandatoryAddonsCad(e.target.value)}
+                      placeholder="e.g. 595"
+                      value={docFeeCharged}
+                      onChange={(e) => setDocFeeCharged(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor={`${formId}-forced-addons`}>Mandatory Add-ons / Packages ($CAD)</Label>
+                    <Input
+                      id={`${formId}-forced-addons`}
+                      name="forced_addons_amount"
+                      type="number"
+                      min="0"
+                      step="50"
+                      placeholder="e.g. 995 for VIN etching, rust, tire protection"
+                      value={forcedAddonsAmount}
+                      onChange={(e) => {
+                        setForcedAddonsAmount(e.target.value);
+                        setMandatoryAddonsCad(e.target.value);
+                      }}
                     />
                   </div>
                 </div>

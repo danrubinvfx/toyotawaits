@@ -118,6 +118,14 @@ export const submissionCreateSchema = z
       .max(100000, 'Dealer markup / ADM exceeds reasonable limit')
       .optional()
       .nullable(),
+    dealer_markup: z.number().max(100000, 'Dealer markup exceeds reasonable limit').optional().nullable(),
+    dealerMarkup: z.number().max(100000, 'Dealer markup exceeds reasonable limit').optional().nullable(),
+    doc_fee: z.number().max(10000, 'Doc fee exceeds reasonable limit').optional().nullable(),
+    docFee: z.number().max(10000, 'Doc fee exceeds reasonable limit').optional().nullable(),
+    doc_fee_charged: z.number().max(10000, 'Doc fee exceeds reasonable limit').optional().nullable(),
+    docFeeCharged: z.number().max(10000, 'Doc fee exceeds reasonable limit').optional().nullable(),
+    forced_addons_amount: z.number().max(50000, 'Forced addons amount exceeds reasonable limit').optional().nullable(),
+    forcedAddonsAmount: z.number().max(50000, 'Forced addons amount exceeds reasonable limit').optional().nullable(),
     pricing_type: z.enum(['at_msrp', 'markup', 'discount', 'mandatory_addons']).optional().nullable(),
     portDestination: z.string().trim().max(100).optional().nullable(),
     port_destination: z.string().trim().max(100).optional().nullable(),

@@ -13,9 +13,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
+  title: 'Is the Toyota RAV4 Hybrid Worth the Wait? (2026 Payback & Fuel Calculator) | ToyotaWaits',
   description:
-    'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
+    'Calculate whether waiting 10-14 months for a Toyota Hybrid pays off. Real NRCan fuel savings vs gas models, break-even timelines, and waiting cost.',
   keywords: [
     'toyota savings calculator',
     'toyota hybrid fuel savings canada',
@@ -30,9 +30,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
+    title: 'Is the Toyota RAV4 Hybrid Worth the Wait? (2026 Payback & Fuel Calculator) | ToyotaWaits',
     description:
-      'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
+      'Calculate whether waiting 10-14 months for a Toyota Hybrid pays off. Real NRCan fuel savings vs gas models, break-even timelines, and waiting cost.',
     url: 'https://toyotawaits.ca/calculator',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Is a Toyota Hybrid Worth It? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits',
+    title: 'Is the Toyota RAV4 Hybrid Worth the Wait? (2026 Payback & Fuel Calculator) | ToyotaWaits',
     description:
-      'Calculate real gas savings and break-even timelines vs gas models in Canada. Features BC & Ontario pump prices, hydro rates, and the fuel cost of waiting.',
+      'Calculate whether waiting 10-14 months for a Toyota Hybrid pays off. Real NRCan fuel savings vs gas models, break-even timelines, and waiting cost.',
   },
 };
 

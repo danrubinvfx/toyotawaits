@@ -62,6 +62,14 @@ export interface SubmissionCreateData {
   pricing: PricingType;
   pricing_type?: string | null;
   mandatoryAddonsCad: number;
+  doc_fee?: number | null;
+  docFee?: number | null;
+  doc_fee_charged?: number | null;
+  docFeeCharged?: number | null;
+  forced_addons_amount?: number | null;
+  forcedAddonsAmount?: number | null;
+  dealer_markup?: number | null;
+  dealerMarkup?: number | null;
   adm_markup?: number | null;
   dealerMarkupAdm?: number | null;
   dealer_markup_adm?: number | null;
@@ -868,6 +876,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   const state = data.state || (countryCode === 'US' && data.province ? String(data.province) : null);
   const dealerMarkupAdm = data.dealer_markup_adm ?? data.dealerMarkupAdm ?? (admMarkup !== 0 ? admMarkup : null);
   const portDestination = data.port_destination ?? data.portDestination ?? null;
+  const docFee = data.doc_fee ?? data.docFee ?? data.doc_fee_charged ?? data.docFeeCharged ?? null;
+  const forcedAddonsAmount = data.forced_addons_amount ?? data.forcedAddonsAmount ?? (data.mandatoryAddonsCad || null);
+  const dealerMarkup = data.dealer_markup ?? data.dealerMarkup ?? forcedAddonsAmount ?? (admMarkup !== 0 ? admMarkup : null);
 
   if (data.status === 'delivered' && data.deliveryDate) {
     const start = new Date(data.orderDate).getTime();
@@ -920,7 +931,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         stage: resolvedDbStage,
         stage_updated_at: new Date().toISOString(),
         pricing: data.pricing,
-        mandatory_addons_cad: data.mandatoryAddonsCad,
+        mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
+        doc_fee: docFee != null ? Number(docFee) : null,
         trade_in_required: data.tradeInRequired,
         notes: data.notes,
         edit_key_hash: data.editKeyHash,
@@ -941,6 +954,8 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         delete fallbackRow.currency;
         delete fallbackRow.adm_markup;
         delete fallbackRow.pricing_type;
+        delete fallbackRow.dealer_markup;
+        delete fallbackRow.doc_fee;
         const retryCol = await supabase
           .from('submissions')
           .insert(fallbackRow)
@@ -988,7 +1003,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             stage: resolvedDbStage,
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
-            mandatory_addons_cad: data.mandatoryAddonsCad,
+            mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
+        doc_fee: docFee != null ? Number(docFee) : null,
             trade_in_required: data.tradeInRequired,
             notes: data.notes,
             edit_key_hash: data.editKeyHash,
@@ -1031,7 +1048,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             stage: resolvedDbStage,
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
-            mandatory_addons_cad: data.mandatoryAddonsCad,
+            mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
+        doc_fee: docFee != null ? Number(docFee) : null,
             trade_in_required: data.tradeInRequired,
             notes: data.notes,
             edit_key_hash: data.editKeyHash,
@@ -1075,6 +1094,12 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
           dealer_markup_adm: dealerMarkupAdm,
           portDestination,
           port_destination: portDestination,
+          dealerMarkup,
+          dealer_markup: dealerMarkup,
+          docFee,
+          doc_fee: docFee,
+          doc_fee_charged: docFee,
+          forced_addons_amount: forcedAddonsAmount,
           status: inserted?.status || data.status,
           currentStage: normalizedReturnStage,
           stage: normalizedReturnStage,
@@ -1184,7 +1209,13 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     stage: resolvedDbStage,
     stage_updated_at: new Date().toISOString(),
     pricing: data.pricing,
-    mandatory_addons_cad: data.mandatoryAddonsCad,
+    mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+    dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
+    dealerMarkup: dealerMarkup != null ? Number(dealerMarkup) : null,
+    doc_fee: docFee != null ? Number(docFee) : null,
+    docFee: docFee != null ? Number(docFee) : null,
+    doc_fee_charged: docFee != null ? Number(docFee) : null,
+    forced_addons_amount: forcedAddonsAmount != null ? Number(forcedAddonsAmount) : null,
     trade_in_required: data.tradeInRequired,
     notes: data.notes || '',
     edit_key_hash: data.editKeyHash,
@@ -1218,6 +1249,12 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     dealer_markup_adm: dealerMarkupAdm,
     portDestination,
     port_destination: portDestination,
+    dealerMarkup,
+    dealer_markup: dealerMarkup,
+    docFee,
+    doc_fee: docFee,
+    doc_fee_charged: docFee,
+    forced_addons_amount: forcedAddonsAmount,
     status: data.status,
     currentStage: resolvedDbStage,
     stage: resolvedDbStage,
@@ -1961,6 +1998,14 @@ export interface EditableSubmission {
   stageUpdatedAt?: string | null;
   pricing: PricingType;
   mandatoryAddonsCad: number;
+  doc_fee?: number | null;
+  docFee?: number | null;
+  doc_fee_charged?: number | null;
+  docFeeCharged?: number | null;
+  forced_addons_amount?: number | null;
+  forcedAddonsAmount?: number | null;
+  dealer_markup?: number | null;
+  dealerMarkup?: number | null;
   dealerMarkupAdm?: number | null;
   portDestination?: string | null;
   notes?: string | null;

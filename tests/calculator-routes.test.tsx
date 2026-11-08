@@ -39,10 +39,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   describe('1. Programmatic Model Routes', () => {
     it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
       expect(rav4Metadata.title).toBe(
-        'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits'
+        'Is the Toyota RAV4 Hybrid Worth the Wait? (2026 Payback & Fuel Calculator) | ToyotaWaits'
       );
       expect(rav4Metadata.description).toBe(
-        'Compare RAV4 Hybrid vs Gas break-even timelines in Canada. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.'
+        'Calculate whether waiting 10-14 months for a Toyota Hybrid pays off. Real NRCan fuel savings vs gas models, break-even timelines, and waiting cost.'
       );
       expect(rav4Metadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/rav4-hybrid'

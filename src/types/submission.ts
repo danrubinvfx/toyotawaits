@@ -32,6 +32,10 @@ export interface SubmissionData {
   adm_markup?: number | null;
   dealerMarkupAdm?: number | null;
   dealer_markup_adm?: number | null;
+  dealer_markup?: number | null;
+  doc_fee?: number | null;
+  doc_fee_charged?: number | null;
+  forced_addons_amount?: number | null;
   pricing_type?: SubmissionPricingType | null;
   pricing?: LegacyPricingType | SubmissionPricingType;
   portDestination?: string | null;

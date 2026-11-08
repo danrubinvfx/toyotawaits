@@ -131,6 +131,14 @@ export interface Submission {
   adm_markup?: number | null;
   dealerMarkupAdm?: number | null;
   dealer_markup_adm?: number | null;
+  dealer_markup?: number | null;
+  dealerMarkup?: number | null;
+  doc_fee?: number | null;
+  docFee?: number | null;
+  doc_fee_charged?: number | null;
+  docFeeCharged?: number | null;
+  forced_addons_amount?: number | null;
+  forcedAddonsAmount?: number | null;
   portDestination?: string | null;
   port_destination?: string | null;
   tradeInRequired: boolean;

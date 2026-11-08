@@ -92,6 +92,10 @@ export interface Database {
           state: string | null;
           adm_markup: number | null;
           dealer_markup_adm: number | null;
+          dealer_markup?: number | null;
+          doc_fee?: number | null;
+          doc_fee_charged?: number | null;
+          forced_addons_amount?: number | null;
           pricing_type: string | null;
           port_destination: string | null;
           dealership_city: string | null;

@@ -13,4 +13,5 @@ export function SubmissionModal(props: SubmissionModalProps) {
 }
 
 export { SubmissionForm };
+export { OrderSubmissionModal } from './OrderSubmissionModal';
 export default SubmissionModal;

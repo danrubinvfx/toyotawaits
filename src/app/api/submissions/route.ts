@@ -256,6 +256,10 @@ export async function POST(request: NextRequest) {
       const resolvedAdm = validData.adm_markup ?? validData.dealer_markup_adm ?? validData.dealerMarkupAdm ?? null;
       const resolvedPricingType = validData.pricing_type || (validData.pricing === 'above_msrp' ? 'markup' : validData.pricing === 'below_msrp' ? 'discount' : validData.pricing || 'at_msrp');
 
+      const resolvedDocFee = validData.doc_fee ?? validData.docFee ?? validData.doc_fee_charged ?? validData.docFeeCharged ?? null;
+      const resolvedForcedAddons = validData.forced_addons_amount ?? validData.forcedAddonsAmount ?? (validData.mandatoryAddonsCad || null);
+      const resolvedDealerMarkup = validData.dealer_markup ?? validData.dealerMarkup ?? resolvedForcedAddons ?? resolvedAdm;
+
       const record = await insertSubmission({
         modelId: validData.modelId,
         modelSlug: (validData as any).modelSlug || body?.modelSlug,
@@ -286,6 +290,14 @@ export async function POST(request: NextRequest) {
         currentStage: validData.stage,
         stage: validData.stage,
         mandatoryAddonsCad: validData.mandatoryAddonsCad,
+        doc_fee_charged: resolvedDocFee,
+        docFeeCharged: resolvedDocFee,
+        doc_fee: resolvedDocFee,
+        docFee: resolvedDocFee,
+        forced_addons_amount: resolvedForcedAddons,
+        forcedAddonsAmount: resolvedForcedAddons,
+        dealer_markup: resolvedDealerMarkup,
+        dealerMarkup: resolvedDealerMarkup,
         tradeInRequired: validData.tradeInRequired,
         notes: validData.notes,
         editKeyHash,

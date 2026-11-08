@@ -88,6 +88,28 @@ describe('US Market Database Schema & Submission Adaptation (Step 2)', () => {
       expect(submissionSchema.safeParse(msrpInput).success).toBe(true);
     });
 
+    it('accepts optional Canadian doc_fee_charged and forced_addons_amount fields', () => {
+      const caInput = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        country: 'CA',
+        province: 'ON',
+        modelYear: 2026,
+        orderDate: '2026-03-01',
+        doc_fee_charged: 595,
+        forced_addons_amount: 995,
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const parsed = submissionSchema.safeParse(caInput);
+      expect(parsed.success).toBe(true);
+      if (parsed.success) {
+        expect(parsed.data.doc_fee_charged).toBe(595);
+        expect(parsed.data.forced_addons_amount).toBe(995);
+      }
+    });
+
     it('accepts valid 2-letter Canadian province codes and US state codes in regionCodeSchema', () => {
       expect(regionCodeSchema.safeParse('BC').success).toBe(true);
       expect(regionCodeSchema.safeParse('ON').success).toBe(true);
@@ -162,6 +184,31 @@ describe('US Market Database Schema & Submission Adaptation (Step 2)', () => {
 
       expect(record.country).toBe('CA');
       expect(record.currency).toBe('CAD');
+    });
+
+    it('persists Canadian doc_fee and forced_addons_amount to dealer_markup and doc_fee', async () => {
+      const record = await insertSubmission({
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        country: 'CA',
+        province: 'BC',
+        modelYear: 2026,
+        orderDate: '2026-03-01',
+        status: 'pending',
+        pricing: 'above_msrp',
+        mandatoryAddonsCad: 0,
+        doc_fee_charged: 595,
+        forced_addons_amount: 995,
+        tradeInRequired: false,
+        editKeyHash: 'test-hash-ca-doc-fee',
+        isFlagged: false,
+      });
+
+      expect(record.doc_fee).toBe(595);
+      expect(record.dealer_markup).toBe(995);
+      expect(record.forced_addons_amount).toBe(995);
+      expect(record.doc_fee_charged).toBe(595);
     });
   });
 });
