@@ -1051,15 +1051,16 @@ export function InventoryExplorer({
   }, [popularityCounts]);
 
   const effectiveGearCounts = popularityCounts || fetchedGearCounts;
+  const gearModelContext = filters.model || (filters.make === 'Lexus' ? 'Lexus' : undefined);
   const gearItems = useMemo(() => {
-    const raw = getAccessoriesForModel(filters.model || undefined, effectiveGearCounts);
+    const raw = getAccessoriesForModel(gearModelContext, effectiveGearCounts);
     return raw.filter(
       (item) =>
         !/speaker|audio|amplifier|subwoofer|beat-sonic|tweeter/i.test(
           `${item.id} ${item.title} ${item.category}`
         )
     );
-  }, [filters.model, effectiveGearCounts]);
+  }, [gearModelContext, effectiveGearCounts]);
 
   const displayedListings = useMemo(
     () => filteredListings.slice(0, visibleCount),
@@ -1296,7 +1297,7 @@ export function InventoryExplorer({
                     <InventoryGearCard
                       key={`gear-strip-${gearItem.id}-${index}`}
                       item={gearItem}
-                      modelContext={filters.model || undefined}
+                      modelContext={gearModelContext}
                     />
                   )}
                   {shouldInsertOntarioInsurance && (

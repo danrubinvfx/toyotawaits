@@ -19,7 +19,7 @@ export interface TargetVehicleCardProps {
 
 interface TargetVehicleOption {
   presetId: string;
-  powertrain: 'HEV' | 'PHEV';
+  powertrain: 'GAS' | 'HEV' | 'PHEV';
 }
 
 const VEHICLE_OPTIONS: TargetVehicleOption[] = [
@@ -30,6 +30,15 @@ const VEHICLE_OPTIONS: TargetVehicleOption[] = [
   { presetId: '2025-toyota-sienna-hybrid', powertrain: 'HEV' },
   { presetId: '2025-toyota-grand-highlander-hybrid', powertrain: 'HEV' },
   { presetId: '2025-toyota-crown-signia-hybrid', powertrain: 'HEV' },
+  // Lexus luxury lineup
+  { presetId: 'lexus-gx550', powertrain: 'GAS' },
+  { presetId: 'lexus-tx-350', powertrain: 'GAS' },
+  { presetId: 'lexus-tx-500h', powertrain: 'HEV' },
+  { presetId: 'lexus-tx-550h-plus', powertrain: 'PHEV' },
+  { presetId: 'lexus-nx-350h', powertrain: 'HEV' },
+  { presetId: 'lexus-nx-450h-plus', powertrain: 'PHEV' },
+  { presetId: 'lexus-rx-350h', powertrain: 'HEV' },
+  { presetId: 'lexus-rx-450h-plus', powertrain: 'PHEV' },
 ];
 
 /** Builds the dropdown label, e.g. "2026 Toyota RAV4 Hybrid AWD (5.8 L/100km / 40 MPG)". */
@@ -68,7 +77,8 @@ export function TargetVehicleCard({
     } else {
       onChange({
         presetId: option.presetId,
-        powertrain: 'HEV',
+        powertrain: option.powertrain,
+        electricShare: 0.0,
       });
     }
   };

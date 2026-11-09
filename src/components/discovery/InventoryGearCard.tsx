@@ -49,6 +49,16 @@ const BENEFIT_HOOK_MAP: Record<string, string> = {
     'Stops right knee soreness.',
   'muslogy-armrest-cover':
     'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue.',
+  'lexus-gx550-tuxmat':
+    'Maximum high-wall slush and mud protection.',
+  'lexus-tx-3row-liners':
+    'Precision-fit 3-row laser measured floor defense.',
+  'lexus-14in-screen-protector':
+    'Anti-glare 9H tempered glass screen protection.',
+  'lexus-fitcamx-dashcam':
+    'Stealth OEM mirror-tap plug-and-play recording.',
+  'lexus-phev-evse':
+    'Heavy-duty 40A Canadian winter Level 2 charging.',
 };
 
 export function InventoryGearCard({

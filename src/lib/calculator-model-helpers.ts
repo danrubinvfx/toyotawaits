@@ -14,6 +14,17 @@ export interface ModelResolution {
 export function modelSlugToPresetId(modelOrSlug?: string | null): string | null {
   if (!modelOrSlug) return null;
   const s = modelOrSlug.toLowerCase().trim();
+
+  // Lexus model families
+  if (s.includes('gx550') || s.includes('gx-550') || s.includes('lexus-gx')) return 'lexus-gx550';
+  if (s.includes('tx-550h') || s.includes('tx-550') || s.includes('tx-phev')) return 'lexus-tx-550h-plus';
+  if (s.includes('tx-500h') || s.includes('tx-500')) return 'lexus-tx-500h';
+  if (s.includes('tx-350') || s === 'tx' || s === 'lexus-tx' || s.startsWith('lexus-tx')) return 'lexus-tx-350';
+  if (s.includes('nx-450h') || s.includes('nx-450') || s.includes('nx-phev')) return 'lexus-nx-450h-plus';
+  if (s.includes('nx-350h') || s.includes('nx-350') || s === 'nx' || s === 'lexus-nx' || s.startsWith('lexus-nx')) return 'lexus-nx-350h';
+  if (s.includes('rx-450h') || s.includes('rx-450') || s.includes('rx-phev')) return 'lexus-rx-450h-plus';
+  if (s.includes('rx-350h') || s.includes('rx-350') || s === 'rx' || s === 'lexus-rx' || s.startsWith('lexus-rx')) return 'lexus-rx-350h';
+
   if (s.includes('sienna')) return '2025-toyota-sienna-hybrid';
   if (s.includes('grand-highlander') || s.includes('grand_highlander') || s.includes('grand highlander')) {
     return '2025-toyota-grand-highlander-hybrid';
@@ -29,6 +40,10 @@ export function modelSlugToPresetId(modelOrSlug?: string | null): string | null 
 export function presetIdToModelSlug(presetId?: string): string {
   if (!presetId) return 'rav4';
   const clean = presetId.toLowerCase();
+  if (clean.includes('gx550') || clean.includes('gx-550')) return 'lexus-gx550';
+  if (clean.includes('tx')) return 'lexus-tx';
+  if (clean.includes('nx')) return 'lexus-nx';
+  if (clean.includes('rx')) return 'lexus-rx';
   if (clean.includes('sienna')) return 'sienna';
   if (clean.includes('grand-highlander')) return 'grand-highlander';
   if (clean.includes('camry')) return 'camry';
@@ -41,6 +56,14 @@ export function presetIdToModelSlug(presetId?: string): string {
 export function presetIdToModelName(presetId?: string): string {
   if (!presetId) return 'RAV4';
   const clean = presetId.toLowerCase();
+  if (clean.includes('gx550')) return 'Lexus GX 550';
+  if (clean.includes('tx-550h')) return 'Lexus TX 550h+';
+  if (clean.includes('tx-500h')) return 'Lexus TX 500h';
+  if (clean.includes('tx-350') || clean.includes('tx')) return 'Lexus TX 350';
+  if (clean.includes('nx-450h')) return 'Lexus NX 450h+';
+  if (clean.includes('nx-350h') || clean.includes('nx')) return 'Lexus NX 350h';
+  if (clean.includes('rx-450h')) return 'Lexus RX 450h+';
+  if (clean.includes('rx-350h') || clean.includes('rx')) return 'Lexus RX 350h';
   if (clean.includes('sienna')) return 'Sienna';
   if (clean.includes('grand-highlander')) return 'Grand Highlander';
   if (clean.includes('camry')) return 'Camry';

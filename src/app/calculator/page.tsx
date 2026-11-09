@@ -9,7 +9,9 @@ import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
-export const revalidate = 3600; // Cache on edge for 1 hour
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
+export const revalidate = 0;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),

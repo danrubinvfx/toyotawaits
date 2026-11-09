@@ -503,9 +503,28 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
   });
 
   const [comparisonMode, setComparisonModeState] = useState<ComparisonMode>('ENERGY_COMPARISON');
-  const [mode2Outlay, setMode2OutlayState] = useState<Mode2OutlayState>(defaultMode2);
+  const [mode2Outlay, setMode2OutlayState] = useState<Mode2OutlayState>(() => {
+    const presetId = config?.initialTargetPresetId;
+    if (presetId) {
+      const p = getVehiclePresetById(presetId);
+      if (p?.pricing?.msrpCad) {
+        return {
+          ...defaultMode2,
+          targetPriceCad: isInitialImp ? (p.pricing.msrpUsd ?? p.pricing.msrpCad) : p.pricing.msrpCad,
+        };
+      }
+    }
+    return defaultMode2;
+  });
   const [mode3Outlay, setMode3OutlayState] = useState<Mode3OutlayState>(defaultMode3);
-  const [waitDays, setWaitDaysState] = useState<number>(180);
+  const [waitDays, setWaitDaysState] = useState<number>(() => {
+    const presetId = config?.initialTargetPresetId ?? DEFAULT_TARGET_VEHICLE.presetId;
+    const preset = getVehiclePresetById(presetId);
+    if (preset?.typicalWaitDays) {
+      return Math.min(420, preset.typicalWaitDays);
+    }
+    return 180;
+  });
   const [isHydrated, setIsHydrated] = useState(false);
 
   // Apply state overrides safely
@@ -648,7 +667,21 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       }
       return next;
     });
-  }, []);
+
+    if (patch.presetId) {
+      const p = getVehiclePresetById(patch.presetId);
+      if (p?.pricing?.msrpCad) {
+        const msrp = (isInitialImp && p.pricing.msrpUsd) ? p.pricing.msrpUsd : p.pricing.msrpCad;
+        setMode2OutlayState((prev) => ({
+          ...prev,
+          targetPriceCad: msrp,
+        }));
+      }
+      if (p?.typicalWaitDays) {
+        setWaitDaysState(Math.min(420, p.typicalWaitDays));
+      }
+    }
+  }, [isInitialImp]);
 
   const setComparisonMode = useCallback((mode: ComparisonMode) => {
     setComparisonModeState(mode);
@@ -663,7 +696,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
   }, []);
 
   const setWaitDays = useCallback((days: number) => {
-    setWaitDaysState(days);
+    setWaitDaysState(Math.min(420, Math.max(0, days)));
   }, []);
 
   const setUnitSystem = useCallback((newUnit: UnitSystem) => {

@@ -126,6 +126,83 @@ const KNOWN_MODELS: Record<string, ModelInfo> = {
     archetypeId: 'archetype-compact-crossover-awd',
     combinedL100km: 6.2,
   },
+  'lexus-gx550': {
+    name: 'Lexus GX 550',
+    year: 2026,
+    presetId: 'lexus-gx550',
+    archetypeId: 'archetype-half-ton-truck',
+    combinedL100km: 13.5,
+  },
+  'lexus-tx': {
+    name: 'Lexus TX 350 AWD',
+    year: 2026,
+    presetId: 'lexus-tx-350',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 10.3,
+  },
+  'lexus-tx-350': {
+    name: 'Lexus TX 350 AWD',
+    year: 2026,
+    presetId: 'lexus-tx-350',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 10.3,
+  },
+  'lexus-tx-500h': {
+    name: 'Lexus TX 500h F SPORT',
+    year: 2026,
+    presetId: 'lexus-tx-500h',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 8.6,
+  },
+  'lexus-tx-550h-plus': {
+    name: 'Lexus TX 550h+ Plug-in Hybrid',
+    year: 2026,
+    presetId: 'lexus-tx-550h-plus',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 8.1,
+  },
+  'lexus-nx': {
+    name: 'Lexus NX 350h AWD',
+    year: 2026,
+    presetId: 'lexus-nx-350h',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.0,
+  },
+  'lexus-nx-350h': {
+    name: 'Lexus NX 350h AWD',
+    year: 2026,
+    presetId: 'lexus-nx-350h',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.0,
+  },
+  'lexus-nx-450h-plus': {
+    name: 'Lexus NX 450h+ Plug-in Hybrid',
+    year: 2026,
+    presetId: 'lexus-nx-450h-plus',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.6,
+  },
+  'lexus-rx': {
+    name: 'Lexus RX 350h AWD',
+    year: 2026,
+    presetId: 'lexus-rx-350h',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.5,
+  },
+  'lexus-rx-350h': {
+    name: 'Lexus RX 350h AWD',
+    year: 2026,
+    presetId: 'lexus-rx-350h',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.5,
+  },
+  'lexus-rx-450h-plus': {
+    name: 'Lexus RX 450h+ Plug-in Hybrid',
+    year: 2026,
+    presetId: 'lexus-rx-450h-plus',
+    archetypeId: 'archetype-compact-crossover-awd',
+    combinedL100km: 6.7,
+  },
 };
 
 function resolveModelInfo(slug: string): ModelInfo {
@@ -193,6 +270,10 @@ export async function generateStaticParams() {
     { model: 'land-cruiser' },
     { model: '4runner' },
     { model: 'sequoia' },
+    { model: 'lexus-gx550' },
+    { model: 'lexus-tx' },
+    { model: 'lexus-nx' },
+    { model: 'lexus-rx' },
   ];
 }
 

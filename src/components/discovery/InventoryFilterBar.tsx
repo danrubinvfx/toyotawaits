@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { RotateCcw, Search, SlidersHorizontal, ChevronDown, ChevronUp, Navigation, Loader2, AlertCircle, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -53,6 +53,8 @@ export interface InventoryFilterBarProps {
   onToggleCancellations?: () => void;
 }
 
+export const LEXUS_MODELS = ['GX 550', 'TX', 'NX', 'RX'];
+
 export const DEFAULT_MODELS = [
   'RAV4 Hybrid',
   'RAV4 Prime',
@@ -64,10 +66,10 @@ export const DEFAULT_MODELS = [
   'Prius Prime',
   'Camry Hybrid',
   'Corolla Cross Hybrid',
-  'Lexus GX 550',
-  'Lexus TX',
-  'Lexus NX',
-  'Lexus RX',
+  'GX 550',
+  'TX',
+  'NX',
+  'RX',
 ];
 
 export function isLexusModelName(name: string): boolean {
@@ -109,11 +111,15 @@ export function InventoryFilterBar({
     onFilterChange({ ...filters, make: selectedMake, model: nextModel });
   };
 
-  const displayedModels = availableModels.filter((m) => {
-    if (!filters.make) return true;
-    const isLexus = isLexusModelName(m);
-    return filters.make === 'Lexus' ? isLexus : !isLexus;
-  });
+  const displayedModels = useMemo(() => {
+    if (filters.make === 'Lexus') {
+      return LEXUS_MODELS;
+    }
+    if (filters.make === 'Toyota') {
+      return availableModels.filter((m) => !isLexusModelName(m));
+    }
+    return availableModels;
+  }, [filters.make, availableModels]);
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ ...filters, model: e.target.value });
@@ -438,7 +444,7 @@ export function InventoryFilterBar({
                 className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
               >
                 <option value="">All Models</option>
-                {displayedModels.map((m) => (
+                {displayedModels.map((m: string) => (
                   <option key={m} value={m}>
                     {m}
                   </option>

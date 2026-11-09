@@ -53,6 +53,51 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'lexus-gx550-must-have-accessories',
+    title: 'Lexus GX 550 Day-One Delivery Checklist & Essential Accessories',
+    tagline: 'Essential delivery-day inspection checklist, TuxMat floor protection, FitcamX 4K OEM dashcam, and PPF stone-chip armor.',
+    badge: 'Lexus Luxury Armor',
+    model: 'Lexus GX 550',
+    tags: ['Lexus', 'Delivery Prep', 'Accessories'],
+    highlights: [
+      'TuxMat high-wall laser floor liners & dead-pedal protection',
+      'FitcamX 4K OEM-integrated LSS+ mirror-tap dashcam',
+      'Spigen GlasTR 14" matte 9H tempered glass screen shield',
+      'Bluff fascia Paint Protection Film (PPF) strike-zone roadmap',
+    ],
+    href: '/guides/lexus-gx550-must-have-accessories',
+  },
+  {
+    slug: 'lexus-tx-delivery-prep-gear',
+    title: 'Lexus TX 350 & 500h Delivery Prep Guide: 3-Row Protection & Tech',
+    tagline: 'Full 3-row high-wall TPE floor liners, 14-inch touchscreen defense, split cargo seatback armor, and relay theft deterrence.',
+    badge: '3-Row Protection',
+    model: 'Lexus TX 350 & 500h',
+    tags: ['Lexus', '3-Row', 'Delivery Prep'],
+    highlights: [
+      '3-row laser-fit high-wall floor liners with pass-through aisle runners',
+      'Spigen 14" matte tempered glass touchscreen protector',
+      'Dual-layer Faraday smart-key signal blocking pouches',
+      'Split-folding 50/50 cargo mat & 3rd-row seatback armor',
+    ],
+    href: '/guides/lexus-tx-delivery-prep-gear',
+  },
+  {
+    slug: 'lexus-phev-home-charging-setup',
+    title: 'Lexus NX 450h+ & RX 450h+ Home Charging: Level 2 EVSE Setup in Canada',
+    tagline: '6.6 kW onboard charger specs, Grizzl-E Canadian winter-rated EVSE, provincial rebates, and sub-zero shore-power preheating.',
+    badge: 'PHEV EVSE Setup',
+    model: 'Lexus NX 450h+ & RX 450h+',
+    tags: ['Lexus', 'EVSE', 'PHEV', 'Winter'],
+    highlights: [
+      '6.6 kW onboard charger: 2.5-hour 240V full recharge vs 12 hours 120V',
+      'Canadian-made Grizzl-E Classic 40A (-40°C winter-rated aluminum EVSE)',
+      'Shore-power preheating via Lexus App preserving 100% pure EV range',
+      'CEC 80% continuous load electrical panel & provincial grant breakdown',
+    ],
+    href: '/guides/lexus-phev-home-charging-setup',
+  },
+  {
     slug: 'toyota-ecp-warranty-guide',
     title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada?',
     tagline: 'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Real component repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',

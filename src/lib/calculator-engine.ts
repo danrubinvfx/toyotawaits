@@ -241,11 +241,12 @@ export function calculateExtraEnergyWhileWaiting(
   assertFiniteNonNegative('annualCostTarget', targetCost);
   assertFiniteNonNegative('remainingWaitDays', remainingWaitDays);
 
-  if (remainingWaitDays === 0) {
+  const clampedWaitDays = Math.min(420, remainingWaitDays);
+  if (clampedWaitDays === 0) {
     return 0;
   }
 
-  const extraCost = (currentCost - targetCost) * (remainingWaitDays / 365);
+  const extraCost = (currentCost - targetCost) * (clampedWaitDays / 365);
   return Math.round((extraCost + Number.EPSILON) * 100) / 100;
 }
 
