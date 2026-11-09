@@ -292,11 +292,149 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     imageUrl: '/assets/gear/faraday-pouch.webp',
     fallbackIcon: 'lock',
   },
+  {
+    id: 'lexus-gx550-tuxmat',
+    title: 'TuxMat High-Wall All-Weather Liners',
+    category: 'protection',
+    brand: 'TuxMat',
+    destinationType: 'amazon',
+    description: 'Ultimate all-weather protection custom tailored for the Lexus GX 550 with maximum wall coverage.',
+    estimatedPriceCad: '$280 – $340 CAD',
+    url: buildAmazonCaSearchUrl('Lexus GX 550 all weather floor mats TuxMat'),
+    searchQuery: 'Lexus GX 550 all weather floor mats TuxMat',
+    applicableModels: ['Lexus GX 550', 'lexus-gx550', 'GX 550', 'gx550'],
+    badge: 'Direct Fit (2024–2026)',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'layers',
+  },
+  {
+    id: 'lexus-tx-3row-liners',
+    title: '3-Row High-Wall All-Weather Floor Liners',
+    category: 'protection',
+    destinationType: 'amazon',
+    description: 'Precision-measured 3-row laser-fit all-weather floor liners designed for the Lexus TX.',
+    estimatedPriceCad: '$260 – $320 CAD',
+    url: buildAmazonCaSearchUrl('Lexus TX 3-row all weather floor mats liners'),
+    searchQuery: 'Lexus TX 3-row all weather floor mats liners',
+    applicableModels: ['Lexus TX', 'lexus-tx', 'TX', 'tx'],
+    badge: '3-Row Coverage',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'layers',
+  },
+  {
+    id: 'lexus-14in-screen-protector',
+    title: 'Spigen GlasTR 14-inch Matte Tempered Glass Screen Protector',
+    category: 'interior',
+    brand: 'Spigen',
+    destinationType: 'amazon',
+    description: 'Anti-fingerprint, anti-glare 9H tempered glass screen protector custom cut for Lexus 14-inch displays.',
+    estimatedPriceCad: '$32 – $38 CAD',
+    url: buildAmazonCaSearchUrl('Spigen 14 inch screen protector Lexus TX GX NX'),
+    searchQuery: 'Spigen 14 inch screen protector Lexus TX GX NX',
+    applicableModels: [
+      'Lexus GX 550',
+      'lexus-gx550',
+      'GX 550',
+      'gx550',
+      'Lexus TX',
+      'lexus-tx',
+      'TX',
+      'tx',
+      'Lexus NX',
+      'lexus-nx',
+      'NX',
+      'nx',
+      'Lexus RX',
+      'lexus-rx',
+      'RX',
+      'rx',
+      'lexus-universal',
+    ],
+    badge: '14" Interface Fit',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'layers',
+  },
+  {
+    id: 'lexus-fitcamx-dashcam',
+    title: 'FitcamX 4K OEM Integrated Dashcam (Lexus LSS+)',
+    category: 'tech',
+    brand: 'Fitcamx',
+    destinationType: 'amazon',
+    description: 'Seamless factory rearview mirror shroud housing replacement with plug-and-play wiring for Lexus models.',
+    estimatedPriceCad: '$230 – $280 CAD',
+    url: buildAmazonCaSearchUrl('Fitcamx dash cam Lexus RX NX TX GX OEM 4K'),
+    searchQuery: 'Fitcamx dash cam Lexus RX NX TX GX OEM 4K',
+    applicableModels: [
+      'lexus-universal',
+      'Lexus GX 550',
+      'lexus-gx550',
+      'GX 550',
+      'gx550',
+      'Lexus TX',
+      'lexus-tx',
+      'TX',
+      'tx',
+      'Lexus NX',
+      'lexus-nx',
+      'NX',
+      'nx',
+      'Lexus RX',
+      'lexus-rx',
+      'RX',
+      'rx',
+      'Lexus',
+    ],
+    badge: 'Zero Wire Splicing',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'camera',
+  },
+  {
+    id: 'lexus-phev-evse',
+    title: 'Grizzl-E Classic 40A Heavy-Duty Level 2 EV Charger',
+    category: 'charging',
+    brand: 'Grizzl-E',
+    destinationType: 'amazon',
+    description: 'Rugged Canadian-built 40A NEMA 14-50 EV charger engineered for NX 450h+ and RX 450h+ winter plug-in charging.',
+    estimatedPriceCad: '$499 – $549 CAD',
+    url: buildAmazonCaSearchUrl('Level 2 EV charger 40A NEMA 14-50 J1772'),
+    searchQuery: 'Level 2 EV charger 40A NEMA 14-50 J1772',
+    asin_ca: 'B082LMVSLY',
+    asin_us: 'B082LMVSLY',
+    applicableModels: [
+      'Lexus NX',
+      'lexus-nx',
+      'NX',
+      'nx',
+      'Lexus RX',
+      'lexus-rx',
+      'RX',
+      'rx',
+    ],
+    badge: 'Winter Rated (-40°C)',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'zap',
+  },
 ];
 
 /**
  * Normalizes vehicle model input (e.g. "rav4" -> "RAV4", "grand-highlander" -> "Grand Highlander")
  */
+export function isLexusModel(model?: string | null): boolean {
+  if (!model) return false;
+  const clean = model.trim().toLowerCase();
+  return (
+    clean.startsWith('lexus') ||
+    clean.includes('gx 550') ||
+    clean.includes('gx550') ||
+    clean === 'tx' ||
+    clean === 'lexus-tx' ||
+    clean === 'nx' ||
+    clean === 'lexus-nx' ||
+    clean === 'rx' ||
+    clean === 'lexus-rx'
+  );
+}
+
 function normalizeModelName(model?: string | null): string {
   if (!model) return '';
   const clean = model.trim().toLowerCase();
@@ -313,6 +451,10 @@ function normalizeModelName(model?: string | null): string {
   if (clean === 'prius' || clean.includes('prius')) return 'Prius';
   if (clean === 'land-cruiser' || clean.includes('land cruiser')) return 'Land Cruiser';
   if (clean === 'sequoia' || clean.includes('sequoia')) return 'Sequoia';
+  if (clean === 'lexus-gx550' || clean === 'gx550' || clean.includes('gx 550') || clean.includes('gx550')) return 'Lexus GX 550';
+  if (clean === 'lexus-tx' || clean === 'tx' || clean.includes('lexus tx')) return 'Lexus TX';
+  if (clean === 'lexus-nx' || clean === 'nx' || clean.includes('lexus nx')) return 'Lexus NX';
+  if (clean === 'lexus-rx' || clean === 'rx' || clean.includes('lexus rx')) return 'Lexus RX';
   return model.trim();
 }
 
@@ -394,9 +536,23 @@ export function getAccessoriesForModel(
   popularityWeights?: Record<string, number>
 ): AccessoryItem[] {
   const normalized = normalizeModelName(modelName);
+  const isLexus = isLexusModel(modelName) || isLexusModel(normalized);
 
   let matching: AccessoryItem[];
-  if (!normalized) {
+  if (isLexus) {
+    // Resolve Lexus models to dedicated luxury accessories, bypassing generic Toyota defaults
+    matching = ESSENTIAL_ACCESSORIES.filter((item) => {
+      return item.applicableModels.some((m) => {
+        const lower = m.toLowerCase();
+        return (
+          lower === 'lexus-universal' ||
+          lower === (normalized || '').toLowerCase() ||
+          (normalized || '').toLowerCase().includes(lower) ||
+          (modelName && lower === modelName.toLowerCase())
+        );
+      });
+    });
+  } else if (!normalized) {
     // Return universal essentials
     matching = ESSENTIAL_ACCESSORIES.filter((item) =>
       item.applicableModels.includes('universal')

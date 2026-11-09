@@ -596,6 +596,53 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(905) 668-4792',
     websiteUrl: 'https://www.whitbytoyota.com/',
   },
+  {
+    dealerCode: 'openroad-lexus-richmond',
+    aliases: ['openroad-lexus-richmond', 'openroad-lexus', 'openroad lexus richmond'],
+    dealerName: 'OpenRoad Lexus Richmond',
+    sourceCode: 'openroad-lexus-richmond-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://openroadlexusrichmond.com',
+    endpointUrl:
+      'https://www.openroadlexusrichmond.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    address: '5631 Parkwood Way',
+    city: 'Richmond',
+    province: 'BC',
+    postalCode: 'V6V 2L1',
+    phone: '(604) 273-5533',
+    websiteUrl: 'https://openroadlexusrichmond.com/',
+  },
+  {
+    dealerCode: 'pattison-lexus-northshore',
+    aliases: ['pattison-lexus-northshore', 'jp-lexus-northshore', 'jim pattison lexus northshore', 'jimpattisonlexus'],
+    dealerName: 'Jim Pattison Lexus Northshore',
+    sourceCode: 'pattison-lexus-northshore-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.jimpattisonlexus.com',
+    endpointUrl:
+      'https://www.jimpattisonlexus.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    address: '845 Automall Drive',
+    city: 'North Vancouver',
+    province: 'BC',
+    postalCode: 'V7P 1M8',
+    phone: '(604) 982-0033',
+    websiteUrl: 'https://www.jimpattisonlexus.com/',
+  },
+  {
+    dealerCode: 'lexus-downtown-toronto',
+    aliases: ['lexus-downtown-toronto', 'lexus-downtown', 'lexus downtown toronto', 'lexusdowntown'],
+    dealerName: 'Lexus Downtown',
+    sourceCode: 'lexus-downtown-toronto-edealer',
+    platform: 'edealer',
+    baseUrl: 'https://www.lexusdowntown.ca',
+    endpointUrl: 'https://www.lexusdowntown.ca/inventory-listing-sitemap.xml',
+    address: '77 Overlea Blvd',
+    city: 'Toronto',
+    province: 'ON',
+    postalCode: 'M5A 1H7',
+    phone: '(416) 465-3987',
+    websiteUrl: 'https://www.lexusdowntown.ca/',
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -682,6 +729,22 @@ const TOYOTA_MODEL_PREFIXES: Array<[string, string, number, string]> = [
   ['c-hr', 'C-HR', 38950, 'Hybrid'],
   ['gr86', 'GR86', 34950, 'Gas'],
   ['gr-supra', 'GR Supra', 69950, 'Gas'],
+  ['gx-550', 'Lexus GX 550', 86500, 'Gas'],
+  ['gx550', 'Lexus GX 550', 86500, 'Gas'],
+  ['tx-550h', 'Lexus TX', 87500, 'Plug-in Hybrid'],
+  ['tx-500h', 'Lexus TX', 84500, 'Hybrid'],
+  ['tx-350', 'Lexus TX', 69000, 'Gas'],
+  ['tx', 'Lexus TX', 69000, 'Gas'],
+  ['rx-500h', 'Lexus RX', 83500, 'Hybrid'],
+  ['rx-450h', 'Lexus RX', 87500, 'Plug-in Hybrid'],
+  ['rx-350h', 'Lexus RX', 64500, 'Hybrid'],
+  ['rx-350', 'Lexus RX', 61500, 'Gas'],
+  ['rx', 'Lexus RX', 61500, 'Gas'],
+  ['nx-450h', 'Lexus NX', 62500, 'Plug-in Hybrid'],
+  ['nx-350h', 'Lexus NX', 54500, 'Hybrid'],
+  ['nx-350', 'Lexus NX', 51500, 'Gas'],
+  ['nx-250', 'Lexus NX', 49500, 'Gas'],
+  ['nx', 'Lexus NX', 51500, 'Gas'],
 ];
 
 function formatTrimTokens(rawTrimSlug: string): string {
@@ -701,15 +764,17 @@ function formatTrimTokens(rawTrimSlug: string): string {
 
 export function parseToyotaSlugSpec(slug: string): {
   year: number;
+  make?: string;
   model: string;
   trim: string;
   msrp: number;
   fuelType: string;
 } | null {
-  const m = slug.toLowerCase().match(/^(202\d)-toyota-(.+)$/);
+  const m = slug.toLowerCase().match(/^(202\d)-(toyota|lexus)-(.+)$/);
   if (!m) return null;
   const year = parseInt(m[1], 10);
-  let rest = m[2];
+  const make = m[2] === 'lexus' ? 'Lexus' : 'Toyota';
+  let rest = m[3];
 
   for (const [prefix, canonicalModel, baseMsrp, fuelType] of TOYOTA_MODEL_PREFIXES) {
     if (rest === prefix || rest.startsWith(prefix + '-')) {
@@ -727,7 +792,7 @@ export function parseToyotaSlugSpec(slug: string): {
         rest = rest.slice('hybrid-'.length);
       }
       const trim = formatTrimTokens(rest);
-      return { year, model: finalModel, trim, msrp: finalMsrp, fuelType: finalFuel };
+      return { year, make, model: finalModel, trim, msrp: finalMsrp, fuelType: finalFuel };
     }
   }
   return null;
@@ -754,7 +819,7 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
           vin,
           stock_number: `OR-${vin.slice(-6)}`,
           year: spec.year,
-          make: 'Toyota',
+          make: spec.make || (slug.includes('lexus') ? 'Lexus' : 'Toyota'),
           model: spec.model,
           trim: spec.trim,
           fuel_type: spec.fuelType,
@@ -802,7 +867,7 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       continue;
     }
 
-    const edealerMatch = loc.match(/\/inventory\/((?:202\d)-toyota-[a-z0-9-]+)-([A-Za-z0-9_-]+)vdp\/?$/i);
+    const edealerMatch = loc.match(/\/inventory\/((?:202\d)-(?:toyota|lexus)-[a-z0-9-]+)-([A-Za-z0-9_-]+)vdp\/?$/i);
     if (edealerMatch) {
       const slug = edealerMatch[1];
       const vdpId = edealerMatch[2];
@@ -814,13 +879,14 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
         else if (loc.includes('downtowntoyota')) prefix = 'DT';
         else if (loc.includes('donvalleynorthtoyota') || loc.includes('dvntoyota')) prefix = 'DVN';
         else if (loc.includes('thornhilltoyota')) prefix = 'TH';
+        else if (loc.includes('lexusdowntown')) prefix = 'LDT';
         items.push({
           ad_id: `${prefix}-${vdpId}`,
           vehicle_id: `${prefix}-${vdpId}`,
           vin: null,
           stock_number: `${prefix}-${vdpId.slice(-6).toUpperCase()}`,
           year: spec.year,
-          make: 'Toyota',
+          make: spec.make || (slug.includes('lexus') ? 'Lexus' : 'Toyota'),
           model: spec.model,
           trim: spec.trim,
           fuel_type: spec.fuelType,
@@ -834,6 +900,38 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
           image: imgLoc,
         });
       }
+      continue;
+    }
+
+    const convertusVehicleMatch = loc.match(/\/vehicles\/((?:202\d))\/(lexus|toyota)\/([^/]+)\/([^/]+)\/([^/]+)\/([a-z0-9_-]+)\/?/i);
+    if (convertusVehicleMatch) {
+      const year = parseInt(convertusVehicleMatch[1], 10);
+      const rawMake = convertusVehicleMatch[2];
+      const rawModel = convertusVehicleMatch[3];
+      const id = convertusVehicleMatch[6];
+      const make = rawMake.charAt(0).toUpperCase() + rawMake.slice(1).toLowerCase();
+      const spec = parseToyotaSlugSpec(`${year}-${rawMake.toLowerCase()}-${rawModel.toLowerCase()}`);
+      const model = spec ? spec.model : (make === 'Lexus' ? `Lexus ${rawModel.toUpperCase()}` : rawModel.toUpperCase());
+      const prefix = loc.includes('jimpattisonlexus') ? 'JPL' : 'CV';
+      items.push({
+        ad_id: `${prefix}-${id}`,
+        vehicle_id: `${prefix}-${id}`,
+        vin: null,
+        stock_number: `${prefix}-${id.slice(-6).toUpperCase()}`,
+        year,
+        make,
+        model,
+        trim: spec?.trim || 'Base',
+        fuel_type: spec?.fuelType || 'Gas',
+        sale_class: 'New',
+        in_transit: 0,
+        on_order: 0,
+        msrp: spec?.msrp || 65000,
+        asking_price: spec?.msrp || 65000,
+        final_price: spec?.msrp || 65000,
+        vdp_url: loc,
+        image: imgLoc,
+      });
       continue;
     }
 
@@ -1314,6 +1412,12 @@ export async function sweepSingleDealer(
           sitemapUrl = 'https://www.nanaimotoyota.com/en/sitemap_newinventory.xml';
         } else if (sitemapUrl.includes('upperjamestoyota.ca')) {
           sitemapUrl = 'https://www.upperjamestoyota.ca/en/sitemap_newinventory.xml';
+        } else if (sitemapUrl.includes('lexusdowntown.ca')) {
+          sitemapUrl = 'https://www.lexusdowntown.ca/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('jimpattisonlexus.com')) {
+          sitemapUrl = 'https://www.jimpattisonlexus.com/new-vehicle-1-sitemap.xml';
+        } else if (sitemapUrl.includes('openroadlexusrichmond.com')) {
+          sitemapUrl = 'https://openroadlexusrichmond.com/sitemap.xml';
         }
         try {
           const res = await fetch(sitemapUrl, {
@@ -1325,7 +1429,7 @@ export async function sweepSingleDealer(
           });
           if (!res.ok) return [];
           let xmlText = await res.text();
-          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory)[^<]*\.xml)<\/loc>/i);
+          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory|new-vehicle)[^<]*\.xml)<\/loc>/i);
           if (subMatch) {
             try {
               const subRes = await fetch(subMatch[1], {

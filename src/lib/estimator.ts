@@ -26,6 +26,10 @@ export const BASE_MODEL_P75: Record<string, number> = {
   corolla: 165,
   'corolla-cross': 270,
   sequoia: 240,
+  'lexus-gx550': 420,
+  'lexus-tx': 360,
+  'lexus-nx': 420,
+  'lexus-rx': 330,
 };
 
 /** Provincial demand & EV/PHEV rebate multipliers */
@@ -261,6 +265,11 @@ export function getModelCeiling(modelSlug?: string, powertrainSlug?: string, tri
     return 330;
   }
 
+  if (m === 'lexus-gx550') return 420;
+  if (m === 'lexus-tx') return 360;
+  if (m === 'lexus-nx') return 420;
+  if (m === 'lexus-rx') return 330;
+
   return null;
 }
 
@@ -329,22 +338,26 @@ export function calculateEstimatedWaitTime(options: EstimatorOptions): Estimator
   }
 
   // HARD BOUNDING GUARDRAILS:
-  // Clamp maximum calculated wait time to realistic upper bounds (hard cap per model ceiling).
+  // Clamp maximum calculated wait time to realistic upper bounds (hard cap under 420 days).
   // Ensures projections do not compound into impossible out-years (e.g. 2028+).
   const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
-  const maxCeiling = specificCeiling !== null ? specificCeiling : MAX_WAIT_TIME_DAYS;
+  const maxCeiling = Math.min(specificCeiling !== null ? specificCeiling : MAX_WAIT_TIME_DAYS, MAX_WAIT_TIME_DAYS);
   const p75 = clampWaitDays(rawP75, maxCeiling);
   const p50 = clampWaitDays(Math.min(rawMedian, p75), maxCeiling);
   const p25 = clampWaitDays(Math.min(rawP25, p50), maxCeiling);
 
-  // Projected arrival dates using bounded days
+  // Projected arrival dates using bounded days (never exceed 2027)
   const calculateProjectedDate = (daysOffset: number): string => {
     const cappedOffset = clampWaitDays(daysOffset, maxCeiling);
     const base = depositDateStr
       ? new Date(depositDateStr + (depositDateStr.includes('T') ? '' : 'T00:00:00'))
       : todayDate;
     const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
-    const target = new Date(baseTime + cappedOffset * 24 * 60 * 60 * 1000);
+    let target = new Date(baseTime + cappedOffset * 24 * 60 * 60 * 1000);
+    const maxDate2027 = new Date('2027-12-31T23:59:59');
+    if (target.getTime() > maxDate2027.getTime()) {
+      target = maxDate2027;
+    }
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',

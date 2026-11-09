@@ -22,6 +22,7 @@ export type SortOption =
   | 'status';
 
 export interface FilterState {
+  make?: string;
   model: string;
   status: string;
   cancellationsOnly?: boolean;
@@ -52,7 +53,7 @@ export interface InventoryFilterBarProps {
   onToggleCancellations?: () => void;
 }
 
-const DEFAULT_MODELS = [
+export const DEFAULT_MODELS = [
   'RAV4 Hybrid',
   'RAV4 Prime',
   'Sienna',
@@ -63,7 +64,23 @@ const DEFAULT_MODELS = [
   'Prius Prime',
   'Camry Hybrid',
   'Corolla Cross Hybrid',
+  'Lexus GX 550',
+  'Lexus TX',
+  'Lexus NX',
+  'Lexus RX',
 ];
+
+export function isLexusModelName(name: string): boolean {
+  const clean = name.toLowerCase();
+  return (
+    clean.includes('lexus') ||
+    clean.includes('gx 550') ||
+    clean.includes('gx550') ||
+    clean === 'tx' ||
+    clean === 'nx' ||
+    clean === 'rx'
+  );
+}
 
 export function InventoryFilterBar({
   filters,
@@ -80,6 +97,23 @@ export function InventoryFilterBar({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
+
+  const handleMakeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedMake = e.target.value;
+    let nextModel = filters.model;
+    if (selectedMake === 'Lexus' && nextModel && !isLexusModelName(nextModel)) {
+      nextModel = '';
+    } else if (selectedMake === 'Toyota' && nextModel && isLexusModelName(nextModel)) {
+      nextModel = '';
+    }
+    onFilterChange({ ...filters, make: selectedMake, model: nextModel });
+  };
+
+  const displayedModels = availableModels.filter((m) => {
+    if (!filters.make) return true;
+    const isLexus = isLexusModelName(m);
+    return filters.make === 'Lexus' ? isLexus : !isLexus;
+  });
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onFilterChange({ ...filters, model: e.target.value });
@@ -203,7 +237,7 @@ export function InventoryFilterBar({
   const handleReset = () => {
     setLocationError(null);
     setIsLocating(false);
-    onFilterChange({
+    const resetState: FilterState = {
       model: '',
       status: 'advertised',
       cancellationsOnly: false,
@@ -217,10 +251,15 @@ export function InventoryFilterBar({
       minPrice: '',
       maxPrice: '',
       search: '',
-    });
+    };
+    if (filters.make !== undefined) {
+      resetState.make = '';
+    }
+    onFilterChange(resetState);
   };
 
   const activeFacetCount = [
+    Boolean(filters.make),
     Boolean(filters.model),
     Boolean(filters.status && filters.status !== 'advertised'),
     Boolean(filters.cancellationsOnly),
@@ -231,7 +270,8 @@ export function InventoryFilterBar({
   ].filter(Boolean).length;
 
   const hasActiveFilters = Boolean(
-    filters.model ||
+    filters.make ||
+      filters.model ||
       (filters.status && filters.status !== 'advertised') ||
       filters.cancellationsOnly ||
       filters.location ||
@@ -366,26 +406,45 @@ export function InventoryFilterBar({
         className={`${isExpanded ? 'block' : 'hidden'} md:block pt-2.5 mt-2.5 border-t border-zinc-800/80`}
       >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 text-xs">
-          {/* Column 1: Model */}
+          {/* Column 1: Make & Model */}
           <div className="space-y-1">
-            <label htmlFor="filter-model" className="text-[11px] font-medium text-zinc-400 block">
-              Model
-            </label>
-            <select
-              id="filter-model"
-              data-testid="filter-model-select"
-              aria-label="Filter by vehicle model"
-              value={filters.model}
-              onChange={handleModelChange}
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
-            >
-              <option value="">All Models</option>
-              {availableModels.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center justify-between">
+              <label htmlFor="filter-make" className="text-[11px] font-medium text-zinc-400 block">
+                Make
+              </label>
+              <label htmlFor="filter-model" className="text-[11px] font-medium text-zinc-400 block">
+                Model
+              </label>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              <select
+                id="filter-make"
+                data-testid="filter-make-select"
+                aria-label="Filter by vehicle make"
+                value={filters.make || ''}
+                onChange={handleMakeChange}
+                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              >
+                <option value="">All Makes</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Lexus">Lexus</option>
+              </select>
+              <select
+                id="filter-model"
+                data-testid="filter-model-select"
+                aria-label="Filter by vehicle model"
+                value={filters.model}
+                onChange={handleModelChange}
+                className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-2 py-1.5 text-xs text-zinc-200 focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+              >
+                <option value="">All Models</option>
+                {displayedModels.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {/* Column 2: User Location & Distance */}

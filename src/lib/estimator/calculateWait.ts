@@ -123,12 +123,16 @@ export function calculateWait(options: CalculateWaitOptions): CalculateWaitResul
   const specificCeiling = getModelCeiling(modelSlug, powertrainSlug, trimSlug);
 
   const calculateProjectedDate = (daysOffset: number): string => {
-    const cappedOffset = specificCeiling !== null ? Math.min(specificCeiling, daysOffset) : daysOffset;
+    const cappedOffset = specificCeiling !== null ? Math.min(specificCeiling, daysOffset) : Math.min(daysOffset, 420);
     const base = depositDateStr
       ? new Date(depositDateStr + (depositDateStr.includes('T') ? '' : 'T00:00:00'))
       : todayDate;
     const baseTime = !isNaN(base.getTime()) ? base.getTime() : todayDate.getTime();
-    const target = new Date(baseTime + cappedOffset * 24 * 60 * 60 * 1000);
+    let target = new Date(baseTime + cappedOffset * 24 * 60 * 60 * 1000);
+    const maxDate2027 = new Date('2027-12-31T23:59:59');
+    if (target.getTime() > maxDate2027.getTime()) {
+      target = maxDate2027;
+    }
     return target.toLocaleDateString('en-CA', {
       month: 'short',
       year: 'numeric',

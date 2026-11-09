@@ -7,6 +7,13 @@ export interface ModelRegistryEntry {
   baseMedian: number;
   baseP25: number;
   baseP75: number;
+  make?: string;
+  defaultWaitDays?: number;
+  p25Days?: number;
+  p75Days?: number;
+  clampCap?: number;
+  sisterModelSlug?: string;
+  sisterModelName?: string;
   popularTrims: Array<{
     trim: string;
     powertrain: string;
@@ -503,6 +510,168 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
       },
     ],
   },
+  'lexus-gx550': {
+    slug: 'lexus-gx550',
+    make: 'Lexus',
+    name: 'Lexus GX 550',
+    shortName: 'GX 550',
+    dbFilter: 'GX 550',
+    powertrains: ['Twin-Turbo V6 (Gas)', 'i-FORCE MAX Hybrid'],
+    baseMedian: 360,
+    baseP25: 270,
+    baseP75: 420,
+    defaultWaitDays: 360,
+    p25Days: 270,
+    p75Days: 420,
+    clampCap: 420,
+    sisterModelSlug: 'land-cruiser',
+    sisterModelName: 'Toyota Land Cruiser',
+    title: 'Lexus GX 550 Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Lexus GX 550 Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaDescription: 'Track Canadian wait times and backlog queues for the 2026 Lexus GX 550 Twin-Turbo V6 and Hybrid. Compare regional allocations and dealer lead times.',
+    popularTrims: [
+      { trim: 'Signature / Premium', powertrain: 'Twin-Turbo V6 (Gas)', spread: '9–12 months (270–360 days)', status: 'Balanced' },
+      { trim: 'Overtrail / Overtrail+', powertrain: 'Twin-Turbo V6 (Gas)', spread: '12–14 months (360–420 days)', status: 'High Demand' },
+      { trim: 'Executive / Luxury+', powertrain: 'Twin-Turbo V6 (Gas)', spread: '12–14 months (360–420 days)', status: 'Constrained' },
+      { trim: 'i-FORCE MAX Hybrid', powertrain: 'i-FORCE MAX Hybrid', spread: '12–14 months (360–420 days)', status: 'Constrained' },
+    ],
+    allocationTips: [
+      'Built on the GA-F truck platform alongside the Land Cruiser; allocations are heavily constrained by global production quotas.',
+      'Overtrail and Overtrail+ trims feature 33-inch all-terrain tires and electronic kinetic dynamic suspension (E-KDSS), carrying the longest waiting queues.',
+      'Consider checking mid-tier metropolitan Lexus stores in BC and Ontario for unreserved factory allocation allocations.',
+    ],
+    faqs: [
+      {
+        question: 'What is the average wait time for a Lexus GX 550 in Canada?',
+        answer: 'In 2026, Canadian wait times for the Lexus GX 550 range from 9 to 14 months (270 to 420 days), with rugged Overtrail trims commanding the longest lead times.',
+      },
+      {
+        question: 'How does the Lexus GX 550 compare to the Toyota Land Cruiser?',
+        answer: 'The GX 550 shares the GA-F platform with the Land Cruiser 250, but features a 3.4L Twin-Turbo V6 (349 hp / 479 lb-ft) paired with upscale interior materials and higher towing capacity.',
+      },
+    ],
+  },
+  'lexus-tx': {
+    slug: 'lexus-tx',
+    make: 'Lexus',
+    name: 'Lexus TX',
+    shortName: 'TX',
+    dbFilter: 'TX',
+    powertrains: ['TX 350 (Gas)', 'TX 500h (F SPORT)', 'TX 550h+ (Plug-in)'],
+    baseMedian: 240,
+    baseP25: 180,
+    baseP75: 360,
+    defaultWaitDays: 240,
+    p25Days: 180,
+    p75Days: 360,
+    clampCap: 360,
+    sisterModelSlug: 'grand-highlander',
+    sisterModelName: 'Toyota Grand Highlander',
+    title: 'Lexus TX Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Lexus TX Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaDescription: 'Real Canadian delivery wait times for the 2026 Lexus TX 350, TX 500h F SPORT, and TX 550h+ Plug-in Hybrid. Crowdsourced turnaround for BC and Ontario.',
+    popularTrims: [
+      { trim: 'TX 350 AWD (Gas)', powertrain: 'TX 350 (Gas)', spread: '5–8 months (150–240 days)', status: 'Balanced' },
+      { trim: 'TX 500h F SPORT Performance', powertrain: 'TX 500h (F SPORT)', spread: '8–12 months (240–360 days)', status: 'High Demand' },
+      { trim: 'TX 550h+ Executive (PHEV)', powertrain: 'TX 550h+ (Plug-in)', spread: '10–13 months (300–390 days)', status: 'Constrained' },
+    ],
+    allocationTips: [
+      'Assembled at Toyota Motor Manufacturing Indiana alongside the Grand Highlander; 3-row family backlog remains elevated across Canada.',
+      'TX 350 gas turbo models arrive substantially quicker (5–8 months) than the high-output TX 500h hybrid or V6 plug-in hybrid TX 550h+.',
+      'Check pipeline updates with high-allocation GTA and Lower Mainland dealers at the start of each month.',
+    ],
+    faqs: [
+      {
+        question: 'What is the wait time for a Lexus TX in Canada?',
+        answer: 'Average Canadian wait times for the Lexus TX range from 5 to 8 months for the TX 350, and 8 to 12 months for the TX 500h and TX 550h+ PHEV.',
+      },
+      {
+        question: 'Is the Lexus TX built on the Grand Highlander platform?',
+        answer: 'Yes, the Lexus TX shares the TNGA-K platform with the Toyota Grand Highlander, offering authentic three-row adult seating with Lexus Mark Levinson audio and refined sound insulation.',
+      },
+    ],
+  },
+  'lexus-nx': {
+    slug: 'lexus-nx',
+    make: 'Lexus',
+    name: 'Lexus NX',
+    shortName: 'NX',
+    dbFilter: 'NX',
+    powertrains: ['NX 250/350 (Gas)', 'NX 350h (HEV)', 'NX 450h+ (PHEV)'],
+    baseMedian: 210,
+    baseP25: 120,
+    baseP75: 420,
+    defaultWaitDays: 210,
+    p25Days: 120,
+    p75Days: 420,
+    clampCap: 420,
+    sisterModelSlug: 'rav4',
+    sisterModelName: 'Toyota RAV4',
+    title: 'Lexus NX Wait Times Canada (2026 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Lexus NX Wait Times Canada (2026 Delivery Tracker) | ToyotaWaits',
+    metaDescription: 'Current Canadian wait times and inventory turnaround for the Lexus NX 250, NX 350, NX 350h Hybrid, and NX 450h+ Plug-in Hybrid.',
+    popularTrims: [
+      { trim: 'NX 250 / NX 350 AWD (Gas)', powertrain: 'NX 250/350 (Gas)', spread: '3–6 months (90–180 days)', status: 'Balanced' },
+      { trim: 'NX 350h AWD (HEV)', powertrain: 'NX 350h (HEV)', spread: '6–9 months (180–270 days)', status: 'High Demand' },
+      { trim: 'NX 450h+ AWD (PHEV)', powertrain: 'NX 450h+ (PHEV)', spread: '11–14 months (330–420 days)', status: 'Constrained' },
+    ],
+    allocationTips: [
+      'The NX 350h and NX 450h+ are built in Cambridge, Ontario (TMMC), resulting in steady domestic allocations compared to fully imported nameplates.',
+      'High demand for the NX 450h+ PHEV is driven by federal iZEV and provincial EV rebate eligibility in BC and Quebec.',
+      'Gas NX 250 and NX 350 turbo models frequently have available pipeline slots within 60 to 90 days.',
+    ],
+    faqs: [
+      {
+        question: 'What is the wait time for a Lexus NX in Canada?',
+        answer: 'Canadian delivery times for the Lexus NX average 3 to 6 months for gas models, 6 to 9 months for NX 350h hybrids, and 11 to 14 months for the NX 450h+ plug-in hybrid.',
+      },
+      {
+        question: 'Is the Lexus NX manufactured in Canada?',
+        answer: 'Yes, both the Lexus NX 250/350 and NX 350h/450h+ are assembled at Toyota Motor Manufacturing Canada (TMMC) in Cambridge, Ontario.',
+      },
+    ],
+  },
+  'lexus-rx': {
+    slug: 'lexus-rx',
+    make: 'Lexus',
+    name: 'Lexus RX',
+    shortName: 'RX',
+    dbFilter: 'RX',
+    powertrains: ['RX 350 (Gas)', 'RX 350h (HEV)', 'RX 450h+ (PHEV)', 'RX 500h'],
+    baseMedian: 180,
+    baseP25: 120,
+    baseP75: 330,
+    defaultWaitDays: 180,
+    p25Days: 120,
+    p75Days: 330,
+    clampCap: 330,
+    sisterModelSlug: 'highlander',
+    sisterModelName: 'Toyota Highlander',
+    title: 'Lexus RX Wait Times Canada (2026 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Lexus RX Wait Times Canada (2026 Delivery Tracker) | ToyotaWaits',
+    metaDescription: 'Track real crowdsourced wait times and backlog queues for the 2026 Lexus RX 350, RX 350h Hybrid, RX 450h+ PHEV, and RX 500h across Canada.',
+    popularTrims: [
+      { trim: 'RX 350 AWD (Gas)', powertrain: 'RX 350 (Gas)', spread: '3–5 months (90–150 days)', status: 'Balanced' },
+      { trim: 'RX 350h AWD (HEV)', powertrain: 'RX 350h (HEV)', spread: '5–8 months (150–240 days)', status: 'High Demand' },
+      { trim: 'RX 500h F SPORT Performance', powertrain: 'RX 500h', spread: '7–10 months (210–300 days)', status: 'High Demand' },
+      { trim: 'RX 450h+ AWD (PHEV)', powertrain: 'RX 450h+ (PHEV)', spread: '8–11 months (240–330 days)', status: 'Constrained' },
+    ],
+    allocationTips: [
+      'Built alongside the NX at TMMC in Cambridge, Ontario; high manufacturing volume ensures consistent dealer delivery streams.',
+      'RX 350 gas models represent the fastest path to delivery, often arriving within 60 to 90 days.',
+      'High-spec RX 500h and RX 450h+ models feature adaptive suspension and direct-injected hybrid power with tighter dealership quotas.',
+    ],
+    faqs: [
+      {
+        question: 'What is the wait time for a Lexus RX in Canada?',
+        answer: 'Wait times for the Canadian-built Lexus RX range from 3 to 5 months for the RX 350 gas, 5 to 8 months for the RX 350h hybrid, and 7 to 11 months for the RX 500h and RX 450h+ plug-in.',
+      },
+      {
+        question: 'Where is the Lexus RX built for the Canadian market?',
+        answer: 'The vast majority of Canadian Lexus RX models are manufactured right in Cambridge, Ontario at Toyota Motor Manufacturing Canada (TMMC).',
+      },
+    ],
+  },
 };
 
 /**
@@ -517,6 +686,10 @@ export function normalizeModelSlug(slug?: string | null): string {
   if (MODEL_REGISTRY[clean]) return clean;
 
   // Specific multi-word or compound models
+  if (clean.includes('gx550') || clean.includes('gx-550') || clean.includes('lexus-gx')) return 'lexus-gx550';
+  if (clean === 'tx' || clean === 'lexus-tx' || clean.startsWith('tx-') || clean.startsWith('lexus-tx')) return 'lexus-tx';
+  if (clean === 'nx' || clean === 'lexus-nx' || clean.startsWith('nx-') || clean.startsWith('lexus-nx')) return 'lexus-nx';
+  if (clean === 'rx' || clean === 'lexus-rx' || clean.startsWith('rx-') || clean.startsWith('lexus-rx')) return 'lexus-rx';
   if (clean.includes('crown')) return 'crown-signia';
   if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
   if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';

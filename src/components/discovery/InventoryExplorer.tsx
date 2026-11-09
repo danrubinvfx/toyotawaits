@@ -10,6 +10,7 @@ import {
 import {
   InventoryFilterBar,
   FilterState,
+  DEFAULT_MODELS,
 } from './InventoryFilterBar';
 import { CoverageDisclosureBanner } from './CoverageDisclosureBanner';
 import { InventoryGearCard } from './InventoryGearCard';
@@ -485,6 +486,7 @@ export function InventoryExplorer({
       if (matched) initialM = matched.model;
     }
     return {
+      make: '',
       model: initialM,
       status: 'advertised',
       cancellationsOnly: isCancellationsOnlyQuery,
@@ -572,6 +574,7 @@ export function InventoryExplorer({
   const availableModels = useMemo(() => {
     const set = new Set<string>();
     listings.forEach((item) => set.add(item.model));
+    DEFAULT_MODELS.forEach((m) => set.add(m));
     if (filters.model) {
       set.add(filters.model);
     }
@@ -790,14 +793,25 @@ export function InventoryExplorer({
         }
       }
 
+      // Make facet
+      if (filters.make) {
+        const filterMake = filters.make.toLowerCase().trim();
+        const itemMake = (item.make || '').toLowerCase().trim();
+        if (itemMake !== filterMake) {
+          return false;
+        }
+      }
+
       // Model facet
       if (filters.model) {
         const filterModel = filters.model.toLowerCase().trim();
         const itemModel = item.model.toLowerCase().trim();
+        const cleanFilter = filterModel.replace(/^lexus\s+/, '');
+        const cleanItem = itemModel.replace(/^lexus\s+/, '');
         const itemPowertrain = (item.powertrain || '').toLowerCase().trim();
         const itemTrim = (item.trim || '').toLowerCase().trim();
 
-        const matchesExact = itemModel === filterModel;
+        const matchesExact = itemModel === filterModel || cleanItem === cleanFilter;
         const isTargetPhev =
           filterModel.includes('plug-in') ||
           filterModel.includes('prime') ||
@@ -1078,6 +1092,7 @@ export function InventoryExplorer({
   }
 
   const isFiltered = Boolean(
+    filters.make ||
     (filters.model && filters.model.toLowerCase() !== 'all') ||
     (filters.status && filters.status !== 'advertised' && filters.status !== 'active') ||
     filters.location ||

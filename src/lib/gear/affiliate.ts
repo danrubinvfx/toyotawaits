@@ -47,6 +47,10 @@ export const KNOWN_MODEL_NAMES: Record<string, string> = {
   tacoma: 'Tacoma',
   tundra: 'Tundra',
   sequoia: 'Sequoia',
+  'lexus-gx550': 'Lexus GX 550',
+  'lexus-tx': 'Lexus TX',
+  'lexus-nx': 'Lexus NX',
+  'lexus-rx': 'Lexus RX',
 };
 
 /**

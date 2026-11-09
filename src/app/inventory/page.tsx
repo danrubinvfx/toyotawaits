@@ -5,6 +5,7 @@ import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
 import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 export const revalidate = 0;
 
 export function InventoryLoadingSkeleton() {

@@ -544,6 +544,56 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -78.9675,
     enabled: true,
   },
+  // 29. OpenRoad Lexus Richmond
+  'openroad-lexus-richmond': {
+    id: 'openroad-lexus-richmond',
+    name: 'OpenRoad Lexus Richmond',
+    city: 'Richmond',
+    province: 'BC',
+    area: 'Richmond Automall',
+    adapter: 'convertus',
+    baseUrl: 'https://openroadlexusrichmond.com',
+    apiEndpoint:
+      'https://www.openroadlexusrichmond.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    latitude: 49.1711,
+    longitude: -123.0722,
+    lat: 49.1711,
+    lng: -123.0722,
+    enabled: true,
+  },
+  // 30. Jim Pattison Lexus Northshore
+  'pattison-lexus-northshore': {
+    id: 'pattison-lexus-northshore',
+    name: 'Jim Pattison Lexus Northshore',
+    city: 'North Vancouver',
+    province: 'BC',
+    area: 'North Shore Automall',
+    adapter: 'convertus',
+    baseUrl: 'https://www.jimpattisonlexus.com',
+    apiEndpoint:
+      'https://www.jimpattisonlexus.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    latitude: 49.3142,
+    longitude: -123.0967,
+    lat: 49.3142,
+    lng: -123.0967,
+    enabled: true,
+  },
+  // 31. Lexus Downtown
+  'lexus-downtown-toronto': {
+    id: 'lexus-downtown-toronto',
+    name: 'Lexus Downtown',
+    city: 'Toronto',
+    province: 'ON',
+    area: 'Downtown Toronto / East York',
+    adapter: 'edealer',
+    baseUrl: 'https://www.lexusdowntown.ca',
+    apiEndpoint: 'https://www.lexusdowntown.ca/inventory-listing-sitemap.xml',
+    latitude: 43.6532,
+    longitude: -79.3832,
+    lat: 43.6532,
+    lng: -79.3832,
+    enabled: true,
+  },
 };
 
 /**

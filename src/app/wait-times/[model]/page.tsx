@@ -531,6 +531,14 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   <span className="text-zinc-400 mx-1.5 font-normal">|</span>
                   <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~12–18 months</span>
                 </div>
+                <div className="pt-1.5">
+                  <Link
+                    href="/wait-times/lexus-nx"
+                    className="inline-flex items-center text-xs font-semibold text-red-600 dark:text-red-400 hover:underline"
+                  >
+                    Can&apos;t wait for Prime? View Lexus NX 450h+ PHEV lead times &rarr;
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -625,6 +633,95 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </p>
         </div>
       </section>
+
+      {/* Sibling Model Cross-Shopping Bridge Card */}
+      {modelConfig.slug === 'grand-highlander' && (
+        <div
+          data-testid="sibling-bridge-lexus-tx"
+          className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-50/60 via-amber-50/20 to-zinc-50 dark:from-amber-950/30 dark:via-zinc-900/50 dark:to-zinc-950 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              Can&apos;t Wait? Upgrade Alternative
+            </span>
+            <p className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Facing a long wait for a Grand Highlander? View live turnaround times and lot arrivals for the Lexus TX 350 / 500h &rarr;
+            </p>
+          </div>
+          <Link
+            href="/wait-times/lexus-tx"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold shrink-0 transition-colors shadow-xs"
+          >
+            Explore Lexus TX &rarr;
+          </Link>
+        </div>
+      )}
+
+      {modelConfig.slug === 'land-cruiser' && (
+        <div
+          data-testid="sibling-bridge-lexus-gx550"
+          className="rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-50/60 via-amber-50/20 to-zinc-50 dark:from-amber-950/30 dark:via-zinc-900/50 dark:to-zinc-950 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              Can&apos;t Wait? Upgrade Alternative
+            </span>
+            <p className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Facing a long wait for a Land Cruiser? View live turnaround times and incoming allocations for the twin-turbo Lexus GX 550 &rarr;
+            </p>
+          </div>
+          <Link
+            href="/wait-times/lexus-gx550"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-xs sm:text-sm font-bold shrink-0 transition-colors shadow-xs"
+          >
+            Explore Lexus GX 550 &rarr;
+          </Link>
+        </div>
+      )}
+
+      {modelConfig.slug === 'rav4' && (
+        <div
+          data-testid="sibling-bridge-lexus-nx"
+          className="rounded-xl border border-red-500/30 bg-gradient-to-r from-red-50/60 via-red-50/20 to-zinc-50 dark:from-red-950/30 dark:via-zinc-900/50 dark:to-zinc-950 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
+              Can&apos;t Wait for Prime? Upgrade Alternative
+            </span>
+            <p className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Facing a multi-year queue for a RAV4 Prime / Plug-in Hybrid? View live turnaround times and lot arrivals for the Lexus NX 350h / NX 450h+ PHEV &rarr;
+            </p>
+          </div>
+          <Link
+            href="/wait-times/lexus-nx"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs sm:text-sm font-bold shrink-0 transition-colors shadow-xs"
+          >
+            Explore Lexus NX &rarr;
+          </Link>
+        </div>
+      )}
+
+      {modelConfig.make === 'Lexus' && modelConfig.sisterModelSlug && (
+        <div
+          data-testid="sibling-bridge-toyota-counterpart"
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+        >
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              Toyota Sister Platform
+            </span>
+            <p className="text-sm sm:text-base font-semibold text-zinc-900 dark:text-zinc-100">
+              Cross-shopping with Toyota? View Canadian delivery wait times and allocations for the {modelConfig.sisterModelName} &rarr;
+            </p>
+          </div>
+          <Link
+            href={`/wait-times/${modelConfig.sisterModelSlug}`}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white text-xs sm:text-sm font-bold shrink-0 transition-colors dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+          >
+            View {modelConfig.sisterModelName} &rarr;
+          </Link>
+        </div>
+      )}
 
       {/* "Skip the Wait" Live Inventory Bridge Card */}
       <ModelDropAlertBridge
