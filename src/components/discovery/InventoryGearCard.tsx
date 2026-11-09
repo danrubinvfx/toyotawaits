@@ -20,21 +20,33 @@ export interface InventoryGearCardProps {
 
 const BENEFIT_HOOK_MAP: Record<string, string> = {
   'all-weather-floor-liners':
-    'Laser-fit floor & trunk spill protection for Canadian winters',
+    'Laser-fit spill and slush protection.',
   '4k-front-rear-dash-cam':
-    'OEM-integrated rearview mirror power tap with zero visible wiring',
+    'Stealth OEM mirror-tap recording.',
   'infotainment-screen-protector':
-    '9H tempered glass to reduce fingerprint smudges & glare',
+    'Stops fingerprints and glare.',
   'rfid-faraday-key-fob-pouch':
-    'Stops keyless relay theft signals right out of the showroom.',
+    'Blocks keyless relay theft.',
   'ceramic-interior-leather-protection':
     'Shields SofTex & leather seats from indigo dye transfer and winter salt.',
   'fast-usbc-pd-car-charger':
     'Ultra-fast dual phone charging.',
   'center-console-organizer-tray':
-    'Drop-in dual tray with OEM-style USB-C fast charging',
+    'Dual-tier armrest storage divider.',
   'muslogy-rav4-organizer':
-    'Drop-in multi-tier center console armrest divider tray with anti-slip silicone coin pads.',
+    'Dual-tier armrest storage divider.',
+  'muslogy-sienna-organizer':
+    'Dual-tier armrest storage divider.',
+  'muslogy-grand-highlander-organizer':
+    'Dual-tier armrest storage divider.',
+  'muslogy-rav4-cargo-net':
+    'Secures groceries and gear.',
+  'muslogy-sienna-cargo-net':
+    'Secures groceries and gear.',
+  'muslogy-grand-highlander-cargo-net':
+    'Secures groceries and gear.',
+  'lateral-console-knee-cushion':
+    'Stops right knee soreness.',
   'muslogy-armrest-cover':
     'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue.',
 };
@@ -140,7 +152,7 @@ export function InventoryGearCard({
 
         {/* Middle Column: Product Identity & Description */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-semibold text-white tracking-tight truncate">
+          <h4 className="text-sm font-bold text-white tracking-tight">
             {item.title}
           </h4>
           <p className="text-xs text-neutral-400 line-clamp-1">

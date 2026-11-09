@@ -1136,15 +1136,15 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       expect(gearCards.length).toBe(3);
 
       // Strip 1 gets Rank 1: Infotainment Screen Protector with '🔥 Most Popular'
-      expect(gearCards[0]).toHaveTextContent('Anti-Glare Screen Protector (10.5" / 12.3")');
+      expect(gearCards[0]).toHaveTextContent('Screen Protector');
       expect(gearCards[0]).toHaveTextContent('🔥 Community Top Pick');
 
       // Strip 2 gets Rank 2: Center Console Organizer Tray with 'Community Top Pick'
-      expect(gearCards[1]).toHaveTextContent('Center Console Organizer & Fast Charger');
+      expect(gearCards[1]).toHaveTextContent('Console Organizer');
       expect(gearCards[1]).not.toHaveTextContent('🔥 Community Top Pick');
 
       // Strip 3 gets Rank 3: 4K Dash Cam
-      expect(gearCards[2]).toHaveTextContent('Plug-and-Play FitcamX 4K Dash Cam');
+      expect(gearCards[2]).toHaveTextContent('Integrated Dash Cam');
     });
 
     it('updates gear card model context when model filter is selected', () => {
@@ -1426,7 +1426,7 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
         screen.getByText('RAV4 Hybrid')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Laser-fit floor & trunk spill protection for Canadian winters')
+        screen.getByText('Laser-fit spill and slush protection.')
       ).toBeInTheDocument();
       expect(screen.getAllByText('$120 – $189 CAD').length).toBeGreaterThan(0);
       expect(screen.getByText('Verified Amazon affiliate link')).toBeInTheDocument();

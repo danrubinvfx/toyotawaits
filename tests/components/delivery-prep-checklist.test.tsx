@@ -43,7 +43,7 @@ describe('DeliveryPrepChecklist Component', () => {
     // Price badge check
     expect(screen.getByText(/Saves ~\$350\+ vs dealer install/i)).toBeDefined();
     // Punchy utility text
-    expect(screen.getByText(/Replaces the TSS mirror shroud with zero dangling cables/i)).toBeDefined();
+    expect(screen.getByText(/Stealth OEM mirror-tap recording/i)).toBeDefined();
   });
 
   it('displays PHEV-specific accessories only when powertrain is phev', () => {

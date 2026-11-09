@@ -19,7 +19,7 @@ describe('Muslogy Cargo Nets Integration', () => {
     it('registers Muslogy cargo nets in GEAR_MARKET_CATALOG with direct_partner destination', () => {
       const rav4Net = GEAR_MARKET_CATALOG['muslogy-rav4-cargo-net'];
       expect(rav4Net).toBeDefined();
-      expect(rav4Net.title).toContain('Muslogy Heavy-Duty Trunk Cargo Net');
+      expect(rav4Net.title).toContain('Trunk Cargo Net');
       expect(rav4Net.brand).toBe('Muslogy');
       expect(rav4Net.category).toBe('Cargo & Utility');
       expect(rav4Net.destinationType).toBe('direct_partner');

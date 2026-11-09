@@ -233,7 +233,7 @@ export function GearImage({
     >
       <div
         className={cn(
-          'relative w-full h-40 sm:h-44 rounded-xl overflow-hidden border border-zinc-800/80 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-700/35 via-zinc-900/90 to-zinc-950 flex items-center justify-center p-3 group/img',
+          'relative w-full h-36 sm:h-40 rounded-xl overflow-hidden border border-zinc-800/80 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-zinc-700/35 via-zinc-900/90 to-zinc-950 flex items-center justify-center p-2.5 group/img',
           aspectRatioClass,
           containerClassName
         )}

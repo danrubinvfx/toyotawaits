@@ -166,7 +166,7 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
 
   it('verifies GEAR_MARKET_CATALOG floor liner entries for Sienna and RAV4', () => {
     const siennaEntry = GEAR_MARKET_CATALOG['sienna-all-weather-liners'];
-    expect(siennaEntry.title).toBe('3-Row All-Weather High-Wall Floor Liners');
+    expect(siennaEntry.title).toBe('All-Weather Liners');
     expect(siennaEntry.asin_ca).toBeUndefined();
     expect(siennaEntry.asin_us).toBeUndefined();
     expect(siennaEntry.searchKeywordsCA).toBe('Toyota Sienna 2021-2026 all weather floor mats liners 7 8 passenger');

@@ -121,8 +121,8 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       );
 
       const titles = container.querySelectorAll('h5');
-      expect(titles[0]).toHaveTextContent('Anti-Glare Screen Protector (10.5" / 12.3")');
-      expect(titles[1]).toHaveTextContent('Heavy-Duty RFID Faraday Key Fob Signal Blocker');
+      expect(titles[0]).toHaveTextContent('Screen Protector');
+      expect(titles[1]).toHaveTextContent('Faraday Key Pouch');
 
       expect(screen.getAllByText('🔥 Community Top Pick')).toHaveLength(1);
       expect(screen.queryByText('Community Top Pick')).not.toBeInTheDocument();
@@ -132,7 +132,7 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
       render(<WhileYouWaitGear modelName="RAV4" />);
 
       // Verify Muslogy items rendered
-      expect(screen.getByText('Muslogy Center Console Organizer Tray (RAV4)')).toBeInTheDocument();
+      expect(screen.getByText('Console Organizer')).toBeInTheDocument();
       expect(screen.getByText('Muslogy Custom-Fit Padded Center Console Armrest Cover')).toBeInTheDocument();
 
       // Verify discount pills and copy buttons
@@ -152,16 +152,16 @@ describe('WhileYouWaitGear Component & Accessories Data', () => {
     it('renders Muslogy partner gear in top slots for Sienna and Grand Highlander', () => {
       // Sienna
       const { unmount: unmountSienna } = render(<WhileYouWaitGear modelName="Sienna" />);
-      expect(screen.getByText('Muslogy Sienna Center Console Sliding Organizer & Bridge Box')).toBeInTheDocument();
-      const siennaPartnerLink = screen.getByRole('link', { name: /View Muslogy Sienna Center Console Sliding Organizer & Bridge Box on Muslogy/i });
+      expect(screen.getByText('Console Organizer')).toBeInTheDocument();
+      const siennaPartnerLink = screen.getByRole('link', { name: /View Console Organizer on Muslogy/i });
       expect(siennaPartnerLink).toHaveAttribute('href', '/out/muslogy-sienna');
       expect(siennaPartnerLink).toHaveAttribute('rel', 'sponsored noopener noreferrer');
       unmountSienna();
 
       // Grand Highlander
       render(<WhileYouWaitGear modelName="Grand Highlander" />);
-      expect(screen.getByText('Muslogy Grand Highlander Console Divider Tray')).toBeInTheDocument();
-      const ghPartnerLink = screen.getByRole('link', { name: /View Muslogy Grand Highlander Console Divider Tray on Muslogy/i });
+      expect(screen.getByText('Console Organizer')).toBeInTheDocument();
+      const ghPartnerLink = screen.getByRole('link', { name: /View Console Organizer on Muslogy/i });
       expect(ghPartnerLink).toHaveAttribute('href', '/out/muslogy-grand-highlander');
       expect(ghPartnerLink).toHaveAttribute('rel', 'sponsored noopener noreferrer');
     });

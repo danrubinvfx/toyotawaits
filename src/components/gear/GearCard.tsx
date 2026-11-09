@@ -481,8 +481,7 @@ export function GearCard({
         {/* Title: text-sm font-bold line-clamp-1 mt-2 */}
         <h4
           className={cn(
-            'text-sm font-bold tracking-tight transition-colors line-clamp-1 mt-2',
-            isChecked ? 'line-through text-zinc-500' : 'text-zinc-100'
+            'text-sm font-bold text-white tracking-tight transition-colors mt-2', isChecked ? 'line-through text-zinc-500' : 'text-white'
           )}
         >
           {item.title}
@@ -529,7 +528,7 @@ export function GearCard({
 
         {/* Description: text-xs text-neutral-400 line-clamp-2 leading-relaxed mb-3 */}
         {note && (
-          <p className="line-clamp-2 text-xs text-neutral-400 leading-relaxed font-sans mb-3">
+          <p className="text-xs text-neutral-400 line-clamp-1 leading-relaxed font-sans mb-3">
             {note}
           </p>
         )}
