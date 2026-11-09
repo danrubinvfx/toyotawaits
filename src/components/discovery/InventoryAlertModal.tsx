@@ -138,7 +138,7 @@ export function InventoryAlertModal({
       }
 
       setSuccessMessage(
-        `We sent a confirmation link to ${trimmedEmail}. Tap it to verify your email and start your 30-day drop monitoring.`
+        `We sent a confirmation link to ${trimmedEmail}. Tap it to verify your email and start your 180-day drop monitoring.`
       );
       setIsSubmitting(false);
     } catch {
@@ -167,10 +167,10 @@ export function InventoryAlertModal({
                 id="inventory-alert-modal-title"
                 className="text-base sm:text-lg font-bold text-white tracking-tight"
               >
-                30-Day Free Allocation Pass
+                6-Month Allocation Pass
               </h2>
               <p className="text-xs text-zinc-400">
-                Get instant email alerts when matching unreserved inventory or canceled customer orders land across Lower Mainland dealers. Free for 30 days.
+                Receive free email alerts for 180 days when matching unreserved allocations land in your region.
               </p>
             </div>
           </div>
@@ -427,7 +427,7 @@ export function InventoryAlertModal({
                   ) : (
                     <>
                       <Bell className="h-3.5 w-3.5" aria-hidden="true" />
-                      <span>Activate Free 30-Day Alert</span>
+                      <span>Activate Free 180-Day Alert</span>
                     </>
                   )}
                 </button>
@@ -436,7 +436,7 @@ export function InventoryAlertModal({
                 data-testid="alert-casl-disclaimer"
                 className="text-[11px] text-zinc-500 leading-relaxed border-t border-zinc-800/70 pt-2"
               >
-                Notice: This free 30-day alert pass monitors publicly indexed dealer management feeds across Metro Vancouver. ToyotaWaits is an independent research platform not affiliated with Toyota Canada Inc. or any dealership. Listings do not guarantee vehicle availability or reservation status. Unsubscribe anytime.
+                Notice: This free 180-day alert pass monitors publicly indexed dealer management feeds across Metro Vancouver. ToyotaWaits is an independent research platform not affiliated with Toyota Canada Inc. or any dealership. Listings do not guarantee vehicle availability or reservation status. Unsubscribe anytime.
               </p>
             </div>
           </form>

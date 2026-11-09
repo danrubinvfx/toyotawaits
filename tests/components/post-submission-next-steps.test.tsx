@@ -120,7 +120,7 @@ describe('PostSubmissionNextSteps Component', () => {
       });
 
       expect(
-        screen.getByText(/Set a 30-Day Drop Alert for incoming unreserved allocations at MSRP/i)
+        screen.getByText(/Set a 180-Day Drop Alert for incoming unreserved allocations at MSRP/i)
       ).toBeInTheDocument();
     });
   });

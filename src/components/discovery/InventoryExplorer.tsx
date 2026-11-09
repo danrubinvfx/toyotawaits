@@ -1103,7 +1103,7 @@ export function InventoryExplorer({
           className="flex items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950/40 px-4 py-3 text-xs sm:text-sm text-emerald-200 shadow-sm"
         >
           <span>
-            ✅ <strong>30-Day Free Allocation Pass Activated!</strong> Your email is verified and we are now monitoring Lower Mainland dealer drops for your vehicle.
+            ✅ <strong>180-Day Free Allocation Pass Activated!</strong> Your email is verified and we are now monitoring Lower Mainland dealer drops for your vehicle.
           </span>
           <button
             type="button"
@@ -1123,7 +1123,7 @@ export function InventoryExplorer({
           className="flex items-center justify-between gap-3 rounded-xl border border-zinc-700 bg-zinc-900/80 px-4 py-3 text-xs sm:text-sm text-zinc-300 shadow-sm"
         >
           <span>
-            You have been unsubscribed from your 30-day allocation drop alert pass.
+            You have been unsubscribed from your 180-day allocation drop alert pass.
           </span>
           <button
             type="button"

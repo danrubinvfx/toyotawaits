@@ -31,7 +31,7 @@ export async function GET(request: NextRequest | Request) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = createServerClient() as any;
     const nowIso = new Date().toISOString();
-    const expiresAtIso = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const expiresAtIso = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString();
 
     // Match active record by verification_token
     const { data: matched, error: selectError } = await supabase
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest | Request) {
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to activate 30-day alert pass.',
+          error: 'Failed to activate 180-day alert pass.',
         },
         { status: 500, headers: { 'Cache-Control': 'no-store' } }
       );

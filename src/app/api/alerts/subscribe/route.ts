@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+const ONE_HUNDRED_EIGHTY_DAYS_MS = 180 * 24 * 60 * 60 * 1000;
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_missing_api_key');
 
@@ -29,13 +29,13 @@ function buildVerificationEmailPayload(params: {
 
   const displayTrim = trim === 'ALL' ? 'Any Trim' : trim;
   const displayPowertrain = powertrain === 'ALL' ? 'All Powertrains' : powertrain;
-  const subject = 'Confirm your 30-Day Toyota Allocation Drop Alert';
+  const subject = 'Confirm your 180-Day Toyota Allocation Drop Alert';
 
   const html = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; padding: 24px; background-color: #09090b; color: #f4f4f5; border-radius: 12px; border: 1px solid #27272a;">
-      <h2 style="margin-top: 0; color: #ffffff; font-size: 20px;">Confirm your 30-Day Toyota Allocation Drop Alert</h2>
+      <h2 style="margin-top: 0; color: #ffffff; font-size: 20px;">Confirm your 180-Day Toyota Allocation Drop Alert</h2>
       <p style="color: #d4d4d8; font-size: 14px; line-height: 1.6;">
-        Tap the button below to verify your email address and activate your <strong>100% free 30-day monitoring window</strong> for:
+        Tap the button below to verify your email address and activate your <strong>100% free 180-day monitoring window</strong> for:
       </p>
       <ul style="color: #e4e4e7; font-size: 14px; line-height: 1.6; padding-left: 20px;">
         <li><strong>Model:</strong> ${model}</li>
@@ -45,11 +45,11 @@ function buildVerificationEmailPayload(params: {
       </ul>
       <div style="margin: 24px 0;">
         <a href="${verifyUrl}" style="display: inline-block; background-color: #dc2626; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 14px; padding: 12px 20px; border-radius: 8px;">
-          Verify Email &amp; Start 30-Day Alert Pass
+          Verify Email &amp; Start 180-Day Alert Pass
         </a>
       </div>
       <p style="color: #a1a1aa; font-size: 12px; line-height: 1.5;">
-        Your alert pass monitors publicly indexed dealer management feeds across Metro Vancouver for 30 days and automatically expires with zero recurring charges or spam.
+        Your alert pass monitors publicly indexed dealer management feeds across Metro Vancouver for 180 days and automatically expires with zero recurring charges or spam.
       </p>
       <hr style="border: 0; border-top: 1px solid #27272a; margin: 20px 0;" />
       <p style="color: #71717a; font-size: 11px; line-height: 1.5; margin-bottom: 0;">
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest | Request) {
     }
 
     const freshVerificationToken = crypto.randomBytes(24).toString('hex');
-    const expiresAtIso = new Date(Date.now() + THIRTY_DAYS_MS).toISOString();
+    const expiresAtIso = new Date(Date.now() + ONE_HUNDRED_EIGHTY_DAYS_MS).toISOString();
 
     const basePayload = {
       email: rawEmail,
@@ -183,7 +183,7 @@ export async function POST(request: NextRequest | Request) {
             token: fallbackToken,
             created_at: new Date().toISOString(),
           },
-          message: `We sent a confirmation link to ${rawEmail}. Tap it to verify your email and start your 30-day drop monitoring.`,
+          message: `We sent a confirmation link to ${rawEmail}. Tap it to verify your email and start your 180-day drop monitoring.`,
         },
         { status: 201, headers: { 'Cache-Control': 'no-store' } }
       );
@@ -193,7 +193,7 @@ export async function POST(request: NextRequest | Request) {
     const supabase = createServerClient() as any;
     const tableRef = supabase.from('inventory_alert_subscriptions');
 
-    // Include 30-day verification columns on full Supabase PostgrestQueryBuilder
+    // Include 180-day verification columns on full Supabase PostgrestQueryBuilder
     const isFullSupabaseClient = typeof tableRef.delete === 'function';
     const upsertPayload = isFullSupabaseClient
       ? {
@@ -328,7 +328,7 @@ export async function POST(request: NextRequest | Request) {
       {
         success: true,
         subscription: finalRecord,
-        message: `We sent a confirmation link to ${rawEmail}. Tap it to verify your email and start your 30-day drop monitoring.`,
+        message: `We sent a confirmation link to ${rawEmail}. Tap it to verify your email and start your 180-day drop monitoring.`,
       },
       { status: 201, headers: { 'Cache-Control': 'no-store' } }
     );

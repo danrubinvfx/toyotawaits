@@ -410,7 +410,7 @@ export function PostSubmissionNextSteps({
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-xs sm:text-sm font-medium text-zinc-200">
-                Set a 30-Day Drop Alert for incoming unreserved allocations at MSRP
+                Set a 180-Day Drop Alert for incoming unreserved allocations at MSRP
               </p>
               <p className="text-[11px] text-zinc-400 mt-0.5">
                 We monitor dealer cancellations and unreserved allocations arriving across {province || 'local'} showrooms.

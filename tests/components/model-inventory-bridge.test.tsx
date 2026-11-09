@@ -45,7 +45,7 @@ describe('ModelInventoryBridge Component', () => {
 
     // Modal opens with initialModel prefilled
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/30-Day Free Allocation Pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/(6-Month|180-Day).*Allocation Pass/i)).toBeInTheDocument();
     expect(screen.getByTestId('close-alert-modal-btn')).toBeInTheDocument();
   });
 
