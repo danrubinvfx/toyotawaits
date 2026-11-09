@@ -8,7 +8,7 @@ import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-chec
 import { PartnerDealBanner } from '@/components/gear/PartnerDealBanner';
 import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSection';
 import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
-import { ModelInventoryBridge } from '@/components/wait-times/ModelInventoryBridge';
+import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
 import { ModelDeliveryShelf } from '@/components/gear/ModelDeliveryShelf';
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
 import {
@@ -627,7 +627,8 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       </section>
 
       {/* "Skip the Wait" Live Inventory Bridge Card */}
-      <ModelInventoryBridge
+      <ModelDropAlertBridge
+        estimatedWaitMonths={stats.medianMonths}
         modelSlug={modelConfig.slug}
         modelName={modelConfig.name}
       />

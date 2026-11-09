@@ -156,10 +156,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(screen.getAllByText('Hybrid AWD / FWD').length).toBeGreaterThan(0);
 
     // Verify "Skip the Wait" Live Inventory Bridge Card
-    const inventoryBridge = screen.getByTestId('model-inventory-bridge');
-    expect(inventoryBridge).toBeInTheDocument();
-    expect(screen.getByText(/⚡ Skip the wait\?/i)).toBeInTheDocument();
-    const liveStockLink = screen.getByRole('link', { name: /View Live (Toyota )?Sienna Stock ↗/i });
+    const alertBridge = screen.getByTestId('model-drop-alert-bridge');
+    expect(alertBridge).toBeInTheDocument();
+    expect(screen.getByText(/⚡ SKIP THE QUEUE • ALLOCATION RADAR/i)).toBeInTheDocument();
+    expect(screen.getByText(/Don't want to wait 13\.5 months for a Toyota Sienna\?/i)).toBeInTheDocument();
+    const liveStockLink = screen.getByRole('link', { name: /Browse Live (Toyota )?Sienna Stock ↗/i });
     expect(liveStockLink).toHaveAttribute('href', '/inventory?model=sienna');
 
     // Verify Contextual Calculator Bridge & Delivery Day Preparation Bridge Cards
