@@ -7,6 +7,8 @@ import { PrintButton } from '@/components/delivery-prep/print-button';
 import { FactoryStatusTracker } from '@/components/delivery-prep/factory-status-tracker';
 import { DealerTrackingTips } from '@/components/delivery-prep/dealer-tracking-tips';
 import { DealerFeeAudit } from '@/components/delivery-prep/dealer-fee-audit';
+import { DealerFeeAuditor } from '@/components/compliance/DealerFeeAuditor';
+import { FeeRefusalWorksheet } from '@/components/delivery-prep/fee-refusal-worksheet';
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard } from '@/components/gear/GearCard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -279,6 +281,12 @@ export default function DeliveryPrepPage() {
 
         {/* Surviving the Business Office: Dealer Fee Audit & ECP Warranty Defense */}
         <DealerFeeAudit />
+
+        {/* Interactive Dealer Fee Auditor */}
+        <DealerFeeAuditor />
+
+        {/* Printable Inspection Checklist & Fee Refusal Worksheet */}
+        <FeeRefusalWorksheet />
 
         {/* 5. Frequently Asked Questions Section */}
         <section

@@ -20,6 +20,7 @@ import {
   Car,
   FileText,
   BadgeAlert,
+  Scale,
 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -337,20 +338,22 @@ export function DealerFeeAudit() {
               id="ecp-defense-heading"
               className="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2"
             >
-              Surviving the Business Office: Extended Warranty (ECP) Defense
+              Surviving the Finance Office: The 31-Day Toyota ECP Warranty Rule
             </h3>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400">
+              Surviving the Business Office: Extended Warranty (ECP) Defense
+            </h4>
             <p className="text-xs text-zinc-300 leading-relaxed max-w-2xl">
-              Target benchmark: Platinum 7yr/120,000km wholesale is ~$1,700–$2,000 CAD (vs. $2,600+ dealer retail).
-              Never buy under delivery day pressure.
+              Wholesale cost baseline ($1,900–$2,100 on 7yr/120k Platinum vs $2,800+ dealer desk retail), reminder that ECP can be purchased from any Canadian dealer within 31 days of delivery. Target benchmark: Platinum 7yr/120,000km wholesale is ~$1,700–$2,000 CAD (vs. $2,600+ dealer retail).
             </p>
           </div>
 
           <div className="p-3 rounded-xl bg-zinc-950/80 border border-amber-500/30 text-amber-300 text-xs font-semibold shrink-0">
-            ⏳ <strong>Key Rule:</strong> 31-day grace window after delivery to shop ECP at ANY Canadian Toyota dealership.
+            ⏳ <strong>Key Rule:</strong> 31-day grace window after delivery to shop ECP at ANY Canadian Toyota dealership. ECP can be purchased from any Canadian dealer within 31 days of delivery.
           </div>
         </div>
 
-        {/* Dealer Quote Auditor Interactive Tool CTA */}
+        {/* Dealer Fee Auditor & Quote Auditor Interactive Tools CTA */}
         <div className="rounded-xl border border-amber-500/40 bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-zinc-950 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
@@ -361,15 +364,24 @@ export function DealerFeeAudit() {
               Got a quote or bill of sale from your dealer?
             </h4>
             <p className="text-xs text-zinc-300 leading-relaxed max-w-xl">
-              Run it through our free Dealer Quote Auditor to inspect doc fees and add-ons before signing. Strip bogus charges with our 1-click provincial rebuttal script (AMVIC, OMVIC, VSA).
+              Run it through our free Dealer Fee Auditor to inspect doc fees and add-ons before signing. Strip bogus charges with our 1-click provincial negotiation script (AMVIC, OMVIC, VSA).
             </p>
           </div>
-          <Link
-            href="/tools/quote-auditor"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md transition-colors shrink-0 self-start sm:self-center"
-          >
-            <span>Launch Dealer Quote Auditor →</span>
-          </Link>
+          <div className="flex flex-wrap items-center gap-2 shrink-0 self-start sm:self-center">
+            <Link
+              href="/tools/fee-auditor"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-md transition-colors"
+            >
+              <Scale className="h-4 w-4" />
+              <span>Launch Dealer Fee Auditor →</span>
+            </Link>
+            <Link
+              href="/tools/quote-auditor"
+              className="inline-flex items-center gap-2 px-3 py-2.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border border-zinc-700 font-semibold text-xs transition-colors"
+            >
+              <span>Quote Auditor →</span>
+            </Link>
+          </div>
         </div>
 
         {/* 3 Strategic Pillars */}

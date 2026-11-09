@@ -200,4 +200,66 @@ describe('DeliveryPrepPage Route', () => {
     expect(gearLinks[2]).toHaveAttribute('target', '_blank');
     expect(gearLinks[2]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
   });
+
+  it('renders Surviving the Finance Office: The 31-Day Toyota ECP Warranty Rule with key wholesale copy', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: /Surviving the Finance Office: The 31-Day Toyota ECP Warranty Rule/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getAllByText(
+        /Wholesale cost baseline \(\$1,900–\$2,100 on 7yr\/120k Platinum vs \$2,800\+ dealer desk retail\), reminder that ECP can be purchased from any Canadian dealer within 31 days of delivery\./i
+      ).length
+    ).toBeGreaterThanOrEqual(1);
+
+    expect(
+      screen.getAllByText(/ECP can be purchased from any Canadian dealer within 31 days of delivery/i).length
+    ).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders Printable Inspection Checklist & Fee Refusal Worksheet section with print trigger', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(
+      screen.getByRole('heading', {
+        name: /Printable Inspection Checklist & Fee Refusal Worksheet/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(screen.getByTestId('fee-refusal-worksheet-section')).toBeInTheDocument();
+    expect(screen.getByTestId('print-worksheet-btn')).toBeInTheDocument();
+
+    expect(screen.getByText('Front Suspension Transport Spacers Removed')).toBeInTheDocument();
+    expect(screen.getByText('Bright Daylight Exterior Body & Glass Audit')).toBeInTheDocument();
+    expect(screen.getByText('2nd Smart Key Allocation IOU Voucher')).toBeInTheDocument();
+    expect(screen.getByText('Hybrid Battery Vent Filter & Charging Cables')).toBeInTheDocument();
+
+    expect(screen.getByText('Part 2: Finance Office Fee Refusal & All-In Pricing Worksheet')).toBeInTheDocument();
+    expect(screen.getByText('Purchaser Signature')).toBeInTheDocument();
+    expect(screen.getByText('Dealership Representative')).toBeInTheDocument();
+  });
+
+  it('renders Interactive Dealer Fee Auditor with inputs, AMVIC/OMVIC flags, and copy script CTA', () => {
+    render(<DeliveryPrepPage />);
+
+    expect(screen.getByTestId('dealer-fee-auditor')).toBeInTheDocument();
+
+    // Verify all 5 key line items
+    expect(screen.getByTestId('fee-row-doc-fee')).toBeInTheDocument();
+    expect(screen.getByTestId('fee-row-etching')).toBeInTheDocument();
+    expect(screen.getByTestId('fee-row-rust-module')).toBeInTheDocument();
+    expect(screen.getByTestId('fee-row-block-heater')).toBeInTheDocument();
+    expect(screen.getByTestId('fee-row-ecp')).toBeInTheDocument();
+
+    // Verify AMVIC flag by default in Alberta
+    expect(screen.getByText(/AMVIC Violation \(Alberta All-In Pricing Law\)/i)).toBeInTheDocument();
+
+    // Verify copy button
+    expect(screen.getByTestId('copy-script-btn')).toBeInTheDocument();
+    expect(screen.getByTestId('negotiation-script-preview')).toBeInTheDocument();
+  });
 });
