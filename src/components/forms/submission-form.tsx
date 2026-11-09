@@ -30,7 +30,7 @@ import {
 import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
 import { PostSubmissionNextSteps } from '@/components/submission/PostSubmissionNextSteps';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark } from 'lucide-react';
+import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark, Bell } from 'lucide-react';
 
 export function getTodayLocalDate(): string {
   const now = new Date();
@@ -238,6 +238,18 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setSuccessBanner(null);
     setFieldErrors({});
 
+    const trimmedEmail = email.trim();
+    if (trimmedEmail) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(trimmedEmail)) {
+        setFieldErrors({ email: ['Please enter a valid email address'] });
+        setErrorMsg('Please enter a valid email address or leave the field empty.');
+        setIsSubmitting(false);
+        isSubmittingRef.current = false;
+        return;
+      }
+    }
+
     try {
       const currentTrim = currentTrims.find((t) => t.id === effectiveTrimId) || currentTrims[0];
 
@@ -286,6 +298,8 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         dealer_markup: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
         tradeInRequired: false,
         notes: notes.trim() || undefined,
+        email: trimmedEmail || undefined,
+        reminder_opt_in: Boolean(trimmedEmail),
         turnstileToken: 'mock-valid-turnstile-token', // In test/dev environment fallback
         honeypot,
       };
@@ -979,21 +993,44 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                   )}
                 </div>
 
-                <div className="space-y-1.5 pt-1">
-                  <Label htmlFor={`${formId}-email`}>Email (Optional — For 1-Click Drop Alerts)</Label>
-                  <Input
-                    id={`${formId}-email`}
-                    type="email"
-                    placeholder="you@example.com (optional)"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                  <p className="text-[11px] text-zinc-500">
-                    Optional. Reused to enable 1-click allocation drop alerts and order link recovery.
-                  </p>
                 </div>
-              </div>
             )}
+
+            {/* Track Queue & Monthly Benchmark Updates Card */}
+            <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5 shadow-sm space-y-3">
+              <div className="space-y-1">
+                <h4 className="text-sm font-semibold text-zinc-100 flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Track Queue &amp; Receive Monthly Benchmark Updates
+                </h4>
+                <p className="text-xs text-zinc-400 leading-relaxed">
+                  Optional: Receive a monthly 1-tap status check-in, updated delivery estimate, and local allocation drop alerts while you wait.
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                <Input
+                  id={`${formId}-reminder-email`}
+                  type="email"
+                  placeholder="name@example.com (optional)"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (fieldErrors['email']) {
+                      const nextErrors = { ...fieldErrors };
+                      delete nextErrors['email'];
+                      setFieldErrors(nextErrors);
+                    }
+                  }}
+                  className="bg-zinc-950/80 border-zinc-700/80 text-zinc-100 placeholder:text-zinc-500 text-sm h-10"
+                />
+                {fieldErrors['email'] && (
+                  <p className="text-xs text-rose-500 font-medium">{fieldErrors['email'][0]}</p>
+                )}
+                <p className="text-[11px] text-zinc-500 leading-normal">
+                  Includes monthly status check-ins and unreserved lot drop alerts. 1-click unsubscribe anytime per CASL.
+                </p>
+              </div>
+            </div>
 
             {/* Submit Action */}
             <Button

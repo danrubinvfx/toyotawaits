@@ -59,6 +59,10 @@ export interface SubmissionCreateData {
   email?: string | null;
   lastNudgedAt?: string | null;
   cancelledAt?: string | null;
+  reminder_opt_in?: boolean;
+  reminderOptIn?: boolean;
+  lastRemindedAt?: string | null;
+  last_reminded_at?: string | null;
   pricing: PricingType;
   pricing_type?: string | null;
   mandatoryAddonsCad: number;
@@ -938,6 +942,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         notes: data.notes,
         edit_key_hash: data.editKeyHash,
         edit_token: editToken,
+        email: data.email || null,
+        reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
+        last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
         is_flagged: data.isFlagged,
       };
 
@@ -1010,6 +1017,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             notes: data.notes,
             edit_key_hash: data.editKeyHash,
             edit_token: editToken,
+        email: data.email || null,
+        reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
+        last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
             is_flagged: data.isFlagged,
           })
           .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
@@ -1055,6 +1065,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             notes: data.notes,
             edit_key_hash: data.editKeyHash,
             edit_token: editToken,
+        email: data.email || null,
+        reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
+        last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
             is_flagged: false,
           })
           .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
@@ -1220,6 +1233,9 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
     notes: data.notes || '',
     edit_key_hash: data.editKeyHash,
     edit_token: editToken,
+    email: data.email || null,
+    reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
+    last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
     is_flagged: data.isFlagged,
     created_at: new Date().toISOString(),
   };
@@ -2013,6 +2029,20 @@ export interface EditableSubmission {
   updatedAt?: string | null;
 }
 
+export function buildTokenOrClause(primaryToken: string, secondaryToken?: string): string {
+  const clauses: string[] = [`edit_token.eq.${primaryToken}`];
+  if (UUID_REGEX.test(primaryToken)) {
+    clauses.push(`id.eq.${primaryToken}`);
+  }
+  if (secondaryToken && secondaryToken !== primaryToken) {
+    clauses.push(`edit_token.eq.${secondaryToken}`);
+    if (UUID_REGEX.test(secondaryToken)) {
+      clauses.push(`id.eq.${secondaryToken}`);
+    }
+  }
+  return clauses.join(',');
+}
+
 export async function getSubmissionByEditToken(
   editToken: string,
   secretKey?: string
@@ -2132,7 +2162,7 @@ export async function getSubmissionByEditToken(
             vehicle_powertrains(name, slug),
             vehicle_trims(name, slug)
           `)
-          .or(`edit_token.eq.${editToken},id.eq.${editToken}${secretKey && secretKey !== editToken ? `,edit_token.eq.${secretKey}` : ''}`)
+          .or(buildTokenOrClause(editToken, secretKey))
           .maybeSingle();
 
         data = fallbackData;
@@ -2319,7 +2349,7 @@ export async function updateSubmissionByEditToken(
         const { data: fallbackMatch } = await supabase
           .from('submissions')
           .select('id, order_date, wait_days, edit_token, edit_key_hash')
-          .or(`edit_token.eq.${editToken},id.eq.${editToken}${secretKey && secretKey !== editToken ? `,edit_token.eq.${secretKey}` : ''}`)
+          .or(buildTokenOrClause(editToken, secretKey))
           .maybeSingle();
 
         if (fallbackMatch) {
@@ -2353,7 +2383,7 @@ export async function updateSubmissionByEditToken(
             updatePayload.stage_updated_at = nowIso;
             if (finalStage === 'deposit_placed') {
               updatePayload.current_stage = 'deposit_placed';
-            } else if (finalStage === 'vin_assigned' || finalStage === 'allocation_confirmed') {
+            } else if (finalStage === 'vin_assigned' || finalStage === 'allocation_confirmed' || finalStage === 'build_assigned') {
               updatePayload.current_stage = 'allocation_confirmed';
             } else if (finalStage === 'in_transit' || finalStage === 'freight_transit') {
               updatePayload.current_stage = 'freight_transit';
@@ -2553,7 +2583,7 @@ export async function handleNudgeAction(
           vehicle_models(name),
           vehicle_trims(name)
         `)
-        .or(`edit_token.eq.${normalizedToken},id.eq.${normalizedToken}`)
+        .or(buildTokenOrClause(normalizedToken))
         .maybeSingle();
 
       if (existing) {

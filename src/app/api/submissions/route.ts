@@ -249,7 +249,11 @@ export async function POST(request: NextRequest) {
     // 6. Generate One-Time Cryptographic Secret Edit Key (128-bit) and Edit Token UUID
     const editKey = crypto.randomUUID();
     const editKeyHash = crypto.createHash('sha256').update(editKey).digest('hex');
-    const editToken = crypto.randomUUID();
+    const editToken = crypto.randomBytes(24).toString('hex');
+
+    const submittedEmail = (validData.email || body?.email || '').trim();
+    const hasEmail = Boolean(submittedEmail);
+    const reminderOptIn = hasEmail ? (validData.reminder_opt_in ?? (validData as any).reminderOptIn ?? body?.reminder_opt_in ?? body?.reminderOptIn ?? true) : false;
 
       const resolvedCountry = validData.country || validData.country_code || validData.countryCode || 'CA';
       const resolvedCurrency = validData.currency || (resolvedCountry === 'US' ? 'USD' : 'CAD');
@@ -302,6 +306,9 @@ export async function POST(request: NextRequest) {
         notes: validData.notes,
         editKeyHash,
         editToken,
+        email: hasEmail ? submittedEmail : null,
+        reminder_opt_in: reminderOptIn,
+        reminderOptIn: reminderOptIn,
         isFlagged: outlierResult.isFlagged,
       });
 
@@ -386,6 +393,9 @@ export async function POST(request: NextRequest) {
           editKey,
           editToken: finalEditToken,
           editUrl: `/edit/${finalEditToken}`,
+          updateStatusUrl: `/update-status/${finalEditToken}`,
+          email: hasEmail ? submittedEmail : undefined,
+          reminder_opt_in: reminderOptIn,
           isFlagged: record.isFlagged,
           message:
             'Submission recorded anonymously. Save your secret edit link to update your status later.',

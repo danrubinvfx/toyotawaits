@@ -145,7 +145,11 @@ export interface Submission {
   isFlagged: boolean;
   editToken?: string;
   email?: string | null;
+  reminder_opt_in?: boolean;
+  reminderOptIn?: boolean;
   lastNudgedAt?: string | null;
+  lastRemindedAt?: string | null;
+  last_reminded_at?: string | null;
   cancelledAt?: string | null;
   isStale?: boolean;
   createdAt: string; // ISO 8601

@@ -160,6 +160,15 @@ export const submissionCreateSchema = z
       .default(0),
     tradeInRequired: z.boolean().default(false),
     notes: sanitizedNotesSchema,
+    email: z
+      .string()
+      .trim()
+      .email('Please enter a valid email address')
+      .optional()
+      .or(z.literal(''))
+      .nullable(),
+    reminder_opt_in: z.boolean().optional(),
+    reminderOptIn: z.boolean().optional(),
     // Bot & Security checks
     turnstileToken: z.string().min(1, 'Cloudflare Turnstile verification is required'),
     honeypot: z.string().max(0, 'Bot trap triggered').optional()
@@ -251,6 +260,15 @@ export const submissionUpdateSchema = z.object({
     .optional()
     .nullable(),
   notes: sanitizedNotesSchema,
+    email: z
+      .string()
+      .trim()
+      .email('Please enter a valid email address')
+      .optional()
+      .or(z.literal(''))
+      .nullable(),
+    reminder_opt_in: z.boolean().optional(),
+    reminderOptIn: z.boolean().optional(),
   portDestination: z.string().trim().max(100).optional().nullable(),
   port_destination: z.string().trim().max(100).optional().nullable(),
   state: usStateSchema.optional().nullable(),

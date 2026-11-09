@@ -719,6 +719,72 @@ describe('PATCH /api/submissions/[id]', () => {
     expect(data.success).toBe(true);
     expect(data.data.id).toBeDefined();
   });
+
+  it('persists optional email, sets reminder_opt_in to true, and generates edit_token', async () => {
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'AB',
+      dealershipCity: 'Calgary',
+      modelYear: 2026,
+      orderDate: '2026-03-01',
+      status: 'pending',
+      stage: 'deposit_placed',
+      email: 'tracker@example.com',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.101',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.editToken).toBeDefined();
+    expect(data.data.editToken.length).toBeGreaterThanOrEqual(32);
+    expect(data.data.email).toBe('tracker@example.com');
+    expect(data.data.reminder_opt_in).toBe(true);
+    expect(data.data.updateStatusUrl).toBe(`/update-status/${data.data.editToken}`);
+  });
+
+  it('rejects malformed email format with 400 validation error', async () => {
+    const payload = {
+      modelId: validUuid1,
+      powertrainId: validUuid2,
+      trimId: validUuid3,
+      province: 'AB',
+      dealershipCity: 'Calgary',
+      modelYear: 2026,
+      orderDate: '2026-03-01',
+      status: 'pending',
+      email: 'invalid-email-format',
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.102',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+    const data = await response.json();
+    expect(data.success).toBe(false);
+    expect(data.error.code).toBe('VALIDATION_ERROR');
+    expect(data.error.details.email).toBeDefined();
+  });
 });
 
 describe('GET /api/submissions', () => {
