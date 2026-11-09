@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { PostEstimateSubmissionCta } from '@/components/calculator/post-estimate-submission-cta';
@@ -30,53 +31,124 @@ import { Hero } from '@/components/Hero';
 
 export const revalidate = 1800; // Cache on edge for 30 minutes
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
-  description:
-    'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
-  keywords: [
-    'toyota wait times canada',
-    'toyota waitlist canada',
-    'toyota delivery estimator',
-    'rav4 wait time canada',
-    'sienna wait time canada',
-    'grand highlander wait time',
-    'tacoma hybrid wait time',
-    'land cruiser canada wait time',
-    'canadian toyota delivery estimator',
-    'toyota factory allocation canada',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca',
-  },
-  openGraph: {
-    title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
-    description:
-      'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
-    url: 'https://www.toyotawaits.ca',
-    siteName: 'ToyotaWaits',
-    locale: 'en_CA',
-    type: 'website',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Toyota Wait Times Canada (2026) - Crowd-Sourced Delivery Estimator',
+export function getHomeMetadata(host?: string): Metadata {
+  const cleanHost = (host || '').toLowerCase();
+  const isCaDomain = cleanHost.includes('toyotawaits.ca');
+
+  if (isCaDomain) {
+    return {
+      metadataBase: new URL('https://www.toyotawaits.ca'),
+      title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
+      description:
+        'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+      keywords: [
+        'toyota wait times canada',
+        'toyota waitlist canada',
+        'toyota delivery estimator',
+        'rav4 wait time canada',
+        'sienna wait time canada',
+        'grand highlander wait time',
+        'tacoma hybrid wait time',
+        'land cruiser canada wait time',
+        'canadian toyota delivery estimator',
+        'toyota factory allocation canada',
+      ],
+      alternates: {
+        canonical: 'https://www.toyotawaits.ca',
       },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
+      openGraph: {
+        title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
+        description:
+          'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+        url: 'https://www.toyotawaits.ca',
+        siteName: 'ToyotaWaits',
+        locale: 'en_CA',
+        type: 'website',
+        images: [
+          {
+            url: '/og-image.png',
+            width: 1200,
+            height: 630,
+            alt: 'Toyota Wait Times Canada (2026) - Crowd-Sourced Delivery Estimator',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
+        description:
+          'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+        images: ['/og-image.png'],
+      },
+    };
+  }
+
+  const canonicalUrl = cleanHost.includes('toyotawaits.ca')
+    ? 'https://www.toyotawaits.ca'
+    : 'https://www.toyotawaits.com';
+
+  return {
+    metadataBase: new URL(canonicalUrl),
+    title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
     description:
-      'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
-    images: ['/og-image.png'],
-  },
-};
+      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
+    keywords: [
+      'toyota wait times',
+      'toyota wait times 2026',
+      'toyota markup tracker',
+      'toyota allocation tracker',
+      'toyota delivery estimator',
+      'rav4 wait time',
+      'sienna wait time',
+      'grand highlander wait time',
+      'tacoma hybrid wait time',
+      'land cruiser wait time',
+    ],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+      description:
+        'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
+      url: canonicalUrl,
+      siteName: 'ToyotaWaits',
+      locale: 'en_US',
+      type: 'website',
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+      description:
+        'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
+      images: ['/og-image.png'],
+    },
+  };
+}
 
-
+export async function generateMetadata(): Promise<Metadata> {
+  let host = '';
+  try {
+    const headersList = await headers();
+    host = (
+      headersList.get('x-forwarded-host') ||
+      headersList.get('host') ||
+      headersList.get('x-domain') ||
+      ''
+    ).toLowerCase();
+  } catch {
+    // Fallback when headers() is called outside request context (e.g. static build)
+  }
+  return getHomeMetadata(host);
+}
 
 export default async function HomePage() {
   const submissions = await getCommunitySubmissions('CA', { revalidate: 3600, tags: ['submissions', 'benchmarks'], limit: 50 }).catch(() => []);

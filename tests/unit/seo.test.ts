@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import sitemap from '@/app/sitemap';
 import robots from '@/app/robots';
 import { metadata as layoutMetadata, jsonLd } from '@/app/layout';
-import { metadata as homeMetadata } from '@/app/page';
+import { getHomeMetadata, generateMetadata } from '@/app/page';
 import { metadata as inventoryMetadata } from '@/app/inventory/page';
 
 describe('Technical SEO & Discovery Configuration', () => {
@@ -146,7 +146,8 @@ describe('Technical SEO & Discovery Configuration', () => {
     );
   });
 
-  it('exports home page metadata consistent with root metadata', () => {
+  it('exports home page metadata consistent with root metadata for Canadian domain', () => {
+    const homeMetadata = getHomeMetadata('toyotawaits.ca');
     expect(homeMetadata.title).toBe(
       'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator'
     );
@@ -154,6 +155,36 @@ describe('Technical SEO & Discovery Configuration', () => {
       'Track real crowd-sourced Toyota wait times'
     );
     expect(homeMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca');
+  });
+
+  it('exports host-aware OpenGraph tags for toyotawaits.com and dual market', async () => {
+    const usMetadata = getHomeMetadata('toyotawaits.com');
+    expect(usMetadata.title).toBe(
+      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+    );
+    expect(usMetadata.openGraph?.title).toBe(
+      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+    );
+    expect(usMetadata.openGraph?.description).toBe(
+      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.'
+    );
+    expect(usMetadata.alternates?.canonical).toBe('https://www.toyotawaits.com');
+
+    // Universal fallback when host is absent or generic
+    const universalMetadata = getHomeMetadata();
+    expect(universalMetadata.openGraph?.title).toBe(
+      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+    );
+    expect(universalMetadata.openGraph?.description).toBe(
+      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.'
+    );
+    expect(universalMetadata.alternates?.canonical).toBe('https://www.toyotawaits.com');
+    expect(universalMetadata.title).not.toContain('Canada');
+
+    const generated = await generateMetadata();
+    expect(generated.openGraph?.title).toBe(
+      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+    );
   });
 
   it('exports inventory page metadata matching Lower Mainland discovery specs', () => {

@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
                   alignItems: 'center',
                 }}
               >
-                🇨🇦 ToyotaWaits.ca
+                ToyotaWaits
               </div>
               <span
                 style={{
@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
                   textTransform: 'uppercase',
                 }}
               >
-                Canadian Open Community Tracker
+                Community Wait Time &amp; Allocation Tracker
               </span>
             </div>
 
@@ -222,8 +222,8 @@ export async function GET(request: NextRequest) {
               paddingTop: '20px',
             }}
           >
-            <span>Live Community Submissions • Verified Canadian Vehicle Data</span>
-            <span style={{ color: '#eb0a1e', fontWeight: 600 }}>toyotawaits.ca</span>
+            <span>Live Community Submissions • Verified Vehicle Timelines</span>
+            <span style={{ color: '#eb0a1e', fontWeight: 600 }}>ToyotaWaits</span>
           </div>
         </div>
       ),
