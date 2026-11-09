@@ -41,19 +41,19 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     });
 
     expect(metadata.title).toBe(
-      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
+      'Toyota Grand Highlander Wait Times Canada (2026–2027 Backlog Tracker) | ToyotaWaits'
     );
     expect(metadata.description).toBe(
       `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect(metadata.openGraph?.title).toBe(
-      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
+      'Toyota Grand Highlander Wait Times Canada (2026–2027 Backlog Tracker) | ToyotaWaits'
     );
     expect(metadata.openGraph?.description).toBe(
       `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
     );
     expect((metadata.twitter as any)?.title).toBe(
-      `Toyota Grand Highlander Wait Times Canada (Updated ${currentMonthYear}) | Live Delivery Tracker`
+      'Toyota Grand Highlander Wait Times Canada (2026–2027 Backlog Tracker) | ToyotaWaits'
     );
     expect((metadata.twitter as any)?.description).toBe(
       `Track real-time crowdsourced Toyota Grand Highlander delivery wait times and allocations across Canada (Updated ${currentMonthYear}). Compare lead times by powertrain, trim, and province.`
@@ -69,7 +69,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     });
 
     expect(metadata.title).toBe(
-      '2026 Toyota RAV4 Wait Times & Pricing Canada (Nov 2026 Update) | ToyotaWaits'
+      'Toyota RAV4 Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits'
     );
     expect(metadata.description).toBe(
       'Real Canadian wait times and MSRP breakdown for the 2026 Toyota RAV4 Gas, Hybrid, and Plug-in Hybrid. Crowdsourced dealer delivery reports for BC, Ontario, and Alberta.'
@@ -261,6 +261,23 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     ).toBeInTheDocument();
     const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 RAV4 Guide →/i });
     expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-rav4-2026-vs-2027');
+  });
+
+  it('renders 2026 vs 2027 comparison card for Grand Highlander wait times page', async () => {
+    const jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'grand-highlander' }),
+    });
+
+    render(jsx);
+
+    expect(screen.getByText('Allocated a 2026 or Waiting for a 2027 Grand Highlander?')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Toyota has officially announced the 2027 Grand Highlander featuring a new lifted Woodland Edition\. Compare the trim changes and see how queue rollovers work\./i
+      )
+    ).toBeInTheDocument();
+    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
+    expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-grand-highlander-2026-vs-2027');
   });
 
   it('renders distinct data separation for rav4, sienna, and tacoma', async () => {

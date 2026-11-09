@@ -45,6 +45,14 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(priusGuideEntry?.priority).toBe(0.8);
     expect(priusGuideEntry?.changeFrequency).toBe('weekly');
 
+    // Grand Highlander 2026 vs 2027 Guide: https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027
+    const ghGuideEntry = sitemapEntries.find(
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027'
+    );
+    expect(ghGuideEntry).toBeDefined();
+    expect(ghGuideEntry?.priority).toBe(0.8);
+    expect(ghGuideEntry?.changeFrequency).toBe('monthly');
+
     // Guides & Prep Hub Entries
     const winterPrepEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/winter-prep');
     expect(winterPrepEntry).toBeDefined();

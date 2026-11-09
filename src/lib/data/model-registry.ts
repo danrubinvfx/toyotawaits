@@ -30,8 +30,8 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     name: 'Toyota RAV4',
     shortName: 'RAV4',
     dbFilter: 'rav4',
-    title: '2026 Toyota RAV4 Wait Times & Pricing Canada (Nov 2026 Update) | ToyotaWaits',
-    metaTitle: '2026 Toyota RAV4 Wait Times & Pricing Canada (Nov 2026 Update) | ToyotaWaits',
+    title: 'Toyota RAV4 Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Toyota RAV4 Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
     metaDescription:
       'Real Canadian wait times and MSRP breakdown for the 2026 Toyota RAV4 Gas, Hybrid, and Plug-in Hybrid. Crowdsourced dealer delivery reports for BC, Ontario, and Alberta.',
     powertrains: ['Gas', 'Hybrid', 'Plug-in Hybrid'],
@@ -122,7 +122,8 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     baseMedian: 300,
     baseP25: 240,
     baseP75: 360,
-    metaTitle: 'Toyota Grand Highlander Wait Times in Canada (2026 Backlog Tracker) | ToyotaWaits',
+    title: 'Toyota Grand Highlander Wait Times Canada (2026–2027 Backlog Tracker) | ToyotaWaits',
+    metaTitle: 'Toyota Grand Highlander Wait Times Canada (2026–2027 Backlog Tracker) | ToyotaWaits',
     metaDescription: 'Track real crowdsourced wait times and backlog queues for the 2026 Toyota Grand Highlander & Hybrid across Canada. Check regional lead times and allocations.',
     popularTrims: [
       { trim: 'XLE AWD (Gas Turbo)', powertrain: 'Gas', spread: '4–6 months (120–180 days)', status: 'Balanced' },

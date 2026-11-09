@@ -205,6 +205,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/guides/toyota-grand-highlander-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Grand Highlander Guide
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/grand-highlander-mods`} className="hover:text-amber-500 transition-colors">
                   Toyota Grand Highlander Utility Mods
                 </Link>

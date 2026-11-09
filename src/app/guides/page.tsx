@@ -215,6 +215,19 @@ const MOD_GUIDES = [
     href: '/guides/toyota-rav4-2026-vs-2027',
   },
   {
+    slug: 'toyota-grand-highlander-2026-vs-2027',
+    title: '2026 vs. 2027 Grand Highlander: Woodland Edition & Trim Matrix',
+    tagline: 'New Hybrid Woodland Edition, +12mm lift, 1500W inverter, blacked-out MAX Platinum, and Indiana queue rollovers.',
+    badge: '2026 vs. 2027',
+    model: 'Grand Highlander',
+    highlights: [
+      'New Hybrid Woodland Edition with +12mm lifted suspension',
+      '1,500W high-output AC inverter & standard heated wheel on XLE',
+      'Princeton Indiana (TMMI) allocation queue rollover guide',
+    ],
+    href: '/guides/toyota-grand-highlander-2026-vs-2027',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',

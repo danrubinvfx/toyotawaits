@@ -457,7 +457,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       <section className="space-y-4">
         <div className="flex items-center gap-2 flex-wrap">
           <Badge className="bg-red-600 text-white font-semibold">
-            {modelConfig.slug === 'corolla'
+            {['corolla', 'grand-highlander', 'rav4'].includes(modelConfig.slug)
               ? '🇨🇦 2026–2027 Canadian Delivery Tracker'
               : '🇨🇦 2026 Canadian Delivery Tracker'}
           </Badge>
@@ -910,6 +910,32 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               </div>
               <Button asChild className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold shrink-0 shadow-sm">
                 <Link href="/guides/toyota-sienna-2026-vs-2027" className="gap-2">
+                  Read 2026 vs. 2027 Comparison →
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Grand Highlander Guide Callout Banner */}
+      {modelConfig.slug === 'grand-highlander' && (
+        <section aria-label="2026 vs 2027 Grand Highlander Guide Callout">
+          <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-zinc-50 dark:from-amber-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-amber-500 text-zinc-950 font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Grand Highlander?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Toyota has officially announced the 2027 Grand Highlander featuring a new lifted Woodland Edition. Compare the trim changes and see how queue rollovers work.
+                </p>
+              </div>
+              <Button asChild className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold shrink-0 shadow-sm">
+                <Link href="/guides/toyota-grand-highlander-2026-vs-2027" className="gap-2">
                   Read 2026 vs. 2027 Comparison →
                 </Link>
               </Button>
