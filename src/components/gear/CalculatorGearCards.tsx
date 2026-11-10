@@ -540,6 +540,89 @@ const PRIUS_PRODUCTS: VettedProduct[] = [
   },
 ];
 
+const COROLLA_CROSS_PRODUCTS: VettedProduct[] = [
+  {
+    id: 'corolla-cross-floor-liners',
+    category: 'Interior Protection',
+    brand: 'TuxMat',
+    title: 'Custom-Fit All-Weather High-Wall Floor Liners',
+    imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+    description: 'Laser-measured precision tub coverage engineered to protect Corolla Cross carpets from severe winter slush and road salt.',
+    searchQuery: 'TuxMat Toyota Corolla Cross custom all weather floor mats liners',
+    badge: 'Canadian Winter Ready',
+    bullets: [
+      'Maximum perimeter high-wall tub coverage',
+      'Cold-flexible down to -40°C with retention clips',
+      'Protects driver dead-pedal and footwell carpet',
+      'Designed specifically for Corolla Cross Gas & Hybrid floors',
+    ],
+    buttonText: 'View All-Weather Liners',
+    icon: Layers,
+    iconBg: 'bg-blue-500/10 dark:bg-blue-500/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    id: 'corolla-cross-dashcam',
+    category: 'Vehicle Safety & Electronics',
+    brand: 'FitcamX',
+    title: '4K OEM Integrated Mirror Dashcam',
+    imageUrl: '/assets/gear/fitcamx-rav4.webp',
+    description: 'Factory-integrated 4K dashcam that replaces the plastic mirror housing with mirror-tap plug & play wiring.',
+    searchQuery: 'Fitcamx dash cam Toyota Corolla Cross 4K OEM',
+    badge: 'Mirror-Tap Plug & Play',
+    bullets: [
+      'Plug-and-play harness taps Toyota Safety Sense mirror socket',
+      '4K Sony sensor with HDR low-light night vision',
+      'Zero dangling cords or windshield clutter',
+      'Wi-Fi connected with instant smartphone video review',
+    ],
+    buttonText: 'View OEM Dashcams',
+    icon: Video,
+    iconBg: 'bg-emerald-500/10 dark:bg-emerald-500/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    id: 'corolla-cross-screen-protector',
+    category: 'Display & Console Care',
+    brand: 'Spigen',
+    title: '8" / 10.5" Tempered Glass Screen Protector',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    description: '9H hardness optical-grade tempered glass shielding the Toyota Multimedia touchscreen from scratches and glare.',
+    searchQuery: 'Spigen screen protector Toyota Corolla Cross 8 inch 10.5 inch',
+    badge: 'Anti-Glare 9H',
+    bullets: [
+      'Oleophobic matte anti-fingerprint surface coating',
+      '9H surface hardness defends against pet claws and keys',
+      'Responsive touch sensitivity without input latency',
+      'Easy alignment tray for bubble-free installation',
+    ],
+    buttonText: 'View Screen Protectors',
+    icon: ShieldCheck,
+    iconBg: 'bg-indigo-500/10 dark:bg-indigo-500/20',
+    iconColor: 'text-indigo-600 dark:text-indigo-400',
+  },
+  {
+    id: 'corolla-cross-console-organizer',
+    category: 'Storage & Organization',
+    brand: 'Muslogy / EDBETOS',
+    title: 'Center Console Dual-Tier Drop-In Organizer Tray',
+    imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+    description: 'Drop-in center console divider tray turning the deep cavernous bin into dual-tier organized compartments.',
+    searchQuery: 'Center console organizer tray Toyota Corolla Cross',
+    badge: 'Essential Organization',
+    bullets: [
+      'Upper tray stores coins, sunglasses, cards, and keys',
+      'Allows unobstructed access to lower compartment and USB ports',
+      'Textured non-slip rubber mats eliminate rattling',
+      'OEM textured matte black finish',
+    ],
+    buttonText: 'View Console Trays',
+    icon: Box,
+    iconBg: 'bg-amber-500/10 dark:bg-amber-500/20',
+    iconColor: 'text-amber-700 dark:text-amber-300',
+  },
+];
+
 const PHEV_EVSE_CHARGER: VettedProduct = {
   id: 'evse-charger',
   category: 'EV Home Charging',
@@ -573,6 +656,8 @@ const MODEL_CATALOG: Record<string, VettedProduct[]> = {
   prius: PRIUS_PRODUCTS,
   'prius-hybrid': PRIUS_PRODUCTS,
   'prius-prime': PRIUS_PRODUCTS,
+  'corolla-cross': COROLLA_CROSS_PRODUCTS,
+  'corolla-cross-hybrid': COROLLA_CROSS_PRODUCTS,
 };
 
 export const ALL_CALCULATOR_PRODUCTS: VettedProduct[] = [
@@ -582,6 +667,7 @@ export const ALL_CALCULATOR_PRODUCTS: VettedProduct[] = [
   ...GRAND_HIGHLANDER_PRODUCTS,
   ...CAMRY_PRODUCTS,
   ...PRIUS_PRODUCTS,
+  ...COROLLA_CROSS_PRODUCTS,
   PHEV_EVSE_CHARGER,
 ];
 

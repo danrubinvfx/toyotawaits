@@ -38,6 +38,7 @@ import {
   Package,
   Sparkles,
   ArrowRight,
+  Calculator,
 } from 'lucide-react';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
@@ -717,6 +718,90 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
           >
             <span>Compare TX vs. Grand Highlander</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
+      {/* Editorial Comparison Guide Bridge for Toyota Corolla Cross vs. RAV4 */}
+      {(modelConfig.slug === 'corolla-cross' || modelConfig.slug === 'corolla-cross-hybrid') && (
+        <aside
+          aria-label="Toyota Corolla Cross vs. RAV4 Hybrid Guide"
+          className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-red-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Debating between Corolla Cross and RAV4? Read our Corolla Cross vs. RAV4 Hybrid Sizing &amp; Allocation Guide &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Compare physical dimensions, 21.5 vs. 37.5 cu. ft. cargo capacity, rear child seat fitment, and Ontario vs. Alabama waitlists.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-corolla-cross-vs-rav4-hybrid"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare Corolla Cross vs. RAV4</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
+      {/* Fuel Savings & Payback Calculator Bridge for Corolla Cross */}
+      {(modelConfig.slug === 'corolla-cross' || modelConfig.slug === 'corolla-cross-hybrid') && (
+        <aside
+          aria-label="Corolla Cross Hybrid Fuel Savings Calculator"
+          className="rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+              <Calculator className="h-3 w-3" />
+              Fuel Savings &amp; Payback Calculator
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Is the Corolla Cross Hybrid worth the $6,000 premium over gas? Calculate your provincial payback timeline &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Pre-seeded with 5.3 L/100 km NRCan metrics, Canadian pump prices, and MTM Alabama wait-time trade-off costs.
+            </p>
+          </div>
+          <Link
+            href="/calculator/corolla-cross-hybrid"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Launch Payback Calculator</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
+      {/* Editorial Comparison Guide Bridge for Toyota RAV4 vs Corolla Cross */}
+      {(modelConfig.slug === 'rav4' || modelConfig.slug === 'rav4-hybrid') && (
+        <aside
+          aria-label="Toyota RAV4 vs. Corolla Cross Hybrid Comparison Guide"
+          className="rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-red-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Considering downsizing to save $6,000? Compare RAV4 vs. Corolla Cross Hybrid &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Evaluate real cargo trade-offs (37.5 vs. 21.5 cu. ft.), rear child seat space, and Ontario vs. Alabama delivery queues.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-corolla-cross-vs-rav4-hybrid"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare RAV4 vs. Corolla Cross</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </aside>

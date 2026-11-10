@@ -11,6 +11,15 @@ export interface ModelNewsTickerItem extends NewsTickerItem {
 
 export const CALCULATOR_NEWS_ITEMS: ModelNewsTickerItem[] = [
   {
+    id: 'news-corolla-cross-1',
+    type: 'news',
+    category: 'ALLOCATION',
+    title: 'Corolla Cross Hybrid Canadian delivery queues average 6–10 months from MTM Huntsville factory',
+    headline: 'Corolla Cross Hybrid Canadian delivery queues average 6–10 months from MTM Huntsville factory',
+    timestamp: new Date().toISOString(),
+    applicableModels: ['corolla-cross', 'corolla-cross-hybrid', 'corolla'],
+  },
+  {
     id: 'news-rav4-2027',
     type: 'news',
     category: 'ALLOCATION',

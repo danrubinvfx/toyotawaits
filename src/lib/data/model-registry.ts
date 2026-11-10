@@ -341,6 +341,7 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
       'The Corolla Cross Hybrid is assembled in limited batches compared to conventional gas trims, resulting in a marked delivery time split.',
       'Gas L and LE AWD trims are commonly available within 90 days across Canadian dealerships.',
       'Flexibility with two-tone roof color selections can shave 60+ days off hybrid order fulfilment.',
+      'Active 2026 deposits automatically roll to 2027 allocations during bi-weekly dealer cycles without queue penalties.',
     ],
     faqs: [
       {
@@ -349,7 +350,11 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
       },
       {
         question: 'Why is the Corolla Cross Hybrid harder to get than the gas model?',
-        answer: 'High fuel efficiency and compact crossover demand make the Hybrid exceptionally popular, while factory production allocation to Canada remains conservative.',
+        answer: 'High fuel efficiency and compact crossover demand make the Hybrid exceptionally popular, while factory production allocation to Canada from MTM Huntsville remains conservative.',
+      },
+      {
+        question: 'Is the Corolla Cross Hybrid worth the wait over a RAV4 Hybrid?',
+        answer: 'The Ontario-built RAV4 Hybrid delivers 2 to 4 months faster and provides 74% more cargo volume (37.5 vs. 21.5 cu. ft.). For sub-$37k budgets and tight urban parking, the Corolla Cross Hybrid is the superior value.',
       },
     ],
   },

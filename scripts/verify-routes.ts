@@ -30,6 +30,7 @@ const STATIC_NAVIGATION_ROUTES = [
   '/winter-prep',
   '/tires',
   '/guides',
+  '/guides/toyota-corolla-cross-vs-rav4-hybrid',
   '/guides/ev-charging',
   '/guides/grand-highlander-mods',
   '/guides/land-cruiser-mods',
@@ -77,6 +78,8 @@ const CALCULATOR_MODEL_ROUTES = [
   'camry-hybrid',
   'prius',
   'prius-hybrid',
+  'corolla-cross',
+  'corolla-cross-hybrid',
   'crown-signia',
 ];
 

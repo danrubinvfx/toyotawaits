@@ -118,6 +118,34 @@ export default async function ModelPage({ params }: RouteProps) {
         </div>
       </section>
 
+      {/* Corolla Cross vs RAV4 Comparison Guide Callout Banner */}
+      {(model.slug === 'corolla-cross' || model.slug === 'rav4') && (
+        <section className="container mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-rose-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 sm:p-8 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  {model.slug === 'corolla-cross' ? 'Cross-Shopping Shootout' : 'Downsizing Comparison'}
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  {model.slug === 'corolla-cross'
+                    ? 'Debating between Corolla Cross and RAV4?'
+                    : 'Considering downsizing to save $6,000?'}
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Compare real cargo dimensions (21.5 vs. 37.5 cu. ft.), rear child seat fitment, Canadian MSRP deltas, and Ontario vs. Alabama allocation queues.
+                </p>
+              </div>
+              <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shrink-0 shadow-sm">
+                <Link href="/guides/toyota-corolla-cross-vs-rav4-hybrid" className="gap-2">
+                  <span>Compare Corolla Cross vs. RAV4 &rarr;</span>
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Sienna Trailer Hitch Guide Callout Banner */}
       {model.slug === 'sienna' && (
         <section className="container mx-auto max-w-6xl px-4 sm:px-6">
@@ -209,7 +237,9 @@ export default async function ModelPage({ params }: RouteProps) {
             <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shrink-0 shadow-sm min-h-[44px] px-5">
               <Link
                 href={
-                  model.slug === 'rav4'
+                  model.slug === 'corolla-cross'
+                    ? '/calculator/corolla-cross-hybrid'
+                    : model.slug === 'rav4'
                     ? '/calculator/rav4-hybrid'
                     : model.slug === 'sienna'
                     ? '/calculator/sienna-hybrid'

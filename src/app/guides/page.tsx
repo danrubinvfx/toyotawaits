@@ -53,6 +53,21 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'toyota-corolla-cross-vs-rav4-hybrid',
+    title: 'Toyota Corolla Cross vs. RAV4 Hybrid: Sizing, Price & Canadian Wait Times',
+    tagline: 'Cargo dimensions (21.5 vs. 37.5 cu. ft.), rear child seat space, Canadian MSRP deltas, and Ontario vs. Alabama allocation queues.',
+    badge: 'Compact Crossover Shootout',
+    model: 'Corolla Cross vs. RAV4',
+    tags: ['Toyota', 'Corolla Cross', 'RAV4', 'Hybrid', 'Sizing', 'Wait Times', 'Canada'],
+    highlights: [
+      'Dimensions & Cargo: 175.6" length (21.5 cu. ft.) vs 180.9" RAV4 (37.5 cu. ft.) — RAV4 offers +74% cargo volume',
+      'Child Seat Clearance: 32.0" rear legroom in Corolla Cross vs 37.8" in RAV4 (+5.8" for rear-facing seats)',
+      'Pricing & Efficiency: CC Hybrid from ~$34,500 CAD (5.3 L/100 km) vs RAV4 Hybrid from ~$38,950 CAD (6.0 L/100 km)',
+      'Allocation Wait Times: MTM Alabama CC quotas (6–10 mo) vs TMMC Ontario RAV4 production (3–7 mo)',
+    ],
+    href: '/guides/toyota-corolla-cross-vs-rav4-hybrid',
+  },
+  {
     slug: 'toyota-grand-highlander-vs-lexus-tx',
     title: 'Toyota Grand Highlander vs. Lexus TX: Space, Wait Times & Luxury Tax',
     tagline: 'TNGA-K platform packaging, adult third-row legroom, acoustic glass & materials, Canadian luxury tax math, and allocation timelines.',

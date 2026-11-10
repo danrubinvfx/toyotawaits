@@ -25,6 +25,9 @@ export function modelSlugToPresetId(modelOrSlug?: string | null): string | null 
   if (s.includes('rx-450h') || s.includes('rx-450') || s.includes('rx-phev')) return 'lexus-rx-450h-plus';
   if (s.includes('rx-350h') || s.includes('rx-350') || s === 'rx' || s === 'lexus-rx' || s.startsWith('lexus-rx')) return 'lexus-rx-350h';
 
+  if (s.includes('corolla-cross') || s.includes('corollacross')) {
+    return s.includes('gas') ? 'corolla-cross-gas' : 'corolla-cross-hybrid';
+  }
   if (s.includes('sienna')) return '2025-toyota-sienna-hybrid';
   if (s.includes('grand-highlander') || s.includes('grand_highlander') || s.includes('grand highlander')) {
     return '2025-toyota-grand-highlander-hybrid';
@@ -44,6 +47,7 @@ export function presetIdToModelSlug(presetId?: string): string {
   if (clean.includes('tx')) return 'lexus-tx';
   if (clean.includes('nx')) return 'lexus-nx';
   if (clean.includes('rx')) return 'lexus-rx';
+  if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
   if (clean.includes('sienna')) return 'sienna';
   if (clean.includes('grand-highlander')) return 'grand-highlander';
   if (clean.includes('camry')) return 'camry';
@@ -64,6 +68,8 @@ export function presetIdToModelName(presetId?: string): string {
   if (clean.includes('nx-350h') || clean.includes('nx')) return 'Lexus NX 350h';
   if (clean.includes('rx-450h')) return 'Lexus RX 450h+';
   if (clean.includes('rx-350h') || clean.includes('rx')) return 'Lexus RX 350h';
+  if (clean.includes('corolla-cross-hybrid') || clean.includes('corollacross-hybrid')) return 'Corolla Cross Hybrid';
+  if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'Corolla Cross';
   if (clean.includes('sienna')) return 'Sienna';
   if (clean.includes('grand-highlander')) return 'Grand Highlander';
   if (clean.includes('camry')) return 'Camry';
@@ -89,6 +95,7 @@ export function toCanonicalWaitTimeSlug(slugOrPreset?: string | null): string {
   if (clean.includes('grand-highlander') || clean.includes('grandhighlander')) return 'grand-highlander';
   if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
   if (clean.includes('land-cruiser') || clean.includes('landcruiser')) return 'land-cruiser';
+  if (clean.includes('corolla-cross') || clean.includes('corollacross')) return 'corolla-cross';
   if (clean.includes('sienna')) return 'sienna';
   if (clean.includes('highlander')) return 'highlander';
   if (clean.includes('rav4')) return 'rav4';

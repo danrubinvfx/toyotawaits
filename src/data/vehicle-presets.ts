@@ -124,6 +124,114 @@ export const VEHICLE_PRESETS: VehiclePresetRecord[] = [
   },
 
   // -------------------------------------------------------------------------
+  // 2026 Toyota Corolla Cross Models (Huntsville MTM Allocation)
+  // -------------------------------------------------------------------------
+  {
+    id: 'corolla-cross-gas',
+    name: '2026 Toyota Corolla Cross AWD',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 90,
+    identity: {
+      make: 'Toyota',
+      model: 'Corolla Cross',
+      year: 2026,
+      trim: 'L AWD',
+      powertrain: 'GAS',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Corolla Cross',
+        year: 2026,
+        trim: 'L AWD',
+        powertrain: 'GAS',
+      },
+      combinedL100km: 7.4,
+      cityL100km: 8.1,
+      highwayL100km: 6.9,
+      combinedMpg: 32,
+      cityMpg: 29,
+      highwayMpg: 34,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Corolla Cross',
+        year: 2026,
+        trim: 'L AWD',
+        powertrain: 'GAS',
+      },
+      msrpCad: 28500,
+      msrpUsd: 24500,
+      freightPdiCad: 1930,
+      dealerAdminFeeCad: 499,
+      estimatedDeliveryDays: 90,
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-corolla-cross-pricing',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    notes: 'Official Natural Resources Canada (NRCan) ratings for the 2.0L Dynamic Force 4-cylinder gas engine with AWD.',
+  },
+  {
+    id: 'corolla-cross-hybrid',
+    name: '2026 Toyota Corolla Cross Hybrid AWD',
+    category: 'NEW_VEHICLE',
+    isTradeInArchetype: false,
+    typicalWaitDays: 270,
+    identity: {
+      make: 'Toyota',
+      model: 'Corolla Cross Hybrid',
+      year: 2026,
+      trim: 'SE AWD',
+      powertrain: 'HEV',
+    },
+    consumption: {
+      identity: {
+        make: 'Toyota',
+        model: 'Corolla Cross Hybrid',
+        year: 2026,
+        trim: 'SE AWD',
+        powertrain: 'HEV',
+      },
+      combinedL100km: 5.3,
+      cityL100km: 5.2,
+      highwayL100km: 5.5,
+      combinedMpg: 44,
+      cityMpg: 45,
+      highwayMpg: 43,
+      sourceUrl: 'https://natural-resources.canada.ca/energy-efficiency/transportation-alternative-fuels/personal-vehicles/fuel-consumption-ratings',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    pricing: {
+      identity: {
+        make: 'Toyota',
+        model: 'Corolla Cross Hybrid',
+        year: 2026,
+        trim: 'SE AWD',
+        powertrain: 'HEV',
+      },
+      msrpCad: 34500,
+      msrpUsd: 28500,
+      freightPdiCad: 1930,
+      dealerAdminFeeCad: 499,
+      estimatedDeliveryDays: 270,
+      sourceUrl: 'https://media.toyota.ca/en/releases/2026-corolla-cross-hybrid-pricing',
+      verifiedAtDate: VERIFIED_DATE,
+      datasetVersion: DATASET_VERSION,
+      status: 'VERIFIED',
+    },
+    notes: 'Official Natural Resources Canada (NRCan) ratings for the 5th-Gen Hybrid Synergy Drive with electronic All-Wheel Drive (e-AWD).',
+  },
+
+  // -------------------------------------------------------------------------
   // 2025 Verified Production Toyota Models
   // -------------------------------------------------------------------------
   {
@@ -902,9 +1010,27 @@ export const VEHICLE_PRESETS: VehiclePresetRecord[] = [
 export const NEW_VEHICLE_PRESETS = VEHICLE_PRESETS.filter((p) => !p.isTradeInArchetype);
 export const TRADE_IN_ARCHETYPES = VEHICLE_PRESETS.filter((p) => p.isTradeInArchetype);
 
+export const COROLLA_CROSS_GAS_PRESET = VEHICLE_PRESETS.find((p) => p.id === 'corolla-cross-gas')!;
+export const COROLLA_CROSS_HYBRID_PRESET = VEHICLE_PRESETS.find((p) => p.id === 'corolla-cross-hybrid')!;
+
 export function getVehiclePresetById(id: string): VehiclePresetRecord | undefined {
   if (!id) return undefined;
   const clean = id.toLowerCase().trim();
+  if (
+    clean === 'corolla-cross' ||
+    clean === 'corolla-cross-hybrid' ||
+    clean === '2026-toyota-corolla-cross-hybrid' ||
+    clean === '2026-corolla-cross-hybrid'
+  ) {
+    return COROLLA_CROSS_HYBRID_PRESET;
+  }
+  if (
+    clean === 'corolla-cross-gas' ||
+    clean === '2026-toyota-corolla-cross-gas' ||
+    clean === '2026-corolla-cross-gas'
+  ) {
+    return COROLLA_CROSS_GAS_PRESET;
+  }
   return (
     VEHICLE_PRESETS.find((p) => p.id === id || p.id.toLowerCase() === clean) ||
     VEHICLE_PRESETS.find(

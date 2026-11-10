@@ -150,6 +150,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/guides/toyota-corolla-cross-vs-rav4-hybrid`} className="hover:text-amber-500 transition-colors">
+                  Corolla Cross vs. RAV4 Hybrid Guide
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/toyota-grand-highlander-vs-lexus-tx`} className="hover:text-amber-500 transition-colors">
                   Grand Highlander vs. Lexus TX Guide
                 </Link>
