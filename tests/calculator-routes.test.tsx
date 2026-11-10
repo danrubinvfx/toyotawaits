@@ -39,10 +39,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   describe('1. Programmatic Model Routes', () => {
     it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
       expect(rav4Metadata.title).toBe(
-        'Is the Toyota RAV4 Hybrid Worth the Wait? (2026 Payback & Fuel Calculator) | ToyotaWaits'
+        'Is the Toyota RAV4 Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits'
       );
       expect(rav4Metadata.description).toBe(
-        'Calculate whether waiting 10-14 months for a Toyota Hybrid pays off. Real NRCan fuel savings vs gas models, break-even timelines, and waiting cost.'
+        'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
       );
       expect(rav4Metadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/rav4-hybrid'
@@ -65,10 +65,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
 
     it('verifies Sienna Hybrid page metadata, canonical, and static table', () => {
       expect(siennaMetadata.title).toBe(
-        'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits'
+        'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits'
       );
       expect(siennaMetadata.description).toBe(
-        'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.'
+        'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
       );
       expect(siennaMetadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/sienna-hybrid'
