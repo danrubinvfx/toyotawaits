@@ -17,7 +17,10 @@ export const DEFAULT_US_AFFILIATE_TAG = US_ASSOCIATE_TAG;
 export function shouldStripAffiliateTags(): boolean {
   if (typeof window === 'undefined') return false;
   try {
-    return window.localStorage.getItem('tw_admin_opt_out') === 'true';
+    return (
+      window.localStorage.getItem('tw_admin_opt_out') === 'true' ||
+      window.localStorage.getItem('tw_ignore_analytics') === 'true'
+    );
   } catch {
     return false;
   }

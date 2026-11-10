@@ -7,6 +7,9 @@ import {
   isRebateEligibleProvince,
 } from '@/lib/data/vehicles';
 
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -19,13 +22,34 @@ export async function GET(request: NextRequest) {
     const powertrain = getPowertrainBySlug(modelSlug, powertrainSlug);
     const province = getProvinceByCode(provinceCode);
 
-    const modelName = model ? `Toyota ${model.name}` : 'Toyota Vehicle';
-    const powertrainName = powertrain ? powertrain.name : 'Hybrid';
+    const isLexus = model?.make === 'Lexus' || modelSlug.startsWith('lexus-');
+
+    const modelName = model
+      ? isLexus
+        ? model.name
+        : `Toyota ${model.name}`
+      : isLexus
+      ? 'Lexus Vehicle'
+      : 'Toyota Vehicle';
+
+    const powertrainName = powertrain
+      ? powertrain.name
+      : isLexus
+      ? 'Executive'
+      : 'Hybrid';
     const provinceName = province ? province.name : provinceCode;
 
     // Calculate realistic empirical median wait days for card
     let medianDays = 265;
-    if (modelSlug === 'sienna') {
+    if (modelSlug === 'lexus-gx550') {
+      medianDays = 360;
+    } else if (modelSlug === 'lexus-tx') {
+      medianDays = 240;
+    } else if (modelSlug === 'lexus-nx') {
+      medianDays = 210;
+    } else if (modelSlug === 'lexus-rx') {
+      medianDays = 180;
+    } else if (modelSlug === 'sienna') {
       medianDays = 520;
     } else if (modelSlug === 'rav4' && powertrainSlug === 'phev') {
       medianDays = provinceCode === 'BC' || provinceCode === 'QC' ? 412 : 380;
@@ -43,6 +67,18 @@ export async function GET(request: NextRequest) {
 
     const months = (medianDays / 30.4).toFixed(1);
     const hasRebate = isRebateEligibleProvince(provinceCode);
+
+    const accentColor = isLexus ? '#f59e0b' : '#eb0a1e';
+    const brandBadgeColor = isLexus ? '#d97706' : '#eb0a1e';
+    const brandTitle = isLexus ? 'ToyotaWaits / Lexus' : 'ToyotaWaits';
+    const subtitle = isLexus
+      ? 'Canadian Luxury Backlog & Allocation Tracker'
+      : 'Community Wait Time & Allocation Tracker';
+    const tagPill = isLexus
+      ? '⚡ Verified Lexus Backlog'
+      : hasRebate
+      ? '⚡ Provincial ZEV Rebate'
+      : '🍁 Canada Tracked';
 
     return new ImageResponse(
       (
@@ -71,7 +107,7 @@ export async function GET(request: NextRequest) {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <div
                 style={{
-                  backgroundColor: '#eb0a1e',
+                  backgroundColor: brandBadgeColor,
                   color: '#ffffff',
                   padding: '8px 16px',
                   borderRadius: '8px',
@@ -81,7 +117,7 @@ export async function GET(request: NextRequest) {
                   alignItems: 'center',
                 }}
               >
-                ToyotaWaits
+                {brandTitle}
               </div>
               <span
                 style={{
@@ -92,7 +128,7 @@ export async function GET(request: NextRequest) {
                   textTransform: 'uppercase',
                 }}
               >
-                Community Wait Time &amp; Allocation Tracker
+                {subtitle}
               </span>
             </div>
 
@@ -100,15 +136,16 @@ export async function GET(request: NextRequest) {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                backgroundColor: '#18181b',
-                border: '1px solid #27272a',
+                backgroundColor: isLexus ? 'rgba(245, 158, 11, 0.15)' : '#18181b',
+                border: isLexus ? '1px solid rgba(245, 158, 11, 0.4)' : '1px solid #27272a',
                 borderRadius: '30px',
                 padding: '6px 18px',
                 fontSize: '16px',
-                color: '#e4e4e7',
+                color: isLexus ? '#fbbf24' : '#e4e4e7',
+                fontWeight: 600,
               }}
             >
-              {hasRebate ? '⚡ Provincial ZEV Rebate' : '🍁 Canada Tracked'}
+              {tagPill}
             </div>
           </div>
 
@@ -118,7 +155,7 @@ export async function GET(request: NextRequest) {
               style={{
                 display: 'flex',
                 fontSize: '26px',
-                color: '#eb0a1e',
+                color: accentColor,
                 fontWeight: 'bold',
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
@@ -147,7 +184,7 @@ export async function GET(request: NextRequest) {
                 display: 'flex',
                 alignItems: 'center',
                 backgroundColor: '#18181b',
-                border: '2px solid #eb0a1e',
+                border: `2px solid ${accentColor}`,
                 borderRadius: '16px',
                 padding: '24px 36px',
                 marginTop: '10px',
@@ -170,7 +207,7 @@ export async function GET(request: NextRequest) {
                     style={{
                       fontSize: '64px',
                       fontWeight: 900,
-                      color: '#eb0a1e',
+                      color: accentColor,
                     }}
                   >
                     {`${medianDays} Days`}
@@ -223,7 +260,7 @@ export async function GET(request: NextRequest) {
             }}
           >
             <span>Live Community Submissions • Verified Vehicle Timelines</span>
-            <span style={{ color: '#eb0a1e', fontWeight: 600 }}>ToyotaWaits</span>
+            <span style={{ color: accentColor, fontWeight: 600 }}>{brandTitle}</span>
           </div>
         </div>
       ),

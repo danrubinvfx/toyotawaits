@@ -46,6 +46,9 @@ const CATEGORY_META: Record<
 export function getDayOneProtectionGear(modelName?: string | null): AccessoryItem[] {
   const cleanModel = modelName ? modelName.trim() : 'Toyota';
   const lower = cleanModel.toLowerCase();
+  const isLexus = lower.includes('lexus') || lower.includes('gx') || lower.includes('tx') || lower.includes('nx') || lower.includes('rx');
+  const brandPrefix = isLexus ? 'Lexus' : 'Toyota';
+  const displayModel = cleanModel.replace(/^(Toyota|Lexus)\s+/i, '');
 
   const consoleTrayImg = lower.includes('sienna')
     ? '/assets/gear/muslogy-sienna-organizer.webp'
@@ -60,10 +63,10 @@ export function getDayOneProtectionGear(modelName?: string | null): AccessoryIte
       category: 'protection',
       brand: 'TuxMat',
       description: 'Laser-measured maximum-coverage all-weather floor liners engineered for Canadian winter snow and slush.',
-      estimatedPriceCad: '$240 – $310 CAD',
-      searchQuery: `TuxMat Toyota ${cleanModel} custom all weather floor mats liners`,
+      estimatedPriceCad: isLexus ? '$280 – $340 CAD' : '$240 – $310 CAD',
+      searchQuery: `TuxMat ${brandPrefix} ${displayModel} custom all weather floor mats liners`,
       url: buildAmazonAffiliateUrl({
-        query: `TuxMat Toyota ${cleanModel} custom all weather floor mats liners`,
+        query: `TuxMat ${brandPrefix} ${displayModel} custom all weather floor mats liners`,
         market: 'CA',
       }),
       badge: 'Day-One Essential',
@@ -77,10 +80,10 @@ export function getDayOneProtectionGear(modelName?: string | null): AccessoryIte
       category: 'protection',
       brand: 'Spigen',
       description: '9H tempered glass screen protector with oleophobic coating to prevent fingerprints and scratches.',
-      estimatedPriceCad: '$24 – $35 CAD',
-      searchQuery: `Spigen tempered glass screen protector Toyota ${cleanModel}`,
+      estimatedPriceCad: isLexus ? '$32 – $38 CAD' : '$240 – $35 CAD',
+      searchQuery: `Spigen tempered glass screen protector ${brandPrefix} ${displayModel}`,
       url: buildAmazonAffiliateUrl({
-        query: `Spigen tempered glass screen protector Toyota ${cleanModel}`,
+        query: `Spigen tempered glass screen protector ${brandPrefix} ${displayModel}`,
         market: 'CA',
       }),
       badge: 'Screen Glass',
@@ -90,14 +93,14 @@ export function getDayOneProtectionGear(modelName?: string | null): AccessoryIte
     },
     {
       id: 'muslogy-console-tray',
-      title: `Muslogy Center Console Organizer Tray (${cleanModel})`,
+      title: `${isLexus ? 'Custom Fit' : 'Muslogy'} Center Console Organizer Tray (${cleanModel})`,
       category: 'comfort',
-      brand: 'Muslogy',
+      brand: isLexus ? 'Lexus Gear' : 'Muslogy',
       description: 'Precision drop-in dual-tier console divider tray with textured non-slip silicone pads.',
       estimatedPriceCad: '$22 – $32 CAD',
-      searchQuery: `Muslogy center console organizer tray Toyota ${cleanModel}`,
+      searchQuery: `Center console organizer tray ${brandPrefix} ${displayModel}`,
       url: buildAmazonAffiliateUrl({
-        query: `Muslogy center console organizer tray Toyota ${cleanModel}`,
+        query: `Center console organizer tray ${brandPrefix} ${displayModel}`,
         market: 'CA',
       }),
       badge: 'Console Tray',

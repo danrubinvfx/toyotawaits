@@ -25,6 +25,7 @@ import {
   Compass,
   BookOpen,
   ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { KofiHeaderPill } from '@/components/common/kofi-button';
 import { cn } from '@/lib/utils';
@@ -58,8 +59,10 @@ export function Header({ initialRegion }: HeaderProps = {}) {
   const setMobileMenuOpen = setIsOpen;
   const [desktopGuidesOpen, setDesktopGuidesOpen] = useState(false);
   const [desktopToolsOpen, setDesktopToolsOpen] = useState(false);
+  const [desktopModelsOpen, setDesktopModelsOpen] = useState(false);
   const guidesDropdownRef = React.useRef<HTMLDivElement>(null);
   const toolsDropdownRef = React.useRef<HTMLDivElement>(null);
+  const modelsDropdownRef = React.useRef<HTMLDivElement>(null);
   const [submission, setSubmission] = useState<HeaderSubmission | null>(null);
   const pathname = usePathname();
 
@@ -72,12 +75,16 @@ export function Header({ initialRegion }: HeaderProps = {}) {
       if (toolsDropdownRef.current && !toolsDropdownRef.current.contains(target)) {
         setDesktopToolsOpen(false);
       }
+      if (modelsDropdownRef.current && !modelsDropdownRef.current.contains(target)) {
+        setDesktopModelsOpen(false);
+      }
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setDesktopGuidesOpen(false);
         setDesktopToolsOpen(false);
+        setDesktopModelsOpen(false);
       }
     };
 
@@ -195,6 +202,152 @@ export function Header({ initialRegion }: HeaderProps = {}) {
             <Clock className="h-4 w-4 text-zinc-400" />
             <span>Wait Times</span>
           </Link>
+
+          {/* Models Dropdown */}
+          <div
+            ref={modelsDropdownRef}
+            className="relative"
+            onMouseEnter={() => setDesktopModelsOpen(true)}
+            onMouseLeave={() => setDesktopModelsOpen(false)}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setDesktopModelsOpen((prev) => !prev);
+                setDesktopGuidesOpen(false);
+                setDesktopToolsOpen(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setDesktopModelsOpen((prev) => !prev);
+                  setDesktopGuidesOpen(false);
+                  setDesktopToolsOpen(false);
+                }
+              }}
+              aria-expanded={desktopModelsOpen}
+              aria-haspopup="true"
+              className={cn(
+                'hover:text-amber-500 transition-colors flex items-center gap-1.5 py-1 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 rounded-md px-1',
+                (pathname.startsWith('/wait-times') || pathname.includes('lexus')) && 'text-amber-500 font-semibold'
+              )}
+            >
+              <Car className="h-4 w-4 text-zinc-400" />
+              <span>Models</span>
+              <ChevronDown className={cn('h-3.5 w-3.5 text-zinc-400 transition-transform duration-200', desktopModelsOpen && 'rotate-180')} />
+            </button>
+
+            {desktopModelsOpen && (
+              <div className="absolute top-full left-0 w-[440px] rounded-xl border border-zinc-200 dark:border-neutral-800 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-md p-3 shadow-2xl z-50 animate-in fade-in slide-in-from-top-1 duration-150 space-y-3">
+                {/* Toyota Models Section */}
+                <div>
+                  <div className="flex items-center justify-between pb-1.5 border-b border-zinc-100 dark:border-neutral-800">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 flex items-center gap-1.5">
+                      <Car className="h-3 w-3 text-red-500" />
+                      Toyota Models
+                    </span>
+                    <Link
+                      href="/#estimator"
+                      onClick={(e) => {
+                        setDesktopModelsOpen(false);
+                        handleAnchorClick(e, 'estimator');
+                      }}
+                      className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 hover:underline"
+                    >
+                      View All &rarr;
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 pt-1.5">
+                    {[
+                      { slug: 'rav4', name: 'RAV4' },
+                      { slug: 'sienna', name: 'Sienna' },
+                      { slug: 'grand-highlander', name: 'Grand Highlander' },
+                      { slug: 'land-cruiser', name: 'Land Cruiser' },
+                      { slug: 'tacoma', name: 'Tacoma' },
+                      { slug: 'prius', name: 'Prius' },
+                    ].map((m) => (
+                      <Link
+                        key={m.slug}
+                        href={`/wait-times/${m.slug}`}
+                        onClick={() => setDesktopModelsOpen(false)}
+                        className="px-2 py-1.5 rounded-md text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-neutral-800 hover:text-amber-500 transition-colors flex items-center justify-between"
+                      >
+                        <span className="truncate">{m.name}</span>
+                        <ChevronRight className="h-3 w-3 text-zinc-400 shrink-0" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Lexus Backlog Section */}
+                <div className="pt-2 border-t border-zinc-100 dark:border-neutral-800">
+                  <div className="flex items-center justify-between pb-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                      <Sparkles className="h-3 w-3 text-amber-500" />
+                      Lexus Backlog
+                    </span>
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                      Luxury Quota
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    <Link
+                      href="/wait-times/lexus-gx550"
+                      onClick={() => setDesktopModelsOpen(false)}
+                      className="p-2 rounded-lg border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 hover:border-amber-500/50 hover:bg-amber-50/60 dark:hover:bg-amber-950/40 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">GX 550</p>
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">Twin-Turbo V6 / Hybrid</p>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                      </div>
+                    </Link>
+                    <Link
+                      href="/wait-times/lexus-tx"
+                      onClick={() => setDesktopModelsOpen(false)}
+                      className="p-2 rounded-lg border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 hover:border-amber-500/50 hover:bg-amber-50/60 dark:hover:bg-amber-950/40 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">TX</p>
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">3-Row Family Crossover</p>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                      </div>
+                    </Link>
+                    <Link
+                      href="/wait-times/lexus-nx"
+                      onClick={() => setDesktopModelsOpen(false)}
+                      className="p-2 rounded-lg border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 hover:border-amber-500/50 hover:bg-amber-50/60 dark:hover:bg-amber-950/40 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">NX</p>
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">HEV &amp; 450h+ PHEV</p>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                      </div>
+                    </Link>
+                    <Link
+                      href="/wait-times/lexus-rx"
+                      onClick={() => setDesktopModelsOpen(false)}
+                      className="p-2 rounded-lg border border-amber-500/20 bg-amber-50/30 dark:bg-amber-950/20 hover:border-amber-500/50 hover:bg-amber-50/60 dark:hover:bg-amber-950/40 transition-all group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">RX</p>
+                          <p className="text-[10px] text-zinc-500 dark:text-zinc-400">HEV &amp; 450h+ PHEV</p>
+                        </div>
+                        <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                      </div>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* 2. Guides Dropdown */}
           <div
@@ -1215,6 +1368,45 @@ export function Header({ initialRegion }: HeaderProps = {}) {
                     <ChevronRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
                   </Link>
                 ))}
+              </div>
+
+              {/* Distinct Lexus Backlog Drawer Section */}
+              <div className="pt-2 border-t border-zinc-200 dark:border-neutral-800/80">
+                <div className="flex items-center justify-between px-1 pb-1.5">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 flex items-center gap-1.5">
+                    <Sparkles className="h-3 w-3 text-amber-500" />
+                    Lexus Backlog
+                  </span>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                    4 Models
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {[
+                    { slug: 'lexus-gx550', name: 'GX 550', desc: 'Twin-Turbo V6 / Hybrid' },
+                    { slug: 'lexus-tx', name: 'TX', desc: '3-Row Family Crossover' },
+                    { slug: 'lexus-nx', name: 'NX', desc: 'HEV & 450h+ PHEV' },
+                    { slug: 'lexus-rx', name: 'RX', desc: 'HEV & 450h+ PHEV' },
+                  ].map((lexus) => (
+                    <Link
+                      key={lexus.slug}
+                      href={`/wait-times/${lexus.slug}`}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        'flex flex-col justify-between p-2 rounded-lg border text-xs font-medium transition-all group',
+                        pathname === `/wait-times/${lexus.slug}`
+                          ? 'border-amber-500/50 bg-amber-500/10 text-amber-500 font-bold'
+                          : 'border-zinc-200 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/40 text-zinc-700 dark:text-zinc-300 hover:border-amber-500/40 hover:text-amber-500 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                      )}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-zinc-900 dark:text-zinc-100">{lexus.name}</span>
+                        <ChevronRight className="h-3 w-3 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+                      </div>
+                      <span className="text-[10px] text-zinc-500 dark:text-zinc-400 truncate">{lexus.desc}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
 

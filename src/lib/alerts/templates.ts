@@ -36,6 +36,7 @@ export interface DropAlertEnrichment {
 }
 
 export interface AllocationDropAlertVehicle {
+  make?: string | null;
   vin?: string | null;
   provisionalId?: string | null;
   model: string;
@@ -55,6 +56,7 @@ export interface AllocationDropAlertVehicle {
 }
 
 export interface AllocationDropAlertEmailInput {
+  make?: string | null;
   recipientEmail?: string;
   model?: string;
   modelSlug?: string | null;
@@ -354,6 +356,46 @@ export function getCuratedGearForDropAlert(
     ];
   }
 
+  if (slug.startsWith('lexus-') || slug === 'lexus') {
+    const dashcamQuery =
+      slug === 'lexus-gx550'
+        ? 'Fitcamx dash cam Lexus GX 550 4K OEM'
+        : slug === 'lexus-tx'
+        ? 'Fitcamx dash cam Lexus TX 350 500h 4K'
+        : slug === 'lexus-nx'
+        ? 'Fitcamx dash cam Lexus NX 2022-2026 4K OEM'
+        : 'Fitcamx dash cam Lexus RX 350 350h 500h 4K OEM';
+
+    const linersQuery =
+      slug === 'lexus-gx550'
+        ? 'TuxMat custom floor mats Lexus GX 550'
+        : slug === 'lexus-tx'
+        ? 'TuxMat custom floor mats Lexus TX'
+        : slug === 'lexus-nx'
+        ? 'TuxMat custom floor mats Lexus NX'
+        : 'TuxMat custom floor mats Lexus RX';
+
+    return [
+      {
+        id: `fitcamx-${slug}`,
+        title: 'FitcamX 4K OEM Dashcam',
+        description:
+          'Factory-integrated rearview mirror cover replacement with 4K recording and zero dangling wires.',
+        searchQuery: dashcamQuery,
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
+        buttonLabel: 'Check on Amazon ↗',
+      },
+      {
+        id: `tuxmat-${slug}`,
+        title: 'TuxMat High-Wall Liners',
+        description:
+          'Laser-measured luxury high-wall floor protection engineered for severe Canadian slush and snow.',
+        searchQuery: linersQuery,
+        url: buildZero404AmazonSearchUrl(linersQuery, market),
+        buttonLabel: 'Check on Amazon ↗',
+      },
+    ];
+  }
   // Fallback for other Toyota models (Tacoma, Corolla Cross, Land Cruiser, Sequoia, Highlander, etc.)
   const faradayQuery = 'TICONN Faraday bag key fob signal protector pouch';
   const inflatorQuery = 'portable cordless tire inflator 150 psi';
@@ -399,15 +441,29 @@ export function buildDropAlertEnrichment(params: {
   const gearPicks = getCuratedGearForDropAlert(modelSlug, market);
 
   const isSienna = modelSlug === 'sienna';
-  const guideUrl = isSienna
-    ? SIENNA_HITCH_GUIDE_URL
-    : `https://www.toyotawaits.ca/wait-times/${modelSlug}`;
-  const guideTitle = isSienna
-    ? 'Sienna Trailer Hitch & Bike Rack Guide'
-    : `${modelDisplay} Wait Times & Delivery Checklist Hub`;
-  const guideDescription = isSienna
-    ? 'Planning to carry bikes or cargo? Check our complete Sienna 2-inch hitch receiver, ground clearance, and kick-sensor guide.'
-    : `Review live Canadian wait-time benchmarks, provincial allocation trends, and the delivery checklist for your ${modelDisplay}.`;
+  const isLexus = modelSlug.startsWith('lexus-') || modelSlug === 'lexus';
+  let guideUrl = `https://www.toyotawaits.ca/wait-times/${modelSlug}`;
+  let guideTitle = `${modelDisplay} Wait Times & Delivery Checklist Hub`;
+  let guideDescription = `Review live Canadian wait-time benchmarks, provincial allocation trends, and the delivery checklist for your ${modelDisplay}.`;
+
+  if (modelSlug === 'lexus-gx550') {
+    guideUrl = 'https://www.toyotawaits.ca/guides/lexus-gx550-must-have-accessories';
+    guideTitle = 'Lexus GX 550 Delivery Prep & Armor Guide';
+    guideDescription = 'Essential rock-sliders, TuxMat liners, ceramic protection, and 4K dashcam installation for your GX 550.';
+  } else if (modelSlug === 'lexus-tx') {
+    guideUrl = 'https://www.toyotawaits.ca/guides/lexus-tx-delivery-prep-gear';
+    guideTitle = 'Lexus TX Delivery Day Prep & Protection Guide';
+    guideDescription = 'Complete guide for 3-row cargo trays, 14-inch screen protectors, and day-one essentials for the Lexus TX.';
+  } else if (modelSlug === 'lexus-nx' || modelSlug === 'lexus-rx') {
+    guideUrl = 'https://www.toyotawaits.ca/guides/lexus-phev-home-charging-setup';
+    guideTitle = 'Lexus PHEV & Hybrid Delivery Day Prep Guide';
+    guideDescription = 'Level 2 240V charging specs, winter range optimization, and luxury interior protection for NX & RX.';
+  } else if (isSienna) {
+    guideUrl = SIENNA_HITCH_GUIDE_URL;
+    guideTitle = 'Sienna Trailer Hitch & Bike Rack Guide';
+    guideDescription = 'Planning to carry bikes or cargo? Check our complete Sienna 2-inch hitch receiver, ground clearance, and kick-sensor guide.';
+  }
+  const guideCtaText = isLexus ? 'Read the Delivery Day Prep Guide &rarr;' : `${guideTitle} &rarr;`;
 
   const htmlSection = `
     <!-- Calculator CTA Callout Box -->
@@ -460,7 +516,7 @@ export function buildDropAlertEnrichment(params: {
     <!-- Model Guide / Hitch Guide Cross-Link -->
     <div style="margin-top: 20px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 18px;">
       <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #60a5fa; margin-bottom: 4px;">
-        📘 Buyer Guide &amp; Delivery Checklist
+        📘 ${isLexus ? 'Lexus Delivery Day Prep Guide' : 'Buyer Guide &amp; Delivery Checklist'}
       </div>
       <div style="font-size: 14px; font-weight: 700; color: #fafafa; margin-bottom: 4px;">
         ${guideTitle}
@@ -468,8 +524,8 @@ export function buildDropAlertEnrichment(params: {
       <p style="margin: 0 0 10px 0; font-size: 12px; color: #a1a1aa; line-height: 1.5;">
         ${guideDescription}
       </p>
-      <a href="${guideUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 13px; font-weight: 700; color: #60a5fa; text-decoration: underline;">
-        ${guideTitle} &rarr;
+      <a href="${guideUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 10px 16px; background-color: #27272a; border: 1px solid #3f3f46; color: #60a5fa; font-weight: 700; font-size: 13px; border-radius: 6px; text-decoration: none;">
+        ${guideCtaText}
       </a>
     </div>
   `.trim();
@@ -693,8 +749,27 @@ export function generateAllocationDropAlertEmail(
       ? `https://www.toyotawaits.ca/api/alerts/unsubscribe?token=${encodeURIComponent(unsubToken)}`
       : 'https://www.toyotawaits.ca/api/alerts/unsubscribe');
 
+  const isLexusAllocation =
+    input.make === 'Lexus' ||
+    enrichment.modelSlug.startsWith('lexus-') ||
+    vehicles.some(
+      (v) =>
+        v.make === 'Lexus' ||
+        (typeof v.model === 'string' && v.model.toLowerCase().includes('lexus'))
+    );
+
   let subject: string;
-  if (vehicles.length === 1) {
+  if (isLexusAllocation) {
+    if (vehicles.length === 1) {
+      const v = vehicles[0];
+      const yearStr = v.modelYear ? `${v.modelYear} ` : '';
+      const cleanModel = (v.model || '').replace(/^Lexus\s+/i, '') || 'GX 550';
+      const trimStr = v.trim ? ` ${v.trim}` : '';
+      subject = `⚡ Lexus Allocation Match: ${yearStr}Lexus ${cleanModel}${trimStr} Available Now`.trim();
+    } else {
+      subject = `⚡ Lexus Allocation Match: ${vehicles.length} New Lexus Allocations Available Now`;
+    }
+  } else if (vehicles.length === 1) {
     const v = vehicles[0];
     const trimStr = v.trim ? ` (${v.trim})` : '';
     subject = `Allocation Alert: ${v.model}${trimStr} Observed (${region})`;
@@ -792,7 +867,7 @@ ${priceFormatted ? `Pricing: ${priceFormatted}\n` : ''}Dealer & Location: 🔒 L
     .join('\n\n');
 
   const text = `
-⚡ ALLOCATION RADAR: ${region}
+⚡ ${isLexusAllocation ? 'TOYOTAWAITS / LEXUS ALLOCATION RADAR' : 'ALLOCATION RADAR'}: ${region}
 ${matchSummary}
 Prepping for: ${targetModelName}
 Pipeline Stage: ${pipelineStage}
@@ -830,7 +905,7 @@ ${AMAZON_ASSOCIATES_DISCLOSURE}
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
         <tr>
           <td>
-            <span style="font-size: 18px; font-weight: 800; color: #ffffff;">ToyotaWaits.ca 🍁</span>
+            <span style="font-size: 18px; font-weight: 800; color: #ffffff;">${isLexusAllocation ? 'ToyotaWaits / Lexus Allocation Radar 🍁' : 'ToyotaWaits.ca 🍁'}</span>
           </td>
           <td style="text-align: right;">
             <span style="display: inline-block; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 700; background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); text-transform: uppercase; letter-spacing: 0.5px;">

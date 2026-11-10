@@ -49,6 +49,10 @@ interface HeroAccessory {
 
 function resolveEstimatedMonths(modelName: string): number {
   const norm = modelName.toLowerCase();
+  if (norm.includes('gx550') || norm.includes('gx 550')) return 12;
+  if (norm.includes('tx')) return 8;
+  if (norm.includes('nx')) return 7;
+  if (norm.includes('rx')) return 6;
   if (norm.includes('sienna')) return 14;
   if (norm.includes('rav4')) return 12;
   if (norm.includes('grand highlander') || norm.includes('grand-highlander')) return 10;
@@ -61,6 +65,129 @@ function resolveEstimatedMonths(modelName: string): number {
 
 function getHeroAccessories(modelName: string): HeroAccessory[] {
   const norm = (modelName || '').toLowerCase().trim();
+
+  if (norm.includes('gx') || norm.includes('gx550') || norm.includes('gx 550')) {
+    return [
+      {
+        id: 'lexus-gx550-tuxmat',
+        title: 'TuxMat High-Wall All-Weather Liners',
+        category: 'protection',
+        brand: 'TuxMat',
+        destinationType: 'amazon',
+        description: 'Maximum-coverage laser-measured all-weather liners protecting footwells and dead-pedal from road salt.',
+        estimatedPriceCad: '$280 – $340 CAD',
+        searchQuery: 'Lexus GX 550 all weather floor mats TuxMat',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: 'lexus-fitcamx',
+        title: 'FitcamX 4K OEM Integrated Dashcam',
+        category: 'tech',
+        brand: 'FitcamX',
+        destinationType: 'amazon',
+        description: 'OEM-integrated rearview mirror power tap with zero visible wiring and factory appearance.',
+        estimatedPriceCad: '$230 – $280 CAD',
+        searchQuery: 'Fitcamx dash cam Lexus RX NX TX GX OEM 4K',
+        imageUrl: '/assets/gear/fitcamx-rav4.webp',
+        fallbackIcon: 'camera',
+      },
+      {
+        id: 'lexus-14in-spigen',
+        title: 'Spigen GlasTR 14-inch Screen Protector',
+        category: 'protection',
+        brand: 'Spigen',
+        destinationType: 'amazon',
+        description: 'Matte 9H oleophobic tempered glass eliminating fingerprint glare on the 14-inch Lexus Interface.',
+        estimatedPriceCad: '$32 – $38 CAD',
+        searchQuery: 'Spigen 14 inch screen protector Lexus TX GX NX',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'layout-grid',
+      },
+    ];
+  }
+
+  if (norm.includes('tx')) {
+    return [
+      {
+        id: 'lexus-tx-3row-liners',
+        title: '3-Row High-Wall All-Weather Floor Liners',
+        category: 'protection',
+        brand: 'TuxMat',
+        destinationType: 'amazon',
+        description: 'Full 3-row high-wall TPE floor liners with pass-through aisle runner for family comfort.',
+        estimatedPriceCad: '$260 – $320 CAD',
+        searchQuery: 'Lexus TX 3-row all weather floor mats liners',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: 'lexus-14in-spigen-tx',
+        title: 'Spigen GlasTR 14-inch Screen Protector',
+        category: 'protection',
+        brand: 'Spigen',
+        destinationType: 'amazon',
+        description: 'Precision cut 9H tempered glass screen shield for the 14-inch Lexus Interface.',
+        estimatedPriceCad: '$32 – $38 CAD',
+        searchQuery: 'Spigen 14 inch screen protector Lexus TX GX NX',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'layout-grid',
+      },
+      {
+        id: 'lexus-faraday-pouch',
+        title: 'Dual-Layer Faraday Key Fob Shielding Pouches',
+        category: 'tech',
+        brand: 'Faraday',
+        destinationType: 'amazon',
+        description: 'Blocks smart-key RFID signals preventing residential relay theft attacks in urban centers.',
+        estimatedPriceCad: '$18 – $26 CAD',
+        searchQuery: 'Faraday bag key fob signal protector pouch',
+        imageUrl: '/assets/gear/fitcamx-rav4.webp',
+        fallbackIcon: 'camera',
+      },
+    ];
+  }
+
+  if (norm.includes('nx') || norm.includes('rx') || norm.includes('lexus')) {
+    return [
+      {
+        id: 'lexus-tuxmat-crossover',
+        title: 'TuxMat High-Wall All-Weather Liners',
+        category: 'protection',
+        brand: 'TuxMat',
+        destinationType: 'amazon',
+        description: 'Custom laser-fit high-wall winter protection keeping melted snow and salt off luxury carpet.',
+        estimatedPriceCad: '$260 – $310 CAD',
+        searchQuery: 'Lexus RX NX all weather floor mats TuxMat',
+        imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
+        fallbackIcon: 'layers',
+      },
+      {
+        id: 'lexus-fitcamx-crossover',
+        title: 'FitcamX 4K OEM Integrated Dashcam',
+        category: 'tech',
+        brand: 'FitcamX',
+        destinationType: 'amazon',
+        description: 'Discrete factory look OEM dashcam tapping into Lexus Safety System+ mirror shroud.',
+        estimatedPriceCad: '$230 – $280 CAD',
+        searchQuery: 'Fitcamx dash cam Lexus RX NX TX GX OEM 4K',
+        imageUrl: '/assets/gear/fitcamx-rav4.webp',
+        fallbackIcon: 'camera',
+      },
+      {
+        id: 'lexus-evse-grizzl-e',
+        title: 'Grizzl-E Classic 40A Heavy-Duty Level 2 EV Charger',
+        category: 'tech',
+        brand: 'Grizzl-E',
+        destinationType: 'amazon',
+        description: 'Canadian-made -40°C winter-rated 240V home charger replenishing NX/RX 450h+ in 2.5 hours.',
+        estimatedPriceCad: '$499 – $549 CAD',
+        searchQuery: 'Grizzl-E Level 2 EV charger 40A NEMA 14-50',
+        imageUrl: '/assets/gear/spigen-screen-protector.webp',
+        fallbackIcon: 'layout-grid',
+      },
+    ];
+  }
 
   if (norm.includes('rav4')) {
     return [

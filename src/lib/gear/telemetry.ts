@@ -42,3 +42,42 @@ export function trackAffiliateClick(payload: AffiliateClickEvent): void {
     // Silently ignore
   }
 }
+
+export interface CrossShopClickEvent {
+  source_model: string;
+  target_model: string;
+  timestamp?: string;
+}
+
+export function trackCrossShopClick(sourceModel: string, targetModel: string): void {
+  if (typeof window === 'undefined') return;
+
+  const endpoint = '/api/telemetry/cross-shop-click';
+  const payload: CrossShopClickEvent = {
+    source_model: sourceModel,
+    target_model: targetModel,
+    timestamp: new Date().toISOString(),
+  };
+  const serialized = JSON.stringify(payload);
+
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+      const blob = new Blob([serialized], { type: 'application/json' });
+      const sent = navigator.sendBeacon(endpoint, blob);
+      if (sent) return;
+    }
+  } catch {
+    // Fall back to fetch below
+  }
+
+  try {
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: serialized,
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // Silently ignore
+  }
+}

@@ -94,6 +94,7 @@ export const sanitizedNotesSchema = z
 // ----------------------------------------------------------------------------
 export const submissionCreateSchema = z
   .object({
+    make: z.enum(['Toyota', 'Lexus']).optional().nullable(),
     modelId: z.string().uuid({ message: 'Valid modelId UUID is required' }),
     powertrainId: z.string().uuid({ message: 'Valid powertrainId UUID is required' }),
     trimId: z.string().uuid({ message: 'Valid trimId UUID is required' }),

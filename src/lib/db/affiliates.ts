@@ -12,6 +12,33 @@ export interface AffiliateRecord {
 
 // Fallback registry matching 004_seed_canadian_data.sql and 006_se_mods_affiliates.sql
 export const FALLBACK_AFFILIATES: Record<string, AffiliateRecord> = {
+  'lexus-tuxmat': {
+    id: 'fbaaaaaa-2222-4222-8222-222222222201',
+    slug: 'lexus-tuxmat',
+    destinationUrl: 'https://www.amazon.ca/s?k=Lexus+GX+550+all+weather+floor+mats+TuxMat&tag=toyotawaits-20',
+    title: 'Lexus GX 550 TuxMat High-Wall All-Weather Liners',
+    category: 'protection',
+    clickCount: 0,
+    isActive: true,
+  },
+  'fitcamx-lexus': {
+    id: 'fbaaaaaa-2222-4222-8222-222222222202',
+    slug: 'fitcamx-lexus',
+    destinationUrl: 'https://www.amazon.ca/s?k=Fitcamx+dash+cam+Lexus+RX+NX+TX+GX&tag=toyotawaits-20',
+    title: 'FitcamX 4K OEM Integrated Dashcam (Lexus LSS+)',
+    category: 'tech',
+    clickCount: 0,
+    isActive: true,
+  },
+  'lexus-14in-screen': {
+    id: 'fbaaaaaa-2222-4222-8222-222222222203',
+    slug: 'lexus-14in-screen',
+    destinationUrl: 'https://www.amazon.ca/s?k=Spigen+14+inch+screen+protector+Lexus+TX+GX&tag=toyotawaits-20',
+    title: 'Spigen 14-inch Matte Tempered Glass Screen Protector (Lexus TX GX NX)',
+    category: 'interior',
+    clickCount: 0,
+    isActive: true,
+  },
   'muslogy-rav4': {
     id: 'f9000001-0001-4001-8001-000000000001',
     slug: 'muslogy-rav4',

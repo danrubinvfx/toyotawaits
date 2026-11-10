@@ -651,3 +651,63 @@ export function calculateMaxVehiclePrice(
     totalLoanCost,
   };
 }
+
+/**
+ * Calculates Canadian Federal Luxury Tax (Select Luxury Items Tax Act).
+ * Passenger vehicles with a taxable retail value exceeding $100,000 CAD are subject to tax.
+ * Formula: The lesser of:
+ * 1. 10% of the vehicle's total taxable value
+ * 2. 20% of the taxable amount exceeding $100,000 CAD
+ *
+ * @param vehiclePriceCad Total final retail price in CAD
+ * @returns Luxury tax amount in CAD (rounded to 2 decimal places)
+ */
+export function calculateCanadianLuxuryTax(vehiclePriceCad: number): number {
+  assertFiniteNonNegative('vehiclePriceCad', vehiclePriceCad);
+  if (vehiclePriceCad <= 100000) {
+    return 0;
+  }
+  const tax = Math.min(vehiclePriceCad * 0.10, (vehiclePriceCad - 100000) * 0.20);
+  return Math.round((tax + Number.EPSILON) * 100) / 100;
+}
+
+export interface VehicleTotalPurchasePriceResult {
+  vehiclePriceCad: number;
+  luxuryTaxCad: number;
+  subtotalWithLuxuryTax: number;
+  salesTaxCad: number;
+  totalPurchasePrice: number;
+}
+
+/**
+ * Calculates total purchase price including the Canadian Federal Luxury Tax
+ * and provincial/territorial sales tax (GST/PST/HST).
+ * Note: Under Canadian tax law, provincial sales taxes apply to the taxable base
+ * which includes the federal luxury tax.
+ *
+ * @param vehiclePriceCad Base vehicle price before taxes in CAD
+ * @param salesTaxRatePct Combined provincial sales tax rate in % (e.g. 13 for ON HST, 12 for BC PST+GST)
+ */
+export function calculateVehicleTotalPurchasePrice(
+  vehiclePriceCad: number,
+  salesTaxRatePct: number = 0
+): VehicleTotalPurchasePriceResult {
+  assertFiniteNonNegative('vehiclePriceCad', vehiclePriceCad);
+  assertFiniteNonNegative('salesTaxRatePct', salesTaxRatePct);
+
+  const luxuryTaxCad = calculateCanadianLuxuryTax(vehiclePriceCad);
+  const subtotalWithLuxuryTax = vehiclePriceCad + luxuryTaxCad;
+  const salesTaxCad =
+    Math.round((subtotalWithLuxuryTax * (salesTaxRatePct / 100) + Number.EPSILON) * 100) / 100;
+  const totalPurchasePrice =
+    Math.round((subtotalWithLuxuryTax + salesTaxCad + Number.EPSILON) * 100) / 100;
+
+  return {
+    vehiclePriceCad,
+    luxuryTaxCad,
+    subtotalWithLuxuryTax,
+    salesTaxCad,
+    totalPurchasePrice,
+  };
+}
+

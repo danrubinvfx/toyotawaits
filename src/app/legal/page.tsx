@@ -98,11 +98,12 @@ export default function LegalPage() {
           <ul className="list-disc pl-5 space-y-1.5 text-zinc-600 dark:text-zinc-400">
             <li><strong>Toyota Motor Corporation</strong> (Japan)</li>
             <li><strong>Toyota Canada Inc.</strong> (Canada)</li>
+            <li><strong>Lexus Canada</strong> (a division of Toyota Canada Inc.)</li>
             <li><strong>Toyota Motor Sales, U.S.A., Inc.</strong> / Toyota Motor North America, Inc. (United States)</li>
             <li>Any affiliated distributor, regional marketing council, or authorized franchise dealership.</li>
           </ul>
           <p className="text-xs text-zinc-500">
-            The marks &ldquo;Toyota&rdquo;, &ldquo;RAV4&rdquo;, &ldquo;Sienna&rdquo;, &ldquo;Grand Highlander&rdquo;, &ldquo;Land Cruiser&rdquo;, &ldquo;Prius&rdquo;, &ldquo;Tacoma&rdquo;, &ldquo;Prime&rdquo;, &ldquo;Hybrid Synergy Drive&rdquo;, and related vehicle model names and logos are registered trademarks of Toyota Motor Corporation or its respective subsidiaries. All trademarks, service marks, and trade names used on this website are for nominative identification purposes only under the nominative fair use doctrine of trademark law.
+            ToyotaWaits.ca is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names (&ldquo;Toyota&rdquo;, &ldquo;Lexus&rdquo;, &ldquo;GX 550&rdquo;, &ldquo;TX&rdquo;, &ldquo;NX&rdquo;, &ldquo;RX&rdquo;, &ldquo;RAV4&rdquo;, &ldquo;Sienna&rdquo;, &ldquo;Grand Highlander&rdquo;, &ldquo;Land Cruiser&rdquo;, &ldquo;Prius&rdquo;, &ldquo;Tacoma&rdquo;) are the property of their respective trademark holders. All trademarks, service marks, and trade names used on this website are for nominative identification purposes only under the nominative fair use doctrine of trademark law.
           </p>
         </section>
 

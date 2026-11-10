@@ -530,7 +530,11 @@ describe('Sprint 5: Discovery UI Components & Search Integration', () => {
       const optgroups = Array.from(locationSelect.querySelectorAll('optgroup')).map((og) =>
         og.getAttribute('label')
       );
-      expect(optgroups).toEqual(['British Columbia', 'Ontario (GTA)']);
+      expect(optgroups).toEqual(['British Columbia', 'Ontario (GTA)', 'Alberta']);
+
+      expect(screen.getByRole('option', { name: 'All Alberta' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Calgary (Stampede / Country Hills)' })).toBeInTheDocument();
+      expect(screen.getByRole('option', { name: 'Edmonton (Gateway / Mayfield)' })).toBeInTheDocument();
 
       expect(screen.getByRole('option', { name: 'All Canada (2,200+ units)' })).toBeInTheDocument();
       expect(screen.getByRole('option', { name: 'All British Columbia' })).toBeInTheDocument();

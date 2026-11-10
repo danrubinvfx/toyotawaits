@@ -113,11 +113,15 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getPresetCoordinates('Whitby')).toEqual({ lat: 43.8732, lng: -78.9675 });
       expect(getPresetCoordinates('Georgetown')).toEqual({ lat: 43.6497, lng: -79.8935 });
       expect(getPresetCoordinates('Simcoe')).toEqual({ lat: 42.8428, lng: -80.2942 });
+      expect(getPresetCoordinates('Calgary')).toEqual({ lat: 51.0447, lng: -114.0719 });
+      expect(getPresetCoordinates('Edmonton')).toEqual({ lat: 53.5461, lng: -113.4938 });
     });
 
     it('handles case-insensitivity and aliases', () => {
       expect(getPresetCoordinates('burnaby')).toEqual({ lat: 49.2488, lng: -122.9805 });
       expect(getPresetCoordinates('coquitlam')).toEqual({ lat: 49.2838, lng: -122.7932 });
+      expect(getPresetCoordinates('calgary')).toEqual({ lat: 51.0447, lng: -114.0719 });
+      expect(getPresetCoordinates('edmonton')).toEqual({ lat: 53.5461, lng: -113.4938 });
     });
 
     it('returns null for All, province-wide filters, or unknown locations', () => {
@@ -126,6 +130,7 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getPresetCoordinates('All Canada (2,200+ units)')).toBeNull();
       expect(getPresetCoordinates('All British Columbia')).toBeNull();
       expect(getPresetCoordinates('All Ontario / GTA')).toBeNull();
+      expect(getPresetCoordinates('All Alberta')).toBeNull();
       expect(getPresetCoordinates(null)).toBeNull();
       expect(getPresetCoordinates('Tokyo')).toBeNull();
     });
@@ -138,6 +143,7 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(GROUPED_LOCATION_PRESETS.map((g) => g.label)).toEqual([
         'British Columbia',
         'Ontario (GTA)',
+        'Alberta',
       ]);
       expect(getLocationProvince('')).toBeNull();
       expect(getLocationProvince('All Canada (2,200+ units)')).toBeNull();
@@ -150,6 +156,9 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getLocationProvince('Markham')).toBe('ON');
       expect(getLocationProvince('Vaughan')).toBe('ON');
       expect(getLocationProvince('Richmond Hill')).toBe('ON');
+      expect(getLocationProvince('All Alberta')).toBe('AB');
+      expect(getLocationProvince('Calgary')).toBe('AB');
+      expect(getLocationProvince('Edmonton')).toBe('AB');
       expect(getPresetCoordinates('Markham')).toEqual({ lat: 43.8161, lng: -79.3422 });
       expect(getPresetCoordinates('Vaughan')).toEqual({ lat: 43.8172, lng: -79.4241 });
       expect(getPresetCoordinates('Richmond Hill')).toEqual({ lat: 43.9038, lng: -79.4426 });
@@ -235,6 +244,22 @@ describe('Geo Distance & Preset Utilities', () => {
       expect(getDealerCoordinates('whitby-toyota')).toEqual({
         lat: 43.8732,
         lng: -78.9675,
+      });
+      expect(getDealerCoordinates('stampede-toyota')).toEqual({
+        lat: 50.9852,
+        lng: -114.0722,
+      });
+      expect(getDealerCoordinates('country-hills-toyota')).toEqual({
+        lat: 51.1557,
+        lng: -114.0135,
+      });
+      expect(getDealerCoordinates('gateway-toyota')).toEqual({
+        lat: 53.4347,
+        lng: -113.4975,
+      });
+      expect(getDealerCoordinates('mayfield-toyota')).toEqual({
+        lat: 53.5428,
+        lng: -113.6163,
       });
     });
 

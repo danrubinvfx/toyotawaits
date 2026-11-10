@@ -10,7 +10,7 @@ import {
 export interface LocationOption {
   value: string;
   label: string;
-  province?: 'BC' | 'ON';
+  province?: 'BC' | 'ON' | 'AB';
 }
 
 export type SortOption =

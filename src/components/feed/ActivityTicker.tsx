@@ -79,10 +79,19 @@ export function formatRelativeTime(dateString?: string | null): string {
  */
 export function formatVehicleDescription(item: AnyTickerItem): string {
   const year = item.model_year || 2026;
-  const model = item.model_name || 'RAV4';
+  let model = item.model_name || item.model || 'RAV4';
+
+  const isLexus =
+    item.make === 'Lexus' ||
+    (typeof model === 'string' &&
+      (model.toLowerCase().includes('lexus') || ['gx 550', 'gx550', 'tx', 'nx', 'rx'].includes(model.toLowerCase().trim())));
+
+  if (isLexus && !model.toLowerCase().startsWith('lexus')) {
+    model = `Lexus ${model}`;
+  }
 
   let pt = (item.powertrain || '').replace(/\s*\((?:PHEV|HEV)\)/gi, '').trim();
-  let trim = (item.trim_name || '').replace(/\s*\(.*?\)/g, '').trim();
+  let trim = (item.trim_name || item.trim || '').replace(/\s*\(.*?\)/g, '').trim();
 
   if (trim.toLowerCase().startsWith(model.toLowerCase())) {
     trim = trim.substring(model.length).trim();
@@ -140,6 +149,27 @@ export function formatTickerSummary(item: AnyTickerItem): string {
   }
 
   const prov = item.province || (item as any).state || 'CA';
+  const timeAgo = formatRelativeTime(item.updated_at || item.created_at);
+  const rawModel = item.model_name || item.model || '';
+  const isLexus =
+    item.make === 'Lexus' ||
+    (typeof rawModel === 'string' &&
+      (rawModel.toLowerCase().includes('lexus') || ['gx 550', 'gx550', 'tx', 'nx', 'rx'].includes(rawModel.toLowerCase().trim())));
+
+  if (isLexus) {
+    const cleanModel = rawModel.toLowerCase().startsWith('lexus') ? rawModel : `Lexus ${rawModel}`;
+    const trim = (item.trim_name || item.trim || '').trim();
+    const vehicleStr = trim ? `${cleanModel} ${trim}` : cleanModel;
+
+    if (isDeliveryItem(item)) {
+      const days = item.daysWaited != null ? item.daysWaited : item.wait_days != null ? item.wait_days : 180;
+      return `⚡ ${timeAgo} • ${prov}: ${vehicleStr} delivered (${days}d wait)`;
+    }
+
+    const estDays = item.estimated_wait_days ?? item.wait_days ?? 240;
+    return `⚡ ${timeAgo} • ${prov}: ${vehicleStr} deposit logged (Est. ${estDays}d)`;
+  }
+
   const vehicle = formatVehicleDescription(item);
 
   if (isDeliveryItem(item)) {
@@ -147,7 +177,6 @@ export function formatTickerSummary(item: AnyTickerItem): string {
     return `🟢 DELIVERED • ${prov}: ${vehicle} — ${days} days wait`;
   }
 
-  const timeAgo = formatRelativeTime(item.updated_at || item.created_at);
   const action = formatActionDescription(item);
   return `${timeAgo} • ${prov}: ${vehicle} ${action}`;
 }

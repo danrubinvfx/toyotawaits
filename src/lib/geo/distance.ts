@@ -13,12 +13,12 @@ export interface Coordinates {
 export interface LocationPresetOption {
   value: string;
   label: string;
-  province?: 'BC' | 'ON';
+  province?: 'BC' | 'ON' | 'AB';
 }
 
 export interface LocationPresetGroup {
   label: string;
-  province: 'BC' | 'ON';
+  province: 'BC' | 'ON' | 'AB';
   options: LocationPresetOption[];
 }
 
@@ -74,6 +74,15 @@ export const GROUPED_LOCATION_PRESETS: LocationPresetGroup[] = [
       { value: 'Simcoe', label: 'Simcoe', province: 'ON' },
     ],
   },
+  {
+    label: 'Alberta',
+    province: 'AB',
+    options: [
+      { value: 'All Alberta', label: 'All Alberta', province: 'AB' },
+      { value: 'Calgary', label: 'Calgary (Stampede / Country Hills)', province: 'AB' },
+      { value: 'Edmonton', label: 'Edmonton (Gateway / Mayfield)', province: 'AB' },
+    ],
+  },
 ];
 
 export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
@@ -116,6 +125,11 @@ export const LOWER_MAINLAND_PRESETS: Record<string, Coordinates> = {
   Georgetown: { lat: 43.6497, lng: -79.8935 },
   Simcoe: { lat: 42.8428, lng: -80.2942 },
   'GTA / Ontario': { lat: 43.6822, lng: -79.4875 },
+  Calgary: { lat: 51.0447, lng: -114.0719 },
+  'Calgary (Stampede / Country Hills)': { lat: 51.0447, lng: -114.0719 },
+  Edmonton: { lat: 53.5461, lng: -113.4938 },
+  'Edmonton (Gateway / Mayfield)': { lat: 53.5461, lng: -113.4938 },
+  Alberta: { lat: 51.0447, lng: -114.0719 },
 };
 
 export const PRESET_LOCATIONS = LOWER_MAINLAND_PRESETS;
@@ -153,10 +167,10 @@ export function calculateDistanceKm(
 }
 
 /**
- * Resolves the target province ('BC' | 'ON') for a given location preset or province-wide filter,
+ * Resolves the target province ('BC' | 'ON' | 'AB') for a given location preset or province-wide filter,
  * or null if the selection is global ('All Canada', '') or GPS ('Near Me (GPS)').
  */
-export function getLocationProvince(name?: string | null): 'BC' | 'ON' | null {
+export function getLocationProvince(name?: string | null): 'BC' | 'ON' | 'AB' | null {
   if (!name) return null;
   const lower = name.trim().toLowerCase();
   if (
@@ -167,6 +181,20 @@ export function getLocationProvince(name?: string | null): 'BC' | 'ON' | null {
     lower === 'near me (gps)'
   ) {
     return null;
+  }
+
+  if (
+    lower === 'ab' ||
+    lower === 'all alberta' ||
+    lower.includes('alberta') ||
+    lower.includes('calgary') ||
+    lower.includes('edmonton') ||
+    lower.includes('stampede') ||
+    lower.includes('country hills') ||
+    lower.includes('gateway') ||
+    lower.includes('mayfield')
+  ) {
+    return 'AB';
   }
 
   if (
@@ -243,8 +271,10 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
     lower.startsWith('all canada') ||
     lower === 'all british columbia' ||
     lower === 'all ontario / gta' ||
+    lower === 'all alberta' ||
     lower === 'bc' ||
-    lower === 'on'
+    lower === 'on' ||
+    lower === 'ab'
   ) {
     return null;
   }
@@ -261,6 +291,14 @@ export function getPresetCoordinates(name?: string | null): Coordinates | null {
     ) {
       return coords;
     }
+  }
+
+  // Handle Alberta municipality and dealer aliases
+  if (lower.includes('calgary') || lower.includes('stampede') || lower.includes('country hills')) {
+    return LOWER_MAINLAND_PRESETS['Calgary'];
+  }
+  if (lower.includes('edmonton') || lower.includes('gateway') || lower.includes('mayfield')) {
+    return LOWER_MAINLAND_PRESETS['Edmonton'];
   }
 
   // Handle South Surrey / White Rock aliases

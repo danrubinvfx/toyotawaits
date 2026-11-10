@@ -64,15 +64,15 @@ describe('Footer Component', () => {
     render(<Footer />);
 
     expect(
-      screen.getByText(
-        /toyotawaits\.ca is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or Toyota Canada Inc\./i
-      )
-    ).toBeInTheDocument();
+      screen.getAllByText(
+        /toyotawaits\.ca is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc\., Lexus Canada, or Toyota Motor Corporation\./i
+      ).length
+    ).toBeGreaterThanOrEqual(1);
     expect(
-      screen.getByText(
-        /All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use\./i
-      )
-    ).toBeInTheDocument();
+      screen.getAllByText(
+        /Vehicle trademarks, logos, and model names are the property of their respective trademark holders\./i
+      ).length
+    ).toBeGreaterThanOrEqual(1);
   });
 
   it('renders FTC and Canadian compliant Regulatory & Affiliate Notice in footer', () => {
@@ -130,7 +130,7 @@ describe('Footer Component', () => {
     const disclaimerEl = screen.getByTestId('community-disclaimer');
     expect(disclaimerEl).toBeInTheDocument();
     expect(disclaimerEl.textContent).toContain(
-      'ToyotaWaits is an independent, community-driven tracker and is not affiliated with Toyota Motor Corporation. We cannot look up individual factory orders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email hello@toyotawaits.ca.'
+      'ToyotaWaits.ca is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email hello@toyotawaits.ca.'
     );
 
     const emailInDisclaimer = screen.getByRole('link', { name: 'hello@toyotawaits.ca' });
@@ -141,3 +141,5 @@ describe('Footer Component', () => {
     );
   });
 });
+
+

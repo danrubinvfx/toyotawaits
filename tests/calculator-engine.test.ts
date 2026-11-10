@@ -8,6 +8,8 @@ import {
   evaluateSimplePayback,
   evaluateCashFlowTimeline,
   calculateMaxVehiclePrice,
+  calculateCanadianLuxuryTax,
+  calculateVehicleTotalPurchasePrice,
 } from '@/lib/calculator-engine';
 import {
   VEHICLE_PRESETS,
@@ -433,6 +435,40 @@ describe('ToyotaWaits.ca Savings & Payback Calculator Engine', () => {
       expect(() => calculateMaxVehiclePrice(650, Infinity, 5.99, 60)).toThrow(TypeError);
       expect(() => calculateMaxVehiclePrice(650, 5000, NaN, 60)).toThrow(TypeError);
       expect(() => calculateMaxVehiclePrice(650, 5000, 5.99, NaN)).toThrow(TypeError);
+    });
+  });
+  describe('Canadian Federal Luxury Tax Math (Select Luxury Items Tax Act)', () => {
+    it('returns  for vehicle price at or below ,000 CAD', () => {
+      expect(calculateCanadianLuxuryTax(0)).toBe(0);
+      expect(calculateCanadianLuxuryTax(50000)).toBe(0);
+      expect(calculateCanadianLuxuryTax(85000)).toBe(0);
+      expect(calculateCanadianLuxuryTax(100000)).toBe(0);
+    });
+
+    it('calculates correct luxury tax for ,000 vehicle (Math.min(,000, ,000) = ,000)', () => {
+      expect(calculateCanadianLuxuryTax(110000)).toBe(2000);
+    });
+
+    it('calculates correct luxury tax for ,000 vehicle (Math.min(,000, ,000) = ,000)', () => {
+      expect(calculateCanadianLuxuryTax(130000)).toBe(6000);
+    });
+
+    it('calculates correct luxury tax for ,000 luxury vehicle where 10% rule takes over', () => {
+      expect(calculateCanadianLuxuryTax(250000)).toBe(25000);
+    });
+
+    it('calculates total purchase price with luxury tax and provincial sales tax', () => {
+      const result = calculateVehicleTotalPurchasePrice(110000, 13);
+      expect(result.luxuryTaxCad).toBe(2000);
+      expect(result.subtotalWithLuxuryTax).toBe(112000);
+      expect(result.salesTaxCad).toBe(14560);
+      expect(result.totalPurchasePrice).toBe(126560);
+    });
+
+    it('validates and rejects negative or non-finite inputs', () => {
+      expect(() => calculateCanadianLuxuryTax(-100000)).toThrow(RangeError);
+      expect(() => calculateCanadianLuxuryTax(NaN)).toThrow(TypeError);
+      expect(() => calculateCanadianLuxuryTax(Infinity)).toThrow(TypeError);
     });
   });
 });

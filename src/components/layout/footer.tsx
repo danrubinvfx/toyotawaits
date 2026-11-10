@@ -307,7 +307,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
         {/* Disclaimer & Disclosure Section */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-400 space-y-3">
           <p className="leading-relaxed">
-            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent community tracker and is not affiliated with, endorsed by, or sponsored by Toyota Motor Corporation or {isUs ? 'Toyota Motor Sales, U.S.A., Inc.' : 'Toyota Canada Inc.'} All trademarks, service marks, and trade names are the property of their respective owners and are used strictly for identification purposes under nominative fair use. For complete details, see our{' '}
+            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For complete details, see our{' '}
             <Link href="/legal" className="underline hover:text-amber-500">
               Legal Terms &amp; Consumer Pricing Disclosures
             </Link>.
@@ -323,7 +323,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           {/* Independence / Non-Dealership Community Disclaimer Note */}
           <div className="rounded-lg border border-zinc-200/80 bg-zinc-100/60 dark:border-zinc-800/80 dark:bg-zinc-900/60 p-3.5 text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
             <p data-testid="community-disclaimer">
-              ToyotaWaits is an independent, community-driven tracker and is not affiliated with Toyota Motor Corporation. We cannot look up individual factory orders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email{' '}
+              ToyotaWaits.ca is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email{' '}
               <a
                 href="mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry"
                 className="underline font-medium text-zinc-800 dark:text-zinc-200 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"

@@ -26,6 +26,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Guard against admin opt-out
+    const isOptOut =
+      request.cookies.get('tw_admin_opt_out')?.value === 'true' ||
+      request.cookies.get('tw_ignore_analytics')?.value === 'true' ||
+      request.nextUrl.searchParams.get('tw_admin_opt_out') === 'true' ||
+      request.nextUrl.searchParams.get('tw_ignore_analytics') === 'true' ||
+      request.headers.get('x-admin-opt-out') === 'true' ||
+      request.headers.get('x-ignore-analytics') === 'true';
+
+    if (isOptOut) {
+      return NextResponse.json({ success: true, ignored: true });
+    }
+
     const { accessory_id, placement, model_context, target_url } = payload;
 
     if (!accessory_id || typeof accessory_id !== 'string') {

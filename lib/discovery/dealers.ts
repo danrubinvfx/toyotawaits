@@ -643,6 +643,119 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     phone: '(416) 465-3987',
     websiteUrl: 'https://www.lexusdowntown.ca/',
   },
+{
+    dealerCode: 'dvnt-lexus',
+    aliases: ['dvnt-lexus', 'don-valley-north-lexus', 'don valley north lexus', 'dvn-lexus'],
+    dealerName: 'Don Valley North Lexus',
+    sourceCode: 'dvnt-lexus-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.donvalleynorthlexus.com',
+    endpointUrl:
+      'https://www.donvalleynorthlexus.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    address: '3120 Steeles Ave E',
+    city: 'Markham',
+    province: 'ON',
+    postalCode: 'L3R 5V8',
+    phone: '(905) 475-1800',
+    websiteUrl: 'https://www.donvalleynorthlexus.com/',
+  },
+  {
+    dealerCode: 'lexus-richmond-hill',
+    aliases: ['lexus-richmond-hill', 'lexus of richmond hill', 'richmond-hill-lexus'],
+    dealerName: 'Lexus of Richmond Hill',
+    sourceCode: 'lexus-richmond-hill-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.lexusofrichmondhill.com',
+    endpointUrl:
+      'https://www.lexusofrichmondhill.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    address: '11559 Yonge St',
+    city: 'Richmond Hill',
+    province: 'ON',
+    postalCode: 'L4C 9Y7',
+    phone: '(905) 883-8812',
+    websiteUrl: 'https://www.lexusofrichmondhill.com/',
+  },
+  {
+    dealerCode: 'stampede-toyota',
+    aliases: ['stampede-toyota', 'stampede toyota', 'stampedetoyota', 'stampede-toyota-calgary'],
+    dealerName: 'Stampede Toyota',
+    sourceCode: 'stampede-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.stampedetoyotacalgary.com',
+    endpointUrl:
+      'https://www.stampedetoyotacalgary.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '708 Heritage Dr SE',
+    city: 'Calgary',
+    province: 'AB',
+    postalCode: 'T2V 2W2',
+    phone: '(403) 291-2111',
+    websiteUrl: 'https://www.stampedetoyotacalgary.com/',
+    lat: 50.9852,
+    lng: -114.0722,
+  },
+  {
+    dealerCode: 'country-hills-toyota',
+    aliases: ['country-hills-toyota', 'country hills toyota', 'countryhillstoyota', 'chtoyota', 'ch-toyota'],
+    dealerName: 'Country Hills Toyota',
+    sourceCode: 'country-hills-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.chtoyota.com',
+    endpointUrl:
+      'https://www.chtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '20 Freeport Landing NE',
+    city: 'Calgary',
+    province: 'AB',
+    postalCode: 'T3J 5H6',
+    phone: '(403) 290-1111',
+    websiteUrl: 'https://www.chtoyota.com/',
+    lat: 51.1557,
+    lng: -114.0135,
+  },
+  {
+    dealerCode: 'gateway-toyota',
+    aliases: ['gateway-toyota', 'gateway toyota', 'gatewaytoyota'],
+    dealerName: 'Gateway Toyota',
+    sourceCode: 'gateway-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.gatewaytoyota.ca',
+    endpointUrl:
+      'https://www.gatewaytoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '2020 103A St SW',
+    city: 'Edmonton',
+    province: 'AB',
+    postalCode: 'T6W 2P6',
+    phone: '(780) 439-3939',
+    websiteUrl: 'https://www.gatewaytoyota.ca/',
+    lat: 53.4347,
+    lng: -113.4975,
+  },
+  {
+    dealerCode: 'mayfield-toyota',
+    aliases: [
+      'mayfield-toyota',
+      'mayfield toyota',
+      'mayfieldtoyota',
+      'wem-toyota',
+      'wem toyota',
+      'west-edmonton-mall-toyota',
+      'west edmonton mall toyota',
+      'wemtoyota',
+    ],
+    dealerName: 'Mayfield Toyota',
+    sourceCode: 'mayfield-toyota-convertus',
+    platform: 'convertus',
+    baseUrl: 'https://www.wemtoyota.com',
+    endpointUrl:
+      'https://www.wemtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    address: '10220 170 St NW',
+    city: 'Edmonton',
+    province: 'AB',
+    postalCode: 'T5S 1N9',
+    phone: '(780) 420-1111',
+    websiteUrl: 'https://www.wemtoyota.com/',
+    lat: 53.5428,
+    lng: -113.6163,
+  },
 ];
 
 export interface DealerSweepExecutionResult {
@@ -880,6 +993,8 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
         else if (loc.includes('donvalleynorthtoyota') || loc.includes('dvntoyota')) prefix = 'DVN';
         else if (loc.includes('thornhilltoyota')) prefix = 'TH';
         else if (loc.includes('lexusdowntown')) prefix = 'LDT';
+        else if (loc.includes('stampedetoyota')) prefix = 'ST';
+        else if (loc.includes('gatewaytoyota')) prefix = 'GW';
         items.push({
           ad_id: `${prefix}-${vdpId}`,
           vehicle_id: `${prefix}-${vdpId}`,
@@ -969,14 +1084,16 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
       continue;
     }
 
-    // Nanaimo / Upper James pattern: /new/inventory/2026-Toyota-4Runner-id14454878.html
+    // Nanaimo / Upper James / Country Hills pattern: /new/inventory/2026-Toyota-4Runner-id14454878.html
     const nanaimoMatch = loc.match(/\/new\/inventory\/((?:202\d)-Toyota-[A-Za-z0-9-]+)-id(\d+)\.html/i);
     if (nanaimoMatch) {
       const rawSlug = nanaimoMatch[1].toLowerCase();
       const id = nanaimoMatch[2];
       const spec = parseToyotaSlugSpec(rawSlug);
       if (spec) {
-        const prefix = loc.includes('upperjamestoyota') ? 'UJ' : 'NAN';
+        let prefix = 'NAN';
+        if (loc.includes('upperjamestoyota')) prefix = 'UJ';
+        else if (loc.includes('chtoyota')) prefix = 'CH';
         items.push({
           ad_id: `${prefix}-${id}`,
           vehicle_id: `${prefix}-${id}`,
@@ -996,6 +1113,71 @@ export function parsePublicSitemapToConvertusItems(xmlText: string): Array<Recor
           vdp_url: loc,
           image: imgLoc,
         });
+      }
+      continue;
+    }
+
+    // Mayfield / West Edmonton Mall Toyota pattern: /inventaire/new/2027/toyota/corolla-hatchback/2337
+    const wemMatch = loc.match(/\/inventaire\/(new|used)\/(\d{4})\/toyota\/([a-z0-9-]+)\/(\d+)\/?$/i);
+    if (wemMatch) {
+      const saleClass = wemMatch[1];
+      const year = parseInt(wemMatch[2], 10);
+      const modelSlug = wemMatch[3].toLowerCase();
+      const id = wemMatch[4];
+      const spec = parseToyotaSlugSpec(`${year}-toyota-${modelSlug}`);
+      if (spec && spec.year >= 2025) {
+        const prefix = 'MAY';
+        items.push({
+          ad_id: `${prefix}-${id}`,
+          vehicle_id: `${prefix}-${id}`,
+          vin: null,
+          stock_number: `${prefix}-${id}`,
+          year: spec.year,
+          make: 'Toyota',
+          model: spec.model,
+          trim: spec.trim,
+          fuel_type: spec.fuelType,
+          sale_class: saleClass.toLowerCase() === 'new' ? 'New' : 'Used',
+          in_transit: 0,
+          on_order: 0,
+          msrp: spec.msrp,
+          asking_price: spec.msrp,
+          final_price: spec.msrp,
+          vdp_url: loc,
+          image: imgLoc,
+        });
+      }
+      continue;
+    }
+
+    // Generic /vdp/ fallback pattern
+    const vdpGenericMatch = loc.match(/\/vdp\/([A-Za-z0-9_-]+)\/?$/i);
+    if (vdpGenericMatch) {
+      const vdpId = vdpGenericMatch[1];
+      const slugMatch = loc.match(/((?:202\d)-toyota-[a-z0-9-]+)/i);
+      if (slugMatch) {
+        const spec = parseToyotaSlugSpec(slugMatch[1]);
+        if (spec && spec.year >= 2025) {
+          items.push({
+            ad_id: `VDP-${vdpId}`,
+            vehicle_id: `VDP-${vdpId}`,
+            vin: null,
+            stock_number: `VDP-${vdpId.slice(-6).toUpperCase()}`,
+            year: spec.year,
+            make: 'Toyota',
+            model: spec.model,
+            trim: spec.trim,
+            fuel_type: spec.fuelType,
+            sale_class: 'New',
+            in_transit: 0,
+            on_order: 0,
+            msrp: spec.msrp,
+            asking_price: spec.msrp,
+            final_price: spec.msrp,
+            vdp_url: loc,
+            image: imgLoc,
+          });
+        }
       }
       continue;
     }
@@ -1414,10 +1596,22 @@ export async function sweepSingleDealer(
           sitemapUrl = 'https://www.upperjamestoyota.ca/en/sitemap_newinventory.xml';
         } else if (sitemapUrl.includes('lexusdowntown.ca')) {
           sitemapUrl = 'https://www.lexusdowntown.ca/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('donvalleynorthlexus.com')) {
+          sitemapUrl = 'https://www.donvalleynorthlexus.com/sitemap.xml';
+        } else if (sitemapUrl.includes('lexusofrichmondhill.com')) {
+          sitemapUrl = 'https://www.lexusofrichmondhill.com/sitemap.xml';
         } else if (sitemapUrl.includes('jimpattisonlexus.com')) {
           sitemapUrl = 'https://www.jimpattisonlexus.com/new-vehicle-1-sitemap.xml';
         } else if (sitemapUrl.includes('openroadlexusrichmond.com')) {
           sitemapUrl = 'https://openroadlexusrichmond.com/sitemap.xml';
+        } else if (sitemapUrl.includes('chtoyota.com')) {
+          sitemapUrl = 'https://www.chtoyota.com/en/sitemap_newinventory.xml';
+        } else if (sitemapUrl.includes('stampedetoyota.com') || sitemapUrl.includes('stampedetoyotacalgary.com')) {
+          sitemapUrl = 'https://www.stampedetoyotacalgary.com/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('gatewaytoyota.ca')) {
+          sitemapUrl = 'https://www.gatewaytoyota.ca/inventory-listing-sitemap.xml';
+        } else if (sitemapUrl.includes('mayfieldtoyota.com') || sitemapUrl.includes('wemtoyota.com')) {
+          sitemapUrl = 'https://www.wemtoyota.com/inventory-sitemap.xml';
         }
         try {
           const res = await fetch(sitemapUrl, {
@@ -1429,7 +1623,7 @@ export async function sweepSingleDealer(
           });
           if (!res.ok) return [];
           let xmlText = await res.text();
-          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory|new-vehicle)[^<]*\.xml)<\/loc>/i);
+          const subMatch = xmlText.match(/<loc>([^<]*(?:inventory-listing-sitemap|sitemap-vehicles|sitemap_newinventory|new-vehicle|inventory-sitemap)[^<]*\.xml)<\/loc>/i);
           if (subMatch) {
             try {
               const subRes = await fetch(subMatch[1], {

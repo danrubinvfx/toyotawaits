@@ -28,6 +28,18 @@ export const MUSLOGY_DIRECT_URLS: Record<string, string> = {
 };
 
 export const OUT_PROXY_URLS: Record<string, string> = {
+  'lexus-tuxmat': buildAmazonAffiliateUrl(
+    'Lexus GX 550 all weather floor mats TuxMat',
+    'CA'
+  ),
+  'fitcamx-lexus': buildAmazonAffiliateUrl(
+    'Fitcamx dash cam Lexus RX NX TX GX',
+    'CA'
+  ),
+  'lexus-14in-screen': buildAmazonAffiliateUrl(
+    'Spigen 14 inch screen protector Lexus TX GX',
+    'CA'
+  ),
   'spigen-screen-protector': buildAmazonAffiliateUrl(
     'Toyota tempered glass screen protector matte 9H',
     'CA'
@@ -107,26 +119,40 @@ export async function GET(
       return NextResponse.redirect(new URL('/winter-prep', request.url), 307);
     }
 
-    // Telemetry click logging: ensure telemetry clicks log to telemetry_affiliate_clicks
     const searchParams = request.nextUrl.searchParams;
-    try {
-      const placementParam = searchParams.get('placement');
-      const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait', 'guide_ecp_warranty', 'guide_warranty'];
-      const effectivePlacement = (placementParam && validPlacements.includes(placementParam)) ? placementParam : 'while_you_wait';
-      const modelContext = searchParams.get('model') || null;
 
-      const supabase = createServerClient();
-      supabase
-        .from('telemetry_affiliate_clicks')
-        .insert({
-          accessory_id: validatedSlug,
-          placement: effectivePlacement,
-          model_context: modelContext,
-          target_url: destinationUrl,
-        })
-        .then();
-    } catch {
-      // Non-blocking telemetry delivery
+    // Detect admin opt-out flag from query params, cookies, or headers
+    const isOptOut =
+      searchParams.get('opt_out') === 'true' ||
+      searchParams.get('tw_admin_opt_out') === 'true' ||
+      searchParams.get('tw_ignore_analytics') === 'true' ||
+      request.cookies.get('opt_out')?.value === 'true' ||
+      request.cookies.get('tw_admin_opt_out')?.value === 'true' ||
+      request.cookies.get('tw_ignore_analytics')?.value === 'true' ||
+      request.headers.get('x-admin-opt-out') === 'true' ||
+      request.headers.get('x-ignore-analytics') === 'true';
+
+    // Telemetry click logging: skip entirely if admin opt-out is detected
+    if (!isOptOut) {
+      try {
+        const placementParam = searchParams.get('placement');
+        const validPlacements = ['inventory_feed', 'submission_modal', 'donation_toast', 'guide_rav4_mods', 'while_you_wait', 'guide_ecp_warranty', 'guide_warranty'];
+        const effectivePlacement = (placementParam && validPlacements.includes(placementParam)) ? placementParam : 'while_you_wait';
+        const modelContext = searchParams.get('model') || null;
+
+        const supabase = createServerClient();
+        supabase
+          .from('telemetry_affiliate_clicks')
+          .insert({
+            accessory_id: validatedSlug,
+            placement: effectivePlacement,
+            model_context: modelContext,
+            target_url: destinationUrl,
+          })
+          .then();
+      } catch {
+        // Non-blocking telemetry delivery
+      }
     }
 
     // Eliminate any Google Search wrapping on destination URL
@@ -141,13 +167,6 @@ export async function GET(
         // ignore parsing error
       }
     }
-
-    // Detect admin opt-out flag from query params or cookies
-    const isOptOut =
-      searchParams.get('opt_out') === 'true' ||
-      searchParams.get('tw_admin_opt_out') === 'true' ||
-      request.cookies.get('opt_out')?.value === 'true' ||
-      request.cookies.get('tw_admin_opt_out')?.value === 'true';
 
     // Detect market context from URL param, cookie, or hostname
     const marketParam = searchParams.get('market')?.toUpperCase();

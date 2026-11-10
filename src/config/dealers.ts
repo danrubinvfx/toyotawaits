@@ -594,6 +594,108 @@ export const DEALERS: Record<string, DealerGeocoding> = {
     lng: -79.3832,
     enabled: true,
   },
+  // 32. Don Valley North Lexus
+  'dvnt-lexus': {
+    id: 'dvnt-lexus',
+    name: 'Don Valley North Lexus',
+    city: 'Markham',
+    province: 'ON',
+    area: 'Markham / GTA North',
+    adapter: 'convertus',
+    baseUrl: 'https://www.donvalleynorthlexus.com',
+    apiEndpoint:
+      'https://www.donvalleynorthlexus.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    latitude: 43.8166,
+    longitude: -79.3364,
+    lat: 43.8166,
+    lng: -79.3364,
+    enabled: true,
+  },
+  // 33. Lexus of Richmond Hill
+  'lexus-richmond-hill': {
+    id: 'lexus-richmond-hill',
+    name: 'Lexus of Richmond Hill',
+    city: 'Richmond Hill',
+    province: 'ON',
+    area: 'Richmond Hill / GTA North',
+    adapter: 'convertus',
+    baseUrl: 'https://www.lexusofrichmondhill.com',
+    apiEndpoint:
+      'https://www.lexusofrichmondhill.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26ln%3Den%26pg%3D1%26pc%3D100%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dlexus',
+    latitude: 43.9015,
+    longitude: -79.4442,
+    lat: 43.9015,
+    lng: -79.4442,
+    enabled: true,
+  },
+  // 32. Stampede Toyota (Calgary / Heritage Dr SE)
+  'stampede-toyota': {
+    id: 'stampede-toyota',
+    name: 'Stampede Toyota',
+    city: 'Calgary',
+    province: 'AB',
+    area: 'Heritage Dr SE',
+    adapter: 'convertus',
+    baseUrl: 'https://www.stampedetoyotacalgary.com',
+    apiEndpoint:
+      'https://www.stampedetoyotacalgary.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 50.9852,
+    longitude: -114.0722,
+    lat: 50.9852,
+    lng: -114.0722,
+    enabled: true,
+  },
+  // 33. Country Hills Toyota (Calgary / Freeport Landing NE)
+  'country-hills-toyota': {
+    id: 'country-hills-toyota',
+    name: 'Country Hills Toyota',
+    city: 'Calgary',
+    province: 'AB',
+    area: 'Freeport Landing NE',
+    adapter: 'convertus',
+    baseUrl: 'https://www.chtoyota.com',
+    apiEndpoint:
+      'https://www.chtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 51.1557,
+    longitude: -114.0135,
+    lat: 51.1557,
+    lng: -114.0135,
+    enabled: true,
+  },
+  // 34. Gateway Toyota (Edmonton / 103A St SW)
+  'gateway-toyota': {
+    id: 'gateway-toyota',
+    name: 'Gateway Toyota',
+    city: 'Edmonton',
+    province: 'AB',
+    area: 'South Edmonton / 103A St SW',
+    adapter: 'convertus',
+    baseUrl: 'https://www.gatewaytoyota.ca',
+    apiEndpoint:
+      'https://www.gatewaytoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 53.4347,
+    longitude: -113.4975,
+    lat: 53.4347,
+    lng: -113.4975,
+    enabled: true,
+  },
+  // 35. Mayfield Toyota (Edmonton / 170 St NW)
+  'mayfield-toyota': {
+    id: 'mayfield-toyota',
+    name: 'Mayfield Toyota',
+    city: 'Edmonton',
+    province: 'AB',
+    area: 'West Edmonton / 170 St NW',
+    adapter: 'convertus',
+    baseUrl: 'https://www.wemtoyota.com',
+    apiEndpoint:
+      'https://www.wemtoyota.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Faction%3Dvms_data%26sc%3Dnew%26pc%3D100',
+    latitude: 53.5428,
+    longitude: -113.6163,
+    lat: 53.5428,
+    lng: -113.6163,
+    enabled: true,
+  },
 };
 
 /**
@@ -610,6 +712,55 @@ export function getDealerCoordinates(
   if (dealerName && DEALERS[dealerName.toLowerCase()]) {
     const d = DEALERS[dealerName.toLowerCase()];
     return { lat: d.lat, lng: d.lng };
+  }
+
+  // Alberta Dealers (Calgary & Edmonton)
+  if (
+    query.includes('stampede') ||
+    query.includes('stampede-toyota') ||
+    query.includes('stampedetoyota')
+  ) {
+    return {
+      lat: DEALERS['stampede-toyota'].lat,
+      lng: DEALERS['stampede-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('country hills') ||
+    query.includes('country-hills') ||
+    query.includes('countryhillstoyota') ||
+    query.includes('chtoyota')
+  ) {
+    return {
+      lat: DEALERS['country-hills-toyota'].lat,
+      lng: DEALERS['country-hills-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('gateway') ||
+    query.includes('gateway-toyota') ||
+    query.includes('gatewaytoyota')
+  ) {
+    return {
+      lat: DEALERS['gateway-toyota'].lat,
+      lng: DEALERS['gateway-toyota'].lng,
+    };
+  }
+
+  if (
+    query.includes('mayfield') ||
+    query.includes('mayfield-toyota') ||
+    query.includes('mayfieldtoyota') ||
+    query.includes('wem toyota') ||
+    query.includes('wemtoyota') ||
+    query.includes('west edmonton mall')
+  ) {
+    return {
+      lat: DEALERS['mayfield-toyota'].lat,
+      lng: DEALERS['mayfield-toyota'].lng,
+    };
   }
 
   // Ontario / GTA Dealers — check specific dealers before generic city names

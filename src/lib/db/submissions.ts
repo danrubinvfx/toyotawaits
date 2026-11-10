@@ -725,6 +725,7 @@ export async function resolveDatabaseVehicleIds(
             id: catalogModel.id,
             slug: catalogModel.slug,
             name: catalogModel.name,
+            manufacturer: catalogModel.make || (catalogModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota'),
             generation_start_year: catalogModel.generationStartYear,
             is_active: true,
             sort_order: 50,

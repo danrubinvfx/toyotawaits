@@ -24,6 +24,10 @@ const QUICK_MODELS = [
   'Camry Hybrid',
   'Corolla Cross Hybrid',
   'Land Cruiser',
+  'GX 550',
+  'TX',
+  'NX',
+  'RX',
 ];
 
 const QUICK_TRIMS = [
@@ -36,6 +40,12 @@ const QUICK_TRIMS = [
   'Platinum',
   'TRD Off-Road',
   'TRD Sport',
+  'Signature',
+  'Premium',
+  'Luxury',
+  'Executive',
+  'Overtrail',
+  'F SPORT',
 ];
 
 const POWERTRAIN_OPTIONS = ['ALL', 'Hybrid', 'Plug-in Hybrid', 'Gas'];
@@ -57,6 +67,9 @@ const REGION_OPTIONS = [
   'Granville Toyota',
   'Valley Toyota',
   'Abbotsford Toyota',
+  'OpenRoad Lexus Richmond',
+  'Jim Pattison Lexus Northshore',
+  'Lexus Downtown',
 ];
 
 export function InventoryAlertModal({

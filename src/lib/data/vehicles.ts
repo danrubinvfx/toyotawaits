@@ -25,6 +25,7 @@ export interface CatalogModel {
   id: string;
   slug: string;
   name: string;
+  make?: 'Toyota' | 'Lexus';
   generationStartYear: number;
   powertrains: CatalogPowertrain[];
 }
@@ -359,6 +360,156 @@ export const CANADIAN_VEHICLE_CATALOG: CatalogModel[] = [
           { id: '30000000-0000-4000-8000-000000000141', slug: 'se-awd', name: 'SE AWD', msrpCad: 37950 },
           { id: '30000000-0000-4000-8000-000000000142', slug: 'xse-awd', name: 'XSE AWD', msrpCad: 44250 },
           { id: '30000000-0000-4000-8000-000000000143', slug: 'xle-awd', name: 'XLE AWD', msrpCad: 44250 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000020',
+    slug: 'lexus-gx550',
+    name: 'Lexus GX 550',
+    make: 'Lexus',
+    generationStartYear: 2024,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000201',
+        slug: 'gas',
+        name: 'Twin-Turbo V6 (Gas)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000201', slug: 'signature', name: 'Signature', msrpCad: 83500 },
+          { id: '30000000-0000-4000-8000-000000000202', slug: 'premium', name: 'Premium', msrpCad: 92500 },
+          { id: '30000000-0000-4000-8000-000000000203', slug: 'luxury', name: 'Luxury', msrpCad: 101850 },
+          { id: '30000000-0000-4000-8000-000000000204', slug: 'executive', name: 'Executive', msrpCad: 105850 },
+          { id: '30000000-0000-4000-8000-000000000205', slug: 'overtrail', name: 'Overtrail', msrpCad: 101850 },
+          { id: '30000000-0000-4000-8000-000000000206', slug: 'overtrail-plus', name: 'Overtrail+', msrpCad: 105850 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000202',
+        slug: 'hev',
+        name: 'i-FORCE MAX Hybrid',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000207', slug: 'overtrail-hybrid', name: 'Overtrail Hybrid', msrpCad: 106850 },
+          { id: '30000000-0000-4000-8000-000000000208', slug: 'executive-hybrid', name: 'Executive Hybrid', msrpCad: 110850 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000021',
+    slug: 'lexus-tx',
+    name: 'Lexus TX',
+    make: 'Lexus',
+    generationStartYear: 2024,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000211',
+        slug: 'gas',
+        name: 'TX 350 (Gas)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000211', slug: 'tx-350-awd', name: 'TX 350 AWD', msrpCad: 68750 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000212',
+        slug: 'hev',
+        name: 'TX 500h (F SPORT)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000212', slug: 'tx-500h-f-sport-2', name: 'TX 500h F SPORT Performance 2', msrpCad: 84200 },
+          { id: '30000000-0000-4000-8000-000000000213', slug: 'tx-500h-f-sport-3', name: 'TX 500h F SPORT Performance 3', msrpCad: 90200 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000213',
+        slug: 'phev',
+        name: 'TX 550h+ (Plug-in)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000214', slug: 'tx-550h-plus-executive', name: 'TX 550h+ Executive', msrpCad: 98000 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000022',
+    slug: 'lexus-nx',
+    name: 'Lexus NX',
+    make: 'Lexus',
+    generationStartYear: 2022,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000221',
+        slug: 'gas',
+        name: 'NX 250 / NX 350 (Gas)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000221', slug: 'nx-250', name: 'NX 250', msrpCad: 48900 },
+          { id: '30000000-0000-4000-8000-000000000222', slug: 'nx-350', name: 'NX 350', msrpCad: 52500 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000222',
+        slug: 'hev',
+        name: 'NX 350h (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000223', slug: 'base', name: 'Base', msrpCad: 53250 },
+          { id: '30000000-0000-4000-8000-000000000224', slug: 'premium', name: 'Premium', msrpCad: 55450 },
+          { id: '30000000-0000-4000-8000-000000000225', slug: 'luxury', name: 'Luxury', msrpCad: 60450 },
+          { id: '30000000-0000-4000-8000-000000000226', slug: 'ultra-luxury', name: 'Ultra Luxury', msrpCad: 64700 },
+          { id: '30000000-0000-4000-8000-000000000227', slug: 'executive', name: 'Executive', msrpCad: 69900 },
+          { id: '30000000-0000-4000-8000-000000000228', slug: 'f-sport-1', name: 'F SPORT 1', msrpCad: 58500 },
+          { id: '30000000-0000-4000-8000-000000000229', slug: 'f-sport-2', name: 'F SPORT 2', msrpCad: 62500 },
+          { id: '30000000-0000-4000-8000-000000000230', slug: 'f-sport-3', name: 'F SPORT 3', msrpCad: 68500 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000223',
+        slug: 'phev',
+        name: 'NX 450h+ (PHEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000231', slug: 'executive', name: 'Executive', msrpCad: 62150 },
+          { id: '30000000-0000-4000-8000-000000000232', slug: 'f-sport-3', name: 'F SPORT 3', msrpCad: 78500 },
+        ],
+      },
+    ],
+  },
+  {
+    id: '10000000-0000-4000-8000-000000000023',
+    slug: 'lexus-rx',
+    name: 'Lexus RX',
+    make: 'Lexus',
+    generationStartYear: 2023,
+    powertrains: [
+      {
+        id: '20000000-0000-4000-8000-000000000231',
+        slug: 'gas',
+        name: 'RX 350 (Gas)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000241', slug: 'rx-350', name: 'RX 350', msrpCad: 59450 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000232',
+        slug: 'hev',
+        name: 'RX 350h (HEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000242', slug: 'premium', name: 'Premium', msrpCad: 61450 },
+          { id: '30000000-0000-4000-8000-000000000243', slug: 'luxury', name: 'Luxury', msrpCad: 68950 },
+          { id: '30000000-0000-4000-8000-000000000244', slug: 'executive', name: 'Executive', msrpCad: 76500 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000233',
+        slug: 'phev',
+        name: 'RX 450h+ (PHEV)',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000245', slug: 'executive', name: 'Executive', msrpCad: 86950 },
+        ],
+      },
+      {
+        id: '20000000-0000-4000-8000-000000000234',
+        slug: 'f-sport-perf',
+        name: 'RX 500h F SPORT Performance',
+        trims: [
+          { id: '30000000-0000-4000-8000-000000000246', slug: 'f-sport-perf', name: 'RX 500h F SPORT Performance', msrpCad: 81100 },
         ],
       },
     ],

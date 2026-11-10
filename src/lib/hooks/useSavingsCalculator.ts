@@ -18,6 +18,7 @@ import {
   calculateAnnualPHEVCostUS,
   evaluateSimplePayback,
   evaluateCashFlowTimeline,
+  calculateCanadianLuxuryTax,
 } from '@/lib/calculator-engine';
 import {
   VEHICLE_PRESETS,
@@ -924,9 +925,12 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
         : 0;
 
     // 4. Outlay & Payback Calculations based on Comparison Mode
+    const luxuryTaxCad =
+      !isImp ? calculateCanadianLuxuryTax(mode2Outlay.targetPriceCad) : 0;
     const calculatedNetOutlay = Math.max(
       0,
-      mode2Outlay.targetPriceCad -
+      mode2Outlay.targetPriceCad +
+        luxuryTaxCad -
         mode2Outlay.tradeInProceedsCad +
         mode2Outlay.loanSettlementBalanceCad +
         mode2Outlay.chargerCostCad -
@@ -1173,6 +1177,7 @@ export function useSavingsCalculator(initialConfigOrHash?: string | CalculatorIn
       timelineResult,
       effectiveNetOutlay,
       calculatedNetOutlay,
+      luxuryTaxCad,
       isRecovered,
       recoveryYear,
       recoveryDay,

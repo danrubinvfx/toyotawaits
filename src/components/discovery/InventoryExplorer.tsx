@@ -29,11 +29,12 @@ import { useDonationReminder } from '@/hooks/useDonationReminder';
 import { DonationToast } from '@/components/common/DonationToast';
 import { Car, AlertCircle, Bell, AlertTriangle } from 'lucide-react';
 
-function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' {
+function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' | 'AB' {
   if (item.dealerProvince) {
     const prov = item.dealerProvince.toUpperCase().trim();
     if (prov === 'ON' || prov === 'ONTARIO') return 'ON';
     if (prov === 'BC' || prov === 'BRITISH COLUMBIA') return 'BC';
+    if (prov === 'AB' || prov === 'ALBERTA') return 'AB';
   }
   const query = `${item.dealerName || ''} ${item.dealerCity || ''}`.toLowerCase();
   for (const d of Object.values(DEALERS)) {
@@ -41,8 +42,22 @@ function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' {
       query.includes(d.name.toLowerCase()) ||
       (item.dealerCity && item.dealerCity.toLowerCase() === d.city.toLowerCase())
     ) {
-      return d.province.toUpperCase() === 'ON' ? 'ON' : 'BC';
+      const p = d.province.toUpperCase();
+      if (p === 'ON') return 'ON';
+      if (p === 'AB') return 'AB';
+      return 'BC';
     }
+  }
+  if (
+    query.includes('calgary') ||
+    query.includes('edmonton') ||
+    query.includes('stampede') ||
+    query.includes('country hills') ||
+    query.includes('gateway') ||
+    query.includes('mayfield') ||
+    query.includes('alberta')
+  ) {
+    return 'AB';
   }
   if (
     query.includes('toronto') ||
@@ -731,11 +746,13 @@ export function InventoryExplorer({
     return null;
   }, [filters.userCoordinates, filters.location]);
 
-  const activeRegion = useMemo<'BC' | 'ON' | null>(() => {
+  const activeRegion = useMemo<'BC' | 'ON' | 'AB' | null>(() => {
     const fromLocation = getLocationProvince(filters.location);
     if (fromLocation) return fromLocation;
     if (userCoordinates) {
-      return userCoordinates.lng > -95 ? 'ON' : 'BC';
+      if (userCoordinates.lng > -95) return 'ON';
+      if (userCoordinates.lng > -114.5 && userCoordinates.lng <= -110) return 'AB';
+      return 'BC';
     }
     return null;
   }, [filters.location, userCoordinates]);

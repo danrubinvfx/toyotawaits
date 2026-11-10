@@ -53,6 +53,17 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
       ? 'delivery'
       : 'news';
 
+  const rawModelStr = String(raw.model_name || raw.model || raw.text || '').toLowerCase();
+  const isLexusItem =
+    raw.make === 'Lexus' ||
+    rawModelStr.includes('lexus') ||
+    /\b(gx\s*550|gx550|tx\s*350|tx\s*500h|tx\s*550h|nx\s*350h|nx\s*450h|rx\s*350h|rx\s*450h|rx\s*500h)\b/i.test(rawModelStr);
+
+  const defaultBadge = isLexusItem ? 'Lexus' : DEFAULT_BADGES[type];
+  const defaultBadgeColor = isLexusItem
+    ? 'bg-amber-400/20 text-amber-200 border-amber-300/40'
+    : resolveBadgeColor(raw.badgeColor, type);
+
   // Already a unified TickerItem
   if (typeof raw.text === 'string' && raw.text.trim().length > 0) {
     const isExternal = Boolean(
@@ -61,11 +72,11 @@ export function normalizeTickerItem(raw: any, index = 0): TickerItem | null {
     return {
       id: String(raw.id || `${type}-${index}`),
       type,
-      badge: raw.badge || DEFAULT_BADGES[type],
-      badgeColor: resolveBadgeColor(raw.badgeColor, type),
+      badge: raw.badge || defaultBadge,
+      badgeColor: raw.badgeColor ? resolveBadgeColor(raw.badgeColor, type) : defaultBadgeColor,
       title: typeof raw.title === 'string' && raw.title.trim().length > 0 ? raw.title.trim() : undefined,
       text: raw.text,
-      linkUrl: raw.linkUrl || '/',
+      linkUrl: raw.linkUrl || (isLexusItem ? '/wait-times/lexus-gx550' : '/'),
       isExternal,
       accessoryId: raw.accessoryId,
       modelContext: raw.modelContext ?? null,

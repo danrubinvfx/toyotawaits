@@ -179,7 +179,7 @@ describe('Ticker Data Fetcher & 4-Stream Aggregator', () => {
       expect(item.type).toBe('delivery');
       expect(['[📦 DELIVERED]', '[📝 ALLOCATED]']).toContain(item.badge);
       expect(item.badgeColor).toBe(TICKER_BADGE_COLORS.delivery);
-      expect(item.text).toMatch(/delivered in .+ after \d+ days/);
+      expect(item.text).toMatch(/(delivered in .+ \(\d+d wait\)|deposit logged in .+ \(Est\. \d+d\))/);
       expect(item.linkUrl).toBe('/');
     }
 

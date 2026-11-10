@@ -62,6 +62,9 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     initialModel.powertrains[0];
   const initialTrim = initialPowertrain?.trims[0];
 
+  const [selectedMake, setSelectedMake] = useState<string>(() => {
+    return initialModel.make || (initialModel.slug.startsWith('lexus-') ? 'Lexus' : 'All');
+  });
   const [selectedModelSlug, setSelectedModelSlug] = useState<string>(initialModel.slug);
   const [selectedPowertrainSlug, setSelectedPowertrainSlug] = useState<string>(initialPowertrain?.slug || 'hev');
   const [selectedTrimId, setSelectedTrimId] = useState<string>(
@@ -204,10 +207,37 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     Number(modelYear) < 2026 ||
     Boolean(orderDate && new Date(orderDate + (orderDate.includes('T') ? '' : 'T00:00:00')).getFullYear() < 2026);
 
+  const handleMakeChange = (make: string) => {
+    setSelectedMake(make);
+    if (make !== 'All') {
+      const currentMake = currentModel.make || (currentModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota');
+      if (currentMake !== make) {
+        const firstOfMake = CANADIAN_VEHICLE_CATALOG.find(
+          (m) => (m.make || (m.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota')) === make
+        );
+        if (firstOfMake) {
+          handleModelChange(firstOfMake.slug);
+        }
+      }
+    }
+  };
+
+  const displayedModels = selectedMake === 'All'
+    ? CANADIAN_VEHICLE_CATALOG
+    : CANADIAN_VEHICLE_CATALOG.filter(
+        (m) => (m.make || (m.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota')) === selectedMake
+      );
+
   // Handle Model Change
   const handleModelChange = (modelSlug: string) => {
     setSelectedModelSlug(modelSlug);
     const newModel = CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === modelSlug);
+    if (newModel) {
+      const mMake = newModel.make || (newModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota');
+      if (selectedMake !== 'All' && selectedMake !== mMake) {
+        setSelectedMake(mMake);
+      }
+    }
     if (newModel && newModel.powertrains.length > 0) {
       const defaultPowertrain = newModel.powertrains[0];
       setSelectedPowertrainSlug(defaultPowertrain.slug);
@@ -265,6 +295,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         : pricing;
 
       const payload = {
+        make: currentModel.make || (currentModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota'),
         modelId: currentModel.id,
         modelSlug: currentModel.slug,
         model: currentModel.name,
@@ -590,7 +621,21 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
             />
 
             {/* 1. Vehicle Cascading Selection */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor={`${formId}-make`}>Make</Label>
+                <Select
+                  id={`${formId}-make`}
+                  value={selectedMake}
+                  onChange={(e) => handleMakeChange(e.target.value)}
+                  className="font-medium"
+                >
+                  <option value="All">All Makes</option>
+                  <option value="Toyota">Toyota</option>
+                  <option value="Lexus">Lexus</option>
+                </Select>
+              </div>
+
               <div className="space-y-1.5">
                 <Label htmlFor={`${formId}-model`}>Vehicle Model</Label>
                 <Select
@@ -599,7 +644,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                   onChange={(e) => handleModelChange(e.target.value)}
                   className="font-medium"
                 >
-                  {CANADIAN_VEHICLE_CATALOG.map((m) => (
+                  {displayedModels.map((m) => (
                     <option key={m.slug} value={m.slug}>
                       {m.name}
                     </option>

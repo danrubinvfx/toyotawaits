@@ -133,6 +133,9 @@ export async function POST(request: NextRequest) {
         }
         body.modelSlug = catalogModel.slug;
         body.model = catalogModel.name;
+        if (!body.make) {
+          body.make = catalogModel.make || (catalogModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota');
+        }
 
         // Powertrain normalization
         const incomingPtStr = String(body.powertrainSlug || body.powertrainId || body.powertrain || '').toLowerCase().trim();

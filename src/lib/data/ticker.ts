@@ -439,13 +439,27 @@ export async function getDeliveryTickerItems(
             const waitDays = calculateDaysWaited(item?.order_date, item?.delivery_date, item?.wait_days);
             const isAllocated = item?.status !== 'delivered';
 
+            const isLexus =
+              item?.make === 'Lexus' ||
+              model.toLowerCase().includes('lexus') ||
+              ['gx 550', 'gx550', 'tx', 'nx', 'rx'].includes(model.toLowerCase());
+            const cleanModel = isLexus && !model.toLowerCase().startsWith('lexus') ? `Lexus ${model}` : model;
+            const badge = isLexus ? 'Lexus' : isAllocated ? '[📝 ALLOCATED]' : '[📦 DELIVERED]';
+            const badgeColor = isLexus ? 'bg-amber-400/20 text-amber-200 border-amber-300/40' : TICKER_BADGE_COLORS.delivery;
+            const text = isAllocated
+              ? `${cleanModel} ${trim} deposit logged in ${province} (Est. ${waitDays}d)`
+              : `${cleanModel} ${trim} delivered in ${province} (${waitDays}d wait)`;
+            const linkUrl = isLexus
+              ? `/wait-times/${cleanModel.toLowerCase().replace(/\s+/g, '-')}`
+              : '/';
+
             return {
               id: `del-${item?.id ?? idx}`,
               type: 'delivery',
-              badge: isAllocated ? '[📝 ALLOCATED]' : '[📦 DELIVERED]',
-              badgeColor: TICKER_BADGE_COLORS.delivery,
-              text: `${year} ${model} ${trim} delivered in ${province} after ${waitDays} days`,
-              linkUrl: '/',
+              badge,
+              badgeColor,
+              text,
+              linkUrl,
               isExternal: false,
             };
           })
@@ -477,13 +491,27 @@ export async function getDeliveryTickerItems(
         const province = String(r?.province ?? (isUs ? 'CA' : 'BC')).trim();
         const waitDays = calculateDaysWaited(r?.orderDate, r?.deliveryDate, r?.waitDays);
 
+        const isLexus =
+          (r as any)?.make === 'Lexus' ||
+          model.toLowerCase().includes('lexus') ||
+          ['gx 550', 'gx550', 'tx', 'nx', 'rx'].includes(model.toLowerCase());
+        const cleanModel = isLexus && !model.toLowerCase().startsWith('lexus') ? `Lexus ${model}` : model;
+        const badge = isLexus ? 'Lexus' : '[📦 DELIVERED]';
+        const badgeColor = isLexus ? 'bg-amber-400/20 text-amber-200 border-amber-300/40' : TICKER_BADGE_COLORS.delivery;
+        const text = r?.status === 'delivered'
+          ? `${cleanModel} ${trim} delivered in ${province} (${waitDays}d wait)`
+          : `${cleanModel} ${trim} deposit logged in ${province} (Est. ${waitDays}d)`;
+        const linkUrl = isLexus
+          ? `/wait-times/${cleanModel.toLowerCase().replace(/\s+/g, '-')}`
+          : '/';
+
         return {
           id: `del-${r?.id ?? idx}`,
           type: 'delivery',
-          badge: '[📦 DELIVERED]',
-          badgeColor: TICKER_BADGE_COLORS.delivery,
-          text: `${year} ${model} ${trim} delivered in ${province} after ${waitDays} days`,
-          linkUrl: '/',
+          badge,
+          badgeColor,
+          text,
+          linkUrl,
           isExternal: false,
         };
       })

@@ -14,6 +14,41 @@ describe('POST /api/submissions', () => {
     _resetRateLimiter();
   });
 
+  it('successfully persists a Lexus GX 550 Overtrail submission with make: Lexus', async () => {
+    const payload = {
+      make: 'Lexus',
+      modelSlug: 'lexus-gx550',
+      powertrainSlug: 'gas',
+      trimSlug: 'overtrail',
+      province: 'BC',
+      dealershipCity: 'Richmond',
+      dealershipName: 'OpenRoad Lexus Richmond',
+      modelYear: 2026,
+      orderDate: '2026-02-01',
+      status: 'pending',
+      pricing: 'at_msrp',
+      mandatoryAddonsCad: 0,
+      turnstileToken: 'mock-valid-turnstile-token',
+    };
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.189',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+
+    const data = await response.json();
+    expect(data.success).toBe(true);
+    expect(data.data.id).toBeDefined();
+    expect(data.data.status).toBe('pending');
+  });
+
   it('successfully creates an anonymous pending submission (201 Created)', async () => {
     const payload = {
       modelId: validUuid1,

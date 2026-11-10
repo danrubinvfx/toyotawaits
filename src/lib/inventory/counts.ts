@@ -55,6 +55,19 @@ export function getEstimatorInventoryModelName(
     return 'Land Cruiser';
   }
 
+  if (normModel === 'lexus-gx550' || normModel === 'gx550' || normModel === 'gx-550' || normModel === 'gx 550') {
+    return 'GX 550';
+  }
+  if (normModel === 'lexus-tx' || normModel === 'tx') {
+    return 'TX';
+  }
+  if (normModel === 'lexus-nx' || normModel === 'nx') {
+    return 'NX';
+  }
+  if (normModel === 'lexus-rx' || normModel === 'rx') {
+    return 'RX';
+  }
+
   const catalogModel = CANADIAN_VEHICLE_CATALOG.find((m) => m.slug === normModel);
   if (catalogModel) {
     return catalogModel.name;
@@ -73,7 +86,8 @@ export function getActiveInventoryCountByModel(
   countsOrListings?: Record<string, number> | VehicleListingCardProps[]
 ): number {
   if (!modelName) return 0;
-  const target = modelName.trim().toLowerCase();
+  const rawTarget = modelName.trim().toLowerCase();
+  const target = rawTarget.startsWith('lexus-') ? rawTarget.replace('lexus-', '').replace('-', ' ') : rawTarget;
 
   // If passed an array of listings
   if (Array.isArray(countsOrListings)) {
