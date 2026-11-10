@@ -36,6 +36,8 @@ import {
   CheckCircle2,
   Snowflake,
   Package,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
@@ -635,6 +637,34 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </p>
         </div>
       </section>
+
+      {/* Editorial Comparison Guide Bridge for Lexus TX / RX */}
+      {(modelConfig.slug === 'lexus-tx' || modelConfig.slug === 'lexus-rx') && (
+        <aside
+          aria-label="Lexus TX vs. RX Sizing & Family Guide"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Torn between TX 3rd-row utility and RX maneuverability? Read our Lexus TX vs. RX Sizing &amp; Family Guide &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Compare physical dimensions, garage walkaround clearance, adult seating packaging, and Canadian queue times.
+            </p>
+          </div>
+          <Link
+            href="/guides/lexus-tx-vs-rx"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare TX vs. RX</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
 
       {/* Sibling Model Cross-Shopping Bridge Card */}
       <CrossShopBridge

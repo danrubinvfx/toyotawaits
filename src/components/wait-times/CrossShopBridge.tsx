@@ -170,6 +170,18 @@ export function CrossShopBridge({
           <div className="text-xs text-amber-300/90 font-medium pt-0.5">
             📊 {sister.waitSummary}
           </div>
+
+          {sister.slug === 'lexus-tx' && (
+            <div className="pt-2 text-xs text-zinc-300">
+              <span className="text-zinc-400">Comparing 3-row architecture sizing? </span>
+              <Link
+                href="/guides/lexus-tx-vs-rx"
+                className="text-amber-300 hover:text-amber-200 underline font-medium inline-flex items-center gap-1 transition-colors"
+              >
+                <span>Read how Lexus TX sizing compares to midsize and full-size crossovers in our Sizing Guide &rarr;</span>
+              </Link>
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 flex items-center pt-2 md:pt-0">

@@ -53,6 +53,21 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'lexus-tx-vs-rx',
+    title: 'Lexus TX vs. RX: Sizing, Seating & Allocation Guide',
+    tagline: 'Head-to-head dimensions, garage maneuverability, adult passenger legroom, cargo packaging, and Canadian wait times.',
+    badge: 'Luxury Family SUV Shootout',
+    model: 'Lexus TX vs. RX',
+    tags: ['Lexus', 'Sizing', '3-Row vs 2-Row', 'Wait Times'],
+    highlights: [
+      'Footprint & Turning Circle: RX 192.5" (38.8 ft) vs TX 203.1" (38.0 ft w/ DRS)',
+      'Passenger packaging: 3-row college-adult comfort vs midsize Ascent baselines',
+      'Cargo capacity: 57.4 cu. ft. behind 2nd row vs 29.6 cu. ft. in RX',
+      'Powertrains & Allocations: 4–8 mo RX queue vs 6–12 mo TX 500h/550h+ allocations',
+    ],
+    href: '/guides/lexus-tx-vs-rx',
+  },
+  {
     slug: 'lexus-gx550-must-have-accessories',
     title: 'Lexus GX 550 Day-One Delivery Checklist & Essential Accessories',
     tagline: 'Essential delivery-day inspection checklist, TuxMat floor protection, FitcamX 4K OEM dashcam, and PPF stone-chip armor.',
