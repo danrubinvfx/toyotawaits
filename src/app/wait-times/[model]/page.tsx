@@ -666,6 +666,62 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </aside>
       )}
 
+      {/* Editorial Comparison Guide Bridge for Toyota RAV4 */}
+      {(modelConfig.slug === 'rav4' || modelConfig.slug === 'rav4-hybrid') && (
+        <aside
+          aria-label="Toyota RAV4 vs. Sienna Family Sizing & Cargo Guide"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Feeling cramped in a compact SUV? Read our Toyota RAV4 vs. Sienna Family Sizing &amp; Cargo Guide &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Compare ground clearance, sunken cargo well utility, sliding doors, and Canadian allocation rollover options.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-rav4-vs-sienna"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare RAV4 vs. Sienna</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
+      {/* Editorial Comparison Guide Bridge for Toyota Sienna */}
+      {(modelConfig.slug === 'sienna' || modelConfig.slug === 'sienna-hybrid') && (
+        <aside
+          aria-label="Toyota RAV4 vs. Sienna Family Sizing & Cargo Guide"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Cross-shopping the RAV4? Compare ground clearance, sliding doors, and wait times &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Analyze ramp breakover angles, iZEV point-of-sale rebates, flat vs. sunken floor cargo, and queue transitions.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-rav4-vs-sienna"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare RAV4 vs. Sienna</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
       {/* Sibling Model Cross-Shopping Bridge Card */}
       <CrossShopBridge
         sourceModelSlug={modelConfig.slug}

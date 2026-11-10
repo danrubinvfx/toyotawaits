@@ -53,6 +53,21 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'toyota-rav4-vs-sienna',
+    title: 'Toyota RAV4 vs. Sienna: Crossover to Minivan Transition & Allocation Guide',
+    tagline: 'Crossover ground clearance vs. sliding door ergonomics, 33.5 cu. ft. flat deck vs. deep sunken trunk well, and Canadian queue rollover rules.',
+    badge: 'Family Transition Guide',
+    model: 'RAV4 vs. Sienna',
+    tags: ['Toyota', 'RAV4', 'Sienna', 'Crossover vs Minivan', 'Sizing', 'Wait Times'],
+    highlights: [
+      'Ground Clearance: RAV4 8.1"–8.6" snow clearance vs. Sienna 6.4" low step-in',
+      'Cargo Packaging: Flat 33.5 cu. ft. crossover deck vs. Sienna 33.5 cu. ft. sunken well + 75.2 cu. ft. stowed',
+      'Sliding Door Superpower: Zero door dings in tight parking stalls & stress-free car seat loading',
+      'Canadian Queue Rollovers: 4–8 mo RAV4 Prime ($2.5k iZEV) vs. 1–4 mo Sienna LE AWD queue transitions',
+    ],
+    href: '/guides/toyota-rav4-vs-sienna',
+  },
+  {
     slug: 'lexus-tx-vs-rx',
     title: 'Lexus TX vs. RX: Sizing, Seating & Allocation Guide',
     tagline: 'Head-to-head dimensions, garage maneuverability, adult passenger legroom, cargo packaging, and Canadian wait times.',

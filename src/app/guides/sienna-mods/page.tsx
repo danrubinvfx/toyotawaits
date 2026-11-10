@@ -229,6 +229,22 @@ export default function SiennaModsGuidePage() {
       {/* Legal & Safety Disclaimer */}
       <GuideDisclaimer />
 
+      {/* Cross-Shopping Comparison Guide Card */}
+      <div className="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-0.5">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Buyer Comparison Guide</span>
+          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Debating between a compact SUV and minivan? Read our Toyota RAV4 vs. Sienna Sizing Guide &rarr;
+          </p>
+        </div>
+        <Link
+          href="/guides/toyota-rav4-vs-sienna"
+          className="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-zinc-950 text-xs font-bold transition-colors"
+        >
+          <span>Compare RAV4 vs. Sienna</span>
+        </Link>
+      </div>
+
       {/* Navigation CTA */}
       <div className="pt-4 flex items-center justify-between">
         <Button asChild className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold gap-2 cursor-pointer">

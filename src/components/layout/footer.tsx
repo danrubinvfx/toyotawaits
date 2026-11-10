@@ -155,6 +155,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/guides/toyota-rav4-vs-sienna`} className="hover:text-amber-500 transition-colors">
+                  RAV4 vs. Sienna Guide
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/toyota-ecp-warranty-guide`} className="hover:text-amber-500 transition-colors">
                   Toyota ECP Warranty Guide
                 </Link>

@@ -866,6 +866,12 @@ export default function SiennaTrailerHitchGuidePage() {
           >
             More Sienna Mods <ArrowRight className="h-3.5 w-3.5" />
           </Link>
+          <Link
+            href="/guides/toyota-rav4-vs-sienna"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-xs font-semibold text-amber-600 dark:text-amber-400 transition-colors"
+          >
+            RAV4 vs. Sienna Guide &rarr;
+          </Link>
         </div>
       </div>
     </div>
