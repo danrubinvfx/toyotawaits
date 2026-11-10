@@ -666,6 +666,62 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </aside>
       )}
 
+      {/* Editorial Comparison Guide Bridge for Toyota Grand Highlander */}
+      {(modelConfig.slug === 'grand-highlander' || modelConfig.slug === 'grand-highlander-hybrid') && (
+        <aside
+          aria-label="Toyota Grand Highlander vs. Lexus TX Comparison Guide"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Tired of the 8–14 month wait? Compare Grand Highlander vs. Lexus TX allocation timelines and luxury math &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Weighing an 8–14 month Grand Highlander wait against an available Lexus TX? Compare TNGA-K packaging, 3rd-row legroom, and luxury tax.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-grand-highlander-vs-lexus-tx"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare GH vs. TX</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
+      {/* Editorial Comparison Guide Bridge for Lexus TX vs Grand Highlander */}
+      {modelConfig.slug === 'lexus-tx' && (
+        <aside
+          aria-label="Lexus TX vs. Toyota Grand Highlander Comparison Guide"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-zinc-900/90 to-zinc-950 p-4 sm:p-5 my-4 shadow-md text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-3 w-3" />
+              Editorial Comparison Guide
+            </span>
+            <p className="text-sm font-bold text-zinc-100">
+              Weighing the Lexus TX against the Toyota Grand Highlander? Compare TNGA-K platform packaging, third-row legroom, and luxury tax &rarr;
+            </p>
+            <p className="text-xs text-zinc-400">
+              Evaluate the $12k–$18k MSRP spread, acoustic dampening differences, and 6–8 months of avoided queue wait.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-grand-highlander-vs-lexus-tx"
+            className="shrink-0 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs shadow-sm transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+          >
+            <span>Compare TX vs. Grand Highlander</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </aside>
+      )}
+
       {/* Editorial Comparison Guide Bridge for Toyota RAV4 */}
       {(modelConfig.slug === 'rav4' || modelConfig.slug === 'rav4-hybrid') && (
         <aside

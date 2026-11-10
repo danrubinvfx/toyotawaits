@@ -547,6 +547,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L6L 6L4',
     phone: '(905) 827-2228',
     websiteUrl: 'https://www.oakvilletoyota.ca/',
+    lat: 43.4139,
+    lng: -79.7267,
   },
   {
     dealerCode: 'upper-james-toyota',
@@ -563,6 +565,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L9C 3A6',
     phone: '(905) 387-9287',
     websiteUrl: 'https://www.upperjamestoyota.ca/',
+    lat: 43.2208,
+    lng: -79.8842,
   },
   {
     dealerCode: 'pickering-toyota',
@@ -579,6 +583,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L1V 3N7',
     phone: '(905) 420-9000',
     websiteUrl: 'https://www.pickeringtoyota.com/',
+    lat: 43.8144,
+    lng: -79.1206,
   },
   {
     dealerCode: 'whitby-toyota',
@@ -595,6 +601,8 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     postalCode: 'L1P 1Z1',
     phone: '(905) 668-4792',
     websiteUrl: 'https://www.whitbytoyota.com/',
+    lat: 43.8732,
+    lng: -78.9675,
   },
   {
     dealerCode: 'openroad-lexus-richmond',

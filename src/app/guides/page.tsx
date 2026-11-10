@@ -53,6 +53,21 @@ export function generateMetadata(): Metadata {
 
 const MOD_GUIDES = [
   {
+    slug: 'toyota-grand-highlander-vs-lexus-tx',
+    title: 'Toyota Grand Highlander vs. Lexus TX: Space, Wait Times & Luxury Tax',
+    tagline: 'TNGA-K platform packaging, adult third-row legroom, acoustic glass & materials, Canadian luxury tax math, and allocation timelines.',
+    badge: '3-Row Crossover Shootout',
+    model: 'Grand Highlander vs. Lexus TX',
+    tags: ['Toyota', 'Lexus', 'Grand Highlander', 'Lexus TX', '3-Row SUVs', 'Wait Times', 'Luxury Tax'],
+    highlights: [
+      'Identical 116.1" Wheelbase: True 33.5" third-row adult legroom on both TNGA-K platforms',
+      'Acoustic Refinement: Dual laminated acoustic side glass & active noise cancelling in TX',
+      'Federal Luxury Tax: TX 500h Exec & 550h+ trigger 20% over $100k; GH trims 100% exempt',
+      'Queue Bypassing: Avoid 8–14 month GH Hybrid waits with faster 4–8 month TX 350 allocations',
+    ],
+    href: '/guides/toyota-grand-highlander-vs-lexus-tx',
+  },
+  {
     slug: 'toyota-rav4-vs-sienna',
     title: 'Toyota RAV4 vs. Sienna: Crossover to Minivan Transition & Allocation Guide',
     tagline: 'Crossover ground clearance vs. sliding door ergonomics, 33.5 cu. ft. flat deck vs. deep sunken trunk well, and Canadian queue rollover rules.',
