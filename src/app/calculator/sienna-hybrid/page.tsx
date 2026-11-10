@@ -12,9 +12,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
+  title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
   description:
-    'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
+    'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
   keywords: [
     'toyota sienna hybrid fuel savings',
     'sienna hybrid vs gas minivan canada',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/sienna-hybrid',
   },
   openGraph: {
-    title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
+    title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
     description:
-      'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
+      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
     url: 'https://toyotawaits.ca/calculator/sienna-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota Sienna Hybrid Fuel Savings Calculator (2026 Canada) | ToyotaWaits',
+    title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
     description:
-      'Calculate Sienna Hybrid fuel savings vs standard V6 minivans. Real Canadian fuel prices, annual mileage break-even, and provincial payback timelines.',
+      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
   },
 };
 

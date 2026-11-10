@@ -254,13 +254,13 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
 
     render(jsx);
 
-    expect(screen.getByText('Allocated a 2026 or Waiting for a 2027?')).toBeInTheDocument();
+    expect(screen.getByText('Allocated a 2026 or Holding Out for a 2027 RAV4?')).toBeInTheDocument();
     expect(
       screen.getByText(
-        /The 2027 RAV4 brings major hardware changes including native NACS Supercharging and upgraded PHEV output\. Read our breakdown before deciding to pass on an incoming allocation\./i
+        /Toyota has announced major 2027 hardware revisions including native NACS Tesla charging and Level 3 DC fast charging\. Compare the changes before passing on an allocation\./i
       )
     ).toBeInTheDocument();
-    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 RAV4 Guide →/i });
+    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
     expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-rav4-2026-vs-2027');
   });
 

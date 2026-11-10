@@ -1120,15 +1120,15 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   2026 vs. 2027 Model Year
                 </Badge>
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-                  Allocated a 2026 or Waiting for a 2027?
+                  Allocated a 2026 or Holding Out for a 2027 RAV4?
                 </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                  The 2027 RAV4 brings major hardware changes including native NACS Supercharging and upgraded PHEV output. Read our breakdown before deciding to pass on an incoming allocation.
+                  Toyota has announced major 2027 hardware revisions including native NACS Tesla charging and Level 3 DC fast charging. Compare the changes before passing on an allocation.
                 </p>
               </div>
               <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shrink-0 shadow-sm">
                 <Link href="/guides/toyota-rav4-2026-vs-2027" className="gap-2">
-                  Read 2026 vs. 2027 RAV4 Guide →
+                  Read 2026 vs. 2027 Comparison →
                 </Link>
               </Button>
             </div>

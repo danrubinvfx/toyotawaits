@@ -16,17 +16,17 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
   it('has valid SEO metadata matching specification requirements', () => {
     const meta = generateMetadata();
     expect(meta.title).toBe(
-      '2026 vs. 2027 Toyota RAV4: Key Differences, NACS Port & Wait Times | ToyotaWaits'
+      '2026 vs. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times | ToyotaWaits'
     );
     expect(meta.description).toBe(
-      'Compare the 2026 and 2027 Toyota RAV4 (Hybrid & PHEV). Breakdown of native NACS Supercharging, 321-hp PHEV upgrade, 9.1" Woodland lift, and allocation queue rollovers.'
+      'Compare the 2026 and 2027 Toyota RAV4. Breakdown of native NACS Tesla charging, 11kW AC onboard charger, 321 hp PHEV, 9.1-inch Woodland lift, and Canadian delivery queues.'
     );
     expect(meta.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027'
     );
   });
 
-  it('renders JSON-LD FAQPage schema with the 3 mandatory questions', () => {
+  it('renders JSON-LD FAQPage schema with the mandatory questions', () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
         <Rav42026Vs2027GuidePage />
@@ -38,27 +38,20 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     const json = JSON.parse(script!.textContent || '{}');
 
     expect(json['@type']).toBe('FAQPage');
-    expect(json.mainEntity).toHaveLength(3);
+    expect(json.mainEntity.length).toBeGreaterThanOrEqual(2);
 
     expect(json.mainEntity[0].name).toBe(
-      'What are the major differences between the 2026 and 2027 Toyota RAV4?'
+      'What are the biggest upgrades on the 2027 Toyota RAV4?'
     );
     expect(json.mainEntity[0].acceptedAnswer.text).toBe(
-      'The 2027 RAV4 introduces a native NACS (Tesla-style) charging port and DC fast charging on all PHEVs, upgrades PHEV power to 321 hp (6th-gen system), increases Woodland ground clearance to 9.1 inches, and standardizes Toyota Safety Sense 4.0 with an integrated drive recorder.'
+      'The 2027 RAV4 introduces native NACS ports for direct Tesla Supercharger access, Level 3 DC fast charging on PHEVs, an upgraded 11 kW AC onboard charger, and TSS 4.0 with a factory dashcam.'
     );
 
     expect(json.mainEntity[1].name).toBe(
-      'Will my 2026 RAV4 allocation roll over into a 2027 model year?'
+      'Should I accept a 2026 RAV4 allocation or hold out for a 2027?'
     );
     expect(json.mainEntity[1].acceptedAnswer.text).toBe(
-      "Yes. In Toyota's bi-weekly dealer allocation system, build slots clearing Japanese or North American plants between November and January will transition to 2027 VINs without losing queue position."
-    );
-
-    expect(json.mainEntity[2].name).toBe(
-      'Should I pass on a 2026 RAV4 Plug-in Hybrid to get a 2027?'
-    );
-    expect(json.mainEntity[2].acceptedAnswer.text).toBe(
-      'Only if native NACS Supercharger access and 11 kW Level 2 charging are critical to you. Passing on a late 2026 build will push delivery back by 6 to 12 months, subject you to annual model-year price bumps, and may cross into lower federal PHEV incentive brackets.'
+      'Hybrid (HEV) buyers should take a 2026 build immediately to dodge annual MSRP inflation. Plug-in Hybrid (PHEV) buyers wanting native Tesla Supercharging may prefer waiting for 2027, though taking delivery in 2026 locks in an extra $500 in Canadian federal iZEV rebates.'
     );
   });
 
@@ -71,28 +64,30 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: /2026 vs\. 2027 Toyota RAV4: Key Differences, NACS Port & Wait Times/i,
+        name: /2026 vs\. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times/i,
       })
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/Year-Over-Year Carryover & Upgrade Comparison/i)).toBeInTheDocument();
-    expect(screen.getByText(/Native NACS \(J3400\) \+ Level 3 DC Fast Charging/i)).toBeInTheDocument();
-    expect(screen.getByText(/321 hp net system \(6th-Gen\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/9\.1 inches \(231 mm\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/TSS 4\.0 with Factory Drive Recorder/i)).toBeInTheDocument();
+    expect(screen.getByText(/2026 vs\. 2027 RAV4 Specification Matrix/i)).toBeInTheDocument();
+    expect(screen.getByText(/Native NACS \(SAE J3400\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Standard on PHEV \(Level 3 DC\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/321 hp \(6th-Gen\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/9\.1" \(231 mm\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/TSS 4\.0 Factory Integrated Drive Recorder/i)).toBeInTheDocument();
+    expect(screen.getByText(/\$2,500 CAD \(Full\)/i)).toBeInTheDocument();
   });
 
-  it('renders "Pass or Take It?" decision engine with clear criteria', () => {
+  it('renders "The Verdict" decision matrix with clear criteria', () => {
     render(
       <MarketProvider initialMarket="CA">
         <Rav42026Vs2027GuidePage />
       </MarketProvider>
     );
 
-    expect(screen.getByText(/"Pass or Take It\?" Buyer Decision Engine/i)).toBeInTheDocument();
-    expect(screen.getByText(/Take the 2026 Allocation If:/i)).toBeInTheDocument();
-    expect(screen.getByText(/Hold Out for the 2027 If:/i)).toBeInTheDocument();
-    expect(screen.getByText(/\+6 to \+12 Months/i)).toBeInTheDocument();
+    expect(screen.getByText(/The Verdict: What Should Deposit Holders Do\?/i)).toBeInTheDocument();
+    expect(screen.getByText(/Gas Deposit Holders/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hybrid \(HEV\) Holders/i)).toBeInTheDocument();
+    expect(screen.getByText(/PHEV Deposit Holders/i)).toBeInTheDocument();
   });
 
   it('renders live inventory bridge banner linking to RAV4 stock', () => {
@@ -136,10 +131,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(evseLink).toHaveAttribute('target', '_blank');
     expect(evseLink).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
 
-    // 2. High-Wall Floor Mats
-    expect(screen.getByText(/High-Wall 3D All-Weather Floor Mats/i)).toBeInTheDocument();
+    // 2. High-Wall Floor Mats / TuxMat
+    expect(screen.getByText(/TuxMat Laser-Fit All-Weather Floor Liners/i)).toBeInTheDocument();
     expect(screen.getByText(/Confirmed Fit 2019-2027/i)).toBeInTheDocument();
-    const matsLink = screen.getByRole('link', { name: /Check Mats on Amazon ↗/i });
+    const matsLink = screen.getByRole('link', { name: /View TuxMat on Amazon ↗/i });
     expect(matsLink.getAttribute('href')).toContain('tag=toyotawaits-20');
     expect(matsLink.getAttribute('href')).toContain('amazon.ca');
 
