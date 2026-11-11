@@ -1,5 +1,9 @@
 import React from 'react';
 import {
+  getCurrentPromoConfig,
+  sortGearByPromotions,
+} from '@/lib/gear/promotions';
+import {
   AllocationDropAlertEmailInput,
   AllocationDropAlertVehicle,
   AMAZON_ASSOCIATES_DISCLOSURE,
@@ -27,11 +31,13 @@ export {
   resolveVehicleStatusBadge,
   formatVehiclePricing,
   formatVehicleDealership,
+  getCurrentPromoConfig,
+  sortGearByPromotions,
 };
 export type { AllocationDropAlertEmailInput, AllocationDropAlertVehicle };
 
 export function AllocationDropAlertEmail(props: AllocationDropAlertEmailInput) {
-  const email = generateAllocationDropAlertEmail(props);
+  const email = generateAllocationDropAlertEmail(props, props.currentDate);
   return <div dangerouslySetInnerHTML={{ __html: email.html }} />;
 }
 

@@ -1,9 +1,12 @@
 import { getGearMarketConfig } from '@/data/gear/catalog';
-import { getAccessoriesForModel } from '@/data/accessories';
 import {
   buildAmazonAffiliateUrl,
   getModelDisplayName,
 } from '@/lib/gear/affiliate';
+import {
+  getCurrentPromoConfig,
+  sortGearByPromotions,
+} from '@/lib/gear/promotions';
 import { toCanonicalWaitTimeSlug } from '@/lib/calculator-model-helpers';
 
 export const AMAZON_ASSOCIATES_DISCLOSURE =
@@ -18,7 +21,10 @@ export interface DropAlertGearPick {
   description: string;
   searchQuery: string;
   url: string;
-  buttonLabel: 'Check on Amazon ↗';
+  buttonLabel: string;
+  isHeroDeal?: boolean;
+  category?: string;
+  discountCode?: string;
 }
 
 export interface DropAlertEnrichment {
@@ -78,6 +84,7 @@ export interface AllocationDropAlertEmailInput {
   market?: 'CA' | 'US';
   region?: string | null;
   vehicles?: AllocationDropAlertVehicle[];
+  currentDate?: Date;
 }
 
 export interface GeneratedDropAlertEmail {
@@ -126,22 +133,31 @@ export function resolveAlertModelDisplay(
  */
 export function buildZero404AmazonSearchUrl(
   searchKeywords: string,
-  market: 'CA' | 'US' = 'CA'
+  market: 'CA' | 'US' = 'CA',
+  dealFilter: boolean = false
 ): string {
   const cleanKeywords = searchKeywords.trim() || 'Toyota accessories';
-  return buildAmazonAffiliateUrl(cleanKeywords, market, market);
+  return buildAmazonAffiliateUrl(cleanKeywords, market, market, dealFilter);
 }
 
 /**
- * Returns 2 curated model-specific Delivery Day Essentials from the gear catalog
- * using zero-404 search URL fallbacks and standard "Check on Amazon ↗" CTA labels.
+ * Returns curated model-specific Delivery Day Essentials from the gear catalog
+ * using zero-404 search URL fallbacks, seasonal deal filtering, priority sorting, and dynamic CTA labels.
  */
 export function getCuratedGearForDropAlert(
   modelOrSlug?: string | null,
-  market: 'CA' | 'US' = 'CA'
+  market: 'CA' | 'US' = 'CA',
+  currentDate: Date = new Date()
 ): DropAlertGearPick[] {
   const slug = resolveAlertModelSlug(modelOrSlug);
   const isUs = market === 'US';
+  const promoConfig = getCurrentPromoConfig(currentDate);
+  const dealFilter = promoConfig.isPromoActive;
+  const buttonLabel = promoConfig.isPromoActive
+    ? promoConfig.ctaText
+    : 'Check on Amazon ↗';
+
+  let picks: DropAlertGearPick[];
 
   if (slug === 'rav4') {
     const dashcamCfg = getGearMarketConfig('fitcamx-rav4', 'rav4');
@@ -154,7 +170,7 @@ export function getCuratedGearForDropAlert(
       (isUs ? linersCfg?.searchKeywordsUS : linersCfg?.searchKeywordsCA) ||
       'TuxMat Toyota RAV4 custom all weather floor mats';
 
-    return [
+    picks = [
       {
         id: 'fitcamx-rav4',
         title: 'FitcamX OEM 4K Dashcam',
@@ -162,8 +178,10 @@ export function getCuratedGearForDropAlert(
           dashcamCfg?.whyBuy ||
           'Discrete OEM look tapping into rearview mirror power with zero dangling cables.',
         searchQuery: dashcamQuery,
-        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'high-wall-floor-liners-rav4',
@@ -172,10 +190,13 @@ export function getCuratedGearForDropAlert(
           linersCfg?.whyBuy ||
           'Maximum high-wall laser-measured coverage containing snow, salt, mud, and water spills.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (slug === 'sienna') {
@@ -189,7 +210,7 @@ export function getCuratedGearForDropAlert(
       (isUs ? consoleCfg?.searchKeywordsUS : consoleCfg?.searchKeywordsCA) ||
       'Sienna center console organizer tray 2021-2026';
 
-    return [
+    picks = [
       {
         id: 'sienna-all-weather-liners',
         title: '3-Row Custom Floor Liners',
@@ -197,8 +218,10 @@ export function getCuratedGearForDropAlert(
           linersCfg?.whyBuy ||
           'Maximized spill containment along sliding Super Long Slide tracks and cargo trunk well.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'console-tray-sienna',
@@ -207,10 +230,13 @@ export function getCuratedGearForDropAlert(
           consoleCfg?.whyBuy ||
           'Tames the deep center bridge cubby and upper armrest cavity with non-slip rubber inserts.',
         searchQuery: consoleQuery,
-        url: buildZero404AmazonSearchUrl(consoleQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(consoleQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (slug === 'grand-highlander') {
@@ -230,7 +256,7 @@ export function getCuratedGearForDropAlert(
       (isUs ? dashcamCfg?.searchKeywordsUS : dashcamCfg?.searchKeywordsCA) ||
       'Fitcamx dash cam Grand Highlander TSS 3.0';
 
-    return [
+    picks = [
       {
         id: 'screen-protector-grand-highlander',
         title: '12.3" Matte Screen Protector',
@@ -238,8 +264,10 @@ export function getCuratedGearForDropAlert(
           screenCfg?.whyBuy ||
           'Prevents fingerprint oil buildup and eliminates harsh reflections across wide cabin glass.',
         searchQuery: screenQuery,
-        url: buildZero404AmazonSearchUrl(screenQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(screenQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'fitcamx-grand-highlander',
@@ -248,10 +276,13 @@ export function getCuratedGearForDropAlert(
           dashcamCfg?.whyBuy ||
           'Custom molded mirror housing integrating 4K recording under the digital/standard mirror bracket.',
         searchQuery: dashcamQuery,
-        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (slug === 'prius') {
@@ -265,7 +296,7 @@ export function getCuratedGearForDropAlert(
       (isUs ? linersCfg?.searchKeywordsUS : linersCfg?.searchKeywordsCA) ||
       'toyota prius 2023-2025 all weather floor mats cargo liner';
 
-    return [
+    picks = [
       {
         id: 'fitcamx-prius',
         title: 'FitcamX OEM Integrated 4K Dashcam',
@@ -273,8 +304,10 @@ export function getCuratedGearForDropAlert(
           dashcamCfg?.whyBuy ||
           'Factory-integrated mirror replacement for sleek Gen 5 Prius windshield aerodynamics.',
         searchQuery: dashcamQuery,
-        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'prius-all-weather-liners',
@@ -283,25 +316,30 @@ export function getCuratedGearForDropAlert(
           linersCfg?.whyBuy ||
           'High-wall laser-measured floor & trunk protection engineered for the Gen 5 Prius cabin.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (slug === 'camry') {
     const screenQuery = 'Toyota Camry 12.3 inch screen protector tempered glass';
     const linersQuery = 'Toyota Camry all weather floor mats TPE';
 
-    return [
+    picks = [
       {
         id: 'camry-screen-protector',
         title: '12.3" Anti-Glare Tempered Glass Screen Protector',
         description:
           '9H hardness matte oleophobic tempered glass custom cut for the Camry multimedia touchscreen.',
         searchQuery: screenQuery,
-        url: buildZero404AmazonSearchUrl(screenQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(screenQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'camry-floor-liners',
@@ -309,10 +347,13 @@ export function getCuratedGearForDropAlert(
         description:
           'Laser-fit high-wall floor mats protecting front and rear footwells from winter slush and road salt.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (
@@ -325,15 +366,17 @@ export function getCuratedGearForDropAlert(
     const linersQuery = 'Toyota Corolla Hatchback custom all weather floor mats liners';
     const trayQuery = 'Toyota Corolla Hatchback center console organizer tray 2020-2026';
 
-    return [
+    picks = [
       {
         id: 'fitcamx-corolla-hatchback',
         title: 'FitcamX OEM-Integrated 4K Dashcam',
         description:
           'Clean factory-look dashcam drawing power directly from the TSS rearview mirror harness without exposed wires.',
         searchQuery: dashcamQuery,
-        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'corolla-hatchback-all-weather-liners',
@@ -341,8 +384,10 @@ export function getCuratedGearForDropAlert(
         description:
           'High-wall TPE waterproof liners engineered for Corolla Hatchback floor wells and retention clips.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: 'console-tray-corolla-hatchback',
@@ -350,10 +395,12 @@ export function getCuratedGearForDropAlert(
         description:
           'Dual-tier organizer tray dividing the deep armrest compartment with coin and cable slots.',
         searchQuery: trayQuery,
-        url: buildZero404AmazonSearchUrl(trayQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(trayQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: false,
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
 
   if (slug.startsWith('lexus-') || slug === 'lexus') {
@@ -375,15 +422,17 @@ export function getCuratedGearForDropAlert(
         ? 'TuxMat custom floor mats Lexus NX'
         : 'TuxMat custom floor mats Lexus RX';
 
-    return [
+    picks = [
       {
         id: `fitcamx-${slug}`,
         title: 'FitcamX 4K OEM Dashcam',
         description:
           'Factory-integrated rearview mirror cover replacement with 4K recording and zero dangling wires.',
         searchQuery: dashcamQuery,
-        url: buildZero404AmazonSearchUrl(dashcamQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(dashcamQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
       {
         id: `tuxmat-${slug}`,
@@ -391,24 +440,30 @@ export function getCuratedGearForDropAlert(
         description:
           'Laser-measured luxury high-wall floor protection engineered for severe Canadian slush and snow.',
         searchQuery: linersQuery,
-        url: buildZero404AmazonSearchUrl(linersQuery, market),
-        buttonLabel: 'Check on Amazon ↗',
+        url: buildZero404AmazonSearchUrl(linersQuery, market, dealFilter),
+        buttonLabel,
+        isHeroDeal: true,
+        category: 'Day-1 Essential',
       },
     ];
+    return sortGearByPromotions(picks, currentDate);
   }
+
   // Fallback for other Toyota models (Tacoma, Corolla Cross, Land Cruiser, Sequoia, Highlander, etc.)
   const faradayQuery = 'TICONN Faraday bag key fob signal protector pouch';
   const inflatorQuery = 'portable cordless tire inflator 150 psi';
 
-  return [
+  picks = [
     {
       id: 'ticonn-faraday-pouches',
       title: 'TICONN Faraday Pouches',
       description:
         'Dual-layer RFID & BLE signal blocking pouches preventing relay theft and key fob signal cloning.',
       searchQuery: faradayQuery,
-      url: buildZero404AmazonSearchUrl(faradayQuery, market),
-      buttonLabel: 'Check on Amazon ↗',
+      url: buildZero404AmazonSearchUrl(faradayQuery, market, dealFilter),
+      buttonLabel,
+      isHeroDeal: true,
+      category: 'Day-1 Essential',
     },
     {
       id: 'cordless-tire-inflator',
@@ -416,29 +471,39 @@ export function getCuratedGearForDropAlert(
       description:
         'Compact rechargeable digital air pump with auto-shutoff for rapid seasonal tire pressure management.',
       searchQuery: inflatorQuery,
-      url: buildZero404AmazonSearchUrl(inflatorQuery, market),
-      buttonLabel: 'Check on Amazon ↗',
+      url: buildZero404AmazonSearchUrl(inflatorQuery, market, dealFilter),
+      buttonLabel,
+      isHeroDeal: false,
     },
   ];
+  return sortGearByPromotions(picks, currentDate);
 }
 
 /**
- * Builds the model-specific Calculator CTA, 2 Curated Delivery Day Gear Picks,
+ * Builds the model-specific Calculator CTA, Curated Delivery Day Gear Picks,
  * and Guide / Model Hub Cross-Link for both HTML and Plain-Text drop alert emails.
  */
 export function buildDropAlertEnrichment(params: {
   model?: string | null;
   modelSlug?: string | null;
   market?: 'CA' | 'US';
+  currentDate?: Date;
 }): DropAlertEnrichment {
   const modelSlug = resolveAlertModelSlug(params.model, params.modelSlug);
   const modelDisplay = resolveAlertModelDisplay(params.model, modelSlug);
   const market = params.market || 'CA';
+  const effectiveDate = params.currentDate ?? new Date();
+  const promoConfig = getCurrentPromoConfig(effectiveDate);
 
   const calculatorUrl = `https://www.toyotawaits.ca/calculator/${modelSlug}`;
   const calculatorBannerText = `Weighing Hybrid vs. Gas? Calculate annual fuel payback on this trim before signing the purchase agreement → ${calculatorUrl}`;
 
-  const gearPicks = getCuratedGearForDropAlert(modelSlug, market);
+  const rawGearPicks = getCuratedGearForDropAlert(modelSlug, market, effectiveDate);
+  const gearPicks = sortGearByPromotions(rawGearPicks, effectiveDate);
+
+  const gearSectionEyebrow = promoConfig.isPromoActive
+    ? `⚡ Black Friday Deals for Your ${modelDisplay}`
+    : `🛡️ Delivery Day Essentials (${modelDisplay})`;
 
   const isSienna = modelSlug === 'sienna';
   const isLexus = modelSlug.startsWith('lexus-') || modelSlug === 'lexus';
@@ -479,10 +544,10 @@ export function buildDropAlertEnrichment(params: {
       </a>
     </div>
 
-    <!-- Delivery Day Essentials (2 Curated Picks) -->
+    <!-- Delivery Day Essentials (Curated Picks) -->
     <div style="margin-top: 20px; background-color: #18181b; border: 1px solid #27272a; border-radius: 10px; padding: 18px;">
-      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #34d399; margin-bottom: 4px;">
-        🛡️ Delivery Day Essentials (${modelDisplay})
+      <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: ${promoConfig.isPromoActive ? '#f87171' : '#34d399'}; margin-bottom: 4px;">
+        ${gearSectionEyebrow}
       </div>
       <h4 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 700; color: #ffffff;">
         Curated Day-One Protection &amp; Gear Picks
@@ -494,12 +559,16 @@ export function buildDropAlertEnrichment(params: {
         <tr>
           <td style="padding: 12px; background-color: #09090b; border: 1px solid #27272a; border-radius: 8px;">
             <div style="font-size: 14px; font-weight: 700; color: #fafafa; margin-bottom: 4px;">
-              ${pick.title}
+              ${pick.title}${
+                promoConfig.isPromoActive
+                  ? ' <span style="display: inline-block; margin-left: 6px; padding: 2px 6px; background-color: #dc2626; color: #ffffff; font-size: 10px; font-weight: 700; border-radius: 4px;">[ Black Friday Deal ]</span>'
+                  : ''
+              }
             </div>
             <div style="font-size: 12px; color: #a1a1aa; line-height: 1.4; margin-bottom: 10px;">
               ${pick.description}
             </div>
-            <a href="${pick.url}" target="_blank" rel="sponsored noopener noreferrer" style="display: inline-block; padding: 8px 14px; background-color: #27272a; border: 1px solid #3f3f46; color: #fbbf24; font-weight: 700; font-size: 12px; border-radius: 6px; text-decoration: none;">
+            <a href="${pick.url}" target="_blank" rel="sponsored noopener noreferrer nofollow" style="display: inline-block; padding: 8px 14px; background-color: #27272a; border: 1px solid #3f3f46; color: #fbbf24; font-weight: 700; font-size: 12px; border-radius: 6px; text-decoration: none;">
               ${pick.buttonLabel}
             </a>
           </td>
@@ -536,10 +605,10 @@ HYBRID SAVINGS CALCULATOR:
 ${calculatorBannerText}
 
 --------------------------------------------------
-DELIVERY DAY ESSENTIALS (${modelDisplay}):
+${promoConfig.isPromoActive ? `⚡ Black Friday Deals for Your ${modelDisplay}:` : `DELIVERY DAY ESSENTIALS (${modelDisplay}):`}
 ${gearPicks
   .map(
-    (pick, i) => `${i + 1}. ${pick.title}
+    (pick, i) => `${i + 1}. ${pick.title}${promoConfig.isPromoActive ? ' [ Black Friday Deal ]' : ''}
    ${pick.description}
    ${pick.buttonLabel}: ${pick.url}`
   )
@@ -670,8 +739,10 @@ export function formatVehicleDealership(
  * Supports batch digests (multiple vehicles) and articulate vehicle dossiers.
  */
 export function generateAllocationDropAlertEmail(
-  input: AllocationDropAlertEmailInput
+  input: AllocationDropAlertEmailInput,
+  currentDate?: Date
 ): GeneratedDropAlertEmail {
+  const effectiveDate = currentDate ?? input.currentDate ?? new Date();
   const vehicles: AllocationDropAlertVehicle[] =
     input.vehicles && input.vehicles.length > 0
       ? input.vehicles
@@ -699,6 +770,7 @@ export function generateAllocationDropAlertEmail(
     model: primaryModel,
     modelSlug: input.modelSlug,
     market: input.market || 'CA',
+    currentDate: effectiveDate,
   });
 
   const count = vehicles.length;

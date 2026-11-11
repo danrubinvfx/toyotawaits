@@ -252,11 +252,16 @@ export interface AffiliateParams {
   asin_ca?: string;
   asin_us?: string;
   market?: 'CA' | 'US';
+  countryCode?: 'CA' | 'US';
+  region?: 'CA' | 'US';
   isUs?: boolean;
   slug?: string;
+  dealFilter?: boolean;
 }
 
 export type BuildAmazonAffiliateUrlParams = AffiliateParams;
+
+export const AMAZON_DEAL_FILTER_PARAM = '&rh=p_n_deal_type%3A23566065011';
 
 /**
  * Builds standard Amazon affiliate URL with market domain and associate tag routing.
@@ -266,16 +271,24 @@ export type BuildAmazonAffiliateUrlParams = AffiliateParams;
  */
 export function buildAmazonAffiliateUrl(
   paramsOrQuery: AffiliateParams | string,
-  tagOrMarket?: string,
-  marketFallback: 'CA' | 'US' = 'CA'
+  tagOrMarket?: string | boolean,
+  marketFallback: 'CA' | 'US' | boolean = 'CA',
+  dealFilterArg?: boolean
 ): string {
   const stripTag = shouldStripAffiliateTags();
   if (typeof paramsOrQuery === 'string') {
     const isUS = tagOrMarket === 'US' || marketFallback === 'US';
+    const isDeal =
+      dealFilterArg === true ||
+      (typeof tagOrMarket === 'boolean' && tagOrMarket) ||
+      (typeof marketFallback === 'boolean' && marketFallback);
     const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
     const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
     const cleanQuery = encodeURIComponent(paramsOrQuery.trim() || 'Toyota accessories');
-    return stripTag ? `${domain}/s?k=${cleanQuery}` : `${domain}/s?k=${cleanQuery}&tag=${tag}`;
+    const dealSuffix = isDeal ? AMAZON_DEAL_FILTER_PARAM : '';
+    return stripTag
+      ? `${domain}/s?k=${cleanQuery}${dealSuffix}`
+      : `${domain}/s?k=${cleanQuery}&tag=${tag}${dealSuffix}`;
   }
 
   const {
@@ -284,11 +297,14 @@ export function buildAmazonAffiliateUrl(
     asin,
     asin_ca,
     asin_us,
-    market = 'CA',
+    market,
+    countryCode,
+    region,
     isUs,
+    dealFilter,
   } = paramsOrQuery;
 
-  const isUS = market === 'US' || isUs === true;
+  const isUS = market === 'US' || countryCode === 'US' || region === 'US' || isUs === true;
   const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
   const tag = isUS ? 'toyotawaits07-20' : 'toyotawaits-20';
   const activeAsin = isUS ? (asin_us || asin) : (asin_ca || asin);
@@ -299,7 +315,10 @@ export function buildAmazonAffiliateUrl(
   }
 
   const cleanQuery = encodeURIComponent((query || searchQuery || 'Toyota accessories').trim());
-  return stripTag ? `${domain}/s?k=${cleanQuery}` : `${domain}/s?k=${cleanQuery}&tag=${tag}`;
+  const dealSuffix = dealFilter || dealFilterArg ? AMAZON_DEAL_FILTER_PARAM : '';
+  return stripTag
+    ? `${domain}/s?k=${cleanQuery}${dealSuffix}`
+    : `${domain}/s?k=${cleanQuery}&tag=${tag}${dealSuffix}`;
 }
 
 export interface MobileDeepLinkTargets {

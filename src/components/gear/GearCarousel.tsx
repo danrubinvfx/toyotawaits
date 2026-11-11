@@ -7,12 +7,14 @@ import {
   DeliveryPrepChecklistProps,
 } from '@/components/dashboard/delivery-prep-checklist';
 import { injectActiveModelIntoQuery, getModelDisplayName } from '@/lib/gear/affiliate';
+import { sortGearByPromotions, getCurrentPromoConfig } from '@/lib/gear/promotions';
 
 export interface GearCarouselProps extends DeliveryPrepChecklistProps {
   activeModel?: string;
+  items?: any[];
 }
 
-export function GearCarousel({ activeModel, model, ...props }: GearCarouselProps) {
+export function GearCarousel({ activeModel, model, items, ...props }: GearCarouselProps) {
   const searchParams = useSearchParams();
   const urlModel = searchParams?.get('model');
   const [currentModel, setCurrentModel] = useState<string>(activeModel || model || urlModel || 'all');
@@ -40,10 +42,18 @@ export function GearCarousel({ activeModel, model, ...props }: GearCarouselProps
     };
   }, []);
 
-  return <DeliveryPrepChecklist model={currentModel} {...props} />;
+  const sortedItems = items ? sortGearByPromotions(items) : undefined;
+
+  return <DeliveryPrepChecklist model={currentModel} items={sortedItems} {...props} />;
 }
 
 export const GearSection = GearCarousel;
 export const DayOneGearShelf = GearCarousel;
-export { DeliveryPrepChecklist, injectActiveModelIntoQuery, getModelDisplayName };
+export {
+  DeliveryPrepChecklist,
+  injectActiveModelIntoQuery,
+  getModelDisplayName,
+  sortGearByPromotions,
+  getCurrentPromoConfig,
+};
 export default GearCarousel;

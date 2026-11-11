@@ -29,6 +29,7 @@ import {
 } from '@/lib/gear/affiliate';
 import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 import { resolveGearLocalImage } from '@/data/gear/catalog';
+import { sortGearByPromotions } from '@/lib/gear/promotions';
 import { cn } from '@/lib/utils';
 
 export interface VettedProduct {
@@ -44,6 +45,7 @@ export interface VettedProduct {
   discountCode?: string;
   discountText?: string;
   badge?: string;
+  isHeroDeal?: boolean;
   bullets: string[];
   buttonText: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -755,7 +757,7 @@ export function CalculatorGearCards({
       }
     }
 
-    return list.slice(0, 4);
+    return sortGearByPromotions(list.slice(0, 4));
   }, [modelKey, effectiveIsPhev]);
 
   const [copiedId, setCopiedId] = useState<string | null>(null);

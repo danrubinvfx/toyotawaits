@@ -25,6 +25,8 @@ export interface GearItem {
   videoUrl?: string;         // e.g. YouTube guide
   badge?: string;
   savingsCad?: string;
+  isHeroDeal?: boolean;
+  isDeliveryDayEssential?: boolean;
 }
 
 export interface GearMarketConfig {
@@ -55,6 +57,7 @@ export interface GearMarketConfig {
   description?: string;
   whyBuy?: string;
   badge?: string;
+  isHeroDeal?: boolean;
   isDeliveryDayEssential?: boolean;
   buttonLabel?: string;
   videoUrl?: string;

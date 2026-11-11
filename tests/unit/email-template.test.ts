@@ -116,7 +116,7 @@ describe('Notification Email Engine & Template Generator', () => {
       // 2 Curated Picks for RAV4: FitcamX OEM 4K Dashcam & TuxMat TPE Liners
       expect(email.html).toContain('FitcamX OEM 4K Dashcam');
       expect(email.html).toContain('TuxMat TPE Liners');
-      expect(email.html).toContain('Check on Amazon ↗');
+      expect(email.html).toMatch(/Check (on Amazon|Black Friday Price|Boxing Day Deals|Winter Deals) ↗/);
       expect(email.text).toContain('FitcamX OEM 4K Dashcam');
       expect(email.text).toContain('TuxMat TPE Liners');
 

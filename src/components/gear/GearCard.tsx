@@ -15,7 +15,6 @@ import {
   BatteryCharging,
   Armchair,
   Smartphone,
-  Wifi,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
@@ -33,6 +32,7 @@ import {
   isAmazonDirectProductUrl,
   getImageLinkAriaLabel,
 } from '@/lib/gear/affiliate';
+import { getCurrentPromoConfig, sortGearByPromotions } from '@/lib/gear/promotions';
 import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 
 export interface GearCardItem {
@@ -68,6 +68,7 @@ export interface GearCardItem {
   affiliateUrl?: string;
   activeModel?: string;
   badge?: 'Essential' | 'Recommended' | 'Pro Tip' | 'Recommended Upgrade' | 'Top Pick' | string;
+  isHeroDeal?: boolean;
   compatibility?: string;
   fitment?: string;
   youtubeVideoId?: string;
@@ -277,6 +278,8 @@ export function GearCard({
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const { market, isUs } = useMarket();
+  const promoConfig = getCurrentPromoConfig();
+
   const currentModel =
     activeModel ||
     item.activeModel ||
@@ -301,7 +304,6 @@ export function GearCard({
     config?.brand === 'Muslogy';
 
   const discountCode = item.discountCode || config?.discountCode || (isDirectPartner ? 'Toyotawaits' : undefined);
-  const discountText = item.discountText || config?.discountText || (isDirectPartner ? '2% OFF' : undefined);
 
   const handleCopyCode = (codeToCopy: string = discountCode || 'Toyotawaits') => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -318,22 +320,35 @@ export function GearCard({
   const isDirectAsin = isDirectValidAsin;
   const hasDirectAsin = isDirectValidAsin || isAmazonDirectProductUrl(amazonAffiliateUrl);
 
+  const isPromoHero =
+    promoConfig.isPromoActive &&
+    Boolean(
+      item.isHeroDeal ||
+        config?.isHeroDeal ||
+        item.category === 'Day-1 Essential' ||
+        config?.category === 'Day-1 Essential'
+    );
+
   const buttonText =
-    buttonLabel ||
-    item.buttonLabel ||
-    config?.buttonLabel ||
-    (isDirectPartner
-      ? 'Get 2% Off on Muslogy ↗'
-      : isDirectAsin
-      ? 'View on Amazon ↗'
-      : 'Search Amazon ↗');
+    !isDirectPartner && isPromoHero
+      ? promoConfig.ctaText
+      : buttonLabel ||
+        item.buttonLabel ||
+        config?.buttonLabel ||
+        (isDirectPartner
+          ? 'Get 2% Off on Muslogy ↗'
+          : isDirectAsin
+          ? 'View on Amazon ↗'
+          : 'Search Amazon ↗');
   const imageAriaLabel = isDirectPartner
     ? `View ${item.title} on Muslogy (2% Off with code ${discountCode})`
     : getImageLinkAriaLabel(item.title, amazonAffiliateUrl);
   const effectiveBadge =
-    item.badge ||
-    config?.badge ||
-    (isDirectPartner ? 'Partner Deal 2% Off' : hasDirectAsin ? 'Direct Fit' : undefined);
+    !isDirectPartner && isPromoHero
+      ? promoConfig.badgeText
+      : item.badge ||
+        config?.badge ||
+        (isDirectPartner ? 'Partner Deal 2% Off' : hasDirectAsin ? 'Direct Fit' : undefined);
 
   const imageSource = resolveVerifiedGearImageSrc(
     item.imageUrl || item.imageSrc || item.image,
@@ -452,7 +467,9 @@ export function GearCard({
                 variant="outline"
                 className={cn(
                   'text-[10px] font-semibold px-2 py-0.5 border shrink-0',
-                  effectiveBadge.includes('Partner') || effectiveBadge.includes('2%')
+                  !isDirectPartner && isPromoHero
+                    ? promoConfig.badgeColorClass
+                    : effectiveBadge.includes('Partner') || effectiveBadge.includes('2%')
                     ? 'text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold'
                     : effectiveBadge === 'Essential' || effectiveBadge.includes('MUST-HAVE')
                     ? 'text-amber-400 bg-amber-500/10 border-amber-500/20 font-bold'
@@ -491,7 +508,9 @@ export function GearCard({
         {isDirectPartner && (
           <div className="flex items-center justify-between gap-1.5 px-2 py-1 my-1.5 rounded-md bg-amber-950/40 border border-amber-800/50 text-amber-300 text-[11px] font-bold">
             <span className="tracking-tight">
-              CODE: <span className="underline decoration-amber-500/60 font-mono">{discountCode || 'Toyotawaits'}</span> ({discountText || '2% OFF'})
+              {promoConfig.season === 'BFCM'
+                ? `BFCM Deal: Extra 2% Off • Code: ${discountCode || 'Toyotawaits'}`
+                : `Community Deal • Code: ${discountCode || 'Toyotawaits'}`}
             </span>
             <button
               type="button"
@@ -563,7 +582,7 @@ export function GearCard({
             <span className="sr-only">
               {isDirectPartner
                 ? ' (Get 2% Off on Muslogy)'
-                : buttonText.startsWith('View on Amazon')
+                : isDirectAsin
                 ? ' (View on Amazon)'
                 : ' (Search Amazon)'}
             </span>
@@ -636,5 +655,5 @@ export function GearCard({
 }
 
 export const ModCard = GearCard;
-export { buildAmazonAffiliateUrl };
+export { buildAmazonAffiliateUrl, getCurrentPromoConfig, sortGearByPromotions };
 export default GearCard;

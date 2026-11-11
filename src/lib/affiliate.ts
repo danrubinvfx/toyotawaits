@@ -13,8 +13,10 @@ export const DEFAULT_AMAZON_US_AFFILIATE_TAG = 'toyotawaits07-20';
 
 export interface AffiliateParams {
   query?: string;
+  searchQuery?: string;
   asin?: string;
   market?: 'CA' | 'US';
+  dealFilter?: boolean;
 }
 
 /**
@@ -22,7 +24,13 @@ export interface AffiliateParams {
  * or the United States (amazon.com), with proper associate attribution tags.
  * If admin opt-out is enabled, the tag parameter is omitted.
  */
-export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateParams): string {
+export function getAmazonAffiliateUrl({
+  query,
+  searchQuery,
+  asin,
+  market = 'CA',
+  dealFilter,
+}: AffiliateParams): string {
   const isUS = market === 'US';
   const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
   const tag = isUS
@@ -35,10 +43,12 @@ export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateP
     return stripTag ? `${domain}/dp/${cleanAsin}` : `${domain}/dp/${cleanAsin}?tag=${tag}`;
   }
 
-  if (query && query.trim().length > 0) {
+  const effectiveQuery = query || searchQuery;
+  if (effectiveQuery && effectiveQuery.trim().length > 0) {
+    const dealSuffix = dealFilter ? '&rh=p_n_deal_type%3A23566065011' : '';
     return stripTag
-      ? `${domain}/s?k=${encodeURIComponent(query.trim())}`
-      : `${domain}/s?k=${encodeURIComponent(query.trim())}&tag=${tag}`;
+      ? `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}${dealSuffix}`
+      : `${domain}/s?k=${encodeURIComponent(effectiveQuery.trim())}&tag=${tag}${dealSuffix}`;
   }
 
   return stripTag ? `${domain}/` : `${domain}/?tag=${tag}`;
@@ -50,26 +60,35 @@ export function getAmazonAffiliateUrl({ query, asin, market = 'CA' }: AffiliateP
  */
 export function buildAmazonAffiliateUrl(
   paramsOrQuery: AffiliateParams | string,
-  tagOrMarket?: string,
-  marketFallback: 'CA' | 'US' = 'CA'
+  tagOrMarket?: string | boolean,
+  marketFallback: 'CA' | 'US' | boolean = 'CA',
+  dealFilterArg?: boolean
 ): string {
   if (typeof paramsOrQuery === 'string') {
+    const isDeal =
+      dealFilterArg === true ||
+      (typeof tagOrMarket === 'boolean' && tagOrMarket) ||
+      (typeof marketFallback === 'boolean' && marketFallback);
     if (tagOrMarket === 'CA' || tagOrMarket === 'US') {
-      return getAmazonAffiliateUrl({ query: paramsOrQuery, market: tagOrMarket });
+      return getAmazonAffiliateUrl({ query: paramsOrQuery, market: tagOrMarket, dealFilter: isDeal });
     }
     const isUS = marketFallback === 'US';
     const domain = isUS ? 'https://www.amazon.com' : 'https://www.amazon.ca';
     const tag =
-      tagOrMarket ||
+      (typeof tagOrMarket === 'string' && tagOrMarket) ||
       (isUS
         ? process.env.NEXT_PUBLIC_AMAZON_US_TAG || process.env.NEXT_PUBLIC_AMAZON_TAG || 'toyotawaits07-20'
         : process.env.NEXT_PUBLIC_AMAZON_CA_TAG || 'toyotawaits-20');
     const stripTag = shouldStripAffiliateTags();
+    const dealSuffix = isDeal ? '&rh=p_n_deal_type%3A23566065011' : '';
     return stripTag
-      ? `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}`
-      : `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}`;
+      ? `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}${dealSuffix}`
+      : `${domain}/s?k=${encodeURIComponent(paramsOrQuery)}&tag=${tag}${dealSuffix}`;
   }
-  return getAmazonAffiliateUrl(paramsOrQuery);
+  return getAmazonAffiliateUrl({
+    ...paramsOrQuery,
+    dealFilter: paramsOrQuery.dealFilter ?? dealFilterArg,
+  });
 }
 
 /**

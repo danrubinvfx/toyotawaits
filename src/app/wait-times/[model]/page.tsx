@@ -11,6 +11,7 @@ import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderW
 import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
 import { CrossShopBridge } from '@/components/wait-times/CrossShopBridge';
 import { ModelDeliveryShelf } from '@/components/gear/ModelDeliveryShelf';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
 import { EstimatorDisclaimer } from '@/components/wait-times/EstimatorDisclaimer';
 import {
@@ -42,6 +43,8 @@ import {
 } from 'lucide-react';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
 interface PageProps {
   params: Promise<{
@@ -877,6 +880,12 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       />
 
       {/* Curated 3-Item Delivery Day Prep Shelf Mounted Directly Beneath Median Summary Card */}
+      <Suspense fallback={null}>
+        <SeasonalDealBanner
+          modelSlug={modelConfig.slug}
+          modelName={modelConfig.name}
+        />
+      </Suspense>
       <ModelDeliveryShelf
         modelSlug={modelConfig.slug}
         modelName={modelConfig.name}

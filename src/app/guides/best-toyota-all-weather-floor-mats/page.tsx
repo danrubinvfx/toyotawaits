@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
@@ -6,6 +6,7 @@ import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { GearCard } from '@/components/gear/GearCard';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import {
   Layers,
   ShieldCheck,
@@ -21,7 +22,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
 export const metadata: Metadata = {
   title: 'Best Toyota All-Weather Floor Mats (2026): TuxMat vs WeatherTech vs OEM | ToyotaWaits',
@@ -166,6 +168,9 @@ export default function BestToyotaAllWeatherFloorMatsPage() {
       />
 
       {/* Header & Navigation */}
+      <Suspense fallback={null}>
+        <SeasonalDealBanner modelName="Toyota All-Weather Liners" />
+      </Suspense>
       <div className="space-y-4">
         <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
 

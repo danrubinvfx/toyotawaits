@@ -20,6 +20,7 @@ import {
 import { cn } from '@/lib/utils';
 import { ModCard } from '@/components/delivery-prep/mod-card';
 import { useMarket } from '@/context/MarketContext';
+import { sortGearByPromotions } from '@/lib/gear/promotions';
 
 export interface ChecklistProduct {
   id: string;
@@ -59,6 +60,8 @@ export interface ChecklistProduct {
   guideVideoUrl?: string;
   videoLabel?: string;
   isDeliveryDayEssential?: boolean;
+  isHeroDeal?: boolean;
+  discountCode?: string;
 }
 
 import {
@@ -78,6 +81,7 @@ export interface DeliveryPrepChecklistProps {
   vehicleLabel?: string;
   showUniversalGear?: boolean;
   onToggleUniversalGear?: () => void;
+  items?: ChecklistProduct[];
 }
 
 const PRIMARY_FILTER_TABS = [
@@ -708,7 +712,7 @@ export function DeliveryPrepChecklist({
                 isDragging && 'cursor-grabbing scroll-auto snap-none'
               )}
             >
-              {filteredProducts.map((item) => (
+              {sortGearByPromotions(filteredProducts).map((item) => (
                 <ModCard
                   key={item.id || item.slug}
                   item={item}

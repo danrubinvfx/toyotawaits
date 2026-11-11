@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Badge } from '@/components/ui/badge';
 import { GearCard } from '@/components/gear/GearCard';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import {
   Car,
   ShieldCheck,
@@ -14,7 +15,8 @@ import {
   HelpCircle,
 } from 'lucide-react';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
 export const metadata: Metadata = {
   title: 'Top 7 Must-Have Toyota RAV4 Accessories (2026) — Delivery Day Gear | ToyotaWaits',
@@ -117,6 +119,9 @@ export default function Rav4MustHaveAccessoriesPage() {
       />
 
       {/* Header & Navigation */}
+      <Suspense fallback={null}>
+        <SeasonalDealBanner modelSlug="rav4" modelName="Toyota RAV4" />
+      </Suspense>
       <div className="space-y-4">
         <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
 
