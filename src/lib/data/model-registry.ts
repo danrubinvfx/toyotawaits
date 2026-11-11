@@ -327,6 +327,8 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     name: 'Toyota Corolla Cross',
     shortName: 'Corolla Cross',
     dbFilter: 'corolla cross',
+    title: 'Toyota Corolla Cross Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Toyota Corolla Cross Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
     powertrains: ['Gas', 'Hybrid'],
     baseMedian: 180,
     baseP25: 90,
