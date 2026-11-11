@@ -269,6 +269,25 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
   const fastestProvince = sortedProvinces[0];
   const slowestProvince = sortedProvinces[sortedProvinces.length - 1];
 
+  const backlogStatus =
+    medianDays >= 210 ? 'High Allocation Backlog' : 'Moderate Allocation Backlog';
+  const factoryPlantMap: Record<string, string> = {
+    rav4: 'Cambridge & Woodstock, Ontario (TMMC) / Japan',
+    sienna: 'Princeton, Indiana (TMMI)',
+    'grand-highlander': 'Princeton, Indiana (TMMI)',
+    highlander: 'Princeton, Indiana (TMMI)',
+    'lexus-tx': 'Princeton, Indiana (TMMI)',
+    'corolla-cross': 'Huntsville, Alabama (MTM)',
+    camry: 'Georgetown, Kentucky (TMMK)',
+    tacoma: 'Guanajuato / Baja California, Mexico',
+    tundra: 'San Antonio, Texas (TMMTX)',
+    sequoia: 'San Antonio, Texas (TMMTX)',
+    'lexus-nx': 'Cambridge, Ontario (TMMC)',
+    'lexus-rx': 'Cambridge, Ontario (TMMC)',
+  };
+  const factoryPlant =
+    factoryPlantMap[modelConfig.slug] || 'Toyota City / Tahara, Japan';
+
   return {
     sampleSize: records.length,
     deliveredCount: delivered.length,
@@ -285,6 +304,8 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
     fastestProvince,
     slowestProvince,
     powertrainGrid,
+    backlogStatus,
+    factoryPlant,
   };
 }
 
@@ -384,6 +405,10 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     {
       question: `Which Canadian province has the shortest wait time for the ${modelConfig.shortName}?`,
       answer: `${stats.fastestProvince.name} (${stats.fastestProvince.code}) generally reports the shortest wait times for the ${modelConfig.name} in Canada at approximately ${stats.fastestProvince.months} months (~${stats.fastestProvince.days} days), while provinces with heavy EV/ZEV rebate programs like ${stats.slowestProvince.name} (${stats.slowestProvince.code}) experience the longest delivery queues (~${stats.slowestProvince.days} days).`,
+    },
+    {
+      question: `How long is the wait time for a ${modelConfig.name} in Canada?`,
+      answer: `As of ${currentMonthYear}, the estimated median delivery wait time for a new ${modelConfig.name} in Canada is ${stats.medianMonths} months (${stats.medianDays} days) across all trims.`,
     },
   ];
 
@@ -632,13 +657,46 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-2">
+        <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-3">
+          <h2 className="text-base sm:text-lg font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
+            Current {modelConfig.name} Wait Time in Canada
+          </h2>
           <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            As of {currentMonthYear}, the estimated median delivery wait time for a new {modelConfig.name} in Canada is {stats.medianMonths} months across all trims.
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs sm:text-sm text-zinc-800 dark:text-zinc-200">
+            <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
+              <strong>Median Wait:</strong> {stats.medianMonths} months
+            </li>
+            <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
+              <strong>Backlog Status:</strong> {stats.backlogStatus}
+            </li>
+            <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
+              <strong>Factory Plant:</strong> {stats.factoryPlant}
+            </li>
+          </ul>
+          <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
             As of <strong>2026</strong>, Canadian buyers ordering a <strong>{modelConfig.name}</strong> report an overall national median wait time of <strong>{stats.medianDays} days</strong> (~{stats.medianMonths} months), with an interquartile delivery range (IQR) between <strong>{stats.p25Days} days</strong> ({stats.minWaitMonths} months) and <strong>{stats.p75Days} days</strong> ({stats.maxWaitMonths} months). New deposits placed today have a projected target delivery of <strong>{stats.projectedDeliveryText}</strong>.
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Timelines vary considerably by powertrain variant (Gas vs. Hybrid vs. Plug-in Hybrid) and provincial allocation policies.
           </p>
+        </div>
+
+        {/* Winter Tire Seasonal Callout Banner */}
+        <div
+          data-testid="winter-tire-callout-banner"
+          className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/60 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
+        >
+          <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-200 leading-relaxed">
+            Taking winter delivery? Check factory OEM tire sizing, 17-inch downsizing wheels, and provincial winter compliance.
+          </p>
+          <Link
+            href="/tires"
+            className="shrink-0 inline-flex items-center justify-center rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700 px-4 py-2 text-xs font-bold text-zinc-900 dark:text-white transition-colors"
+          >
+            View Toyota Winter Tire Guide →
+          </Link>
         </div>
       </section>
 

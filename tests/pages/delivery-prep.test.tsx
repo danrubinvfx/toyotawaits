@@ -262,4 +262,16 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getByTestId('copy-script-btn')).toBeInTheDocument();
     expect(screen.getByTestId('negotiation-script-preview')).toBeInTheDocument();
   });
+
+  it('renders Winter Tire Seasonal Callout Banner linking to /tires', () => {
+    render(<DeliveryPrepPage />);
+
+    const banner = screen.getByTestId('winter-tire-callout-banner');
+    expect(banner).toBeInTheDocument();
+    expect(banner).toHaveTextContent(
+      /Taking winter delivery\? Check factory OEM tire sizing, 17-inch downsizing wheels, and provincial winter compliance\./i
+    );
+    const tireGuideLink = screen.getByRole('link', { name: /View Toyota Winter Tire Guide →/i });
+    expect(tireGuideLink).toHaveAttribute('href', '/tires');
+  });
 });
