@@ -364,7 +364,7 @@ export default function Rav42026Vs2027GuidePage() {
                 PHEV Deposit Holders
               </CardTitle>
               <CardDescription className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                This is where the major hardware split occurs: native Tesla NACS, Level 3 DC fast charging, 11 kW AC charging, and 321 hp vs. locking in higher 2026 iZEV rebates.
+                This is where the major hardware split occurs: native Tesla NACS, Level 3 DC fast charging, 11 kW AC charging, and 321 hp vs. locking in confirmed 2026 iZEV rebates and avoiding an 8–14+ month queue reset.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3 pt-0">
@@ -373,11 +373,45 @@ export default function Rav42026Vs2027GuidePage() {
                   Recommendation:
                 </p>
                 <p className="text-zinc-700 dark:text-zinc-300">
-                  <strong>Hold for 2027</strong> if Tesla Supercharger road-tripping and 11 kW home charging are essential. <strong>Take 2026</strong> if you charge at home on J1772 and want to keep an extra $500 CAD in federal iZEV rebates.
+                  <strong>Take 2026</strong> if your allocation is arriving next month at MSRP—you lock in confirmed federal iZEV ($2,500–$5,000) and provincial rebates while charging overnight at home. <strong>Hold for 2027</strong> only if native NACS and 11 kW home charging justify waiting into late 2027.
                 </p>
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Dedicated PHEV Buyer Dilemma Deep-Dive */}
+        <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 p-6 space-y-4 shadow-xs">
+          <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400 font-bold text-sm uppercase tracking-wider">
+            <Zap className="h-4 w-4 shrink-0" />
+            <span>The PHEV Buyer Dilemma: Allocation Arriving Next Month vs. Waiting for 2027</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <div className="rounded-xl bg-white dark:bg-zinc-900/80 border border-amber-500/20 p-4 space-y-1.5">
+              <p className="font-bold text-zinc-900 dark:text-zinc-100">
+                1. Point-of-Sale Rebate Security
+              </p>
+              <p className="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed">
+                Taking a 2026 allocation now secures confirmed federal iZEV ($2,500–$5,000) and provincial incentives (e.g., CleanBC, Roulez vert) at delivery before scheduled phase-downs or 2027 MSRP price cap bracket shifts.
+              </p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-zinc-900/80 border border-amber-500/20 p-4 space-y-1.5">
+              <p className="font-bold text-zinc-900 dark:text-zinc-100">
+                2. NACS &amp; DC Fast Charging ROI Reality
+              </p>
+              <p className="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed">
+                While 2027 adds native NACS and Level 3 DC fast charging, with an 18.1 kWh battery and 68 km EV range, commercial Supercharger rates provide minimal financial return compared to cheap overnight Level 2 home charging (and running the efficient hybrid engine on road trips).
+              </p>
+            </div>
+            <div className="rounded-xl bg-white dark:bg-zinc-900/80 border border-amber-500/20 p-4 space-y-1.5">
+              <p className="font-bold text-zinc-900 dark:text-zinc-100">
+                3. Queue Reset Penalty
+              </p>
+              <p className="text-zinc-600 dark:text-zinc-400 text-xs leading-relaxed">
+                While unallocated waitlist deposits roll over automatically, passing on a matched 2026 VIN arriving &quot;next month&quot; at MSRP forfeits that priority build slot and typically resets wait times by 8–14+ months into late 2027.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

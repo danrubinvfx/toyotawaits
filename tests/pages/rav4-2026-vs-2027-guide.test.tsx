@@ -88,6 +88,11 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(screen.getByText(/Gas Deposit Holders/i)).toBeInTheDocument();
     expect(screen.getByText(/Hybrid \(HEV\) Holders/i)).toBeInTheDocument();
     expect(screen.getByText(/PHEV Deposit Holders/i)).toBeInTheDocument();
+    expect(screen.getByText(/1\. Point-of-Sale Rebate Security/i)).toBeInTheDocument();
+    expect(screen.getByText(/2\. NACS & DC Fast Charging ROI Reality/i)).toBeInTheDocument();
+    expect(screen.getByText(/18\.1 kWh battery and 68 km EV range/i)).toBeInTheDocument();
+    expect(screen.getByText(/3\. Queue Reset Penalty/i)).toBeInTheDocument();
+    expect(screen.getByText(/resets wait times by 8–14\+ months/i)).toBeInTheDocument();
   });
 
   it('renders live inventory bridge banner linking to RAV4 stock', () => {
