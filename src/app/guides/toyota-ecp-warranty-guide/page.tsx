@@ -27,16 +27,16 @@ import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? | ToyotaWaits',
+  title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
   description:
-    'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Discover real repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
+    'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
   alternates: {
     canonical: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
   },
   openGraph: {
-    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? | ToyotaWaits',
+    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
     description:
-      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Discover real repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
+      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
     url: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? | ToyotaWaits',
+    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
     description:
-      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Discover real repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
+      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
   },
 };
 
@@ -67,17 +67,17 @@ const warrantyMatrix: WarrantyComparisonRow[] = [
     highlight: true,
   },
   {
-    feature: 'Comprehensive Coverage',
+    feature: 'Comprehensive Coverage (100,000 km vs. 200,000 km Tiers)',
     factory: '3 Years / 60,000 km',
-    ecpGold: 'Up to 7–8 Years / 160,000–200,000 km',
-    ecpPlatinum: 'Up to 7–8 Years / 160,000–200,000 km',
+    ecpGold: 'Up to 7–8 Years / 100,000–200,000 km',
+    ecpPlatinum: 'Up to 7–8 Years / 100,000–200,000 km',
     highlight: true,
   },
   {
     feature: 'Powertrain (Engine & Transaxle)',
     factory: '5 Years / 100,000 km',
-    ecpGold: 'Extended to ECP plan term',
-    ecpPlatinum: 'Extended to ECP plan term',
+    ecpGold: 'Extended to ECP plan term (100,000–200,000 km)',
+    ecpPlatinum: 'Extended to ECP plan term (100,000–200,000 km)',
   },
   {
     feature: 'Hybrid Components (Inverter/ECU)',
@@ -180,7 +180,7 @@ const replacementCosts = [
 const dayOneGear = [
   {
     id: 'spigen-screen-protector',
-    slug: 'spigen-toyota-screen-protector',
+    slug: 'spigen-screen-protector',
     proxyUrl: '/out/spigen-screen-protector',
     fallbackAmazonUrl: buildAmazonAffiliateUrl('Toyota tempered glass screen protector matte 9H', 'CA'),
     title: 'Spigen 9H Tempered Glass Matte Screen Protector',
@@ -197,7 +197,7 @@ const dayOneGear = [
   },
   {
     id: 'faraday-key-pouch',
-    slug: 'faraday-key-fob-pouch',
+    slug: 'faraday-key-pouch',
     proxyUrl: '/out/faraday-key-pouch',
     fallbackAmazonUrl: buildAmazonAffiliateUrl('Faraday pouch for car keys signal blocker 2-pack', 'CA'),
     title: 'RFID Faraday Key Fob Signal Blocker (2-Pack)',
@@ -214,7 +214,7 @@ const dayOneGear = [
   },
   {
     id: 'portable-tire-inflator',
-    slug: 'fanttik-cordless-tire-inflator',
+    slug: 'portable-tire-inflator',
     proxyUrl: '/out/portable-tire-inflator',
     fallbackAmazonUrl: buildAmazonAffiliateUrl('portable cordless tire inflator 150 PSI auto shut off', 'CA'),
     title: 'Fanttik Cordless 150 PSI Tire Inflator & Digital Gauge',
@@ -232,6 +232,18 @@ const dayOneGear = [
 ];
 
 const faqs = [
+  {
+    q: "Is Toyota's extended warranty (ECP) worth it in Canada?",
+    a: 'For buyers keeping a mature naturally aspirated hybrid (like the RAV4 Hybrid, Camry Hybrid, or Corolla Hybrid) for under 4 years, ECP is generally not worth the retail $2,800–$3,200 CAD price because Toyota already includes a 5-year/100,000 km powertrain warranty, 8-year/160,000 km hybrid component warranty, and 10-year/240,000 km hybrid battery warranty. However, if you plan to keep the vehicle for 7–10 years (160,000–200,000 km) or are buying a complex turbo/i-FORCE MAX powertrain, ECP Platinum can be worth it if negotiated down to wholesale ($1,900–$2,100 CAD), especially once you deduct the ~$600–$800 CAD value of the included 3-year complimentary maintenance plan.',
+  },
+  {
+    q: 'Do I have to buy Toyota ECP on delivery day?',
+    a: 'No. Despite finance office claims that you must sign on delivery day to qualify for the 3-year complimentary maintenance program, Toyota Canada gives you a full 31-day grace period from the original vehicle registration date to purchase ECP and still receive 100% of the complimentary maintenance and tire road hazard benefits. Furthermore, you can purchase ECP anytime before 36 months or 60,000 km from any authorized Toyota dealership in Canada.',
+  },
+  {
+    q: 'What is the difference between Toyota ECP Gold and Platinum?',
+    a: 'ECP Gold is a restrictive "Named-Component" contract that only covers parts explicitly listed on the policy sheet, frequently excluding modern failure points like 12.3-inch infotainment touchscreen digitizers, TSS 3.0 camera/radar sensors, and body wiring harnesses. ECP Platinum is an "Exclusionary" bumper-to-bumper contract that covers every mechanical and electrical component on the vehicle except a short list of routine wear items (brake pads, wiper blades, tires, fluids, and glass).',
+  },
   {
     q: 'Can I cancel an ECP policy for a refund if I sell or trade in my Toyota early?',
     a: 'Yes. If you cancel within the first 30 days of purchase and have made no claims, you receive a 100% full refund from Toyota Canada. After 30 days, Toyota calculates a prorated refund based on the remaining months or kilometers (whichever has elapsed more), minus an administrative processing fee. If you finance the warranty into your vehicle loan, any refund credit will be sent directly to your lienholder to reduce your principal balance.',
@@ -254,9 +266,28 @@ const faqs = [
   },
 ];
 
+const ecpFaqPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((faq) => ({
+    '@type': 'Question',
+    name: faq.q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: faq.a,
+    },
+  })),
+};
+
 export default function ToyotaEcpWarrantyGuidePage() {
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/20 selection:text-amber-300 pb-20">
+      {/* JSON-LD FAQPage Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ecpFaqPageSchema) }}
+      />
+
       {/* Top Banner / Breadcrumb */}
       <div className="border-b border-zinc-800/80 bg-zinc-900/50 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -285,12 +316,12 @@ export default function ToyotaEcpWarrantyGuidePage() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-zinc-50 leading-tight">
             Toyota ECP Extended Warranty: <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">
-              Is It Worth It in Canada?
+              Is It Worth It in Canada? (100k vs 200k km)
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-3xl">
-            An objective, mathematical dissection of Toyota Extra Care Protection (ECP). We break down dealer wholesale margins, the Platinum vs. Gold trap, hybrid coverage overlap, and when you should self-insure.
+            An objective, mathematical dissection of Toyota Extra Care Protection (ECP Platinum vs. Gold) across 100,000 km and 200,000 km tiers. We break down standard Canadian factory warranty overlap (3-yr/60,000 km comprehensive, 5-yr/100,000 km powertrain, 8-yr/160,000 km hybrid components, and 10-yr/240,000 km hybrid battery), dealer wholesale margins, the 31-day grace period, and when you should self-insure.
           </p>
         </header>
 
@@ -301,7 +332,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
               <ShieldCheck className="h-6 w-6 text-emerald-400 shrink-0" />
               <div>
                 <h2 className="text-lg sm:text-xl font-bold text-zinc-100">
-                  The Quick Verdict: Should You Buy Toyota ECP?
+                  The Fast Verdict: Should You Buy Toyota ECP?
                 </h2>
                 <p className="text-xs text-zinc-400">
                   Decision matrix based on powertrain architecture, holding period, and financing terms.
@@ -318,13 +349,13 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 </div>
                 <ul className="space-y-2 text-xs sm:text-sm text-zinc-300 leading-relaxed list-disc list-inside">
                   <li>
-                    <strong className="text-zinc-100">Short-Term Ownership:</strong> You plan to trade in or sell within 3 to 4 years (you are paying for coverage the next buyer will use).
+                    <strong className="text-zinc-100">Short-Term Ownership (&lt;4 Years):</strong> You plan to trade in or sell within 3 to 4 years (you are paying for coverage the next buyer will use).
                   </li>
                   <li>
                     <strong className="text-zinc-100">Mature Naturally Aspirated Hybrids:</strong> RAV4 Hybrid, Camry Hybrid, or Corolla Hybrid using Toyota’s bulletproof 2.5L/2.0L Dynamic Force engine and planetary e-CVT.
                   </li>
                   <li>
-                    <strong className="text-zinc-100">Financing Over 60 Months:</strong> Rolling $2,800 CAD into a 7.5% auto loan adds $600–$800 in loan interest, completely destroying the insurance math.
+                    <strong className="text-zinc-100">Financing Over 60 Months:</strong> Rolling $2,800 CAD into a 7% auto loan adds $600–$800 in loan interest, completely destroying the insurance math.
                   </li>
                 </ul>
               </div>
@@ -363,10 +394,10 @@ export default function ToyotaEcpWarrantyGuidePage() {
           <div className="space-y-2">
             <h2 className="text-2xl font-bold tracking-tight text-zinc-100 flex items-center gap-2">
               <FileText className="h-5 w-5 text-amber-300" />
-              Factory Warranty vs. ECP Gold vs. ECP Platinum
+              Factory Warranty vs. ECP Gold vs. ECP Platinum (100,000 km vs. 200,000 km)
             </h2>
             <p className="text-sm text-zinc-400">
-              Detailed coverage matrix comparing Toyota’s standard factory new-vehicle warranty against the two official Extra Care Protection tiers.
+              Detailed coverage matrix comparing Toyota’s standard Canadian factory new-vehicle warranty (3-yr/60,000 km comprehensive, 5-yr/100,000 km powertrain, 8-yr/160,000 km hybrid components, and 10-yr/240,000 km hybrid battery) against the two official Extra Care Protection tiers across 100,000 km and 200,000 km terms.
             </p>
           </div>
 
@@ -408,7 +439,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
               </table>
             </div>
             <div className="p-3.5 bg-zinc-950/60 border-t border-zinc-800 text-[11px] text-zinc-400 flex items-center justify-between flex-wrap gap-2">
-              <span>* Terms vary by plan selected (e.g. 7 yr / 120,000 km, 7 yr / 160,000 km, or 8 yr / 200,000 km).</span>
+              <span>* Terms vary by plan selected across 100,000 km to 200,000 km tiers (e.g. 6 yr / 100,000 km, 7 yr / 120,000 km, 7 yr / 160,000 km, or 8 yr / 200,000 km).</span>
               <span className="text-amber-300 font-mono">Deductible: $0 on all genuine Toyota ECP plans</span>
             </div>
           </div>
@@ -477,7 +508,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
               The Financial Breakdown: The &ldquo;Net Cost&rdquo; Math
             </h2>
             <p className="text-sm text-zinc-400 leading-relaxed">
-              When a finance manager quotes you $2,800 CAD for an ECP Platinum policy, you are not actually paying $2,800 for mechanical breakdown insurance. Here is the true accounting breakdown:
+              When a finance manager quotes you $2,800 CAD for an ECP Platinum policy, deducting the built-in 3-year complimentary maintenance package value (~$600–$800 CAD, averaging ~$700 CAD) brings the true mechanical coverage cost down to ~$2,100 CAD (or ~$1,950 CAD after tire road hazard protection):
             </p>
           </div>
 
@@ -490,26 +521,26 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 <span className="text-[11px] text-zinc-500 mt-1 block">Typical 7yr / 160k km quote</span>
               </div>
               <div className="p-4 rounded-xl border border-emerald-900/40 bg-emerald-950/20">
-                <span className="text-xs text-emerald-400 uppercase tracking-wider block">Built-In Perks Value</span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1 block">-$850 CAD</span>
-                <span className="text-[11px] text-emerald-300/80 mt-1 block">~$700 Maintenance + ~$150 Tire Hazard</span>
+                <span className="text-xs text-emerald-400 uppercase tracking-wider block">Built-In Maintenance &amp; Perks</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-1 block">-$700 to -$850 CAD</span>
+                <span className="text-[11px] text-emerald-300/80 mt-1 block">~$700 Maintenance (~$600–$800) + ~$150 Tire Hazard</span>
               </div>
               <div className="p-4 rounded-xl border border-amber-900/40 bg-amber-950/20">
                 <span className="text-xs text-amber-300 uppercase tracking-wider block">Net Mechanical Risk</span>
-                <span className="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-1 block">~$1,950 CAD</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-amber-300 mt-1 block">~$1,950–$2,100 CAD</span>
                 <span className="text-[11px] text-amber-300/80 mt-1 block">True mechanical insurance cost</span>
               </div>
             </div>
 
             <div className="space-y-3 text-xs sm:text-sm text-zinc-300 leading-relaxed">
               <p>
-                <strong>1. 3-Year Complimentary Maintenance (~$700 CAD Value):</strong> If purchased within the first 31 days of delivery, ECP includes your first 6 scheduled maintenance visits (Services 1, 2, and 3 up to 36 months or 48,000 km). This includes 3 synthetic oil changes, tire rotations, cabin/engine air filters, and multi-point inspections that you would have paid out-of-pocket anyway.
+                <strong>1. 3-Year Complimentary Maintenance (~$600–$800 CAD Value, ~$700 Avg):</strong> If purchased within the first 31 days of delivery, ECP includes your first 6 scheduled maintenance visits (Services 1, 2, and 3 up to 36 months or 48,000 km). Deducting ~$700 from a $2,800 CAD quote leaves ~$2,100 CAD in true mechanical coverage cost.
               </p>
               <p>
-                <strong>2. 3-Year Tire Road Hazard Protection (~$150 CAD Value):</strong> ECP covers puncture repairs or prorated tire replacements for original equipment tires damaged by potholes, nails, or road debris during the first 36 months / 50,000 km.
+                <strong>2. 3-Year Tire Road Hazard Protection (~$150 CAD Value):</strong> ECP covers puncture repairs or prorated tire replacements for original equipment tires damaged by potholes, nails, or road debris during the first 36 months / 50,000 km (bringing net mechanical risk to ~$1,950 CAD).
               </p>
               <p>
-                <strong>The Bottom Line:</strong> If you negotiate the retail price down to <strong>$2,000 CAD</strong>, your net mechanical warranty insurance cost is only <strong>~$1,150 CAD</strong> ($2,000 - $850). For an owner keeping the vehicle for 7 to 8 years, that represents exceptionally low risk.
+                <strong>The Bottom Line:</strong> If you negotiate the retail price down to <strong>$1,900–$2,100 CAD</strong>, your net mechanical warranty insurance cost is only <strong>~$1,150–$1,300 CAD</strong>. For an owner keeping the vehicle for 7 to 10 years, that represents exceptionally low risk.
               </p>
             </div>
           </div>
@@ -642,7 +673,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 <span>Scenario A: Rolling ECP Into Your Car Loan</span>
               </div>
               <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
-                Most buyers don&apos;t pay $2,800 CAD cash upfront; the finance manager rolls it into a 72-month or 84-month auto loan at <strong>6.99% – 8.49% APR</strong>.
+                Most buyers don&apos;t pay $2,800 CAD cash upfront; the finance manager rolls it into a 72-month or 84-month auto loan at <strong>6.99% – 8.49% APR (~7% auto loan interest trap)</strong>.
               </p>
               <div className="p-4 rounded-lg bg-zinc-950/80 border border-zinc-800 space-y-2 font-mono text-xs">
                 <div className="flex justify-between text-zinc-400">
@@ -743,7 +774,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
                 </h3>
               </div>
               <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed pl-10">
-                You do NOT have to purchase your ECP warranty from the dealership where you purchased the vehicle. You can purchase genuine Toyota Canada ECP from <strong>any authorized Toyota dealer across Canada</strong> before your vehicle reaches 36 months or 60,000 km. Call finance managers at regional or high-volume stores in other cities—many are willing to discount ECP to hit their monthly volume quotas.
+                You do NOT have to purchase your ECP warranty from the dealership where you purchased the vehicle. You can purchase genuine Toyota Canada ECP from <strong>any authorized Toyota dealer across Canada</strong> before your vehicle reaches 36 months or 60,000 km. Call competing Toyota finance managers at regional or high-volume stores across your province for quotes—many are willing to discount ECP to hit their monthly volume quotas.
               </p>
             </div>
           </div>
@@ -787,6 +818,12 @@ export default function ToyotaEcpWarrantyGuidePage() {
               <p className="text-xs text-zinc-400">Arm yourself with Canadian vehicle preparation knowledge.</p>
             </div>
             <div className="flex flex-wrap gap-2">
+              <Link
+                href="/delivery-prep"
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-300 hover:text-zinc-100 transition-colors"
+              >
+                Delivery Day Prep <ArrowRight className="h-3 w-3" />
+              </Link>
               <Link
                 href="/guides/best-toyota-all-weather-floor-mats"
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-300 hover:text-zinc-100 transition-colors"

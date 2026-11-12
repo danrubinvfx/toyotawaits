@@ -469,8 +469,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     savingsCad: '$2,800+ vs. OEM screen replacement',
   },
   'spigen-screen-protector': {
-    id: 'spigen-toyota-screen-protector',
-    slug: 'spigen-toyota-screen-protector',
+    id: 'spigen-screen-protector',
+    slug: 'spigen-screen-protector',
     proxySlug: 'spigen-screen-protector',
     title: 'Screen Protector',
     brand: 'Spigen',
@@ -509,8 +509,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     savingsCad: '$600–$1,200 vs. dealer etching',
   },
   'faraday-key-pouch': {
-    id: 'faraday-key-fob-pouch',
-    slug: 'faraday-key-fob-pouch',
+    id: 'faraday-key-pouch',
+    slug: 'faraday-key-pouch',
     proxySlug: 'faraday-key-pouch',
     title: 'Faraday Key Pouch',
     brand: 'Defender Guard',
@@ -549,8 +549,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     savingsCad: '$1,200+ vs. dealer tire & wheel plans',
   },
   'portable-tire-inflator': {
-    id: 'fanttik-cordless-tire-inflator',
-    slug: 'fanttik-cordless-tire-inflator',
+    id: 'portable-tire-inflator',
+    slug: 'portable-tire-inflator',
     proxySlug: 'portable-tire-inflator',
     title: 'Fanttik Portable Cordless Tire Inflator & Digital Gauge (150 PSI)',
     brand: 'Fanttik',

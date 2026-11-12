@@ -395,6 +395,13 @@ const MOD_GUIDES = [
 
 const PREP_GUIDES = [
   {
+    slug: 'toyota-ecp-warranty-guide',
+    title: 'Toyota ECP Warranty Guide',
+    description: 'ECP Platinum vs. Gold breakdown, factory hybrid warranty overlap, dealer margins, and the 31-day purchase rule.',
+    icon: ShieldCheck,
+    href: '/guides/toyota-ecp-warranty-guide',
+  },
+  {
     slug: 'winter-prep',
     title: 'Winter Prep & Salt Protection Guide',
     description: 'BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don\'ts.',

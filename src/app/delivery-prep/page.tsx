@@ -295,6 +295,32 @@ export default function DeliveryPrepPage() {
           </div>
         </section>
 
+        {/* Surviving the Finance Office: ECP Extended Warranty Defense Callout */}
+        <section
+          aria-label="Surviving the Finance Office: ECP Extended Warranty Defense"
+          data-testid="ecp-warranty-defense-callout"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-zinc-900/90 to-zinc-950 p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-0.5 text-xs font-bold text-amber-400">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Finance Office Defense</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              Surviving the Finance Office: ECP Extended Warranty Defense
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              Facing a $2,800–$3,200 CAD quote for Toyota Extra Care Protection? Compare ECP Platinum vs. Gold, factory 8-yr/160k hybrid overlap, wholesale dealer target pricing ($1,900–$2,100 CAD), and the 31-day post-delivery grace period.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-ecp-warranty-guide"
+            className="shrink-0 inline-flex items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-md transition-colors"
+          >
+            Read Toyota ECP Warranty Guide →
+          </Link>
+        </section>
+
         {/* Surviving the Business Office: Dealer Fee Audit & ECP Warranty Defense */}
         <DealerFeeAudit />
 
