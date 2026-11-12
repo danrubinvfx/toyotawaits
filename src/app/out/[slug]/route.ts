@@ -64,6 +64,22 @@ export const OUT_PROXY_URLS: Record<string, string> = {
     'portable cordless tire inflator 150 PSI auto shut off',
     'CA'
   ),
+  'beatsonic-ena-3t3-amp': buildAmazonAffiliateUrl(
+    'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    'CA'
+  ),
+  'kicker-ksc3504-dash-speakers': buildAmazonAffiliateUrl(
+    'Kicker KSC3504 3.5 speakers Metra 72-8110 Toyota',
+    'CA'
+  ),
+  'kicker-cs-65-door-speakers': buildAmazonAffiliateUrl(
+    'Kicker 46CSC654 6.5 speakers Metra 82-8148 Toyota RAV4',
+    'CA'
+  ),
+  'alpine-pwe-s800-subwoofer': buildAmazonAffiliateUrl(
+    'Alpine PWE-S800 compact powered subwoofer',
+    'CA'
+  ),
 };
 
 export async function GET(

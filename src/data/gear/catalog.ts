@@ -1362,23 +1362,103 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   // ==========================================
   // RAV4 Stealth "OEM+" Audio Package
   // ==========================================
+  'beatsonic-ena-3t3-amp': {
+    id: 'beatsonic-ena-3t3-amp',
+    slug: 'beatsonic-ena-3t3-amp',
+    title: 'Beat-Sonic ENA-3T3 Plug-and-Play Micro Amplifier',
+    brand: 'Beat-Sonic',
+    category: 'Audio & Electronics',
+    searchQuery: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    searchKeywordsCA: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    searchKeywordsUS: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    compatibility: '2019–2026 Toyota RAV4 (Non-JBL 8", 10.5", and 12.3" Multimedia Screens)',
+    description:
+      'Inline T-harness micro-amp (50W x 4 peak) that mounts behind the factory multimedia screen with zero wire splicing and a built-in RCA sub pre-out.',
+    whyBuy:
+      'Inline T-harness micro-amp (50W x 4 peak) that mounts behind the factory multimedia screen with zero wire splicing and a built-in RCA sub pre-out.',
+    badge: 'Recommended',
+    isDeliveryDayEssential: false,
+    buttonLabel: 'Search Amazon ↗',
+  },
+  'kicker-ksc3504-dash-speakers': {
+    id: 'kicker-ksc3504-dash-speakers',
+    slug: 'kicker-ksc3504-dash-speakers',
+    title: 'Kicker KSC3504 3.5" Coaxial Dash Speakers + Metra 72-8110 Harness',
+    brand: 'Kicker',
+    category: 'Audio & Electronics',
+    searchQuery: 'Kicker KSC3504 3.5 speakers Metra 72-8110 Toyota',
+    searchKeywordsCA: 'Kicker KSC3504 3.5 speakers Metra 72-8110 Toyota',
+    searchKeywordsUS: 'Kicker KSC3504 3.5 speakers Metra 72-8110 Toyota',
+    compatibility: '2019–2026 Toyota RAV4 Left & Right Dash Corners (Non-JBL)',
+    description:
+      '20-minute drop-in dash corner upgrade that lifts vocals and clears up muffled factory treble.',
+    whyBuy:
+      '20-minute drop-in dash corner upgrade that lifts vocals and clears up muffled factory treble.',
+    badge: 'Recommended',
+    isDeliveryDayEssential: false,
+    buttonLabel: 'Search Amazon ↗',
+  },
+  'kicker-cs-65-door-speakers': {
+    id: 'kicker-cs-65-door-speakers',
+    slug: 'kicker-cs-65-door-speakers',
+    title: 'Kicker CS Series 6.5" Door Speakers + Metra 82-8148 Brackets',
+    brand: 'Kicker',
+    category: 'Audio & Electronics',
+    searchQuery: 'Kicker 46CSC654 6.5 speakers Metra 82-8148 Toyota RAV4',
+    searchKeywordsCA: 'Kicker 46CSC654 6.5 speakers Metra 82-8148 Toyota RAV4',
+    searchKeywordsUS: 'Kicker 46CSC654 6.5 speakers Metra 82-8148 Toyota RAV4',
+    compatibility: '2019–2026 Toyota RAV4 Front & Rear Doors (Non-JBL)',
+    description:
+      'Replaces weak factory paper-cone door drivers for tighter mid-bass without rattling.',
+    whyBuy:
+      'Replaces weak factory paper-cone door drivers for tighter mid-bass without rattling.',
+    badge: 'Recommended',
+    isDeliveryDayEssential: false,
+    buttonLabel: 'Search Amazon ↗',
+  },
+  'alpine-pwe-s800-subwoofer': {
+    id: 'alpine-pwe-s800-subwoofer',
+    slug: 'alpine-pwe-s800-subwoofer',
+    title: 'Alpine PWE-S800 8" Compact Under-Seat Powered Subwoofer',
+    brand: 'Alpine',
+    category: 'Audio & Electronics',
+    searchQuery: 'Alpine PWE-S800 compact powered subwoofer',
+    searchKeywordsCA: 'Alpine PWE-S800 compact powered subwoofer',
+    searchKeywordsUS: 'Alpine PWE-S800 compact powered subwoofer',
+    compatibility: '2019–2026 Toyota RAV4 Under Front Passenger Seat (Hybrid Safe)',
+    description:
+      'Shallow cast-aluminum powered sub that fits under the front passenger seat, preserving 100% of rear cargo space.',
+    whyBuy:
+      'Shallow cast-aluminum powered sub that fits under the front passenger seat, preserving 100% of rear cargo space.',
+    badge: 'Recommended',
+    isDeliveryDayEssential: false,
+    buttonLabel: 'Search Amazon ↗',
+  },
   'beat-sonic-ena-3t3': {
     slug: 'beat-sonic-ena-3t3',
     title: 'Beat-Sonic ENA-3T3 Micro Power Amplifier Kit (RAV4 Non-JBL)',
-    searchKeywordsCA: 'Beat-Sonic ENA-3T3 micro power amplifier Toyota',
-    searchKeywordsUS: 'Beat-Sonic ENA-3T3 micro power amplifier Toyota',
+    searchQuery: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    searchKeywordsCA: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
+    searchKeywordsUS: 'Beat-Sonic ENA-3T3 Toyota RAV4 amplifier',
     compatibility: '2019–2026 Toyota RAV4 (Non-JBL 8" and 10.5" Multimedia Screens)',
+    description:
+      'Inline T-harness micro-amp (50W x 4 peak) that mounts behind the factory multimedia screen with zero wire splicing and a built-in RCA sub pre-out.',
     whyBuy: 'Plug-and-play inline T-harness micro-amp boosting power without cutting wires or triggering hybrid battery drain codes. Dedicated RCA subwoofer pre-out.',
     badge: 'Recommended',
+    isDeliveryDayEssential: false,
   },
   'alpine-pwe-s800': {
     slug: 'alpine-pwe-s800',
     title: 'Alpine PWE-S800 8" Compact Powered Subwoofer (Under-Seat)',
-    searchKeywordsCA: 'Alpine PWE-S8 compact powered subwoofer',
-    searchKeywordsUS: 'Alpine PWE-S8 compact powered subwoofer',
+    searchQuery: 'Alpine PWE-S800 compact powered subwoofer',
+    searchKeywordsCA: 'Alpine PWE-S800 compact powered subwoofer',
+    searchKeywordsUS: 'Alpine PWE-S800 compact powered subwoofer',
     compatibility: 'Universal under-seat fitment (compatible with RAV4 hybrid battery clearances)',
+    description:
+      'Shallow cast-aluminum powered sub that fits under the front passenger seat, preserving 100% of rear cargo space.',
     whyBuy: '240W peak / 120W RMS shallow cast-aluminum sub fitting flat under front passenger seat. Preserves 100% trunk space.',
     badge: 'Recommended',
+    isDeliveryDayEssential: false,
   },
   'alpine-pwe-s8': {
     slug: 'alpine-pwe-s8',
@@ -1388,6 +1468,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: 'Universal under-seat fitment (compatible with RAV4 hybrid battery clearances)',
     whyBuy: '120W RMS shallow cast-aluminum sub fitting flat under front passenger seat.',
     badge: 'Recommended',
+    isDeliveryDayEssential: false,
   },
   'dash-speakers-rav4': {
     slug: 'dash-speakers-rav4',
@@ -1397,6 +1478,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: '2019–2026 Toyota RAV4 Left & Right Dash Corners',
     whyBuy: 'Drop-in 3.5" coaxial upgrade replacing factory paper cones. Brings vocals up to ear level in 15 minutes.',
     badge: 'Recommended',
+    isDeliveryDayEssential: false,
   },
   'metra-72-8110-harness': {
     slug: 'metra-72-8110-harness',
@@ -1405,6 +1487,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Metra 72-8110 Toyota speaker harness',
     compatibility: 'Toyota Dash Speaker Plugs',
     whyBuy: 'Plug-and-play adapter harness for clean, solder-free dash speaker installation.',
+    isDeliveryDayEssential: false,
   },
   'kicker-cs-door-speakers-rav4': {
     slug: 'kicker-cs-door-speakers-rav4',
@@ -1414,6 +1497,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     compatibility: '2019–2026 Toyota RAV4 Front & Rear Doors',
     whyBuy: 'Replaces weak factory paper cones with punchy mid-bass coaxial drivers.',
     badge: 'Recommended',
+    isDeliveryDayEssential: false,
   },
   'metra-82-8148-brackets': {
     slug: 'metra-82-8148-brackets',
@@ -1422,6 +1506,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Metra 82-8148 speaker mounting brackets Toyota',
     compatibility: 'Toyota Front & Rear Door Speaker Cutouts',
     whyBuy: 'Precision bracket matching factory door rivet holes and sealing moisture barrier.',
+    isDeliveryDayEssential: false,
   },
   'metra-72-8104-harness': {
     slug: 'metra-72-8104-harness',
@@ -1430,6 +1515,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchKeywordsUS: 'Metra 72-8104 speaker wiring harness Toyota',
     compatibility: 'Toyota Door Speaker Harness Connectors',
     whyBuy: 'Solderless plug-and-play leads clicking into factory door speaker wiring.',
+    isDeliveryDayEssential: false,
   },
 
   // ==========================================
