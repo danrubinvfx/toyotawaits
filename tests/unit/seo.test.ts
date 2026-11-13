@@ -53,6 +53,14 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(ghGuideEntry?.priority).toBe(0.8);
     expect(ghGuideEntry?.changeFrequency).toBe('monthly');
 
+    // Corolla Cross 2026 vs 2027 Guide: https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027
+    const ccGuideEntry = sitemapEntries.find(
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027'
+    );
+    expect(ccGuideEntry).toBeDefined();
+    expect(ccGuideEntry?.priority).toBe(0.8);
+    expect(ccGuideEntry?.changeFrequency).toBe('monthly');
+
     // Guides & Prep Hub Entries
     const winterPrepEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/winter-prep');
     expect(winterPrepEntry).toBeDefined();
@@ -189,10 +197,10 @@ describe('Technical SEO & Discovery Configuration', () => {
 
   it('exports inventory page metadata matching Lower Mainland discovery specs', () => {
     expect(inventoryMetadata.title).toBe(
-      'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC'
+      'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits'
     );
     expect(inventoryMetadata.description).toBe(
-      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.'
+      'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.'
     );
     expect(inventoryMetadata.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/inventory'

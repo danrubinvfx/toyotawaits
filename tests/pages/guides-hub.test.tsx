@@ -41,6 +41,7 @@ describe('Guides Index Hub Page', () => {
       '/guides/toyota-sienna-2026-vs-2027',
       '/guides/toyota-rav4-2026-vs-2027',
       '/guides/toyota-grand-highlander-2026-vs-2027',
+      '/guides/toyota-corolla-cross-2026-vs-2027',
       '/guides/toyota-rav4-must-have-accessories',
       '/guides/best-toyota-all-weather-floor-mats',
       '/guides/sienna-mods',

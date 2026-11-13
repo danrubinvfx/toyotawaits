@@ -5,6 +5,7 @@ import { Disc, ExternalLink, AlertTriangle, Layers, CheckCircle2 } from 'lucide-
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export interface TrimSizingSpec {
+  id: string;
   generation: string;
   model: string;
   badge: string;
@@ -21,6 +22,7 @@ export interface TrimSizingSpec {
 
 export const TRIM_SIZING_DATA: TrimSizingSpec[] = [
   {
+    id: 'rav4-oem-sizes',
     generation: '5th / 6th Gen (2019–2026+)',
     model: 'RAV4 (Gas, Hybrid & Prime PHEV)',
     badge: 'Canada #1 Selling SUV',
@@ -51,6 +53,7 @@ export const TRIM_SIZING_DATA: TrimSizingSpec[] = [
       'All 5th/6th Gen RAV4 trims—including RAV4 Prime PHEV with larger front brake rotors—safely clear 17x7J ET35 wheels. Downsizing to 17" saves $200–$350 CAD per set of winter rubber.',
   },
   {
+    id: 'sienna-oem-sizes',
     generation: '4th Gen (2021–2026+ Hybrid)',
     model: 'Sienna AWD / FWD',
     badge: 'Hybrid Minivan Platform',
@@ -76,6 +79,7 @@ export const TRIM_SIZING_DATA: TrimSizingSpec[] = [
       'Sienna Spare Tire Caveat: Most Canadian Siennas ship without a physical spare tire (12V inflator kit with sealant is factory standard). Dedicated winter wheels must clear front calipers and rear electric e-AWD drive units. A dedicated cordless inflator is highly recommended.',
   },
   {
+    id: 'grand-highlander-oem-sizes',
     generation: '1st Gen (2024–2026+)',
     model: 'Grand Highlander (Gas, HEV & Hybrid MAX)',
     badge: 'Full-Size 3-Row TNGA-K',
@@ -92,6 +96,7 @@ export const TRIM_SIZING_DATA: TrimSizingSpec[] = [
       'Critical PCD Note: Grand Highlander uses a heavy-duty 5x120 bolt pattern (NOT the standard 5x114.3 found on RAV4/Highlander/Sienna). Rims from previous Highlander models will not fit.',
   },
   {
+    id: 'corolla-cross-oem-sizes',
     generation: '1st Gen (2022–2026+)',
     model: 'Corolla Cross (AWD / FWD & Hybrid)',
     badge: 'Compact Crossover',
@@ -146,7 +151,11 @@ export function TrimSizingTable() {
 
         <CardContent className="p-0 divide-y divide-zinc-800">
           {TRIM_SIZING_DATA.map((vehicle) => (
-            <div key={vehicle.model} className="p-5 sm:p-6 space-y-4">
+            <div
+              key={vehicle.model}
+              id={vehicle.id}
+              className="p-5 sm:p-6 space-y-4 scroll-mt-20"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2.5">
                   <Disc className="w-5 h-5 text-cyan-400 shrink-0" />

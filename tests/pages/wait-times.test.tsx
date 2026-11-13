@@ -34,7 +34,7 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(params.some((p) => p.model === 'crown-signia')).toBe(true);
   });
 
-    it('optimizes Grand Highlander dynamic title, description, OpenGraph, and Twitter tags for high CTR', async () => {
+  it('optimizes Grand Highlander dynamic title, description, OpenGraph, and Twitter tags for high CTR', async () => {
     const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
     const metadata = await generateMetadata({
       params: Promise.resolve({ model: 'grand-highlander' }),
@@ -279,6 +279,21 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     ).toBeInTheDocument();
     const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
     expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-grand-highlander-2026-vs-2027');
+  });
+
+  it('renders 2026 vs 2027 comparison bridge card for Corolla Cross wait times page linking to guide and live inventory', async () => {
+    const jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'corolla-cross' }),
+    });
+
+    render(jsx);
+
+    expect(screen.getByText('Allocated a 2026 or Waiting for a 2027 Corolla Cross?')).toBeInTheDocument();
+    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
+    expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-corolla-cross-2026-vs-2027');
+
+    const inventoryLink = screen.getByRole('link', { name: /Check Live Corolla Cross Stock ↗/i });
+    expect(inventoryLink).toHaveAttribute('href', '/inventory?model=corolla-cross');
   });
 
   it('renders distinct data separation for rav4, sienna, and tacoma', async () => {

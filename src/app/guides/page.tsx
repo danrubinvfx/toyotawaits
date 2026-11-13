@@ -333,6 +333,19 @@ const MOD_GUIDES = [
     href: '/guides/toyota-grand-highlander-2026-vs-2027',
   },
   {
+    slug: 'toyota-corolla-cross-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota Corolla Cross: Price, Hybrid Changes & Waitlist Rollover',
+    tagline: 'Canadian MSRP expectations, 196-hp Hybrid AWD vs. Gas lead times, MTM Alabama deposit rollovers, and RAV4 Hybrid comparison.',
+    badge: '2026 vs. 2027',
+    model: 'Corolla Cross Gas & Hybrid',
+    highlights: [
+      'Expected $400–$850 CAD annual MSRP delta & carryover specs',
+      'Hybrid AWD (6–12 mo) vs. Gas AWD (2–5 mo) Canadian waitlists',
+      'MTM Huntsville Alabama factory queue rollover rules',
+    ],
+    href: '/guides/toyota-corolla-cross-2026-vs-2027',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',

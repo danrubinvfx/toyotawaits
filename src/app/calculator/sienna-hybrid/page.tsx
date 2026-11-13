@@ -12,7 +12,7 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
+  title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
   description:
     'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
   keywords: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/sienna-hybrid',
   },
   openGraph: {
-    title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
+    title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
     description:
       'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
     url: 'https://toyotawaits.ca/calculator/sienna-hybrid',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits',
+    title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
     description:
       'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
   },

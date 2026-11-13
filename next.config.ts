@@ -101,12 +101,17 @@ const nextConfig: NextConfig = {
       { source: '/rx', destination: '/wait-times/lexus-rx', permanent: true },
       { source: '/lexus-rx', destination: '/wait-times/lexus-rx', permanent: true },
       {
-        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|prius|tacoma|tundra|sequoia|4runner|highlander|corolla|lexus-gx550|lexus-tx|lexus-nx|lexus-rx)/:powertrain/:province',
+        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|tacoma|tundra|sequoia|4runner|highlander|corolla|prius|lexus-gx550|lexus-tx|lexus-nx|lexus-rx)',
         destination: '/wait-times/:model',
         permanent: true,
       },
       {
-        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|prius|tacoma|tundra|sequoia|4runner|highlander|corolla|lexus-gx550|lexus-tx|lexus-nx|lexus-rx)/:powertrain',
+        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|tacoma|tundra|sequoia|4runner|highlander|corolla|prius|lexus-gx550|lexus-tx|lexus-nx|lexus-rx)/:powertrain/:province',
+        destination: '/wait-times/:model',
+        permanent: true,
+      },
+      {
+        source: '/:model(rav4|sienna|corolla-cross|grand-highlander|camry|land-cruiser|tacoma|tundra|sequoia|4runner|highlander|corolla|prius|lexus-gx550|lexus-tx|lexus-nx|lexus-rx)/:powertrain',
         destination: '/wait-times/:model',
         permanent: true,
       },

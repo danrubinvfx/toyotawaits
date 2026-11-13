@@ -15,7 +15,7 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
   it('has valid SEO metadata matching specification requirements', () => {
     const meta = generateMetadata();
     expect(meta.title).toBe(
-      '2026 vs. 2027 Toyota Sienna: Key Differences, Trim Matrix & Wait Times | ToyotaWaits'
+      '2026 vs. 2027 Toyota Sienna Canada: Price Hike, Changes & Waitlist Rollover | ToyotaWaits'
     );
     expect(meta.description).toBe(
       'Compare the 2026 and 2027 Toyota Sienna. Full trim level matrix (LE, XLE, XSE, Limited, Platinum), carryover specs, Canadian queue rollovers, live lot inventory, and Day-1 gear.'

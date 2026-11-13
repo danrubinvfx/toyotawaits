@@ -23,9 +23,9 @@ export function InventoryLoadingSkeleton() {
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
+  title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
   description:
-    'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+    'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
   keywords: [
     'toyota inventory vancouver',
     'toyota inventory bc',
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
     canonical: 'https://www.toyotawaits.ca/inventory',
   },
   openGraph: {
-    title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
+    title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
     description:
-      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+      'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
     url: 'https://www.toyotawaits.ca/inventory',
     siteName: 'ToyotaWaits',
     locale: 'en_CA',
@@ -49,9 +49,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Live Toyota Inventory | Metro Vancouver & Lower Mainland BC',
+    title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
     description:
-      'Explore 140+ observed Toyota vehicles across Vancouver, Surrey, and Pitt Meadows dealership feeds. Find in-transit and lot-ready units to skip the wait.',
+      'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
   },
 };
 

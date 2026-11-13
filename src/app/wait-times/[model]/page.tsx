@@ -1255,6 +1255,39 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </section>
       )}
 
+      {/* 2026 vs 2027 Corolla Cross Guide Callout Banner */}
+      {modelConfig.slug === 'corolla-cross' && (
+        <section aria-label="2026 vs 2027 Corolla Cross Guide Callout" data-testid="corolla-cross-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Corolla Cross?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Compare 2026 vs. 2027 Canadian MSRP expectations, 196-hp Hybrid AWD vs. Gas lead times, and MTM Huntsville, Alabama waitlist rollover rules—or check incoming dealer inventory to skip the queue.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-corolla-cross-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Comparison →
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="border-red-500/40 text-red-600 dark:text-red-400 hover:bg-red-500/10 font-bold shadow-sm">
+                  <Link href="/inventory?model=corolla-cross" className="gap-2">
+                    Check Live Corolla Cross Stock ↗
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Section 2: Provincial Allocation Breakdown */}
       <section className="space-y-4">
         <div>

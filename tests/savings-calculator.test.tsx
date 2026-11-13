@@ -388,10 +388,10 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
     it('renders server component page with metadata and canonical URL', async () => {
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
       expect(metadata.title).toBe(
-        'Is the Toyota RAV4 Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits'
+        'Is a Toyota Hybrid Worth It? 2026–2027 Canada Gas vs. Hybrid Break-Even Calculator | ToyotaWaits'
       );
       expect(metadata.description).toBe(
-        'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
+        'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.'
       );
 
       await act(async () => {

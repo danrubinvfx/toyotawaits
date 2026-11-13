@@ -14,6 +14,22 @@ describe('TiresPage Route', () => {
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/tires');
   });
 
+  it('renders top-of-page jump links for RAV4, Sienna, and Corolla Cross OEM sizes', () => {
+    render(<TiresPage />);
+
+    const jumpNav = screen.getByTestId('tire-oem-jump-links');
+    expect(jumpNav).toBeInTheDocument();
+
+    const rav4Jump = within(jumpNav).getByRole('link', { name: /RAV4 OEM Sizes/i });
+    expect(rav4Jump).toHaveAttribute('href', '#rav4-oem-sizes');
+
+    const siennaJump = within(jumpNav).getByRole('link', { name: /Sienna OEM Sizes/i });
+    expect(siennaJump).toHaveAttribute('href', '#sienna-oem-sizes');
+
+    const ccJump = within(jumpNav).getByRole('link', { name: /Corolla Cross OEM Sizes/i });
+    expect(ccJump).toHaveAttribute('href', '#corolla-cross-oem-sizes');
+  });
+
   it('renders the Direct-Fit Sizing Quick-Lookup Matrix with 17-inch downsizing specs', () => {
     render(<TiresPage />);
 

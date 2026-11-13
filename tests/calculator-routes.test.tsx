@@ -39,7 +39,7 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   describe('1. Programmatic Model Routes', () => {
     it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
       expect(rav4Metadata.title).toBe(
-        'Is the Toyota RAV4 Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits'
+        'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits'
       );
       expect(rav4Metadata.description).toBe(
         'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
@@ -65,7 +65,7 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
 
     it('verifies Sienna Hybrid page metadata, canonical, and static table', () => {
       expect(siennaMetadata.title).toBe(
-        'Is the Toyota Sienna Hybrid Worth the Wait? (2026–2027 Payback & Fuel Calculator) | ToyotaWaits'
+        '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits'
       );
       expect(siennaMetadata.description).toBe(
         'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'

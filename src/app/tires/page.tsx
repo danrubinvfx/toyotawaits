@@ -96,6 +96,11 @@ const FAQ_ITEMS = [
     answer:
       'Most Canadian 4th-Gen Toyota Sienna trims do not come with a physical spare tire; they are equipped from the factory with a 12V inflator and liquid tire sealant kit. Because cold Canadian winters cause severe pressure drops and sealant kits can ruin TPMS sensors, carrying a reliable battery-powered cordless inflator or arranging dedicated seasonal roadside assistance is highly recommended.',
   },
+  {
+    question: 'What is the OEM winter tire size and 17-inch downsize for the Toyota Corolla Cross?',
+    answer:
+      'The Toyota Corolla Cross comes with 215/65R17 tires on L and LE trims (17x6.5J ET40, 5x114.3 bolt pattern, 60.1mm center bore) and 225/55R18 tires on XLE and XSE Hybrid trims. Downsizing 18-inch XLE/XSE wheels to 215/65R17 for winter driving is fully supported, reducing tire costs while improving slush and snow traction.',
+  },
 ];
 
 const faqPageSchema = {
@@ -152,6 +157,32 @@ export default function TiresPage() {
               Factory OEM sizing matrices, cost-saving 17-inch winter downsizing specs, Quebec Dec 1 mandates,
               BC mountain highway rules, and Ontario/Alberta insurance discount guides for Canadian Toyota deliveries.
             </p>
+
+            {/* Top-of-Page Jump Links for RAV4, Sienna, and Corolla Cross OEM Sizes */}
+            <nav
+              aria-label="Jump to Model OEM Tire Sizes"
+              data-testid="tire-oem-jump-links"
+              className="flex flex-wrap items-center justify-center gap-2 pt-2"
+            >
+              <a
+                href="#rav4-oem-sizes"
+                className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/50 hover:bg-cyan-900/60 px-3.5 py-1.5 text-xs font-bold text-cyan-300 transition-colors"
+              >
+                <span>RAV4 OEM Sizes &darr;</span>
+              </a>
+              <a
+                href="#sienna-oem-sizes"
+                className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/50 hover:bg-cyan-900/60 px-3.5 py-1.5 text-xs font-bold text-cyan-300 transition-colors"
+              >
+                <span>Sienna OEM Sizes &darr;</span>
+              </a>
+              <a
+                href="#corolla-cross-oem-sizes"
+                className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/40 bg-cyan-950/50 hover:bg-cyan-900/60 px-3.5 py-1.5 text-xs font-bold text-cyan-300 transition-colors"
+              >
+                <span>Corolla Cross OEM Sizes &darr;</span>
+              </a>
+            </nav>
 
             {/* Quick Context Highlights */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-4 border-t border-zinc-800/80 text-left text-xs">
