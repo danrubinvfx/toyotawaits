@@ -15,7 +15,7 @@ export const revalidate = 0;
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Is a Toyota Hybrid Worth It? 2026–2027 Canada Gas vs. Hybrid Break-Even Calculator | ToyotaWaits',
+  title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
   description:
     'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
   keywords: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator',
   },
   openGraph: {
-    title: 'Is a Toyota Hybrid Worth It? 2026–2027 Canada Gas vs. Hybrid Break-Even Calculator | ToyotaWaits',
+    title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
     description:
       'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
     url: 'https://toyotawaits.ca/calculator',
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Is a Toyota Hybrid Worth It? 2026–2027 Canada Gas vs. Hybrid Break-Even Calculator | ToyotaWaits',
+    title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
     description:
       'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
   },

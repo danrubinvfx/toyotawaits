@@ -12,9 +12,9 @@ export const revalidate = 3600; // Cache on edge for 1 hour
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
-  title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
+  title: 'Is the 2026–2027 Toyota Sienna Hybrid Worth the Wait? Canada Savings Calculator | ToyotaWaits',
   description:
-    'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+    'Calculate annual fuel savings and payback timelines for the 2026–2027 Toyota Sienna Hybrid across Canadian provinces.',
   keywords: [
     'toyota sienna hybrid fuel savings',
     'sienna hybrid vs gas minivan canada',
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     canonical: 'https://toyotawaits.ca/calculator/sienna-hybrid',
   },
   openGraph: {
-    title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
+    title: 'Is the 2026–2027 Toyota Sienna Hybrid Worth the Wait? Canada Savings Calculator | ToyotaWaits',
     description:
-      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+      'Calculate annual fuel savings and payback timelines for the 2026–2027 Toyota Sienna Hybrid across Canadian provinces.',
     url: 'https://toyotawaits.ca/calculator/sienna-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -36,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits',
+    title: 'Is the 2026–2027 Toyota Sienna Hybrid Worth the Wait? Canada Savings Calculator | ToyotaWaits',
     description:
-      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+      'Calculate annual fuel savings and payback timelines for the 2026–2027 Toyota Sienna Hybrid across Canadian provinces.',
   },
 };
 

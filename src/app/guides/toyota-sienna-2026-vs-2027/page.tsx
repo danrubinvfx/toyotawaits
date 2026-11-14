@@ -33,16 +33,16 @@ export const { instant } = { instant: false };
 
 export function generateMetadata(): Metadata {
   return {
-    title: '2026 vs. 2027 Toyota Sienna Canada: Price Hike, Changes & Waitlist Rollover | ToyotaWaits',
+    title: '2026 vs. 2027 Toyota Sienna Canada: Changes, Pricing & Wait Times | ToyotaWaits',
     description:
-      'Compare the 2026 and 2027 Toyota Sienna. Full trim level matrix (LE, XLE, XSE, Limited, Platinum), carryover specs, Canadian queue rollovers, live lot inventory, and Day-1 gear.',
+      'Compare the 2026 and 2027 Toyota Sienna in Canada. Full trim matrix, XLE AWD return, MSRP changes, and how dealer waitlist rollovers work.',
     alternates: {
       canonical: 'https://www.toyotawaits.ca/guides/toyota-sienna-2026-vs-2027',
     },
     openGraph: {
-      title: '2026 vs. 2027 Toyota Sienna Canada: Price Hike, Changes & Waitlist Rollover | ToyotaWaits',
+      title: '2026 vs. 2027 Toyota Sienna Canada: Changes, Pricing & Wait Times | ToyotaWaits',
       description:
-        'Compare the 2026 and 2027 Toyota Sienna. Full trim level matrix (LE, XLE, XSE, Limited, Platinum), carryover specs, Canadian queue rollovers, live lot inventory, and Day-1 gear.',
+        'Compare the 2026 and 2027 Toyota Sienna in Canada. Full trim matrix, XLE AWD return, MSRP changes, and how dealer waitlist rollovers work.',
       url: 'https://www.toyotawaits.ca/guides/toyota-sienna-2026-vs-2027',
       siteName: 'ToyotaWaits.ca',
       locale: 'en_CA',
@@ -50,9 +50,9 @@ export function generateMetadata(): Metadata {
     },
     twitter: {
       card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Sienna Canada: Price Hike, Changes & Waitlist Rollover | ToyotaWaits',
+      title: '2026 vs. 2027 Toyota Sienna Canada: Changes, Pricing & Wait Times | ToyotaWaits',
       description:
-        'Compare the 2026 and 2027 Toyota Sienna: mechanical carryovers, trim level matrix, TMMI Indiana queue rollovers, and live inventory.',
+        'Compare the 2026 and 2027 Toyota Sienna in Canada. Full trim matrix, XLE AWD return, MSRP changes, and how dealer waitlist rollovers work.',
     },
   };
 }

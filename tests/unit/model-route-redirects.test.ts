@@ -92,4 +92,21 @@ describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
       expect(meta.alternates?.canonical).toBe(`https://www.toyotawaits.ca/wait-times/${model}`);
     }
   });
+
+  it('configures permanent (301) redirect from /guides/winter-tires to /tires and apex toyotawaits.ca to www.toyotawaits.ca', async () => {
+    const redirects = await (nextConfig.redirects ? nextConfig.redirects() : []);
+
+    const tireRedirect = redirects.find((r) => r.source === '/guides/winter-tires');
+    expect(tireRedirect).toBeDefined();
+    expect(tireRedirect?.destination).toBe('/tires');
+    expect(tireRedirect?.permanent).toBe(true);
+
+    const apexRedirect = redirects.find(
+      (r) =>
+        r.source === '/:path*' &&
+        r.destination === 'https://www.toyotawaits.ca/:path*' &&
+        r.permanent === true
+    );
+    expect(apexRedirect).toBeDefined();
+  });
 });

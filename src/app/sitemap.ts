@@ -267,12 +267,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/guides/winter-tires`,
-      lastModified: now,
-      changeFrequency: 'monthly',
-      priority: 0.6,
-    },
-    {
       url: `${baseUrl}/guides/ev-charging`,
       lastModified: now,
       changeFrequency: 'monthly',

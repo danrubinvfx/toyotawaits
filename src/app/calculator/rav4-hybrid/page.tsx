@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://toyotawaits.ca'),
   title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
   description:
-    'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+    'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
   keywords: [
     'toyota rav4 hybrid fuel savings',
     'rav4 hybrid vs gas savings canada',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
     description:
-      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+      'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
     url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
     description:
-      'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.',
+      'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
   },
 };
 

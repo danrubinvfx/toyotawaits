@@ -70,6 +70,11 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(tiresEntry).toBeDefined();
     expect(tiresEntry?.priority).toBe(0.8);
 
+    const duplicateWinterTiresGuide = sitemapEntries.find(
+      (e) => e.url === 'https://www.toyotawaits.ca/guides/winter-tires'
+    );
+    expect(duplicateWinterTiresGuide).toBeUndefined();
+
     const deliveryPrepEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/delivery-prep');
     expect(deliveryPrepEntry).toBeDefined();
     expect(deliveryPrepEntry?.priority).toBe(0.7);

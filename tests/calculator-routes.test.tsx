@@ -42,7 +42,7 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
         'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits'
       );
       expect(rav4Metadata.description).toBe(
-        'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
+        'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.'
       );
       expect(rav4Metadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/rav4-hybrid'
@@ -65,10 +65,10 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
 
     it('verifies Sienna Hybrid page metadata, canonical, and static table', () => {
       expect(siennaMetadata.title).toBe(
-        '2026–2027 Toyota Sienna Hybrid Cost & Fuel Savings Calculator (Canada) | ToyotaWaits'
+        'Is the 2026–2027 Toyota Sienna Hybrid Worth the Wait? Canada Savings Calculator | ToyotaWaits'
       );
       expect(siennaMetadata.description).toBe(
-        'Calculate whether waiting 10–14 months for a Toyota Hybrid pays off. Real NRCan fuel savings, break-even timelines, and the true energy cost of waiting vs gas models.'
+        'Calculate annual fuel savings and payback timelines for the 2026–2027 Toyota Sienna Hybrid across Canadian provinces.'
       );
       expect(siennaMetadata.alternates?.canonical).toBe(
         'https://toyotawaits.ca/calculator/sienna-hybrid'
