@@ -1,4 +1,29 @@
+import fs from 'fs';
+import path from 'path';
 import { createClient } from '@supabase/supabase-js';
+
+function loadEnvFromDisk() {
+  for (const file of ['.env.local', '.env.production', '.env']) {
+    try {
+      const fullPath = path.resolve(process.cwd(), file);
+      if (!fs.existsSync(fullPath)) continue;
+      const lines = fs.readFileSync(fullPath, 'utf8').split(/\r?\n/);
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed || trimmed.startsWith('#')) continue;
+        const eqIdx = trimmed.indexOf('=');
+        if (eqIdx <= 0) continue;
+        const key = trimmed.slice(0, eqIdx).trim();
+        const val = trimmed.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '');
+        if (!process.env[key] && val) {
+          process.env[key] = val;
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+}
 
 export interface CanaryOptions {
   baseUrl?: string;
@@ -13,6 +38,10 @@ export async function runSubmissionCanary(options: CanaryOptions = {}): Promise<
   id?: string;
   error?: string;
 }> {
+  if (process.env.VITEST !== 'true') {
+    loadEnvFromDisk();
+  }
+
   const baseUrl = (
     options.baseUrl ||
     process.env.CANARY_BASE_URL ||
@@ -114,10 +143,10 @@ if (isMainModule && process.env.VITEST !== 'true') {
   runSubmissionCanary()
     .then(() => {
       console.log('CANARY PASS: submission insert + cleanup verified');
-      process.exit(0);
+      setTimeout(() => process.exit(0), 50);
     })
     .catch((err: any) => {
       console.error('CANARY FAIL:', err?.message || err);
-      process.exit(1);
+      setTimeout(() => process.exit(1), 50);
     });
 }
