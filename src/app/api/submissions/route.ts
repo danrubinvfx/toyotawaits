@@ -129,6 +129,30 @@ export async function POST(request: NextRequest) {
 
     // Vehicle Dimension Normalization (Gracefully maps slugs, vehicle names, or unformatted IDs to catalog UUIDs)
     if (body && typeof body === 'object') {
+      if (!body.modelSlug && body.model_slug) body.modelSlug = body.model_slug;
+      if (!body.modelId && body.model_id) body.modelId = body.model_id;
+      if (!body.powertrainSlug && body.powertrain_slug) body.powertrainSlug = body.powertrain_slug;
+      if (!body.powertrainId && body.powertrain_id) body.powertrainId = body.powertrain_id;
+      if (!body.trimSlug && body.trim_slug) body.trimSlug = body.trim_slug;
+      if (!body.trimId && body.trim_id) body.trimId = body.trim_id;
+      if (!body.orderDate && body.order_date) body.orderDate = body.order_date;
+      if (!body.deliveryDate && body.delivery_date) body.deliveryDate = body.delivery_date;
+      if (!body.modelYear && body.model_year) body.modelYear = Number(body.model_year);
+      if (!body.dealershipCity && body.dealership_city) body.dealershipCity = body.dealership_city;
+      if (!body.dealershipName && body.dealership_name) body.dealershipName = body.dealership_name;
+      if (body.mandatoryAddonsCad === undefined && body.mandatory_addons_cad !== undefined) {
+        body.mandatoryAddonsCad = Number(body.mandatory_addons_cad) || 0;
+      }
+      if (body.tradeInRequired === undefined && body.trade_in_required !== undefined) {
+        body.tradeInRequired = Boolean(body.trade_in_required);
+      }
+      if (!body.turnstileToken && body.turnstile_token) {
+        body.turnstileToken = body.turnstile_token;
+      }
+      if (!body.stage && (body.current_stage || body.currentStage)) {
+        body.stage = body.current_stage || body.currentStage;
+      }
+
       const incomingModelStr = String(body.modelSlug || body.modelId || body.model || '').toLowerCase().trim();
       const catalogModel = CANADIAN_VEHICLE_CATALOG.find(
         (m) =>
@@ -308,7 +332,7 @@ export async function POST(request: NextRequest) {
     // 6. Generate One-Time Cryptographic Secret Edit Key (128-bit) and Edit Token UUID
     const editKey = crypto.randomUUID();
     const editKeyHash = crypto.createHash('sha256').update(editKey).digest('hex');
-    const editToken = crypto.randomBytes(24).toString('hex');
+    const editToken = crypto.randomUUID();
 
     const submittedEmail = (validData.email || body?.email || '').trim();
     const hasEmail = Boolean(submittedEmail);

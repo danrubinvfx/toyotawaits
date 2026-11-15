@@ -438,4 +438,56 @@ describe('SubmissionForm Component', () => {
 
     vi.useRealTimers();
   });
+
+  it('always renders [data-testid="error-banner"] on missing required fields and submits cleanly with empty/unloaded Turnstile', async () => {
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          id: 'sub-mobile-safari-test',
+          status: 'pending',
+          editKey: 'key-mobile-safari',
+          editToken: '30000000-0000-4000-8000-000000000999',
+        },
+      }),
+    } as any);
+    global.fetch = mockFetch;
+
+    const { container } = render(<SubmissionForm initialTurnstileToken="" />);
+
+    // Form must have noValidate so mobile Safari never silently blocks onSubmit
+    const formEl = container.querySelector('form');
+    expect(formEl).toHaveAttribute('noValidate');
+
+    const orderDateInput = screen.getByLabelText(/Order \/ Deposit Date/i);
+    const submitBtn = screen.getByRole('button', { name: /Submit Wait Time Anonymously/i });
+
+    // 1. Clear orderDate and click Submit -> must render [data-testid="error-banner"] (never silent)
+    fireEvent.change(orderDateInput, { target: { value: '' } });
+    fireEvent.click(submitBtn);
+
+    const errorBanner = await screen.findByTestId('error-banner');
+    expect(errorBanner).toBeInTheDocument();
+    expect(errorBanner).toHaveAttribute('role', 'alert');
+    expect(errorBanner.textContent).toMatch(/Please select a valid order or deposit date/i);
+    expect(submitBtn).not.toBeDisabled();
+
+    // 2. Restore orderDate and click Submit with empty/unloaded Turnstile -> must submit cleanly with fallback token
+    fireEvent.change(orderDateInput, { target: { value: '2026-11-01' } });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/api/submissions',
+        expect.objectContaining({ method: 'POST' })
+      );
+      expect(screen.getByText('Timeline Recorded Successfully!')).toBeInTheDocument();
+    });
+
+    const submissionCall = mockFetch.mock.calls.find((c) => c[0] === '/api/submissions');
+    expect(submissionCall).toBeDefined();
+    const submittedPayload = JSON.parse(submissionCall![1].body);
+    expect(submittedPayload.turnstileToken).toBe('mock-valid-turnstile-token');
+  });
 });

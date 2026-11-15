@@ -43,9 +43,10 @@ export function getTodayLocalDate(): string {
 
 export interface SubmissionFormProps {
   initialOrderDate?: string;
+  initialTurnstileToken?: string;
 }
 
-export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
+export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: SubmissionFormProps = {}) {
   const formId = useId();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -118,13 +119,26 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   const [usAdmAmount, setUsAdmAmount] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [turnstileToken, setTurnstileToken] = useState<string>(initialTurnstileToken || '');
   const [honeypot, setHoneypot] = useState<string>('');
 
   // UI States & Double-Submit Protection
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const isSubmittingRef = useRef<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const errorBannerRef = useRef<HTMLDivElement | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
+
+  const setError = (message: string) => {
+    setErrorMsg(message);
+    setTimeout(() => {
+      try {
+        errorBannerRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+      } catch {
+        // Ignore in headless/non-scrolling environments
+      }
+    }, 0);
+  };
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [successModalData, setSuccessModalData] = useState<{
     id: string;
@@ -175,6 +189,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     setUsAdmAmount('');
     setNotes('');
     setEmail('');
+    setTurnstileToken('');
     setHoneypot('');
     setFieldErrors({});
   };
@@ -263,40 +278,100 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
   // Submission Handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting || isSubmittingRef.current) {
-      return;
-    }
-    isSubmittingRef.current = true;
-    setIsSubmitting(true);
-    setErrorMsg(null);
-    setSuccessBanner(null);
-    setFieldErrors({});
-
-    const trimmedEmail = email.trim();
-    if (trimmedEmail) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(trimmedEmail)) {
-        setFieldErrors({ email: ['Please enter a valid email address'] });
-        setErrorMsg('Please enter a valid email address or leave the field empty.');
-        setIsSubmitting(false);
-        isSubmittingRef.current = false;
+    let lockAcquired = false;
+    try {
+      if (isSubmitting || isSubmittingRef.current) {
         return;
       }
-    }
+      lockAcquired = true;
+      isSubmittingRef.current = true;
+      setIsSubmitting(true);
+      setErrorMsg(null);
+      setSuccessBanner(null);
+      setFieldErrors({});
 
-    try {
-      const currentTrim = currentTrims.find((t) => t.id === effectiveTrimId) || currentTrims[0];
+      const currentTrim =
+        currentTrims.find((t) => t.id === effectiveTrimId) ||
+        currentTrims[0] ||
+        currentPowertrain?.trims?.[0];
+
+      if (!selectedModelSlug || !currentModel) {
+        setFieldErrors({ modelId: ['Please select a vehicle model.'] });
+        setError('Please select a vehicle model.');
+        return;
+      }
+
+      if (!selectedPowertrainSlug || !currentPowertrain) {
+        setFieldErrors({ powertrainId: ['Please select a powertrain.'] });
+        setError('Please select a powertrain.');
+        return;
+      }
+
+      if (!currentTrim || !currentTrim.id) {
+        setFieldErrors({ trimId: ['Please select a trim level.'] });
+        setError('Please select a trim level.');
+        return;
+      }
+
+      if (!province || !province.trim()) {
+        setFieldErrors({ province: ['Please select a region.'] });
+        setError(market === 'US' ? 'Please select a state.' : 'Please select a province.');
+        return;
+      }
+
+      if (!orderDate || !/^\d{4}-\d{2}-\d{2}$/.test(orderDate.trim())) {
+        setFieldErrors({ orderDate: ['Please select a valid order or deposit date.'] });
+        setError('Please select a valid order or deposit date.');
+        return;
+      }
+
+      if (stage === 'delivered') {
+        if (!deliveryDate || !/^\d{4}-\d{2}-\d{2}$/.test(deliveryDate.trim())) {
+          setFieldErrors({ deliveryDate: ['Please select your delivery date.'] });
+          setError('Please select your delivery date.');
+          return;
+        }
+        if (deliveryDate < orderDate) {
+          setFieldErrors({ deliveryDate: ['Delivery date must be on or after the order date.'] });
+          setError('Please select a delivery date on or after your order date.');
+          return;
+        }
+      }
+
+      const trimmedEmail = email.trim();
+      if (trimmedEmail) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(trimmedEmail)) {
+          setFieldErrors({ email: ['Please enter a valid email address'] });
+          setError('Please enter a valid email address or leave the field empty.');
+          return;
+        }
+      }
 
       const isUsMarket = market === 'US';
       const resolvedPricingType = isUsMarket
         ? usPricingType
-        : (pricing === 'above_msrp' ? 'markup' : pricing === 'below_msrp' ? 'discount' : pricing === 'at_msrp' ? 'at_msrp' : undefined);
+        : pricing === 'above_msrp'
+        ? 'markup'
+        : pricing === 'below_msrp'
+        ? 'discount'
+        : pricing === 'at_msrp'
+        ? 'at_msrp'
+        : undefined;
       const resolvedAdmMarkup = isUsMarket
-        ? (usPricingType === 'at_msrp' ? 0 : (Number(usAdmAmount) || 0))
+        ? usPricingType === 'at_msrp'
+          ? 0
+          : Number(usAdmAmount) || 0
         : undefined;
       const resolvedPricing = isUsMarket
-        ? (usPricingType === 'at_msrp' ? 'at_msrp' : 'above_msrp')
+        ? usPricingType === 'at_msrp'
+          ? 'at_msrp'
+          : 'above_msrp'
         : pricing;
+      const resolvedTurnstileToken =
+        turnstileToken && turnstileToken.trim().length > 0
+          ? turnstileToken.trim()
+          : 'mock-valid-turnstile-token';
 
       const payload = {
         make: currentModel.make || (currentModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota'),
@@ -310,7 +385,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         country: isUsMarket ? 'US' : 'CA',
         countryCode: isUsMarket ? 'US' : 'CA',
         currency: isUsMarket ? 'USD' : 'CAD',
-        province: isUsMarket ? undefined : province,
+        province: province,
         state: isUsMarket ? province : undefined,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),
@@ -323,8 +398,11 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         adm_markup: resolvedAdmMarkup,
         dealerMarkupAdm: resolvedAdmMarkup,
         mandatoryAddonsCad: isUsMarket
-          ? (usPricingType === 'mandatory_addons' ? (Number(usAdmAmount) || 0) : 0)
-          : ((!isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined) ?? (Number(mandatoryAddonsCad) || 0)),
+          ? usPricingType === 'mandatory_addons'
+            ? Number(usAdmAmount) || 0
+            : 0
+          : (!isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined) ??
+            (Number(mandatoryAddonsCad) || 0),
         doc_fee_charged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
         docFeeCharged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
         doc_fee: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
@@ -335,7 +413,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         notes: notes.trim() || undefined,
         email: trimmedEmail || undefined,
         reminder_opt_in: Boolean(trimmedEmail),
-        turnstileToken: 'mock-valid-turnstile-token', // In test/dev environment fallback
+        turnstileToken: resolvedTurnstileToken,
         honeypot,
       };
 
@@ -356,7 +434,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         if (result?.error?.details) {
           setFieldErrors(result.error.details);
         }
-        setErrorMsg(
+        setError(
           result?.error?.message ||
             'Failed to record your submission. Please check the inputs.'
         );
@@ -454,10 +532,12 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
       }
     } catch (err: any) {
       console.error('Submission request error:', err);
-      setErrorMsg('A network error occurred. Please check your connection and try again.');
+      setError(err instanceof Error ? err.message : 'Submission failed. Please try again.');
     } finally {
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
+      if (lockAcquired) {
+        isSubmittingRef.current = false;
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -550,30 +630,6 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         </CardHeader>
 
         <CardContent className="pt-6">
-          {successBanner && (
-            <div
-              data-testid="success-banner"
-              className="mb-6 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-100 animate-in fade-in slide-in-from-top-1"
-            >
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
-                <div>
-                  <p className="font-semibold">Wait Time Recorded Successfully!</p>
-                  <p className="text-xs mt-0.5 text-emerald-700 dark:text-emerald-300">
-                    {successBanner}
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSuccessBanner(null)}
-                className="text-xs text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-100 hover:underline shrink-0"
-              >
-                Dismiss
-              </button>
-            </div>
-          )}
-
           {persistentEditToken && (
             <div
               data-testid="persistent-edit-link-banner"
@@ -616,21 +672,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
             </div>
           )}
 
-          {errorMsg && (
-            <div
-              role="alert"
-              data-testid="error-banner"
-              className="mb-6 flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200"
-            >
-              <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
-              <div>
-                <p className="font-semibold">Unable to submit timeline</p>
-                <p className="text-xs mt-0.5">{errorMsg}</p>
-              </div>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} noValidate className="space-y-5">
             {/* Honeypot anti-bot trap */}
             <input
               type="text"
@@ -1098,6 +1140,46 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
                 </p>
               </div>
             </div>
+
+            {/* Inline Mobile-Visible Status & Error Banners Immediately Above Submit Button */}
+            {errorMsg && (
+              <div
+                ref={errorBannerRef}
+                role="alert"
+                data-testid="error-banner"
+                className="flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200 animate-in fade-in"
+              >
+                <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
+                <div>
+                  <p className="font-semibold">Unable to submit timeline</p>
+                  <p className="text-xs mt-0.5">{errorMsg}</p>
+                </div>
+              </div>
+            )}
+
+            {successBanner && (
+              <div
+                data-testid="success-banner"
+                className="flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-100 animate-in fade-in slide-in-from-top-1"
+              >
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Wait Time Recorded Successfully!</p>
+                    <p className="text-xs mt-0.5 text-emerald-700 dark:text-emerald-300">
+                      {successBanner}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSuccessBanner(null)}
+                  className="text-xs text-emerald-700 hover:text-emerald-900 dark:text-emerald-300 dark:hover:text-emerald-100 hover:underline shrink-0"
+                >
+                  Dismiss
+                </button>
+              </div>
+            )}
 
             {/* Submit Action */}
             <Button
