@@ -288,12 +288,12 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
 
     render(jsx);
 
-    expect(screen.getByText('Allocated a 2026 or Waiting for a 2027 Corolla Cross?')).toBeInTheDocument();
-    const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });
-    expect(comparisonLink).toHaveAttribute('href', '/guides/toyota-corolla-cross-2026-vs-2027');
+    expect(screen.getByText('Allocated a 2026 or Rolling Over to a 2027 Corolla Cross?')).toBeInTheDocument();
+    const ccComparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Corolla Cross Guide →/i });
+    expect(ccComparisonLink).toHaveAttribute('href', '/guides/toyota-corolla-cross-2026-vs-2027');
 
-    const inventoryLink = screen.getByRole('link', { name: /Check Live Corolla Cross Stock ↗/i });
-    expect(inventoryLink).toHaveAttribute('href', '/inventory?model=corolla-cross');
+    expect(screen.getByText(/2027 Canadian pricing is up ~\$565–\$956 with identical 196-hp hybrid specs\. See whether to claim an incoming 2026 build or wait\./i)).toBeInTheDocument();
+
   });
 
   it('renders distinct data separation for rav4, sienna, and tacoma', async () => {

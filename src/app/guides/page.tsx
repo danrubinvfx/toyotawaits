@@ -334,12 +334,12 @@ const MOD_GUIDES = [
   },
   {
     slug: 'toyota-corolla-cross-2026-vs-2027',
-    title: '2026 vs. 2027 Toyota Corolla Cross: Price, Hybrid Changes & Waitlist Rollover',
-    tagline: 'Canadian MSRP expectations, 196-hp Hybrid AWD vs. Gas lead times, MTM Alabama deposit rollovers, and RAV4 Hybrid comparison.',
+    title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times',
+    tagline: 'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
     badge: '2026 vs. 2027',
     model: 'Corolla Cross Gas & Hybrid',
     highlights: [
-      'Expected $400–$850 CAD annual MSRP delta & carryover specs',
+      '2027 Canadian All-In MSRP delta (+$565 Gas / +$951–$956 Hybrid)',
       'Hybrid AWD (6–12 mo) vs. Gas AWD (2–5 mo) Canadian waitlists',
       'MTM Huntsville Alabama factory queue rollover rules',
     ],

@@ -6,13 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
-import { CorollaCrossVsRav4DayOneGearShelf } from '@/components/guides/corolla-cross-vs-rav4-day-one-gear';
+import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import {
   Car,
   Clock,
   ShieldCheck,
   CheckCircle2,
-  XCircle,
   AlertCircle,
   HelpCircle,
   ArrowRight,
@@ -20,10 +19,13 @@ import {
   Calendar,
   DollarSign,
   Fuel,
-  Compass,
   Warehouse,
   Layers,
   Calculator,
+  ExternalLink,
+  Shield,
+  Camera,
+  Box,
 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -31,16 +33,16 @@ export const { instant } = { instant: false };
 
 export function generateMetadata(): Metadata {
   return {
-    title: '2026 vs. 2027 Toyota Corolla Cross Canada: Price, Hybrid Changes & Waitlist Rollover | ToyotaWaits',
+    title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
     description:
-      'Compare the 2026 and 2027 Toyota Corolla Cross in Canada. Expected MSRP increases, Hybrid AWD vs. Gas lead times, MTM Alabama factory waitlist rollovers, and RAV4 Hybrid comparison.',
+      'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
     alternates: {
       canonical: 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027',
     },
     openGraph: {
-      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Price, Hybrid Changes & Waitlist Rollover | ToyotaWaits',
+      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
       description:
-        'Compare the 2026 and 2027 Toyota Corolla Cross in Canada. Expected MSRP increases, Hybrid AWD vs. Gas lead times, MTM Alabama factory waitlist rollovers, and RAV4 Hybrid comparison.',
+        'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
       url: 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027',
       siteName: 'ToyotaWaits.ca',
       locale: 'en_CA',
@@ -48,33 +50,28 @@ export function generateMetadata(): Metadata {
     },
     twitter: {
       card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Price, Hybrid Changes & Waitlist Rollover | ToyotaWaits',
+      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
       description:
-        'Compare the 2026 and 2027 Toyota Corolla Cross in Canada: MSRP expectations, Hybrid AWD vs. Gas lead times, MTM Alabama waitlist rollovers, and RAV4 Hybrid comparison.',
+        'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
     },
   };
 }
 
 const faqData = [
   {
-    question: 'Are there mechanical differences between the 2026 and 2027 Toyota Corolla Cross in Canada?',
+    question: 'What changed on the 2027 Toyota Corolla Cross in Canada?',
     answer:
-      'No major mechanical changes are introduced for 2027. Both model years carry over the 196-hp 2.0L 5th-Gen Hybrid Synergy Drive with standard Electronic On-Demand AWD (5.6 L/100 km combined) and the 169-hp 2.0L Dynamic Force gas engine on L, LE, and XLE grades.',
+      'The 2027 Toyota Corolla Cross is a mechanical carryover in Canada following its 2026 styling refresh. Gas models keep the 169-hp 2.0L engine and Hybrid models keep the 196-hp 5th-gen AWD system, while Canadian all-in prices rise ~$565 on Gas trims and ~$950 on Hybrid trims.',
   },
   {
-    question: 'How much will the 2027 Toyota Corolla Cross MSRP increase in Canada?',
+    question: 'Will my 2026 Corolla Cross Hybrid deposit roll over into a 2027?',
     answer:
-      'Canadian buyers should expect a routine annual inflationary MSRP adjustment of approximately $400 to $850 CAD across 2027 Corolla Cross Gas and Hybrid trims. Accepting an incoming 2026 build slot locks in current model-year pricing and avoids 2027 freight or base price bumps.',
+      'Yes. Because Canadian Corolla Cross Hybrid waitlists run 6 to 12+ months from the Huntsville, Alabama (MTM) plant, unallocated 2026 orders automatically roll into 2027 VINs without resetting your dealership queue position.',
   },
   {
-    question: 'Will my Canadian 2026 Corolla Cross deposit automatically roll over to a 2027 model?',
+    question: 'Should I take a 2026 Corolla Cross allocation or wait for a 2027?',
     answer:
-      'Yes. In Toyota Canada\'s bi-weekly allocation system, unfulfilled factory orders at the Mazda Toyota Manufacturing (MTM) plant in Huntsville, Alabama automatically transition to 2027 VINs during the late-autumn tooling changeover (November–January) without losing dealership waitlist priority.',
-  },
-  {
-    question: 'How do 2026–2027 Corolla Cross Hybrid wait times compare to the Gas model and RAV4 Hybrid?',
-    answer:
-      'In Canada, the Corolla Cross Gas AWD typically delivers in 2 to 5 months, whereas the Corolla Cross Hybrid AWD faces 6 to 12 month waitlists due to constrained MTM Alabama export quotas. Ironically, the larger Ontario-built RAV4 Hybrid often delivers faster (4 to 8 months) despite costing roughly $4,500 to $5,500 CAD more.',
+      'Take an incoming 2026 allocation immediately. Because there are no hardware or powertrain upgrades for 2027 in Canada, passing on a 2026 only delays delivery by months and adds ~$565 to $955 CAD in model-year price increases.',
   },
 ];
 
@@ -95,9 +92,9 @@ const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'Article',
   headline:
-    '2026 vs. 2027 Toyota Corolla Cross Canada: Price, Hybrid Changes & Waitlist Rollover',
+    '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times',
   description:
-    'Compare the 2026 and 2027 Toyota Corolla Cross in Canada. Expected MSRP increases, Hybrid AWD vs. Gas lead times, MTM Alabama factory waitlist rollovers, and RAV4 Hybrid comparison.',
+    'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
   author: {
     '@type': 'Organization',
     name: 'ToyotaWaits Editorial Team',
@@ -110,22 +107,73 @@ const articleSchema = {
       url: 'https://www.toyotawaits.ca/favicon.ico',
     },
   },
-  datePublished: '2026-11-13T00:00:00.000Z',
-  dateModified: '2026-11-13T00:00:00.000Z',
+  datePublished: '2026-11-14T00:00:00.000Z',
+  dateModified: '2026-11-14T00:00:00.000Z',
   mainEntityOfPage: 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027',
 };
+
+const DAY_ONE_GEAR_ITEMS = [
+  {
+    id: 'tuxmat-corolla-cross',
+    title: 'TuxMat / High-Wall 3D All-Weather Floor Liners',
+    category: 'Interior Armor',
+    badge: 'Confirmed Fit 2022–2027',
+    priceCad: '~$240 CAD',
+    description:
+      'Laser-scanned high-wall floor liners engineered for the 2022–2027 Corolla Cross Gas and Hybrid cabin. Protects carpet from Canadian winter road salt, slush, and gravel brine.',
+    query: 'Toyota Corolla Cross all weather floor mats',
+    ctaText: 'Check Floor Liners on Amazon ↗',
+    icon: Shield,
+  },
+  {
+    id: 'fitcamx-corolla-cross',
+    title: 'FitcamX 4K OEM Integrated Dashcam',
+    category: 'Stealth Optics',
+    badge: 'Plug & Play TSS Housing',
+    priceCad: '~$210 CAD',
+    description:
+      'OEM-look 4K UHD dashcam that replaces the factory rearview mirror shroud and taps directly into the Toyota Safety Sense (TSS 3.0) camera harness with zero exposed wires.',
+    query: 'Fitcamx 4K dash cam Toyota Corolla Cross',
+    ctaText: 'Check FitcamX on Amazon ↗',
+    icon: Camera,
+  },
+  {
+    id: 'spigen-corolla-cross-screen',
+    title: 'Spigen 8" / 10.5" Tempered Glass Screen Protector',
+    category: 'Touchscreen Defense',
+    badge: '9H Anti-Glare',
+    priceCad: '~$35 CAD',
+    description:
+      'Optical-grade 9H tempered glass protector shielding the 8.0-inch standard or 10.5-inch available Toyota Multimedia display against scratches, glare, and fingerprints.',
+    query: 'Spigen screen protector Toyota Corolla Cross',
+    ctaText: 'Check Screen Protector on Amazon ↗',
+    icon: Layers,
+  },
+  {
+    id: 'corolla-cross-console-tray',
+    title: 'Center Console Dual-Tier Organizer Tray',
+    category: 'Interior Storage',
+    badge: 'Day-1 Essential',
+    priceCad: '~$25 CAD',
+    description:
+      'Custom drop-in divider tray designed for the Corolla Cross center armrest bin. Separates daily essentials on top while keeping lower storage accessible for USB-C cables.',
+    query: 'Toyota Corolla Cross center console organizer tray',
+    ctaText: 'Check Console Tray on Amazon ↗',
+    icon: Box,
+  },
+];
 
 export default function CorollaCross2026Vs2027GuidePage() {
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
-      {/* Article & FAQPage Structured Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      {/* FAQPage & Article Structured Schema */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
 
       {/* Header & Breadcrumbs */}
@@ -149,12 +197,11 @@ export default function CorollaCross2026Vs2027GuidePage() {
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
-          2026 vs. 2027 Toyota Corolla Cross Canada: Price, Hybrid Changes &amp; Waitlist Rollover
+          2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims &amp; Wait Times
         </h1>
 
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
-          Should Canadian buyers accept an allocated 2026 Toyota Corolla Cross build slot or wait for a 2027 VIN?
-          Here is the complete breakdown of Canadian MSRP expectations, Hybrid AWD vs. Gas lead times, MTM Alabama factory deposit rollover rules, and how it stacks up against the RAV4 Hybrid.
+          Compare the 2026 and 2027 Toyota Corolla Cross &amp; Hybrid in Canada. Full breakdown of 2027 Canadian all-in MSRP increases (~$565–$956 CAD), carryover 196-hp 5th-gen hybrid and 169-hp gas specifications, and how MTM Huntsville, Alabama waitlist rollovers work.
         </p>
       </div>
 
@@ -170,47 +217,18 @@ export default function CorollaCross2026Vs2027GuidePage() {
         </div>
         <p className="leading-relaxed text-[11px] sm:text-xs">
           <strong>Editorial Notice:</strong> ToyotaWaits is an independent crowdsourced community tracker.
-          All trim specifications, allocation cycles, and mechanical benchmarks reflect verified Canadian dealership ordering guides and Mazda Toyota Manufacturing (MTM) Huntsville, Alabama production schedules.
+          All trim specifications, Canadian all-in pricing figures, and allocation timelines reflect verified Canadian dealership ordering guides and Mazda Toyota Manufacturing (MTM) Huntsville, Alabama production schedules.
         </p>
       </div>
 
-      {/* 1. Executive Verdict */}
-      <section className="space-y-4">
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Executive Verdict: Take the 2026 Allocation Without Hesitation
-        </h2>
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-6 space-y-4">
-          <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            If your Canadian dealership calls with an incoming <strong>2026 Toyota Corolla Cross Hybrid or Gas AWD allocation</strong>, <strong>accept the build immediately</strong>. The 2027 Corolla Cross is a mechanical carryover utilizing the identical 196-hp 5th-Gen Hybrid Synergy Drive and 169-hp 2.0L Dynamic Force gas powertrain. Declining a matched 2026 VIN forfeits your priority allocation slot, pushing your delivery back <strong>6 to 10+ months</strong> while exposing you to an estimated <strong>$400 to $850 CAD 2027 MSRP price increase</strong>.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Mechanical Delta</span>
-              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1">0% (100% Carryover)</p>
-              <p className="text-xs text-zinc-500 mt-0.5">Identical 196-hp Hybrid AWD &amp; 169-hp Gas</p>
-            </div>
-            <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Expected 2027 MSRP Hike</span>
-              <p className="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">+$400 – $850 CAD</p>
-              <p className="text-xs text-zinc-500 mt-0.5">Annual base price &amp; freight inflation</p>
-            </div>
-            <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Queue Penalty If Passed</span>
-              <p className="text-sm font-bold text-red-600 dark:text-red-400 mt-1">+6 to +10 Months</p>
-              <p className="text-xs text-zinc-500 mt-0.5">Constrained MTM Alabama export quotas</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Canadian MSRP Expectations & 2026 vs 2027 Specification Matrix */}
+      {/* 1. Side-by-Side Year-Over-Year Comparison Table (2026 vs. 2027 Canadian Specs) */}
       <section className="space-y-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Canadian MSRP Expectations &amp; 2026 vs. 2027 Specification Matrix
+            Year-Over-Year Comparison Table (2026 vs. 2027 Canadian Specs)
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Side-by-side comparison of Canadian trim pricing, powertrain specs, infotainment hardware, and winter equipment.
+            Side-by-side comparison of Canadian powertrains, 7-trim lineup, multimedia hardware, and all-in starting prices (including Freight &amp; PDI).
           </p>
         </div>
 
@@ -219,65 +237,105 @@ export default function CorollaCross2026Vs2027GuidePage() {
             <table className="w-full text-xs sm:text-sm text-left border-collapse">
               <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="py-3 px-4">Specification / Trim</th>
+                  <th className="py-3 px-4">Specification / Canadian Trim</th>
                   <th className="py-3 px-4">2026 Toyota Corolla Cross</th>
                   <th className="py-3 px-4">2027 Toyota Corolla Cross</th>
-                  <th className="py-3 px-4">Buyer Verdict</th>
+                  <th className="py-3 px-4">Year-Over-Year Delta</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Gas Base MSRP (L / LE / XLE)</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">~$27,950 – $35,850 CAD</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Projected ~$28,400 – $36,500 CAD</td>
-                  <td className="py-3 px-4 text-xs text-red-600 dark:text-red-400 font-medium">
-                    2026 locks in lower base MSRP
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Gas Powertrain</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    2.0L 4-Cyl (169 hp, CVT, FWD/AWD, 7.4–7.8 L/100 km)
                   </td>
-                </tr>
-                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Hybrid AWD MSRP (SE / XSE)</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">~$34,550 – $37,350 CAD</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Projected ~$35,100 – $38,150 CAD</td>
-                  <td className="py-3 px-4 text-xs text-red-600 dark:text-red-400 font-medium">
-                    Save ~$500–$800 CAD on 2026 VIN
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    2.0L 4-Cyl (169 hp, CVT, FWD/AWD, 7.4–7.8 L/100 km)
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Identical Carryover
+                    </span>
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Hybrid Powertrain</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">2.0L 5th-Gen Hybrid AWD (196 hp)</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">2.0L 5th-Gen Hybrid AWD (196 hp)</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    2.0L 5th-Gen Hybrid e-AWD (196 hp, e-CVT, 5.6 L/100 km combined)
+                  </td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    2.0L 5th-Gen Hybrid e-AWD (196 hp, e-CVT, 5.6 L/100 km combined)
+                  </td>
                   <td className="py-3 px-4">
                     <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> 100% Mechanical Carryover
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Identical Carryover
                     </span>
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Gas Powertrain</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">2.0L Dynamic Force 4-Cyl (169 hp)</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">2.0L Dynamic Force 4-Cyl (169 hp)</td>
-                  <td className="py-3 px-4">
-                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> Identical
-                    </span>
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Canadian Trim Lineup</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    Gas (L FWD, L AWD, LE FWD, LE AWD, XLE AWD) &amp; Hybrid (SE AWD, XSE AWD)
                   </td>
-                </tr>
-                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Combined Fuel Economy</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Hybrid: 5.6 L/100 km | Gas AWD: 7.8 L/100 km</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Hybrid: 5.6 L/100 km | Gas AWD: 7.8 L/100 km</td>
-                  <td className="py-3 px-4">
-                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> Identical NRCan Ratings
-                    </span>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    Gas (L FWD, L AWD, LE FWD, LE AWD, XLE AWD) &amp; Hybrid (SE AWD, XSE AWD)
                   </td>
-                </tr>
-                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Active Safety &amp; Cockpit</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Toyota Safety Sense 3.0 + 8&quot;/10.5&quot; Display</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Toyota Safety Sense 3.0 + 8&quot;/10.5&quot; Display</td>
                   <td className="py-3 px-4 text-xs text-zinc-600 dark:text-zinc-400">
-                    Minor exterior paint &amp; accent refreshes
+                    Identical 7-trim Canadian lineup (note: US dropped Hybrid S, Canada never had Hybrid S)
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Infotainment &amp; Safety</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    8.0&quot; standard / 10.5&quot; available Multimedia, wireless CarPlay/AA, TSS 3.0, standard heated front seats
+                  </td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    8.0&quot; standard / 10.5&quot; available Multimedia, wireless CarPlay/AA, TSS 3.0, standard heated front seats
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Identical Carryover
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors bg-zinc-50/40 dark:bg-zinc-900/20">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
+                    L FWD (All-In Starting Price incl. Freight/PDI)
+                  </td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$31,973 (2026)</td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$32,538 (2027)</td>
+                  <td className="py-3 px-4 font-mono text-xs font-bold text-red-600 dark:text-red-400">
+                    +$565
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors bg-zinc-50/40 dark:bg-zinc-900/20">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
+                    LE AWD (All-In Starting Price incl. Freight/PDI)
+                  </td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$35,428 (2026)</td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$35,993 (2027)</td>
+                  <td className="py-3 px-4 font-mono text-xs font-bold text-red-600 dark:text-red-400">
+                    +$565
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors bg-zinc-50/40 dark:bg-zinc-900/20">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
+                    Hybrid SE AWD (All-In Starting Price incl. Freight/PDI)
+                  </td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$39,297 (2026)</td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$40,248 (2027)</td>
+                  <td className="py-3 px-4 font-mono text-xs font-bold text-red-600 dark:text-red-400">
+                    +$951
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors bg-zinc-50/40 dark:bg-zinc-900/20">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
+                    Hybrid XSE AWD (All-In Starting Price incl. Freight/PDI)
+                  </td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$42,122 (2026)</td>
+                  <td className="py-3 px-4 font-mono text-zinc-700 dark:text-zinc-300">$43,078 (2027)</td>
+                  <td className="py-3 px-4 font-mono text-xs font-bold text-red-600 dark:text-red-400">
+                    +$956
                   </td>
                 </tr>
               </tbody>
@@ -286,72 +344,49 @@ export default function CorollaCross2026Vs2027GuidePage() {
         </Card>
       </section>
 
-      {/* 3. Hybrid AWD vs. Gas Lead Times in Canada */}
-      <section className="space-y-4">
+      {/* 2. "Pass or Take It?" Decision Matrix */}
+      <section className="space-y-4" aria-label="Pass or Take It Decision Matrix">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Hybrid AWD vs. Gas Lead Times Across Canada
+            &ldquo;Pass or Take It?&rdquo; Decision Matrix: Take the 2026 Allocation Immediately
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Why the 196-hp Corolla Cross Hybrid SE and XSE waitlists are twice as long as Gas L/LE/XLE trims.
+            Why Canadian deposit holders should claim any incoming 2026 Corolla Cross at MSRP rather than waiting for a 2027 VIN.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-lg text-zinc-900 dark:text-zinc-100">
-                Corolla Cross Gas (L / LE / XLE AWD)
-              </span>
-              <Badge variant="secondary" className="text-xs">2 – 5 Months Wait</Badge>
+        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-6 space-y-4">
+          <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
+            <strong>Verdict: Accept any incoming 2026 allocation at MSRP immediately.</strong> Because Toyota already executed the exterior fascia and interior console refresh for the 2026 model year, the <strong>2027 Toyota Corolla Cross is a 100% mechanical and equipment carryover in Canada</strong>. Passing on a matched 2026 VIN does not get you a newer engine, larger battery, or updated infotainment—it only costs you <strong>~$565 to $956 CAD</strong> in model-year price increases and forces you into another <strong>6 to 12 month MTM Huntsville queue cycle</strong>.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Mechanical &amp; Tech Delta</span>
+              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1">0% (Identical Carryover)</p>
+              <p className="text-xs text-zinc-500 mt-0.5">Same 196-hp Hybrid e-AWD, 169-hp Gas &amp; TSS 3.0</p>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Equipped with the 169-hp 2.0L naturally aspirated engine and mechanical Dynamic Torque Control AWD (standard on LE AWD and XLE), gas allocations arrive steadily across Ontario, Alberta, and BC dealerships.
-            </p>
-            <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5 pt-1">
-              <li className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                <span><strong>Fastest Trim:</strong> LE AWD (highest Canadian production volume)</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                <span><strong>Best For:</strong> Drivers driving under 14,000 km/year who need immediate delivery</span>
-              </li>
-            </ul>
-          </Card>
-
-          <Card className="border-red-500/40 dark:border-red-500/30 bg-red-500/5 p-5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="font-extrabold text-lg text-red-600 dark:text-red-400">
-                Corolla Cross Hybrid AWD (SE / XSE)
-              </span>
-              <Badge className="bg-red-600 text-white font-bold text-xs">6 – 12 Months Wait</Badge>
+            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">2027 Canadian Price Hike</span>
+              <p className="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">+$565 to +$956 CAD</p>
+              <p className="text-xs text-zinc-500 mt-0.5">+$565 on Gas trims; +$951–$956 on Hybrid AWD</p>
             </div>
-            <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              The 196-hp Hybrid SE and XSE cut 0–100 km/h times to ~8.0 seconds while dropping fuel consumption to 5.6 L/100 km. However, U.S. domestic demand absorbs the majority of Huntsville, Alabama hybrid output, restricting Canadian provincial quotas.
-            </p>
-            <ul className="text-xs text-zinc-600 dark:text-zinc-400 space-y-1.5 pt-1">
-              <li className="flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                <span><strong>Longest Queues:</strong> British Columbia &amp; Quebec (8–12 months on XSE)</span>
-              </li>
-              <li className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0" />
-                <span><strong>Allocation Tip:</strong> Accepting flexible exterior colors on SE AWD cuts wait times by 2–3 months</span>
-              </li>
-            </ul>
-          </Card>
+            <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Queue Penalty If Passed</span>
+              <p className="text-sm font-bold text-red-600 dark:text-red-400 mt-1">+6 to +12 Months</p>
+              <p className="text-xs text-zinc-500 mt-0.5">Constrained MTM Huntsville, Alabama export quotas</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 4. Factory Deposit Rollover Rules (MTM Huntsville, Alabama) */}
+      {/* 3. MTM Huntsville Queue Rollover & Waitlist Rules */}
       <section className="space-y-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Factory Deposit Rollover Rules (MTM Huntsville, Alabama)
+            MTM Huntsville Queue Rollovers &amp; Canadian Lead Times
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            How unfulfilled 2026 Canadian waitlist deposits transition to 2027 VINs.
+            How unallocated 2026 deposits transition to 2027 VINs at the Mazda Toyota Manufacturing (MTM) plant in Alabama.
           </p>
         </div>
 
@@ -359,122 +394,52 @@ export default function CorollaCross2026Vs2027GuidePage() {
           <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-3">
             <div className="flex items-center gap-2 text-red-600 dark:text-red-400 font-bold text-sm">
               <Calendar className="h-4 w-4" />
-              <span>Automatic Queue Rollover Protection</span>
+              <span>Automatic 2026-to-2027 Queue Rollover</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Every Corolla Cross sold in Canada is built at the <strong>Mazda Toyota Manufacturing (MTM)</strong> joint-venture plant in Huntsville, Alabama. Between <strong>November and January</strong>, MTM transitions assembly lines from 2026 to 2027 model-year VINs.
+              Every North American Corolla Cross is assembled at <strong>Mazda Toyota Manufacturing (MTM)</strong> in Huntsville, Alabama. Because Canadian Corolla Cross Hybrid SE and XSE waitlists run <strong>6 to 12+ months</strong> (compared to 2 to 5 months for Gas L/LE/XLE trims), many 2026 orders remain unfulfilled when MTM switches model-year production.
             </p>
             <p className="text-xs text-zinc-500 leading-relaxed">
-              <strong>You Do Not Lose Your Spot:</strong> Toyota Canada dealerships manage waitlists by original deposit timestamp. If your 2026 order is not allocated before the Alabama plant changeover, your request automatically converts into a 2027 order at the exact same queue rank.
+              <strong>Queue Priority Preserved:</strong> Unallocated 2026 orders automatically roll over into 2027 VINs based on your original deposit date without resetting your dealership waitlist position.
             </p>
           </Card>
 
           <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-3">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
               <DollarSign className="h-4 w-4" />
-              <span>Price Protection &amp; OMVIC / AMVIC Deposit Rights</span>
+              <span>Canadian Pricing &amp; Provincial Deposit Rights</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Unlike locked factory VIN contracts, a waitlist rollover to a new model year is subject to Toyota Canada&apos;s official 2027 MSRP bulletin:
+              When an unallocated 2026 factory order rolls into a 2027 VIN, the bill of sale adjusts to Toyota Canada&apos;s 2027 pricing bulletin:
             </p>
             <div className="text-xs space-y-1.5 text-zinc-600 dark:text-zinc-400 pt-1">
               <div className="flex items-start gap-2">
                 <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                <span>Expect a $400–$850 CAD base MSRP adjustment when your bill of sale updates to a 2027 VIN.</span>
+                <span>2027 all-in Canadian pricing increases by <strong>+$565 CAD</strong> on L/LE/XLE Gas models and <strong>+$951–$956 CAD</strong> on Hybrid SE/XSE AWD models.</span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span>Under provincial consumer laws (OMVIC, AMVIC, VSA), if a model-year price hike exceeds your agreed contract terms and no VIN was assigned, you retain the right to a full refund of your deposit.</span>
+                <span>Under provincial consumer protection rules (OMVIC, AMVIC, VSA), if a model-year price increase exceeds your signed contract terms before a VIN is assigned, you may cancel for a 100% deposit refund.</span>
               </div>
             </div>
           </Card>
         </div>
       </section>
 
-      {/* 5. Comparison vs. Toyota RAV4 Hybrid */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Corolla Cross Hybrid vs. Toyota RAV4 Hybrid: Should You Step Up?
-          </h2>
-          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Why Ontario TMMC production often makes the larger RAV4 Hybrid faster to get in Canada than the Alabama-built Corolla Cross.
-          </p>
-        </div>
-
-        <Card className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
-            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
-                1. The Canadian Waitlist Paradox
-              </span>
-              <p className="font-bold text-zinc-900 dark:text-zinc-100">
-                Ontario TMMC vs. Alabama MTM
-              </p>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Because the RAV4 Hybrid is built domestically in Cambridge and Woodstock, Ontario (TMMC), Canadian dealers receive far larger bi-weekly allocations (4–8 months typical wait) compared to the imported Corolla Cross Hybrid (6–12 months).
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-                2. Cabin &amp; Cargo Dimensions
-              </span>
-              <p className="font-bold text-zinc-900 dark:text-zinc-100">
-                21.5 vs. 37.5 Cu. Ft. Rear Cargo
-              </p>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                The Corolla Cross (175.6&quot; length, 32.0&quot; rear legroom) is ideal for urban parking and solo commuters. Families with rear-facing child seats or strollers strongly benefit from the RAV4&apos;s 37.8&quot; rear legroom and +74% deeper cargo bay.
-              </p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 space-y-1.5">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                3. Price &amp; Efficiency Delta
-              </span>
-              <p className="font-bold text-zinc-900 dark:text-zinc-100">
-                ~$4,400 CAD Savings on Corolla Cross
-              </p>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Starting around ~$34,550 CAD vs. ~$38,950 CAD for the RAV4 Hybrid LE, the Corolla Cross Hybrid saves ~$4,400 upfront and sips slightly less fuel (5.6 vs. 6.0 L/100 km).
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-zinc-200 dark:border-zinc-800">
-            <span className="text-xs text-zinc-500">
-              Want the full dimensional &amp; child-seat breakdown between both crossovers?
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button asChild variant="outline" size="sm" className="text-xs font-semibold">
-                <Link href="/guides/toyota-corolla-cross-vs-rav4-hybrid">
-                  Read Corolla Cross vs. RAV4 Hybrid Shootout →
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="sm" className="text-xs font-semibold">
-                <Link href="/calculator/corolla-cross-hybrid">
-                  Corolla Cross Hybrid Payback Calculator →
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* 6. Live Allocation Bridge Card */}
+      {/* 4. Live Inventory & Payback Calculator CTA Card */}
       <section aria-label="Live Inventory Allocation Bridge">
         <div className="relative overflow-hidden rounded-2xl border border-red-500/40 bg-gradient-to-r from-red-500/15 via-red-500/10 to-zinc-50 dark:from-red-950/50 dark:via-zinc-900/70 dark:to-zinc-950 p-6 sm:p-8 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white shadow-xs">
                 <Warehouse className="h-3.5 w-3.5" />
-                <span>In-Transit Stock Bridge</span>
+                <span>Live Stock &amp; Payback Tools</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
                 Want to Skip the 6–12 Month Corolla Cross Waitlist?
               </h3>
               <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                Because 2026 and 2027 Corolla Cross models share identical powertrains, claiming an incoming dealer allocation in BC, Ontario, or Alberta lets you bypass the Alabama factory backlog and dodge 2027 MSRP increases.
+                Because 2026 and 2027 Corolla Cross models are mechanically identical, claiming an incoming 2026 dealer allocation lets you bypass the Huntsville backlog and save up to $956 CAD—or run the math to see how fast the 196-hp Hybrid pays back its premium over Gas.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3 shrink-0">
@@ -482,8 +447,8 @@ export default function CorollaCross2026Vs2027GuidePage() {
                 asChild
                 className="bg-red-600 hover:bg-red-700 text-white font-black text-sm px-6 py-6 shadow-md cursor-pointer"
               >
-                <Link href="/inventory?model=corolla-cross" className="gap-2">
-                  <span>Explore Live Corolla Cross Stock ↗</span>
+                <Link href="/inventory?model=Corolla%20Cross" className="gap-2">
+                  <span>Explore Live Corolla Cross Inventory ↗</span>
                 </Link>
               </Button>
               <Button
@@ -491,8 +456,9 @@ export default function CorollaCross2026Vs2027GuidePage() {
                 variant="outline"
                 className="border-zinc-300 dark:border-zinc-700 text-xs font-bold px-4 py-6"
               >
-                <Link href="/wait-times/corolla-cross">
-                  <span>View Wait-Time Tracker →</span>
+                <Link href="/calculator/corolla-cross-hybrid" className="gap-1.5">
+                  <Calculator className="h-3.5 w-3.5" />
+                  <span>Run Hybrid vs. Gas Payback Calculator →</span>
                 </Link>
               </Button>
             </div>
@@ -500,17 +466,93 @@ export default function CorollaCross2026Vs2027GuidePage() {
         </div>
       </section>
 
-      {/* 7. Direct-Fit Delivery Day Gear Shelf */}
-      <CorollaCrossVsRav4DayOneGearShelf />
+      {/* 5. Day-1 Delivery Gear Shelf (4 cards using buildAmazonAffiliateUrl search fallbacks) */}
+      <section className="space-y-6" aria-label="Day-1 Delivery Gear Shelf">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 pb-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 mb-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Confirmed 2022–2027 Fitment</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
+              Day-1 Delivery Gear Shelf: 2026 &amp; 2027 Corolla Cross
+            </h2>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 max-w-2xl">
+              Because cabin dimensions and multimedia displays are 100% identical between 2026 and 2027, all interior protection and TSS 3.0 accessories fit both model years without modification.
+            </p>
+          </div>
+        </div>
 
-      {/* 8. Frequently Asked Questions */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {DAY_ONE_GEAR_ITEMS.map((item) => {
+            const href = buildAmazonAffiliateUrl({
+              query: item.query,
+              market: 'CA',
+            });
+            const IconComponent = item.icon;
+
+            return (
+              <Card
+                key={item.id}
+                className="flex flex-col justify-between border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs hover:border-amber-500/50 transition-all duration-200"
+              >
+                <CardHeader className="space-y-2.5 p-4 sm:p-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-zinc-400">
+                      <IconComponent className="h-4 w-4 text-amber-500" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                        {item.category}
+                      </span>
+                    </div>
+                    <Badge variant="secondary" className="text-[10px] whitespace-nowrap">
+                      {item.badge}
+                    </Badge>
+                  </div>
+
+                  <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                    {item.title}
+                  </CardTitle>
+
+                  <div className="flex items-baseline gap-2 pt-1">
+                    <span className="text-base font-extrabold text-amber-600 dark:text-amber-400 font-mono">
+                      {item.priceCad}
+                    </span>
+                  </div>
+
+                  <CardDescription className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed pt-1">
+                    {item.description}
+                  </CardDescription>
+                </CardHeader>
+
+                <CardContent className="p-4 sm:p-5 pt-0">
+                  <Button
+                    asChild
+                    className="w-full bg-zinc-900 hover:bg-zinc-800 text-zinc-50 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-xs font-semibold gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer nofollow"
+                    >
+                      <span>{item.ctaText}</span>
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 6. Frequently Asked Questions */}
       <section className="space-y-4" aria-label="Frequently Asked Questions">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Key questions from Canadian buyers comparing 2026 vs. 2027 Toyota Corolla Cross allocations.
+            Key answers for Canadian buyers comparing 2026 vs. 2027 Toyota Corolla Cross &amp; Hybrid allocations.
           </p>
         </div>
 

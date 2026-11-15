@@ -1265,21 +1265,16 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   2026 vs. 2027 Model Year
                 </Badge>
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-                  Allocated a 2026 or Waiting for a 2027 Corolla Cross?
+                  Allocated a 2026 or Rolling Over to a 2027 Corolla Cross?
                 </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                  Compare 2026 vs. 2027 Canadian MSRP expectations, 196-hp Hybrid AWD vs. Gas lead times, and MTM Huntsville, Alabama waitlist rollover rules—or check incoming dealer inventory to skip the queue.
+                  2027 Canadian pricing is up ~$565–$956 with identical 196-hp hybrid specs. See whether to claim an incoming 2026 build or wait.
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
                   <Link href="/guides/toyota-corolla-cross-2026-vs-2027" className="gap-2">
-                    Read 2026 vs. 2027 Comparison →
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="border-red-500/40 text-red-600 dark:text-red-400 hover:bg-red-500/10 font-bold shadow-sm">
-                  <Link href="/inventory?model=corolla-cross" className="gap-2">
-                    Check Live Corolla Cross Stock ↗
+                    Read 2026 vs. 2027 Corolla Cross Guide →
                   </Link>
                 </Button>
               </div>
