@@ -119,6 +119,32 @@ describe('US Market Database Schema & Submission Adaptation (Step 2)', () => {
       expect(regionCodeSchema.safeParse('ZZ').success).toBe(false);
     });
 
+    it('accepts US market submission when province is undefined and state is provided', () => {
+      const input = {
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        country: 'US',
+        countryCode: 'US',
+        currency: 'USD',
+        province: undefined,
+        state: 'WA',
+        adm_markup: 0,
+        pricing_type: 'at_msrp',
+        modelYear: 2026,
+        orderDate: '2026-02-01',
+        turnstileToken: 'mock-valid-turnstile-token',
+      };
+
+      const parsed = submissionSchema.safeParse(input);
+      expect(parsed.success).toBe(true);
+      if (parsed.success) {
+        expect(parsed.data.country).toBe('US');
+        expect(parsed.data.state).toBe('WA');
+        expect(parsed.data.province).toBeUndefined();
+      }
+    });
+
     it('rejects invalid state code for US submission', () => {
       const input = {
         modelId: validUuid1,

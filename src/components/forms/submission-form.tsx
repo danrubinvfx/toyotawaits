@@ -310,7 +310,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         country: isUsMarket ? 'US' : 'CA',
         countryCode: isUsMarket ? 'US' : 'CA',
         currency: isUsMarket ? 'USD' : 'CAD',
-        province: province,
+        province: isUsMarket ? undefined : province,
         state: isUsMarket ? province : undefined,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),

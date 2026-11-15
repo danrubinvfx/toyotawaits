@@ -40,7 +40,7 @@ export const submissionSchema = z
     countryCode: countryCodeSchema.optional(),
     country_code: countryCodeSchema.optional(),
     currency: submissionCurrencySchema.default('CAD'),
-    province: regionCodeSchema,
+    province: regionCodeSchema.optional().nullable(),
     state: usStateSchema.optional().nullable(),
     adm_markup: z.number().optional().nullable(),
     dealerMarkupAdm: z.number().optional().nullable(),
@@ -93,9 +93,16 @@ export const submissionSchema = z
     honeypot: z.string().max(0, 'Bot trap triggered').optional(),
   })
   .superRefine((data, ctx) => {
-    const activeCountry = data.country || data.country_code || data.countryCode || 'CA';
+    const activeCountry =
+      (data.country && data.country !== 'CA' ? data.country : undefined) ||
+      (data.country_code && data.country_code !== 'CA' ? data.country_code : undefined) ||
+      (data.countryCode && data.countryCode !== 'CA' ? data.countryCode : undefined) ||
+      data.country ||
+      data.country_code ||
+      data.countryCode ||
+      'CA';
     if (activeCountry === 'CA') {
-      if (!CANADIAN_PROVINCES.includes(data.province as any)) {
+      if (!data.province || !CANADIAN_PROVINCES.includes(data.province as any)) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Province is required and must be a valid Canadian province',
