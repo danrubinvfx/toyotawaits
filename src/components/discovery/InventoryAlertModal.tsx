@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Bell, CheckCircle2, Loader2, ShieldCheck, X } from 'lucide-react';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface InventoryAlertModalProps {
   isOpen: boolean;
@@ -150,6 +151,10 @@ export function InventoryAlertModal({
         return;
       }
 
+      trackUserEvent('drop_alert_subscribed', {
+        model: model.trim(),
+        region: region.trim() || 'Lower Mainland, BC',
+      });
       setSuccessMessage(
         `We sent a confirmation link to ${trimmedEmail}. Tap it to verify your email and start your 180-day drop monitoring.`
       );

@@ -7,6 +7,7 @@ import { getAccessoriesForModel, AccessoryItem } from '@/data/accessories';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trackAffiliateClick } from '@/lib/gear';
+import { trackUserEvent } from '@/lib/analytics';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export interface WhileYouWaitGearProps {
@@ -369,6 +370,11 @@ export function WhileYouWaitGear({
                     rel={isDeliveryDay || item.destinationType === 'direct_partner' ? "sponsored noopener noreferrer" : "noopener noreferrer"}
                     aria-label={`View ${item.title} on ${item.destinationType === 'direct_partner' ? 'Muslogy' : 'Amazon'}`}
                     onClick={() => {
+                      trackUserEvent('affiliate_gear_clicked', {
+                        accessoryId: item.id,
+                        model: modelName || 'universal',
+                        placement: placement || (isDeliveryDay ? 'delivery_congratulations' : 'while_you_wait'),
+                      });
                       trackAffiliateClick({
                         accessory_id: item.id,
                         placement: (placement || (isDeliveryDay ? 'delivery_congratulations' : 'while_you_wait')) as any,

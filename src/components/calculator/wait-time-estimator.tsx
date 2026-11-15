@@ -36,6 +36,7 @@ import { useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { getEstimatorInventoryModelName, getActiveInventoryCountByModel } from '@/lib/inventory/counts';
 import { INITIAL_SAMPLE_LISTINGS } from '@/components/discovery/InventoryExplorer';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface QuickSelectModelOption {
   label: string;
@@ -1063,6 +1064,12 @@ export function WaitTimeEstimator({
                     <Link
                       href={`/inventory?model=${encodeURIComponent(inventoryModelName)}`}
                       data-testid="estimator-view-stock-btn"
+                      onClick={() =>
+                        trackUserEvent('cant_wait_clicked', {
+                          model: modelSlug,
+                          source: 'estimator',
+                        })
+                      }
                       className="px-3.5 py-1.5 rounded-lg bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1 shadow-sm shrink-0 transition-colors"
                     >
                       View Live Stock ↗
@@ -1085,6 +1092,12 @@ export function WaitTimeEstimator({
                         </div>
                         <Link
                           data-testid="estimator-bridge-view-stock-btn"
+                          onClick={() =>
+                            trackUserEvent('cant_wait_clicked', {
+                              model: activeModel,
+                              source: 'estimator',
+                            })
+                          }
                           className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-sky-500 px-3 py-1.5 font-bold text-zinc-950 shadow-sm transition hover:bg-sky-400 active:scale-95"
                           href={`/inventory?model=${encodeURIComponent(activeModel)}`}
                         >
@@ -1099,6 +1112,12 @@ export function WaitTimeEstimator({
                       <Link
                         href="/inventory"
                         data-testid="estimator-browse-all-inventory-link"
+                        onClick={() =>
+                          trackUserEvent('cant_wait_clicked', {
+                            model: activeModel,
+                            source: 'estimator',
+                          })
+                        }
                         className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-sky-400 dark:text-slate-400 dark:hover:text-sky-400 font-medium transition-colors"
                       >
                         Browse all observed dealer inventory ↗

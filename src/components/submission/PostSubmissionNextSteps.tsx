@@ -21,6 +21,7 @@ import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { getAccessoriesForModel, AccessoryItem } from '@/data/accessories';
 import { useMatchingInventory, useDropAlertSubscription } from '@/lib/data/inventory';
 import { trackAffiliateClick } from '@/lib/gear';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface PostSubmissionNextStepsProps {
   modelName: string;
@@ -464,6 +465,12 @@ export function PostSubmissionNextSteps({
             {/* Primary CTA */}
             <Link
               href={`/inventory?model=${encodeURIComponent(modelName)}`}
+              onClick={() =>
+                trackUserEvent('cant_wait_clicked', {
+                  model: modelName,
+                  source: 'post_submission',
+                })
+              }
               className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-xs sm:text-sm font-semibold bg-sky-600 hover:bg-sky-500 text-white shadow-sm transition-colors text-center cursor-pointer shrink-0"
             >
               <span>Browse Live Stock ({activeCount}) ↗</span>
@@ -704,6 +711,11 @@ export function PostSubmissionNextSteps({
                     target="_blank"
                     rel="sponsored noopener noreferrer nofollow"
                     onClick={() => {
+                      trackUserEvent('affiliate_gear_clicked', {
+                        accessoryId: item.id,
+                        model: modelName || 'universal',
+                        placement: 'submission_modal',
+                      });
                       trackAffiliateClick({
                         accessory_id: item.id,
                         placement: 'submission_modal',

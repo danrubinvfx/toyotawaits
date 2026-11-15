@@ -1,0 +1,43 @@
+import { track } from '@vercel/analytics';
+
+export const ADMIN_OPT_OUT_KEY = 'tw_admin_opt_out';
+export const IGNORE_ANALYTICS_KEY = 'tw_ignore_analytics';
+
+export function isAnalyticsOptedOut(): boolean {
+  if (typeof window === 'undefined') {
+    return true;
+  }
+
+  try {
+    return (
+      window.localStorage.getItem(ADMIN_OPT_OUT_KEY) === 'true' ||
+      window.localStorage.getItem(IGNORE_ANALYTICS_KEY) === 'true'
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Standardized client-side Vercel Web Analytics event helper.
+ * Respects `tw_admin_opt_out` and `tw_ignore_analytics` localStorage flags
+ * and swallows any network or ad-blocker errors so UI interactions never break.
+ */
+export function trackUserEvent(
+  eventName: string,
+  properties?: Record<string, string | number | boolean>
+): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  if (isAnalyticsOptedOut()) {
+    return;
+  }
+
+  try {
+    track(eventName, properties);
+  } catch {
+    // Silently ignore analytics failures (e.g., ad blockers or offline mode)
+  }
+}

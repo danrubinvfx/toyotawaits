@@ -6,7 +6,10 @@ import {
   useSavingsCalculator,
   CalculatorInitialConfig,
   TargetVehicleState,
+  CurrentVehicleState,
+  DrivingInputsState,
 } from '@/lib/hooks/useSavingsCalculator';
+import { trackUserEvent } from '@/lib/analytics';
 import { DrivingInputsCard } from './DrivingInputsCard';
 import { CurrentVehicleCard } from './CurrentVehicleCard';
 import { TargetVehicleCard } from './TargetVehicleCard';
@@ -88,8 +91,42 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       if (patch.presetId && calculatorContext) {
         calculatorContext.setActivePresetId(patch.presetId);
       }
+      const nextPresetId = patch.presetId || targetVehicle.presetId;
+      const nextPreset = getVehiclePresetById(nextPresetId);
+      const nextModel = presetIdToModelSlug(nextPresetId);
+      const nextPowertrain =
+        patch.powertrain || nextPreset?.identity.powertrain || targetVehicle.powertrain;
+      trackUserEvent('calculator_computed', {
+        model: nextModel,
+        powertrain: nextPowertrain,
+        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+      });
     },
-    [calculatorContext, setTargetVehicle]
+    [calculatorContext, setTargetVehicle, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
+  );
+
+  const handleCurrentVehicleChange = useCallback(
+    (patch: Partial<CurrentVehicleState>) => {
+      setCurrentVehicle(patch);
+      trackUserEvent('calculator_computed', {
+        model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
+        powertrain: targetVehicle.powertrain,
+        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+      });
+    },
+    [setCurrentVehicle, calculatorContext?.activeModelSlug, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
+  );
+
+  const handleDrivingInputsChange = useCallback(
+    (patch: Partial<DrivingInputsState>) => {
+      setDrivingInputs(patch);
+      trackUserEvent('calculator_computed', {
+        model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
+        powertrain: targetVehicle.powertrain,
+        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+      });
+    },
+    [setDrivingInputs, calculatorContext?.activeModelSlug, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
   );
 
   const activeModelSlug =
@@ -184,7 +221,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           {comparisonMode !== 'NEW_A_VS_NEW_B' ? (
             <CurrentVehicleCard
               currentVehicle={currentVehicle}
-              onChange={setCurrentVehicle}
+              onChange={handleCurrentVehicleChange}
               unitSystem={unitSystem}
             />
           ) : (
@@ -199,7 +236,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           {/* 3. Driving Distance & Gas Price (Power Rate hidden for HEVs) */}
           <DrivingInputsCard
             inputs={drivingInputs}
-            onChange={setDrivingInputs}
+            onChange={handleDrivingInputsChange}
             isPhev={isTargetPhev}
             unitSystem={unitSystem}
           />
@@ -239,7 +276,7 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           )}
 
           {/* Annual Projection / Energy Results Card directly underneath the graph */}
-          <EnergyResultsCard results={results} />
+          <EnergyResultsCard results={results} model={activeModelSlug} powertrain={targetVehicle.powertrain} />
 
           {/* Contextual Action Bridges: Wait Times & Live Inventory */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
@@ -260,7 +297,16 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
               size="sm"
               className="flex-1 h-9 min-h-[36px] text-xs font-semibold bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-xs"
             >
-              <Link href={`/inventory?model=${encodeURIComponent(activeModelName)}`} className="flex items-center justify-center gap-1.5">
+              <Link
+                href={`/inventory?model=${encodeURIComponent(activeModelName)}`}
+                onClick={() =>
+                  trackUserEvent('cant_wait_clicked', {
+                    model: activeModelSlug,
+                    source: 'calculator',
+                  })
+                }
+                className="flex items-center justify-center gap-1.5"
+              >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Skip the Wait / View Live Stock</span>
               </Link>

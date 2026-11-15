@@ -29,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { saveStoredSubmission, getStoredSubmissions } from '@/lib/storage/submission-storage';
 import { PostSubmissionNextSteps } from '@/components/submission/PostSubmissionNextSteps';
+import { trackUserEvent } from '@/lib/analytics';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, Copy, AlertCircle, Loader2, KeyRound, ShieldAlert, Bookmark, Bell } from 'lucide-react';
 
@@ -353,6 +354,12 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
 
       const finalEditToken = result.data.editToken || result.data.id;
       setPersistentEditToken(finalEditToken);
+      trackUserEvent('order_logged', {
+        model: currentModel.slug,
+        powertrain: currentPowertrain.slug,
+        province,
+        status: stage === 'delivered' ? 'delivered' : 'pending',
+      });
 
       // Store persistent local submission recognition
       try {

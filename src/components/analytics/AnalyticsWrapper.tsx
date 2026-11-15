@@ -8,7 +8,7 @@ export const ADMIN_OPT_OUT_KEY = 'tw_admin_opt_out';
 
 function readAdminOptOut(): boolean {
   try {
-    return window.localStorage.getItem(ADMIN_OPT_OUT_KEY) === 'true';
+    return window.localStorage.getItem(ADMIN_OPT_OUT_KEY) === 'true' || window.localStorage.getItem('tw_ignore_analytics') === 'true';
   } catch {
     // Storage blocked (privacy mode / sandboxed iframe): treat as a regular visitor.
     return false;

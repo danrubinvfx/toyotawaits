@@ -30,6 +30,7 @@ import {
 import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 import { resolveGearLocalImage } from '@/data/gear/catalog';
 import { sortGearByPromotions } from '@/lib/gear/promotions';
+import { trackUserEvent } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
 export interface VettedProduct {
@@ -772,6 +773,11 @@ export function CalculatorGearCards({
   };
 
   const handleProductLinkClick = (prod: VettedProduct) => {
+    trackUserEvent('affiliate_gear_clicked', {
+      accessoryId: prod.id,
+      model: modelKey,
+      placement: 'calculator_gear',
+    });
     if (prod.destinationType === 'direct_partner' && prod.discountCode) {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         navigator.clipboard.writeText(prod.discountCode).catch(() => {});

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Zap, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { InventoryAlertModal } from '@/components/discovery/InventoryAlertModal';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface ModelInventoryBridgeProps {
   modelSlug: string;
@@ -51,7 +52,16 @@ export function ModelInventoryBridge({
               size="sm"
               className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs sm:text-sm h-10 px-4 rounded-xl shadow-md transition-all cursor-pointer inline-flex items-center justify-center gap-1.5"
             >
-              <Link href={inventoryHref} data-testid="bridge-inventory-link">
+              <Link
+                href={inventoryHref}
+                data-testid="bridge-inventory-link"
+                onClick={() =>
+                  trackUserEvent('cant_wait_clicked', {
+                    model: modelSlug,
+                    source: 'wait_times_bridge',
+                  })
+                }
+              >
                 <span>View Live {modelName} Stock ↗</span>
               </Link>
             </Button>

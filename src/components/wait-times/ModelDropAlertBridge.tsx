@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Bell } from 'lucide-react';
 import { InventoryAlertModal } from '@/components/discovery/InventoryAlertModal';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface ModelDropAlertBridgeProps {
   modelSlug: string;
@@ -61,6 +62,12 @@ export function ModelDropAlertBridge({
 
             <Link
               href={`/inventory?model=${encodeURIComponent(modelSlug)}`}
+              onClick={() =>
+                trackUserEvent('cant_wait_clicked', {
+                  model: modelSlug,
+                  source: 'drop_alert_bridge',
+                })
+              }
               data-testid="drop-alert-secondary-link"
               className="border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-semibold px-4 py-2.5 rounded-xl text-xs sm:text-sm transition-all text-center inline-flex items-center justify-center cursor-pointer"
             >

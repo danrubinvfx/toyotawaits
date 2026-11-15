@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getActiveInventoryCountByModel } from '@/lib/inventory/counts';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface MatchingInventoryParams {
   modelName: string;
@@ -122,6 +123,11 @@ export async function subscribeToDropAlerts({
         error: data?.error || 'Could not activate drop alerts. Please try again.',
       };
     }
+
+    trackUserEvent('drop_alert_subscribed', {
+      model: cleanModel,
+      region: cleanRegion,
+    });
 
     return {
       success: true,

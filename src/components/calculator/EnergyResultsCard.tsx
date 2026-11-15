@@ -11,16 +11,23 @@ import {
   Check,
 } from 'lucide-react';
 import { CalculatorResults } from '@/lib/hooks/useSavingsCalculator';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface EnergyResultsCardProps {
   results: CalculatorResults;
   className?: string;
+  model?: string;
+  powertrain?: string;
 }
 
-export function EnergyResultsCard({ results, className }: EnergyResultsCardProps) {
+export function EnergyResultsCard({ results, className, model, powertrain }: EnergyResultsCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopyLink = async () => {
+    trackUserEvent('calculator_shared', {
+      model: model || 'rav4',
+      powertrain: powertrain || (results.targetIsPhev ? 'PHEV' : 'HEV'),
+    });
     try {
       if (typeof window !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(results.shareUrl);

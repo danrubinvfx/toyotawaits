@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Bell, CheckCircle2, AlertCircle, Loader2, ShieldCheck, Mail } from 'lucide-react';
 import { CanadianProvince } from '@/lib/types/contracts';
+import { trackUserEvent } from '@/lib/analytics';
 
 interface NotificationSubscriptionModalProps {
   isOpen: boolean;
@@ -66,6 +67,10 @@ export function NotificationSubscriptionModal({
       }
 
       setIsSuccess(true);
+      trackUserEvent('drop_alert_subscribed', {
+        model: defaultModel,
+        region: defaultProvince,
+      });
       setSuccessMessage(
         json.data?.message ||
           `Alert subscription confirmed! We will notify you when matching deliveries occur or regional wait times adjust.`

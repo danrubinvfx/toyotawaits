@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ExternalLink, Copy, Check } from 'lucide-react';
 import { AccessoryItem } from '@/data/accessories';
 import { trackAffiliateClick } from '@/lib/gear';
+import { trackUserEvent } from '@/lib/analytics';
 import { GearImage } from '@/components/gear/GearImage';
 import {
   GEAR_MARKET_CATALOG,
@@ -179,6 +180,11 @@ export function InventoryGearCard({
             data-testid="gear-strip-action-btn"
             aria-label={`${buttonText} for ${item.title} (opens in new tab)`}
             onClick={() => {
+              trackUserEvent('affiliate_gear_clicked', {
+                accessoryId: item.id,
+                model: modelContext || 'inventory',
+                placement: 'inventory_feed',
+              });
               trackAffiliateClick({
                 accessory_id: item.id,
                 placement: 'inventory_feed',
