@@ -240,6 +240,31 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
                 </Link>
               </li>
               <li>
+                <Link href={`${baseUrl}/guides/toyota-sequoia-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Sequoia Guide
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/toyota-highlander-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Highlander Guide
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/toyota-camry-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Camry Guide
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/toyota-land-cruiser-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Land Cruiser Guide
+                </Link>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/guides/toyota-prius-2026-vs-2027`} className="hover:text-amber-500 transition-colors">
+                  2026 vs. 2027 Prius Guide
+                </Link>
+              </li>
+              <li>
                 <Link href={`${baseUrl}/guides/grand-highlander-mods`} className="hover:text-amber-500 transition-colors">
                   Toyota Grand Highlander Utility Mods
                 </Link>

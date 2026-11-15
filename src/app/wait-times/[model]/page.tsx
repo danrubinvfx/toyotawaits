@@ -1311,6 +1311,146 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </section>
       )}
 
+      {/* 2026 vs 2027 Sequoia Guide Callout Banner */}
+      {modelConfig.slug === 'sequoia' && (
+        <section aria-label="2026 vs 2027 Sequoia Guide Callout" data-testid="sequoia-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Toyota Sequoia?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  2027 Canadian Sequoia pricing jumps +$5,560 on the SR5 TRD Off-Road and introduces the new SR5 Trailhunter ($95,552 MSRP), TSS 4.0, and Trailer ADAS. Compare 2026 vs. 2027 before deciding.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-sequoia-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Sequoia Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Highlander Guide Callout Banner */}
+      {modelConfig.slug === 'highlander' && (
+        <section aria-label="2026 vs 2027 Highlander Guide Callout" data-testid="highlander-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Buying a 2026 Highlander Hybrid or Waiting for the 2027 Highlander BEV?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  The 2027 Highlander transforms into an all-electric 3-row SUV (up to 515 km range, native NACS, TSS 4.0). If you want a gas or hybrid 3-row without charging stops, compare 2026 vs. 2027 now.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-highlander-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Highlander Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Camry Guide Callout Banner */}
+      {modelConfig.slug === 'camry' && (
+        <section aria-label="2026 vs 2027 Camry Guide Callout" data-testid="camry-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Toyota Camry Hybrid?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  The 2027 Camry adds the new XSE AWD Special Edition ($46,565 MSRP) while core trims carry over with a +$375–$385 MSRP increase. See whether to claim a 2026 allocation or wait.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-camry-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Camry Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Land Cruiser Guide Callout Banner */}
+      {modelConfig.slug === 'land-cruiser' && (
+        <section aria-label="2026 vs 2027 Land Cruiser Guide Callout" data-testid="land-cruiser-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Toyota Land Cruiser 250?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  The 2027 Land Cruiser 250 is a 100% mechanical carryover in Canada with a +$1,470 MSRP increase on 1958 ($73,020) and +$2,340 on Land Cruiser Grade ($81,825). Compare 2026 vs. 2027 before passing on an allocation.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-land-cruiser-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Land Cruiser Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Prius Guide Callout Banner */}
+      {modelConfig.slug === 'prius' && (
+        <section aria-label="2026 vs 2027 Prius Guide Callout" data-testid="prius-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Prius / Plug-in Hybrid?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Both the 2027 Prius AWD and Prius Plug-in Hybrid are mechanical carryovers in Canada (+$375 to +$435 MSRP) with identical 72 km EV range. See how Tsutsumi queue rollovers work.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-prius-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Prius Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Section 2: Provincial Allocation Breakdown */}
       <section className="space-y-4">
         <div>
