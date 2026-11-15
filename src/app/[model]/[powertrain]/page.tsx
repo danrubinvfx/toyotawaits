@@ -74,7 +74,7 @@ export default async function ModelPowertrainPage({ params }: RouteProps) {
               Home
             </Link>
             <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />
-            <Link href={`/${model.slug}`} className="hover:text-red-600 transition-colors">
+            <Link href={`/wait-times/${model.slug === 'prius-prime' ? 'prius' : model.slug}`} className="hover:text-red-600 transition-colors">
               {model.name}
             </Link>
             <ChevronRight className="h-3.5 w-3.5 text-zinc-400" />

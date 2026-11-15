@@ -4,7 +4,7 @@ import {
   CANADIAN_VEHICLE_CATALOG,
   CANADIAN_PROVINCES_LIST,
 } from '@/lib/data/vehicles';
-import { getAllModelConfigs } from '@/lib/data/model-registry';
+import { getAllModelConfigs, getModelConfig } from '@/lib/data/model-registry';
 
 export const revalidate = 3600;
 
@@ -395,21 +395,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const dynamicRoutes: MetadataRoute.Sitemap = [];
   const distinctProvinceSlugs = Array.from(provinceSlugsSet);
+  const seenWaitTimeSlugs = new Set<string>();
 
   for (const [modelSlug, powertrains] of modelPowertrainsMap.entries()) {
-    dynamicRoutes.push({
-      url: `${baseUrl}/${modelSlug}`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    });
-
-    dynamicRoutes.push({
-      url: `${baseUrl}/wait-times/${modelSlug}`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.9,
-    });
+    const canonicalSlug = getModelConfig(modelSlug)?.slug || modelSlug;
+    if (!seenWaitTimeSlugs.has(canonicalSlug)) {
+      seenWaitTimeSlugs.add(canonicalSlug);
+      dynamicRoutes.push({
+        url: `${baseUrl}/wait-times/${canonicalSlug}`,
+        lastModified: now,
+        changeFrequency: 'daily',
+        priority: 0.9,
+      });
+    }
 
     for (const powertrainSlug of powertrains) {
       dynamicRoutes.push({

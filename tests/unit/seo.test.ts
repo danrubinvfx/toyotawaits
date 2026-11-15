@@ -91,7 +91,10 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(guidesMainEntry?.priority).toBe(0.9);
 
     // Dynamic vehicle model and province routes (priority 0.7 - 0.9)
-    const siennaEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/sienna');
+    const bareSiennaEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/sienna');
+    expect(bareSiennaEntry).toBeUndefined();
+
+    const siennaEntry = sitemapEntries.find((e) => e.url === 'https://www.toyotawaits.ca/wait-times/sienna');
     expect(siennaEntry).toBeDefined();
     expect(siennaEntry?.priority).toBe(0.9);
 
@@ -110,7 +113,8 @@ describe('Technical SEO & Discovery Configuration', () => {
       expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca')).toBe(true);
       expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/inventory')).toBe(true);
       expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/submit')).toBe(true);
-      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/rav4')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/wait-times/rav4')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca/rav4')).toBe(false);
     } finally {
       process.env.NEXT_PUBLIC_SUPABASE_URL = prevEnv;
     }

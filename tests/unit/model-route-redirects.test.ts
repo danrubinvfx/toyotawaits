@@ -1,8 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { notFound, permanentRedirect } from 'next/navigation';
 import nextConfig from '../../next.config';
 import { generateMetadata } from '@/app/wait-times/[model]/page';
+import ModelPage, * as ModelPageModule from '@/app/[model]/page';
 
 describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const models = [
     'rav4',
     'sienna',
@@ -17,9 +23,14 @@ describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
     '4runner',
     'highlander',
     'corolla',
+    'crown-signia',
+    'lexus-gx550',
+    'lexus-tx',
+    'lexus-nx',
+    'lexus-rx',
   ];
 
-  it('configures permanent (301) redirects for all Canadian vehicle root model paths', async () => {
+  it('configures permanent (301) redirects for all Canadian vehicle root model paths and aliases', async () => {
     const redirects = await (nextConfig.redirects ? nextConfig.redirects() : []);
 
     for (const model of models) {
@@ -28,6 +39,39 @@ describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
       expect(match?.destination).toBe(`/wait-times/${model}`);
       expect(match?.permanent).toBe(true);
     }
+
+    const priusPrimeMatch = redirects.find((r) => r.source === '/prius-prime');
+    expect(priusPrimeMatch).toBeDefined();
+    expect(priusPrimeMatch?.destination).toBe('/wait-times/prius');
+    expect(priusPrimeMatch?.permanent).toBe(true);
+
+    const rav4PrimeMatch = redirects.find((r) => r.source === '/rav4-prime');
+    expect(rav4PrimeMatch).toBeDefined();
+    expect(rav4PrimeMatch?.destination).toBe('/wait-times/rav4');
+    expect(rav4PrimeMatch?.permanent).toBe(true);
+  });
+
+  it('enforces hard permanentRedirect on legacy /[model]/page.tsx and removes duplicate generateMetadata', async () => {
+    expect('generateMetadata' in ModelPageModule).toBe(false);
+
+    for (const model of models) {
+      vi.clearAllMocks();
+      await ModelPage({ params: Promise.resolve({ model }) });
+      expect(permanentRedirect).toHaveBeenCalledWith(`/wait-times/${model}`);
+    }
+
+    vi.clearAllMocks();
+    await ModelPage({ params: Promise.resolve({ model: 'prius-prime' }) });
+    expect(permanentRedirect).toHaveBeenCalledWith('/wait-times/prius');
+
+    vi.clearAllMocks();
+    await ModelPage({ params: Promise.resolve({ model: 'rav4-prime' }) });
+    expect(permanentRedirect).toHaveBeenCalledWith('/wait-times/rav4');
+
+    vi.clearAllMocks();
+    await ModelPage({ params: Promise.resolve({ model: 'untracked-vehicle-xyz' }) });
+    expect(notFound).toHaveBeenCalledTimes(1);
+    expect(permanentRedirect).not.toHaveBeenCalled();
   });
 
   it('configures permanent redirects for faceted sub-paths', async () => {

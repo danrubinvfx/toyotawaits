@@ -155,31 +155,18 @@ describe('Toyota Sienna Trailer Hitch Guide Page', () => {
     expect(hitchButton).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
   });
 
-  it('renders prominent hitch guide banner conditionally on /[model] page only for Sienna', async () => {
+  it('permanently redirects legacy /[model] page to /wait-times/[model]', async () => {
+    const { permanentRedirect } = await import('next/navigation');
     const { default: ModelPage } = await import('@/app/[model]/page');
 
-    // Test Sienna renders the banner
-    const siennaJsx = await ModelPage({
+    await ModelPage({
       params: Promise.resolve({ model: 'sienna' }),
     });
-    const { rerender } = render(siennaJsx);
+    expect(permanentRedirect).toHaveBeenCalledWith('/wait-times/sienna');
 
-    expect(screen.getByText('Planning Bike Racks or Towing?')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        /Waiting on your delivery\? Read our 2021\+ Toyota Sienna Trailer Hitch & Kick-Sensor Guide to pick the right receiver and wiring before taking delivery\./i
-      )
-    ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /View Sienna Hitch Guide ->/i })).toHaveAttribute(
-      'href',
-      '/guides/toyota-sienna-trailer-hitch-guide'
-    );
-
-    // Test RAV4 does NOT render the Sienna hitch banner
-    const rav4Jsx = await ModelPage({
+    await ModelPage({
       params: Promise.resolve({ model: 'rav4' }),
     });
-    rerender(rav4Jsx);
-    expect(screen.queryByText('Planning Bike Racks or Towing?')).not.toBeInTheDocument();
+    expect(permanentRedirect).toHaveBeenCalledWith('/wait-times/rav4');
   }, 30000);
 });

@@ -21,6 +21,8 @@ vi.mock('next/navigation', () => ({
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
   notFound: vi.fn(),
+  permanentRedirect: vi.fn(),
+  redirect: vi.fn(),
 }));
 
 // Ensure global.fetch and window.fetch are synchronized in jsdom

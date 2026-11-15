@@ -855,7 +855,7 @@ export default function SiennaTrailerHitchGuidePage() {
         </div>
         <div className="flex flex-wrap items-center gap-3 shrink-0">
           <Link
-            href="/sienna"
+            href="/wait-times/sienna"
             className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-xs font-semibold text-zinc-900 dark:text-zinc-100 transition-colors"
           >
             Sienna Wait Times

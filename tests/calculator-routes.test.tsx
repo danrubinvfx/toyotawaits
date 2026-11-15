@@ -10,11 +10,13 @@ import { Header } from '@/components/layout/header';
 import sitemap from '@/app/sitemap';
 
 // Mock next/navigation
+const mockPermanentRedirect = vi.fn();
 vi.mock('next/navigation', () => ({
   usePathname: () => '/calculator',
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   useSearchParams: () => new URLSearchParams(),
   notFound: vi.fn(),
+  permanentRedirect: (...args: unknown[]) => mockPermanentRedirect(...args),
 }));
 
 // Mock getModelBenchmark to avoid database calls in ModelPage test while preserving exports
@@ -164,34 +166,19 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
       expect(desktopCalcLink).toHaveAttribute('href', '/calculator');
     });
 
-    it('renders fuel savings teaser card on RAV4 model page linking to /calculator/rav4-hybrid', async () => {
-      const page = await ModelPage({ params: Promise.resolve({ model: 'rav4' }) });
-      render(page);
-
-      expect(
-        screen.getByText(
-          'Weighing Gas vs. Hybrid? Calculate your fuel break-even and the energy cost of waiting.'
-        )
-      ).toBeInTheDocument();
-
-      const calcBtn = screen.getByRole('link', { name: /Calculate Savings/i });
-      expect(calcBtn).toHaveAttribute('href', '/calculator/rav4-hybrid');
+    it('permanently redirects legacy /rav4 root model route to /wait-times/rav4', async () => {
+      await ModelPage({ params: Promise.resolve({ model: 'rav4' }) });
+      expect(mockPermanentRedirect).toHaveBeenCalledWith('/wait-times/rav4');
     });
 
-    it('renders fuel savings teaser card on Sienna model page linking to /calculator/sienna-hybrid', async () => {
-      const page = await ModelPage({ params: Promise.resolve({ model: 'sienna' }) });
-      render(page);
-
-      const calcBtn = screen.getByRole('link', { name: /Calculate Savings/i });
-      expect(calcBtn).toHaveAttribute('href', '/calculator/sienna-hybrid');
+    it('permanently redirects legacy /sienna root model route to /wait-times/sienna', async () => {
+      await ModelPage({ params: Promise.resolve({ model: 'sienna' }) });
+      expect(mockPermanentRedirect).toHaveBeenCalledWith('/wait-times/sienna');
     });
 
-    it('renders fuel savings teaser card on Grand Highlander model page linking to /calculator/grand-highlander', async () => {
-      const page = await ModelPage({ params: Promise.resolve({ model: 'grand-highlander' }) });
-      render(page);
-
-      const calcBtn = screen.getByRole('link', { name: /Calculate Savings/i });
-      expect(calcBtn).toHaveAttribute('href', '/calculator/grand-highlander');
+    it('permanently redirects legacy /grand-highlander root model route to /wait-times/grand-highlander', async () => {
+      await ModelPage({ params: Promise.resolve({ model: 'grand-highlander' }) });
+      expect(mockPermanentRedirect).toHaveBeenCalledWith('/wait-times/grand-highlander');
     });
   });
 

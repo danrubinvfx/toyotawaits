@@ -48,7 +48,7 @@ export default function Rav4HybridCalculatorPage() {
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 space-y-8">
         {/* Navigation & Header */}
         <div className="space-y-4">
-          <BackButton fallbackHref="/rav4" label="← Back to RAV4 Wait Tracker" />
+          <BackButton fallbackHref="/wait-times/rav4" label="← Back to RAV4 Wait Tracker" />
 
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-400 text-xs font-semibold">
