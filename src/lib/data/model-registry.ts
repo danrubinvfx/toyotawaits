@@ -257,6 +257,8 @@ export const MODEL_REGISTRY: Record<string, ModelRegistryEntry> = {
     name: 'Toyota Tundra',
     shortName: 'Tundra',
     dbFilter: 'tundra',
+    title: 'Toyota Tundra Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
+    metaTitle: 'Toyota Tundra Wait Times Canada (2026–2027 Delivery Tracker) | ToyotaWaits',
     powertrains: ['i-FORCE', 'i-FORCE MAX'],
     baseMedian: 90,
     baseP25: 60,

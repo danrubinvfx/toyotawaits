@@ -346,6 +346,19 @@ const MOD_GUIDES = [
     href: '/guides/toyota-corolla-cross-2026-vs-2027',
   },
   {
+    slug: 'toyota-tundra-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota Tundra Canada: Trailhunter, TSS 4.0 & Wait Times',
+    tagline: 'Compare the 2026 and 2027 Toyota Tundra & i-FORCE MAX Hybrid in Canada. Breakdown of the new SR5 Trailhunter package, standard 14" screen, TSS 4.0, 122L fuel tank, and San Antonio allocation rollovers.',
+    badge: '2026 vs. 2027',
+    model: 'Tundra i-FORCE & i-FORCE MAX',
+    highlights: [
+      'New SR5 Trailhunter package & TRD Pro FOX QS3 shocks',
+      'Standard 14" Multimedia, TSS 4.0 & 122L tank across all 31 Canadian 4x4s',
+      'San Antonio (TMMTX) allocation rollover rules & Canadian pricing deltas',
+    ],
+    href: '/guides/toyota-tundra-2026-vs-2027',
+  },
+  {
     slug: 'grand-highlander-mods',
     title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
     tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',
