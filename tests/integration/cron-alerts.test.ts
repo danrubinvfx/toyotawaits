@@ -117,6 +117,8 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
       rawListingsQueried: 10,
       candidatesEvaluated: 0,
       subscribersFound: 0,
+      lastSubmissionAt: null,
+      hoursSinceLastSubmission: null,
     });
   });
 
@@ -168,6 +170,8 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
       rawListingsQueried: 5,
       candidatesEvaluated: 1,
       subscribersFound: 1,
+      lastSubmissionAt: null,
+      hoursSinceLastSubmission: null,
     });
   });
 
@@ -261,6 +265,8 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
       rawListingsQueried: 0,
       candidatesEvaluated: 0,
       subscribersFound: 2,
+      lastSubmissionAt: null,
+      hoursSinceLastSubmission: null,
     });
   });
 
@@ -314,7 +320,16 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
 
     const mockSupabase = {
       from: (table: string) => {
-        expect(table).toBe('dealer_listings');
+        expect(['dealer_listings', 'submissions']).toContain(table);
+        if (table === 'submissions') {
+          return {
+            select: () => ({
+              order: () => ({
+                limit: async () => ({ data: [], error: null }),
+              }),
+            }),
+          };
+        }
         return {
           select: () => ({
             order: () => ({
@@ -354,6 +369,8 @@ describe('Allocation Check Alerts & Sweep Cron Workers (/api/cron/check-alerts &
       rawListingsQueried: 3,
       candidatesEvaluated: 2,
       subscribersFound: 2,
+      lastSubmissionAt: null,
+      hoursSinceLastSubmission: null,
     });
 
     // Verify first item resolved from joined vehicle

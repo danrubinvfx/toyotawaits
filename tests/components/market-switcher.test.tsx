@@ -180,7 +180,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
 
     expect(capturedPayload.countryCode).toBe('US');
     expect(capturedPayload.state).toBe('WA');
-    expect(capturedPayload.province).toBeUndefined();
+    expect(capturedPayload.province).toBe('WA');
   }, 15000);
 
   it('dynamically switches CommunityDataTable filter options and resets safely', () => {

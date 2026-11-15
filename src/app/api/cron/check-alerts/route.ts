@@ -17,6 +17,86 @@ export const maxDuration = 60;
 
 export { validateCronSecret };
 
+const DROUGHT_ALERT_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+let lastDroughtAlertSentAt = 0;
+
+export function _resetDroughtAlertCooldown() {
+  lastDroughtAlertSentAt = 0;
+}
+
+async function evaluateSubmissionDrought(
+  supabase: any,
+  dryRun: boolean
+): Promise<{
+  lastSubmissionAt: string | null;
+  hoursSinceLastSubmission: number | null;
+  droughtAlertTriggered: boolean;
+}> {
+  let lastSubmissionAt: string | null = null;
+  let hoursSinceLastSubmission: number | null = null;
+  let droughtAlertTriggered = false;
+
+  if (supabase) {
+    try {
+      const { data: rows, error } = await supabase
+        .from('submissions')
+        .select('created_at')
+        .order('created_at', { ascending: false })
+        .limit(1);
+
+      if (!error && Array.isArray(rows) && rows.length > 0 && rows[0]?.created_at) {
+        lastSubmissionAt = String(rows[0].created_at);
+        const createdMs = new Date(lastSubmissionAt).getTime();
+        if (!isNaN(createdMs)) {
+          hoursSinceLastSubmission =
+            Math.round(((Date.now() - createdMs) / (1000 * 60 * 60)) * 10) / 10;
+        }
+      }
+    } catch (err) {
+      console.warn('[check-alerts] Failed querying latest submission timestamp:', err);
+    }
+  }
+
+  if (
+    hoursSinceLastSubmission !== null &&
+    hoursSinceLastSubmission > 48 &&
+    process.env.RESEND_API_KEY &&
+    !dryRun &&
+    Date.now() - lastDroughtAlertSentAt >= DROUGHT_ALERT_COOLDOWN_MS
+  ) {
+    lastDroughtAlertSentAt = Date.now();
+    droughtAlertTriggered = true;
+    const fromAddress =
+      process.env.RESEND_FROM_EMAIL || 'ToyotaWaits Alerts <hello@toyotawaits.ca>';
+
+    Promise.resolve(
+      fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: fromAddress,
+          to: 'danielrubin76@gmail.com',
+          subject: `[WARNING] Zero ToyotaWaits Submissions in ${hoursSinceLastSubmission}h (48h+ Drought)`,
+          text: [
+            `Zero community wait-time submissions have been recorded on ToyotaWaits in ${hoursSinceLastSubmission} hours.`,
+            `Last submission timestamp: ${lastSubmissionAt}`,
+            `Checked at: ${new Date().toISOString()}`,
+            `Action: Verify POST /api/submissions and run npx tsx scripts/canary-submissions.ts.`,
+          ].join('\n'),
+        }),
+        signal: AbortSignal.timeout(8000),
+      })
+    ).catch((emailErr) => {
+      console.warn('[check-alerts] Drought alert email dispatch failed:', emailErr);
+    });
+  }
+
+  return { lastSubmissionAt, hoursSinceLastSubmission, droughtAlertTriggered };
+}
+
 export async function handleCheckAlerts(request: Request) {
   const auth = validateCronSecret(request);
   if (!auth.authorized) {
@@ -42,6 +122,7 @@ export async function handleCheckAlerts(request: Request) {
 
   const isConfigured = isLiveSupabaseConfigured();
   const supabase = isConfigured ? createServerClient() : null;
+  const droughtStats = await evaluateSubmissionDrought(supabase, dryRun);
 
   // Single-dealer sweep mode (safe for HTTP, runs in < 2 seconds)
   if (dealerParam && dealerParam !== 'all') {
@@ -83,10 +164,14 @@ export async function handleCheckAlerts(request: Request) {
         skippedDuplicates: alertSummary.duplicatesSkipped ?? 0,
         dealerSwept: targetDealer.dealerCode,
         durationMs: Date.now() - startTime,
+        lastSubmissionAt: droughtStats.lastSubmissionAt,
+        hoursSinceLastSubmission: droughtStats.hoursSinceLastSubmission,
         diagnostics: {
           rawListingsQueried: result.totalParsed,
           candidatesEvaluated: result.unreservedVehicles?.length ?? 0,
           subscribersFound: alertSummary.subscribersMatched,
+          lastSubmissionAt: droughtStats.lastSubmissionAt,
+          hoursSinceLastSubmission: droughtStats.hoursSinceLastSubmission,
         },
       },
       {
@@ -168,10 +253,14 @@ export async function handleCheckAlerts(request: Request) {
       skippedDuplicates: alertSummary.duplicatesSkipped ?? 0,
       durationMs: Date.now() - startTime,
       timestamp: new Date().toISOString(),
+      lastSubmissionAt: droughtStats.lastSubmissionAt,
+      hoursSinceLastSubmission: droughtStats.hoursSinceLastSubmission,
       diagnostics: {
         rawListingsQueried,
         candidatesEvaluated: alertVehicles.length,
         subscribersFound: alertSummary.subscribersMatched,
+        lastSubmissionAt: droughtStats.lastSubmissionAt,
+        hoursSinceLastSubmission: droughtStats.hoursSinceLastSubmission,
       },
     },
     {

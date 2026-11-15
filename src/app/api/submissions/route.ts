@@ -72,6 +72,7 @@ export async function GET(request?: NextRequest) {
 
 export async function POST(request: NextRequest) {
   let clientIp = '127.0.0.1';
+  let sanitizedPayloadSummary: { model?: string; province?: string; stage?: string } = {};
   try {
     const forwarded = request.headers.get('x-forwarded-for') || request.headers.get('cf-connecting-ip');
     clientIp = forwarded ? forwarded.split(',')[0].trim() : '127.0.0.1';
@@ -92,6 +93,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    sanitizedPayloadSummary = {
+      model: String(body?.modelSlug || body?.model || body?.modelId || 'unknown'),
+      province: String(body?.province || body?.state || 'unknown'),
+      stage: String(body?.stage || body?.current_stage || body?.status || 'pending'),
+    };
+
     // 1. Honeypot Bot Trap: Silently absorb automated spam
     if (body.honeypot && body.honeypot.length > 0) {
       return NextResponse.json<ApiResponse<{ message: string }>>(
@@ -105,26 +112,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const canarySecretHeader = request.headers.get('x-canary-secret') || '';
+    const isCanaryCheck =
+      Boolean(
+        body &&
+          typeof body === 'object' &&
+          (body.dealershipName === '__CANARY_HEALTH_CHECK__' ||
+            body.dealership_name === '__CANARY_HEALTH_CHECK__') &&
+          canarySecretHeader &&
+          process.env.CRON_SECRET &&
+          canarySecretHeader === process.env.CRON_SECRET
+      );
+
     // 2. Ephemeral In-Memory Rate Limiting (Zero-PII compliant)
     // Check quota without consuming attempt (only successful database insertions decrement quota)
-    const rateLimit = await checkRateLimit(clientIp, 5, 24 * 60 * 60 * 1000, false);
-    if (!rateLimit.success) {
-      return NextResponse.json<ApiResponse<null>>(
-        {
-          success: false,
-          error: {
-            code: 'RATE_LIMIT_EXCEEDED',
-            message: 'Too many submissions from this connection. Please try again tomorrow.',
+    if (!isCanaryCheck) {
+      const rateLimit = await checkRateLimit(clientIp, 5, 24 * 60 * 60 * 1000, false);
+      if (!rateLimit.success) {
+        return NextResponse.json<ApiResponse<null>>(
+          {
+            success: false,
+            error: {
+              code: 'RATE_LIMIT_EXCEEDED',
+              message: 'Too many submissions from this connection. Please try again tomorrow.',
+            },
           },
-        },
-        {
-          status: 429,
-          headers: {
-            'Retry-After': String(rateLimit.reset),
-            'Cache-Control': 'no-store',
-          },
-        }
-      );
+          {
+            status: 429,
+            headers: {
+              'Retry-After': String(rateLimit.reset),
+              'Cache-Control': 'no-store',
+            },
+          }
+        );
+      }
     }
 
     // Vehicle Dimension Normalization (Gracefully maps slugs, vehicle names, or unformatted IDs to catalog UUIDs)
@@ -392,11 +413,13 @@ export async function POST(request: NextRequest) {
         email: hasEmail ? submittedEmail : null,
         reminder_opt_in: reminderOptIn,
         reminderOptIn: reminderOptIn,
-        isFlagged: outlierResult.isFlagged,
+        isFlagged: isCanaryCheck ? true : outlierResult.isFlagged,
       });
 
     // 8. Consume rate limit only after successful persistence
-    await consumeRateLimit(clientIp, 24 * 60 * 60 * 1000);
+    if (!isCanaryCheck) {
+      await consumeRateLimit(clientIp, 24 * 60 * 60 * 1000);
+    }
 
     const finalEditToken = record.editToken || editToken;
 
@@ -479,7 +502,8 @@ export async function POST(request: NextRequest) {
           updateStatusUrl: `/update-status/${finalEditToken}`,
           email: hasEmail ? submittedEmail : undefined,
           reminder_opt_in: reminderOptIn,
-          isFlagged: record.isFlagged,
+          isFlagged: isCanaryCheck ? true : record.isFlagged,
+          is_flagged: isCanaryCheck ? true : record.isFlagged,
           message:
             'Submission recorded anonymously. Save your secret edit link to update your status later.',
         },
@@ -500,6 +524,40 @@ export async function POST(request: NextRequest) {
       hint: error?.hint,
       stack: error?.stack,
     });
+
+    if (process.env.RESEND_API_KEY) {
+      const fromAddress =
+        process.env.RESEND_FROM_EMAIL || 'ToyotaWaits Alerts <hello@toyotawaits.ca>';
+      const alertText = [
+        'ToyotaWaits POST /api/submissions encountered a database/server failure:',
+        `Code: ${error?.code || 'UNKNOWN'}`,
+        `Message: ${error?.message || 'Unknown error'}`,
+        `Details: ${error?.details || 'N/A'}`,
+        `Model: ${sanitizedPayloadSummary.model || 'unknown'}`,
+        `Province: ${sanitizedPayloadSummary.province || 'unknown'}`,
+        `Stage: ${sanitizedPayloadSummary.stage || 'unknown'}`,
+        `Timestamp: ${new Date().toISOString()}`,
+      ].join('\n');
+
+      Promise.resolve(
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: fromAddress,
+            to: 'danielrubin76@gmail.com',
+            subject: '[ALERT] ToyotaWaits POST /api/submissions 500 Error',
+            text: alertText,
+          }),
+          signal: AbortSignal.timeout(8000),
+        })
+      ).catch((alertErr) => {
+        console.warn('[POST /api/submissions] Alert email dispatch failed:', alertErr);
+      });
+    }
 
     const isRls = error?.code === '42501' || error?.message?.includes('violates row-level security');
     const isConstraint = error?.code === '23503' || error?.code === '23514';
