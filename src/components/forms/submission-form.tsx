@@ -189,7 +189,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     currentPowertrains.find((p) => p.slug === selectedPowertrainSlug) ||
     currentPowertrains[0];
 
-  const currentTrims: CatalogTrim[] = currentPowertrain.trims.filter((t) => {
+  const filteredTrims: CatalogTrim[] = currentPowertrain.trims.filter((t) => {
     if (modelYear <= 2025) {
       if (t.minYear && t.minYear > 2025) return false;
       if (t.name.toLowerCase().includes('gr sport') || t.slug === 'gr-sport-awd') return false;
@@ -199,6 +199,9 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
     }
     return true;
   });
+
+  const currentTrims: CatalogTrim[] =
+    filteredTrims.length > 0 ? filteredTrims : currentPowertrain.trims;
 
   const effectiveTrimId = currentTrims.some((t) => t.id === selectedTrimId)
     ? selectedTrimId
@@ -307,7 +310,7 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         country: isUsMarket ? 'US' : 'CA',
         countryCode: isUsMarket ? 'US' : 'CA',
         currency: isUsMarket ? 'USD' : 'CAD',
-        province: isUsMarket ? undefined : province,
+        province: province,
         state: isUsMarket ? province : undefined,
         dealershipCity: dealershipCity.trim() || undefined,
         modelYear: Number(modelYear),
@@ -342,13 +345,21 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      let result: any = null;
+      try {
+        result = await response.json();
+      } catch {
+        result = null;
+      }
 
-      if (!response.ok || !result.success) {
-        if (result.error?.details) {
+      if (!response.ok || !result?.success) {
+        if (result?.error?.details) {
           setFieldErrors(result.error.details);
         }
-        setErrorMsg(result.error?.message || 'Failed to record your submission. Please check the inputs.');
+        setErrorMsg(
+          result?.error?.message ||
+            'Failed to record your submission. Please check the inputs.'
+        );
         return;
       }
 
@@ -606,7 +617,11 @@ export function SubmissionForm({ initialOrderDate }: SubmissionFormProps = {}) {
           )}
 
           {errorMsg && (
-            <div className="mb-6 flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200">
+            <div
+              role="alert"
+              data-testid="error-banner"
+              className="mb-6 flex items-start gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-900 dark:bg-rose-950 dark:text-rose-200"
+            >
               <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 mt-0.5" />
               <div>
                 <p className="font-semibold">Unable to submit timeline</p>

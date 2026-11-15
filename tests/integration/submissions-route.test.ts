@@ -4,6 +4,8 @@ import { POST } from '@/app/api/submissions/route';
 import { PATCH } from '@/app/api/submissions/[id]/route';
 import { _resetRateLimiter } from '@/lib/security/ratelimit';
 import * as dbSubmissions from '@/lib/db/submissions';
+import * as turnstileLib from '@/lib/security/turnstile';
+import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
 
 describe('POST /api/submissions', () => {
   const validUuid1 = '11111111-1111-4111-8111-111111111111';
@@ -819,6 +821,124 @@ describe('PATCH /api/submissions/[id]', () => {
     expect(data.success).toBe(false);
     expect(data.error.code).toBe('VALIDATION_ERROR');
     expect(data.error.details.email).toBeDefined();
+  });
+
+  it('logs detailed error codes via console.error("[POST /api/submissions]", ...) on insert failure', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const dbError: any = new Error('Column mismatch in submissions insert');
+    dbError.code = 'PGRST204';
+    dbError.details = 'Could not find column in schema cache';
+    const insertSpy = vi.spyOn(dbSubmissions, 'insertSubmission').mockRejectedValueOnce(dbError);
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        province: 'ON',
+        modelYear: 2026,
+        orderDate: '2026-03-01',
+        status: 'pending',
+        turnstileToken: 'mock-valid-turnstile-token',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.103',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(500);
+    expect(errSpy).toHaveBeenCalledWith(
+      '[POST /api/submissions]',
+      expect.objectContaining({
+        code: 'PGRST204',
+        message: 'Column mismatch in submissions insert',
+        details: 'Could not find column in schema cache',
+      })
+    );
+
+    insertSpy.mockRestore();
+    errSpy.mockRestore();
+  });
+
+  it('logs a warning rather than hard-blocking legitimate users when Turnstile returns a timeout/network error', async () => {
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const turnstileSpy = vi
+      .spyOn(turnstileLib, 'verifyTurnstileToken')
+      .mockResolvedValueOnce({ success: false, errorCodes: ['timeout-or-duplicate'] } as any);
+
+    const request = new NextRequest('http://localhost:3000/api/submissions', {
+      method: 'POST',
+      body: JSON.stringify({
+        modelId: validUuid1,
+        powertrainId: validUuid2,
+        trimId: validUuid3,
+        province: 'BC',
+        modelYear: 2026,
+        orderDate: '2026-03-01',
+        status: 'pending',
+        turnstileToken: 'real-cf-turnstile-token-that-timed-out',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'x-forwarded-for': '192.168.1.104',
+      },
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+    expect(warnSpy).toHaveBeenCalled();
+
+    turnstileSpy.mockRestore();
+    warnSpy.mockRestore();
+  });
+
+  it('accepts every model, powertrain, and trim combination in CANADIAN_VEHICLE_CATALOG', async () => {
+    let ipCounter = 1;
+    for (const model of CANADIAN_VEHICLE_CATALOG) {
+      for (const pt of model.powertrains) {
+        for (const trim of pt.trims) {
+          _resetRateLimiter();
+          const payload = {
+            make: model.make || (model.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota'),
+            modelId: model.id,
+            modelSlug: model.slug,
+            model: model.name,
+            powertrainId: pt.id,
+            powertrainSlug: pt.slug,
+            trimId: trim.id,
+            trimSlug: trim.slug,
+            country: 'CA',
+            countryCode: 'CA',
+            currency: 'CAD',
+            province: 'ON',
+            modelYear: 2026,
+            orderDate: '2026-03-01',
+            status: 'pending',
+            stage: 'deposit_placed',
+            pricing: 'undisclosed',
+            mandatoryAddonsCad: 0,
+            tradeInRequired: false,
+            turnstileToken: 'mock-valid-turnstile-token',
+          };
+
+          const req = new NextRequest('http://localhost:3000/api/submissions', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+              'Content-Type': 'application/json',
+              'x-forwarded-for': `10.10.${Math.floor(ipCounter / 250)}.${(ipCounter % 250) + 1}`,
+            },
+          });
+          ipCounter++;
+
+          const res = await POST(req);
+          expect(res.status, `Failed for ${model.slug} / ${pt.slug} / ${trim.slug}`).toBe(201);
+        }
+      }
+    }
   });
 });
 
