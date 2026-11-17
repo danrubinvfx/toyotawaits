@@ -164,6 +164,27 @@ export async function POST(request: NextRequest) {
       if (body.mandatoryAddonsCad === undefined && body.mandatory_addons_cad !== undefined) {
         body.mandatoryAddonsCad = Number(body.mandatory_addons_cad) || 0;
       }
+      if (body.mandatory_addons !== undefined && body.mandatory_addons !== null) {
+        const parsedAddons = Number(body.mandatory_addons);
+        if (!Number.isNaN(parsedAddons) && body.forced_addons_amount === undefined) {
+          body.forced_addons_amount = parsedAddons;
+        }
+        if (!Number.isNaN(parsedAddons) && body.mandatoryAddonsCad === undefined) {
+          body.mandatoryAddonsCad = parsedAddons;
+        }
+      }
+      if (body.mandatoryAddons !== undefined && body.mandatoryAddons !== null) {
+        const parsedAddons = Number(body.mandatoryAddons);
+        if (!Number.isNaN(parsedAddons) && body.forcedAddonsAmount === undefined) {
+          body.forcedAddonsAmount = parsedAddons;
+        }
+        if (!Number.isNaN(parsedAddons) && body.mandatoryAddonsCad === undefined) {
+          body.mandatoryAddonsCad = parsedAddons;
+        }
+      }
+      if (body.doc_fee !== undefined && body.doc_fee !== null && typeof body.doc_fee === 'string') {
+        body.doc_fee = Number(body.doc_fee);
+      }
       if (body.tradeInRequired === undefined && body.trade_in_required !== undefined) {
         body.tradeInRequired = Boolean(body.trade_in_required);
       }

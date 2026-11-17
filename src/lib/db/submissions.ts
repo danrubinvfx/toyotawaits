@@ -70,6 +70,8 @@ export interface SubmissionCreateData {
   docFee?: number | null;
   doc_fee_charged?: number | null;
   docFeeCharged?: number | null;
+  mandatory_addons?: number | null;
+  mandatoryAddons?: number | null;
   forced_addons_amount?: number | null;
   forcedAddonsAmount?: number | null;
   dealer_markup?: number | null;
@@ -882,7 +884,12 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
   const dealerMarkupAdm = data.dealer_markup_adm ?? data.dealerMarkupAdm ?? (admMarkup !== 0 ? admMarkup : null);
   const portDestination = data.port_destination ?? data.portDestination ?? null;
   const docFee = data.doc_fee ?? data.docFee ?? data.doc_fee_charged ?? data.docFeeCharged ?? null;
-  const forcedAddonsAmount = data.forced_addons_amount ?? data.forcedAddonsAmount ?? (data.mandatoryAddonsCad || null);
+  const forcedAddonsAmount =
+    data.mandatory_addons ??
+    data.mandatoryAddons ??
+    data.forced_addons_amount ??
+    data.forcedAddonsAmount ??
+    (data.mandatoryAddonsCad || null);
   const dealerMarkup = data.dealer_markup ?? data.dealerMarkup ?? forcedAddonsAmount ?? (admMarkup !== 0 ? admMarkup : null);
 
   if (data.status === 'delivered' && data.deliveryDate) {
@@ -937,6 +944,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         stage_updated_at: new Date().toISOString(),
         pricing: data.pricing,
         mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        mandatory_addons: forcedAddonsAmount != null ? Number(forcedAddonsAmount) : null,
         dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
         doc_fee: docFee != null ? Number(docFee) : null,
         trade_in_required: data.tradeInRequired,
@@ -964,6 +972,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         delete fallbackRow.pricing_type;
         delete fallbackRow.dealer_markup;
         delete fallbackRow.doc_fee;
+        delete fallbackRow.mandatory_addons;
         const retryCol = await supabase
           .from('submissions')
           .insert(fallbackRow)
@@ -1012,6 +1021,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
             mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        mandatory_addons: forcedAddonsAmount != null ? Number(forcedAddonsAmount) : null,
         dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
         doc_fee: docFee != null ? Number(docFee) : null,
             trade_in_required: data.tradeInRequired,
@@ -1060,6 +1070,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
             stage_updated_at: new Date().toISOString(),
             pricing: data.pricing,
             mandatory_addons_cad: data.mandatoryAddonsCad || (forcedAddonsAmount ? Number(forcedAddonsAmount) : 0),
+        mandatory_addons: forcedAddonsAmount != null ? Number(forcedAddonsAmount) : null,
         dealer_markup: dealerMarkup != null ? Number(dealerMarkup) : null,
         doc_fee: docFee != null ? Number(docFee) : null,
             trade_in_required: data.tradeInRequired,
@@ -2019,6 +2030,8 @@ export interface EditableSubmission {
   docFee?: number | null;
   doc_fee_charged?: number | null;
   docFeeCharged?: number | null;
+  mandatory_addons?: number | null;
+  mandatoryAddons?: number | null;
   forced_addons_amount?: number | null;
   forcedAddonsAmount?: number | null;
   dealer_markup?: number | null;

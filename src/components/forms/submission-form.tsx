@@ -373,6 +373,21 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
           ? turnstileToken.trim()
           : 'mock-valid-turnstile-token';
 
+      if (!isUsMarket && docFeeCharged !== '') {
+        const parsedDocFee = Number(docFeeCharged);
+        if (Number.isNaN(parsedDocFee) || parsedDocFee < 0 || parsedDocFee > 25000) {
+          setError('Dealer Documentation Fee must be between $0 and $25,000.');
+          return;
+        }
+      }
+      if (!isUsMarket && forcedAddonsAmount !== '') {
+        const parsedAddons = Number(forcedAddonsAmount);
+        if (Number.isNaN(parsedAddons) || parsedAddons < 0 || parsedAddons > 25000) {
+          setError('Mandatory Add-ons amount must be between $0 and $25,000.');
+          return;
+        }
+      }
+
       const payload = {
         make: currentModel.make || (currentModel.slug.startsWith('lexus-') ? 'Lexus' : 'Toyota'),
         modelId: currentModel.id,
@@ -403,12 +418,14 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
             : 0
           : (!isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined) ??
             (Number(mandatoryAddonsCad) || 0),
-        doc_fee_charged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
-        docFeeCharged: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
-        doc_fee: !isUsMarket && docFeeCharged ? Number(docFeeCharged) : undefined,
-        forced_addons_amount: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
-        forcedAddonsAmount: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
-        dealer_markup: !isUsMarket && forcedAddonsAmount ? Number(forcedAddonsAmount) : undefined,
+        doc_fee_charged: !isUsMarket && docFeeCharged !== '' ? Number(docFeeCharged) : undefined,
+        docFeeCharged: !isUsMarket && docFeeCharged !== '' ? Number(docFeeCharged) : undefined,
+        doc_fee: !isUsMarket && docFeeCharged !== '' ? Number(docFeeCharged) : undefined,
+        mandatory_addons: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
+        mandatoryAddons: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
+        forced_addons_amount: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
+        forcedAddonsAmount: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
+        dealer_markup: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
         tradeInRequired: false,
         notes: notes.trim() || undefined,
         email: trimmedEmail || undefined,
@@ -1051,37 +1068,51 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
                       </p>
                     )}
                   </div>
+                  <details open className="sm:col-span-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white/60 dark:bg-zinc-900/40 p-3">
+                    <summary className="cursor-pointer text-xs font-semibold text-zinc-700 dark:text-zinc-300 select-none">
+                      Pricing &amp; Fee Transparency (Optional)
+                    </summary>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+                      <div className="space-y-1.5">
+                        <Label htmlFor={`${formId}-doc-fee`}>Dealer Documentation Fee ($CAD)</Label>
+                        <Input
+                          id={`${formId}-doc-fee`}
+                          name="doc_fee_charged"
+                          type="number"
+                          min="0"
+                          max="25000"
+                          step="50"
+                          placeholder="e.g. 595"
+                          value={docFeeCharged}
+                          onChange={(e) => setDocFeeCharged(e.target.value)}
+                        />
+                        <p className="text-[11px] text-zinc-500">
+                          Dealer Doc / Admin Fee ($0?$25,000)
+                        </p>
+                      </div>
 
-                  <div className="space-y-1.5">
-                    <Label htmlFor={`${formId}-doc-fee`}>Dealer Documentation Fee ($CAD)</Label>
-                    <Input
-                      id={`${formId}-doc-fee`}
-                      name="doc_fee_charged"
-                      type="number"
-                      min="0"
-                      step="50"
-                      placeholder="e.g. 595"
-                      value={docFeeCharged}
-                      onChange={(e) => setDocFeeCharged(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor={`${formId}-forced-addons`}>Mandatory Add-ons / Packages ($CAD)</Label>
-                    <Input
-                      id={`${formId}-forced-addons`}
-                      name="forced_addons_amount"
-                      type="number"
-                      min="0"
-                      step="50"
-                      placeholder="e.g. 995 for VIN etching, rust, tire protection"
-                      value={forcedAddonsAmount}
-                      onChange={(e) => {
-                        setForcedAddonsAmount(e.target.value);
-                        setMandatoryAddonsCad(e.target.value);
-                      }}
-                    />
-                  </div>
+                      <div className="space-y-1.5">
+                        <Label htmlFor={`${formId}-forced-addons`}>Mandatory Add-ons / Packages ($CAD)</Label>
+                        <Input
+                          id={`${formId}-forced-addons`}
+                          name="forced_addons_amount"
+                          type="number"
+                          min="0"
+                          max="25000"
+                          step="50"
+                          placeholder="e.g. 995 for VIN etching, rust, tire protection"
+                          value={forcedAddonsAmount}
+                          onChange={(e) => {
+                            setForcedAddonsAmount(e.target.value);
+                            setMandatoryAddonsCad(e.target.value);
+                          }}
+                        />
+                        <p className="text-[11px] text-zinc-500">
+                          e.g. $800 block heater, $1,500 rust/paint pack ? enter 0 if straight MSRP
+                        </p>
+                      </div>
+                    </div>
+                  </details>
                 </div>
 
                 <div className="space-y-1.5 pt-1">

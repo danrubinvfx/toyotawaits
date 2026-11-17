@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import {
   ShieldCheck,
   ShieldAlert,
@@ -20,6 +21,8 @@ import {
   Info,
   Car,
   ShoppingBag,
+  ClipboardPaste,
+  ChevronDown,
 } from 'lucide-react';
 import {
   auditQuote,
@@ -33,14 +36,19 @@ import {
   type LineItemCategory,
   type ModelPreset,
 } from '@/lib/compliance/quote-auditor';
+import { parseRawDealerWorksheet } from '@/lib/compliance/worksheet-parser';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 interface EditableFeeRow extends LineItem {}
 
-export function QuoteAuditorClient() {
+export function QuoteAuditorClient({ children }: { children?: React.ReactNode } = {}) {
+  const searchParams = useSearchParams();
   const [province, setProvince] = useState<ProvinceCode>('AB');
   const [selectedModelId, setSelectedModelId] = useState<string>('rav4-hybrid');
   const [dealerName, setDealerName] = useState<string>('');
+  const [rawWorksheetText, setRawWorksheetText] = useState<string>('');
+  const [worksheetDrawerOpen, setWorksheetDrawerOpen] = useState<boolean>(false);
+  const [parsedNotice, setParsedNotice] = useState<string | null>(null);
 
   const selectedModel = useMemo<ModelPreset>(() => {
     return (
@@ -78,6 +86,54 @@ export function QuoteAuditorClient() {
   ]);
 
   const [copied, setCopied] = useState<boolean>(false);
+
+  // Sync ?model=... deep link parameter on mount
+  useEffect(() => {
+    const modelParam = searchParams?.get('model')?.toLowerCase().trim();
+    if (!modelParam) return;
+    const matched =
+      QUOTE_MODEL_PRESETS.find((p) => p.id === modelParam) ||
+      QUOTE_MODEL_PRESETS.find((p) => p.id.startsWith(modelParam)) ||
+      QUOTE_MODEL_PRESETS.find((p) => modelParam.includes(p.id.split('-')[0]));
+    if (matched) {
+      setSelectedModelId(matched.id);
+      setMsrp(matched.msrp);
+      setFreightPdi(matched.freightPdi);
+    }
+  }, [searchParams]);
+
+  const handleExtractWorksheet = () => {
+    const extracted = parseRawDealerWorksheet(rawWorksheetText);
+    if (extracted.length === 0) {
+      setParsedNotice('No fee line items with dollar amounts were detected. Try pasting lines like "Doc Fee $888" or "Block Heater $802.40".');
+      return;
+    }
+
+    const nonStatutory: EditableFeeRow[] = [];
+    for (const item of extracted) {
+      if (item.category === 'statutory') {
+        const lower = item.name.toLowerCase();
+        if (lower.includes('freight') || lower.includes('pdi')) {
+          setFreightPdi(item.amount);
+        } else if (lower.includes('air') || lower.includes('ac')) {
+          setAcTax(item.amount);
+        } else if (lower.includes('tire')) {
+          setTireLevy(item.amount);
+        } else if (lower.includes('amvic') || lower.includes('omvic') || lower.includes('vsa')) {
+          setRegulatoryLevy(item.amount);
+        } else if (lower.includes('licen')) {
+          setLicensing(item.amount);
+        }
+      } else {
+        nonStatutory.push(item);
+      }
+    }
+
+    if (nonStatutory.length > 0) {
+      setFeeRows(nonStatutory);
+    }
+    setParsedNotice(`Extracted ${extracted.length} line item${extracted.length === 1 ? '' : 's'} and updated the audit below.`);
+  };
 
   // When model changes, update MSRP and Freight
   const handleModelChange = (modelId: string) => {
@@ -289,6 +345,54 @@ export function QuoteAuditorClient() {
       </div>
 
       <main className="container mx-auto max-w-6xl px-4 sm:px-6 py-8 space-y-8">
+        {/* Collapsible Raw Worksheet Paste-and-Audit Drawer */}
+        <section aria-label="Paste Dealer Worksheet Text" className="rounded-2xl border border-amber-500/30 bg-zinc-900/70 shadow-xl backdrop-blur-sm overflow-hidden">
+          <button
+            type="button"
+            onClick={() => setWorksheetDrawerOpen((prev) => !prev)}
+            aria-expanded={worksheetDrawerOpen}
+            className="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-zinc-900/90 transition-colors cursor-pointer"
+          >
+            <div className="flex items-center gap-2.5">
+              <ClipboardPaste className="h-4 w-4 text-amber-400 shrink-0" />
+              <span className="text-sm sm:text-base font-bold text-white">
+                Paste Dealer Worksheet Text
+              </span>
+              <span className="text-[11px] font-medium text-amber-300/90 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full">
+                Auto-Extract Fees
+              </span>
+            </div>
+            <ChevronDown
+              className={`h-4 w-4 text-zinc-400 transition-transform ${worksheetDrawerOpen ? 'rotate-180' : ''}`}
+            />
+          </button>
+
+          {worksheetDrawerOpen && (
+            <div className="border-t border-zinc-800 px-5 py-4 space-y-3">
+              <textarea
+                value={rawWorksheetText}
+                onChange={(e) => setRawWorksheetText(e.target.value)}
+                rows={5}
+                placeholder="Paste copied text from your dealer quote, email, or iPhone Live Text photo of your worksheet..."
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3.5 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              />
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={handleExtractWorksheet}
+                  className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-4 py-2 text-xs sm:text-sm font-bold text-zinc-950 hover:bg-amber-400 transition-colors cursor-pointer"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>Extract &amp; Audit Line Items</span>
+                </button>
+                {parsedNotice && (
+                  <p className="text-xs text-emerald-400 font-medium">{parsedNotice}</p>
+                )}
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Step 1: Configuration Controls */}
         <section aria-labelledby="config-heading" className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 sm:p-6 shadow-xl backdrop-blur-sm space-y-5">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
@@ -831,6 +935,7 @@ export function QuoteAuditorClient() {
             </div>
           </div>
         </section>
+        {children}
       </main>
     </div>
   );

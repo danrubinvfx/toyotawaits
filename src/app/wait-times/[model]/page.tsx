@@ -14,6 +14,8 @@ import { ModelDeliveryShelf } from '@/components/gear/ModelDeliveryShelf';
 import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
 import { EstimatorDisclaimer } from '@/components/wait-times/EstimatorDisclaimer';
+import { ShareRegionalSnapshotButton } from '@/components/wait-times/ShareRegionalSnapshotButton';
+import { getTrimTransparencyMetrics, findTrimMetric } from '@/lib/data/trim-metrics';
 import {
   MODEL_REGISTRY,
   getModelConfig,
@@ -426,6 +428,12 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
 
   const { submissions, latestSubmissionDate } = await fetchModelSubmissions(modelConfig);
   const stats = computeModelStats(modelConfig, submissions);
+  const { isUS } = await getRequestMarketMetadata(`/wait-times/${modelConfig.slug}`);
+  const trimMetrics = await getTrimTransparencyMetrics(modelConfig.slug, isUS ? 'US' : 'CA');
+  const topTrimAllocation =
+    trimMetrics.trims.length > 0 && trimMetrics.trims[0].allocationSharePct !== null
+      ? `${trimMetrics.trims[0].trim} (${trimMetrics.trims[0].allocationSharePct}%)`
+      : null;
   const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   // Core machine-readable FAQs targeting Google Position Zero and user queries
@@ -623,9 +631,19 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                 Quick Summary &bull; Canadian Delivery Overview
               </span>
             </div>
-            <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-              Live Allocation Tracker &bull; Updated {currentMonthYear}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+                Live Allocation Tracker &bull; Updated {currentMonthYear}
+              </span>
+              <ShareRegionalSnapshotButton
+                modelSlug={modelConfig.slug}
+                modelName={modelConfig.shortName}
+                medianMonths={stats.medianMonths}
+                medianDays={stats.medianDays}
+                straightMsrpPct={trimMetrics.overallStraightMsrpPct}
+                topTrimAllocation={topTrimAllocation}
+              />
+            </div>
           </div>
 
           {/* Core Snippet Direct Answer */}
@@ -637,8 +655,8 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             , with typical buyer deliveries falling between {stats.minWaitMonths} and {stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days).
           </p>
 
-          {/* 3 Key Takeaway Columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+          {/* Key Takeaway Columns */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
             {/* 1. Canadian Median Wait */}
             <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
@@ -650,6 +668,33 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 IQR: {stats.minWaitMonths}–{stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days)
               </p>
+            </div>
+
+            {/* 2. Pricing & Fee Reality Badge */}
+            <div
+              data-testid="pricing-fee-reality-card"
+              className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1.5 flex flex-col justify-between"
+            >
+              <div className="space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
+                  Pricing &amp; Fee Reality
+                </span>
+                <div className="text-lg font-black text-zinc-950 dark:text-zinc-50">
+                  {trimMetrics.overallStraightMsrpPct !== null
+                    ? `${trimMetrics.overallStraightMsrpPct}% Sold at Straight MSRP`
+                    : 'Collecting MSRP Reports'}
+                </div>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                  Median Doc: {trimMetrics.overallMedianDocFee !== null ? `$${trimMetrics.overallMedianDocFee}` : '—'} &bull; Add-Ons: {trimMetrics.overallMedianAddons !== null ? `$${trimMetrics.overallMedianAddons}` : '$0'}
+                </p>
+              </div>
+              <Link
+                href={`/tools/quote-auditor?model=${modelConfig.slug}`}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 dark:text-red-400 hover:underline pt-1"
+              >
+                <span>Audit Your Dealer Quote</span>
+                <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
 
             {/* 2. Powertrain Breakdown */}
@@ -1179,33 +1224,44 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {modelConfig.popularTrims.map((item) => (
-            <Card key={item.trim} className="border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
-                  {item.trim}
-                </span>
-                <Badge
-                  variant={
-                    item.status === 'Constrained'
-                      ? 'destructive'
-                      : item.status === 'High Demand'
-                      ? 'outline'
-                      : 'secondary'
-                  }
-                  className="text-[10px]"
-                >
-                  {item.status}
-                </Badge>
-              </div>
-              <div className="text-xs text-zinc-500">
-                Powertrain: <strong>{item.powertrain}</strong>
-              </div>
-              <div className="text-xs font-semibold text-red-600 dark:text-red-400 pt-1">
-                Typical Delivery Spread: {item.spread}
-              </div>
-            </Card>
-          ))}
+          {modelConfig.popularTrims.map((item) => {
+            const trimMetric = findTrimMetric(trimMetrics, item.trim);
+            return (
+              <Card key={item.trim} className="border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-bold text-sm text-zinc-900 dark:text-zinc-100">
+                    {item.trim}
+                  </span>
+                  <Badge
+                    variant={
+                      item.status === 'Constrained'
+                        ? 'destructive'
+                        : item.status === 'High Demand'
+                        ? 'outline'
+                        : 'secondary'
+                    }
+                    className="text-[10px]"
+                  >
+                    {item.status}
+                  </Badge>
+                </div>
+                <div className="text-xs text-zinc-500">
+                  Powertrain: <strong>{item.powertrain}</strong>
+                </div>
+                <div className="text-xs font-semibold text-red-600 dark:text-red-400 pt-1">
+                  Typical Delivery Spread: {item.spread}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 text-[11px]">
+                  <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 font-medium text-zinc-700 dark:text-zinc-300">
+                    Allocation Share: {trimMetric ? trimMetric.allocationShareLabel : 'No live sweep units'}
+                  </span>
+                  <span className="inline-flex items-center rounded-md bg-zinc-100 dark:bg-zinc-900 px-2 py-0.5 font-semibold text-zinc-800 dark:text-zinc-200">
+                    {trimMetric ? trimMetric.badge : '⚪ Needs Reports'} ({trimMetric?.reportCount ?? 0} reports)
+                  </span>
+                </div>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
