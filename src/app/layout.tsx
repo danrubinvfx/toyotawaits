@@ -9,6 +9,7 @@ import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
 import { MobileBottomDock } from '@/components/layout/MobileBottomDock';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 // Geist is a variable font: a single file covers every weight (incl. font-black used site-wide),
 // so no explicit `weight` list is needed. Preloading is disabled to stop the
@@ -37,53 +38,107 @@ export const viewport: Viewport = {
   ],
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
-  description:
-    'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
-  keywords: [
-    'toyota waits',
-    'toyota wait tracker',
-    'toyota wait times canada',
-    'canadian toyota tracker',
-    'toyota allocation canada',
-    'rav4 prime wait time',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca',
-  },
-  openGraph: {
-    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
-    description:
-      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
-    url: 'https://www.toyotawaits.ca',
-    siteName: 'ToyotaWaits',
-    locale: 'en_CA',
-    type: 'website',
-    images: [
-      {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'ToyotaWaits.ca - Canadian Toyota Wait Times & Allocation Tracker',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
-    description:
-      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
-    images: ['/og-image.png'],
-  },
-  verification: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/');
+  const verification = {
     google:
       process.env.GOOGLE_SITE_VERIFICATION ||
       process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION ||
       '3gM-Rt6pfp2XODYUowsn5BNJt0CIfuxUoY-9ugCPK_E',
-  },
-};
+  };
+
+  if (isUS) {
+    const title = 'Toyota Wait Times & Dealer Markup Tracker (2026–2027) | ToyotaWaits';
+    const description =
+      'Track real crowdsourced Toyota allocation transit timelines, wait times, and Additional Dealer Markups (ADM) across the United States.';
+    const canonical = `${baseUrl}/`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'toyota waits',
+        'toyota wait tracker',
+        'toyota wait times usa',
+        'toyota dealer markup tracker',
+        'toyota allocation tracker',
+        'rav4 hybrid wait time',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+        images: [
+          {
+            url: '/og-image.png',
+            width: 1200,
+            height: 630,
+            alt: 'ToyotaWaits - US Toyota Wait Times & Dealer Markup Tracker',
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: ['/og-image.png'],
+      },
+      verification,
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://www.toyotawaits.ca'),
+    title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+    description:
+      'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
+    keywords: [
+      'toyota waits',
+      'toyota wait tracker',
+      'toyota wait times canada',
+      'canadian toyota tracker',
+      'toyota allocation canada',
+      'rav4 prime wait time',
+    ],
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+      description:
+        'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
+      url: 'https://www.toyotawaits.ca/',
+      siteName: 'ToyotaWaits',
+      locale: 'en_CA',
+      type: 'website',
+      images: [
+        {
+          url: '/og-image.png',
+          width: 1200,
+          height: 630,
+          alt: 'ToyotaWaits.ca - Canadian Toyota Wait Times & Allocation Tracker',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker',
+      description:
+        'Crowdsourced Canadian Toyota delivery timelines, waitlists, MSRP compliance, and dealer markups for RAV4, Prius Prime, Sienna, and more (covering US and Canada).',
+      images: ['/og-image.png'],
+    },
+    verification,
+  };
+}
 
 export const jsonLd = {
   '@context': 'https://schema.org',

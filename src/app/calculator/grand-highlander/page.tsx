@@ -7,40 +7,82 @@ import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
 import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits',
-  description:
-    'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.',
-  keywords: [
-    'toyota grand highlander hybrid fuel savings',
-    'grand highlander hybrid vs gas suv canada',
-    'grand highlander hybrid fuel economy calculator',
-    'grand highlander hybrid payback period',
-    'toyota 3-row hybrid suv savings canada',
-  ],
-  alternates: {
-    canonical: 'https://toyotawaits.ca/calculator/grand-highlander',
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/calculator/grand-highlander');
+
+  if (isUS) {
+    const title = 'Grand Highlander Hybrid vs Gas: US Gas vs. Hybrid Payback Calculator (2026) | ToyotaWaits';
+    const description =
+      'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs in USD. Real-world US pump prices, break-even mileage, and wait-time trade-off math.';
+    const canonical = `${baseUrl}/calculator/grand-highlander`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'toyota grand highlander hybrid fuel savings',
+        'grand highlander hybrid vs gas suv usa',
+        'grand highlander hybrid fuel economy calculator',
+        'grand highlander hybrid payback period',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://toyotawaits.ca'),
     title: 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits',
     description:
       'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.',
-    url: 'https://toyotawaits.ca/calculator/grand-highlander',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits',
-    description:
-      'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.',
-  },
-};
+    keywords: [
+      'toyota grand highlander hybrid fuel savings',
+      'grand highlander hybrid vs gas suv canada',
+      'grand highlander hybrid fuel economy calculator',
+      'grand highlander hybrid payback period',
+      'toyota 3-row hybrid suv savings canada',
+    ],
+    alternates: {
+      canonical: 'https://toyotawaits.ca/calculator/grand-highlander',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits',
+      description:
+        'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.',
+      url: 'https://toyotawaits.ca/calculator/grand-highlander',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits',
+      description:
+        'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs. Real-world Canadian pump prices, break-even mileage, and wait-time trade-off math.',
+    },
+  };
+}
 
 export default function GrandHighlanderCalculatorPage() {
   return (

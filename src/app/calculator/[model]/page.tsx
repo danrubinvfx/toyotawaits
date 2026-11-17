@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import { notFound } from 'next/navigation';
 import { BackButton } from '@/components/common/back-button';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
@@ -280,11 +281,54 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { model } = await params;
   const info = resolveModelInfo(model);
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata(`/calculator/${model}`);
 
   const clean = model.toLowerCase().trim();
   const isRav4Hybrid = clean === 'rav4' || clean === 'rav4-hybrid';
   const isSiennaHybrid = clean === 'sienna' || clean === 'sienna-hybrid' || clean === 'sienna-hev';
   const isGrandHighlander = clean === 'grand-highlander' || clean === 'grand-highlander-hybrid';
+
+  if (isUS) {
+    const title = isRav4Hybrid
+      ? 'Is the RAV4 Hybrid Worth the Wait? (2026 US Gas vs. Hybrid Payback Calculator) | ToyotaWaits'
+      : isSiennaHybrid
+        ? 'Toyota Sienna Hybrid US Gas vs. Hybrid Payback Calculator (2026) | ToyotaWaits'
+        : isGrandHighlander
+          ? 'Grand Highlander Hybrid vs Gas: US Gas vs. Hybrid Payback Calculator (2026) | ToyotaWaits'
+          : `${info.year} Toyota ${info.name} US Gas vs. Hybrid Payback Calculator | ToyotaWaits`;
+    const description = isRav4Hybrid
+      ? 'Compare RAV4 Hybrid vs Gas break-even timelines in USD. Calculate real annual fuel savings, PHEV electric driving costs, and the true cost of queue delays.'
+      : isSiennaHybrid
+        ? 'Calculate Sienna Hybrid USD fuel savings vs standard V6 minivans. Real US fuel prices, annual mileage break-even, and state payback timelines.'
+        : isGrandHighlander
+          ? 'Compare Grand Highlander Hybrid fuel savings vs 3-row gas SUVs in USD. Real-world US pump prices, break-even mileage, and wait-time trade-off math.'
+          : `Compare Toyota ${info.name} Hybrid vs gas operating costs in USD. Calculate annual dollar savings, monthly fuel reduction, and payback timeline.`;
+    const canonical = `${baseUrl}/calculator/${model}`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
   const title = isRav4Hybrid
     ? 'Is the RAV4 Hybrid Worth the Wait? (2026 Fuel Savings & Payback Calculator) | ToyotaWaits'
     : isSiennaHybrid
@@ -306,6 +350,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: {
       canonical: `https://toyotawaits.ca/calculator/${model}`,
+      languages: alternatesLanguages,
     },
     openGraph: {
       title,

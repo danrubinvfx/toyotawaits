@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { buildGuideMetadata } from '@/lib/seo/host-metadata';
 import {
   Car,
   ShieldCheck,
@@ -24,30 +25,16 @@ import {
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export function generateMetadata(): Metadata {
-  return {
-    title: '2026 vs. 2027 Toyota Highlander Canada: All-Electric 3-Row BEV Overhaul | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildGuideMetadata({
+    slug: 'toyota-highlander-2026-vs-2027',
+    caTitle: '2026 vs. 2027 Toyota Highlander Canada: All-Electric 3-Row BEV Overhaul | ToyotaWaits',
+    caDescription:
       'Compare the 2026 Gas/Hybrid Highlander vs. the all-new 2027 Toyota Highlander 3-row electric SUV in Canada. Up to 511 km range, 338 hp AWD, native NACS port, and Grand Highlander alternatives.',
-    alternates: {
-      canonical: 'https://www.toyotawaits.ca/guides/toyota-highlander-2026-vs-2027',
-    },
-    openGraph: {
-      title: '2026 vs. 2027 Toyota Highlander Canada: All-Electric 3-Row BEV Overhaul | ToyotaWaits',
-      description:
-        'Compare the 2026 Gas/Hybrid Highlander vs. the all-new 2027 Toyota Highlander 3-row electric SUV in Canada. Up to 511 km range, 338 hp AWD, native NACS port, and Grand Highlander alternatives.',
-      url: 'https://www.toyotawaits.ca/guides/toyota-highlander-2026-vs-2027',
-      siteName: 'ToyotaWaits.ca',
-      locale: 'en_CA',
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Highlander Canada: All-Electric 3-Row BEV Overhaul | ToyotaWaits',
-      description:
-        'Compare the 2026 Gas/Hybrid Highlander vs. the all-new 2027 Toyota Highlander 3-row electric SUV in Canada. Up to 511 km range, 338 hp AWD, native NACS port, and Grand Highlander alternatives.',
-    },
-  };
+    usTitle: '2026 vs. 2027 Toyota Highlander United States (2026–2027 Guide): All-Electric 3-Row BEV Overhaul | ToyotaWaits',
+    usDescription:
+      'Compare the 2026 Gas/Hybrid Highlander vs. the all-new 2027 Toyota Highlander 3-row electric SUV in the United States. Up to 317 mi range, 338 hp AWD, native NACS port, and Grand Highlander alternatives.',
+  });
 }
 
 const faqData = [

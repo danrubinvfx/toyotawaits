@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import Link from 'next/link';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { PostEstimateSubmissionCta } from '@/components/calculator/post-estimate-submission-cta';
@@ -33,121 +33,115 @@ export const revalidate = 1800; // Cache on edge for 30 minutes
 
 export function getHomeMetadata(host?: string): Metadata {
   const cleanHost = (host || '').toLowerCase();
-  const isCaDomain = cleanHost.includes('toyotawaits.ca');
+  const isUsDomain = cleanHost.includes('toyotawaits.com');
+  const languages = {
+    'en-CA': 'https://www.toyotawaits.ca/',
+    'en-US': 'https://www.toyotawaits.com/',
+    'x-default': 'https://www.toyotawaits.ca/',
+  };
 
-  if (isCaDomain) {
+  if (isUsDomain) {
+    const title = 'Toyota Wait Times & Dealer Markup Tracker (2026–2027) | ToyotaWaits';
+    const description =
+      'Track real crowdsourced Toyota allocation transit timelines, wait times, and Additional Dealer Markups (ADM) across the United States.';
+    const canonicalUrl = 'https://www.toyotawaits.com/';
+
     return {
-      metadataBase: new URL('https://www.toyotawaits.ca'),
-      title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
-      description:
-        'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+      metadataBase: new URL('https://www.toyotawaits.com'),
+      title,
+      description,
       keywords: [
-        'toyota wait times canada',
-        'toyota waitlist canada',
+        'toyota wait times',
+        'toyota wait times 2026',
+        'toyota dealer markup tracker',
+        'toyota allocation tracker',
         'toyota delivery estimator',
-        'rav4 wait time canada',
-        'sienna wait time canada',
+        'rav4 hybrid wait time',
+        'sienna wait time',
         'grand highlander wait time',
         'tacoma hybrid wait time',
-        'land cruiser canada wait time',
-        'canadian toyota delivery estimator',
-        'toyota factory allocation canada',
+        'land cruiser wait time',
       ],
       alternates: {
-        canonical: 'https://www.toyotawaits.ca',
+        canonical: canonicalUrl,
+        languages,
       },
       openGraph: {
-        title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
-        description:
-          'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
-        url: 'https://www.toyotawaits.ca',
+        title,
+        description,
+        url: canonicalUrl,
         siteName: 'ToyotaWaits',
-        locale: 'en_CA',
+        locale: 'en_US',
         type: 'website',
         images: [
           {
             url: '/og-image.png',
             width: 1200,
             height: 630,
-            alt: 'Toyota Wait Times Canada (2026) - Crowd-Sourced Delivery Estimator',
+            alt: title,
           },
         ],
       },
       twitter: {
         card: 'summary_large_image',
-        title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
-        description:
-          'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+        title,
+        description,
         images: ['/og-image.png'],
       },
     };
   }
 
-  const canonicalUrl = cleanHost.includes('toyotawaits.ca')
-    ? 'https://www.toyotawaits.ca'
-    : 'https://www.toyotawaits.com';
-
   return {
-    metadataBase: new URL(canonicalUrl),
-    title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+    metadataBase: new URL('https://www.toyotawaits.ca'),
+    title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
     description:
-      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
+      'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
     keywords: [
-      'toyota wait times',
-      'toyota wait times 2026',
-      'toyota markup tracker',
-      'toyota allocation tracker',
+      'toyota wait times canada',
+      'toyota waitlist canada',
       'toyota delivery estimator',
-      'rav4 wait time',
-      'sienna wait time',
+      'rav4 wait time canada',
+      'sienna wait time canada',
       'grand highlander wait time',
       'tacoma hybrid wait time',
-      'land cruiser wait time',
+      'land cruiser canada wait time',
+      'canadian toyota delivery estimator',
+      'toyota factory allocation canada',
     ],
     alternates: {
-      canonical: canonicalUrl,
+      canonical: 'https://www.toyotawaits.ca/',
+      languages,
     },
     openGraph: {
-      title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+      title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
       description:
-        'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
-      url: canonicalUrl,
+        'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
+      url: 'https://www.toyotawaits.ca/',
       siteName: 'ToyotaWaits',
-      locale: 'en_US',
+      locale: 'en_CA',
       type: 'website',
       images: [
         {
           url: '/og-image.png',
           width: 1200,
           height: 630,
-          alt: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+          alt: 'Toyota Wait Times Canada (2026) - Crowd-Sourced Delivery Estimator',
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator',
+      title: 'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator',
       description:
-        'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.',
+        'Track real crowd-sourced Toyota wait times, factory allocation queues, and delivery estimates across Canada for RAV4, Sienna, Grand Highlander, Tacoma, and Land Cruiser.',
       images: ['/og-image.png'],
     },
   };
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  let host = '';
-  try {
-    const headersList = await headers();
-    host = (
-      headersList.get('x-forwarded-host') ||
-      headersList.get('host') ||
-      headersList.get('x-domain') ||
-      ''
-    ).toLowerCase();
-  } catch {
-    // Fallback when headers() is called outside request context (e.g. static build)
-  }
-  return getHomeMetadata(host);
+  const { isUS } = await getRequestMarketMetadata('/');
+  return getHomeMetadata(isUS ? 'www.toyotawaits.com' : 'www.toyotawaits.ca');
 }
 
 export default async function HomePage() {

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { buildGuideMetadata } from '@/lib/seo/host-metadata';
 import {
   Car,
   Clock,
@@ -31,30 +32,16 @@ import {
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export function generateMetadata(): Metadata {
-  return {
-    title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildGuideMetadata({
+    slug: 'toyota-corolla-cross-2026-vs-2027',
+    caTitle: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
+    caDescription:
       'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
-    alternates: {
-      canonical: 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027',
-    },
-    openGraph: {
-      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
-      description:
-        'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
-      url: 'https://www.toyotawaits.ca/guides/toyota-corolla-cross-2026-vs-2027',
-      siteName: 'ToyotaWaits.ca',
-      locale: 'en_CA',
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits',
-      description:
-        'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
-    },
-  };
+    usTitle: '2026 vs. 2027 Toyota Corolla Cross United States (2026–2027 Guide): Pricing, Trims & Wait Times | ToyotaWaits',
+    usDescription:
+      'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in the United States. Breakdown of 2027 trim updates, carryover 196-hp hybrid specs, and MTM Huntsville allocation rollovers.',
+  });
 }
 
 const faqData = [

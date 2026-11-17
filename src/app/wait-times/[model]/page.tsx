@@ -19,6 +19,7 @@ import {
   getModelConfig,
   type ModelRegistryEntry,
 } from '@/lib/data/model-registry';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import { clampWaitDays } from '@/lib/estimator';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -312,10 +313,40 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { model } = await params;
   const modelConfig = getModelConfig(model);
+  const path = modelConfig ? `/wait-times/${modelConfig.slug}` : '';
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata(path);
 
   if (!modelConfig) {
     return {
-      title: 'Vehicle Not Found | ToyotaWaits.ca',
+      title: isUS ? 'Vehicle Not Found | ToyotaWaits' : 'Vehicle Not Found | ToyotaWaits.ca',
+    };
+  }
+
+  if (isUS) {
+    const title = `${modelConfig.name} Wait Times & Dealer Markups (2026–2027 US Tracker) | ToyotaWaits`;
+    const description = `Track real-time 2026–2027 ${modelConfig.name} allocation transit times, state-by-state queues, and dealer markups (ADM) across the United States.`;
+    const canonical = `${baseUrl}/wait-times/${modelConfig.slug}`;
+
+    return {
+      title,
+      description,
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
     };
   }
 
@@ -335,6 +366,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: {
       canonical,
+      languages: alternatesLanguages,
     },
     openGraph: {
       title,

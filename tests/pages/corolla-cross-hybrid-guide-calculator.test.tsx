@@ -5,7 +5,7 @@ import CorollaCrossVsRav4GuidePage, {
   generateMetadata as generateGuideMetadata,
 } from '@/app/guides/toyota-corolla-cross-vs-rav4-hybrid/page';
 import CorollaCrossHybridCalculatorPage, {
-  metadata as calculatorMetadata,
+  generateMetadata as generateCalculatorMetadata,
 } from '@/app/calculator/corolla-cross-hybrid/page';
 import {
   getVehiclePresetById,
@@ -101,7 +101,8 @@ describe('Corolla Cross vs RAV4 Hybrid Guide & Calculator Route', () => {
   });
 
   describe('3. Programmatic Calculator Route', () => {
-    it('exports compliant SEO metadata and canonical url', () => {
+    it('exports compliant SEO metadata and canonical url', async () => {
+      const calculatorMetadata = await generateCalculatorMetadata();
       expect(calculatorMetadata.title).toBe(
         'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits'
       );

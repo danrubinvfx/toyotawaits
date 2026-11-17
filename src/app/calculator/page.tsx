@@ -8,45 +8,90 @@ import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
 import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 export const revalidate = 0;
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
-  description:
-    'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
-  keywords: [
-    'toyota savings calculator',
-    'toyota hybrid fuel savings canada',
-    'toyota hybrid payback calculator',
-    'rav4 hybrid vs gas savings',
-    'phev electricity vs gas cost canada',
-    'canadian ev payback calculator',
-    'prius prime fuel economy calculator',
-    'toyota wait times canada savings',
-  ],
-  alternates: {
-    canonical: 'https://toyotawaits.ca/calculator',
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/calculator');
+
+  if (isUS) {
+    const title = 'Is a Toyota Hybrid Worth the Wait? 2026–2027 US Gas vs. Hybrid Payback Calculator | ToyotaWaits';
+    const description =
+      'Calculate exact USD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids across the United States.';
+    const canonical = `${baseUrl}/calculator`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'toyota savings calculator',
+        'toyota hybrid fuel savings usa',
+        'toyota hybrid payback calculator',
+        'rav4 hybrid vs gas savings',
+        'phev electricity vs gas cost',
+        'us gas vs hybrid payback calculator',
+        'prius prime fuel economy calculator',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://toyotawaits.ca'),
     title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
     description:
       'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
-    url: 'https://toyotawaits.ca/calculator',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
-    description:
-      'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
-  },
-};
+    keywords: [
+      'toyota savings calculator',
+      'toyota hybrid fuel savings canada',
+      'toyota hybrid payback calculator',
+      'rav4 hybrid vs gas savings',
+      'phev electricity vs gas cost canada',
+      'canadian ev payback calculator',
+      'prius prime fuel economy calculator',
+      'toyota wait times canada savings',
+    ],
+    alternates: {
+      canonical: 'https://toyotawaits.ca/calculator',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
+      description:
+        'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
+      url: 'https://toyotawaits.ca/calculator',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
+      description:
+        'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
+    },
+  };
+}
 
 const webApplicationSchema = {
   '@context': 'https://schema.org',

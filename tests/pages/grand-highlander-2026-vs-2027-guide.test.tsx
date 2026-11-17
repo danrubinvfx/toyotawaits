@@ -14,8 +14,8 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     expect(instant).toBe(false);
   });
 
-  it('has valid SEO metadata matching specification requirements', () => {
-    const meta = generateMetadata();
+  it('has valid SEO metadata matching specification requirements', async () => {
+    const meta = await generateMetadata();
     expect(meta.title).toBe(
       '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits'
     );

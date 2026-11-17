@@ -17,8 +17,8 @@ describe('2026 vs. 2027 Toyota Tundra Guide Page & Model Hub', () => {
     expect(instant).toBe(false);
   });
 
-  it('has valid SEO metadata and canonical URL matching specification requirements', () => {
-    const meta = generateMetadata();
+  it('has valid SEO metadata and canonical URL matching specification requirements', async () => {
+    const meta = await generateMetadata();
     expect(meta.title).toBe(
       '2026 vs. 2027 Toyota Tundra Canada: Trailhunter, TSS 4.0 & Wait Times | ToyotaWaits'
     );

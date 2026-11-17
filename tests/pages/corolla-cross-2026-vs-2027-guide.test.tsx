@@ -14,8 +14,8 @@ describe('2026 vs. 2027 Toyota Corolla Cross Guide Page', () => {
     expect(instant).toBe(false);
   });
 
-  it('has valid SEO metadata and canonical URL matching specification requirements', () => {
-    const meta = generateMetadata();
+  it('has valid SEO metadata and canonical URL matching specification requirements', async () => {
+    const meta = await generateMetadata();
     expect(meta.title).toBe(
       '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times | ToyotaWaits'
     );

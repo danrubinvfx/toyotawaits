@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { buildGuideMetadata } from '@/lib/seo/host-metadata';
 import {
   Car,
   ShieldCheck,
@@ -27,30 +28,16 @@ import {
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export function generateMetadata(): Metadata {
-  return {
-    title: '2026 vs. 2027 Toyota Sequoia Canada: Trailhunter, Price Hike & Wait Times | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildGuideMetadata({
+    slug: 'toyota-sequoia-2026-vs-2027',
+    caTitle: '2026 vs. 2027 Toyota Sequoia Canada: Trailhunter, Price Hike & Wait Times | ToyotaWaits',
+    caDescription:
       'Compare the 2026 and 2027 Toyota Sequoia in Canada. Breakdown of the new SR5 Trailhunter ($95,552 MSRP), +$5,560 base price jump, FOX QS3 TRD Pro shocks, TSS 4.0, and Trailer ADAS.',
-    alternates: {
-      canonical: 'https://www.toyotawaits.ca/guides/toyota-sequoia-2026-vs-2027',
-    },
-    openGraph: {
-      title: '2026 vs. 2027 Toyota Sequoia Canada: Trailhunter, Price Hike & Wait Times | ToyotaWaits',
-      description:
-        'Compare the 2026 and 2027 Toyota Sequoia in Canada. Breakdown of the new SR5 Trailhunter ($95,552 MSRP), +$5,560 base price jump, FOX QS3 TRD Pro shocks, TSS 4.0, and Trailer ADAS.',
-      url: 'https://www.toyotawaits.ca/guides/toyota-sequoia-2026-vs-2027',
-      siteName: 'ToyotaWaits.ca',
-      locale: 'en_CA',
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Sequoia Canada: Trailhunter, Price Hike & Wait Times | ToyotaWaits',
-      description:
-        'Compare the 2026 and 2027 Toyota Sequoia in Canada. Breakdown of the new SR5 Trailhunter ($95,552 MSRP), +$5,560 base price jump, FOX QS3 TRD Pro shocks, TSS 4.0, and Trailer ADAS.',
-    },
-  };
+    usTitle: '2026 vs. 2027 Toyota Sequoia United States (2026–2027 Guide): Trailhunter, TSS 4.0 & Wait Times | ToyotaWaits',
+    usDescription:
+      'Compare the 2026 and 2027 Toyota Sequoia in the United States. Breakdown of the new SR5 Trailhunter, FOX QS3 TRD Pro shocks, TSS 4.0, Trailer ADAS, and dealer allocations.',
+  });
 }
 
 const faqData = [

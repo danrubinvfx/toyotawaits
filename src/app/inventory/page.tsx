@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
@@ -21,39 +22,81 @@ export function InventoryLoadingSkeleton() {
   );
 }
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
-  description:
-    'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
-  keywords: [
-    'toyota inventory vancouver',
-    'toyota inventory bc',
-    'toyota lower mainland inventory',
-    'toyota in transit vancouver',
-    'surrey toyota inventory',
-    'pitt meadows toyota inventory',
-    'skip the wait toyota canada',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/inventory',
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/inventory');
+
+  if (isUS) {
+    const title = 'In-Stock & Incoming Toyota Allocations — Live Dealer Inventory Tracker | ToyotaWaits';
+    const description =
+      'Search live incoming and on-lot Toyota hybrid, PHEV, and truck allocations before they sell.';
+    const canonical = `${baseUrl}/inventory`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'toyota inventory tracker',
+        'toyota incoming allocations',
+        'toyota hybrid inventory',
+        'toyota in transit',
+        'toyota dealer allocation tracker',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://www.toyotawaits.ca'),
     title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
     description:
       'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
-    url: 'https://www.toyotawaits.ca/inventory',
-    siteName: 'ToyotaWaits',
-    locale: 'en_CA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
-    description:
-      'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
-  },
-};
+    keywords: [
+      'toyota inventory vancouver',
+      'toyota inventory bc',
+      'toyota lower mainland inventory',
+      'toyota in transit vancouver',
+      'surrey toyota inventory',
+      'pitt meadows toyota inventory',
+      'skip the wait toyota canada',
+    ],
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/inventory',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
+      description:
+        'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
+      url: 'https://www.toyotawaits.ca/inventory',
+      siteName: 'ToyotaWaits',
+      locale: 'en_CA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits',
+      description:
+        'Search live incoming and on-lot Toyota hybrid and PHEV allocations across BC, Ontario, and Alberta dealerships before they sell.',
+    },
+  };
+}
 
 import { VehicleListingCardProps } from '@/components/discovery/VehicleListingCard';
 

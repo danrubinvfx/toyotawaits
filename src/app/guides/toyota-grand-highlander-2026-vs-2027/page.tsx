@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { GrandHighlanderDayOneGearShelf } from '@/components/guides/grand-highlander-day-one-gear';
+import { buildGuideMetadata } from '@/lib/seo/host-metadata';
 import {
   Car,
   Clock,
@@ -28,30 +29,17 @@ import {
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export function generateMetadata(): Metadata {
-  return {
-    title: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildGuideMetadata({
+    slug: 'toyota-grand-highlander-2026-vs-2027',
+    caTitle: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits',
+    caDescription:
       'Compare the 2026 and 2027 Grand Highlander. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and Canadian queue rollovers.',
-    alternates: {
-      canonical: 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027',
-    },
-    openGraph: {
-      title: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits',
-      description:
-        'Compare the 2026 and 2027 Grand Highlander. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and Canadian queue rollovers.',
-      url: 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027',
-      siteName: 'ToyotaWaits.ca',
-      locale: 'en_CA',
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times',
-      description:
-        'Compare the 2026 and 2027 Grand Highlander. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and Canadian queue rollovers.',
-    },
-  };
+    usTitle: '2026 vs. 2027 Toyota Grand Highlander United States (2026–2027 Guide): Woodland Edition & Wait Times | ToyotaWaits',
+    usDescription:
+      'Compare the 2026 and 2027 Grand Highlander in the United States. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and allocation rollovers.',
+    caTwitterTitle: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times',
+  });
 }
 
 const faqData = [

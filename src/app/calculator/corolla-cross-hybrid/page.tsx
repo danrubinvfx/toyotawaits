@@ -7,41 +7,83 @@ import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
 import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits',
-  description:
-    'Calculate break-even mileage and annual gas savings for the Corolla Cross Hybrid vs Gas in Canada. Factoring in BC, Ontario, and Alberta pump prices.',
-  keywords: [
-    'corolla cross hybrid vs gas savings canada',
-    'corolla cross payback calculator',
-    'toyota corolla cross hybrid fuel economy canada',
-    'corolla cross hybrid break even timeline',
-    'toyota corolla cross canada gas prices',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/calculator/corolla-cross-hybrid',
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/calculator/corolla-cross-hybrid');
+
+  if (isUS) {
+    const title = 'Toyota Corolla Cross Hybrid US Gas vs. Hybrid Payback Calculator (2026–2027) | ToyotaWaits';
+    const description =
+      'Calculate break-even mileage and annual USD gas savings for the Corolla Cross Hybrid vs Gas across the United States.';
+    const canonical = `${baseUrl}/calculator/corolla-cross-hybrid`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'corolla cross hybrid vs gas savings usa',
+        'corolla cross payback calculator',
+        'toyota corolla cross hybrid fuel economy',
+        'corolla cross hybrid break even timeline',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://www.toyotawaits.ca'),
     title: 'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits',
     description:
       'Calculate break-even mileage and annual gas savings for the Corolla Cross Hybrid vs Gas in Canada. Factoring in BC, Ontario, and Alberta pump prices.',
-    url: 'https://www.toyotawaits.ca/calculator/corolla-cross-hybrid',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits',
-    description:
-      'Calculate break-even mileage and annual gas savings for the Corolla Cross Hybrid vs Gas in Canada. Factoring in BC, Ontario, and Alberta pump prices.',
-  },
-};
+    keywords: [
+      'corolla cross hybrid vs gas savings canada',
+      'corolla cross payback calculator',
+      'toyota corolla cross hybrid fuel economy canada',
+      'corolla cross hybrid break even timeline',
+      'toyota corolla cross canada gas prices',
+    ],
+    alternates: {
+      canonical: 'https://www.toyotawaits.ca/calculator/corolla-cross-hybrid',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits',
+      description:
+        'Calculate break-even mileage and annual gas savings for the Corolla Cross Hybrid vs Gas in Canada. Factoring in BC, Ontario, and Alberta pump prices.',
+      url: 'https://www.toyotawaits.ca/calculator/corolla-cross-hybrid',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Toyota Corolla Cross Hybrid Fuel Savings & Payback Calculator (2026–2027 Canada) | ToyotaWaits',
+      description:
+        'Calculate break-even mileage and annual gas savings for the Corolla Cross Hybrid vs Gas in Canada. Factoring in BC, Ontario, and Alberta pump prices.',
+    },
+  };
+}
 
 export default function CorollaCrossHybridCalculatorPage() {
   return (

@@ -15,7 +15,7 @@ import { TargetVehicleCard } from '@/components/calculator/TargetVehicleCard';
 import { EnergyResultsCard } from '@/components/calculator/EnergyResultsCard';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
 import { VehicleSavingsCalculator } from '@/components/calculator/VehicleSavingsCalculator';
-import CalculatorPage, { metadata } from '@/app/calculator/page';
+import CalculatorPage, { generateMetadata as generateCalculatorMetadata } from '@/app/calculator/page';
 
 describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
   beforeEach(() => {
@@ -386,6 +386,7 @@ describe('Stage 2: ToyotaWaits.ca Savings Calculator (Energy MVP)', () => {
 
   describe('Page & Verification Gates: CalculatorPage', () => {
     it('renders server component page with metadata and canonical URL', async () => {
+      const metadata = await generateCalculatorMetadata();
       expect(metadata.alternates?.canonical).toBe('https://toyotawaits.ca/calculator');
       expect(metadata.title).toBe(
         'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits'

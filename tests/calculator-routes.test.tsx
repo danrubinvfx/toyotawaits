@@ -1,9 +1,9 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Rav4HybridPage, { metadata as rav4Metadata } from '@/app/calculator/rav4-hybrid/page';
-import SiennaHybridPage, { metadata as siennaMetadata } from '@/app/calculator/sienna-hybrid/page';
-import GrandHighlanderPage, { metadata as ghMetadata } from '@/app/calculator/grand-highlander/page';
+import Rav4HybridPage, { generateMetadata as generateRav4Metadata } from '@/app/calculator/rav4-hybrid/page';
+import SiennaHybridPage, { generateMetadata as generateSiennaMetadata } from '@/app/calculator/sienna-hybrid/page';
+import GrandHighlanderPage, { generateMetadata as generateGhMetadata } from '@/app/calculator/grand-highlander/page';
 import ModelPage from '@/app/[model]/page';
 import CalculatorLayout from '@/app/calculator/layout';
 import { Header } from '@/components/layout/header';
@@ -39,7 +39,8 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
   });
 
   describe('1. Programmatic Model Routes', () => {
-    it('verifies RAV4 Hybrid page metadata, canonical, and static table', () => {
+    it('verifies RAV4 Hybrid page metadata, canonical, and static table', async () => {
+      const rav4Metadata = await generateRav4Metadata();
       expect(rav4Metadata.title).toBe(
         'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits'
       );
@@ -65,7 +66,8 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
       ).toBeGreaterThanOrEqual(1);
     });
 
-    it('verifies Sienna Hybrid page metadata, canonical, and static table', () => {
+    it('verifies Sienna Hybrid page metadata, canonical, and static table', async () => {
+      const siennaMetadata = await generateSiennaMetadata();
       expect(siennaMetadata.title).toBe(
         'Is the 2026–2027 Toyota Sienna Hybrid Worth the Wait? Canada Savings Calculator | ToyotaWaits'
       );
@@ -91,7 +93,8 @@ describe('Stage 5: Search Rollout & Site Integration', () => {
       ).toBeGreaterThanOrEqual(1);
     });
 
-    it('verifies Grand Highlander Hybrid page metadata, canonical, and static table', () => {
+    it('verifies Grand Highlander Hybrid page metadata, canonical, and static table', async () => {
+      const ghMetadata = await generateGhMetadata();
       expect(ghMetadata.title).toBe(
         'Grand Highlander Hybrid vs Gas Payback Calculator (2026 Canada) | ToyotaWaits'
       );

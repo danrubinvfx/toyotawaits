@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import sitemap from '@/app/sitemap';
 import robots from '@/app/robots';
-import { metadata as layoutMetadata, jsonLd } from '@/app/layout';
+import { generateMetadata as generateLayoutMetadata, jsonLd } from '@/app/layout';
 import { getHomeMetadata, generateMetadata } from '@/app/page';
-import { metadata as inventoryMetadata } from '@/app/inventory/page';
+import { generateMetadata as generateInventoryMetadata } from '@/app/inventory/page';
 
 describe('Technical SEO & Discovery Configuration', () => {
   it('generates a valid sitemap with required URLs, priorities, and change frequencies', async () => {
@@ -137,7 +137,8 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(rules?.disallow).toContain('/out/');
   });
 
-  it('exports root metadata matching required SEO title, description, and keywords', () => {
+  it('exports root metadata matching required SEO title, description, and keywords', async () => {
+    const layoutMetadata = await generateLayoutMetadata();
     expect(layoutMetadata.title).toBe(
       'ToyotaWaits | Canadian Toyota Wait Times & Allocation Tracker'
     );
@@ -171,40 +172,39 @@ describe('Technical SEO & Discovery Configuration', () => {
     expect(homeMetadata.description).toContain(
       'Track real crowd-sourced Toyota wait times'
     );
-    expect(homeMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca');
+    expect(homeMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/');
   });
 
-  it('exports host-aware OpenGraph tags for toyotawaits.com and dual market', async () => {
+  it('exports host-aware OpenGraph tags for toyotawaits.com and CA default fallback', async () => {
     const usMetadata = getHomeMetadata('toyotawaits.com');
     expect(usMetadata.title).toBe(
-      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+      'Toyota Wait Times & Dealer Markup Tracker (2026–2027) | ToyotaWaits'
     );
     expect(usMetadata.openGraph?.title).toBe(
-      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+      'Toyota Wait Times & Dealer Markup Tracker (2026–2027) | ToyotaWaits'
     );
     expect(usMetadata.openGraph?.description).toBe(
-      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.'
+      'Track real crowdsourced Toyota allocation transit timelines, wait times, and Additional Dealer Markups (ADM) across the United States.'
     );
-    expect(usMetadata.alternates?.canonical).toBe('https://www.toyotawaits.com');
+    expect(usMetadata.alternates?.canonical).toBe('https://www.toyotawaits.com/');
+    expect(usMetadata.title).not.toContain('Canada');
 
-    // Universal fallback when host is absent or generic
-    const universalMetadata = getHomeMetadata();
-    expect(universalMetadata.openGraph?.title).toBe(
-      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+    // CA default fallback when host is absent or generic
+    const caFallbackMetadata = getHomeMetadata();
+    expect(caFallbackMetadata.openGraph?.title).toBe(
+      'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator'
     );
-    expect(universalMetadata.openGraph?.description).toBe(
-      'Crowdsourced Toyota allocation transit timelines, wait times, and dealer markup data across the US and Canada.'
-    );
-    expect(universalMetadata.alternates?.canonical).toBe('https://www.toyotawaits.com');
-    expect(universalMetadata.title).not.toContain('Canada');
+    expect(caFallbackMetadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/');
 
     const generated = await generateMetadata();
     expect(generated.openGraph?.title).toBe(
-      'Toyota Wait Times & Markup Tracker (2026) | Delivery & Allocation Estimator'
+      'Toyota Wait Times Canada (2026) | Crowd-Sourced Delivery Estimator'
     );
+    expect(generated.alternates?.canonical).toBe('https://www.toyotawaits.ca/');
   });
 
-  it('exports inventory page metadata matching Lower Mainland discovery specs', () => {
+  it('exports inventory page metadata matching Lower Mainland discovery specs', async () => {
+    const inventoryMetadata = await generateInventoryMetadata();
     expect(inventoryMetadata.title).toBe(
       'In-Stock & Incoming Toyota Allocations Canada — Live Dealer Inventory Tracker | ToyotaWaits'
     );

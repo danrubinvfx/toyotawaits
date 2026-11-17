@@ -7,40 +7,83 @@ import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
 import { CalculatorGearCards } from '@/components/gear/CalculatorGearCards';
 import { Calculator, ShieldCheck, Fuel, Zap, HelpCircle } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 export const revalidate = 3600; // Cache on edge for 1 hour
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://toyotawaits.ca'),
-  title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
-  description:
-    'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
-  keywords: [
-    'toyota rav4 hybrid fuel savings',
-    'rav4 hybrid vs gas savings canada',
-    'rav4 hybrid payback period',
-    'rav4 hybrid fuel calculator',
-    'toyota rav4 canada fuel economy',
-  ],
-  alternates: {
-    canonical: 'https://toyotawaits.ca/calculator/rav4-hybrid',
-  },
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/calculator/rav4-hybrid');
+
+  if (isUS) {
+    const title = 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? US Gas vs. Hybrid Payback Calculator | ToyotaWaits';
+    const description =
+      'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in USD using real EPA ratings, local US gas prices, and dealer delivery wait times.';
+    const canonical = `${baseUrl}/calculator/rav4-hybrid`;
+
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      keywords: [
+        'toyota rav4 hybrid fuel savings',
+        'rav4 hybrid vs gas savings usa',
+        'rav4 hybrid payback period',
+        'rav4 hybrid fuel calculator',
+        'toyota rav4 us fuel economy',
+      ],
+      alternates: {
+        canonical,
+        languages: alternatesLanguages,
+      },
+      openGraph: {
+        title,
+        description,
+        url: canonical,
+        siteName: 'ToyotaWaits',
+        locale: 'en_US',
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+      },
+    };
+  }
+
+  return {
+    metadataBase: new URL('https://toyotawaits.ca'),
     title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
     description:
       'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
-    url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
-    description:
-      'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
-  },
-};
+    keywords: [
+      'toyota rav4 hybrid fuel savings',
+      'rav4 hybrid vs gas savings canada',
+      'rav4 hybrid payback period',
+      'rav4 hybrid fuel calculator',
+      'toyota rav4 canada fuel economy',
+    ],
+    alternates: {
+      canonical: 'https://toyotawaits.ca/calculator/rav4-hybrid',
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
+      description:
+        'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
+      url: 'https://toyotawaits.ca/calculator/rav4-hybrid',
+      siteName: 'ToyotaWaits.ca',
+      locale: 'en_CA',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'Is the 2026–2027 Toyota RAV4 Hybrid Worth the Wait? Canada Payback Calculator | ToyotaWaits',
+      description:
+        'Compare 2026–2027 RAV4 Hybrid vs. gas fuel costs in Canada using real NRCan ratings, local gas prices, and dealer delivery wait times.',
+    },
+  };
+}
 
 export default function Rav4HybridCalculatorPage() {
   return (
