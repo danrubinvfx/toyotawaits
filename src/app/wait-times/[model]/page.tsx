@@ -7,6 +7,7 @@ import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { DeliveryPrepChecklist } from '@/components/dashboard/delivery-prep-checklist';
 import { PartnerDealBanner } from '@/components/gear/PartnerDealBanner';
 import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSection';
+import { ModelOtdPricingSection } from '@/components/seo/ModelOtdPricingSection';
 import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
 import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
 import { CrossShopBridge } from '@/components/wait-times/CrossShopBridge';
@@ -19,6 +20,7 @@ import { getTrimTransparencyMetrics, findTrimMetric } from '@/lib/data/trim-metr
 import {
   MODEL_REGISTRY,
   getModelConfig,
+  getModelStartingPricing,
   type ModelRegistryEntry,
 } from '@/lib/data/model-registry';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
@@ -429,6 +431,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
   const { submissions, latestSubmissionDate } = await fetchModelSubmissions(modelConfig);
   const stats = computeModelStats(modelConfig, submissions);
   const { isUS } = await getRequestMarketMetadata(`/wait-times/${modelConfig.slug}`);
+  const startingPricing = getModelStartingPricing(modelConfig.slug);
   const trimMetrics = await getTrimTransparencyMetrics(modelConfig.slug, isUS ? 'US' : 'CA');
   const topTrimAllocation =
     trimMetrics.trims.length > 0 && trimMetrics.trims[0].allocationSharePct !== null
@@ -776,6 +779,17 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </Link>
         </div>
       </section>
+
+      {/* 2026–2027 Out-the-Door Price & Provincial/State Fee Breakdown */}
+      <ModelOtdPricingSection
+        modelSlug={modelConfig.slug}
+        modelName={modelConfig.name}
+        baseMsrpCad={startingPricing.startingMsrpCad}
+        baseMsrpUsd={startingPricing.startingMsrpUsd}
+        freightPdiCad={startingPricing.freightPdiCad}
+        destinationUsd={startingPricing.destinationUsd}
+        isUS={isUS}
+      />
 
       {/* Editorial Comparison Guide Bridge for Lexus TX / RX */}
       {(modelConfig.slug === 'lexus-tx' || modelConfig.slug === 'lexus-rx') && (

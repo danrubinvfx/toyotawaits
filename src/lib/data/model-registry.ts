@@ -1,3 +1,5 @@
+import { CANADIAN_VEHICLE_CATALOG } from '@/lib/data/vehicles';
+
 export interface ModelRegistryEntry {
   slug: string;
   name: string; // e.g. "Toyota RAV4"
@@ -7,6 +9,8 @@ export interface ModelRegistryEntry {
   baseMedian: number;
   baseP25: number;
   baseP75: number;
+  startingMsrpCad?: number;
+  startingMsrpUsd?: number;
   make?: string;
   defaultWaitDays?: number;
   p25Days?: number;
@@ -739,4 +743,65 @@ export function getModelConfig(slug: string): ModelRegistryEntry | undefined {
 
 export function getAllModelConfigs(): ModelRegistryEntry[] {
   return Object.values(MODEL_REGISTRY);
+}
+
+export interface ModelPricingMetadata {
+  startingMsrpCad: number;
+  startingMsrpUsd: number;
+  freightPdiCad: number;
+  destinationUsd: number;
+}
+
+const MODEL_PRICING_MAP: Record<string, ModelPricingMetadata> = {
+  'rav4': { startingMsrpCad: 35650, startingMsrpUsd: 30250, freightPdiCad: 1930, destinationUsd: 1395 },
+  'sienna': { startingMsrpCad: 49370, startingMsrpUsd: 39185, freightPdiCad: 2030, destinationUsd: 1450 },
+  'grand-highlander': { startingMsrpCad: 51635, startingMsrpUsd: 40860, freightPdiCad: 2030, destinationUsd: 1450 },
+  'highlander': { startingMsrpCad: 47650, startingMsrpUsd: 39520, freightPdiCad: 2030, destinationUsd: 1450 },
+  'prius': { startingMsrpCad: 37150, startingMsrpUsd: 28350, freightPdiCad: 1930, destinationUsd: 1395 },
+  'tacoma': { startingMsrpCad: 46950, startingMsrpUsd: 31590, freightPdiCad: 2030, destinationUsd: 1495 },
+  'tundra': { startingMsrpCad: 53290, startingMsrpUsd: 40090, freightPdiCad: 2095, destinationUsd: 1850 },
+  'corolla': { startingMsrpCad: 23490, startingMsrpUsd: 22325, freightPdiCad: 1930, destinationUsd: 1395 },
+  'corolla-cross': { startingMsrpCad: 27250, startingMsrpUsd: 24035, freightPdiCad: 1930, destinationUsd: 1395 },
+  'camry': { startingMsrpCad: 34300, startingMsrpUsd: 28700, freightPdiCad: 1930, destinationUsd: 1395 },
+  'land-cruiser': { startingMsrpCad: 71055, startingMsrpUsd: 56700, freightPdiCad: 2095, destinationUsd: 1450 },
+  '4runner': { startingMsrpCad: 54900, startingMsrpUsd: 40770, freightPdiCad: 2030, destinationUsd: 1450 },
+  'sequoia': { startingMsrpCad: 84940, startingMsrpUsd: 62425, freightPdiCad: 2095, destinationUsd: 1850 },
+  'crown-signia': { startingMsrpCad: 57450, startingMsrpUsd: 43590, freightPdiCad: 1930, destinationUsd: 1395 },
+  'lexus-gx550': { startingMsrpCad: 83500, startingMsrpUsd: 65285, freightPdiCad: 2095, destinationUsd: 1450 },
+  'lexus-tx': { startingMsrpCad: 68750, startingMsrpUsd: 56490, freightPdiCad: 2095, destinationUsd: 1450 },
+  'lexus-nx': { startingMsrpCad: 48900, startingMsrpUsd: 42140, freightPdiCad: 2030, destinationUsd: 1395 },
+  'lexus-rx': { startingMsrpCad: 59450, startingMsrpUsd: 50475, freightPdiCad: 2030, destinationUsd: 1395 },
+};
+
+/**
+ * Returns starting CAD/USD MSRP and Freight/Destination fees for a model slug.
+ * Prefers live CANADIAN_VEHICLE_CATALOG base trim MSRP when available.
+ */
+export function getModelStartingPricing(slug: string): ModelPricingMetadata {
+  const normalized = normalizeModelSlug(slug);
+  const entry = MODEL_REGISTRY[normalized];
+  const fallback = MODEL_PRICING_MAP[normalized] ?? {
+    startingMsrpCad: 38000,
+    startingMsrpUsd: 32000,
+    freightPdiCad: 1930,
+    destinationUsd: 1395,
+  };
+
+  const catalogModel = CANADIAN_VEHICLE_CATALOG.find(
+    (m) => m.slug.toLowerCase() === normalized.toLowerCase()
+  );
+  const catalogMinCad = catalogModel
+    ? Math.min(
+        ...catalogModel.powertrains.flatMap((pt) => pt.trims.map((t) => t.msrpCad))
+      )
+    : undefined;
+
+  return {
+    startingMsrpCad:
+      entry?.startingMsrpCad ??
+      (catalogMinCad && Number.isFinite(catalogMinCad) ? catalogMinCad : fallback.startingMsrpCad),
+    startingMsrpUsd: entry?.startingMsrpUsd ?? fallback.startingMsrpUsd,
+    freightPdiCad: fallback.freightPdiCad,
+    destinationUsd: fallback.destinationUsd,
+  };
 }
