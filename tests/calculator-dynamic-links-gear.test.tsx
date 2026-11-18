@@ -43,6 +43,8 @@ describe('Calculator Dynamic Links & Recommended Products', () => {
       if (href.startsWith('/out/')) {
         expect(href).toBe('/out/muslogy-rav4');
         expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer');
+      } else if (href === 'https://www.amazon.ca/shop/toyotawaits') {
+        expect(link.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
       } else {
         expect(href).toContain('amazon.ca');
         expect(href).toContain('tag=toyotawaits-20');

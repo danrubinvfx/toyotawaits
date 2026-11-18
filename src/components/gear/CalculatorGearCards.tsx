@@ -28,6 +28,7 @@ import {
   type MobileDeepLinkTargets,
 } from '@/lib/gear/affiliate';
 import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
+import { StorefrontLink } from '@/components/gear/StorefrontLink';
 import { resolveGearLocalImage } from '@/data/gear/catalog';
 import { sortGearByPromotions } from '@/lib/gear/promotions';
 import { trackUserEvent } from '@/lib/analytics';
@@ -983,9 +984,17 @@ export function CalculatorGearCards({
         })}
       </div>
 
-      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 text-center pt-1">
-        As an Amazon Associate, ToyotaWaits earns from qualifying purchases.
-      </p>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-1 text-[11px] text-zinc-500 dark:text-zinc-400">
+        <p className="text-center sm:text-left">
+          As an Amazon Associate, ToyotaWaits earns from qualifying purchases.
+        </p>
+        <StorefrontLink
+          label="Browse Full Storefront ?"
+          market={currentMarket}
+          modelContext={modelKey}
+          className="font-semibold text-amber-600 dark:text-amber-400 hover:underline shrink-0"
+        />
+      </div>
     </section>
   );
 }

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModCard } from '@/components/delivery-prep/mod-card';
+import { StorefrontLink } from '@/components/gear/StorefrontLink';
 import { useMarket } from '@/context/MarketContext';
 import { sortGearByPromotions } from '@/lib/gear/promotions';
 
@@ -753,16 +754,25 @@ export function DeliveryPrepChecklist({
           </span>
         </div>
 
-        {totalCompleted > 0 && (
-          <button
-            type="button"
-            onClick={resetChecklist}
-            className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
-          >
-            <RotateCcw className="h-3 w-3" />
-            Reset Checks
-          </button>
-        )}
+        <div className="flex items-center gap-4 shrink-0">
+          <StorefrontLink
+            label="Browse Full Storefront ?"
+            market={isUs ? 'US' : 'CA'}
+            modelContext={normalizedModel !== 'all' ? normalizedModel : null}
+            className="text-[11px] font-semibold text-amber-400 hover:text-amber-300 hover:underline transition-colors"
+          />
+
+          {totalCompleted > 0 && (
+            <button
+              type="button"
+              onClick={resetChecklist}
+              className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-amber-400 transition-colors cursor-pointer print:hidden"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Reset Checks
+            </button>
+          )}
+        </div>
       </CardFooter>
     </Card>
   );

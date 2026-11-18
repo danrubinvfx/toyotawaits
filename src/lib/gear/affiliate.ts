@@ -10,6 +10,24 @@ export const PRIUS_SPECIAL_TAG = 'toyotawaits-20';
 export const DEFAULT_CA_AFFILIATE_TAG = CA_ASSOCIATE_TAG;
 export const DEFAULT_US_AFFILIATE_TAG = US_ASSOCIATE_TAG;
 
+export const AMAZON_CA_STOREFRONT_URL = 'https://www.amazon.ca/shop/toyotawaits';
+export const AMAZON_US_STOREFRONT_FALLBACK_URL =
+  'https://www.amazon.com/s?k=Toyota+hybrid+accessories&tag=toyotawaits07-20';
+
+/**
+ * Returns the market-appropriate Amazon Storefront URL.
+ * CA routes to our live Amazon.ca Storefront; US falls back to tagged hybrid accessories search.
+ */
+export function getAmazonStorefrontUrl(market: 'CA' | 'US' = 'CA'): string {
+  const stripTag = shouldStripAffiliateTags();
+  if (market === 'US') {
+    return stripTag
+      ? 'https://www.amazon.com/s?k=Toyota+hybrid+accessories'
+      : AMAZON_US_STOREFRONT_FALLBACK_URL;
+  }
+  return AMAZON_CA_STOREFRONT_URL;
+}
+
 /**
  * Checks for the admin affiliate opt-out flag in browser sessions.
  * When enabled, affiliate tracking query parameters are stripped during internal testing.

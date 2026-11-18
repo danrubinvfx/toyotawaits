@@ -6,6 +6,7 @@ import { Shield, Lock, Heart, Globe, Scale, Mail, HelpCircle } from 'lucide-reac
 import { KofiCalloutCard } from '@/components/common/kofi-button';
 import { ModelDirectory } from '@/components/ModelDirectory';
 import { cn } from '@/lib/utils';
+import { StorefrontLink } from '@/components/gear/StorefrontLink';
 import { useMarket } from '@/context/MarketContext';
 import type { CountryCode } from '@/lib/types/contracts';
 
@@ -311,8 +312,26 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
               </li>
               <li className="pt-2">
                 <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider block mb-1">
+                  Gear &amp; Community Resources
+                </span>
+              </li>
+              <li>
+                <StorefrontLink
+                  label="Curated Amazon Storefront ↗"
+                  market={currentRegion}
+                  className="text-xs font-semibold text-amber-500 hover:underline transition-colors"
+                />
+              </li>
+              <li className="pt-2">
+                <span className="text-[11px] font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider block mb-1">
                   Transparency &amp; About
                 </span>
+              </li>
+              <li>
+                <Link href={`${baseUrl}/about`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors">
+                  <HelpCircle className="h-3.5 w-3.5 text-zinc-400" />
+                  About ToyotaWaits
+                </Link>
               </li>
               <li>
                 <Link href={`${baseUrl}/faq`} className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors">
