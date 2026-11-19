@@ -27,16 +27,16 @@ import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
+  title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
   description:
-    'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
+    'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
   alternates: {
     canonical: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
   },
   openGraph: {
-    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
+    title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
     description:
-      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
+      'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
     url: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
     siteName: 'ToyotaWaits.ca',
     locale: 'en_CA',
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada? (100k vs 200k km) | ToyotaWaits',
+    title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
     description:
-      'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold) for Canadian buyers. Compare factory hybrid warranty overlap, dealer markups, and the 31-day purchase rule.',
+      'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
   },
 };
 
@@ -233,12 +233,16 @@ const dayOneGear = [
 
 const faqs = [
   {
-    q: "Is Toyota's extended warranty (ECP) worth it in Canada?",
-    a: 'For buyers keeping a mature naturally aspirated hybrid (like the RAV4 Hybrid, Camry Hybrid, or Corolla Hybrid) for under 4 years, ECP is generally not worth the retail $2,800–$3,200 CAD price because Toyota already includes a 5-year/100,000 km powertrain warranty, 8-year/160,000 km hybrid component warranty, and 10-year/240,000 km hybrid battery warranty. However, if you plan to keep the vehicle for 7–10 years (160,000–200,000 km) or are buying a complex turbo/i-FORCE MAX powertrain, ECP Platinum can be worth it if negotiated down to wholesale ($1,900–$2,100 CAD), especially once you deduct the ~$600–$800 CAD value of the included 3-year complimentary maintenance plan.',
+    q: "What does Toyota's standard factory warranty and hybrid/battery warranty cover?",
+    a: 'Every new Toyota in Canada includes a 3-year/60,000 km comprehensive bumper-to-bumper warranty ($0 deductible), a 5-year/100,000 km powertrain warranty (engine and transaxle), an 8-year/160,000 km hybrid component warranty (inverter, ECU, and hybrid control modules), and a 10-year/240,000 km high-voltage hybrid battery warranty.',
   },
   {
-    q: 'Do I have to buy Toyota ECP on delivery day?',
-    a: 'No. Despite finance office claims that you must sign on delivery day to qualify for the 3-year complimentary maintenance program, Toyota Canada gives you a full 31-day grace period from the original vehicle registration date to purchase ECP and still receive 100% of the complimentary maintenance and tire road hazard benefits. Furthermore, you can purchase ECP anytime before 36 months or 60,000 km from any authorized Toyota dealership in Canada.',
+    q: 'Is Toyota ECP extended warranty worth it, and how much should you pay vs. dealer retail?',
+    a: "For buyers keeping a mature naturally aspirated hybrid (like the RAV4 Hybrid, Camry Hybrid, or Corolla Hybrid) for under 4 years, ECP is generally not worth the $2,800–$3,200 CAD dealer retail price because Toyota's factory hybrid (8-year/160,000 km) and battery (10-year/240,000 km) coverage already overlaps. However, if you plan to keep the vehicle for 7–10 years (160,000–200,000 km) or are buying a complex turbo/i-FORCE MAX powertrain, ECP Platinum can be worth it if negotiated down to the wholesale benchmark ($1,900–$2,100 CAD), especially once you deduct the ~$600–$800 CAD value of the included 3-year complimentary maintenance plan.",
+  },
+  {
+    q: 'How does the 31-day post-delivery window work for buying a Toyota ECP plan?',
+    a: 'Despite finance office claims that you must sign on delivery day to qualify for the 3-year complimentary maintenance program, Toyota Canada gives you a full 31-day post-delivery grace period from the original vehicle registration date to purchase ECP and still receive 100% of the complimentary maintenance (3 years/48,000 km) and tire road hazard benefits. Furthermore, you can purchase ECP anytime before 36 months or 60,000 km from any authorized Toyota dealership in Canada.',
   },
   {
     q: 'What is the difference between Toyota ECP Gold and Platinum?',

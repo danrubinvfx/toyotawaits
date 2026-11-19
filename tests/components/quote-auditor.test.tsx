@@ -1,10 +1,19 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { QuoteAuditorClient } from '@/components/compliance/QuoteAuditorClient';
-import QuoteAuditorPage, { metadata } from '@/app/tools/quote-auditor/page';
+import QuoteAuditorPage, { metadata, dynamic, instant } from '@/app/tools/quote-auditor/page';
+
+vi.mock('@/lib/data/dealer-scorecard', () => ({
+  getDealerScorecards: vi.fn().mockResolvedValue([]),
+}));
 
 describe('Canadian Dealer Quote Auditor Component & Page', () => {
+  it('exports force-dynamic and instant=false route segment configuration', () => {
+    expect(dynamic).toBe('force-dynamic');
+    expect(instant).toBe(false);
+  });
+
   it('exports valid metadata for SEO and canonical URL', () => {
     expect(metadata.title).toBe(
       'Toyota Dealer Quote Auditor Canada | Check AMVIC, OMVIC & VSA Fees'
@@ -102,5 +111,15 @@ describe('Canadian Dealer Quote Auditor Component & Page', () => {
     fireEvent.click(removeBtn);
 
     expect(screen.queryByDisplayValue('Nitrogen Tire Fill & Cap Guard')).not.toBeInTheDocument();
+  });
+
+  it('renders ECP Extended Warranty guide cross-link on QuoteAuditorPage', async () => {
+    const pageElement = await QuoteAuditorPage();
+    render(pageElement);
+
+    const ecpLink = screen.getByRole('link', {
+      name: /Compare Toyota Warranty & ECP Pricing →/i,
+    });
+    expect(ecpLink).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
   });
 });
