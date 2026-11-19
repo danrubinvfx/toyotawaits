@@ -432,6 +432,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
   const stats = computeModelStats(modelConfig, submissions);
   const { isUS } = await getRequestMarketMetadata(`/wait-times/${modelConfig.slug}`);
   const startingPricing = getModelStartingPricing(modelConfig.slug);
+  const resolvedUsdMsrp =
+    startingPricing.startingMsrpUsd ?? Math.round(startingPricing.startingMsrpCad * 0.74);
+  const resolvedUsdDest = startingPricing.destinationUsd ?? 1395;
   const trimMetrics = await getTrimTransparencyMetrics(modelConfig.slug, isUS ? 'US' : 'CA');
   const topTrimAllocation =
     trimMetrics.trims.length > 0 && trimMetrics.trims[0].allocationSharePct !== null
@@ -440,7 +443,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
   const currentMonthYear = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
   // Core machine-readable FAQs targeting Google Position Zero and user queries
-  const coreFaqs = [
+  const caCoreFaqs = [
     {
       question: `What is the average wait time for a Toyota ${modelConfig.shortName} in Canada?`,
       answer: `The Canadian national median wait time for a ${modelConfig.name} is approximately ${stats.medianMonths} months (${stats.medianDays} days), with typical delivery times ranging from ${stats.minWaitMonths} to ${stats.maxWaitMonths} months (${stats.p25Days} to ${stats.p75Days} days) depending on powertrain and trim level.`,
@@ -455,16 +458,35 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     },
   ];
 
-  const allFaqs = [
-    ...coreFaqs,
-    ...modelConfig.faqs.filter((faq) => {
-      const qLower = faq.question.toLowerCase();
-      return (
-        !qLower.includes('average wait time for') &&
-        !qLower.includes('shortest wait time for')
-      );
-    }),
+  const usCoreFaqs = [
+    {
+      question: `How long is the allocation and transit wait time for a ${modelConfig.name} in the United States?`,
+      answer: `As of ${currentMonthYear}, once a ${modelConfig.name} allocation is assigned by Toyota Motor North America (TMNA) or regional distributors (SET/GST), transit from ${stats.factoryPlant} typically takes 30–90 days. High-demand hybrid and specialty trims can carry dealer reservation queues of 3 to 9+ months.`,
+    },
+    {
+      question: `What is the US MSRP and Additional Dealer Markup (ADM) range for the ${modelConfig.name}?`,
+      answer: `The ${modelConfig.name} starts at ~$${resolvedUsdMsrp.toLocaleString('en-US')} USD MSRP (plus ~$${resolvedUsdDest.toLocaleString('en-US')} USD destination). Real-world US dealer pricing ranges from $0 MSRP at fair-price dealers to +$3,000+ ADM or mandatory accessory add-ons in tight coastal markets.`,
+    },
+    {
+      question: `Are ${modelConfig.name} waitlist deposits refundable in the United States?`,
+      answer: `US vehicle deposit refund rules vary by state motor vehicle franchise law and dealer contract. In states such as California, dealer deposits on unsigned purchase agreements are generally refundable prior to VIN assignment. Always obtain a signed deposit receipt stating full refundability upon request.`,
+    },
   ];
+
+  const coreFaqs = isUS ? usCoreFaqs : caCoreFaqs;
+
+  const allFaqs = isUS
+    ? usCoreFaqs
+    : [
+        ...coreFaqs,
+        ...modelConfig.faqs.filter((faq) => {
+          const qLower = faq.question.toLowerCase();
+          return (
+            !qLower.includes('average wait time for') &&
+            !qLower.includes('shortest wait time for')
+          );
+        }),
+      ];
 
   const faqData: ModelFAQData = {
     modelName: modelConfig.name,
@@ -474,7 +496,8 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     slowestProvince: stats.slowestProvince,
     powertrainBreakdown: stats.powertrainGrid,
     totalReports: stats.sampleSize,
-    additionalFaqs: modelConfig.faqs,
+    additionalFaqs: isUS ? [] : modelConfig.faqs,
+    market: isUS ? 'US' : 'CA',
   };
 
   const jsonLd = {
@@ -482,15 +505,19 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     '@graph': [
       {
         '@type': 'Dataset',
-        name: `${modelConfig.name} Wait Times in Canada (${currentMonthYear} Tracker)`,
-        description: `Track real-time ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`,
+        name: isUS
+          ? `${modelConfig.name} Wait Times & Dealer Markups in the US (${currentMonthYear} Tracker)`
+          : `${modelConfig.name} Wait Times in Canada (${currentMonthYear} Tracker)`,
+        description: isUS
+          ? `Track real-time ${modelConfig.name} allocation transit timelines (30–90 days), USD MSRP (~$${resolvedUsdMsrp.toLocaleString('en-US')} USD), and Additional Dealer Markup (ADM) ranges ($0 MSRP to +$3,000+) across the United States.`
+          : `Track real-time ${modelConfig.name} delivery wait times across Canada. Compare crowdsourced lead times by trim and province.`,
         license: 'https://creativecommons.org/licenses/by-nc/4.0/',
-        spatialCoverage: 'Canada',
+        spatialCoverage: isUS ? 'United States' : 'Canada',
         dateModified: latestSubmissionDate,
         creator: {
           '@type': 'Organization',
           name: 'ToyotaWaits',
-          url: 'https://www.toyotawaits.ca',
+          url: isUS ? 'https://www.toyotawaits.com' : 'https://www.toyotawaits.ca',
         },
       },
       {
@@ -533,9 +560,13 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       <section className="space-y-4">
         <div className="flex items-center gap-2 flex-wrap">
           <Badge className="bg-red-600 text-white font-semibold">
-            {['corolla', 'grand-highlander', 'rav4'].includes(modelConfig.slug)
-              ? '🇨🇦 2026–2027 Canadian Delivery Tracker'
-              : '🇨🇦 2026 Canadian Delivery Tracker'}
+            {isUS
+              ? ['corolla', 'grand-highlander', 'rav4'].includes(modelConfig.slug)
+                ? '🇺🇸 2026–2027 US Allocation & Markup Tracker'
+                : '🇺🇸 2026 US Allocation & Markup Tracker'
+              : ['corolla', 'grand-highlander', 'rav4'].includes(modelConfig.slug)
+                ? '🇨🇦 2026–2027 Canadian Delivery Tracker'
+                : '🇨🇦 2026 Canadian Delivery Tracker'}
           </Badge>
           <Badge variant="outline" className="text-xs">
             Updated {latestSubmissionDate}
@@ -543,10 +574,12 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </div>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-          {modelConfig.h1 || `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear})`}
+          {isUS
+            ? `${modelConfig.name} Wait Times & Dealer Markups US (Updated ${currentMonthYear})`
+            : modelConfig.h1 || `${modelConfig.name} Wait Times Canada (Updated ${currentMonthYear})`}
         </h1>
 
-        {/* RAV4 Canadian MSRP & Lead Time Summary Card (Featured Snippet Answer Box) */}
+        {/* RAV4 MSRP & Lead Time Summary Card (Featured Snippet Answer Box) */}
         {modelConfig.slug === 'rav4' && (
           <div
             data-testid="rav4-summary-card"
@@ -558,17 +591,21 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   ✓
                 </span>
                 <h2 className="text-base sm:text-lg font-bold text-zinc-950 dark:text-zinc-50 tracking-tight">
-                  2026 Toyota RAV4 Canada: Estimated Wait Times &amp; Base Pricing
+                  {isUS
+                    ? '2026 Toyota RAV4 US: Allocation Transit & Base Pricing'
+                    : '2026 Toyota RAV4 Canada: Estimated Wait Times & Base Pricing'}
                 </h2>
               </div>
               <Badge variant="outline" className="text-xs font-semibold text-red-600 dark:text-red-400 border-red-200 dark:border-red-900">
-                Canadian Pricing &amp; Lead Times
+                {isUS ? 'US Pricing (USD) & ADM' : 'Canadian Pricing & Lead Times'}
               </Badge>
             </div>
 
             {/* Explicit Featured Snippet Answer */}
             <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
-              In Canada, the average wait time for a 2026 Toyota RAV4 Hybrid is currently {stats.medianMonths} months, with fastest deliveries reported in Alberta and longer queues in BC and Ontario.
+              {isUS
+                ? `In the United States, once allocated by TMNA or regional distributors, 2026 Toyota RAV4 transit from ${stats.factoryPlant} takes 30–90 days, with Additional Dealer Markup (ADM) ranging from $0 MSRP to +$3,000+ depending on trim.`
+                : `In Canada, the average wait time for a 2026 Toyota RAV4 Hybrid is currently ${stats.medianMonths} months, with fastest deliveries reported in Alberta and longer queues in BC and Ontario.`}
             </p>
 
             {/* Three-column visual grid */}
@@ -579,9 +616,11 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   Gas (LE/XLE/Trail)
                 </span>
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  <span>MSRP ~$35,950 CAD</span>
+                  <span>{isUS ? 'MSRP ~$30,000 USD' : 'MSRP ~$35,950 CAD'}</span>
                   <span className="text-zinc-400 mx-1.5 font-normal">|</span>
-                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~2–4 months</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">
+                    {isUS ? 'Transit: 30–90 days' : 'Average Wait: ~2–4 months'}
+                  </span>
                 </div>
               </div>
 
@@ -591,9 +630,11 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   Hybrid (LE/XLE/Woodland/Limited)
                 </span>
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  <span>MSRP ~$38,950 CAD</span>
+                  <span>{isUS ? 'MSRP ~$32,850 USD' : 'MSRP ~$38,950 CAD'}</span>
                   <span className="text-zinc-400 mx-1.5 font-normal">|</span>
-                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~6–10 months</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">
+                    {isUS ? 'ADM: $0 MSRP to +$2,000' : 'Average Wait: ~6–10 months'}
+                  </span>
                 </div>
               </div>
 
@@ -603,9 +644,11 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   Plug-in Hybrid (SE/XSE)
                 </span>
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                  <span>MSRP ~$53,150 CAD</span>
+                  <span>{isUS ? 'MSRP ~$44,815 USD' : 'MSRP ~$53,150 CAD'}</span>
                   <span className="text-zinc-400 mx-1.5 font-normal">|</span>
-                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">Average Wait: ~12–18 months</span>
+                  <span className="text-zinc-600 dark:text-zinc-300 font-medium">
+                    {isUS ? 'ADM: $0 MSRP to +$3,000+' : 'Average Wait: ~12–18 months'}
+                  </span>
                 </div>
                 <div className="pt-1.5">
                   <Link
@@ -631,7 +674,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                 ✓
               </span>
               <span className="text-xs font-bold uppercase tracking-wider text-red-600 dark:text-red-400">
-                Quick Summary &bull; Canadian Delivery Overview
+                {isUS
+                  ? 'Quick Summary • US Allocation & ADM Overview'
+                  : 'Quick Summary • Canadian Delivery Overview'}
               </span>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -650,26 +695,48 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
 
           {/* Core Snippet Direct Answer */}
-          <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
-            The Canadian national median wait time for a <strong>{modelConfig.name}</strong> is{' '}
-            <strong className="text-red-600 dark:text-red-400">
-              {stats.medianMonths} months ({stats.medianDays} days)
-            </strong>
-            , with typical buyer deliveries falling between {stats.minWaitMonths} and {stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days).
-          </p>
+          {isUS ? (
+            <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
+              In the United States, the <strong>{modelConfig.name}</strong> starts at{' '}
+              <strong className="text-red-600 dark:text-red-400">
+                ${resolvedUsdMsrp.toLocaleString('en-US')} USD MSRP
+              </strong>{' '}
+              (+${resolvedUsdDest.toLocaleString('en-US')} destination). Once allocated by TMNA or regional distributors, transit from {stats.factoryPlant} takes{' '}
+              <strong>30–90 days</strong>, with Additional Dealer Markup (ADM) ranging from{' '}
+              <strong>$0 MSRP to +$3,000+</strong>.
+            </p>
+          ) : (
+            <p className="text-base sm:text-lg font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
+              The Canadian national median wait time for a <strong>{modelConfig.name}</strong> is{' '}
+              <strong className="text-red-600 dark:text-red-400">
+                {stats.medianMonths} months ({stats.medianDays} days)
+              </strong>
+              , with typical buyer deliveries falling between {stats.minWaitMonths} and {stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days).
+            </p>
+          )}
 
           {/* Key Takeaway Columns */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
-            {/* 1. Canadian Median Wait */}
+            {/* 1. Median Wait / US Allocation Transit */}
             <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
-                Canadian Median Wait
+                {isUS ? 'US Allocation Transit' : 'Canadian Median Wait'}
               </span>
               <div className="text-xl font-black text-zinc-950 dark:text-zinc-50">
-                {stats.medianMonths} mos <span className="text-sm font-normal text-zinc-500">({stats.medianDays} days)</span>
+                {isUS ? (
+                  <>
+                    30–90 Days <span className="text-sm font-normal text-zinc-500">(Allocated)</span>
+                  </>
+                ) : (
+                  <>
+                    {stats.medianMonths} mos <span className="text-sm font-normal text-zinc-500">({stats.medianDays} days)</span>
+                  </>
+                )}
               </div>
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                IQR: {stats.minWaitMonths}–{stats.maxWaitMonths} months ({stats.p25Days}–{stats.p75Days} days)
+                {isUS
+                  ? `Factory: ${stats.factoryPlant}`
+                  : `IQR: ${stats.minWaitMonths}–${stats.maxWaitMonths} months (${stats.p25Days}–${stats.p75Days} days)`}
               </p>
             </div>
 
@@ -715,51 +782,101 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               </ul>
             </div>
 
-            {/* 3. Regional Lead Times */}
+            {/* 3. Regional Lead Times / US ADM & Deposit Rules */}
             <div className="p-3.5 rounded-xl bg-white dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 space-y-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-500">
-                Regional Lead Times
+                {isUS ? 'US ADM & Deposit Rules' : 'Regional Lead Times'}
               </span>
-              <div className="text-xs space-y-1 text-zinc-700 dark:text-zinc-300">
-                <div className="flex justify-between items-center">
-                  <span className="text-emerald-700 dark:text-emerald-400 font-semibold truncate">Fastest: {stats.fastestProvince.name} ({stats.fastestProvince.code})</span>
-                  <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.fastestProvince.days}d</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-amber-700 dark:text-amber-400 font-semibold truncate">Slowest: {stats.slowestProvince.name} ({stats.slowestProvince.code})</span>
-                  <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.slowestProvince.days}d</span>
-                </div>
-              </div>
-              <p className="text-[11px] text-zinc-400 leading-tight pt-0.5">
-                Rebate demand compounds wait times in BC &amp; QC.
-              </p>
+              {isUS ? (
+                <>
+                  <div className="text-xs space-y-1 text-zinc-700 dark:text-zinc-300">
+                    <div className="flex justify-between items-center">
+                      <span className="text-emerald-700 dark:text-emerald-400 font-semibold truncate">Fair-Price Dealers:</span>
+                      <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">$0 MSRP</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-amber-700 dark:text-amber-400 font-semibold truncate">High-Demand ADM:</span>
+                      <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">+$1,000–$3,000+</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-tight pt-0.5">
+                    US state deposit refund rules vary (e.g. CA refundable pre-VIN).
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="text-xs space-y-1 text-zinc-700 dark:text-zinc-300">
+                    <div className="flex justify-between items-center">
+                      <span className="text-emerald-700 dark:text-emerald-400 font-semibold truncate">Fastest: {stats.fastestProvince.name} ({stats.fastestProvince.code})</span>
+                      <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.fastestProvince.days}d</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-amber-700 dark:text-amber-400 font-semibold truncate">Slowest: {stats.slowestProvince.name} ({stats.slowestProvince.code})</span>
+                      <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0">~{stats.slowestProvince.days}d</span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-zinc-400 leading-tight pt-0.5">
+                    Rebate demand compounds wait times in BC &amp; QC.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
 
         <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-3">
           <h2 className="text-base sm:text-lg font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
-            Current {modelConfig.name} Wait Time in Canada
+            {isUS
+              ? `Current ${modelConfig.name} Allocation & Markup Outlook in the US`
+              : `Current ${modelConfig.name} Wait Time in Canada`}
           </h2>
           <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            As of {currentMonthYear}, the estimated median delivery wait time for a new {modelConfig.name} in Canada is {stats.medianMonths} months across all trims.
+            {isUS
+              ? `As of ${currentMonthYear}, the ${modelConfig.name} starts at $${resolvedUsdMsrp.toLocaleString('en-US')} USD MSRP (+$${resolvedUsdDest.toLocaleString('en-US')} destination), with allocated factory-to-dealer transit taking 30–90 days and ADM ranging from $0 MSRP to +$3,000+.`
+              : `As of ${currentMonthYear}, the estimated median delivery wait time for a new ${modelConfig.name} in Canada is ${stats.medianMonths} months across all trims.`}
           </p>
           <ul className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs sm:text-sm text-zinc-800 dark:text-zinc-200">
             <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
-              <strong>Median Wait:</strong> {stats.medianMonths} months
+              {isUS ? (
+                <>
+                  <strong>Transit Window:</strong> 30–90 days (allocated)
+                </>
+              ) : (
+                <>
+                  <strong>Median Wait:</strong> {stats.medianMonths} months
+                </>
+              )}
             </li>
             <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
-              <strong>Backlog Status:</strong> {stats.backlogStatus}
+              {isUS ? (
+                <>
+                  <strong>ADM Range:</strong> $0 MSRP to +$3,000+
+                </>
+              ) : (
+                <>
+                  <strong>Backlog Status:</strong> {stats.backlogStatus}
+                </>
+              )}
             </li>
             <li className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2">
               <strong>Factory Plant:</strong> {stats.factoryPlant}
             </li>
           </ul>
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            As of <strong>2026</strong>, Canadian buyers ordering a <strong>{modelConfig.name}</strong> report an overall national median wait time of <strong>{stats.medianDays} days</strong> (~{stats.medianMonths} months), with an interquartile delivery range (IQR) between <strong>{stats.p25Days} days</strong> ({stats.minWaitMonths} months) and <strong>{stats.p75Days} days</strong> ({stats.maxWaitMonths} months). New deposits placed today have a projected target delivery of <strong>{stats.projectedDeliveryText}</strong>.
+            {isUS ? (
+              <>
+                In the United States, Toyota Motor North America (TMNA) and independent distributors (Southeast Toyota / Gulf States Toyota) assign <strong>{modelConfig.name}</strong> build slots bi-weekly. Deposit refundability depends on <strong>US state franchise laws</strong> (e.g. California requires refundability on unsigned orders prior to VIN assignment)—always secure a written refund clause before placing a hold.
+              </>
+            ) : (
+              <>
+                As of <strong>2026</strong>, Canadian buyers ordering a <strong>{modelConfig.name}</strong> report an overall national median wait time of <strong>{stats.medianDays} days</strong> (~{stats.medianMonths} months), with an interquartile delivery range (IQR) between <strong>{stats.p25Days} days</strong> ({stats.minWaitMonths} months) and <strong>{stats.p75Days} days</strong> ({stats.maxWaitMonths} months). New deposits placed today have a projected target delivery of <strong>{stats.projectedDeliveryText}</strong>.
+              </>
+            )}
           </p>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Timelines vary considerably by powertrain variant (Gas vs. Hybrid vs. Plug-in Hybrid) and provincial allocation policies.
+            {isUS
+              ? 'Timelines and ADM vary by powertrain variant, regional distributor, and dealership allocation velocity.'
+              : 'Timelines vary considerably by powertrain variant (Gas vs. Hybrid vs. Plug-in Hybrid) and provincial allocation policies.'}
           </p>
         </div>
 
@@ -1052,7 +1169,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       {/* Fast Summary Grid: Powertrain | National Median | BC Lead Time | Ontario Lead Time */}
       <section className="space-y-3">
         <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-          Fast Lead Time Summary Grid
+          {isUS ? 'Fast Allocation & ADM Summary Grid' : 'Fast Lead Time Summary Grid'}
         </h2>
         <Card className="border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
@@ -1060,9 +1177,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
               <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 font-semibold uppercase tracking-wider text-[11px]">
                 <tr>
                   <th className="py-3 px-4">Powertrain</th>
-                  <th className="py-3 px-4">National Median</th>
-                  <th className="py-3 px-4">BC Lead Time</th>
-                  <th className="py-3 px-4">Ontario Lead Time</th>
+                  <th className="py-3 px-4">{isUS ? 'US Allocation Transit' : 'National Median'}</th>
+                  <th className="py-3 px-4">{isUS ? 'Fair-Price Dealers' : 'BC Lead Time'}</th>
+                  <th className="py-3 px-4">{isUS ? 'High-Demand ADM' : 'Ontario Lead Time'}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-950">
@@ -1072,13 +1189,13 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                       {row.powertrain}
                     </td>
                     <td className="py-3 px-4 font-mono font-semibold text-red-600 dark:text-red-400">
-                      {row.nationalMedian}
+                      {isUS ? '30–90 days (allocated)' : row.nationalMedian}
                     </td>
                     <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
-                      {row.bcLeadTime}
+                      {isUS ? '$0 MSRP' : row.bcLeadTime}
                     </td>
                     <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
-                      {row.onLeadTime}
+                      {isUS ? '+$1,000–$3,000+ ADM' : row.onLeadTime}
                     </td>
                   </tr>
                 ))}
@@ -1553,40 +1670,95 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </section>
       )}
 
-      {/* Section 2: Provincial Allocation Breakdown */}
+      {/* Section 2: Provincial / US Regional Allocation Breakdown */}
       <section className="space-y-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
-            Provincial Allocation Breakdown (BC, AB, ON, QC)
+            {isUS
+              ? 'US Regional Allocation & Markup Breakdown (TMNA, SET, GST, West Coast)'
+              : 'Provincial Allocation Breakdown (BC, AB, ON, QC)'}
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500">
-            Comparison of lead times and allocation dynamics across the four primary Canadian automotive markets.
+            {isUS
+              ? 'Comparison of 30–90 day allocation transit timelines, Additional Dealer Markup (ADM) ranges ($0 MSRP to +$3,000+), and state deposit rules.'
+              : 'Comparison of lead times and allocation dynamics across the four primary Canadian automotive markets.'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {stats.provincialSpreads.map((prov) => (
-            <Card key={prov.code} className="border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-black text-lg text-zinc-900 dark:text-zinc-50">
-                  {prov.code}
-                </span>
-                <span className="text-[10px] font-semibold text-zinc-500">
-                  {prov.multiplier.toFixed(2)}x factor
-                </span>
-              </div>
-              <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
-                {prov.name}
-              </div>
-              <div className="text-2xl font-black text-red-600 dark:text-red-500 pt-1">
-                ~{prov.days} Days
-              </div>
-              <p className="text-[11px] text-zinc-500 leading-snug">
-                {prov.policyNote}
-              </p>
-            </Card>
-          ))}
-        </div>
+        {isUS ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                code: 'TMNA',
+                name: 'Midwest & Northeast',
+                metric: '30–60 Days',
+                note: 'Direct TMNA bi-weekly allocation; higher share of $0 MSRP fair-price dealers.',
+              },
+              {
+                code: 'CA / W',
+                name: 'California & West Coast',
+                metric: '30–90 Days',
+                note: 'Strong hybrid demand (+$1,500–$3,000+ ADM); state law protects deposit refundability pre-VIN.',
+              },
+              {
+                code: 'SET',
+                name: 'Southeast Toyota',
+                metric: '45–90 Days',
+                note: 'Independent distributor; watch for port-installed Toyoguard & distributor add-on packages.',
+              },
+              {
+                code: 'GST',
+                name: 'Gulf States Toyota',
+                metric: '45–90 Days',
+                note: 'Independent TX/OK/LA/AR/MS distributor; compare OTD quotes to avoid mandatory add-ons.',
+              },
+            ].map((region) => (
+              <Card key={region.code} className="border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-black text-lg text-zinc-900 dark:text-zinc-50">
+                    {region.code}
+                  </span>
+                  <span className="text-[10px] font-semibold text-zinc-500">
+                    Transit Window
+                  </span>
+                </div>
+                <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  {region.name}
+                </div>
+                <div className="text-2xl font-black text-red-600 dark:text-red-500 pt-1">
+                  {region.metric}
+                </div>
+                <p className="text-[11px] text-zinc-500 leading-snug">
+                  {region.note}
+                </p>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {stats.provincialSpreads.map((prov) => (
+              <Card key={prov.code} className="border-zinc-200 dark:border-zinc-800 p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-black text-lg text-zinc-900 dark:text-zinc-50">
+                    {prov.code}
+                  </span>
+                  <span className="text-[10px] font-semibold text-zinc-500">
+                    {prov.multiplier.toFixed(2)}x factor
+                  </span>
+                </div>
+                <div className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                  {prov.name}
+                </div>
+                <div className="text-2xl font-black text-red-600 dark:text-red-500 pt-1">
+                  ~{prov.days} Days
+                </div>
+                <p className="text-[11px] text-zinc-500 leading-snug">
+                  {prov.policyNote}
+                </p>
+              </Card>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Section 3: Model-Specific Allocation Tips */}
@@ -1596,7 +1768,9 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
             Model-Specific Allocation Tips &amp; Order Guidance
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500">
-            Field-tested recommendations from Canadian buyers to navigate allocation constraints and avoid unnecessary delivery holds.
+            {isUS
+              ? 'Field-tested recommendations from US buyers to navigate TMNA/distributor allocations, avoid ADM markups, and verify state deposit refund rules.'
+              : 'Field-tested recommendations from Canadian buyers to navigate allocation constraints and avoid unnecessary delivery holds.'}
           </p>
         </div>
 
@@ -1646,7 +1820,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       <EstimatorDisclaimer className="my-6" />
 
       {/* Section 5: FAQ Accordion Section with Schema.org JSON-LD */}
-      <ModelFAQSection faqData={faqData} />
+      <ModelFAQSection faqData={faqData} market={isUS ? 'US' : 'CA'} />
     </div>
   );
 }

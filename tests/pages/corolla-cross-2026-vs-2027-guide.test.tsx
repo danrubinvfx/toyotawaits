@@ -9,7 +9,7 @@ import CorollaCross2026Vs2027GuidePage, {
 import { MarketProvider } from '@/context/MarketContext';
 
 describe('2026 vs. 2027 Toyota Corolla Cross Guide Page', () => {
-  it('has valid Next.js 16 route segment exports', () => {
+  it('has valid Next.js 16 route segment exports', async () => {
     expect(dynamic).toBe('force-dynamic');
     expect(instant).toBe(false);
   });
@@ -27,10 +27,10 @@ describe('2026 vs. 2027 Toyota Corolla Cross Guide Page', () => {
     );
   });
 
-  it('renders JSON-LD FAQPage schema with the 3 mandatory Canadian questions', () => {
+  it('renders JSON-LD FAQPage schema with the 3 mandatory Canadian questions', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
-        <CorollaCross2026Vs2027GuidePage />
+        {await CorollaCross2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -65,10 +65,10 @@ describe('2026 vs. 2027 Toyota Corolla Cross Guide Page', () => {
     );
   });
 
-  it('renders the Year-Over-Year Comparison Table, Decision Matrix, Live Inventory CTA, and Day-1 Gear Shelf', () => {
+  it('renders the Year-Over-Year Comparison Table, Decision Matrix, Live Inventory CTA, and Day-1 Gear Shelf', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <CorollaCross2026Vs2027GuidePage />
+        {await CorollaCross2026Vs2027GuidePage()}
       </MarketProvider>
     );
 

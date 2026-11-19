@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
-import { buildGuideMetadata } from '@/lib/seo/host-metadata';
+import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import {
+  buildGuideMetadata,
+  buildGuideFaqSchema,
+  buildGuideArticleSchema,
+  getRequestMarketMetadata,
+  US_GUIDE_CONFIGS,
+} from '@/lib/seo/host-metadata';
 import {
   Car,
   ShieldCheck,
@@ -146,17 +153,33 @@ const DAY_ONE_GEAR_ITEMS = [
   },
 ];
 
-export default function Tundra2026Vs2027GuidePage() {
+export default async function Tundra2026Vs2027GuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-tundra-2026-vs-2027');
+  const usConfig = US_GUIDE_CONFIGS['toyota-tundra-2026-vs-2027'];
+  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
+  const activeArticleSchema = isUS
+    ? buildGuideArticleSchema({
+        slug: 'toyota-tundra-2026-vs-2027',
+        isUS: true,
+        caHeadline: articleSchema.headline,
+        caDescription: articleSchema.description,
+        usHeadline: articleSchema.headline.replace(/Canada/g, 'United States'),
+        usDescription: usConfig.verdictSummary,
+        datePublished: articleSchema.datePublished,
+        dateModified: articleSchema.dateModified,
+      })
+    : articleSchema;
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* FAQPage & Article Structured Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeFaqPageSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeArticleSchema) }}
       />
 
       {/* Header & Breadcrumbs */}
@@ -187,6 +210,8 @@ export default function Tundra2026Vs2027GuidePage() {
           Announced on November 5, 2026, the 2027 Toyota Tundra brings a major equipment upgrade across all 31 Canadian 4x4 models—headlined by a new SR5 Trailhunter overlanding package, standard 14-inch display, Toyota Safety Sense 4.0, and a standard 122L fuel tank. Compare 2026 vs. 2027 specs, Canadian pricing deltas, and San Antonio factory rollover rules.
         </p>
       </div>
+
+      {isUS && <UsGuideMarketBrief {...usConfig} />}
 
       {/* Transparency Disclosure */}
       <div
@@ -540,7 +565,7 @@ export default function Tundra2026Vs2027GuidePage() {
           {DAY_ONE_GEAR_ITEMS.map((item) => {
             const href = buildAmazonAffiliateUrl({
               query: item.query,
-              market: 'CA',
+              market: isUS ? 'US' : 'CA',
             });
             const IconComponent = item.icon;
 
@@ -610,7 +635,7 @@ export default function Tundra2026Vs2027GuidePage() {
         </div>
 
         <div className="space-y-4">
-          {faqData.map((faq, index) => (
+          {activeFaqs.map((faq, index) => (
             <Card
               key={index}
               className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2 shadow-xs"

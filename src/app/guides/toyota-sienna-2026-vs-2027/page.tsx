@@ -7,7 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { SiennaDayOneGearShelf } from '@/components/guides/sienna-day-one-gear';
-import { buildGuideMetadata } from '@/lib/seo/host-metadata';
+import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import {
+  buildGuideMetadata,
+  buildGuideFaqSchema,
+  getRequestMarketMetadata,
+  US_GUIDE_CONFIGS,
+} from '@/lib/seo/host-metadata';
 import {
   Car,
   Clock,
@@ -75,13 +81,18 @@ const faqPageSchema = {
   })),
 };
 
-export default function Sienna2026Vs2027GuidePage() {
+export default async function Sienna2026Vs2027GuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-sienna-2026-vs-2027');
+  const usConfig = US_GUIDE_CONFIGS['toyota-sienna-2026-vs-2027'];
+  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
+
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* FAQPage Structured Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeFaqPageSchema) }}
       />
 
       {/* Header & Breadcrumbs */}
@@ -109,10 +120,13 @@ export default function Sienna2026Vs2027GuidePage() {
         </h1>
 
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
-          Should Canadian buyers accept an allocated 2026 Sienna build slot or wait for a 2027 VIN?
-          Here is the complete engineering breakdown, trim level equipment matrix, Indiana factory queue rollover timing, and delivery day gear guide.
+          {isUS
+            ? 'Should US buyers accept an allocated 2026 Sienna build slot or wait for a 2027 VIN? Here is the complete breakdown, USD MSRP & ADM range, Indiana factory queue rollover timing, and delivery day gear guide.'
+            : 'Should Canadian buyers accept an allocated 2026 Sienna build slot or wait for a 2027 VIN? Here is the complete engineering breakdown, trim level equipment matrix, Indiana factory queue rollover timing, and delivery day gear guide.'}
         </p>
       </div>
+
+      {isUS && <UsGuideMarketBrief {...usConfig} />}
 
       {/* Transparency Disclosure */}
       <div
@@ -429,7 +443,7 @@ export default function Sienna2026Vs2027GuidePage() {
       </section>
 
       {/* 6. Direct-Fit Delivery Day Gear Shelf */}
-      <SiennaDayOneGearShelf />
+      <SiennaDayOneGearShelf initialMarket={isUS ? 'US' : 'CA'} />
 
       {/* 7. Frequently Asked Questions (FAQ Visual Accordion / Cards) */}
       <section className="space-y-4" aria-label="Frequently Asked Questions">
@@ -438,12 +452,14 @@ export default function Sienna2026Vs2027GuidePage() {
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Common questions about the 2026 vs. 2027 Toyota Sienna transition in Canada.
+            {isUS
+              ? 'Common questions about the 2026 vs. 2027 Toyota Sienna transition, USD MSRP, ADM, and US state deposit rules.'
+              : 'Common questions about the 2026 vs. 2027 Toyota Sienna transition in Canada.'}
           </p>
         </div>
 
         <div className="space-y-4">
-          {faqData.map((faq, index) => (
+          {activeFaqs.map((faq, index) => (
             <Card
               key={index}
               className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2 shadow-xs"

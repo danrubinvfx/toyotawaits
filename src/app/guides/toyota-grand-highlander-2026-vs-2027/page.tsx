@@ -7,7 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { GrandHighlanderDayOneGearShelf } from '@/components/guides/grand-highlander-day-one-gear';
-import { buildGuideMetadata } from '@/lib/seo/host-metadata';
+import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import {
+  buildGuideMetadata,
+  buildGuideFaqSchema,
+  getRequestMarketMetadata,
+  US_GUIDE_CONFIGS,
+} from '@/lib/seo/host-metadata';
 import {
   Car,
   Clock,
@@ -73,13 +79,18 @@ const faqPageSchema = {
   })),
 };
 
-export default function GrandHighlander2026Vs2027GuidePage() {
+export default async function GrandHighlander2026Vs2027GuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-grand-highlander-2026-vs-2027');
+  const usConfig = US_GUIDE_CONFIGS['toyota-grand-highlander-2026-vs-2027'];
+  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
+
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* FAQPage Structured Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeFaqPageSchema) }}
       />
 
       {/* Header & Breadcrumbs */}
@@ -107,9 +118,13 @@ export default function GrandHighlander2026Vs2027GuidePage() {
         </h1>
 
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
-          Toyota has officially announced the 2027 Grand Highlander, headlining a rugged new Hybrid Woodland Edition, +12 mm lifted ground clearance, and trim refreshes. Should Canadian buyers take an incoming 2026 build slot or hold out for a 2027 VIN? Here is the full engineering, rollover, and trim comparison.
+          {isUS
+            ? 'Toyota has officially announced the 2027 Grand Highlander, headlining a rugged new Hybrid Woodland Edition, +12 mm lifted ground clearance, and trim refreshes. Should US buyers take an incoming 2026 build slot or hold out for a 2027 VIN? Here is the full USD MSRP, ADM, allocation transit, and trim comparison.'
+            : 'Toyota has officially announced the 2027 Grand Highlander, headlining a rugged new Hybrid Woodland Edition, +12 mm lifted ground clearance, and trim refreshes. Should Canadian buyers take an incoming 2026 build slot or hold out for a 2027 VIN? Here is the full engineering, rollover, and trim comparison.'}
         </p>
       </div>
+
+      {isUS && <UsGuideMarketBrief {...usConfig} />}
 
       {/* Transparency Disclosure */}
       <div
@@ -419,7 +434,7 @@ export default function GrandHighlander2026Vs2027GuidePage() {
       </section>
 
       {/* 6. Vetted Day-1 Accessory Shelf */}
-      <GrandHighlanderDayOneGearShelf />
+      <GrandHighlanderDayOneGearShelf initialMarket={isUS ? 'US' : 'CA'} />
 
       {/* 7. Frequently Asked Questions (FAQ Visual Cards) */}
       <section className="space-y-4" aria-label="Frequently Asked Questions">
@@ -428,12 +443,14 @@ export default function GrandHighlander2026Vs2027GuidePage() {
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Common questions regarding the 2026 vs. 2027 Toyota Grand Highlander Canadian ordering cycle.
+            {isUS
+              ? 'Common questions regarding the 2026 vs. 2027 Toyota Grand Highlander US allocation, USD MSRP, ADM, and state deposit rules.'
+              : 'Common questions regarding the 2026 vs. 2027 Toyota Grand Highlander Canadian ordering cycle.'}
           </p>
         </div>
 
         <div className="space-y-4">
-          {faqData.map((faq, index) => (
+          {activeFaqs.map((faq, index) => (
             <Card
               key={index}
               className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2 shadow-xs"

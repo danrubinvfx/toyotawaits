@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render } from '@testing-library/react';
 
 const mockHeaders = vi.fn();
 
@@ -7,6 +8,11 @@ vi.mock('next/headers', () => ({
 }));
 
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
+import sitemap from '@/app/sitemap';
+import robots from '@/app/robots';
+import Rav42026Vs2027GuidePage from '@/app/guides/toyota-rav4-2026-vs-2027/page';
+import Camry2026Vs2027GuidePage from '@/app/guides/toyota-camry-2026-vs-2027/page';
+import WaitTimesModelPage from '@/app/wait-times/[model]/page';
 import { generateMetadata as generateLayoutMetadata } from '@/app/layout';
 import { generateMetadata as generateHomeMetadata } from '@/app/page';
 import { generateMetadata as generateWaitTimesMetadata } from '@/app/wait-times/[model]/page';
@@ -219,6 +225,85 @@ describe('Host-Aware Server Metadata (toyotawaits.com vs. toyotawaits.ca)', () =
       expect(tundraGuide.alternates?.canonical).toBe(
         'https://www.toyotawaits.ca/guides/toyota-tundra-2026-vs-2027'
       );
+    });
+  });
+
+  describe('Host-Aware Sitemap, Robots & US SSR Content', () => {
+    it('emits https://www.toyotawaits.com sitemap & robots when x-region: US or host: www.toyotawaits.com', async () => {
+      setMockHeaders({ host: 'www.toyotawaits.com', 'x-region': 'US' });
+
+      const robotsConfig = await robots();
+      expect(robotsConfig.sitemap).toBe('https://www.toyotawaits.com/sitemap.xml');
+      expect(robotsConfig.host).toBe('https://www.toyotawaits.com');
+
+      const entries = await sitemap();
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.com')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.com/faq')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.com/calculator/rav4-hybrid')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.com/wait-times/rav4')).toBe(true);
+      expect(
+        entries.some((e) => e.url === 'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027')
+      ).toBe(true);
+
+      const rav4GuideEntry = entries.find(
+        (e) => e.url === 'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027'
+      );
+      expect(rav4GuideEntry?.alternates?.languages).toEqual({
+        'en-US': 'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027',
+        'en-CA': 'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027',
+      });
+    });
+
+    it('defaults sitemap & robots to https://www.toyotawaits.ca when no US header is present', async () => {
+      const robotsConfig = await robots();
+      expect(robotsConfig.sitemap).toBe('https://www.toyotawaits.ca/sitemap.xml');
+      expect(robotsConfig.host).toBeUndefined();
+
+      const entries = await sitemap();
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.ca')).toBe(true);
+      expect(entries.some((e) => e.url === 'https://www.toyotawaits.com')).toBe(false);
+    });
+
+    it('renders USD MSRP, 30–90 day transit, ADM ranges, and US JSON-LD on 2026-vs-2027 guides when isUS === true', async () => {
+      setMockHeaders({ host: 'www.toyotawaits.com', 'x-region': 'US' });
+
+      const rav4El = await Rav42026Vs2027GuidePage();
+      const { container: rav4Container } = render(rav4El);
+      expect(rav4Container.textContent).toContain('USD');
+      expect(rav4Container.textContent).toContain('30–90 days');
+      expect(rav4Container.textContent).toContain('$0 MSRP to +$3,000+ ADM');
+      expect(rav4Container.textContent).toContain('Varies by State Law');
+
+      const camryEl = await Camry2026Vs2027GuidePage();
+      const { container: camryContainer } = render(camryEl);
+      expect(camryContainer.textContent).toContain('$28,700 – $36,425 USD');
+      expect(camryContainer.textContent).toContain('Georgetown, Kentucky');
+      const scripts = camryContainer.querySelectorAll('script[type="application/ld+json"]');
+      const combinedJsonLd = Array.from(scripts).map((s) => s.textContent || '').join('\n');
+      expect(combinedJsonLd).toContain('https://www.toyotawaits.com/guides/toyota-camry-2026-vs-2027');
+      expect(combinedJsonLd).toContain('30–90 days');
+      expect(combinedJsonLd).toContain('USD');
+    });
+
+    it('renders USD MSRP, US allocation transit, ADM, and US Dataset/FAQPage JSON-LD on /wait-times/[model] when isUS === true', async () => {
+      setMockHeaders({ host: 'www.toyotawaits.com', 'x-region': 'US' });
+
+      const ui = await WaitTimesModelPage({ params: Promise.resolve({ model: 'rav4' }) });
+      const { container } = render(ui);
+
+      expect(container.textContent).toContain('US Allocation & Markup Tracker');
+      expect(container.textContent).toContain('30–90 days');
+      expect(container.textContent).toContain('$0 MSRP to +$3,000+');
+      expect(container.textContent).toContain('USD');
+
+      const jsonLdScript = container.querySelector('script[type="application/ld+json"]');
+      const parsed = JSON.parse(jsonLdScript?.textContent || '{}');
+      const dataset = parsed['@graph']?.find((n: { '@type': string }) => n['@type'] === 'Dataset');
+      const faqPage = parsed['@graph']?.find((n: { '@type': string }) => n['@type'] === 'FAQPage');
+      expect(dataset?.spatialCoverage).toBe('United States');
+      expect(dataset?.creator?.url).toBe('https://www.toyotawaits.com');
+      expect(JSON.stringify(faqPage)).toContain('USD');
+      expect(JSON.stringify(faqPage)).toContain('30–90 days');
     });
   });
 });

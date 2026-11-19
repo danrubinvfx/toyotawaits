@@ -86,8 +86,10 @@ const SIENNA_DAY_ONE_GEAR: GearProduct[] = [
   },
 ];
 
-export function SiennaDayOneGearShelf() {
-  const { market, isUs } = useMarket();
+export function SiennaDayOneGearShelf({ initialMarket }: { initialMarket?: 'US' | 'CA' } = {}) {
+  const { market: contextMarket } = useMarket();
+  const market = initialMarket === 'US' ? 'US' : contextMarket;
+  const isUs = market === 'US';
 
   return (
     <section className="space-y-6" aria-label="Direct-Fit Delivery Day Gear Shelf">

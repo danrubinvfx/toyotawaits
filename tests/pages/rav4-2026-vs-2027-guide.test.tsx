@@ -9,7 +9,7 @@ import { MarketProvider } from '@/context/MarketContext';
 import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 
 describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
-  it('has valid Next.js dynamic route configuration', () => {
+  it('has valid Next.js dynamic route configuration', async () => {
     expect(dynamic).toBe('force-dynamic');
   });
 
@@ -26,10 +26,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     );
   });
 
-  it('renders JSON-LD FAQPage schema with the mandatory questions', () => {
+  it('renders JSON-LD FAQPage schema with the mandatory questions', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -55,10 +55,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     );
   });
 
-  it('renders page header and carryover comparison table', () => {
+  it('renders page header and carryover comparison table', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -77,10 +77,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(screen.getByText(/\$2,500 CAD \(Full\)/i)).toBeInTheDocument();
   });
 
-  it('renders "The Verdict" decision matrix with clear criteria', () => {
+  it('renders "The Verdict" decision matrix with clear criteria', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -95,10 +95,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(screen.getByText(/resets wait times by 8–14\+ months/i)).toBeInTheDocument();
   });
 
-  it('renders live inventory bridge banner linking to RAV4 stock', () => {
+  it('renders live inventory bridge banner linking to RAV4 stock', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -107,10 +107,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(inventoryLink).toHaveAttribute('href', '/inventory?model=Toyota%20RAV4');
   });
 
-  it('details Nagakusa, Takaoka and TMMK factory queue rollover and rebate dynamics', () => {
+  it('details Nagakusa, Takaoka and TMMK factory queue rollover and rebate dynamics', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -118,10 +118,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(screen.getByText(/Provincial & Federal Incentive Phase-Downs/i)).toBeInTheDocument();
   });
 
-  it('renders Delivery Day Gear shelf with 4 cards and localized Amazon links', () => {
+  it('renders Delivery Day Gear shelf with 4 cards and localized Amazon links', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -156,10 +156,10 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
     expect(screenLink.getAttribute('href')).toContain('amazon.ca');
   });
 
-  it('routes to Amazon.com with US tag when US market is active', () => {
+  it('routes to Amazon.com with US tag when US market is active', async () => {
     render(
       <MarketProvider initialMarket="US">
-        <Rav42026Vs2027GuidePage />
+        {await Rav42026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -170,7 +170,7 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
 });
 
 describe('WSJCalloutBanner', () => {
-  it('renders official 2027 announcement alert linking to the guide', () => {
+  it('renders official 2027 announcement alert linking to the guide', async () => {
     render(
       <MarketProvider initialMarket="CA">
         <WSJCalloutBanner forceShow={true} />

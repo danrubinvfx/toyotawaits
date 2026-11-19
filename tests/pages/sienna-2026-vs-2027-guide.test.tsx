@@ -8,7 +8,7 @@ import Sienna2026Vs2027GuidePage, {
 import { MarketProvider } from '@/context/MarketContext';
 
 describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
-  it('has valid Next.js 16 dynamic route configuration', () => {
+  it('has valid Next.js 16 dynamic route configuration', async () => {
     expect(dynamic).toBe('force-dynamic');
   });
 
@@ -25,10 +25,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
   });
 
-  it('renders JSON-LD FAQPage schema with the 3 mandatory questions', () => {
+  it('renders JSON-LD FAQPage schema with the 3 mandatory questions', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -61,10 +61,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
   });
 
-  it('renders page header and carryover comparison table', () => {
+  it('renders page header and carryover comparison table', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -80,10 +80,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(screen.getAllByText(/3,500 lbs \/ 1,585 kg/i)).toHaveLength(2);
   });
 
-  it('renders all 5 trim grades in the trim matrix', () => {
+  it('renders all 5 trim grades in the trim matrix', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -94,10 +94,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(screen.getByText(/Platinum \(7-Passenger\)/i)).toBeInTheDocument();
   });
 
-  it('details Indiana TMMI queue rollover mechanics', () => {
+  it('details Indiana TMMI queue rollover mechanics', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -105,10 +105,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(screen.getByText(/Why Passing on a 2026 Build Slot Is a Costly Mistake/i)).toBeInTheDocument();
   });
 
-  it('renders live inventory bridge banner linking to Sienna stock', () => {
+  it('renders live inventory bridge banner linking to Sienna stock', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -117,10 +117,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(inventoryLink).toHaveAttribute('href', '/inventory?model=Toyota%20Sienna');
   });
 
-  it('renders Delivery Day Gear shelf with localized Amazon and partner links', () => {
+  it('renders Delivery Day Gear shelf with localized Amazon and partner links', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -158,10 +158,10 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(floorMatsLink.getAttribute('href')).toContain('amazon.ca');
   });
 
-  it('routes to Amazon.com with US tag when US market is selected', () => {
+  it('routes to Amazon.com with US tag when US market is selected', async () => {
     render(
       <MarketProvider initialMarket="US">
-        <Sienna2026Vs2027GuidePage />
+        {await Sienna2026Vs2027GuidePage()}
       </MarketProvider>
     );
 

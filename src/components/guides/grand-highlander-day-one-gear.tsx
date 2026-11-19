@@ -68,8 +68,10 @@ export const GRAND_HIGHLANDER_DAY_ONE_GEAR: GrandHighlanderGearItem[] = [
   },
 ];
 
-export function GrandHighlanderDayOneGearShelf() {
-  const { market, isUs } = useMarket();
+export function GrandHighlanderDayOneGearShelf({ initialMarket }: { initialMarket?: 'US' | 'CA' } = {}) {
+  const { market: contextMarket } = useMarket();
+  const market = initialMarket === 'US' ? 'US' : contextMarket;
+  const isUs = market === 'US';
 
   return (
     <section className="space-y-6" aria-label="Direct-Fit Grand Highlander Day-1 Gear Shelf">

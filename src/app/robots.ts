@@ -1,6 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
-export default function robots(): MetadataRoute.Robots {
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
+
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const { isUS, baseUrl } = await getRequestMarketMetadata();
+
   return {
     rules: {
       userAgent: '*',
@@ -15,7 +21,7 @@ export default function robots(): MetadataRoute.Robots {
         '/unsubscribe/',
       ],
     },
-    sitemap: 'https://www.toyotawaits.ca/sitemap.xml',
+    sitemap: `${baseUrl}/sitemap.xml`,
+    ...(isUS ? { host: 'https://www.toyotawaits.com' } : {}),
   };
 }
-

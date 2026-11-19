@@ -7,7 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Rav4DayOneGearShelf } from '@/components/guides/rav4-day-one-gear';
-import { buildGuideMetadata } from '@/lib/seo/host-metadata';
+import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import {
+  buildGuideMetadata,
+  buildGuideFaqSchema,
+  getRequestMarketMetadata,
+  US_GUIDE_CONFIGS,
+} from '@/lib/seo/host-metadata';
 import {
   Car,
   Clock,
@@ -77,13 +83,18 @@ const faqPageSchema = {
   })),
 };
 
-export default function Rav42026Vs2027GuidePage() {
+export default async function Rav42026Vs2027GuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-rav4-2026-vs-2027');
+  const usConfig = US_GUIDE_CONFIGS['toyota-rav4-2026-vs-2027'];
+  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
+
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* FAQPage Structured Schema */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeFaqPageSchema) }}
       />
 
       {/* Header & Breadcrumbs */}
@@ -111,10 +122,13 @@ export default function Rav42026Vs2027GuidePage() {
         </h1>
 
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-300 leading-relaxed max-w-3xl">
-          Should Canadian and US buyers accept an incoming 2026 allocation or roll over into a 2027 VIN?
-          Here is the complete engineering breakdown of official 2027 RAV4 announcements: native NACS Tesla charging, Level 3 DC fast charging, 11 kW AC charger, 321 hp PHEV, 9.1-inch Woodland lift, TSS 4.0 factory dashcam, and the $500 iZEV rebate change.
+          {isUS
+            ? 'Should US buyers accept an incoming 2026 allocation or roll over into a 2027 VIN? Here is the complete breakdown of official 2027 RAV4 announcements: native NACS Tesla charging, Level 3 DC fast charging, 11 kW AC charger, 321 hp PHEV, 9.1-inch Woodland lift, TSS 4.0 factory dashcam, and USD MSRP / ADM guidance.'
+            : 'Should Canadian and US buyers accept an incoming 2026 allocation or roll over into a 2027 VIN? Here is the complete engineering breakdown of official 2027 RAV4 announcements: native NACS Tesla charging, Level 3 DC fast charging, 11 kW AC charger, 321 hp PHEV, 9.1-inch Woodland lift, TSS 4.0 factory dashcam, and the $500 iZEV rebate change.'}
         </p>
       </div>
+
+      {isUS && <UsGuideMarketBrief {...usConfig} />}
 
       {/* Transparency Disclosure */}
       <div
@@ -495,7 +509,7 @@ export default function Rav42026Vs2027GuidePage() {
       </section>
 
       {/* 5. Delivery Day Gear Shelf */}
-      <Rav4DayOneGearShelf />
+      <Rav4DayOneGearShelf initialMarket={isUS ? 'US' : 'CA'} />
 
       {/* 6. Frequently Asked Questions */}
       <section className="space-y-6">
@@ -504,12 +518,14 @@ export default function Rav42026Vs2027GuidePage() {
             Frequently Asked Questions
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Core answers for Canadian and US buyers navigating 2026 vs. 2027 allocation decisions.
+            {isUS
+              ? 'Core answers for US buyers navigating 2026 vs. 2027 allocation, USD MSRP, ADM, and deposit rules.'
+              : 'Core answers for Canadian and US buyers navigating 2026 vs. 2027 allocation decisions.'}
           </p>
         </div>
 
         <div className="space-y-4">
-          {faqData.map((faq, index) => (
+          {activeFaqs.map((faq, index) => (
             <Card key={index} className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2 shadow-xs">
               <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-start gap-2">
                 <HelpCircle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />

@@ -5,12 +5,22 @@ import {
   CANADIAN_PROVINCES_LIST,
 } from '@/lib/data/vehicles';
 import { getAllModelConfigs, getModelConfig } from '@/lib/data/model-registry';
+import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://www.toyotawaits.ca';
+  const { baseUrl } = await getRequestMarketMetadata();
   const now = new Date();
+
+  const buildAlternates = (path: string) => ({
+    languages: {
+      'en-CA': `https://www.toyotawaits.ca${path}`,
+      'en-US': `https://www.toyotawaits.com${path}`,
+    },
+  });
 
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -428,5 +438,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticRoutes, ...dynamicRoutes];
+  return [...staticRoutes, ...dynamicRoutes].map((entry) => {
+    const path = entry.url.startsWith(baseUrl)
+      ? entry.url.slice(baseUrl.length)
+      : '';
+    return {
+      ...entry,
+      alternates: buildAlternates(path),
+    };
+  });
 }

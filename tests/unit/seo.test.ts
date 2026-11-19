@@ -103,6 +103,20 @@ describe('Technical SEO & Discovery Configuration', () => {
     );
     expect(rav4HevBcEntry).toBeDefined();
     expect(rav4HevBcEntry?.priority).toBe(0.7);
+
+    // Reciprocal alternates.languages (en-CA + en-US) on CA default sitemap
+    expect(rootEntry?.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca',
+      'en-US': 'https://www.toyotawaits.com',
+    });
+    expect(siennaEntry?.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca/wait-times/sienna',
+      'en-US': 'https://www.toyotawaits.com/wait-times/sienna',
+    });
+    expect(ghGuideEntry?.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027',
+      'en-US': 'https://www.toyotawaits.com/guides/toyota-grand-highlander-2026-vs-2027',
+    });
   });
 
   it('gracefully falls back to static and catalog routes if Supabase query fails', async () => {
@@ -120,8 +134,8 @@ describe('Technical SEO & Discovery Configuration', () => {
     }
   });
 
-  it('generates a valid robots.txt disallowing /api/ and internal paths and pointing to sitemap.xml', () => {
-    const robotsConfig = robots();
+  it('generates a valid robots.txt disallowing /api/ and internal paths and pointing to sitemap.xml', async () => {
+    const robotsConfig = await robots();
 
     expect(robotsConfig.sitemap).toBe('https://www.toyotawaits.ca/sitemap.xml');
 

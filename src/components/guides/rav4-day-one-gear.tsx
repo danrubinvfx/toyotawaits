@@ -82,8 +82,10 @@ export const RAV4_DAY_ONE_GEAR: Rav4GearItem[] = [
   },
 ];
 
-export function Rav4DayOneGearShelf() {
-  const { market, isUs } = useMarket();
+export function Rav4DayOneGearShelf({ initialMarket }: { initialMarket?: 'US' | 'CA' } = {}) {
+  const { market: contextMarket } = useMarket();
+  const market = initialMarket === 'US' ? 'US' : contextMarket;
+  const isUs = market === 'US';
 
   return (
     <section className="space-y-6" aria-label="Direct-Fit Delivery Day Gear Shelf">

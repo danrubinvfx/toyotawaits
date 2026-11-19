@@ -9,7 +9,7 @@ import GrandHighlander2026Vs2027GuidePage, {
 import { MarketProvider } from '@/context/MarketContext';
 
 describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
-  it('has valid Next.js route segment exports', () => {
+  it('has valid Next.js route segment exports', async () => {
     expect(dynamic).toBe('force-dynamic');
     expect(instant).toBe(false);
   });
@@ -27,10 +27,10 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     );
   });
 
-  it('renders JSON-LD FAQPage schema with required questions', () => {
+  it('renders JSON-LD FAQPage schema with required questions', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
-        <GrandHighlander2026Vs2027GuidePage />
+        {await GrandHighlander2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -56,10 +56,10 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     );
   });
 
-  it('renders page header and side-by-side comparison table', () => {
+  it('renders page header and side-by-side comparison table', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <GrandHighlander2026Vs2027GuidePage />
+        {await GrandHighlander2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -76,10 +76,10 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     expect(screen.getByText(/Canadian Winter Win/i)).toBeInTheDocument();
   });
 
-  it('renders "Should You Pass on a 2026?" guide section', () => {
+  it('renders "Should You Pass on a 2026?" guide section', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <GrandHighlander2026Vs2027GuidePage />
+        {await GrandHighlander2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -91,10 +91,10 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     expect(screen.getByText(/\+\$600 – \$1,200 CAD/i)).toBeInTheDocument();
   });
 
-  it('renders live inventory bridge button linking to Grand Highlander stock', () => {
+  it('renders live inventory bridge button linking to Grand Highlander stock', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <GrandHighlander2026Vs2027GuidePage />
+        {await GrandHighlander2026Vs2027GuidePage()}
       </MarketProvider>
     );
 
@@ -107,10 +107,10 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     );
   });
 
-  it('renders vetted Day-1 accessory shelf with TuxMat, Spigen, and CURT', () => {
+  it('renders vetted Day-1 accessory shelf with TuxMat, Spigen, and CURT', async () => {
     render(
       <MarketProvider initialMarket="CA">
-        <GrandHighlander2026Vs2027GuidePage />
+        {await GrandHighlander2026Vs2027GuidePage()}
       </MarketProvider>
     );
 

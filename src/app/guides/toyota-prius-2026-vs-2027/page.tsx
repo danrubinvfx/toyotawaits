@@ -7,7 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
-import { buildGuideMetadata } from '@/lib/seo/host-metadata';
+import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import {
+  buildGuideMetadata,
+  buildGuideFaqSchema,
+  buildGuideArticleSchema,
+  getRequestMarketMetadata,
+  US_GUIDE_CONFIGS,
+} from '@/lib/seo/host-metadata';
 import {
   Car,
   ShieldCheck,
@@ -143,16 +150,32 @@ const DAY_ONE_GEAR_ITEMS = [
   },
 ];
 
-export default function Prius2026Vs2027GuidePage() {
+export default async function Prius2026Vs2027GuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-prius-2026-vs-2027');
+  const usConfig = US_GUIDE_CONFIGS['toyota-prius-2026-vs-2027'];
+  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
+  const activeArticleSchema = isUS
+    ? buildGuideArticleSchema({
+        slug: 'toyota-prius-2026-vs-2027',
+        isUS: true,
+        caHeadline: articleSchema.headline,
+        caDescription: articleSchema.description,
+        usHeadline: articleSchema.headline.replace(/Canada/g, 'United States'),
+        usDescription: usConfig.verdictSummary,
+        datePublished: articleSchema.datePublished,
+        dateModified: articleSchema.dateModified,
+      })
+    : articleSchema;
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeFaqPageSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(activeArticleSchema) }}
       />
 
       <div className="space-y-4">
@@ -182,6 +205,8 @@ export default function Prius2026Vs2027GuidePage() {
           Compare the 2026 and 2027 Toyota Prius AWD &amp; Prius Plug-in Hybrid in Canada. Breakdown of newly standardized dual-zone climate control across all grades, the included dual-voltage Level 1 / Level 2 PHEV charging cable, Canadian pricing ($39,000–$49,160 MSRP), and Tsutsumi Japan waitlist rollovers.
         </p>
       </div>
+
+      {isUS && <UsGuideMarketBrief {...usConfig} />}
 
       <div
         role="region"
@@ -340,7 +365,7 @@ export default function Prius2026Vs2027GuidePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {DAY_ONE_GEAR_ITEMS.map((item) => {
-            const href = buildAmazonAffiliateUrl({ query: item.query, market: 'CA' });
+            const href = buildAmazonAffiliateUrl({ query: item.query, market: isUS ? 'US' : 'CA' });
             const IconComponent = item.icon;
             return (
               <Card key={item.id} className="flex flex-col justify-between border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-xs">
@@ -378,7 +403,7 @@ export default function Prius2026Vs2027GuidePage() {
           Frequently Asked Questions
         </h2>
         <div className="space-y-4">
-          {faqData.map((faq, index) => (
+          {activeFaqs.map((faq, index) => (
             <Card key={index} className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-5 space-y-2 shadow-xs">
               <div className="flex items-center gap-2 text-zinc-900 dark:text-zinc-100 font-bold text-base">
                 <HelpCircle className="h-4 w-4 text-red-600 dark:text-red-400 shrink-0" />
