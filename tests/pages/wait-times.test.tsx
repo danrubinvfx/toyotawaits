@@ -218,10 +218,10 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(hitchLink).toHaveAttribute('href', '/guides/toyota-sienna-trailer-hitch-guide');
 
     // Verify 2026 vs 2027 Sienna Guide Callout Banner
-    expect(screen.getByText('Allocated a 2026 or 2027 Model?')).toBeInTheDocument();
+    expect(screen.getByText('2026 Allocation vs. Early-2027 Sienna?')).toBeInTheDocument();
     expect(
       screen.getByText(
-        /The 2027 Sienna is a direct mechanical carryover\. Compare the trim differences and learn how dealer queue rollovers work before passing on a build slot\./i
+        /Arriving in early 2027, the 2027 Sienna adds Toyota Safety Sense 4\.0 \(TSS 4\.0\), a 251-hp 6th-gen hybrid \(THS 6\)/i
       )
     ).toBeInTheDocument();
     const comparisonLink = screen.getByRole('link', { name: /Read 2026 vs\. 2027 Comparison →/i });

@@ -4,7 +4,7 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, ShieldCheck, Tag, CheckCircle2, Wrench, Sparkles } from 'lucide-react';
+import { ExternalLink, Tag, CheckCircle2, Sparkles } from 'lucide-react';
 import { useMarket } from '@/context/MarketContext';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { MarketAssociateDisclaimer } from '@/components/guides/market-associate-disclaimer';
@@ -74,15 +74,29 @@ const SIENNA_DAY_ONE_GEAR: GearProduct[] = [
     id: 'fitcamx-dashcam',
     title: 'FitcamX 4K OEM Integrated Dashcam',
     category: 'Safety & Tech',
-    badge: 'OEM Stealth Tap',
+    badge: '2026 Fitment Note',
     badgeVariant: 'secondary',
     priceCad: '$190 – $240 CAD',
     priceUsd: '$140 – $180 USD',
     description:
-      'Discreet OEM replacement shell for the TSS 2.0 / 2.5 rearview mirror shroud. Delivers crisp 4K Sony-sensor footage with zero dangling wires down the windshield or A-pillar trim.',
-    note: 'Plug-and-play into TSS rear-view mirror harness without fuse tapping.',
+      'Discreet OEM replacement shell for the 2021–2026 TSS 2.0 / 2.5 rearview mirror shroud. Delivers crisp 4K Sony-sensor footage with zero dangling wires down the windshield or A-pillar trim.',
+    note: '2026 TSS 2.0/2.5 plug-and-play mirror tap. Note: 2027 Siennas include factory Drive Recorder & TSS 4.0—verify before ordering.',
     searchFallback: 'Fitcamx dash cam Toyota Sienna OEM 4K',
     ctaText: 'View Camera on Amazon ↗',
+  },
+  {
+    id: 'screen-protector-123',
+    title: 'Tempered Glass 12.3" Screen Protector',
+    category: 'Cabin & Tech',
+    badge: '2027 Standard 12.3"',
+    badgeVariant: 'secondary',
+    priceCad: '$19 – $29 CAD',
+    priceUsd: '$15 – $22 USD',
+    description:
+      '9H anti-glare, oleophobic tempered glass protector engineered for the 12.3-inch Toyota Multimedia touchscreen to prevent fingerprints and micro-scratches.',
+    note: 'Fits all 2027 trims (standard 12.3" display) and 2026 XLE/XSE/Limited/Platinum (2026 LE uses 8.0").',
+    searchFallback: 'Toyota Sienna 12.3 inch screen protector tempered glass',
+    ctaText: 'View Protector on Amazon ↗',
   },
 ];
 
@@ -103,7 +117,7 @@ export function SiennaDayOneGearShelf({ initialMarket }: { initialMarket?: 'US' 
             Direct-Fit Delivery Day Gear Shelf
           </h2>
           <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-1 max-w-2xl">
-            Because 2026 and 2027 Siennas share the exact interior geometry, floor plan, and TSS housing, these community-vetted accessories fit both model years without modification.
+            2026 and 2027 Siennas share the same floor plan and center console geometry, while 2027 adds a standard 12.3&quot; touchscreen, TSS 4.0, and factory Drive Recorder—check the fitment notes on each card before ordering.
           </p>
         </div>
         <div className="text-xs text-zinc-500 font-medium shrink-0">
@@ -111,7 +125,7 @@ export function SiennaDayOneGearShelf({ initialMarket }: { initialMarket?: 'US' 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
         {SIENNA_DAY_ONE_GEAR.map((item) => {
           const destinationHref = item.proxyUrl || buildAmazonAffiliateUrl(item.searchFallback, market);
           const price = isUs ? item.priceUsd : item.priceCad;

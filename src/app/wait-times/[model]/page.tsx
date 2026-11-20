@@ -1432,10 +1432,10 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   2026 vs. 2027 Model Year
                 </Badge>
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
-                  Allocated a 2026 or 2027 Model?
+                  2026 Allocation vs. Early-2027 Sienna?
                 </h2>
                 <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-                  The 2027 Sienna is a direct mechanical carryover. Compare the trim differences and learn how dealer queue rollovers work before passing on a build slot.
+                  Arriving in early 2027, the 2027 Sienna adds Toyota Safety Sense 4.0 (TSS 4.0), a 251-hp 6th-gen hybrid (THS 6), Drive Recorder, and standard 12.3&quot; dual displays. Compare 2026 vs. 2027 upgrades and queue rollovers before deciding to take a 2026 slot or wait.
                 </p>
               </div>
               <Button asChild className="bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold shrink-0 shadow-sm">

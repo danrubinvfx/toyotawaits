@@ -25,7 +25,7 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
   });
 
-  it('renders JSON-LD FAQPage schema with the 3 mandatory questions', async () => {
+  it('renders JSON-LD FAQPage schema with updated 2027 THS 6 and TSS 4.0 specs', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -42,26 +42,24 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(json.mainEntity[0].name).toBe(
       'Are there mechanical differences between the 2026 and 2027 Toyota Sienna?'
     );
-    expect(json.mainEntity[0].acceptedAnswer.text).toBe(
-      'No. The 2027 Sienna is a direct mechanical carryover sharing the identical 245-hp 2.5L hybrid synergy powertrain, AWD-e architecture, and 33.5 cu. ft. sunken cargo well.'
-    );
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('THS 6');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('251 hp');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('1.15 kWh Li-ion battery');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('Toyota Safety Sense 4.0');
 
     expect(json.mainEntity[1].name).toBe(
       'Will my Canadian 2026 Sienna allocation automatically turn into a 2027?'
     );
-    expect(json.mainEntity[1].acceptedAnswer.text).toBe(
-      "Yes. In Toyota's bi-weekly dealer allocation system, deposits placed in late 2026 roll to a 2027 VIN when the Indiana assembly plant transitions tooling between November and January without losing queue priority."
-    );
+    expect(json.mainEntity[1].acceptedAnswer.text).toContain('early 2027');
 
     expect(json.mainEntity[2].name).toBe(
-      'What is the difference between the Sienna XSE and LE suspension?'
+      'What is the difference between the Sienna XSE and LE suspension, and what is new for 2027?'
     );
-    expect(json.mainEntity[2].acceptedAnswer.text).toBe(
-      'The XSE features exclusive sport-tuned dampers and thicker anti-sway bars for flatter cornering, whereas LE, XLE, Limited, and Platinum use standard soft-ride comfort tuning.'
-    );
+    expect(json.mainEntity[2].acceptedAnswer.text).toContain('sport-tuned dampers');
+    expect(json.mainEntity[2].acceptedAnswer.text).toContain('12.9-inch rear screen');
   });
 
-  it('renders page header and carryover comparison table', async () => {
+  it('renders page header, Pass or Take It verdict, and 2026 vs 2027 comparison table', async () => {
     render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -74,13 +72,25 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
       })
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/Year-Over-Year Carryover Comparison/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/2.5L 4-Cyl Hybrid \(245 hp net\)/i)).toHaveLength(2);
-    expect(screen.getAllByText(/33.5 cu\. ft\. deep sunken tub/i)).toHaveLength(2);
+    expect(
+      screen.getByRole('heading', {
+        name: /Pass or Take It\? 2026 Allocation vs\. 2027 Upgrade Verdict/i,
+      })
+    ).toBeInTheDocument();
+
+    expect(screen.getByText(/Year-Over-Year Comparison \(2026 vs\. 2027\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/2\.5L 4-Cyl Hybrid \(245 hp net\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/6th-Gen Hybrid \(THS 6, 251 hp net\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/New steering, AHB-C posture control & -1\.6 dB dash silencer/i)).toBeInTheDocument();
+    expect(screen.getByText(/Toyota Safety Sense 4\.0 \+ Drive Recorder dash cam/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Standard 12\.3" touchscreen \+ 12\.3" digital cluster; new Storm Cloud paint/i)
+    ).toBeInTheDocument();
+    expect(screen.getAllByText(/33\.5 cu\. ft\. deep sunken tub/i)).toHaveLength(2);
     expect(screen.getAllByText(/3,500 lbs \/ 1,585 kg/i)).toHaveLength(2);
   });
 
-  it('renders all 5 trim grades in the trim matrix', async () => {
+  it('renders all 5 trim grades in the trim matrix with 2027 upgrades', async () => {
     render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -92,9 +102,11 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(screen.getByText(/XSE \(7-Passenger\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Limited \(7-Passenger\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Platinum \(7-Passenger\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/XLE\+ adds 8-way power passenger seat/i)).toBeInTheDocument();
+    expect(screen.getByText(/Ventilated & memory front seats, Head-Up Display \(HUD\), Panoramic View Monitor/i)).toBeInTheDocument();
   });
 
-  it('details Indiana TMMI queue rollover mechanics', async () => {
+  it('details Indiana TMMI queue rollover mechanics and Pass or Take It tradeoff', async () => {
     render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -102,7 +114,7 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
 
     expect(screen.getByText(/The TMMI Indiana Factory Switchover \(Nov–Jan\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/Why Passing on a 2026 Build Slot Is a Costly Mistake/i)).toBeInTheDocument();
+    expect(screen.getByText(/Pass or Take It\? Weighing a 2026 Slot vs\. Early-2027 Arrival/i)).toBeInTheDocument();
   });
 
   it('renders live inventory bridge banner linking to Sienna stock', async () => {
@@ -117,7 +129,7 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(inventoryLink).toHaveAttribute('href', '/inventory?model=Toyota%20Sienna');
   });
 
-  it('renders Delivery Day Gear shelf with localized Amazon and partner links', async () => {
+  it('renders Delivery Day Gear shelf with localized Amazon, partner links, and 2027 fitment notes', async () => {
     render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -144,12 +156,25 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     expect(curtLink).toHaveAttribute('target', '_blank');
     expect(curtLink).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
 
-    // FitcamX card
+    // FitcamX card with 2027 Drive Recorder annotation
     expect(screen.getByText(/FitcamX 4K OEM Integrated Dashcam/i)).toBeInTheDocument();
-    expect(screen.getByText(/Plug-and-play into TSS rear-view mirror harness without fuse tapping\./i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/2027 Siennas include factory Drive Recorder & TSS 4\.0/i)
+    ).toBeInTheDocument();
     const fitcamxLink = screen.getByRole('link', { name: /View Camera on Amazon ↗/i });
     expect(fitcamxLink.getAttribute('href')).toContain('tag=toyotawaits-20');
     expect(fitcamxLink.getAttribute('href')).toContain('amazon.ca');
+
+    // 12.3" Screen Protector card with 2027 standard 12.3" fitment annotation
+    expect(screen.getByText(/Tempered Glass 12\.3" Screen Protector/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Fits all 2027 trims \(standard 12\.3" display\)/i)
+    ).toBeInTheDocument();
+    const protectorLink = screen.getByRole('link', { name: /View Protector on Amazon ↗/i });
+    expect(protectorLink.getAttribute('href')).toContain('tag=toyotawaits-20');
+    expect(protectorLink.getAttribute('href')).toContain('amazon.ca');
+    expect(protectorLink).toHaveAttribute('target', '_blank');
+    expect(protectorLink).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
 
     // Floor liners card
     expect(screen.getByText(/3-Row High-Wall All-Weather Floor Liners/i)).toBeInTheDocument();
