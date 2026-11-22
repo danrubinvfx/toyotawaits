@@ -2,27 +2,22 @@ import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
-import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Wrench,
-  Clock,
   ArrowRight,
   Sparkles,
-  Car,
-  Volume2,
-  Sliders,
-  ShieldAlert,
   Zap,
   Snowflake,
   ShieldCheck,
   CheckCircle2,
-  ExternalLink,
   ClipboardCheck,
-  Play,
   Disc3,
+  CalendarClock,
+  GitCompare,
+  ChevronDown,
 } from 'lucide-react';
 import { PopularGearCard } from '@/components/guides/popular-gear-card';
 
@@ -52,508 +47,251 @@ export function generateMetadata(): Metadata {
   };
 }
 
-const MOD_GUIDES = [
-  {
-    slug: 'toyota-corolla-cross-vs-rav4-hybrid',
-    title: 'Toyota Corolla Cross vs. RAV4 Hybrid: Sizing, Price & Canadian Wait Times',
-    tagline: 'Cargo dimensions (21.5 vs. 37.5 cu. ft.), rear child seat space, Canadian MSRP deltas, and Ontario vs. Alabama allocation queues.',
-    badge: 'Compact Crossover Shootout',
-    model: 'Corolla Cross vs. RAV4',
-    tags: ['Toyota', 'Corolla Cross', 'RAV4', 'Hybrid', 'Sizing', 'Wait Times', 'Canada'],
-    highlights: [
-      'Dimensions & Cargo: 175.6" length (21.5 cu. ft.) vs 180.9" RAV4 (37.5 cu. ft.) — RAV4 offers +74% cargo volume',
-      'Child Seat Clearance: 32.0" rear legroom in Corolla Cross vs 37.8" in RAV4 (+5.8" for rear-facing seats)',
-      'Pricing & Efficiency: CC Hybrid from ~$34,500 CAD (5.3 L/100 km) vs RAV4 Hybrid from ~$38,950 CAD (6.0 L/100 km)',
-      'Allocation Wait Times: MTM Alabama CC quotas (6–10 mo) vs TMMC Ontario RAV4 production (3–7 mo)',
-    ],
-    href: '/guides/toyota-corolla-cross-vs-rav4-hybrid',
-  },
-  {
-    slug: 'toyota-grand-highlander-vs-lexus-tx',
-    title: 'Toyota Grand Highlander vs. Lexus TX: Space, Wait Times & Luxury Tax',
-    tagline: 'TNGA-K platform packaging, adult third-row legroom, acoustic glass & materials, Canadian luxury tax math, and allocation timelines.',
-    badge: '3-Row Crossover Shootout',
-    model: 'Grand Highlander vs. Lexus TX',
-    tags: ['Toyota', 'Lexus', 'Grand Highlander', 'Lexus TX', '3-Row SUVs', 'Wait Times', 'Luxury Tax'],
-    highlights: [
-      'Identical 116.1" Wheelbase: True 33.5" third-row adult legroom on both TNGA-K platforms',
-      'Acoustic Refinement: Dual laminated acoustic side glass & active noise cancelling in TX',
-      'Federal Luxury Tax: TX 500h Exec & 550h+ trigger 20% over $100k; GH trims 100% exempt',
-      'Queue Bypassing: Avoid 8–14 month GH Hybrid waits with faster 4–8 month TX 350 allocations',
-    ],
-    href: '/guides/toyota-grand-highlander-vs-lexus-tx',
-  },
-  {
-    slug: 'toyota-rav4-vs-sienna',
-    title: 'Toyota RAV4 vs. Sienna: Crossover to Minivan Transition & Allocation Guide',
-    tagline: 'Crossover ground clearance vs. sliding door ergonomics, 33.5 cu. ft. flat deck vs. deep sunken trunk well, and Canadian queue rollover rules.',
-    badge: 'Family Transition Guide',
-    model: 'RAV4 vs. Sienna',
-    tags: ['Toyota', 'RAV4', 'Sienna', 'Crossover vs Minivan', 'Sizing', 'Wait Times'],
-    highlights: [
-      'Ground Clearance: RAV4 8.1"–8.6" snow clearance vs. Sienna 6.4" low step-in',
-      'Cargo Packaging: Flat 33.5 cu. ft. crossover deck vs. Sienna 33.5 cu. ft. sunken well + 75.2 cu. ft. stowed',
-      'Sliding Door Superpower: Zero door dings in tight parking stalls & stress-free car seat loading',
-      'Canadian Queue Rollovers: 4–8 mo RAV4 Prime ($2.5k iZEV) vs. 1–4 mo Sienna LE AWD queue transitions',
-    ],
-    href: '/guides/toyota-rav4-vs-sienna',
-  },
-  {
-    slug: 'lexus-tx-vs-rx',
-    title: 'Lexus TX vs. RX: Sizing, Seating & Allocation Guide',
-    tagline: 'Head-to-head dimensions, garage maneuverability, adult passenger legroom, cargo packaging, and Canadian wait times.',
-    badge: 'Luxury Family SUV Shootout',
-    model: 'Lexus TX vs. RX',
-    tags: ['Lexus', 'Sizing', '3-Row vs 2-Row', 'Wait Times'],
-    highlights: [
-      'Footprint & Turning Circle: RX 192.5" (38.8 ft) vs TX 203.1" (38.0 ft w/ DRS)',
-      'Passenger packaging: 3-row college-adult comfort vs midsize Ascent baselines',
-      'Cargo capacity: 57.4 cu. ft. behind 2nd row vs 29.6 cu. ft. in RX',
-      'Powertrains & Allocations: 4–8 mo RX queue vs 6–12 mo TX 500h/550h+ allocations',
-    ],
-    href: '/guides/lexus-tx-vs-rx',
-  },
-  {
-    slug: 'lexus-gx550-must-have-accessories',
-    title: 'Lexus GX 550 Day-One Delivery Checklist & Essential Accessories',
-    tagline: 'Essential delivery-day inspection checklist, TuxMat floor protection, FitcamX 4K OEM dashcam, and PPF stone-chip armor.',
-    badge: 'Lexus Luxury Armor',
-    model: 'Lexus GX 550',
-    tags: ['Lexus', 'Delivery Prep', 'Accessories'],
-    highlights: [
-      'TuxMat high-wall laser floor liners & dead-pedal protection',
-      'FitcamX 4K OEM-integrated LSS+ mirror-tap dashcam',
-      'Spigen GlasTR 14" matte 9H tempered glass screen shield',
-      'Bluff fascia Paint Protection Film (PPF) strike-zone roadmap',
-    ],
-    href: '/guides/lexus-gx550-must-have-accessories',
-  },
-  {
-    slug: 'lexus-tx-delivery-prep-gear',
-    title: 'Lexus TX 350 & 500h Delivery Prep Guide: 3-Row Protection & Tech',
-    tagline: 'Full 3-row high-wall TPE floor liners, 14-inch touchscreen defense, split cargo seatback armor, and relay theft deterrence.',
-    badge: '3-Row Protection',
-    model: 'Lexus TX 350 & 500h',
-    tags: ['Lexus', '3-Row', 'Delivery Prep'],
-    highlights: [
-      '3-row laser-fit high-wall floor liners with pass-through aisle runners',
-      'Spigen 14" matte tempered glass touchscreen protector',
-      'Dual-layer Faraday smart-key signal blocking pouches',
-      'Split-folding 50/50 cargo mat & 3rd-row seatback armor',
-    ],
-    href: '/guides/lexus-tx-delivery-prep-gear',
-  },
-  {
-    slug: 'lexus-phev-home-charging-setup',
-    title: 'Lexus NX 450h+ & RX 450h+ Home Charging: Level 2 EVSE Setup in Canada',
-    tagline: '6.6 kW onboard charger specs, Grizzl-E Canadian winter-rated EVSE, provincial rebates, and sub-zero shore-power preheating.',
-    badge: 'PHEV EVSE Setup',
-    model: 'Lexus NX 450h+ & RX 450h+',
-    tags: ['Lexus', 'EVSE', 'PHEV', 'Winter'],
-    highlights: [
-      '6.6 kW onboard charger: 2.5-hour 240V full recharge vs 12 hours 120V',
-      'Canadian-made Grizzl-E Classic 40A (-40°C winter-rated aluminum EVSE)',
-      'Shore-power preheating via Lexus App preserving 100% pure EV range',
-      'CEC 80% continuous load electrical panel & provincial grant breakdown',
-    ],
-    href: '/guides/lexus-phev-home-charging-setup',
-  },
-  {
-    slug: 'toyota-ecp-warranty-guide',
-    title: 'Toyota ECP Extended Warranty: Is It Worth It in Canada?',
-    tagline: 'Objective breakdown of Toyota Extra Care Protection (ECP Platinum vs. Gold). Real component repair costs, hybrid warranty overlap, dealer margins, and negotiation rules.',
-    badge: 'Finance Office Guide',
-    model: 'Universal Canadian Guide',
-    tags: ['Finance', 'Warranty', 'Buyer Guide'],
-    highlights: [
-      'Platinum Exclusionary vs Gold Named Component trap analysis',
-      'Factory 8yr/160k km hybrid component overlap breakdown',
-      'Net cost math: $2,800 retail vs. ~$1,950 true mechanical risk',
-      'Dealer negotiation playbook: target wholesale ($1,900–$2,100 CAD)',
-    ],
-    href: '/guides/toyota-ecp-warranty-guide',
-  },
-  {
-    slug: 'toyota-first-wash-paint-care',
-    title: 'New Toyota First-Wash & Paint Care Guide: Why to Decline the Dealer Car Wash',
-    tagline:
-      'Protect soft Toyota clear coats on delivery day. Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
-    badge: 'Delivery Day Paint Defense',
-    model: 'All Toyota & Lexus Models',
-    tags: ['Paint Care', 'Delivery Prep', 'Ceramic Sealant', 'Zero-Swirl'],
-    highlights: [
-      'Rule #1: Tell your advisor "Do Not Wash" in writing before PDI',
-      'Skip $899+ F&I paint sealants for $30 SiO2 ceramic spray (or real local PPF)',
-      '2-Method Safe Wash Playbook: Driveway Two-Bucket vs. Condo Rinseless ONR',
-      '4-item Day-One Paint & Wash Kit with CA/US Amazon routing',
-    ],
-    href: '/guides/toyota-first-wash-paint-care',
-  },
+const POPULAR_GUIDES = [
   {
     slug: 'toyota-diy-maintenance-guide',
     title: 'Toyota DIY Maintenance & Upkeep Guide',
-    tagline:
+    description:
       'Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM filter numbers, hybrid battery fan filter cleaning, 12V battery care, and clear-coat safe wash gear.',
-    badge: 'Popular Guide',
-    model: 'All Toyota & Lexus Models',
+    badge: 'DIY & Maintenance',
     tags: ['Maintenance', 'DIY', 'Hybrid Care'],
-    highlights: [
-      'Model Fluid Matrix: 0W-8 vs. 0W-16 vs. 0W-20 & OEM 90915-YZZN1 filter',
-      '8,000 km / 6-month vs. 16,000 km / 12-month DIY schedule',
-      'Rear-seat hybrid battery cooling fan intake filter cleaning',
-      '12V smart maintainer, 76 ft-lbs lug torque & salt-wash gear',
-    ],
     href: '/guides/toyota-diy-maintenance-guide',
-  },
-  {
-    slug: 'winter-prep',
-    title: 'Canadian Winter Prep & Salt Protection Guide',
-    tagline: "BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don'ts.",
-    badge: 'Seasonal Prep',
-    model: 'Universal Canadian Guide',
-    tags: ['Seasonal', 'Winter', 'Essential'],
-    highlights: [
-      'BC highway tire laws & Quebec Dec 1 winter mandates',
-      '12V AGM hybrid auxiliary battery winter survival & jump procedures',
-      'Anti-corrosion undercoating dos and don\'ts for high-voltage harnesses',
-      'Winter prep checklist: block heaters, winter wipers & frost shields',
-    ],
-    href: '/winter-prep',
-  },
-  {
-    slug: 'tires',
-    title: 'OEM Tire Sizing & 17-Inch Downsizing Guide',
-    tagline: 'Confirmed bolt patterns (5x114.3 / 5x120), center bore offsets, and 3PMSF winter rubber for RAV4, Sienna, Grand Highlander, and Corolla.',
-    badge: 'Tire & Wheel DB',
-    model: 'RAV4, Sienna, Grand Highlander, Corolla',
-    tags: ['Tires', 'Wheels', 'Specs'],
-    highlights: [
-      'Confirmed bolt patterns (5x114.3 / 5x120) and center bore offsets',
-      '17-inch downsizing fitment clearing front brake calipers',
-      'Top 3PMSF severe snow tires: Michelin X-Ice Snow vs Blizzak WS90',
-      'Seasonal tire changeover math & steel wheel downsizing savings',
-    ],
-    href: '/tires',
+    icon: Wrench,
   },
   {
     slug: 'delivery-prep',
-    title: 'Zero-Mile Dealership Delivery Inspection',
-    tagline: 'PDI checklist: transit fuse seating, overinflated shipping tires, hybrid cable inspection, and factory accessories check.',
+    title: 'Delivery Day Prep & Inspection Checklist',
+    description:
+      'Zero-Mile Dealership Delivery Inspection & PDI checklist: transit fuse seating, overinflated shipping tires, hybrid cable inspection, and factory accessories check.',
     badge: 'Delivery Checklist',
-    model: 'Universal Delivery Checklist',
     tags: ['Checklist', 'Delivery'],
-    highlights: [
-      'Pre-Delivery Inspection (PDI) fuse seating & spring spacer removal',
-      'Shipping tire pressure deflation (dropping from 45+ PSI)',
-      'High-voltage orange cable corroded connector inspection',
-      'OMVIC/VSA bill of sale add-on audit & dual key fob verification',
-    ],
     href: '/delivery-prep',
+    icon: ClipboardCheck,
   },
   {
-    slug: 'toyota-rav4-must-have-accessories',
-    title: 'Top 7 Must-Have Toyota RAV4 Accessories (2026)',
-    tagline: 'Community-vetted delivery day gear for 2019–2026 RAV4 Hybrid & PHEV owners: TuxMat, FitcamX 4K, Spigen 9H, and faraday defense.',
-    badge: 'Delivery Day Gear',
-    model: 'RAV4 Hybrid & Prime',
-    tags: ['Accessories', 'Gear'],
-    highlights: [
-      'TuxMat custom-fit high-wall floor liners (Full Dead Pedal)',
-      'FitcamX 4K OEM-look integrated mirror dashcam (TSS tap)',
-      'Spigen 9H anti-glare tempered screen protector (10.5" / 12.3")',
-      'Grizzl-E Level 2 40A sub-zero winter home charger',
-    ],
-    href: '/guides/toyota-rav4-must-have-accessories',
+    slug: 'tires',
+    title: 'Tire Fitment & Winter Tire Guide',
+    description:
+      'OEM Tire Sizing & 17-Inch Downsizing Guide: Confirmed bolt patterns (5x114.3 / 5x120), center bore offsets, and 3PMSF winter rubber for all hybrid models.',
+    badge: 'Tire & Wheel DB',
+    tags: ['Tires', 'Wheels', 'Specs'],
+    href: '/tires',
+    icon: Disc3,
   },
   {
-    slug: 'best-toyota-all-weather-floor-mats',
-    title: 'Best Toyota All-Weather Floor Mats: TuxMat vs. WeatherTech vs. OEM',
-    tagline: 'Head-to-head comparison for Canadian winters: dead pedal coverage, slush containment, and multi-row minivan fitment.',
-    badge: 'Floor Mat Comparison',
-    model: 'Multi-Model Benchmark',
-    tags: ['Accessories', 'Gear'],
-    highlights: [
-      'TuxMat vs WeatherTech dead pedal containment breakdown',
-      'Sienna Super Long Slide 2nd-row track compatibility',
-      'Hybrid battery cooling intake vent obstruction warnings',
-      'Model-specific high-wall search cards for RAV4, Sienna & Grand Highlander',
-    ],
-    href: '/guides/best-toyota-all-weather-floor-mats',
+    slug: 'winter-prep',
+    title: 'Toyota Winter Prep & 12V Battery Guide',
+    description:
+      'Canadian Winter Prep & Salt Protection Guide: BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don\'ts.',
+    badge: 'Seasonal Prep',
+    tags: ['Seasonal', 'Winter', 'Essential'],
+    href: '/winter-prep',
+    icon: Snowflake,
   },
   {
-    slug: 'rav4-mods',
-    title: 'Must-Have Toyota RAV4 Mods & DIY Upgrades',
-    tagline: 'Comprehensive mod playbook for Canadian RAV4 Hybrid, Prime, and Gas owners: dashcams, high-wall liners, and speaker swaps.',
-    badge: 'RAV4 Master Playbook',
-    model: 'RAV4 Hybrid, Prime & Gas',
-    tags: ['Accessories', 'Mods'],
-    highlights: [
-      'FitcamX OEM 4K Integrated Mirror Dashcam',
-      'TuxMat High-Wall Canadian Winter Floor Liners',
-      'JBL Club 3.5" Dash Corner Speaker Upgrade',
-      'Anti-Glare 9H Tempered Glass Display Shield',
-    ],
-    href: '/guides/rav4-mods',
-  },
-  {
-    slug: 'rav4-se-mods',
-    title: 'Skipping the Wait: Turn Your RAV4 Prime SE into an XSE',
-    tagline: 'Skip the 12-month queue: Drop-in audio, tailored leather, and trim tools for ~$700 CAD.',
-    badge: 'Skip 6–12 Mo Wait',
-    model: 'RAV4 Prime (PHEV)',
-    highlights: ['JBL Club 3.5" Dash Speaker Swap', 'Clazzio & EKR Tailored Leather Covers', 'Plug-and-play wiring harnesses'],
-    href: '/guides/rav4-se-mods',
-  },
-  {
-    slug: 'sienna-mods',
-    title: 'The Road Dog Cruiser: Essential Sienna Family & Road-Trip Mods',
-    tagline: 'Fixing rear suspension sag, flying bridge clutter, and pitch-black cargo areas.',
-    badge: 'Road-Trip Tested',
-    model: 'Toyota Sienna Hybrid',
-    highlights: ['Air Lift 1000 in-coil air helper springs', 'Dual-tier center console bridge tray', 'Powerty hatch LED floodlights'],
-    href: '/guides/sienna-mods',
+    slug: 'toyota-ecp-warranty-guide',
+    title: 'Toyota ECP Extended Warranty Guide',
+    description:
+      'ECP Platinum vs. Gold breakdown, factory 8yr/160k km hybrid warranty overlap, dealer margins, and the 31-day purchase rule.',
+    badge: 'Finance Office Guide',
+    tags: ['Finance', 'Warranty'],
+    href: '/guides/toyota-ecp-warranty-guide',
+    icon: ShieldCheck,
   },
   {
     slug: 'toyota-sienna-trailer-hitch-guide',
-    title: '2021–2026 Toyota Sienna Trailer Hitch & Kick-Sensor Guide',
-    tagline: 'Torklift EcoHitch vs. Curt 13470: Ground clearance, kick-sensor relocation, and trailer wiring.',
+    title: 'Sienna Trailer Hitch & Kick-Sensor Guide',
+    description:
+      'Torklift EcoHitch vs. Curt 13470: Ground clearance, kick-sensor relocation, and plug-and-play 4-flat trailer wiring.',
     badge: 'Hitch & Towing',
-    model: 'Toyota Sienna Hybrid',
-    highlights: [
-      'Torklift EcoHitch vs Curt 13470 comparison',
-      'Kick-sensor relocation & disable instructions',
-      'Plug-and-play 4-flat wiring harnesses',
-    ],
+    tags: ['Sienna', 'Towing'],
     href: '/guides/toyota-sienna-trailer-hitch-guide',
+    icon: Wrench,
+  },
+  {
+    slug: 'toyota-rav4-must-have-accessories',
+    title: 'RAV4 Must-Have Accessories',
+    description:
+      'Community-vetted delivery day gear for 2019–2026 RAV4 Hybrid & PHEV owners: TuxMat, FitcamX 4K, Spigen 9H, and faraday defense.',
+    badge: 'Delivery Day Gear',
+    tags: ['RAV4', 'Accessories'],
+    href: '/guides/toyota-rav4-must-have-accessories',
+    icon: Sparkles,
+  },
+  {
+    slug: 'best-toyota-all-weather-floor-mats',
+    title: 'Best All-Weather Floor Mats: TuxMat vs. WeatherTech',
+    description:
+      'Head-to-head comparison for Canadian winters: dead pedal coverage, slush containment, and multi-row minivan fitment.',
+    badge: 'Floor Mat Comparison',
+    tags: ['Accessories', 'Winter'],
+    href: '/guides/best-toyota-all-weather-floor-mats',
+    icon: CheckCircle2,
+  },
+  {
+    slug: 'toyota-first-wash-paint-care',
+    title: 'First Wash & Clear-Coat Paint Care',
+    description:
+      'Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
+    badge: 'Delivery Day Paint Defense',
+    tags: ['Paint Care', 'Zero-Swirl'],
+    href: '/guides/toyota-first-wash-paint-care',
+    icon: Sparkles,
+  },
+];
+
+const MODEL_YEAR_ROLLOVER_GUIDES = [
+  {
+    slug: 'toyota-rav4-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times',
+    summary: 'Native NACS Tesla charging, 11 kW AC charger, 321 hp PHEV, 9.1" Woodland lift, and delivery queues.',
+    model: 'RAV4 Hybrid & PHEV',
+    href: '/guides/toyota-rav4-2026-vs-2027',
   },
   {
     slug: 'toyota-sienna-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Sienna: Key Differences & Trim Matrix',
-    tagline: 'Carryover engineering, full trim matrix, Indiana queue rollovers, and delivery day gear.',
-    badge: '2026 vs. 2027',
+    summary: 'Carryover engineering, full trim matrix, Indiana queue rollovers, and delivery day gear.',
     model: 'Toyota Sienna Hybrid',
-    highlights: [
-      'Side-by-side carryover specs & 0% mechanical delta',
-      'Indiana factory queue rollover explanation',
-      'Direct-fit delivery day gear shelf & live stock bridge',
-    ],
     href: '/guides/toyota-sienna-2026-vs-2027',
-  },
-  {
-    slug: 'toyota-rav4-2026-vs-2027',
-    title: '2026 vs. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times',
-    tagline: 'Native NACS Tesla charging, 11 kW AC charger, 321 hp PHEV, 9.1" Woodland lift, and delivery queues.',
-    badge: '2026 vs. 2027',
-    model: 'RAV4 Hybrid & PHEV',
-    highlights: [
-      'Native NACS Tesla port & Level 3 DC fast charging',
-      '321-hp PHEV upgrade & 11 kW AC home charger',
-      '9.1" Woodland lift & $500 iZEV rebate change',
-    ],
-    href: '/guides/toyota-rav4-2026-vs-2027',
   },
   {
     slug: 'toyota-grand-highlander-2026-vs-2027',
     title: '2026 vs. 2027 Grand Highlander: Woodland Edition & Trim Matrix',
-    tagline: 'New Hybrid Woodland Edition, +12mm lift, 1500W inverter, blacked-out MAX Platinum, and Indiana queue rollovers.',
-    badge: '2026 vs. 2027',
+    summary: 'New Hybrid Woodland Edition, +12mm lift, 1500W inverter, blacked-out MAX Platinum, and Indiana queue rollovers.',
     model: 'Grand Highlander',
-    highlights: [
-      'New Hybrid Woodland Edition with +12mm lifted suspension',
-      '1,500W high-output AC inverter & standard heated wheel on XLE',
-      'Princeton Indiana (TMMI) allocation queue rollover guide',
-    ],
     href: '/guides/toyota-grand-highlander-2026-vs-2027',
   },
   {
     slug: 'toyota-corolla-cross-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Corolla Cross Canada: Pricing, Trims & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Corolla Cross & Hybrid in Canada. Breakdown of 2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
-    badge: '2026 vs. 2027',
+    summary: '2027 Canadian MSRP increases (~$565–$955), carryover 196-hp hybrid specs, and MTM Huntsville queue rollovers.',
     model: 'Corolla Cross Gas & Hybrid',
-    highlights: [
-      '2027 Canadian All-In MSRP delta (+$565 Gas / +$951–$956 Hybrid)',
-      'Hybrid AWD (6–12 mo) vs. Gas AWD (2–5 mo) Canadian waitlists',
-      'MTM Huntsville Alabama factory queue rollover rules',
-    ],
     href: '/guides/toyota-corolla-cross-2026-vs-2027',
   },
   {
     slug: 'toyota-tundra-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Tundra Canada: Trailhunter, TSS 4.0 & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Tundra & i-FORCE MAX Hybrid in Canada. Breakdown of the new SR5 Trailhunter package, standard 14" screen, TSS 4.0, 122L fuel tank, and San Antonio allocation rollovers.',
-    badge: '2026 vs. 2027',
-    model: 'Tundra i-FORCE & i-FORCE MAX',
-    highlights: [
-      'New SR5 Trailhunter package & TRD Pro FOX QS3 shocks',
-      'Standard 14" Multimedia, TSS 4.0 & 122L tank across all 31 Canadian 4x4s',
-      'San Antonio (TMMTX) allocation rollover rules & Canadian pricing deltas',
-    ],
+    summary: 'New SR5 Trailhunter package, standard 14" screen, TSS 4.0, 122L fuel tank, and San Antonio allocation rollovers.',
+    model: 'Tundra i-FORCE & MAX',
     href: '/guides/toyota-tundra-2026-vs-2027',
   },
   {
     slug: 'toyota-sequoia-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Sequoia Canada: Trailhunter, Price Hike & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Sequoia in Canada. Breakdown of the new SR5 Trailhunter ($95,552 MSRP), +$5,560 base price jump, FOX QS3 TRD Pro shocks, TSS 4.0, and Trailer ADAS.',
-    badge: '2026 vs. 2027',
+    summary: 'New SR5 Trailhunter ($95,552 MSRP), +$5,560 base price jump, FOX QS3 TRD Pro shocks, TSS 4.0, and Trailer ADAS.',
     model: 'Sequoia i-FORCE MAX',
-    highlights: [
-      'New SR5 Trailhunter package ($95,552 MSRP) & TRD Pro FOX QS3 shocks',
-      'Standard 14" touchscreen w/ Drive Recorder, TSS 4.0 & Trailer ADAS',
-      '+$5,560 CAD base SR5 TRD Off-Road price jump & San Antonio queue rollovers',
-    ],
     href: '/guides/toyota-sequoia-2026-vs-2027',
   },
   {
     slug: 'toyota-highlander-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Highlander Canada: Gas/Hybrid vs. All-New 3-Row EV',
-    tagline: 'The 2027 Toyota Highlander transforms into an all-electric 3-row BEV in Canada (up to 515 km range, NACS port, TSS 4.0). Compare 2026 Gas/Hybrid vs. 2027 BEV specs and waitlists.',
-    badge: '2026 vs. 2027',
+    summary: 'Transforms into an all-electric 3-row BEV in Canada (up to 515 km range, NACS port, TSS 4.0).',
     model: 'Highlander Hybrid vs. BEV',
-    highlights: [
-      'Complete transformation from 2026 Gas/Hybrid to 2027 3-Row All-Electric BEV',
-      '77.0 kWh (462 km) & 95.8 kWh (515 km) batteries with native NACS & V2L',
-      'Why 2026 Gas/Hybrid orders do NOT auto-convert to 2027 BEV + Grand Highlander alternative',
-    ],
     href: '/guides/toyota-highlander-2026-vs-2027',
   },
   {
     slug: 'toyota-camry-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Camry Canada: XSE Special Edition, Pricing & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Camry Hybrid in Canada. Breakdown of the new 2027 XSE AWD Special Edition ($46,565 MSRP), +$375–$385 price increases, and Kentucky queue rollovers.',
-    badge: '2026 vs. 2027',
+    summary: 'New 2027 XSE AWD Special Edition ($46,565 MSRP), +$375–$385 price increases, and Kentucky queue rollovers.',
     model: 'Camry Hybrid FWD & AWD',
-    highlights: [
-      'New 2027 XSE AWD Special Edition ($46,565 MSRP / $49,731 all-in)',
-      'Mild +$375–$385 CAD MSRP increase across carryover 5th-Gen Hybrid trims',
-      'TMMK Kentucky allocation queue rollovers & 4.7 L/100 km efficiency',
-    ],
     href: '/guides/toyota-camry-2026-vs-2027',
   },
   {
     slug: 'toyota-land-cruiser-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Land Cruiser Canada: Price Increase, Specs & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Land Cruiser 250 in Canada. Full breakdown of the +$1,470 to +$2,340 MSRP increase, carryover 326-hp i-FORCE MAX specs, and Tahara allocation rollovers.',
-    badge: '2026 vs. 2027',
-    model: 'Land Cruiser 250 i-FORCE MAX',
-    highlights: [
-      '100% mechanical carryover: 326-hp i-FORCE MAX & full-time 4WD',
-      '2027 Canadian MSRP increases: +$1,470 on 1958 ($73,020) & +$2,340 on LC Grade ($81,825)',
-      'Tahara / Hino Japan factory queue rollovers & Executive Package pricing',
-    ],
+    summary: '+$1,470 to +$2,340 MSRP increase, carryover 326-hp i-FORCE MAX specs, and Tahara allocation rollovers.',
+    model: 'Land Cruiser 250',
     href: '/guides/toyota-land-cruiser-2026-vs-2027',
   },
   {
     slug: 'toyota-prius-2026-vs-2027',
     title: '2026 vs. 2027 Toyota Prius & Plug-in Hybrid Canada: Pricing, Trims & Wait Times',
-    tagline: 'Compare the 2026 and 2027 Toyota Prius AWD and Prius Plug-in Hybrid (Prime) in Canada. Breakdown of +$375–$435 MSRP increases, 72 km EV range carryover, and Japan allocation queues.',
-    badge: '2026 vs. 2027',
-    model: 'Prius AWD & Plug-in Hybrid',
-    highlights: [
-      'Carryover 196-hp Prius AWD & 220-hp Prius Plug-in Hybrid (up to 72 km EV range)',
-      'Modest +$375–$435 CAD MSRP adjustments across HEV and PHEV grades',
-      'Tsutsumi Plant (Aichi, Japan) allocation rollovers & BC/QC provincial EV rebates',
-    ],
+    summary: '+$375–$435 MSRP increases, 72 km EV range carryover, and Tsutsumi Japan allocation queues.',
+    model: 'Prius AWD & PHEV',
     href: '/guides/toyota-prius-2026-vs-2027',
+  },
+];
+
+const CROSS_MODEL_COMPARISONS = [
+  {
+    slug: 'toyota-rav4-vs-sienna',
+    matchup: 'RAV4 vs. Sienna',
+    takeaway: 'Ground Clearance vs. Sliding Doors & Cargo Packaging',
+    href: '/guides/toyota-rav4-vs-sienna',
+  },
+  {
+    slug: 'toyota-corolla-cross-vs-rav4-hybrid',
+    matchup: 'Corolla Cross vs. RAV4 Hybrid',
+    takeaway: '21.5 vs. 37.5 cu. ft. Cargo, Rear Car Seats & Wait Times',
+    href: '/guides/toyota-corolla-cross-vs-rav4-hybrid',
+  },
+  {
+    slug: 'toyota-grand-highlander-vs-lexus-tx',
+    matchup: 'Grand Highlander vs. Lexus TX',
+    takeaway: '3-Row Space, Acoustic Glass, Luxury Tax & Allocations',
+    href: '/guides/toyota-grand-highlander-vs-lexus-tx',
+  },
+  {
+    slug: 'lexus-tx-vs-rx',
+    matchup: 'Lexus TX vs. RX',
+    takeaway: '3-Row College-Adult Comfort vs. 2-Row Garage Footprint',
+    href: '/guides/lexus-tx-vs-rx',
+  },
+];
+
+const MODEL_MOD_HUBS = [
+  {
+    slug: 'sienna-mods',
+    label: 'Sienna Mods',
+    subtitle: 'Road Dog Cruiser & Air Helper Springs',
+    href: '/guides/sienna-mods',
+  },
+  {
+    slug: 'rav4-mods',
+    label: 'RAV4 Mods',
+    subtitle: 'Dashcam, TuxMat & Dash Speakers',
+    href: '/guides/rav4-mods',
+  },
+  {
+    slug: 'rav4-se-mods',
+    label: 'RAV4 Prime SE → XSE',
+    subtitle: 'Skip 12-Mo Queue for ~$700 CAD',
+    href: '/guides/rav4-se-mods',
   },
   {
     slug: 'grand-highlander-mods',
-    title: 'Big Rig Comfort: Grand Highlander Cabin & Utility Upgrades',
-    tagline: 'Drop-in hatch flood illumination, textured anti-slip charging mats, and console dividers.',
-    badge: 'Cabin Utility',
-    model: 'Grand Highlander',
-    highlights: ['OEM PT944-style cargo hatch lamps', 'Textured silicone Qi charging pad mat', 'Winter highway stone-chip prep'],
+    label: 'Grand Highlander Mods',
+    subtitle: 'Hatch Flood Lamps & Console Trays',
     href: '/guides/grand-highlander-mods',
   },
   {
-    slug: 'land-cruiser-mods',
-    title: 'Backroads & Borderlines: LC250 1958 Trim Upgrades',
-    tagline: 'Overhaul base 6-speaker paper cones, frame sliders for battery harness protection, and winter rubber.',
-    badge: 'Trail & Winter Armor',
-    model: 'Land Cruiser 250',
-    highlights: ['Drop-in 3.5" & 6.5" speaker upgrade', 'Frame-mounted rock sliders & underside armor', 'Severe snow tire & wheel packages'],
-    href: '/guides/land-cruiser-mods',
-  },
-  {
     slug: 'prius-mods',
-    title: 'Must-Have 2023-2026 Toyota Prius & Prius Prime Accessories & Mods',
-    tagline: 'The essential exterior armor, interior protection, and tech upgrades for Canadian Gen 5 Prius owners.',
-    badge: 'Gen 5 Essential Armor',
-    model: 'Prius & Prius Prime',
-    highlights: [
-      'FitcamX OEM-Integrated 4K Dashcam',
-      'Molded Splash Guards & Mud Flap Kit',
-      '3D All-Weather TPE Floor & Cargo Liners',
-    ],
+    label: 'Prius Mods',
+    subtitle: 'Gen 5 Dashcam, Mud Flaps & TPE Liners',
     href: '/guides/prius-mods',
   },
   {
     slug: 'corolla-mods',
-    title: 'Must-Have Toyota Corolla & Corolla Cross Mods & Upgrades',
-    tagline: 'The 4-stage playbook: TuxMat liners, FitcamX 4K dashcam, 22mm sway bar, 3.5" tweeter swap, and intake.',
-    badge: '4-Stage Playbook',
-    model: 'Corolla & Corolla Cross',
-    highlights: [
-      'TuxMat / WeatherTech All-Weather Liners',
-      'FitcamX OEM-Integrated 4K Mirror Dashcam',
-      'JBL / Kicker 3.5" Dash Corner Tweeter Swap',
-      'TRD / Progress 22mm Rear Sway Bar',
-    ],
+    label: 'Corolla & Cross Mods',
+    subtitle: '4-Stage Playbook & Rear Sway Bar',
     href: '/guides/corolla-mods',
   },
   {
     slug: 'sequoia-mods',
-    title: 'Must-Have Toyota Sequoia (XK80) Mods & Practical Upgrades',
-    tagline: 'Solving the hybrid battery cargo hump, 3-inch preload leveling, 35-inch clearances, and towing stability.',
-    badge: 'Full-Size 4WD Playbook',
-    model: 'Toyota Sequoia (XK80)',
-    highlights: [
-      'Aftermarket Cargo Leveling Drawers & Shelves',
-      'Westcott Designs 3"/1" Preload Collar Lift',
-      'FitcamX OEM 4K Integrated Dashcam',
-      'Heavy-Duty Rear Sway Bar & Towing Coils',
-    ],
+    label: 'Sequoia (XK80) Mods',
+    subtitle: 'Cargo Leveling & 3" Preload Lift',
     href: '/guides/sequoia-mods',
+  },
+  {
+    slug: 'land-cruiser-mods',
+    label: 'Land Cruiser 250 Mods',
+    subtitle: '1958 Trim Audio & Trail Armor',
+    href: '/guides/land-cruiser-mods',
   },
 ];
 
-const PREP_GUIDES = [
-  {
-    slug: 'toyota-ecp-warranty-guide',
-    title: 'Toyota ECP Warranty Guide',
-    description: 'ECP Platinum vs. Gold breakdown, factory hybrid warranty overlap, dealer margins, and the 31-day purchase rule.',
-    icon: ShieldCheck,
-    href: '/guides/toyota-ecp-warranty-guide',
-  },
-  {
-    slug: 'toyota-first-wash-paint-care',
-    title: 'First-Wash & Paint Care Guide',
-    description:
-      'Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
-    icon: Sparkles,
-    href: '/guides/toyota-first-wash-paint-care',
-  },
-  {
-    slug: 'winter-prep',
-    title: 'Winter Prep & Salt Protection Guide',
-    description: 'BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don\'ts.',
-    icon: Snowflake,
-    href: '/winter-prep',
-  },
-  {
-    slug: 'tires',
-    title: 'OEM Tire Sizing & 17" Downsizing Guide',
-    description: 'Confirmed bolt patterns (5x114.3 / 5x120), center bore offsets, and 3PMSF winter rubber for all hybrid models.',
-    icon: Disc3,
-    href: '/tires',
-  },
-  {
-    slug: 'delivery-prep',
-    title: 'Zero-Mile Dealership Delivery Inspection',
-    description: 'PDI checklist: transit fuse seating, overinflated shipping tires, hybrid cable inspection, and factory accessories check.',
-    icon: ClipboardCheck,
-    href: '/delivery-prep',
-  },
+const SPECIALTY_AND_LEXUS_GUIDES = [
   {
     slug: 'ev-charging',
     title: 'Level 2 Home EVSE Charging Guide',
@@ -574,6 +312,27 @@ const PREP_GUIDES = [
     description: 'Battery replacement endorsements, TAG anti-theft tracking, and rate negotiation tips.',
     icon: ShieldCheck,
     href: '/guides/insurance',
+  },
+  {
+    slug: 'lexus-gx550-must-have-accessories',
+    title: 'Lexus GX 550 Day-One Delivery Checklist',
+    description: 'TuxMat liners, FitcamX 4K dashcam, 14" screen shield, and PPF stone-chip armor.',
+    icon: Sparkles,
+    href: '/guides/lexus-gx550-must-have-accessories',
+  },
+  {
+    slug: 'lexus-tx-delivery-prep-gear',
+    title: 'Lexus TX 350 & 500h Delivery Prep Gear',
+    description: 'Full 3-row TPE floor liners, 14" screen defense, cargo seatback armor & faraday pouches.',
+    icon: ClipboardCheck,
+    href: '/guides/lexus-tx-delivery-prep-gear',
+  },
+  {
+    slug: 'lexus-phev-home-charging-setup',
+    title: 'Lexus NX 450h+ & RX 450h+ Home Charging',
+    description: '6.6 kW charger specs, Grizzl-E winter EVSE, rebates, and sub-zero shore preheating.',
+    icon: Zap,
+    href: '/guides/lexus-phev-home-charging-setup',
   },
 ];
 
@@ -633,77 +392,220 @@ export default function GuidesIndexPage() {
           DIY Mod Playbooks &amp; Delivery Day Prep (Updated {currentMonthYear})
         </h1>
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl leading-relaxed">
-          The piano has been drinking, and dealer allocation queues are backed up for months. Turn your standard trim into a luxury spec, prep for Canadian winter roads, and skip the line.
+          Dealer allocation queues are backed up for months. Prep for delivery day, maintain your
+          hybrid or gas powertrain yourself, and skip high-trim markups.
         </p>
       </div>
 
-      {/* 1. Model-Specific DIY Mod Guides */}
-      <section className="space-y-6">
+      {/* Section 1 — Popular Guides & Ownership Playbooks (Always Visible, Top Grid) */}
+      <section className="space-y-6" aria-labelledby="popular-guides-heading">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
           <div>
-            <h2 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-amber-500" />
-              Model-Specific DIY Mod Playbooks
+            <h2
+              id="popular-guides-heading"
+              className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2"
+            >
+              <Sparkles className="h-5 w-5 text-amber-500" />
+              Popular Guides &amp; Ownership Playbooks
             </h2>
             <p className="text-sm text-zinc-500">
-              Community-proven upgrades to skip high-trim wait queues and eliminate factory annoyances.
+              High-utility evergreen checklists for maintenance, delivery inspection, tires, winter prep, and paint care.
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {MOD_GUIDES.map((guide) => (
-            <Card
-              key={guide.slug}
-              className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm flex flex-col justify-between hover:border-amber-500/50 transition-colors"
-            >
-              <CardHeader className="space-y-2">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <Badge variant="outline" className="text-xs border-amber-500/30 text-amber-400 bg-amber-500/5">
-                      {guide.model}
+        <div
+          data-testid="popular-guides-grid"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          {POPULAR_GUIDES.map((guide) => {
+            const Icon = guide.icon;
+            return (
+              <Card
+                key={guide.slug}
+                className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 shadow-sm flex flex-col justify-between hover:border-amber-500/50 transition-colors"
+              >
+                <CardHeader className="space-y-2 p-4 pb-2">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="h-7 w-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 shrink-0">
+                      <Icon className="h-3.5 w-3.5" />
+                    </div>
+                    <Badge className="bg-amber-500/20 text-amber-600 dark:text-amber-300 border border-amber-500/30 text-[10px] font-semibold">
+                      {guide.badge}
                     </Badge>
-                    {guide.tags?.map((t) => (
-                      <Badge key={t} variant="secondary" className="text-[10px] font-semibold">
-                        [{t}]
+                  </div>
+                  <CardTitle className="text-base font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                    {guide.title}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                    {guide.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-4 py-2">
+                  <div className="flex flex-wrap gap-1.5">
+                    {guide.tags.map((tag) => (
+                      <Badge key={tag} variant="secondary" className="text-[10px] font-semibold">
+                        [{tag}]
                       </Badge>
                     ))}
                   </div>
-                  <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] font-semibold">
-                    {guide.badge}
+                </CardContent>
+                <CardFooter className="p-4 pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
+                  <Button
+                    asChild
+                    className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs gap-1.5"
+                  >
+                    <Link href={guide.href}>
+                      Read Guide <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Section 2 — 2026 vs. 2027 Model-Year Rollover Guides (Always Visible) */}
+      <section className="space-y-6" aria-labelledby="rollover-guides-heading">
+        <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          <h2
+            id="rollover-guides-heading"
+            className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2"
+          >
+            <CalendarClock className="h-5 w-5 text-amber-500" />
+            2026 vs. 2027 Model-Year Rollover Guides
+          </h2>
+          <p className="text-sm text-zinc-500">
+            Pricing deltas, spec changes, and factory allocation rollover rules for buyers tracking incoming model years.
+          </p>
+        </div>
+
+        <div
+          data-testid="rollover-guides-grid"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          {MODEL_YEAR_ROLLOVER_GUIDES.map((guide) => (
+            <Card
+              key={guide.slug}
+              className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 hover:border-amber-500/50 transition-colors flex flex-col justify-between"
+            >
+              <CardHeader className="p-4 pb-2 space-y-1.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-500">
+                    {guide.model}
                   </Badge>
+                  <Badge className="bg-zinc-800 text-zinc-200 text-[10px]">2026 vs. 2027</Badge>
                 </div>
-                <CardTitle className="text-lg font-bold text-zinc-900 dark:text-zinc-50 leading-snug">
+                <CardTitle className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
                   {guide.title}
                 </CardTitle>
                 <CardDescription className="text-xs text-zinc-600 dark:text-zinc-400">
-                  {guide.tagline}
+                  {guide.summary}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">Key Upgrades Covered:</p>
-                <ul className="text-xs text-zinc-500 dark:text-zinc-400 space-y-1">
-                  {guide.highlights.map((h, i) => (
-                    <li key={i} className="flex items-center gap-1.5">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-amber-500 shrink-0" />
-                      <span>{h}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-              <CardFooter className="pt-2 border-t border-zinc-100 dark:border-zinc-800/80">
-                <Button asChild className="w-full bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs gap-1.5">
-                  <Link href={guide.href}>
-                    Read Mod Guide <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </Button>
+              <CardFooter className="p-4 pt-2">
+                <Link
+                  href={guide.href}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-500 hover:text-amber-400 hover:underline"
+                >
+                  <span>Read Rollover Guide</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </CardFooter>
             </Card>
           ))}
         </div>
       </section>
 
-      {/* 2. Curated Delivery Day Prep & Gear */}
+      {/* Section 3 — Cross-Model & Head-to-Head Comparisons (Collapsible Disclosure) */}
+      <section aria-labelledby="cross-model-heading">
+        <details
+          data-testid="cross-model-comparisons-details"
+          className="group rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 sm:p-5 shadow-sm"
+        >
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <GitCompare className="h-5 w-5 text-amber-500 shrink-0" />
+              <h2
+                id="cross-model-heading"
+                className="text-lg sm:text-xl font-black tracking-tight text-zinc-900 dark:text-zinc-50"
+              >
+                Model-vs-Model Comparison Guides
+              </h2>
+              <Badge variant="secondary" className="text-xs font-semibold">
+                ({CROSS_MODEL_COMPARISONS.length} Guides)
+              </Badge>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs font-bold text-amber-500 shrink-0">
+              <span className="group-open:hidden">Show All</span>
+              <span className="hidden group-open:inline">Hide</span>
+              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            </div>
+          </summary>
+
+          <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+            {CROSS_MODEL_COMPARISONS.map((comp) => (
+              <Link
+                key={comp.slug}
+                href={comp.href}
+                className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 px-4 py-3 hover:border-amber-500/50 transition-colors"
+              >
+                <div className="min-w-0">
+                  <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                    {comp.matchup}
+                  </div>
+                  <div className="text-xs text-zinc-500 dark:text-zinc-400 truncate">
+                    {comp.takeaway}
+                  </div>
+                </div>
+                <ArrowRight className="h-4 w-4 text-amber-500 shrink-0" />
+              </Link>
+            ))}
+          </div>
+        </details>
+      </section>
+
+      {/* Section 4 — Model Modification & Build Hubs (Compact Pill Strip) */}
+      <section className="space-y-4" aria-labelledby="mod-hubs-heading">
+        <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
+          <h2
+            id="mod-hubs-heading"
+            className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2"
+          >
+            <Wrench className="h-5 w-5 text-amber-500" />
+            Model Modification &amp; Build Hubs
+          </h2>
+          <p className="text-sm text-zinc-500">
+            Model-specific DIY upgrade playbooks to skip high-trim wait queues and eliminate factory annoyances.
+          </p>
+        </div>
+
+        <div
+          data-testid="model-mod-hubs-strip"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"
+        >
+          {MODEL_MOD_HUBS.map((hub) => (
+            <Link
+              key={hub.slug}
+              href={hub.href}
+              className="group flex items-center justify-between gap-2 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 px-3.5 py-3 hover:border-amber-500/50 transition-colors"
+            >
+              <div className="min-w-0">
+                <div className="text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-amber-500 transition-colors truncate">
+                  {hub.label}
+                </div>
+                <div className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">
+                  {hub.subtitle}
+                </div>
+              </div>
+              <ArrowRight className="h-3.5 w-3.5 text-zinc-400 group-hover:text-amber-500 shrink-0" />
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Essential Delivery Day Prep & Gear */}
       <section className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-3">
           <div>
@@ -732,20 +634,20 @@ export default function GuidesIndexPage() {
         </div>
       </section>
 
-      {/* 3. Ownership & Prep Guides */}
+      {/* Specialty EV, Insurance & Lexus Delivery Guides */}
       <section className="space-y-6">
         <div className="border-b border-zinc-200 dark:border-zinc-800 pb-3">
           <h2 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-amber-500" />
-            Ownership &amp; Cold-Weather Guides
+            EV Charging, Insurance &amp; Lexus Delivery Guides
           </h2>
           <p className="text-sm text-zinc-500">
-            Canadian winter specifications, Level 2 EV charging, and comprehensive insurance strategies.
+            Level 2 EVSE charging, provincial tire mandates, hybrid insurance, and Lexus delivery checklists.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {PREP_GUIDES.map((guide) => {
+          {SPECIALTY_AND_LEXUS_GUIDES.map((guide) => {
             const Icon = guide.icon;
             return (
               <Card key={guide.slug} className="border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-4 space-y-2 flex flex-col justify-between">
@@ -777,9 +679,6 @@ export default function GuidesIndexPage() {
           ToyotaWaits.ca participates in privacy-safe affiliate programs. When you follow product links via <code>/out/[slug]</code>, we may earn an affiliate commission at no extra cost to you. As an Amazon Associate, toyotawaits.ca earns from qualifying purchases at no extra cost to you.
         </p>
       </div>
-
-      {/* Legal & Safety Disclaimer */}
-      <GuideDisclaimer />
     </div>
   );
 }

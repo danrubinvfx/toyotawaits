@@ -9,10 +9,14 @@ describe('Guides Index Hub Page', () => {
     expect(instant).toBe(false);
   });
 
-  it('features Toyota DIY Maintenance & Upkeep Guide in featured guides without duplicates', () => {
+  it('features Toyota DIY Maintenance & Upkeep Guide in Popular Guides without duplicates', () => {
     const { container } = render(<GuidesIndexPage />);
 
+    const popularGrid = container.querySelector('[data-testid="popular-guides-grid"]');
+    expect(popularGrid).not.toBeNull();
+
     expect(screen.getByText('Toyota DIY Maintenance & Upkeep Guide')).toBeInTheDocument();
+    expect(screen.getByText('DIY & Maintenance')).toBeInTheDocument();
     expect(
       screen.getByText(
         /Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM filter numbers, hybrid battery fan filter cleaning, 12V battery care, and clear-coat safe wash gear\./i
@@ -24,70 +28,98 @@ describe('Guides Index Hub Page', () => {
 
     const links = container.querySelectorAll('a[href="/guides/toyota-diy-maintenance-guide"]');
     expect(links.length).toBe(1);
+    expect(popularGrid!.querySelector('a[href="/guides/toyota-diy-maintenance-guide"]')).not.toBeNull();
   });
 
-  it('renders seasonal prep and inspection guide cards with expected content and URLs', () => {
-    render(<GuidesIndexPage />);
-
-    // 1. Winter Prep Card
-    expect(screen.getByText('Canadian Winter Prep & Salt Protection Guide')).toBeInTheDocument();
-    expect(
-      screen.getAllByText(/BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival/i).length
-    ).toBeGreaterThanOrEqual(1);
-    const winterPrepLinks = screen.getAllByRole('link', { name: /Read (Mod )?Guide/i });
-    const winterHref = winterPrepLinks.some((l) => l.getAttribute('href') === '/winter-prep');
-    expect(winterHref).toBe(true);
-
-    // 2. Tires Sizing Card
-    expect(screen.getByText('OEM Tire Sizing & 17-Inch Downsizing Guide')).toBeInTheDocument();
-    expect(
-      screen.getAllByText(/Confirmed bolt patterns \(5x114\.3 \/ 5x120\), center bore offsets/i).length
-    ).toBeGreaterThanOrEqual(1);
-    const tiresHref = winterPrepLinks.some((l) => l.getAttribute('href') === '/tires');
-    expect(tiresHref).toBe(true);
-
-    // 3. Delivery Prep Card
-    expect(screen.getAllByText('Zero-Mile Dealership Delivery Inspection').length).toBeGreaterThanOrEqual(1);
-    expect(
-      screen.getAllByText(/PDI checklist: transit fuse seating, overinflated shipping tires/i).length
-    ).toBeGreaterThanOrEqual(1);
-    const deliveryHref = winterPrepLinks.some((l) => l.getAttribute('href') === '/delivery-prep');
-    expect(deliveryHref).toBe(true);
-  });
-
-  it('renders all active model guides and DIY playbook hubs', () => {
+  it('renders Popular Guides evergreen playbooks and links', () => {
     const { container } = render(<GuidesIndexPage />);
+    const popularGrid = container.querySelector('[data-testid="popular-guides-grid"]');
+    expect(popularGrid).not.toBeNull();
 
-    const expectedGuideHrefs = [
+    const expectedPopularHrefs = [
+      '/guides/toyota-diy-maintenance-guide',
+      '/delivery-prep',
+      '/tires',
+      '/winter-prep',
+      '/guides/toyota-ecp-warranty-guide',
       '/guides/toyota-sienna-trailer-hitch-guide',
-      '/guides/toyota-sienna-2026-vs-2027',
-      '/guides/toyota-rav4-2026-vs-2027',
-      '/guides/toyota-grand-highlander-2026-vs-2027',
-      '/guides/toyota-corolla-cross-2026-vs-2027',
       '/guides/toyota-rav4-must-have-accessories',
       '/guides/best-toyota-all-weather-floor-mats',
-      '/guides/sienna-mods',
-      '/guides/rav4-mods',
-      '/guides/prius-mods',
-      '/guides/grand-highlander-mods',
-      '/guides/corolla-mods',
-      '/guides/sequoia-mods',
+      '/guides/toyota-first-wash-paint-care',
     ];
 
-    for (const href of expectedGuideHrefs) {
-      const link = container.querySelector(`a[href="${href}"]`);
-      expect(link).toBeInTheDocument();
+    for (const href of expectedPopularHrefs) {
+      expect(popularGrid!.querySelector(`a[href="${href}"]`)).toBeInTheDocument();
     }
   });
 
-  it('renders ownership and cold-weather quick cards', () => {
+  it('keeps all 2026 vs. 2027 model-year rollover guides visible in their dedicated section', () => {
+    const { container } = render(<GuidesIndexPage />);
+    const rolloverGrid = container.querySelector('[data-testid="rollover-guides-grid"]');
+    expect(rolloverGrid).not.toBeNull();
+
+    const expectedRolloverHrefs = [
+      '/guides/toyota-rav4-2026-vs-2027',
+      '/guides/toyota-sienna-2026-vs-2027',
+      '/guides/toyota-grand-highlander-2026-vs-2027',
+      '/guides/toyota-corolla-cross-2026-vs-2027',
+      '/guides/toyota-tundra-2026-vs-2027',
+      '/guides/toyota-sequoia-2026-vs-2027',
+      '/guides/toyota-highlander-2026-vs-2027',
+      '/guides/toyota-camry-2026-vs-2027',
+      '/guides/toyota-land-cruiser-2026-vs-2027',
+      '/guides/toyota-prius-2026-vs-2027',
+    ];
+
+    for (const href of expectedRolloverHrefs) {
+      expect(rolloverGrid!.querySelector(`a[href="${href}"]`)).toBeInTheDocument();
+    }
+  });
+
+  it('groups model-vs-model comparisons inside a collapsed-by-default <details> disclosure with SSR links', () => {
+    const { container } = render(<GuidesIndexPage />);
+    const details = container.querySelector(
+      'details[data-testid="cross-model-comparisons-details"]'
+    );
+    expect(details).not.toBeNull();
+    expect(details!.hasAttribute('open')).toBe(false);
+    expect(screen.getByText('Model-vs-Model Comparison Guides')).toBeInTheDocument();
+    expect(screen.getByText('(4 Guides)')).toBeInTheDocument();
+
+    const expectedComparisonHrefs = [
+      '/guides/toyota-rav4-vs-sienna',
+      '/guides/toyota-corolla-cross-vs-rav4-hybrid',
+      '/guides/toyota-grand-highlander-vs-lexus-tx',
+      '/guides/lexus-tx-vs-rx',
+    ];
+
+    for (const href of expectedComparisonHrefs) {
+      expect(details!.querySelector(`a[href="${href}"]`)).toBeInTheDocument();
+    }
+  });
+
+  it('renders model mod hubs and specialty EV, insurance & Lexus guides', () => {
     const { container } = render(<GuidesIndexPage />);
 
-    expect(container.querySelector('a[href="/winter-prep"]')).toBeInTheDocument();
-    expect(container.querySelector('a[href="/tires"]')).toBeInTheDocument();
-    expect(container.querySelector('a[href="/delivery-prep"]')).toBeInTheDocument();
-    expect(container.querySelector('a[href="/guides/ev-charging"]')).toBeInTheDocument();
-    expect(container.querySelector('a[href="/guides/winter-tires"]')).toBeInTheDocument();
-    expect(container.querySelector('a[href="/guides/insurance"]')).toBeInTheDocument();
+    const expectedOtherHrefs = [
+      '/guides/sienna-mods',
+      '/guides/rav4-mods',
+      '/guides/rav4-se-mods',
+      '/guides/grand-highlander-mods',
+      '/guides/prius-mods',
+      '/guides/corolla-mods',
+      '/guides/sequoia-mods',
+      '/guides/land-cruiser-mods',
+      '/guides/ev-charging',
+      '/guides/winter-tires',
+      '/guides/insurance',
+      '/guides/lexus-gx550-must-have-accessories',
+      '/guides/lexus-tx-delivery-prep-gear',
+      '/guides/lexus-phev-home-charging-setup',
+    ];
+
+    for (const href of expectedOtherHrefs) {
+      expect(container.querySelector(`a[href="${href}"]`)).toBeInTheDocument();
+    }
   });
 });
