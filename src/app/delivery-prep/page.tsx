@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { PickupChecklist } from '@/components/delivery-prep/pickup-checklist';
 import { PrintButton } from '@/components/delivery-prep/print-button';
@@ -123,6 +124,7 @@ export default function DeliveryPrepPage() {
             </div>
 
             <div className="flex items-center gap-2 shrink-0 print:hidden">
+              <ShareButton variant="header" title="Toyota Canada Delivery Tracking & Pickup Day Checklist" />
               <PrintButton />
             </div>
           </div>

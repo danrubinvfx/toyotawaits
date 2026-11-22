@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { AFFILIATE_LINKS } from '@/lib/affiliate';
@@ -58,7 +59,10 @@ export default function SiennaTrailerHitchGuidePage() {
     <div className="container mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       {/* Header & Breadcrumbs */}
       <div className="space-y-4">
-        <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" />
+          <ShareButton variant="header" title="2021–2026 Toyota Sienna Trailer Hitch & Kick-Sensor Guide" />
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">

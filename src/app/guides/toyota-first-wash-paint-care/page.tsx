@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GearCard, type GearCardItem } from '@/components/gear/GearCard';
@@ -172,7 +173,10 @@ export default async function ToyotaFirstWashPaintCareGuidePage() {
 
       {/* Header & Breadcrumbs */}
       <div className="space-y-4">
-        <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" />
+          <ShareButton variant="header" title="New Toyota First-Wash & Paint Care Guide" />
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">

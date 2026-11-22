@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import {
   Check,
   Copy,
@@ -408,10 +409,11 @@ export function GearCard({
 
   return (
     <div
+      id={item.id}
       data-testid={`checklist-item-${item.slug}`}
       className={
         cn(
-          'relative w-[72vw] max-w-[270px] sm:w-[320px] flex-shrink-0 snap-center rounded-2xl border border-zinc-800 hover:border-amber-500/40 bg-zinc-900/70 hover:bg-zinc-900/95 transition-all p-4 shadow-lg flex flex-col justify-between',
+          'relative scroll-mt-24 w-[72vw] max-w-[270px] sm:w-[320px] flex-shrink-0 snap-center rounded-2xl border border-zinc-800 hover:border-amber-500/40 bg-zinc-900/70 hover:bg-zinc-900/95 transition-all p-4 shadow-lg flex flex-col justify-between',
           isChecked
             ? 'border-amber-500/60 bg-zinc-900/95 shadow-inner'
             : '',
@@ -495,14 +497,22 @@ export function GearCard({
           </div>
         )}
 
-        {/* Title: text-sm font-bold line-clamp-1 mt-2 */}
-        <h4
-          className={cn(
-            'text-sm font-bold text-white tracking-tight transition-colors mt-2', isChecked ? 'line-through text-zinc-500' : 'text-white'
-          )}
-        >
-          {item.title}
-        </h4>
+        {/* Title & Share Row */}
+        <div className="flex items-start justify-between gap-2 mt-2">
+          <h4
+            className={cn(
+              'text-sm font-bold text-white tracking-tight transition-colors', isChecked ? 'line-through text-zinc-500' : 'text-white'
+            )}
+          >
+            {item.title}
+          </h4>
+          <ShareButton
+            title={item.title}
+            text={item.description}
+            anchorId={item.id}
+            variant="card"
+          />
+        </div>
 
         {/* Muslogy Partner 2% Discount Pill & One-Tap Copy */}
         {isDirectPartner && (

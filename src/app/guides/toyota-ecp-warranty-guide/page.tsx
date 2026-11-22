@@ -3,6 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -303,6 +304,7 @@ export default function ToyotaEcpWarrantyGuidePage() {
             <Badge className="bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 text-[11px]">
               Canadian Market (CAD)
             </Badge>
+            <ShareButton variant="header" title="Toyota ECP Extended Warranty Guide" />
           </div>
         </div>
       </div>

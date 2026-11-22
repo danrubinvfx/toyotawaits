@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Badge } from '@/components/ui/badge';
 import { GearCard } from '@/components/gear/GearCard';
@@ -123,7 +124,10 @@ export default function Rav4MustHaveAccessoriesPage() {
         <SeasonalDealBanner modelSlug="rav4" modelName="Toyota RAV4" />
       </Suspense>
       <div className="space-y-4">
-        <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" />
+          <ShareButton variant="header" title="Top 7 Must-Have Toyota RAV4 Accessories" />
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-amber-500 text-zinc-950 font-bold gap-1 text-xs hover:bg-amber-400">

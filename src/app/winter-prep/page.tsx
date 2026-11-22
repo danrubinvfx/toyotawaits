@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import { WinterPrepView } from '@/components/winter-prep/winter-prep-view';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 
 export const revalidate = 60;
@@ -46,7 +47,10 @@ export default function WinterPrepPage() {
   return (
     <main className="min-h-screen pt-4 sm:pt-6">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <BackButton className="mb-4" />
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <BackButton />
+          <ShareButton variant="header" title="Canadian Toyota Winter Prep & 12V AGM Battery Guide" />
+        </div>
       </div>
       <WinterPrepView />
       <div className="container mx-auto max-w-6xl px-4 sm:px-6 pt-8 pb-16">

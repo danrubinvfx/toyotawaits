@@ -7,6 +7,7 @@ import { TrimSizingTable } from '@/components/tires/trim-sizing-table';
 import { TopRecommendedSolutions } from '@/components/tires/top-recommended-solutions';
 import { ContextualWinterGear } from '@/components/tires/contextual-winter-gear';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
@@ -119,8 +120,9 @@ export default function TiresPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPageSchema) }}
       />
 
-      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
-        <BackButton className="mb-4" />
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6 flex items-center justify-between gap-4 mb-4">
+        <BackButton />
+        <ShareButton variant="header" title='Toyota Winter Tire Sizing, 17" Downsizing & Provincial Mandates' />
       </div>
 
       {/* 1. Server-Rendered Hero Section */}

@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
+import { ShareButton } from '@/components/ui/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
@@ -100,7 +101,10 @@ export default async function Rav42026Vs2027GuidePage() {
 
       {/* Header & Breadcrumbs */}
       <div className="space-y-4">
-        <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" className="mb-2" />
+        <div className="flex items-center justify-between gap-4 mb-2">
+          <BackButton label="← Back to Guides Almanac" fallbackHref="/guides" />
+          <ShareButton variant="header" title="2026 vs. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times" />
+        </div>
 
         <div className="flex flex-wrap items-center gap-2">
           <Badge className="bg-red-600 text-white font-bold gap-1 text-xs hover:bg-red-500">

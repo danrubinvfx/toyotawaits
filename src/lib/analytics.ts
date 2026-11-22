@@ -41,3 +41,18 @@ export function trackUserEvent(
     // Silently ignore analytics failures (e.g., ad blockers or offline mode)
   }
 }
+
+export function trackGuideOrGearShared(params: {
+  title: string;
+  anchorId?: string;
+  method: 'native' | 'clipboard';
+}): void {
+  const properties: Record<string, string> = {
+    title: params.title,
+    method: params.method,
+  };
+  if (params.anchorId) {
+    properties.anchorId = params.anchorId;
+  }
+  trackUserEvent('guide_or_gear_shared', properties);
+}
