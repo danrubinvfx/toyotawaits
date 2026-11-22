@@ -353,6 +353,31 @@ export default function DeliveryPrepPage() {
           </Link>
         </section>
 
+        {/* Post-Delivery Next Step: DIY Maintenance & Fluid Kit */}
+        <section
+          aria-label="Post-Delivery DIY Maintenance Next Step"
+          data-testid="diy-maintenance-callout"
+          className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/25 via-zinc-900/90 to-zinc-950 p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/40 bg-amber-500/15 px-3 py-0.5 text-xs font-bold text-amber-300">
+              <span>Post-Delivery Ownership</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              Plan Your First 8,000 km DIY Maintenance &amp; Fluid Kit
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              Verify your exact 0W-8 / 0W-16 / 0W-20 oil spec, OEM 90915-YZZN1 filter, hybrid battery cooling fan intake cleaning, and 76 ft-lbs lug torque tools.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-diy-maintenance-guide"
+            className="shrink-0 inline-flex items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-md transition-colors"
+          >
+            After Delivery: Set Up Your 8,000 km DIY Maintenance &amp; Fluid Kit →
+          </Link>
+        </section>
+
         {/* Surviving the Business Office: Dealer Fee Audit & ECP Warranty Defense */}
         <DealerFeeAudit />
 

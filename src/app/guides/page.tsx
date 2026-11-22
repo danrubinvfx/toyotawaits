@@ -517,6 +517,14 @@ const PREP_GUIDES = [
     href: '/guides/toyota-first-wash-paint-care',
   },
   {
+    slug: 'toyota-diy-maintenance-guide',
+    title: 'Toyota DIY Maintenance & Upkeep Guide',
+    description:
+      'Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM 90915-YZZN1 filters, hybrid battery fan filter cleaning, 12V care, and wash gear.',
+    icon: Wrench,
+    href: '/guides/toyota-diy-maintenance-guide',
+  },
+  {
     slug: 'winter-prep',
     title: 'Winter Prep & Salt Protection Guide',
     description: 'BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don\'ts.',
