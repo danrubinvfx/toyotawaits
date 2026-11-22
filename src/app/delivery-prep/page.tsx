@@ -145,7 +145,13 @@ export default function DeliveryPrepPage() {
               <div>
                 <p className="font-semibold text-zinc-200">Inspect In Bright Daylight</p>
                 <p className="text-[11px] text-zinc-400 mt-0.5">
-                  Always inspect paint, rocker panels, and glass outdoors—never under dim delivery-bay lights.
+                  Always inspect paint, rocker panels, and glass outdoors—never under dim delivery-bay lights.{' '}
+                  <Link
+                    href="/guides/toyota-first-wash-paint-care"
+                    className="text-emerald-400 hover:text-emerald-300 underline font-semibold"
+                  >
+                    Tell dealer &ldquo;Do Not Wash&rdquo; →
+                  </Link>
                 </p>
               </div>
             </div>
@@ -318,6 +324,32 @@ export default function DeliveryPrepPage() {
             className="shrink-0 inline-flex items-center justify-center rounded-xl bg-amber-500 hover:bg-amber-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-md transition-colors"
           >
             Read Toyota ECP Warranty Guide →
+          </Link>
+        </section>
+
+        {/* Exterior Paint Inspection & Dealer Add-On Skip Callout */}
+        <section
+          aria-label="Delivery Day Paint Care & Dealer Wash Defense"
+          data-testid="first-wash-paint-care-callout"
+          className="rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-950/30 via-zinc-900/90 to-zinc-950 p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden"
+        >
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/40 bg-emerald-500/15 px-3 py-0.5 text-xs font-bold text-emerald-400">
+              <Car className="h-3.5 w-3.5" />
+              <span>Exterior Paint &amp; Add-On Defense</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              Tell Your Dealer &ldquo;Do Not Wash&rdquo; &amp; Skip $899 Paint Sealants
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              Dealership brush tunnels swirl soft Toyota clear coats before pickup. Protect your paint with our zero-swirl ONR &amp; two-bucket wash playbook and $30 DIY ceramic spray guide.
+            </p>
+          </div>
+          <Link
+            href="/guides/toyota-first-wash-paint-care"
+            className="shrink-0 inline-flex items-center justify-center rounded-xl bg-emerald-500 hover:bg-emerald-400 px-4 py-2.5 text-xs font-bold text-zinc-950 shadow-md transition-colors"
+          >
+            Read First-Wash &amp; Paint Care Guide →
           </Link>
         </section>
 

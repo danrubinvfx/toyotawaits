@@ -1884,6 +1884,89 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     savingsCad: '$499 – $549',
     buttonLabel: 'View Product on Amazon ↗',
   },
+  // ==========================================
+  // Paint Care & First-Wash Starter Kit
+  // ==========================================
+  'optimum-no-rinse-wash': {
+    id: 'optimum-no-rinse-wash',
+    slug: 'optimum-no-rinse-wash',
+    proxySlug: 'optimum-no-rinse',
+    title: 'Optimum No Rinse (ONR) Wash & Shine (32 oz)',
+    brand: 'Optimum Polymer Technologies',
+    category: 'Paint Care & Wash',
+    searchQuery: 'Optimum No Rinse Wash and Shine 32 oz',
+    searchKeywordsCA: 'Optimum No Rinse Wash and Shine 32 oz',
+    searchKeywordsUS: 'Optimum No Rinse Wash and Shine 32 oz',
+    destinationUrl: '/out/optimum-no-rinse',
+    description:
+      'Rinseless polymer wash for apartment/condo owners and winter garage washes without swirl-inducing brushes.',
+    whyBuy:
+      'Encapsulates road salt and grit in slick polymers so you can safely wash a new Toyota in a condo stall or heated garage with two gallons of water and zero hose.',
+    badge: 'Condo & Winter Safe',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'sparkles',
+    buttonLabel: 'Search on Amazon ↗',
+  },
+  'griots-ceramic-3-in-1-wax': {
+    id: 'griots-ceramic-3-in-1-wax',
+    slug: 'griots-ceramic-3-in-1-wax',
+    proxySlug: 'griots-ceramic-wax',
+    title: "Griot's Garage Ceramic 3-in-1 Spray Wax (22 oz)",
+    brand: "Griot's Garage",
+    category: 'Paint Care & Wash',
+    searchQuery: 'Griots Garage Ceramic 3 in 1 Wax 22 oz',
+    searchKeywordsCA: 'Griots Garage Ceramic 3 in 1 Wax 22 oz',
+    searchKeywordsUS: 'Griots Garage Ceramic 3 in 1 Wax 22 oz',
+    destinationUrl: '/out/griots-ceramic-wax',
+    description:
+      'SiO2 spray sealant replacing $899+ dealership paint protection packages.',
+    whyBuy:
+      'Delivers 6+ months of hydrophobic SiO2 clear-coat protection and UV defense in 20 minutes—eliminating $899+ F&I dealer paint sealant markups.',
+    badge: 'Replaces $899 Dealer Sealant',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'shield',
+    buttonLabel: 'Search on Amazon ↗',
+  },
+  'microfiber-edgeless-towels': {
+    id: 'microfiber-edgeless-towels',
+    slug: 'microfiber-edgeless-towels',
+    proxySlug: 'microfiber-towels',
+    title: 'Edgeless Plush Microfiber Detailing Towels (6-Pack)',
+    brand: 'The Rag Company / Detailers',
+    category: 'Paint Care & Wash',
+    searchQuery: 'edgeless plush microfiber car drying towels 500 GSM',
+    searchKeywordsCA: 'edgeless plush microfiber car drying towels 500 GSM',
+    searchKeywordsUS: 'edgeless plush microfiber car drying towels 500 GSM',
+    destinationUrl: '/out/microfiber-towels',
+    description:
+      'Scratch-free drying and sealant buffing towels for soft Toyota clear coats.',
+    whyBuy:
+      'Ultrasonic edgeless 500+ GSM weave eliminates stitched nylon borders that inflict micro-marring on soft Toyota and Lexus clear coats.',
+    badge: 'Soft Clear Coat Safe',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'layers',
+    buttonLabel: 'Search on Amazon ↗',
+  },
+  'chemical-guys-two-bucket-kit': {
+    id: 'chemical-guys-two-bucket-kit',
+    slug: 'chemical-guys-two-bucket-kit',
+    proxySlug: 'two-bucket-wash-kit',
+    title: 'Two-Bucket Grit Guard Wash Kit & Chenille Mitt',
+    brand: 'Chemical Guys',
+    category: 'Paint Care & Wash',
+    searchQuery: 'car wash bucket grit guard chenille microfiber mitt kit',
+    searchKeywordsCA: 'car wash bucket grit guard chenille microfiber mitt kit',
+    searchKeywordsUS: 'car wash bucket grit guard chenille microfiber mitt kit',
+    destinationUrl: '/out/two-bucket-wash-kit',
+    description:
+      'Separates wheel/lower-panel grit from upper clear coat during driveway washes.',
+    whyBuy:
+      'Traps abrasive sand and brake dust beneath a Grit Guard insert in a dedicated rinse bucket so grit never returns to your wash mitt.',
+    badge: 'Zero-Swirl Driveway Kit',
+    isDeliveryDayEssential: true,
+    fallbackIcon: 'droplets',
+    buttonLabel: 'Search on Amazon ↗',
+  },
 };
 
 /**

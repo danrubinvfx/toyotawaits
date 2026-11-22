@@ -173,6 +173,22 @@ const MOD_GUIDES = [
     href: '/guides/toyota-ecp-warranty-guide',
   },
   {
+    slug: 'toyota-first-wash-paint-care',
+    title: 'New Toyota First-Wash & Paint Care Guide: Why to Decline the Dealer Car Wash',
+    tagline:
+      'Protect soft Toyota clear coats on delivery day. Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
+    badge: 'Delivery Day Paint Defense',
+    model: 'All Toyota & Lexus Models',
+    tags: ['Paint Care', 'Delivery Prep', 'Ceramic Sealant', 'Zero-Swirl'],
+    highlights: [
+      'Rule #1: Tell your advisor "Do Not Wash" in writing before PDI',
+      'Skip $899+ F&I paint sealants for $30 SiO2 ceramic spray (or real local PPF)',
+      '2-Method Safe Wash Playbook: Driveway Two-Bucket vs. Condo Rinseless ONR',
+      '4-item Day-One Paint & Wash Kit with CA/US Amazon routing',
+    ],
+    href: '/guides/toyota-first-wash-paint-care',
+  },
+  {
     slug: 'winter-prep',
     title: 'Canadian Winter Prep & Salt Protection Guide',
     tagline: "BC highway tire laws, Quebec Dec 1 mandates, 12V AGM hybrid auxiliary battery survival, and undercoating dos & don'ts.",
@@ -491,6 +507,14 @@ const PREP_GUIDES = [
     description: 'ECP Platinum vs. Gold breakdown, factory hybrid warranty overlap, dealer margins, and the 31-day purchase rule.',
     icon: ShieldCheck,
     href: '/guides/toyota-ecp-warranty-guide',
+  },
+  {
+    slug: 'toyota-first-wash-paint-care',
+    title: 'First-Wash & Paint Care Guide',
+    description:
+      'Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
+    icon: Sparkles,
+    href: '/guides/toyota-first-wash-paint-care',
   },
   {
     slug: 'winter-prep',

@@ -150,6 +150,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/guides/toyota-first-wash-paint-care`,
+      lastModified: now,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/guides/toyota-rav4-must-have-accessories`,
       lastModified: now,
       changeFrequency: 'weekly',
