@@ -14,45 +14,32 @@ import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCar
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard } from '@/components/gear/GearCard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
-  description:
-    'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
-  keywords: [
-    'toyota canada delivery tracking',
-    'toyota order status codes canada',
-    'toyota status a freight status f',
-    'toyota status g ground delivery',
-    'dealer daily logistics tracking cn rail',
-    'canadian toyota delivery checklist',
-    'toyota pickup day inspection pdi',
-    'toyota bill of sale omvic amvic',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/delivery-prep',
-  },
-  openGraph: {
-    title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildHostAwarePageMetadata({
+    path: '/delivery-prep',
+    caTitle: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
+    caDescription:
       'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
-    url: 'https://www.toyotawaits.ca/delivery-prep',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
+    usTitle: 'Toyota Delivery Tracking & Allocation Status Codes (2026 US Guide) | ToyotaWaits',
+    usDescription:
+      'Track your US Toyota allocation from factory build to dealership delivery. Demystify Status A, Freight Status F, transit timelines, USD MSRP audits, and PDI checks.',
+    keywords: [
+      'toyota delivery tracking',
+      'toyota order status codes',
+      'toyota status a freight status f',
+      'toyota status g ground delivery',
+      'dealer daily logistics tracking',
+      'toyota pickup day inspection pdi',
+    ],
     type: 'article',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits',
-    description:
-      'Track your Canadian Toyota order from factory allocation to dealership delivery. Demystify Status A, Freight Status F, rail tracking, and dealer PDI checks.',
-  },
-};
+  });
+}
 
 const DELIVERY_FAQ_ITEMS = [
   {

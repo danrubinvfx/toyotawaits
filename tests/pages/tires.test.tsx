@@ -1,10 +1,11 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen, within } from '@testing-library/react';
-import TiresPage, { metadata } from '@/app/tires/page';
+import TiresPage, { generateMetadata } from '@/app/tires/page';
 
 describe('TiresPage Route', () => {
-  it('defines correct page metadata matching Canadian Toyota seasonal tire specifications', () => {
+  it('defines correct page metadata matching Canadian Toyota seasonal tire specifications', async () => {
+    const metadata = await generateMetadata();
     expect(metadata.title).toBe(
       'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits'
     );

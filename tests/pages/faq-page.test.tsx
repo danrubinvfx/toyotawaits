@@ -5,8 +5,8 @@ import FAQPage, { generateMetadata } from '@/app/faq/page';
 import { MarketProvider } from '@/context/MarketContext';
 
 describe('FAQPage (/faq Route)', () => {
-  it('generates the exact required metadata for SEO and canonical URL', () => {
-    const metadata = generateMetadata();
+  it('generates the exact required metadata for SEO and canonical URL', async () => {
+    const metadata = await generateMetadata();
 
     expect(metadata.title).toBe(
       'Toyota Wait Times & Dealer Markup FAQ (US & Canada 2026) | ToyotaWaits'

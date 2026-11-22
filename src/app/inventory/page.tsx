@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { InventoryExplorer } from '@/components/discovery/InventoryExplorer';
+import { UsInventoryNotice } from '@/components/inventory/UsInventoryNotice';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import { AlertTriangle, ArrowLeft, Lock } from 'lucide-react';
 
@@ -307,6 +308,9 @@ export default function InventoryPage({
             BC &amp; ON Fleet (30 Dealers)
           </span>
         </header>
+
+        {/* US Allocation & ADM Guidance Banner (only visible when market === 'US' or on toyotawaits.com) */}
+        <UsInventoryNotice />
 
         {/* Interactive Explorer Client Component */}
         <Suspense fallback={<InventoryLoadingSkeleton />}>

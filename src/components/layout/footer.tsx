@@ -27,7 +27,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-3">
             <div className="flex items-center space-x-2 font-bold text-base text-zinc-900 dark:text-zinc-100">
-              <span>{isUs ? 'ToyotaWaits.com' : 'ToyotaWaits.ca'}</span>
+              <span>{isUs ? 'ToyotaWaits' : 'ToyotaWaits.ca'}</span>
               <span className={cn(
                 "rounded px-1.5 py-0.5 text-[10px] font-semibold",
                 isUs

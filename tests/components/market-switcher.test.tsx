@@ -44,7 +44,7 @@ describe('Market Switcher & Dynamic Region Filtering', () => {
     expect(toggleCa).not.toHaveClass('bg-amber-500');
 
     // Brand logo should reflect .com and USA badge
-    expect(screen.getByText('.com')).toBeInTheDocument();
+    expect(screen.queryByText('.ca')).not.toBeInTheDocument();
     expect(screen.getByText(/🇺🇸 USA/i)).toBeInTheDocument();
 
     // Click CA toggle

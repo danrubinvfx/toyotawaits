@@ -4,33 +4,23 @@ import { HelpCircle, Scale } from 'lucide-react';
 import { BackButton } from '@/components/common/back-button';
 import { Badge } from '@/components/ui/badge';
 import { FAQInteractiveView, FAQ_CATEGORIES } from '@/components/faq/FAQInteractiveView';
+import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
 
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
-export function generateMetadata(): Metadata {
-  return {
-    title: 'Toyota Wait Times & Dealer Markup FAQ (US & Canada 2026) | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildHostAwarePageMetadata({
+    path: '/faq',
+    caTitle: 'Toyota Wait Times & Dealer Markup FAQ (US & Canada 2026) | ToyotaWaits',
+    caDescription:
       'Frequently asked questions on Toyota allocation transit times, dealer markups (ADM), deposit refund rules, and crowdsourced delivery tracking in the US and Canada.',
-    alternates: {
-      canonical: 'https://www.toyotawaits.ca/faq',
-    },
-    openGraph: {
-      title: 'Toyota Wait Times & Dealer Markup FAQ (US & Canada 2026) | ToyotaWaits',
-      description:
-        'Frequently asked questions on Toyota allocation transit times, dealer markups (ADM), deposit refund rules, and crowdsourced delivery tracking in the US and Canada.',
-      url: 'https://www.toyotawaits.ca/faq',
-      siteName: 'ToyotaWaits',
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: 'Toyota Wait Times & Dealer Markup FAQ (US & Canada 2026) | ToyotaWaits',
-      description:
-        'Frequently asked questions on Toyota allocation transit times, dealer markups (ADM), deposit refund rules, and crowdsourced delivery tracking in the US and Canada.',
-    },
-  };
+    usTitle: 'Toyota Wait Times & Dealer Markup FAQ (US 2026) | ToyotaWaits',
+    usDescription:
+      'Frequently asked questions on Toyota allocation transit times, USD MSRP pricing, dealer markups (ADM), and deposit refund rules across the United States.',
+    caSiteName: 'ToyotaWaits',
+    type: 'website',
+  });
 }
 
 export default function FAQPage() {

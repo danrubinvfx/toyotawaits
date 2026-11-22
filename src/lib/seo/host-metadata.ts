@@ -114,6 +114,54 @@ export async function buildGuideMetadata(options: GuideMetadataOptions): Promise
   };
 }
 
+export interface HostAwarePageMetadataOptions {
+  path: string;
+  caTitle: string;
+  caDescription: string;
+  usTitle: string;
+  usDescription: string;
+  keywords?: string[];
+  caSiteName?: string;
+  type?: 'website' | 'article';
+}
+
+/**
+ * Builds host-aware Metadata for top-level public routes (/faq, /delivery-prep, /tires, etc.)
+ * with reciprocal en-CA / en-US / x-default hreflang alternates and self-referencing canonicals.
+ */
+export async function buildHostAwarePageMetadata(
+  options: HostAwarePageMetadataOptions
+): Promise<Metadata> {
+  const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata(options.path);
+  const canonical = `${baseUrl}${options.path}`;
+  const title = isUS ? options.usTitle : options.caTitle;
+  const description = isUS ? options.usDescription : options.caDescription;
+
+  return {
+    metadataBase: new URL(baseUrl),
+    title,
+    description,
+    ...(options.keywords ? { keywords: options.keywords } : {}),
+    alternates: {
+      canonical,
+      languages: alternatesLanguages,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: isUS ? 'ToyotaWaits' : (options.caSiteName ?? 'ToyotaWaits.ca'),
+      locale: isUS ? 'en_US' : 'en_CA',
+      type: options.type ?? 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
+}
+
 export interface GuideFaqItem {
   question: string;
   answer: string;

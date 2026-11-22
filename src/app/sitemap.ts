@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { baseUrl } = await getRequestMarketMetadata();
+  const { isUS, baseUrl } = await getRequestMarketMetadata();
   const now = new Date();
 
   const buildAlternates = (path: string) => ({
@@ -29,12 +29,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 1.0,
     },
-    {
-      url: `${baseUrl}/inventory`,
-      lastModified: now,
-      changeFrequency: 'hourly',
-      priority: 0.9,
-    },
+    ...(!isUS
+      ? [
+          {
+            url: `${baseUrl}/inventory`,
+            lastModified: now,
+            changeFrequency: 'hourly' as const,
+            priority: 0.9,
+          },
+        ]
+      : []),
     {
       url: `${baseUrl}/submit`,
       lastModified: now,
@@ -77,12 +81,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    {
-      url: `${baseUrl}/tools/omvic-checker`,
-      lastModified: now,
-      changeFrequency: 'weekly',
-      priority: 0.9,
-    },
+    ...(!isUS
+      ? [
+          {
+            url: `${baseUrl}/tools/omvic-checker`,
+            lastModified: now,
+            changeFrequency: 'weekly' as const,
+            priority: 0.9,
+          },
+        ]
+      : []),
     {
       url: `${baseUrl}/tools/quote-auditor`,
       lastModified: now,
@@ -439,13 +447,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       });
 
-      for (const provinceSlug of distinctProvinceSlugs) {
-        dynamicRoutes.push({
-          url: `${baseUrl}/${modelSlug}/${powertrainSlug}/${provinceSlug}`,
-          lastModified: now,
-          changeFrequency: 'weekly',
-          priority: 0.7,
-        });
+      if (!isUS) {
+        for (const provinceSlug of distinctProvinceSlugs) {
+          dynamicRoutes.push({
+            url: `${baseUrl}/${modelSlug}/${powertrainSlug}/${provinceSlug}`,
+            lastModified: now,
+            changeFrequency: 'weekly',
+            priority: 0.7,
+          });
+        }
       }
     }
   }

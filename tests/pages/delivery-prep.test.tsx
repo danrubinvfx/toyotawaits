@@ -1,14 +1,15 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import DeliveryPrepPage, { metadata, dynamic, instant } from '@/app/delivery-prep/page';
+import DeliveryPrepPage, { generateMetadata, dynamic, instant } from '@/app/delivery-prep/page';
 
 describe('DeliveryPrepPage Route', () => {
   it('exports force-dynamic and instant=false route segment configuration', () => {
     expect(dynamic).toBe('force-dynamic');
     expect(instant).toBe(false);
   });
-  it('defines correct page metadata for Toyota Canada delivery tracking and status codes', () => {
+  it('defines correct page metadata for Toyota Canada delivery tracking and status codes', async () => {
+    const metadata = await generateMetadata();
     expect(metadata.title).toBe(
       'Toyota Canada Delivery Tracking & Status Codes (2026 Guide) | ToyotaWaits'
     );

@@ -9,6 +9,7 @@ import { ContextualWinterGear } from '@/components/tires/contextual-winter-gear'
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
 import {
   HelpCircle,
   Loader2,
@@ -22,43 +23,27 @@ import {
 export const dynamic = 'force-dynamic';
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.toyotawaits.ca'),
-  title: 'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits',
-  description:
-    'Complete Canadian winter tire guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. Provincial winter tire deadlines, insurance discounts, and factory wheel sizing.',
-  keywords: [
-    'toyota winter tire sizing canada',
-    'toyota rav4 17 inch winter downsizing',
-    'sienna 225 65r17 winter tires',
-    'grand highlander 5x120 winter wheels',
-    'corolla cross winter tire size',
-    'bc winter tire legal requirements 2026',
-    'quebec winter tire deadline dec 1',
-    'toyota bolt pattern 5x114.3 60.1',
-    '3pmsf severe snow certified toyota',
-    'ontario winter tire insurance discount',
-    'manitoba mpi winter tire financing',
-  ],
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/tires',
-  },
-  openGraph: {
-    title: 'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits',
-    description:
+export async function generateMetadata(): Promise<Metadata> {
+  return buildHostAwarePageMetadata({
+    path: '/tires',
+    caTitle: 'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits',
+    caDescription:
       'Complete Canadian winter tire guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. Provincial winter tire deadlines, insurance discounts, and factory wheel sizing.',
-    url: 'https://www.toyotawaits.ca/tires',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
+    usTitle: 'Toyota Winter & All-Weather Tires Guide (2026 US Sizing & Fitment) | ToyotaWaits',
+    usDescription:
+      'Complete US winter and all-weather tire fitment guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. OEM wheel sizing, 17-inch downsizing, and 3PMSF ratings.',
+    keywords: [
+      'toyota winter tire sizing',
+      'toyota rav4 17 inch winter downsizing',
+      'sienna 225 65r17 winter tires',
+      'grand highlander 5x120 winter wheels',
+      'corolla cross winter tire size',
+      'toyota bolt pattern 5x114.3 60.1',
+      '3pmsf severe snow certified toyota',
+    ],
     type: 'article',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits',
-    description:
-      'Complete Canadian winter tire guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. Provincial winter tire deadlines, insurance discounts, and factory wheel sizing.',
-  },
-};
+  });
+}
 
 const FAQ_ITEMS = [
   {
