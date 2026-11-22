@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import { PopularGearCard } from '@/components/guides/popular-gear-card';
 
-export const revalidate = 60;
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
 export function generateMetadata(): Metadata {
   const currentDate = new Date();
@@ -187,6 +188,22 @@ const MOD_GUIDES = [
       '4-item Day-One Paint & Wash Kit with CA/US Amazon routing',
     ],
     href: '/guides/toyota-first-wash-paint-care',
+  },
+  {
+    slug: 'toyota-diy-maintenance-guide',
+    title: 'Toyota DIY Maintenance & Upkeep Guide',
+    tagline:
+      'Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM filter numbers, hybrid battery fan filter cleaning, 12V battery care, and clear-coat safe wash gear.',
+    badge: 'Popular Guide',
+    model: 'All Toyota & Lexus Models',
+    tags: ['Maintenance', 'DIY', 'Hybrid Care'],
+    highlights: [
+      'Model Fluid Matrix: 0W-8 vs. 0W-16 vs. 0W-20 & OEM 90915-YZZN1 filter',
+      '8,000 km / 6-month vs. 16,000 km / 12-month DIY schedule',
+      'Rear-seat hybrid battery cooling fan intake filter cleaning',
+      '12V smart maintainer, 76 ft-lbs lug torque & salt-wash gear',
+    ],
+    href: '/guides/toyota-diy-maintenance-guide',
   },
   {
     slug: 'winter-prep',
@@ -515,14 +532,6 @@ const PREP_GUIDES = [
       'Why to tell your dealer "Do Not Wash," swirl-free ONR & two-bucket washes, and $30 DIY ceramic sealants vs. $899 dealer packages.',
     icon: Sparkles,
     href: '/guides/toyota-first-wash-paint-care',
-  },
-  {
-    slug: 'toyota-diy-maintenance-guide',
-    title: 'Toyota DIY Maintenance & Upkeep Guide',
-    description:
-      'Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM 90915-YZZN1 filters, hybrid battery fan filter cleaning, 12V care, and wash gear.',
-    icon: Wrench,
-    href: '/guides/toyota-diy-maintenance-guide',
   },
   {
     slug: 'winter-prep',

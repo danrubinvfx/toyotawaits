@@ -1,9 +1,31 @@
 import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import GuidesIndexPage from '@/app/guides/page';
+import GuidesIndexPage, { dynamic, instant } from '@/app/guides/page';
 
 describe('Guides Index Hub Page', () => {
+  it('preserves Next.js 16 route segment exports', () => {
+    expect(dynamic).toBe('force-dynamic');
+    expect(instant).toBe(false);
+  });
+
+  it('features Toyota DIY Maintenance & Upkeep Guide in featured guides without duplicates', () => {
+    const { container } = render(<GuidesIndexPage />);
+
+    expect(screen.getByText('Toyota DIY Maintenance & Upkeep Guide')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Model-by-model 0W-8, 0W-16, and 0W-20 oil specs, OEM filter numbers, hybrid battery fan filter cleaning, 12V battery care, and clear-coat safe wash gear\./i
+      )
+    ).toBeInTheDocument();
+    expect(screen.getByText('[Maintenance]')).toBeInTheDocument();
+    expect(screen.getByText('[DIY]')).toBeInTheDocument();
+    expect(screen.getByText('[Hybrid Care]')).toBeInTheDocument();
+
+    const links = container.querySelectorAll('a[href="/guides/toyota-diy-maintenance-guide"]');
+    expect(links.length).toBe(1);
+  });
+
   it('renders seasonal prep and inspection guide cards with expected content and URLs', () => {
     render(<GuidesIndexPage />);
 
