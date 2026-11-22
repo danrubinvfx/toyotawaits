@@ -9,6 +9,8 @@ import { DealerTrackingTips } from '@/components/delivery-prep/dealer-tracking-t
 import { DealerFeeAudit } from '@/components/delivery-prep/dealer-fee-audit';
 import { DealerFeeAuditor } from '@/components/compliance/DealerFeeAuditor';
 import { FeeRefusalWorksheet } from '@/components/delivery-prep/fee-refusal-worksheet';
+import { TradeInValuationCard } from '@/components/discovery/TradeInValuationCard';
+import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard } from '@/components/gear/GearCard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -376,6 +378,16 @@ export default function DeliveryPrepPage() {
           >
             After Delivery: Set Up Your 8,000 km DIY Maintenance &amp; Fluid Kit →
           </Link>
+        </section>
+
+        {/* Pre-Delivery Financial Prep: Trade-In Equity & Insurance Rate Check */}
+        <section
+          aria-label="Pre-Delivery Financial Preparation"
+          data-testid="delivery-prep-financial-cpa"
+          className="space-y-4 print:hidden"
+        >
+          <TradeInValuationCard modelContext="Delivery Prep" placement="delivery_prep" />
+          <OntarioInsuranceCard region="ON" modelContext="Delivery Prep" />
         </section>
 
         {/* Surviving the Business Office: Dealer Fee Audit & ECP Warranty Defense */}

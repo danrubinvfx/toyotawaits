@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { CalculatorResults } from '@/lib/hooks/useSavingsCalculator';
 import { trackUserEvent } from '@/lib/analytics';
+import { TradeInValuationCard } from '@/components/discovery/TradeInValuationCard';
 
 export interface EnergyResultsCardProps {
   results: CalculatorResults;
@@ -345,6 +346,15 @@ export function EnergyResultsCard({
                 )}
               </Button>
             </div>
+          </div>
+
+          {/* Trade-In Equity Valuation CPA Card */}
+          <div className="pt-1">
+            <TradeInValuationCard
+              market={isImperial ? 'US' : 'CA'}
+              modelContext={vehicleLabel}
+              placement="calculator_results"
+            />
           </div>
         </CardContent>
       </details>

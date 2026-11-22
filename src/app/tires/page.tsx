@@ -223,6 +223,48 @@ export default function TiresPage() {
       {/* 2. Direct-Fit Sizing Quick-Lookup Matrix (Server Rendered Directly Beneath Hero) */}
       <DirectFitSizingMatrix />
 
+      {/* 2b. Installed Winter Tire & Rim Packages Retailer CTA */}
+      <section
+        aria-label="Compare Installed Winter Tire and Rim Packages"
+        data-testid="tire-retailer-cta-section"
+        className="container mx-auto max-w-6xl px-4 sm:px-6 py-4"
+      >
+        <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/95 to-cyan-950/30 p-5 sm:p-6 shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5 max-w-2xl">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wider text-cyan-300">
+              <Disc3 className="h-3.5 w-3.5" />
+              <span>Mounted &amp; Balanced Packages</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-black tracking-tight text-white">
+              Compare Installed Winter Tire &amp; Rim Packages
+            </h2>
+            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+              Skip dealership winter wheel markups. Price complete 17-inch and 18-inch winter tire + alloy/steel rim bundles with local installation or home delivery.
+            </p>
+          </div>
+          <div className="shrink-0 flex flex-col items-start sm:items-end gap-2">
+            <a
+              href="/out/tire-retailer-ca"
+              target="_blank"
+              rel="sponsored noopener noreferrer nofollow"
+              data-testid="tire-retailer-ca-cta"
+              className="px-4 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold text-xs shadow-md inline-flex items-center gap-1.5 whitespace-nowrap transition-colors"
+            >
+              <span>Compare Canadian Tire Packages (Blackcircles.ca) ↗</span>
+            </a>
+            <a
+              href="/out/tire-retailer-us"
+              target="_blank"
+              rel="sponsored noopener noreferrer nofollow"
+              data-testid="tire-retailer-us-cta"
+              className="text-[11px] font-semibold text-cyan-300 hover:text-cyan-200 hover:underline inline-flex items-center gap-1"
+            >
+              <span>US Buyer? Compare Tire Rack Packages ↗</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* 3. Canadian Provincial Winter Tire Mandate & Insurance Table */}
       <ProvincialMandateMatrix />
 

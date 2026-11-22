@@ -3,6 +3,11 @@ import { affiliateSlugSchema } from '@/lib/validations/schemas';
 import { getAffiliateRedirect } from '@/lib/db/affiliates';
 import { createServerClient } from '@/lib/supabase/server';
 import { buildAmazonDeepLinks, buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import {
+  getTradeInAffiliateUrl,
+  getTireRetailerAffiliateUrl,
+  getDirectBrandPartnerUrl,
+} from '@/config/affiliates';
 
 export const dynamic = 'force-dynamic';
 
@@ -105,10 +110,30 @@ export async function GET(
     }
 
     const validatedSlug = validation.data.slug;
+    const searchParams = request.nextUrl.searchParams;
 
-    // 2. Query target redirect URL (with direct Muslogy partner checkout mapping)
+    // Detect market context from URL param, cookie, or hostname
+    const marketParam = searchParams.get('market')?.toUpperCase();
+    const cookieMarket = request.cookies.get('toyotawaits_market')?.value?.toUpperCase();
+    const host = request.headers.get('host') || '';
+    const isUS = marketParam === 'US' || cookieMarket === 'US' || host.includes('toyotawaits.com');
+    const market: 'CA' | 'US' = isUS ? 'US' : 'CA';
+
+    // 2. Query target redirect URL (including centralized CPA, tire, and direct brand partners)
     let destinationUrl: string | null = null;
-    if (MUSLOGY_DIRECT_URLS[validatedSlug]) {
+    if (validatedSlug === 'trade-in-quote') {
+      destinationUrl = getTradeInAffiliateUrl(market);
+    } else if (validatedSlug === 'tire-retailer-ca') {
+      destinationUrl = getTireRetailerAffiliateUrl('CA');
+    } else if (validatedSlug === 'tire-retailer-us') {
+      destinationUrl = getTireRetailerAffiliateUrl('US');
+    } else if (validatedSlug === 'tuxmat-direct') {
+      destinationUrl = getDirectBrandPartnerUrl('tuxmat', market);
+    } else if (validatedSlug === 'fitcamx-direct') {
+      destinationUrl = getDirectBrandPartnerUrl('fitcamx', market);
+    } else if (validatedSlug === 'muslogy-direct') {
+      destinationUrl = getDirectBrandPartnerUrl('muslogy', market);
+    } else if (MUSLOGY_DIRECT_URLS[validatedSlug]) {
       destinationUrl = MUSLOGY_DIRECT_URLS[validatedSlug];
     } else if (OUT_PROXY_URLS[validatedSlug]) {
       destinationUrl = OUT_PROXY_URLS[validatedSlug];
@@ -134,8 +159,6 @@ export async function GET(
       // 2. Safe proxy fallback: Do NOT call notFound(). Safe redirect to /winter-prep
       return NextResponse.redirect(new URL('/winter-prep', request.url), 307);
     }
-
-    const searchParams = request.nextUrl.searchParams;
 
     // Detect admin opt-out flag from query params, cookies, or headers
     const isOptOut =
@@ -183,12 +206,6 @@ export async function GET(
         // ignore parsing error
       }
     }
-
-    // Detect market context from URL param, cookie, or hostname
-    const marketParam = searchParams.get('market')?.toUpperCase();
-    const cookieMarket = request.cookies.get('toyotawaits_market')?.value?.toUpperCase();
-    const host = request.headers.get('host') || '';
-    const isUS = marketParam === 'US' || cookieMarket === 'US' || host.includes('toyotawaits.com');
 
     // 3. Safe Outbound Link Handler & Geolocation Strategy:
     // Route to Amazon.com with US tag (toyotawaits07-20) for US visitors,

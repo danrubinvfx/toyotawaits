@@ -5,7 +5,7 @@ import { getInsuranceAffiliateUrl } from '@/config/affiliates';
 import { trackAffiliateClick } from '@/lib/gear';
 
 export interface OntarioInsuranceCardProps {
-  region?: 'ON' | 'BC' | string | null;
+  region?: 'ON' | 'BC' | 'US' | string | null;
   modelContext?: string;
   className?: string;
 }
@@ -15,22 +15,34 @@ export function OntarioInsuranceCard({
   modelContext,
   className = '',
 }: OntarioInsuranceCardProps) {
-  if (region && region.toUpperCase() !== 'ON' && region.toUpperCase() !== 'ONTARIO') {
+  const normalizedRegion = region ? region.trim().toUpperCase() : 'ON';
+
+  // Strictly exclude British Columbia (ICBC Basic Autoplan monopoly) and any non-ON/non-US regions
+  if (
+    normalizedRegion === 'BC' ||
+    normalizedRegion === 'BRITISH COLUMBIA' ||
+    (normalizedRegion !== 'ON' && normalizedRegion !== 'ONTARIO' && normalizedRegion !== 'US')
+  ) {
     return null;
   }
 
-  const targetUrl = getInsuranceAffiliateUrl('ON');
+  const isUS = normalizedRegion === 'US';
+  const targetUrl = getInsuranceAffiliateUrl(isUS ? 'US' : 'ON');
 
   return (
     <article
       data-testid="ontario-insurance-card"
-      aria-label="Taking Delivery in Ontario? Compare 30+ Auto Quotes"
+      aria-label={
+        isUS
+          ? 'Taking Delivery in the US? Compare Auto Insurance Quotes'
+          : 'Taking Delivery in Ontario? Compare 30+ Auto Quotes'
+      }
       className={`col-span-full w-full rounded-xl border border-sky-500/30 bg-gradient-to-r from-zinc-900 via-zinc-900/95 to-sky-950/30 p-3.5 sm:p-4 shadow-sm transition-all hover:border-sky-500/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${className}`}
     >
       <div className="space-y-1 min-w-0 flex-1">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/20 shrink-0">
-            ONTARIO DELIVERY PREP
+            {isUS ? 'US DELIVERY PREP' : 'ONTARIO DELIVERY PREP'}
           </span>
           {modelContext && (
             <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-400 truncate">
@@ -39,10 +51,14 @@ export function OntarioInsuranceCard({
           )}
         </div>
         <h4 className="text-sm sm:text-base font-bold text-white tracking-tight">
-          🛡️ Taking Delivery in Ontario? Compare 30+ Auto Quotes
+          {isUS
+            ? '🛡️ Taking Delivery Soon? Compare Auto Insurance Quotes'
+            : '🛡️ Taking Delivery in Ontario? Compare 30+ Auto Quotes'}
         </h4>
         <p className="text-xs text-zinc-300 leading-relaxed">
-          Ontario insurance premiums vary by up to $1,200 across private carriers. Check rates and lock in your policy before delivery.
+          {isUS
+            ? 'Hybrid and SUV insurance premiums vary widely across private carriers. Check rates and lock in your policy before delivery.'
+            : 'Ontario insurance premiums vary by up to $1,200 across private carriers. Check rates and lock in your policy before delivery.'}
         </p>
       </div>
 
@@ -54,7 +70,7 @@ export function OntarioInsuranceCard({
           data-testid="ontario-insurance-cta"
           onClick={() => {
             trackAffiliateClick({
-              accessory_id: 'ontario-auto-insurance-ratehub',
+              accessory_id: isUS ? 'us-auto-insurance-quote' : 'ontario-auto-insurance-ratehub',
               placement: 'inventory_feed',
               model_context: modelContext || null,
               target_url: targetUrl,
@@ -62,7 +78,7 @@ export function OntarioInsuranceCard({
           }}
           className="px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 active:scale-95 text-zinc-950 font-bold text-xs shadow inline-flex items-center gap-1.5 whitespace-nowrap transition-all cursor-pointer"
         >
-          <span>Compare Ontario Rates ↗</span>
+          <span>{isUS ? 'Compare Auto Rates ↗' : 'Compare Ontario Rates ↗'}</span>
         </a>
         <span className="text-[10px] text-zinc-500 tracking-tight">
           Sponsored referral · Free 3-minute rate check

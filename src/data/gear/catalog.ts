@@ -5,6 +5,7 @@
  */
 
 import { injectActiveModelIntoQuery } from '@/lib/gear/affiliate';
+import { DIRECT_BRAND_PARTNER_BADGES } from '@/config/affiliates';
 export { ESSENTIAL_ACCESSORIES } from '@/data/accessories';
 
 export interface GearItem {
@@ -2496,6 +2497,76 @@ export function getGearMarketConfig(
   }
 
   return config;
+}
+
+export type CuratedShelfContext = 'delivery-prep' | 'calculator' | 'tires';
+
+export const CURATED_SHELF_SLUGS: Record<CuratedShelfContext, string[]> = {
+  'delivery-prep': [
+    'muslogy-rav4',
+    'fitcamx-rav4',
+    'spigen-toyota-screen-protector',
+    'faraday-key-fob-pouch',
+  ],
+  calculator: [
+    'muslogy-rav4',
+    'fitcamx-rav4',
+    'noco-gb40-jump-pack',
+    'spigen-toyota-screen-protector',
+  ],
+  tires: [
+    'fanttik-cordless-tire-inflator',
+    'noco-gb40-jump-pack',
+    'noco-12v-battery-maintainer',
+  ],
+};
+
+/**
+ * Returns 3 to 5 high-conviction gear picks for a given page context,
+ * surfacing direct brand partner badges alongside dual-market Amazon fallback routing.
+ */
+export function getCuratedGearShelf(
+  context: CuratedShelfContext,
+  activeModel?: string
+): GearMarketConfig[] {
+  const cleanModel = activeModel?.toLowerCase().trim();
+  const baseSlugs = CURATED_SHELF_SLUGS[context] || CURATED_SHELF_SLUGS['delivery-prep'];
+
+  const resolvedSlugs = baseSlugs.map((slug) => {
+    if (cleanModel === 'sienna' && slug === 'muslogy-rav4') return 'muslogy-sienna';
+    if (cleanModel === 'grand-highlander' && slug === 'muslogy-rav4') return 'muslogy-grand-highlander';
+    if (cleanModel === 'sienna' && slug === 'fitcamx-rav4') return 'fitcamx-sienna';
+    if (cleanModel === 'grand-highlander' && slug === 'fitcamx-rav4') return 'fitcamx-grand-highlander';
+    return slug;
+  });
+
+  return resolvedSlugs
+    .map((slug) => getGearMarketConfig(slug, activeModel))
+    .filter((item): item is GearMarketConfig => Boolean(item))
+    .slice(0, 5)
+    .map((item) => {
+      const brandLower = item.brand?.toLowerCase() || '';
+      if (brandLower === 'muslogy') {
+        return {
+          ...item,
+          badge: item.badge || DIRECT_BRAND_PARTNER_BADGES.muslogy,
+          discountCode: item.discountCode || 'Toyotawaits',
+        };
+      }
+      if (brandLower === 'tuxmat') {
+        return {
+          ...item,
+          badge: item.badge || DIRECT_BRAND_PARTNER_BADGES.tuxmat,
+        };
+      }
+      if (brandLower === 'fitcamx') {
+        return {
+          ...item,
+          badge: item.badge || DIRECT_BRAND_PARTNER_BADGES.fitcamx,
+        };
+      }
+      return item;
+    });
 }
 
 export default GEAR_MARKET_CATALOG;
