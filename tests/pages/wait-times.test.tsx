@@ -158,9 +158,9 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     // Verify "Skip the Wait" Live Inventory Bridge Card
     const alertBridge = screen.getByTestId('model-drop-alert-bridge');
     expect(alertBridge).toBeInTheDocument();
-    expect(screen.getByText(/⚡ SKIP THE QUEUE • ALLOCATION RADAR/i)).toBeInTheDocument();
-    expect(screen.getByText(/Don't want to wait 13\.5 months for a Toyota Sienna\?/i)).toBeInTheDocument();
-    const liveStockLink = screen.getByRole('link', { name: /Browse Live (Toyota )?Sienna Stock ↗/i });
+    expect(screen.getByText(/⚡ SKIP THE QUEUE/i)).toBeInTheDocument();
+    expect(screen.getByText(/Skip the Queue: Get Free Toyota Sienna Drop Alerts/i)).toBeInTheDocument();
+    const liveStockLink = screen.getByRole('link', { name: /View Live (Toyota )?Sienna Stock ↗/i });
     expect(liveStockLink).toHaveAttribute('href', '/inventory?model=sienna');
 
     // Verify Contextual Calculator Bridge & Delivery Day Preparation Bridge Cards

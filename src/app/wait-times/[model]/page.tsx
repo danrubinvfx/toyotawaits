@@ -824,6 +824,14 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         </div>
 
+        {/* Inline Free Drop Alert Bridge directly below Quick Summary */}
+        <ModelDropAlertBridge
+          estimatedWaitMonths={stats.medianMonths}
+          modelSlug={modelConfig.slug}
+          modelName={modelConfig.name}
+          isUS={isUS}
+        />
+
         <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-3">
           <h2 className="text-base sm:text-lg font-bold tracking-tight text-zinc-950 dark:text-zinc-50">
             {isUS
@@ -1136,13 +1144,6 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       <CrossShopBridge
         sourceModelSlug={modelConfig.slug}
         sourceModelName={modelConfig.name}
-      />
-
-      {/* "Skip the Wait" Live Inventory Bridge Card */}
-      <ModelDropAlertBridge
-        estimatedWaitMonths={stats.medianMonths}
-        modelSlug={modelConfig.slug}
-        modelName={modelConfig.name}
       />
 
       {/* Curated 3-Item Delivery Day Prep Shelf Mounted Directly Beneath Median Summary Card */}

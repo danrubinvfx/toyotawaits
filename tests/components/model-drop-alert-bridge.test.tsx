@@ -4,59 +4,57 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
 
 describe('ModelDropAlertBridge Component', () => {
-  it('renders high-contrast alert bridge banner with eyebrow, headline with wait months, subtitle, and buttons', () => {
+  it('renders high-contrast alert bridge banner with eyebrow, headline, subtext, and CTAs', () => {
     render(
       <ModelDropAlertBridge
         modelSlug="sienna"
         modelName="Sienna"
         estimatedWaitMonths={14}
+        isUS={false}
       />
     );
 
-    // Container
     const bridge = screen.getByTestId('model-drop-alert-bridge');
     expect(bridge).toBeInTheDocument();
 
-    // Eyebrow badge
-    expect(screen.getByText(/⚡ SKIP THE QUEUE • ALLOCATION RADAR/i)).toBeInTheDocument();
+    expect(screen.getByText(/⚡ SKIP THE QUEUE • ~14 MO WAIT/i)).toBeInTheDocument();
 
-    // Headline with dynamic wait months & model name
     expect(
       screen.getByRole('heading', {
-        name: /Don't want to wait 14 months for a Sienna\?/i,
+        name: /Skip the Queue: Get Free Sienna Drop Alerts/i,
       })
     ).toBeInTheDocument();
 
-    // Subtitle
     expect(
       screen.getByText(
-        /Dealerships receive unreserved allocations and order cancellations every week across Canadian lots\. Get notified before they hit public dealer listings\./i
+        /Get notified by email when unreserved allocations or canceled customer orders land on dealer lots\./i
       )
     ).toBeInTheDocument();
 
-    // Primary CTA Button
     const alertBtn = screen.getByTestId('drop-alert-primary-button');
     expect(alertBtn).toBeInTheDocument();
-    expect(alertBtn).toHaveTextContent(/🔔 Set Free 30-Day Drop Alert/i);
+    expect(alertBtn).toHaveTextContent(/🔔 Get Free Drop Alerts/i);
 
-    // Secondary Link CTA
     const stockLink = screen.getByTestId('drop-alert-secondary-link');
     expect(stockLink).toBeInTheDocument();
-    expect(stockLink).toHaveTextContent(/Browse Live Sienna Stock ↗/i);
+    expect(stockLink).toHaveTextContent(/View Live Sienna Stock ↗/i);
     expect(stockLink).toHaveAttribute('href', '/inventory?model=sienna');
   });
 
-  it('renders fallback headline "in line" when estimatedWaitMonths is undefined or zero', () => {
+  it('renders allocation radar eyebrow for US market or when estimatedWaitMonths is omitted', () => {
     render(
       <ModelDropAlertBridge
         modelSlug="rav4-hybrid"
         modelName="RAV4 Hybrid"
+        estimatedWaitMonths={8}
+        isUS={true}
       />
     );
 
+    expect(screen.getByText(/⚡ SKIP THE QUEUE • ALLOCATION RADAR/i)).toBeInTheDocument();
     expect(
       screen.getByRole('heading', {
-        name: /Don't want to wait in line for a RAV4 Hybrid\?/i,
+        name: /Skip the Queue: Get Free RAV4 Hybrid Drop Alerts/i,
       })
     ).toBeInTheDocument();
 
@@ -64,7 +62,7 @@ describe('ModelDropAlertBridge Component', () => {
     expect(stockLink).toHaveAttribute('href', '/inventory?model=rav4-hybrid');
   });
 
-  it('opens InventoryAlertModal upon clicking primary CTA and closes when dismissed', () => {
+  it('opens InventoryAlertModal pre-populated with active modelSlug and displays 180-Day Free Allocation Pass', () => {
     render(
       <ModelDropAlertBridge
         modelSlug="grand-highlander"
@@ -73,22 +71,20 @@ describe('ModelDropAlertBridge Component', () => {
       />
     );
 
-    // Modal is initially absent
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-    // Click Set Drop Alert
     const alertBtn = screen.getByTestId('drop-alert-primary-button');
     fireEvent.click(alertBtn);
 
-    // Modal should now be open
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByText(/(6-Month|180-Day).*Allocation Pass/i)).toBeInTheDocument();
+    expect(screen.getByText(/180-Day Free Allocation Pass/i)).toBeInTheDocument();
 
-    // Close the modal
+    const modelSelect = screen.getByTestId('alert-model-select') as HTMLSelectElement;
+    expect(modelSelect.value).toBe('grand-highlander');
+
     const closeBtn = screen.getByTestId('close-alert-modal-btn');
     fireEvent.click(closeBtn);
 
-    // Modal should close
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
@@ -101,8 +97,16 @@ describe('ModelDropAlertBridge Component', () => {
       />
     );
 
+    const bridge = screen.getByTestId('model-drop-alert-bridge');
+    expect(bridge).toHaveClass('overflow-hidden');
+
     const actionRow = container.querySelector('.flex-col.sm\\:flex-row');
     expect(actionRow).toBeInTheDocument();
     expect(actionRow).toHaveClass('gap-3');
+
+    const alertBtn = screen.getByTestId('drop-alert-primary-button');
+    const stockLink = screen.getByTestId('drop-alert-secondary-link');
+    expect(alertBtn).toHaveClass('w-full', 'sm:w-auto');
+    expect(stockLink).toHaveClass('w-full', 'sm:w-auto');
   });
 });

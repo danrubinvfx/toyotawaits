@@ -185,7 +185,7 @@ export function InventoryAlertModal({
                 id="inventory-alert-modal-title"
                 className="text-base sm:text-lg font-bold text-white tracking-tight"
               >
-                6-Month Allocation Pass
+                180-Day Free Allocation Pass (6 Months)
               </h2>
               <p className="text-xs text-zinc-400">
                 Receive free email alerts for 180 days when matching unreserved allocations land in your region.
