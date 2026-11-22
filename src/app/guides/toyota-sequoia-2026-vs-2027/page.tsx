@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -426,6 +427,18 @@ export default async function Sequoia2026Vs2027GuidePage() {
           ))}
         </div>
       </section>
+
+      <OrderRolloverCalculator
+        modelSlug="sequoia"
+        modelName="Toyota Sequoia"
+        baseMsrpCad={84940}
+        baseMsrpUsd={62425}
+        my27DeltaCad={5560}
+        my27DeltaUsd={4100}
+        medianWaitDays={210}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
 
       <GuideDisclaimer />
     </div>

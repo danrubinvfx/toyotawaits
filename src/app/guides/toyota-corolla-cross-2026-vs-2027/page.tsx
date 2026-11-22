@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -587,6 +588,18 @@ export default async function CorollaCross2026Vs2027GuidePage() {
       </section>
 
       {/* Legal & Safety Disclaimer */}
+      <OrderRolloverCalculator
+        modelSlug="corolla-cross"
+        modelName="Toyota Corolla Cross"
+        baseMsrpCad={27250}
+        baseMsrpUsd={24035}
+        my27DeltaCad={565}
+        my27DeltaUsd={450}
+        medianWaitDays={150}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
+
       <GuideDisclaimer />
     </div>
   );

@@ -16,6 +16,10 @@ import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
 import { EstimatorDisclaimer } from '@/components/wait-times/EstimatorDisclaimer';
 import { ShareRegionalSnapshotButton } from '@/components/wait-times/ShareRegionalSnapshotButton';
+import {
+  OrderRolloverCalculator,
+  getModelRolloverDeltas,
+} from '@/components/calculators/OrderRolloverCalculator';
 import { getTrimTransparencyMetrics, findTrimMetric } from '@/lib/data/trim-metrics';
 import {
   MODEL_REGISTRY,
@@ -1670,6 +1674,26 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         </section>
       )}
+
+      {/* 2026 -> 2027 Order Rollover Price-Protection Calculator */}
+      {(() => {
+        const rolloverDeltas = getModelRolloverDeltas(modelConfig.slug);
+        return (
+          <section aria-label="2026 to 2027 Order Rollover Price-Protection Calculator">
+            <OrderRolloverCalculator
+              modelSlug={modelConfig.slug}
+              modelName={modelConfig.name}
+              baseMsrpCad={startingPricing.startingMsrpCad}
+              baseMsrpUsd={resolvedUsdMsrp}
+              my27DeltaCad={rolloverDeltas.my27DeltaCad}
+              my27DeltaUsd={rolloverDeltas.my27DeltaUsd}
+              medianWaitDays={stats.medianDays}
+              isUS={isUS}
+              initialMarket={isUS ? 'US' : 'CA'}
+            />
+          </section>
+        );
+      })()}
 
       {/* Section 2: Provincial / US Regional Allocation Breakdown */}
       <section className="space-y-4">

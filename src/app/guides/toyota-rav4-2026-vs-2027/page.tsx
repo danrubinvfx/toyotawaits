@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { Rav4DayOneGearShelf } from '@/components/guides/rav4-day-one-gear';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -538,6 +539,18 @@ export default async function Rav42026Vs2027GuidePage() {
           ))}
         </div>
       </section>
+
+      <OrderRolloverCalculator
+        modelSlug="rav4"
+        modelName="Toyota RAV4"
+        baseMsrpCad={35650}
+        baseMsrpUsd={30250}
+        my27DeltaCad={1500}
+        my27DeltaUsd={1100}
+        medianWaitDays={240}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
 
       {/* Legal & Safety Disclaimer */}
       <GuideDisclaimer />

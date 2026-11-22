@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { GrandHighlanderDayOneGearShelf } from '@/components/guides/grand-highlander-day-one-gear';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -497,6 +498,18 @@ export default async function GrandHighlander2026Vs2027GuidePage() {
       </div>
 
       {/* Legal & Safety Disclaimer */}
+      <OrderRolloverCalculator
+        modelSlug="grand-highlander"
+        modelName="Toyota Grand Highlander"
+        baseMsrpCad={51635}
+        baseMsrpUsd={40860}
+        my27DeltaCad={900}
+        my27DeltaUsd={700}
+        medianWaitDays={240}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
+
       <GuideDisclaimer />
     </div>
   );

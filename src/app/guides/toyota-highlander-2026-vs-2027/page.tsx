@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -399,6 +400,18 @@ export default async function Highlander2026Vs2027GuidePage() {
           ))}
         </div>
       </section>
+
+      <OrderRolloverCalculator
+        modelSlug="highlander"
+        modelName="Toyota Highlander"
+        baseMsrpCad={47650}
+        baseMsrpUsd={39520}
+        my27DeltaCad={4500}
+        my27DeltaUsd={3500}
+        medianWaitDays={180}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
 
       <GuideDisclaimer />
     </div>

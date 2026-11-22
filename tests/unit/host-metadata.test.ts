@@ -137,7 +137,7 @@ describe('Host-Aware Server Metadata (toyotawaits.com vs. toyotawaits.ca)', () =
 
     it('emits US metadata dropping "Canada" and "CAD" across calculator routes', async () => {
       const calcMeta = await generateCalculatorMetadata();
-      expect(String(calcMeta.title)).toContain('US Gas vs. Hybrid Payback Calculator');
+      expect(String(calcMeta.title)).toContain('Wait vs. Switch & Hybrid Payback Calculator');
       expect(String(calcMeta.title)).not.toContain('Canada');
       expect(calcMeta.description).toContain('USD');
       expect(calcMeta.description).not.toContain('CAD');

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
-import { InteractiveCalculatorHub } from '@/components/calculator/InteractiveCalculatorHub';
+import { CalculatorHubWithSwitch } from '@/components/calculators/WaitVsSwitchCalculator';
 import { RelatedGuidesHub } from '@/components/calculator/RelatedGuidesHub';
 import { StaticEnergyTable } from '@/components/calculator/StaticEnergyTable';
 import { CalculatorNewsWire } from '@/components/news/CalculatorNewsWire';
@@ -18,9 +18,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const { isUS, baseUrl, alternatesLanguages } = await getRequestMarketMetadata('/calculator');
 
   if (isUS) {
-    const title = 'Is a Toyota Hybrid Worth the Wait? 2026–2027 US Gas vs. Hybrid Payback Calculator | ToyotaWaits';
+    const title = 'Wait vs. Switch & Hybrid Payback Calculator (2026–2027 US) | ToyotaWaits';
     const description =
-      'Calculate exact USD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids across the United States.';
+      'Use our Wait vs. Switch & Hybrid Payback Calculator to compare USD fuel savings, monthly payback, and waiting vs. switching to an in-stock or CPO Toyota across the United States.';
     const canonical = `${baseUrl}/calculator`;
 
     return {
@@ -58,9 +58,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL('https://toyotawaits.ca'),
-    title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
+    title: 'Wait vs. Switch & Hybrid Payback Calculator (2026–2027 Canada) | ToyotaWaits',
     description:
-      'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
+      'Use our Wait vs. Switch & Hybrid Payback Calculator to compare CAD fuel savings, monthly payback, and waiting vs. switching to an in-stock or CPO Toyota in Canada.',
     keywords: [
       'toyota savings calculator',
       'toyota hybrid fuel savings canada',
@@ -76,9 +76,9 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: alternatesLanguages,
     },
     openGraph: {
-      title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
+      title: 'Wait vs. Switch & Hybrid Payback Calculator (2026–2027 Canada) | ToyotaWaits',
       description:
-        'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
+        'Use our Wait vs. Switch & Hybrid Payback Calculator to compare CAD fuel savings, monthly payback, and waiting vs. switching to an in-stock or CPO Toyota in Canada.',
       url: 'https://toyotawaits.ca/calculator',
       siteName: 'ToyotaWaits.ca',
       locale: 'en_CA',
@@ -86,9 +86,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: 'Is a Toyota Hybrid Worth the Wait? 2026–2027 Canada Payback Calculator | ToyotaWaits',
+      title: 'Wait vs. Switch & Hybrid Payback Calculator (2026–2027 Canada) | ToyotaWaits',
       description:
-        'Calculate exact CAD fuel savings, monthly payback, and wait-time break-even for Toyota RAV4, Sienna, Camry, and Corolla Cross hybrids in Canada.',
+        'Use our Wait vs. Switch & Hybrid Payback Calculator to compare CAD fuel savings, monthly payback, and waiting vs. switching to an in-stock or CPO Toyota in Canada.',
     },
   };
 }
@@ -171,7 +171,7 @@ export default function CalculatorPage() {
 
         {/* Client-Side Interactive Calculator Cockpit with Mode Switcher & Trust Banner */}
         <section aria-label="Interactive Savings Calculator">
-          <InteractiveCalculatorHub />
+          <CalculatorHubWithSwitch />
         </section>
 
         {/* Recommended Products Section placed below the calculator cockpit */}

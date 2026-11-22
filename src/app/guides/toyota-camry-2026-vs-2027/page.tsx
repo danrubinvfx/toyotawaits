@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -406,6 +407,18 @@ export default async function Camry2026Vs2027GuidePage() {
           ))}
         </div>
       </section>
+
+      <OrderRolloverCalculator
+        modelSlug="camry"
+        modelName="Toyota Camry Hybrid"
+        baseMsrpCad={34300}
+        baseMsrpUsd={28700}
+        my27DeltaCad={485}
+        my27DeltaUsd={385}
+        medianWaitDays={120}
+        isUS={isUS}
+        initialMarket={isUS ? 'US' : 'CA'}
+      />
 
       <GuideDisclaimer />
     </div>
