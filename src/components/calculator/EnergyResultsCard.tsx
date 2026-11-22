@@ -9,6 +9,8 @@ import {
   Zap,
   Share2,
   Check,
+  ExternalLink,
+  Copy,
 } from 'lucide-react';
 import { CalculatorResults } from '@/lib/hooks/useSavingsCalculator';
 import { trackUserEvent } from '@/lib/analytics';
@@ -18,16 +20,51 @@ export interface EnergyResultsCardProps {
   className?: string;
   model?: string;
   powertrain?: string;
+  targetVehicleName?: string;
+  annualDistance?: number;
+  gasPrice?: number;
 }
 
-export function EnergyResultsCard({ results, className, model, powertrain }: EnergyResultsCardProps) {
-  const [copied, setCopied] = useState(false);
+export function buildRedditShareUrl(shareUrl: string): string {
+  const hashIndex = shareUrl.indexOf('#');
+  const baseAndQuery = hashIndex >= 0 ? shareUrl.slice(0, hashIndex) : shareUrl;
+  const hash = hashIndex >= 0 ? shareUrl.slice(hashIndex) : '';
 
-  const handleCopyLink = async () => {
+  try {
+    const isAbsolute = /^https?:\/\//i.test(baseAndQuery);
+    const url = new URL(baseAndQuery, 'https://toyotawaits.ca');
+    url.searchParams.set('utm_source', 'reddit');
+    url.searchParams.set('utm_medium', 'organic_social');
+    url.searchParams.set('utm_campaign', 'calculator_share');
+    const formatted = isAbsolute ? url.toString() : `${url.pathname}${url.search}`;
+    return `${formatted}${hash}`;
+  } catch {
+    const separator = baseAndQuery.includes('?') ? '&' : '?';
+    return `${baseAndQuery}${separator}utm_source=reddit&utm_medium=organic_social&utm_campaign=calculator_share${hash}`;
+  }
+}
+
+export function EnergyResultsCard({
+  results,
+  className,
+  model,
+  powertrain,
+  targetVehicleName,
+  annualDistance,
+  gasPrice,
+}: EnergyResultsCardProps) {
+  const [copied, setCopied] = useState(false);
+  const [redditCopied, setRedditCopied] = useState(false);
+
+  const trackShare = () => {
     trackUserEvent('calculator_shared', {
       model: model || 'rav4',
       powertrain: powertrain || (results.targetIsPhev ? 'PHEV' : 'HEV'),
     });
+  };
+
+  const handleCopyLink = async () => {
+    trackShare();
     try {
       if (typeof window !== 'undefined' && navigator.clipboard) {
         await navigator.clipboard.writeText(results.shareUrl);
@@ -42,6 +79,47 @@ export function EnergyResultsCard({ results, className, model, powertrain }: Ene
   const isPositiveSavings = results.annualSavings >= 0;
   const currency = results.currencyCode ?? (results.unitSystem === 'IMPERIAL' ? 'USD' : 'CAD');
   const isImperial = results.unitSystem === 'IMPERIAL';
+
+  const vehicleLabel = targetVehicleName || (model ? `Toyota ${model.toUpperCase()}` : 'Toyota Hybrid');
+  const resolvedDistance = annualDistance ?? (isImperial ? 12000 : 20000);
+  const resolvedGasPrice = gasPrice ?? (isImperial ? 3.45 : 1.75);
+  const distanceUnit = isImperial ? 'mi' : 'km';
+  const fuelUnit = isImperial ? 'gal' : 'L';
+  const formattedDistance = resolvedDistance.toLocaleString();
+  const formattedGasPrice = resolvedGasPrice.toFixed(2);
+  const formattedSavings = Math.abs(results.annualSavings).toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+  const savingsPhrase = isPositiveSavings
+    ? `saves ~$${formattedSavings} ${currency}/yr`
+    : `costs ~$${formattedSavings} ${currency}/yr more`;
+
+  const redditShareUrl = buildRedditShareUrl(results.shareUrl);
+  const redditTitle = `My ${vehicleLabel} energy math: ${formattedDistance} ${distanceUnit}/yr @ $${formattedGasPrice}/${fuelUnit} ${savingsPhrase}`;
+  const redditSubmitUrl = `https://www.reddit.com/submit?url=${encodeURIComponent(redditShareUrl)}&title=${encodeURIComponent(redditTitle)}`;
+
+  const redditMarkdown = [
+    `**${vehicleLabel} Energy Savings Breakdown**`,
+    `- **Annual Driving:** ${formattedDistance} ${distanceUnit}/yr @ $${formattedGasPrice}/${fuelUnit}`,
+    `- **Current Baseline:** $${results.currentAnnualCost.toLocaleString()} ${currency}/yr ($${results.currentMonthlyCost.toFixed(0)}/mo)`,
+    `- **Target (${vehicleLabel}):** $${results.targetAnnualCost.toLocaleString()} ${currency}/yr ($${results.targetMonthlyCost.toFixed(0)}/mo)`,
+    `- **Estimated Annual Savings:** ${isPositiveSavings ? '' : '-'}$${formattedSavings} ${currency}/yr (${results.savingsPercent.toFixed(1)}% ${isPositiveSavings ? 'reduction' : 'increase'})`,
+    `- **Interactive Calculator Permalink:** ${redditShareUrl}`,
+  ].join('\n');
+
+  const handleCopyRedditMarkdown = async () => {
+    trackShare();
+    try {
+      if (typeof window !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(redditMarkdown);
+        setRedditCopied(true);
+        setTimeout(() => setRedditCopied(false), 2000);
+      }
+    } catch {
+      // Fallback
+    }
+  };
 
   return (
     <Card className={`border border-transparent sm:border-2 sm:border-red-500/20 bg-transparent sm:bg-white sm:dark:bg-zinc-900 overflow-hidden shadow-none sm:shadow-lg ${className ?? ''}`}>
@@ -207,8 +285,8 @@ export function EnergyResultsCard({ results, className, model, powertrain }: Ene
             )}
           </div>
 
-          {/* Share Calculation Button: Compact h-8 text-xs */}
-          <div className="pt-0.5">
+          {/* Share Calculation & Reddit Buttons: Compact h-8 text-xs */}
+          <div className="pt-0.5 space-y-1.5">
             <Button
               type="button"
               variant="outline"
@@ -228,6 +306,45 @@ export function EnergyResultsCard({ results, className, model, powertrain }: Ene
                 </>
               )}
             </Button>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-8 min-h-[32px] flex items-center justify-center gap-1.5 border-orange-500/30 text-orange-700 dark:text-orange-400 hover:bg-orange-500/10 cursor-pointer font-medium text-xs"
+              >
+                <a
+                  href={redditSubmitUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={trackShare}
+                >
+                  <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                  <span>Share on Reddit</span>
+                </a>
+              </Button>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCopyRedditMarkdown}
+                className="h-8 min-h-[32px] flex items-center justify-center gap-1.5 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer font-medium text-xs"
+              >
+                {redditCopied ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span>Copied for Reddit!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5 text-zinc-600 dark:text-zinc-400 shrink-0" />
+                    <span>Copy for Reddit Thread</span>
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </details>

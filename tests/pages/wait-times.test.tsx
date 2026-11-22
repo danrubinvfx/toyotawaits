@@ -138,6 +138,11 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     expect(snippetBox).toBeInTheDocument();
     expect(screen.getByText(/Quick Summary • Canadian Delivery Overview/i)).toBeInTheDocument();
     expect(screen.getByText('Canadian Median Wait')).toBeInTheDocument();
+    const freshnessBadge = screen.getByTestId('queue-freshness-badge');
+    expect(freshnessBadge).toBeInTheDocument();
+    expect(freshnessBadge.textContent).toMatch(
+      /Based on \d+ verified deliver(y|ies) in the last 180 days|Planning benchmark anchored to regional allocation cadence/
+    );
     expect(screen.getAllByText('Powertrain Breakdown').length).toBeGreaterThan(0);
     expect(screen.getByText('Regional Lead Times')).toBeInTheDocument();
     expect(screen.getByText(/Fastest:/i)).toBeInTheDocument();

@@ -164,6 +164,23 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
   );
   const pending = records.filter((r) => r.status === 'pending');
 
+  const nowMs = Date.now();
+  const cutoff180dMs = nowMs - 180 * 24 * 60 * 60 * 1000;
+  const recentDeliveries180d = delivered.filter((r) => {
+    let deliveryMs = Number.NaN;
+    if (r.delivery_date) {
+      deliveryMs = Date.parse(r.delivery_date);
+    } else if (r.order_date && r.wait_days != null) {
+      const orderMs = Date.parse(r.order_date);
+      if (!Number.isNaN(orderMs)) {
+        deliveryMs = orderMs + Number(r.wait_days) * 24 * 60 * 60 * 1000;
+      }
+    } else if (r.created_at) {
+      deliveryMs = Date.parse(r.created_at);
+    }
+    return !Number.isNaN(deliveryMs) && deliveryMs >= cutoff180dMs && deliveryMs <= nowMs + 24 * 60 * 60 * 1000;
+  }).length;
+
   const waitDaysArr = delivered.map((r) => Number(r.wait_days)).sort((a, b) => a - b);
 
   let rawMedian: number;
@@ -300,6 +317,7 @@ function computeModelStats(modelConfig: ModelRegistryEntry, records: RawSubmissi
   return {
     sampleSize: records.length,
     deliveredCount: delivered.length,
+    recentDeliveries180d,
     pendingCount: pending.length,
     medianDays,
     medianMonths,
@@ -742,6 +760,13 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
                   ? `Factory: ${stats.factoryPlant}`
                   : `IQR: ${stats.minWaitMonths}–${stats.maxWaitMonths} months (${stats.p25Days}–${stats.p75Days} days)`}
               </p>
+              <div data-testid="queue-freshness-badge" className="pt-1">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-300">
+                  {stats.recentDeliveries180d > 0
+                    ? `Based on ${stats.recentDeliveries180d} verified ${stats.recentDeliveries180d === 1 ? 'delivery' : 'deliveries'} in the last 180 days`
+                    : 'Planning benchmark anchored to regional allocation cadence'}
+                </span>
+              </div>
             </div>
 
             {/* 2. Pricing & Fee Reality Badge */}

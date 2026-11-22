@@ -122,4 +122,17 @@ describe('Guides Index Hub Page', () => {
       expect(container.querySelector(`a[href="${href}"]`)).toBeInTheDocument();
     }
   });
+
+  it('renders clear funnel CTAs to Log Your Order (/submit) and Check Live Local Stock (/inventory)', () => {
+    const { container } = render(<GuidesIndexPage />);
+    const ctaSection = container.querySelector('[data-testid="guides-funnel-ctas"]');
+    expect(ctaSection).not.toBeNull();
+
+    const submitLink = ctaSection!.querySelector('a[href="/submit"]');
+    const inventoryLink = ctaSection!.querySelector('a[href="/inventory"]');
+    expect(submitLink).toBeInTheDocument();
+    expect(submitLink!.textContent).toMatch(/Log Your Order/i);
+    expect(inventoryLink).toBeInTheDocument();
+    expect(inventoryLink!.textContent).toMatch(/Check Live Local Stock/i);
+  });
 });

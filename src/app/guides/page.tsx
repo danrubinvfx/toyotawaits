@@ -395,6 +395,30 @@ export default function GuidesIndexPage() {
           Dealer allocation queues are backed up for months. Prep for delivery day, maintain your
           hybrid or gas powertrain yourself, and skip high-trim markups.
         </p>
+
+        {/* Funnel CTAs: Log Your Order & Check Live Local Stock */}
+        <div
+          data-testid="guides-funnel-ctas"
+          className="flex flex-wrap items-center gap-3 pt-2"
+        >
+          <Button
+            asChild
+            className="bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-sm gap-1.5"
+          >
+            <Link href="/submit">
+              Log Your Order <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="outline"
+            className="border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 font-bold text-sm gap-1.5"
+          >
+            <Link href="/inventory">
+              Check Live Local Stock <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Section 1 — Popular Guides & Ownership Playbooks (Always Visible, Top Grid) */}
@@ -544,7 +568,7 @@ export default function GuidesIndexPage() {
             </div>
           </summary>
 
-          <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {CROSS_MODEL_COMPARISONS.map((comp) => (
               <Link
                 key={comp.slug}

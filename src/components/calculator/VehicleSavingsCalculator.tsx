@@ -276,7 +276,14 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
           )}
 
           {/* Annual Projection / Energy Results Card directly underneath the graph */}
-          <EnergyResultsCard results={results} model={activeModelSlug} powertrain={targetVehicle.powertrain} />
+          <EnergyResultsCard
+            results={results}
+            model={activeModelSlug}
+            powertrain={targetVehicle.powertrain}
+            targetVehicleName={targetVehicleName}
+            annualDistance={drivingInputs.annualKm}
+            gasPrice={drivingInputs.gasPricePerL}
+          />
 
           {/* Contextual Action Bridges: Wait Times & Live Inventory */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
