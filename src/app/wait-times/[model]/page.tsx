@@ -11,6 +11,7 @@ import { ModelOtdPricingSection } from '@/components/seo/ModelOtdPricingSection'
 import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
 import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
 import { CrossShopBridge } from '@/components/wait-times/CrossShopBridge';
+import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
 import { ModelDeliveryShelf } from '@/components/gear/ModelDeliveryShelf';
 import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
@@ -28,6 +29,7 @@ import {
   type ModelRegistryEntry,
 } from '@/lib/data/model-registry';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
+import { getPopularAccessoryWeights } from '@/lib/data/accessories-popularity';
 import { clampWaitDays } from '@/lib/estimator';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -450,7 +452,10 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     permanentRedirect(`/wait-times/${modelConfig.slug}`);
   }
 
-  const { submissions, latestSubmissionDate } = await fetchModelSubmissions(modelConfig);
+  const [{ submissions, latestSubmissionDate }, popularityWeights] = await Promise.all([
+    fetchModelSubmissions(modelConfig),
+    getPopularAccessoryWeights(),
+  ]);
   const stats = computeModelStats(modelConfig, submissions);
   const { isUS } = await getRequestMarketMetadata(`/wait-times/${modelConfig.slug}`);
   const startingPricing = getModelStartingPricing(modelConfig.slug);
@@ -859,6 +864,15 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           modelSlug={modelConfig.slug}
           modelName={modelConfig.name}
           isUS={isUS}
+        />
+
+        {/* Live 30-Day Popularity-Sorted Day-One Gear Shelf */}
+        <DayOneGearShelf
+          modelSlug={modelConfig.slug}
+          modelName={modelConfig.name}
+          popularityWeights={popularityWeights}
+          market={isUS ? 'US' : 'CA'}
+          placement="wait_times_day_one_shelf"
         />
 
         <div className="p-4 sm:p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 space-y-3">

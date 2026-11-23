@@ -1,7 +1,10 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, within } from '@testing-library/react';
 import DeliveryPrepPage, { generateMetadata, dynamic, instant } from '@/app/delivery-prep/page';
+import * as hostMetadata from '@/lib/seo/host-metadata';
+import * as popularityData from '@/lib/data/accessories-popularity';
+import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
 
 describe('DeliveryPrepPage Route', () => {
   it('exports force-dynamic and instant=false route segment configuration', () => {
@@ -19,8 +22,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/delivery-prep');
   });
 
-  it('renders factory order status tracker with Status A, Status F, and Status G stages', () => {
-    render(<DeliveryPrepPage />);
+  it('renders factory order status tracker with Status A, Status F, and Status G stages', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -42,8 +45,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getByText(/Ground \/ Dealership Compound/i)).toBeInTheDocument();
   });
 
-  it('renders dealer tracking secrets, Dealer Daily portal, and PDI audit advice', () => {
-    render(<DeliveryPrepPage />);
+  it('renders dealer tracking secrets, Dealer Daily portal, and PDI audit advice', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -57,8 +60,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getByText(/Watch Out for PDI Add-Ons/i)).toBeInTheDocument();
   });
 
-  it('renders cross-link buttons bridging to RAV4 accessories and floor mats guides', () => {
-    render(<DeliveryPrepPage />);
+  it('renders cross-link buttons bridging to RAV4 accessories and floor mats guides', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -73,8 +76,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(rav4Link).toHaveAttribute('href', '/guides/toyota-rav4-must-have-accessories');
   });
 
-  it('renders delivery FAQ items and JSON-LD schema', () => {
-    const { container } = render(<DeliveryPrepPage />);
+  it('renders delivery FAQ items and JSON-LD schema', async () => {
+    const { container } = render(await DeliveryPrepPage());
 
     expect(screen.getByText(/What does Toyota Status F mean\?/i)).toBeInTheDocument();
     expect(screen.getByText(/How long does a Toyota take to arrive once in transit\?/i)).toBeInTheDocument();
@@ -88,8 +91,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(faqScript?.innerHTML).toContain('How long does a Toyota take to arrive once in transit?');
   });
 
-  it('renders Business Office Extended Warranty (ECP) Defense section with CTA link', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Business Office Extended Warranty (ECP) Defense section with CTA link', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -107,8 +110,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(ecpLink).toHaveAttribute('href', '/guides/toyota-ecp-warranty-guide');
   });
 
-  it('renders Canadian Dealer Fees table with Mandatory vs. Negotiable breakdowns', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Canadian Dealer Fees table with Mandatory vs. Negotiable breakdowns', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -148,8 +151,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getAllByText(/Pure profit add-ons/i).length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders ECP Extended Warranty Strategy Box with wholesale benchmarks and 31-day grace window', () => {
-    render(<DeliveryPrepPage />);
+  it('renders ECP Extended Warranty Strategy Box with wholesale benchmarks and 31-day grace window', async () => {
+    render(await DeliveryPrepPage());
 
     expect(screen.getByText('ECP Extended Warranty Strategy')).toBeInTheDocument();
     expect(
@@ -161,8 +164,8 @@ describe('DeliveryPrepPage Route', () => {
     ).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders Bridge to Day-1 Protection Gear with TuxMat, FitcamX, and Spigen routed via buildAmazonAffiliateUrl', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Bridge to Day-1 Protection Gear with TuxMat, FitcamX, and Spigen routed via buildAmazonAffiliateUrl', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByText(
@@ -202,8 +205,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(gearLinks[2]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
   });
 
-  it('renders Surviving the Finance Office: The 31-Day Toyota ECP Warranty Rule with key wholesale copy', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Surviving the Finance Office: The 31-Day Toyota ECP Warranty Rule with key wholesale copy', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -222,8 +225,8 @@ describe('DeliveryPrepPage Route', () => {
     ).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders Printable Inspection Checklist & Fee Refusal Worksheet section with print trigger', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Printable Inspection Checklist & Fee Refusal Worksheet section with print trigger', async () => {
+    render(await DeliveryPrepPage());
 
     expect(
       screen.getByRole('heading', {
@@ -244,8 +247,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getByText('Dealership Representative')).toBeInTheDocument();
   });
 
-  it('renders Interactive Dealer Fee Auditor with inputs, AMVIC/OMVIC flags, and copy script CTA', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Interactive Dealer Fee Auditor with inputs, AMVIC/OMVIC flags, and copy script CTA', async () => {
+    render(await DeliveryPrepPage());
 
     expect(screen.getByTestId('dealer-fee-auditor')).toBeInTheDocument();
 
@@ -264,8 +267,8 @@ describe('DeliveryPrepPage Route', () => {
     expect(screen.getByTestId('negotiation-script-preview')).toBeInTheDocument();
   });
 
-  it('renders Winter Tire Seasonal Callout Banner linking to /tires', () => {
-    render(<DeliveryPrepPage />);
+  it('renders Winter Tire Seasonal Callout Banner linking to /tires', async () => {
+    render(await DeliveryPrepPage());
 
     const banner = screen.getByTestId('winter-tire-callout-banner');
     expect(banner).toBeInTheDocument();
@@ -274,5 +277,94 @@ describe('DeliveryPrepPage Route', () => {
     );
     const tireGuideLink = screen.getByRole('link', { name: /View Toyota Winter Tire Guide →/i });
     expect(tireGuideLink).toHaveAttribute('href', '/tires');
+  });
+
+  describe('Day-One Pickup Kit (Above the Fold) & Dual-Market Routing', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('renders the 3-card Top-Picked Day-One Pickup Kit above the fold with CA (toyotawaits-20) routing', async () => {
+      vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+        market: 'CA',
+        isUS: false,
+        baseUrl: 'https://www.toyotawaits.ca',
+        alternatesLanguages: {
+          'en-CA': 'https://www.toyotawaits.ca/delivery-prep',
+          'en-US': 'https://www.toyotawaits.com/delivery-prep',
+          'x-default': 'https://www.toyotawaits.ca/delivery-prep',
+        },
+      });
+      vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+      render(await DeliveryPrepPage());
+
+      const shelf = screen.getByTestId('day-one-gear-shelf');
+      expect(shelf).toBeInTheDocument();
+      expect(
+        within(shelf).getByRole('heading', { name: /Top-Picked Day-One Pickup Kit/i })
+      ).toBeInTheDocument();
+      expect(
+        within(shelf).getByText(
+          /Most-ordered accessories by ToyotaWaits buyers before driving off the lot\./i
+        )
+      ).toBeInTheDocument();
+
+      const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+      expect(cards.length).toBe(3);
+
+      const amazonLinks = within(shelf)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+      expect(amazonLinks.length).toBeGreaterThanOrEqual(3);
+      for (const link of amazonLinks) {
+        expect(link).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+      }
+    });
+
+    it('routes the 3-card Day-One Pickup Kit to amazon.com with toyotawaits07-20 when market is US', async () => {
+      vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+        market: 'US',
+        isUS: true,
+        baseUrl: 'https://www.toyotawaits.com',
+        alternatesLanguages: {
+          'en-CA': 'https://www.toyotawaits.ca/delivery-prep',
+          'en-US': 'https://www.toyotawaits.com/delivery-prep',
+          'x-default': 'https://www.toyotawaits.ca/delivery-prep',
+        },
+      });
+      vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+      render(await DeliveryPrepPage());
+
+      const shelf = screen.getByTestId('day-one-gear-shelf');
+      const amazonLinks = within(shelf)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+      expect(amazonLinks.length).toBeGreaterThanOrEqual(3);
+      for (const link of amazonLinks) {
+        expect(link).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+      }
+    });
+
+    it('promotes the highest-clicked item in popularityWeights to index 0 in DayOneGearShelf', () => {
+      render(
+        <DayOneGearShelf
+          modelSlug="rav4"
+          popularityWeights={{ 'fitcamx-rav4': 85, 'high-wall-floor-liners-rav4': 12 }}
+          market="CA"
+        />
+      );
+
+      const shelf = screen.getByTestId('day-one-gear-shelf');
+      const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+      expect(cards.length).toBe(3);
+      expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-fitcamx-rav4');
+      expect(within(cards[0] as HTMLElement).getByText('🔥 Community Top Pick')).toBeInTheDocument();
+    });
   });
 });

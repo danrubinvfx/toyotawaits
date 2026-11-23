@@ -120,10 +120,10 @@ describe('Muslogy Cargo Nets Integration', () => {
   });
 
   describe('4. Delivery Day Prep Checklist Page (/delivery-prep)', () => {
-    it('renders the Cargo & Trunk Organization section with Muslogy cargo net gear cards', () => {
+    it('renders the Cargo & Trunk Organization section with Muslogy cargo net gear cards', async () => {
       render(
         <MarketProvider>
-          <DeliveryPrepPage />
+          {await DeliveryPrepPage()}
         </MarketProvider>
       );
 

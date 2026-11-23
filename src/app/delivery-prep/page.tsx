@@ -13,10 +13,17 @@ import { FeeRefusalWorksheet } from '@/components/delivery-prep/fee-refusal-work
 import { TradeInValuationCard } from '@/components/discovery/TradeInValuationCard';
 import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
-import { GearCard } from '@/components/gear/GearCard';
+import { GearCard, type GearCardItem } from '@/components/gear/GearCard';
+import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
 import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
+import {
+  buildHostAwarePageMetadata,
+  getRequestMarketMetadata,
+} from '@/lib/seo/host-metadata';
+import { getPopularAccessoryWeights } from '@/lib/data/accessories-popularity';
+import { GEAR_MARKET_CATALOG } from '@/data/gear/catalog';
+import { sortAccessoriesByPopularity } from '@/data/accessories';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
@@ -93,7 +100,83 @@ function ChecklistLoadingFallback() {
   );
 }
 
-export default function DeliveryPrepPage() {
+const MODEL_SPECIFIC_TOKENS = [
+  'rav4',
+  'sienna',
+  'grand-highlander',
+  'highlander',
+  'tacoma',
+  'tundra',
+  'corolla',
+  'camry',
+  'prius',
+  '4runner',
+  'sequoia',
+  'land-cruiser',
+  'crown',
+];
+
+function getUniversalDayOneEssentials(weights: Record<string, number>): GearCardItem[] {
+  const seenSlugs = new Set<string>();
+  const rawItems: GearCardItem[] = [];
+
+  for (const [key, config] of Object.entries(GEAR_MARKET_CATALOG)) {
+    if (!config.isDeliveryDayEssential) continue;
+    if (seenSlugs.has(config.slug)) continue;
+    seenSlugs.add(config.slug);
+
+    const identityText = `${key} ${config.slug} ${config.compatibility || ''}`.toLowerCase();
+    if (MODEL_SPECIFIC_TOKENS.some((token) => identityText.includes(token))) {
+      continue;
+    }
+
+    rawItems.push({
+      id: config.slug || key,
+      slug: config.slug || key,
+      title: config.title,
+      brand: config.brand,
+      category: config.category || 'Day-1 Essential',
+      destinationType: config.destinationType || 'amazon',
+      destinationUrl: config.destinationUrl,
+      asin: config.asin,
+      asin_ca: config.asin_ca,
+      asin_us: config.asin_us,
+      searchQuery: config.searchQuery,
+      searchKeywordsCA: config.searchKeywordsCA,
+      searchKeywordsUS: config.searchKeywordsUS,
+      description: config.description,
+      whyBuy: config.whyBuy,
+      badge: config.badge,
+      imageUrl: config.imageUrl,
+      fallbackIcon: config.fallbackIcon,
+      buttonLabel: config.buttonLabel,
+      compatibility: config.compatibility,
+      fitment: config.fitment,
+    });
+  }
+
+  const sorted = sortAccessoriesByPopularity(rawItems as any, weights) as unknown as GearCardItem[];
+
+  const seenTitles = new Set<string>();
+  const uniqueByTitle: GearCardItem[] = [];
+  for (const item of sorted) {
+    const normTitle = item.title.trim().toLowerCase();
+    if (seenTitles.has(normTitle)) continue;
+    seenTitles.add(normTitle);
+    uniqueByTitle.push(item);
+    if (uniqueByTitle.length >= 3) break;
+  }
+
+  return uniqueByTitle;
+}
+
+export default async function DeliveryPrepPage() {
+  const [weights, { isUS }] = await Promise.all([
+    getPopularAccessoryWeights(),
+    getRequestMarketMetadata('/delivery-prep'),
+  ]);
+  const topDayOneItems = getUniversalDayOneEssentials(weights);
+
   return (
     <main className="min-h-screen pt-4 sm:pt-6 pb-16">
       {/* FAQPage JSON-LD Schema */}
@@ -169,6 +252,16 @@ export default function DeliveryPrepPage() {
             </div>
           </div>
         </div>
+
+        {/* Top-Picked Day-One Pickup Kit (Above the Fold) */}
+        <DayOneGearShelf
+          items={topDayOneItems}
+          title="Top-Picked Day-One Pickup Kit"
+          subtitle="Most-ordered accessories by ToyotaWaits buyers before driving off the lot."
+          market={isUS ? 'US' : 'CA'}
+          placement="delivery_prep_top_kit"
+          className="print:hidden"
+        />
 
         {/* Winter Tire Seasonal Callout Banner */}
         <div

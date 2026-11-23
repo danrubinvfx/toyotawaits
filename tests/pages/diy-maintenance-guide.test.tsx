@@ -210,9 +210,10 @@ describe('Toyota DIY Maintenance & Upkeep Guide Page', () => {
       guidesContainer.querySelector('a[href="/guides/toyota-diy-maintenance-guide"]')
     ).toBeInTheDocument();
 
+    const deliveryJsx = await DeliveryPrepPage();
     const { container: deliveryContainer } = render(
       <MarketProvider initialMarket="CA">
-        <DeliveryPrepPage />
+        {deliveryJsx}
       </MarketProvider>
     );
     expect(

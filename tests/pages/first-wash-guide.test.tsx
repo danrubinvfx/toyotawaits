@@ -183,9 +183,10 @@ describe('New Toyota First-Wash & Paint Care Guide Page', () => {
       guidesContainer.querySelector('a[href="/guides/toyota-first-wash-paint-care"]')
     ).toBeInTheDocument();
 
+    const deliveryJsx = await DeliveryPrepPage();
     const { container: deliveryContainer } = render(
       <MarketProvider initialMarket="CA">
-        <DeliveryPrepPage />
+        {deliveryJsx}
       </MarketProvider>
     );
     expect(

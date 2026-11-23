@@ -1,12 +1,13 @@
 import React, { act } from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import ModelWaitTimePage, {
   generateMetadata,
   generateStaticParams,
   getCalculatorBridgeHref,
 } from '@/app/wait-times/[model]/page';
 import { MODEL_REGISTRY } from '@/lib/data/model-registry';
+import * as popularityData from '@/lib/data/accessories-popularity';
 
 // Mock MarketContext for client components in testing environment
 vi.mock('@/context/MarketContext', () => ({
@@ -424,5 +425,43 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
         params: Promise.resolve({ model: 'invalid-model-slug' }),
       })
     ).rejects.toThrow();
+  });
+
+  it('wires 30-day popularityWeights into DayOneGearShelf beneath ModelDropAlertBridge and promotes top-clicked item to index 0', async () => {
+    const spy = vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({
+      'fitcamx-rav4': 120,
+      'high-wall-floor-liners-rav4': 25,
+    });
+
+    const rav4Jsx = await ModelWaitTimePage({
+      params: Promise.resolve({ model: 'rav4' }),
+    });
+    const { getByTestId, unmount } = render(rav4Jsx);
+
+    const alertBridge = getByTestId('model-drop-alert-bridge');
+    const shelf = getByTestId('day-one-gear-shelf');
+    expect(alertBridge).toBeInTheDocument();
+    expect(shelf).toBeInTheDocument();
+
+    // Verify DayOneGearShelf appears after ModelDropAlertBridge in DOM order
+    expect(
+      alertBridge.compareDocumentPosition(shelf) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+
+    const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+    expect(cards.length).toBe(3);
+    expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-fitcamx-rav4');
+    expect(within(cards[0] as HTMLElement).getByText('🔥 Community Top Pick')).toBeInTheDocument();
+
+    // Verify thumbnail and CTA links are clickable with sponsored rel attributes
+    const firstCardLinks = within(cards[0] as HTMLElement).getAllByRole('link');
+    expect(firstCardLinks.length).toBeGreaterThanOrEqual(2);
+    for (const link of firstCardLinks) {
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+    }
+
+    spy.mockRestore();
+    unmount();
   });
 });

@@ -135,8 +135,8 @@ describe('Phase 2 Monetization Diversification', () => {
   });
 
   describe('4. Page Mounts & /out/[slug] Proxy Routing', () => {
-    it('mounts TradeInValuationCard on /delivery-prep', () => {
-      render(<DeliveryPrepPage />);
+    it('mounts TradeInValuationCard on /delivery-prep', async () => {
+      render(await DeliveryPrepPage());
       expect(screen.getByTestId('trade-in-valuation-card')).toBeInTheDocument();
       expect(screen.getByTestId('trade-in-valuation-cta')).toHaveAttribute(
         'href',
