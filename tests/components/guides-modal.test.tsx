@@ -1,4 +1,6 @@
 import React from 'react';
+import fs from 'fs';
+import path from 'path';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { GuidesModal, PRIMARY_GUIDES, MODEL_MOD_PILLS } from '@/components/navigation/GuidesModal';
@@ -20,25 +22,48 @@ describe('GuidesModal Component (2-Column Grid Layout)', () => {
     expect(screen.getByText('Model Mod Hubs')).toBeInTheDocument();
   });
 
-  it('renders all 6 primary guides with correct routes, titles, and subtitles', () => {
+  it('renders all 6 primary guides with valid live routes, titles, and subtitles', () => {
     const handleClose = vi.fn();
     render(<GuidesModal isOpen={true} onClose={handleClose} />);
 
-    PRIMARY_GUIDES.forEach((guide) => {
-      expect(screen.getByText(guide.title)).toBeInTheDocument();
-      expect(screen.getByText(guide.subtitle)).toBeInTheDocument();
+    expect(PRIMARY_GUIDES).toHaveLength(6);
 
-      const link = screen.getByText(guide.title).closest('a');
-      expect(link).toHaveAttribute('href', guide.href);
+    const expectedRoutes = [
+      { title: 'Winter Prep', subtitle: '12V & Floor Mats', href: '/winter-prep' },
+      { title: 'Tire Fitment', subtitle: 'OEM Sizes & 3PMSF', href: '/tires' },
+      { title: 'Delivery Day Prep', subtitle: 'Inspection Checklist', href: '/delivery-prep' },
+      {
+        title: 'DIY Maintenance',
+        subtitle: 'Oil Specs & Hybrid Care',
+        href: '/guides/toyota-diy-maintenance-guide',
+      },
+      {
+        title: 'Sienna Hitch',
+        subtitle: 'Sensors & Install',
+        href: '/guides/toyota-sienna-trailer-hitch-guide',
+      },
+      {
+        title: 'RAV4 Gear Guide',
+        subtitle: 'Must-Have Accessories',
+        href: '/guides/toyota-rav4-must-have-accessories',
+      },
+    ];
+
+    expectedRoutes.forEach(({ title, subtitle, href }) => {
+      expect(screen.getByText(title)).toBeInTheDocument();
+      expect(screen.getByText(subtitle)).toBeInTheDocument();
+
+      const link = screen.getByText(title).closest('a');
+      expect(link).toHaveAttribute('href', href);
+
+      // Verify corresponding Next.js App Router page exists on disk (no 404 links)
+      const pagePath = path.join(process.cwd(), 'src', 'app', ...href.split('/').filter(Boolean), 'page.tsx');
+      expect(fs.existsSync(pagePath)).toBe(true);
     });
 
-    // Check specific primary guides
-    expect(screen.getByText('Winter Prep')).toBeInTheDocument();
-    expect(screen.getByText('Tire Fitment')).toBeInTheDocument();
-    expect(screen.getByText('Delivery Day Prep')).toBeInTheDocument();
-    expect(screen.getByText('EV Rebates')).toBeInTheDocument();
-    expect(screen.getByText('Sienna Hitch')).toBeInTheDocument();
-    expect(screen.getByText('RAV4 Gear Guide')).toBeInTheDocument();
+    // Ensure dead EV Rebates link is removed
+    expect(screen.queryByText('EV Rebates')).not.toBeInTheDocument();
+    expect(PRIMARY_GUIDES.some((g) => g.href === '/guides/ev-rebates-guide')).toBe(false);
   });
 
   it('renders all 6 model mod pill buttons linking to corresponding mod guides', () => {

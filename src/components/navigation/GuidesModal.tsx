@@ -7,7 +7,6 @@ import {
   Snowflake,
   Disc,
   ClipboardCheck,
-  Zap,
   Wrench,
   Sparkles,
   BookOpen,
@@ -39,12 +38,12 @@ export const PRIMARY_GUIDES = [
     badgeClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40',
   },
   {
-    slug: 'ev-rebates',
-    title: 'EV Rebates',
-    subtitle: 'Federal & Provincial',
-    href: '/guides/ev-rebates-guide',
-    icon: 'Zap',
-    badgeClass: 'bg-purple-950/40 text-purple-400 border-purple-800/40',
+    slug: 'diy-maintenance',
+    title: 'DIY Maintenance',
+    subtitle: 'Oil Specs & Hybrid Care',
+    href: '/guides/toyota-diy-maintenance-guide',
+    icon: 'Wrench',
+    badgeClass: 'bg-emerald-950/40 text-emerald-400 border-emerald-800/40',
   },
   {
     slug: 'sienna-hitch',
@@ -81,8 +80,6 @@ function IconComponent({ name, className }: { name: string; className?: string }
       return <Disc className={className} aria-hidden="true" />;
     case 'ClipboardCheck':
       return <ClipboardCheck className={className} aria-hidden="true" />;
-    case 'Zap':
-      return <Zap className={className} aria-hidden="true" />;
     case 'Wrench':
       return <Wrench className={className} aria-hidden="true" />;
     case 'Sparkles':
