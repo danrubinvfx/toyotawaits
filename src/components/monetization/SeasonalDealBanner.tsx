@@ -1,7 +1,8 @@
 import React from 'react';
+import Link from 'next/link';
 import { getCurrentPromoConfig } from '@/lib/gear/promotions';
 import { cn } from '@/lib/utils';
-import { Layers, Camera, Smartphone } from 'lucide-react';
+import { Layers, Sparkles, Wrench, Disc3 } from 'lucide-react';
 
 export interface SeasonalDealBannerProps {
   currentDate?: Date;
@@ -13,18 +14,23 @@ export interface SeasonalDealBannerProps {
 const DEFAULT_JUMP_LINKS = [
   {
     label: 'All-Weather Liners',
-    href: '#all-weather-liners',
+    href: '/guides/best-toyota-all-weather-floor-mats',
     icon: Layers,
   },
   {
-    label: 'Dash Cams',
-    href: '#dash-cams',
-    icon: Camera,
+    label: 'RAV4 Accessories',
+    href: '/guides/toyota-rav4-must-have-accessories',
+    icon: Sparkles,
   },
   {
-    label: 'Screen Glass',
-    href: '#screen-glass',
-    icon: Smartphone,
+    label: 'DIY Maintenance',
+    href: '/guides/toyota-diy-maintenance-guide',
+    icon: Wrench,
+  },
+  {
+    label: 'Winter Tire Packages',
+    href: '/tires',
+    icon: Disc3,
   },
 ];
 
@@ -35,12 +41,16 @@ export function SeasonalDealBanner({
 }: SeasonalDealBannerProps) {
   const promoConfig = getCurrentPromoConfig(currentDate);
 
+  if (!promoConfig.isPromoActive) {
+    return null;
+  }
+
   const borderAccentClass =
     promoConfig.season === 'BFCM'
       ? 'border-red-500/60 shadow-red-950/30'
       : promoConfig.season === 'BOXING_WEEK'
       ? 'border-rose-600/60 shadow-rose-950/30'
-      : promoConfig.season === 'WINTER_DEALS'
+      : promoConfig.season === 'HOLIDAY_WINTER'
       ? 'border-cyan-500/60 shadow-cyan-950/30'
       : 'border-zinc-700/80';
 
@@ -86,14 +96,14 @@ export function SeasonalDealBanner({
           {DEFAULT_JUMP_LINKS.map((item) => {
             const Icon = item.icon;
             return (
-              <a
+              <Link
                 key={item.label}
                 href={item.href}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-zinc-800/90 hover:bg-zinc-700 text-zinc-100 border border-zinc-700 hover:border-amber-500/50 transition-colors"
               >
                 <Icon className="h-3.5 w-3.5 text-amber-400 shrink-0" />
                 <span>{item.label}</span>
-              </a>
+              </Link>
             );
           })}
         </div>

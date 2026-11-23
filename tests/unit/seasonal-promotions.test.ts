@@ -12,40 +12,41 @@ describe('Seasonal Promotion & Priority Sorter Engine', () => {
     vi.useRealTimers();
   });
 
-  it('returns BFCM config for November 27 (new Date("2026-11-27"))', () => {
-    const config = getCurrentPromoConfig(new Date('2026-11-27'));
+  it('returns BFCM config for November 22 (new Date("2026-11-22"))', () => {
+    const config = getCurrentPromoConfig(new Date('2026-11-22'));
     expect(config.season).toBe('BFCM');
     expect(config.isPromoActive).toBe(true);
+    expect(config.applyDealFilter).toBe(true);
     expect(config.badgeText).toBe('⚡ Black Friday Deal');
     expect(config.ctaText).toBe('Check Black Friday Price ↗');
     expect(config.bannerTitle).toContain('Black Friday & Cyber Week Deals Live');
   });
 
-  it('returns BOXING_WEEK config for December 26 (new Date("2026-12-26"))', () => {
-    const config = getCurrentPromoConfig(new Date('2026-12-26'));
+  it('returns HOLIDAY_WINTER config for December 15 (new Date("2026-12-15"))', () => {
+    const config = getCurrentPromoConfig(new Date('2026-12-15'));
+    expect(config.season).toBe('HOLIDAY_WINTER');
+    expect(config.isPromoActive).toBe(true);
+    expect(config.applyDealFilter).toBe(false);
+    expect(config.badgeText).toBe('❄️ Holiday & Winter Deal');
+    expect(config.ctaText).toBe('Check Winter Deal Price ↗');
+    expect(config.bannerTitle).toBe('❄️ Holiday & Winter Delivery Prep Deals');
+  });
+
+  it('returns BOXING_WEEK config for December 27 (new Date("2026-12-27"))', () => {
+    const config = getCurrentPromoConfig(new Date('2026-12-27'));
     expect(config.season).toBe('BOXING_WEEK');
     expect(config.isPromoActive).toBe(true);
-    expect(config.badgeText).toBe('🎁 Boxing Week Sale');
-    expect(config.ctaText).toBe('View Boxing Day Deals ↗');
-    expect(config.bannerTitle).toContain('Boxing Week Accessory Clearance');
+    expect(config.applyDealFilter).toBe(true);
+    expect(config.badgeText).toBe('🎁 Boxing Week & New Year Sale');
+    expect(config.ctaText).toBe('View Boxing Week Price ↗');
+    expect(config.bannerTitle).toBe('🎁 Boxing Week & New Year Accessory Clearance');
   });
 
-  it('returns WINTER_DEALS config for early November and mid-December', () => {
-    const earlyNov = getCurrentPromoConfig(new Date('2026-11-05'));
-    expect(earlyNov.season).toBe('WINTER_DEALS');
-    expect(earlyNov.isPromoActive).toBe(true);
-    expect(earlyNov.badgeText).toBe('❄️ Winter Sale');
-    expect(earlyNov.ctaText).toBe('Check Winter Deals ↗');
-
-    const midDec = getCurrentPromoConfig(new Date('2026-12-12'));
-    expect(midDec.season).toBe('WINTER_DEALS');
-    expect(midDec.isPromoActive).toBe(true);
-  });
-
-  it('falls back to STANDARD mode outside seasonal windows (new Date("2027-04-15"))', () => {
-    const config = getCurrentPromoConfig(new Date('2027-04-15'));
+  it('falls back to STANDARD mode outside seasonal windows (new Date("2027-01-10"))', () => {
+    const config = getCurrentPromoConfig(new Date('2027-01-10'));
     expect(config.season).toBe('STANDARD');
     expect(config.isPromoActive).toBe(false);
+    expect(config.applyDealFilter).toBe(false);
     expect(config.badgeText).toBe('⚡ Community Pick');
     expect(config.ctaText).toBe('Check Price on Amazon ↗');
   });

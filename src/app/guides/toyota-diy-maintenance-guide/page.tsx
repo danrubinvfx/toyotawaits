@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { BackButton } from '@/components/common/back-button';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { ShareButton } from '@/components/ui/ShareButton';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { GearCard, type GearCardItem } from '@/components/gear/GearCard';
@@ -282,6 +283,8 @@ export default async function ToyotaDiyMaintenanceGuidePage() {
           model-specific fluid matrix, 8,000 km / 16,000 km schedule, and vetted DIY kit below.
         </p>
       </div>
+
+      <SeasonalDealBanner modelName="DIY Maintenance" />
 
       {/* FTC & Ad Standards Canada Affiliate Disclosure */}
       <div

@@ -106,7 +106,8 @@ export type ModCardProps = GearCardProps;
 export function getAffiliateUrl(
   item: GearCardItem,
   marketOrIsUs: 'US' | 'CA' | string | boolean = 'CA',
-  activeModel?: string
+  activeModel?: string,
+  dealFilter?: boolean
 ): string {
   const isUs = marketOrIsUs === 'US' || marketOrIsUs === true;
   const market = isUs ? 'US' : 'CA';
@@ -184,6 +185,7 @@ export function getAffiliateUrl(
     searchQuery,
     market,
     slug: item.slug,
+    dealFilter: dealFilter ?? getCurrentPromoConfig().applyDealFilter,
   });
 }
 
@@ -291,7 +293,8 @@ export function GearCard({
   const amazonAffiliateUrl = getAffiliateUrl(
     item,
     activeMarket,
-    currentModel
+    currentModel,
+    promoConfig.applyDealFilter
   );
 
   const isDirectPartner =
@@ -518,8 +521,8 @@ export function GearCard({
         {isDirectPartner && (
           <div className="flex items-center justify-between gap-1.5 px-2 py-1 my-1.5 rounded-md bg-amber-950/40 border border-amber-800/50 text-amber-300 text-[11px] font-bold">
             <span className="tracking-tight">
-              {promoConfig.season === 'BFCM'
-                ? `BFCM Deal: Extra 2% Off • Code: ${discountCode || 'Toyotawaits'}`
+              {promoConfig.isPromoActive
+                ? `Holiday / BFCM Deal: Extra 2% Off • Code: ${discountCode || 'Toyotawaits'}`
                 : `Community Deal • Code: ${discountCode || 'Toyotawaits'}`}
             </span>
             <button

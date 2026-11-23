@@ -1,6 +1,6 @@
 import { GearItem } from '@/data/gear/catalog';
 
-export type PromoSeason = 'BFCM' | 'BOXING_WEEK' | 'WINTER_DEALS' | 'STANDARD';
+export type PromoSeason = 'BFCM' | 'HOLIDAY_WINTER' | 'BOXING_WEEK' | 'STANDARD';
 
 export interface ActivePromoConfig {
   season: PromoSeason;
@@ -10,6 +10,7 @@ export interface ActivePromoConfig {
   bannerTitle: string;
   bannerSubtitle: string;
   isPromoActive: boolean;
+  applyDealFilter: boolean;
 }
 
 export function getCurrentPromoConfig(currentDate: Date = new Date()): ActivePromoConfig {
@@ -30,38 +31,43 @@ export function getCurrentPromoConfig(currentDate: Date = new Date()): ActivePro
       badgeColorClass: 'bg-red-600 text-white border-red-500 shadow-red-950/40',
       ctaText: 'Check Black Friday Price ↗',
       bannerTitle: '🔥 Black Friday & Cyber Week Deals Live',
-      bannerSubtitle: 'Early markdowns and flash coupons verified across Toyota all-weather liners, dashcams, and accessories.',
+      bannerSubtitle:
+        'Seasonal markdowns and flash coupons across Toyota all-weather floor liners, dashcams, battery maintainers, and DIY maintenance gear.',
       isPromoActive: true,
+      applyDealFilter: true,
     };
   }
 
-  // 2. Boxing Week / Year-End Clearance (Dec 24 - Jan 3)
+  // 2. Holiday & Winter Delivery Prep Window (Dec 4 - Dec 23)
+  if (month === 11 && day >= 4 && day <= 23) {
+    return {
+      season: 'HOLIDAY_WINTER',
+      badgeText: '❄️ Holiday & Winter Deal',
+      badgeColorClass: 'bg-cyan-600 text-white border-cyan-500 shadow-cyan-950/40',
+      ctaText: 'Check Winter Deal Price ↗',
+      bannerTitle: '❄️ Holiday & Winter Delivery Prep Deals',
+      bannerSubtitle:
+        'Subzero-rated floor liners, 12V battery maintainers, wipers, and winter protection before year-end.',
+      isPromoActive: true,
+      applyDealFilter: false,
+    };
+  }
+
+  // 3. Boxing Week & New Year Clearance (Dec 24 - Jan 3)
   if ((month === 11 && day >= 24) || (month === 0 && day <= 3)) {
     return {
       season: 'BOXING_WEEK',
-      badgeText: '🎁 Boxing Week Sale',
+      badgeText: '🎁 Boxing Week & New Year Sale',
       badgeColorClass: 'bg-rose-700 text-white border-rose-600 shadow-rose-950/40',
-      ctaText: 'View Boxing Day Deals ↗',
-      bannerTitle: '🎁 Canadian Boxing Week Accessory Clearance',
-      bannerSubtitle: 'End-of-year inventory savings on dash cams, organizers, and winter protection.',
+      ctaText: 'View Boxing Week Price ↗',
+      bannerTitle: '🎁 Boxing Week & New Year Accessory Clearance',
+      bannerSubtitle: 'Year-end savings on custom floor liners, dash cams, and winter essentials.',
       isPromoActive: true,
+      applyDealFilter: true,
     };
   }
 
-  // 3. Winter Prep Deals (Nov 1 - Nov 14 & Dec 4 - Dec 23)
-  if (month === 10 || month === 11) {
-    return {
-      season: 'WINTER_DEALS',
-      badgeText: '❄️ Winter Sale',
-      badgeColorClass: 'bg-cyan-600 text-white border-cyan-500 shadow-cyan-950/40',
-      ctaText: 'Check Winter Deals ↗',
-      bannerTitle: '❄️ Winter Readiness Discounts',
-      bannerSubtitle: 'Subzero-rated floor liners, windshield snow blankets, and battery protection kits.',
-      isPromoActive: true,
-    };
-  }
-
-  // 4. Default / Evergreen Standard Mode
+  // 4. Default / Evergreen Standard Mode (Jan 4 - Nov 14)
   return {
     season: 'STANDARD',
     badgeText: '⚡ Community Pick',
@@ -70,6 +76,7 @@ export function getCurrentPromoConfig(currentDate: Date = new Date()): ActivePro
     bannerTitle: 'Must-Have Delivery Day Accessories',
     bannerSubtitle: 'Vetted protection gear to order before picking up your allocation.',
     isPromoActive: false,
+    applyDealFilter: false,
   };
 }
 

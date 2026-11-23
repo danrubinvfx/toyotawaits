@@ -20,6 +20,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { PopularGearCard } from '@/components/guides/popular-gear-card';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 
 export const dynamic = 'force-dynamic';
 export const { instant } = { instant: false };
@@ -420,6 +421,8 @@ export default function GuidesIndexPage() {
           </Button>
         </div>
       </div>
+
+      <SeasonalDealBanner />
 
       {/* Section 1 — Popular Guides & Ownership Playbooks (Always Visible, Top Grid) */}
       <section className="space-y-6" aria-labelledby="popular-guides-heading">

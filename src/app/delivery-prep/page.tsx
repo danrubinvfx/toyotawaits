@@ -14,6 +14,7 @@ import { TradeInValuationCard } from '@/components/discovery/TradeInValuationCar
 import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard } from '@/components/gear/GearCard';
+import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { buildHostAwarePageMetadata } from '@/lib/seo/host-metadata';
 import Link from 'next/link';
@@ -187,6 +188,8 @@ export default function DeliveryPrepPage() {
 
         {/* 1. Toyota Canada Order Status Codes (Status A, F, G) */}
         <FactoryStatusTracker />
+
+        <SeasonalDealBanner className="print:hidden" />
 
         {/* 2. Dealer Tracking FAQ & Pro-Tips + Cross-Link Hub */}
         <DealerTrackingTips />

@@ -191,7 +191,7 @@ describe('ModCard Component', () => {
     // Link must route to search query, NOT /dp/...
     const buttonLink = screen.getByRole('link', { name: /Search Amazon ↗/i });
     expect(buttonLink).toBeInTheDocument();
-    expect(buttonLink.getAttribute('href')).toBe('https://www.amazon.ca/s?k=TuxMat%20Toyota%20RAV4%202019-2026&tag=toyotawaits-20');
+    expect(buttonLink.getAttribute('href')).toContain('https://www.amazon.ca/s?k=TuxMat%20Toyota%20RAV4%202019-2026&tag=toyotawaits-20');
     expect(buttonLink.getAttribute('target')).toBe('_blank');
     expect(buttonLink.getAttribute('rel')).toBe('sponsored noopener noreferrer nofollow');
   });

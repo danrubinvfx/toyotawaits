@@ -26,9 +26,8 @@ describe('Guides Index Hub Page', () => {
     expect(screen.getByText('[DIY]')).toBeInTheDocument();
     expect(screen.getByText('[Hybrid Care]')).toBeInTheDocument();
 
-    const links = container.querySelectorAll('a[href="/guides/toyota-diy-maintenance-guide"]');
+    const links = popularGrid!.querySelectorAll('a[href="/guides/toyota-diy-maintenance-guide"]');
     expect(links.length).toBe(1);
-    expect(popularGrid!.querySelector('a[href="/guides/toyota-diy-maintenance-guide"]')).not.toBeNull();
   });
 
   it('renders Popular Guides evergreen playbooks and links', () => {
