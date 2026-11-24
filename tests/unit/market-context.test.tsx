@@ -121,10 +121,35 @@ describe('MarketContext & useMarket', () => {
     expect(getClientDetectedMarket()).toBe('US');
 
     Object.defineProperty(window, 'location', {
+      value: new URL('https://www.toyotawaits.com/'),
+      writable: true,
+      configurable: true,
+    });
+    expect(getClientDetectedMarket()).toBe('US');
+
+    Object.defineProperty(window, 'location', {
+      value: new URL('https://www.toyotawaits.ca/'),
+      writable: true,
+      configurable: true,
+    });
+    expect(getClientDetectedMarket('US')).toBe('CA');
+
+    Object.defineProperty(window, 'location', {
       value: originalLocation,
       writable: true,
       configurable: true,
     });
+  });
+
+  it('respects initialMarket="US" passed from server layout', () => {
+    render(
+      <MarketProvider initialMarket="US">
+        <TestConsumer />
+      </MarketProvider>
+    );
+
+    expect(screen.getByTestId('current-market')).toHaveTextContent('US');
+    expect(screen.getByTestId('is-us')).toHaveTextContent('yes');
   });
 
   it('detects market from URL query param ?market=US', () => {
@@ -138,10 +163,35 @@ describe('MarketContext & useMarket', () => {
     expect(getClientDetectedMarket()).toBe('US');
 
     Object.defineProperty(window, 'location', {
+      value: new URL('https://www.toyotawaits.com/'),
+      writable: true,
+      configurable: true,
+    });
+    expect(getClientDetectedMarket()).toBe('US');
+
+    Object.defineProperty(window, 'location', {
+      value: new URL('https://www.toyotawaits.ca/'),
+      writable: true,
+      configurable: true,
+    });
+    expect(getClientDetectedMarket('US')).toBe('CA');
+
+    Object.defineProperty(window, 'location', {
       value: originalLocation,
       writable: true,
       configurable: true,
     });
+  });
+
+  it('respects initialMarket="US" passed from server layout', () => {
+    render(
+      <MarketProvider initialMarket="US">
+        <TestConsumer />
+      </MarketProvider>
+    );
+
+    expect(screen.getByTestId('current-market')).toHaveTextContent('US');
+    expect(screen.getByTestId('is-us')).toHaveTextContent('yes');
   });
 
   it('provides safe fallback when useMarket is used outside MarketProvider', () => {

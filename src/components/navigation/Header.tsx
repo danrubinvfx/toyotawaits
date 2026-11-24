@@ -48,6 +48,14 @@ export function Header({ initialRegion }: HeaderProps = {}) {
   const { market: ctxMarket, setMarket: ctxSetMarket } = useMarket();
   const [overrideMarket, setOverrideMarket] = useState<'CA' | 'US' | undefined>(initialRegion);
 
+  const prevCtxMarketRef = React.useRef(ctxMarket);
+  useEffect(() => {
+    if (prevCtxMarketRef.current !== ctxMarket) {
+      prevCtxMarketRef.current = ctxMarket;
+      setOverrideMarket(undefined);
+    }
+  }, [ctxMarket]);
+
   const market = overrideMarket ?? ctxMarket;
   const setMarket = (newM: 'CA' | 'US') => {
     setOverrideMarket(newM);
@@ -179,7 +187,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           </div>
           <div className="flex flex-col min-w-0">
             <span className="flex items-center text-zinc-900 dark:text-zinc-50 font-black truncate text-base sm:text-lg">
-              ToyotaWaits{!isUs && <span className="text-amber-300 hidden xs:inline">.ca</span>}
+              ToyotaWaits<span className="text-amber-300 hidden xs:inline">{isUs ? '.com' : '.ca'}</span>
               <span className="ml-1.5 hidden sm:inline-flex rounded bg-amber-500/10 border border-amber-500/30 dark:border-amber-400/40 px-1.5 py-0.2 text-[10px] font-semibold text-amber-700 dark:text-amber-300 shrink-0">
                 {isUs ? '🇺🇸 USA' : '🇨🇦 Canada'}
               </span>

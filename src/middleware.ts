@@ -2,22 +2,28 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  const rawHost = request.headers.get('host')?.toLowerCase() || '';
+  const rawHostHeader =
+    request.headers.get('x-forwarded-host') || request.headers.get('host') || '';
+  const rawHost = rawHostHeader.split(',')[0].trim().toLowerCase();
   const host = rawHost.split(':')[0];
 
   // Detect domain context:
   // - U.S. domain: toyotawaits.com (and *.toyotawaits.com) -> US
   // - Canadian domain: toyotawaits.ca (and *.toyotawaits.ca, local dev fallback default) -> CA
-  const isUsDomain = rawHost.includes('toyotawaits.com');
+  const isUsDomain = host === 'toyotawaits.com' || host.endsWith('.toyotawaits.com');
   const region = isUsDomain ? 'US' : 'CA';
   const domain = isUsDomain ? 'toyotawaits.com' : 'toyotawaits.ca';
 
-  // Enforce 301 canonical redirect from apex domain (toyotawaits.ca) to https://www.toyotawaits.ca
+  // Enforce 301 canonical redirect from apex domain to www within the same TLD
   // preserving pathname and query string without looping on /wait-times/*
-  if (host === 'toyotawaits.ca') {
+  if (host === 'toyotawaits.com' || host === 'toyotawaits.ca') {
+    const targetOrigin =
+      host === 'toyotawaits.com'
+        ? 'https://www.toyotawaits.com'
+        : 'https://www.toyotawaits.ca';
     const redirectUrl = new URL(
       `${request.nextUrl.pathname}${request.nextUrl.search}`,
-      'https://www.toyotawaits.ca'
+      targetOrigin
     );
     const redirectResponse = NextResponse.redirect(redirectUrl, 301);
     redirectResponse.headers.set('x-region', region);

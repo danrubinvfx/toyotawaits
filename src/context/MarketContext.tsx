@@ -42,8 +42,12 @@ export function getClientDetectedMarket(fallback: Market = 'CA'): Market {
     }
 
     // 4. Check domain hostname
-    if (window.location.hostname.includes('toyotawaits.com')) {
+    const hostname = window.location.hostname.toLowerCase();
+    if (hostname === 'toyotawaits.com' || hostname.endsWith('.toyotawaits.com')) {
       return 'US';
+    }
+    if (hostname === 'toyotawaits.ca' || hostname.endsWith('.toyotawaits.ca')) {
+      return 'CA';
     }
   } catch {
     // Fallback if localStorage or cookies are restricted

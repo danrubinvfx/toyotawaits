@@ -23,10 +23,22 @@ export async function getRequestMarketMetadata(path = ''): Promise<RequestMarket
   try {
     const headersList = await headers();
     if (headersList && typeof headersList.get === 'function') {
+      const requestHost = (
+        headersList.get('x-forwarded-host') ||
+        headersList.get('host') ||
+        ''
+      )
+        .split(',')[0]
+        .trim()
+        .split(':')[0]
+        .toLowerCase();
+      const xDomain = (headersList.get('x-domain') || '').trim().toLowerCase();
       isUS =
         headersList.get('x-region') === 'US' ||
-        (headersList.get('host') || '').toLowerCase().includes('toyotawaits.com') ||
-        (headersList.get('x-domain') || '').toLowerCase().includes('toyotawaits.com');
+        requestHost === 'toyotawaits.com' ||
+        requestHost.endsWith('.toyotawaits.com') ||
+        xDomain === 'toyotawaits.com' ||
+        xDomain.endsWith('.toyotawaits.com');
     }
   } catch {
     // Static build or unit test context without active request headers

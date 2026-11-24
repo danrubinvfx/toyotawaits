@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import React, { Suspense } from 'react';
+import { cookies } from 'next/headers';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { AnalyticsWrapper } from '@/components/analytics/AnalyticsWrapper';
 import './globals.css';
@@ -172,25 +173,76 @@ export const jsonLd = {
   ],
 };
 
-export default function RootLayout({
+function buildRootJsonLd(isUS: boolean) {
+  if (!isUS) return jsonLd;
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebApplication',
+        '@id': 'https://www.toyotawaits.com/#webapp',
+        name: 'ToyotaWaits',
+        url: 'https://www.toyotawaits.com',
+        applicationCategory: 'AutomotiveApplication',
+        operatingSystem: 'All',
+        description:
+          'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for the United States.',
+      },
+      {
+        '@type': 'AutoDealer',
+        '@id': 'https://www.toyotawaits.com/#autodealer',
+        name: 'Toyota Dealer Network - United States',
+        url: 'https://www.toyotawaits.com/inventory',
+        description:
+          'Public observed inventory and factory allocation tracking for US Toyota dealerships.',
+      },
+      {
+        '@type': 'Organization',
+        '@id': 'https://www.toyotawaits.com/#organization',
+        name: 'ToyotaWaits',
+        url: 'https://www.toyotawaits.com',
+        description:
+          'Crowd-sourced Toyota delivery wait-time tracker and public inventory discovery tool for the United States.',
+      },
+    ],
+  };
+}
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { market: hostMarket, isUS } = await getRequestMarketMetadata('/');
+  let initialMarket: 'CA' | 'US' = hostMarket;
+
+  try {
+    const cookieStore = await cookies();
+    const cookieMarket = cookieStore.get('toyotawaits_market')?.value?.toUpperCase();
+    if (cookieMarket === 'US' || cookieMarket === 'CA') {
+      initialMarket = cookieMarket;
+    }
+  } catch {
+    // Static build or unit test context without active request cookies
+  }
+
+  const activeJsonLd = buildRootJsonLd(isUS);
+
   return (
     <html
-      lang="en-CA"
+      lang={isUS ? 'en-US' : 'en-CA'}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased scroll-smooth`}
     >
       {/* overflow-x-clip (not hidden): clips sideways wobble without creating a scroll container, which would break position: sticky */}
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50 font-sans overflow-x-clip">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(activeJsonLd) }}
         />
-        <MarketProvider>
+        <MarketProvider initialMarket={initialMarket}>
           <WSJCalloutBanner />
-          <Header />
+          <Header initialRegion={initialMarket} />
           <main className="flex-1 pb-16 md:pb-0">
             {children}
           </main>

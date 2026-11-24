@@ -1,6 +1,13 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+
+const mockHeaders = vi.fn();
+
+vi.mock('next/headers', () => ({
+  headers: () => mockHeaders(),
+}));
+
 import Sienna2026Vs2027GuidePage, {
   generateMetadata,
   dynamic,
@@ -8,6 +15,10 @@ import Sienna2026Vs2027GuidePage, {
 import { MarketProvider } from '@/context/MarketContext';
 
 describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockHeaders.mockRejectedValue(new Error('No active request headers'));
+  });
   it('has valid Next.js 16 dynamic route configuration', async () => {
     expect(dynamic).toBe('force-dynamic');
   });
@@ -193,5 +204,34 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     const curtLink = screen.getByRole('link', { name: /View Hitch on Amazon ↗/i });
     expect(curtLink.getAttribute('href')).toContain('tag=toyotawaits07-20');
     expect(curtLink.getAttribute('href')).toContain('amazon.com');
+  });
+
+  it('emits US metadata and localized US copy when requested on www.toyotawaits.com', async () => {
+    mockHeaders.mockResolvedValue(
+      new Headers({
+        'x-forwarded-host': 'www.toyotawaits.com',
+      })
+    );
+
+    const meta = await generateMetadata();
+    expect(meta.alternates?.canonical).toBe(
+      'https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027'
+    );
+    expect(meta.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca/guides/toyota-sienna-2026-vs-2027',
+      'en-US': 'https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027',
+      'x-default': 'https://www.toyotawaits.ca/guides/toyota-sienna-2026-vs-2027',
+    });
+
+    render(
+      <MarketProvider initialMarket="US">
+        {await Sienna2026Vs2027GuidePage()}
+      </MarketProvider>
+    );
+
+    expect(screen.getByText(/Independent US Buyer Intelligence/i)).toBeInTheDocument();
+    expect(screen.getByText(/Complete US Trim Level Matrix/i)).toBeInTheDocument();
+    expect(screen.getByText(/How US Sienna Allocation Queue Rollovers Work/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Canadian buyers/i)).not.toBeInTheDocument();
   });
 });

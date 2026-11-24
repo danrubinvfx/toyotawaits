@@ -520,4 +520,17 @@ describe('Header Component', () => {
     const headerRow = container.querySelector('header > div');
     expect(headerRow).toHaveClass('px-3', 'py-2', 'overflow-hidden', 'gap-1.5', 'sm:gap-3');
   });
+
+  it('renders ToyotaWaits.com brand label and highlights US toggle when initialRegion is US', () => {
+    render(<Header initialRegion="US" />);
+
+    expect(screen.getByText('.com')).toBeInTheDocument();
+    expect(screen.queryByText('.ca')).not.toBeInTheDocument();
+    expect(screen.getByText(/🇺🇸 USA/i)).toBeInTheDocument();
+
+    const usButton = screen.getByTestId('market-toggle-us');
+    const caButton = screen.getByTestId('market-toggle-ca');
+    expect(usButton).toHaveAttribute('aria-pressed', 'true');
+    expect(caButton).toHaveAttribute('aria-pressed', 'false');
+  });
 });

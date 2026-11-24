@@ -141,11 +141,13 @@ export default async function Sienna2026Vs2027GuidePage() {
       >
         <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
           <ShieldCheck className="h-4 w-4 shrink-0" />
-          <span>Independent Canadian Buyer Intelligence</span>
+          <span>{isUS ? 'Independent US Buyer Intelligence' : 'Independent Canadian Buyer Intelligence'}</span>
         </div>
         <p className="leading-relaxed text-[11px] sm:text-xs">
           <strong>Editorial Notice:</strong> ToyotaWaits is an independent crowdsourced community tracker.
-          All trim specifications, allocation cycles, and mechanical benchmarks reflect verified Canadian dealership ordering guides and real-world TMMI production schedules.
+          {isUS
+            ? ' All trim specifications, allocation cycles, and mechanical benchmarks reflect verified US dealership ordering guides (USD pricing) and real-world TMMI production schedules.'
+            : ' All trim specifications, allocation cycles, and mechanical benchmarks reflect verified Canadian dealership ordering guides and real-world TMMI production schedules.'}
         </p>
       </div>
 
@@ -282,9 +284,15 @@ export default async function Sienna2026Vs2027GuidePage() {
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">XSE &amp; Canadian Rear Screen</td>
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">
+                    {isUS ? 'XSE & Rear Screen Options' : 'XSE & Canadian Rear Screen'}
+                  </td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Sport SofTex without HUD or ventilated seats</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">XSE adds ventilated/memory seats, HUD, Panoramic View Monitor; 12.9&quot; rear screen on XSE AWD / Platinum AWD in Canada</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    {isUS
+                      ? 'XSE adds ventilated/memory seats, HUD, Panoramic View Monitor; rear-seat entertainment available on select US grades'
+                      : 'XSE adds ventilated/memory seats, HUD, Panoramic View Monitor; 12.9" rear screen on XSE AWD / Platinum AWD in Canada'}
+                  </td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                       Major XSE feature expansion
@@ -294,7 +302,11 @@ export default async function Sienna2026Vs2027GuidePage() {
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Availability &amp; MSRP</td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">In-transit / immediate 2026 allocations</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Arriving early 2027 (expect modest annual MSRP bump)</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    {isUS
+                      ? 'Arriving early 2027 (starting ~$39,185+ USD; expect modest annual MSRP bump)'
+                      : 'Arriving early 2027 (expect modest annual MSRP bump)'}
+                  </td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
                       2026 delivers sooner; 2027 adds major tech
@@ -311,7 +323,7 @@ export default async function Sienna2026Vs2027GuidePage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Complete Canadian Trim Level Matrix
+            {isUS ? 'Complete US Trim Level Matrix' : 'Complete Canadian Trim Level Matrix'}
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Key seating configurations, suspension tuning, audio systems, and interior appointments across all 5 trim grades.
@@ -356,7 +368,12 @@ export default async function Sienna2026Vs2027GuidePage() {
             <div className="text-xs space-y-2 text-zinc-600 dark:text-zinc-400">
               <p><strong>Drivetrain:</strong> FWD or Electronic AWD (AWD-e)</p>
               <p><strong>Suspension:</strong> Exclusive Sport-Tuned dampers &amp; thicker stabilizer bars for flatter cornering</p>
-              <p><strong>2027 Tech &amp; Comfort Upgrades:</strong> Ventilated &amp; memory front seats, Head-Up Display (HUD), Panoramic View Monitor, and 12.9&quot; rear screen on XSE AWD in Canada</p>
+              <p>
+                <strong>2027 Tech &amp; Comfort Upgrades:</strong>{' '}
+                {isUS
+                  ? 'Ventilated & memory front seats, Head-Up Display (HUD), and Panoramic View Monitor'
+                  : 'Ventilated & memory front seats, Head-Up Display (HUD), Panoramic View Monitor, and 12.9" rear screen on XSE AWD in Canada'}
+              </p>
               <p><strong>Interior &amp; Styling:</strong> 18&quot; dark alloys, dark honeycomb grille, and two-tone Sport SofTex captain&apos;s chairs</p>
             </div>
           </Card>
@@ -384,7 +401,12 @@ export default async function Sienna2026Vs2027GuidePage() {
             <div className="text-xs space-y-2 text-zinc-600 dark:text-zinc-400">
               <p><strong>Drivetrain:</strong> Standard Electronic AWD (AWD-e) with 20&quot; metallic alloy wheels; 251-hp THS 6 &amp; new Storm Cloud paint option for 2027</p>
               <p><strong>Suspension &amp; Glass:</strong> Comfort-tuned chassis with full acoustic sound-deadening glass package</p>
-              <p><strong>Flagship Technology:</strong> 10-inch color HUD, 360° Panoramic View Monitor, FridgeBox &amp; vacuum, plus 12.9&quot; rear screen on Platinum AWD in Canada (2027 adds TSS 4.0 &amp; Drive Recorder)</p>
+              <p>
+                <strong>Flagship Technology:</strong>{' '}
+                {isUS
+                  ? '10-inch color HUD, 360° Panoramic View Monitor, FridgeBox & vacuum, plus available rear-seat entertainment (2027 adds TSS 4.0 & Drive Recorder)'
+                  : '10-inch color HUD, 360° Panoramic View Monitor, FridgeBox & vacuum, plus 12.9" rear screen on Platinum AWD in Canada (2027 adds TSS 4.0 & Drive Recorder)'}
+              </p>
               <p><strong>Interior:</strong> Premium two-tone Noble Brown aniline-style leather with heated 2nd-row ottomans</p>
             </div>
           </Card>
@@ -395,7 +417,7 @@ export default async function Sienna2026Vs2027GuidePage() {
       <section className="space-y-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-            How Canadian Sienna Allocation Queue Rollovers Work
+            {isUS ? 'How US Sienna Allocation Queue Rollovers Work' : 'How Canadian Sienna Allocation Queue Rollovers Work'}
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
             Understanding Toyota Motor Manufacturing Indiana (TMMI) tooling transitions and dealer deposit priority.
@@ -409,10 +431,14 @@ export default async function Sienna2026Vs2027GuidePage() {
               <span>The TMMI Indiana Factory Switchover (Nov–Jan)</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Every year between <strong>November and January</strong>, Toyota’s assembly plant in Princeton, Indiana (TMMI) executes model-year line changeovers. When your dealer receives their bi-weekly allocation drop from Toyota Canada, any unbuilt order that has not entered production status by late autumn automatically rolls to a 2027 model year build slot.
+              Every year between <strong>November and January</strong>, Toyota’s assembly plant in Princeton, Indiana (TMMI) executes model-year line changeovers. When your dealer receives their bi-weekly allocation drop from{' '}
+              {isUS ? 'Toyota Motor North America (TMNA) or regional distributors (SET/GST)' : 'Toyota Canada'}, any unbuilt order that has not entered production status by late autumn automatically rolls to a 2027 model year build slot.
             </p>
             <p className="text-xs text-zinc-500 leading-relaxed">
-              <strong>Your Queue Position Is Safe:</strong> Because Toyota Canada assigns production slots sequentially based on dealer submission timestamp, your place in line does not reset when the plant shifts from 2026 to 2027 VIN codes.
+              <strong>Your Queue Position Is Safe:</strong>{' '}
+              {isUS
+                ? 'Because US dealers and regional distributors assign production slots sequentially based on deposit and allocation timestamp, your place in line does not reset when the plant shifts from 2026 to 2027 VIN codes.'
+                : 'Because Toyota Canada assigns production slots sequentially based on dealer submission timestamp, your place in line does not reset when the plant shifts from 2026 to 2027 VIN codes.'}
             </p>
           </Card>
 
@@ -451,7 +477,7 @@ export default async function Sienna2026Vs2027GuidePage() {
                 Looking for an Incoming Allocation Right Now?
               </h3>
               <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
-                Whether you want an unclaimed 2026 in-transit allocation today or are tracking early-2027 arrivals, filter verified dealer pipelines by province, trim, and incoming freight status.
+                Whether you want an unclaimed 2026 in-transit allocation today or are tracking early-2027 arrivals, filter verified dealer pipelines by {isUS ? 'state' : 'province'}, trim, and incoming freight status.
               </p>
             </div>
             <Button

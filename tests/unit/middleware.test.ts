@@ -117,4 +117,47 @@ describe('Middleware Multi-Domain Routing (.ca vs .com)', () => {
     expect(matcherPattern.test('/logo.svg')).toBe(false);
     expect(matcherPattern.test('/og-image.png')).toBe(false);
   });
+
+  it('reads x-forwarded-host when present to detect toyotawaits.com', () => {
+    const request = new NextRequest('https://internal-proxy.local/guides/toyota-sienna-2026-vs-2027', {
+      headers: {
+        host: 'internal-proxy.local',
+        'x-forwarded-host': 'www.toyotawaits.com',
+      },
+    });
+
+    const response = middleware(request);
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('location')).toBeNull();
+    expect(response.headers.get('x-region')).toBe('US');
+    expect(response.headers.get('x-domain')).toBe('toyotawaits.com');
+  });
+
+  it('normalizes apex toyotawaits.com to https://www.toyotawaits.com without redirecting to .ca', () => {
+    const request = new NextRequest('https://toyotawaits.com/guides/toyota-sienna-2026-vs-2027?utm=test', {
+      headers: {
+        host: 'toyotawaits.com',
+      },
+    });
+
+    const response = middleware(request);
+
+    expect(response.status).toBe(301);
+    expect(response.headers.get('location')).toBe(
+      'https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027?utm=test'
+    );
+    expect(response.headers.get('location')).not.toContain('toyotawaits.ca');
+    expect(response.headers.get('x-region')).toBe('US');
+    expect(response.headers.get('x-domain')).toBe('toyotawaits.com');
+
+    const wwwRequest = new NextRequest('https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027', {
+      headers: {
+        host: 'www.toyotawaits.com',
+      },
+    });
+    const wwwResponse = middleware(wwwRequest);
+    expect(wwwResponse.status).toBe(200);
+    expect(wwwResponse.headers.get('location')).toBeNull();
+  });
 });
