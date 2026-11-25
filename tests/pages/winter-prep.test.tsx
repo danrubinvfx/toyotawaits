@@ -1,7 +1,10 @@
 import React from 'react';
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { WinterPrepView, WINTER_VEHICLE_OPTIONS } from '@/components/winter-prep/winter-prep-view';
+import WinterPrepPage, { dynamic, instant } from '@/app/winter-prep/page';
+import * as hostMetadata from '@/lib/seo/host-metadata';
+import * as popularityData from '@/lib/data/accessories-popularity';
 
 describe('WinterPrepView Page Component', () => {
   it('renders the clean hero section explaining Canadian cold-weather realities', () => {
@@ -92,5 +95,94 @@ describe('WinterPrepView Page Component', () => {
     expect(
       screen.getByText(/As an Amazon Associate I earn from qualifying purchases\./i)
     ).toBeInTheDocument();
+  });
+});
+
+describe('WinterPrepPage Route & Essential Kit Shelf', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('exports force-dynamic and instant=false route segment configuration', () => {
+    expect(dynamic).toBe('force-dynamic');
+    expect(instant).toBe(false);
+  });
+
+  it('renders NOCO GB40 (B015TKUPIC) and Faraday Pouch (B07MDF5TX9) in the top 2 slots with CA (toyotawaits-20) routing', async () => {
+    vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+      market: 'CA',
+      isUS: false,
+      baseUrl: 'https://www.toyotawaits.ca',
+      alternatesLanguages: {
+        'en-CA': 'https://www.toyotawaits.ca/winter-prep',
+        'en-US': 'https://www.toyotawaits.com/winter-prep',
+        'x-default': 'https://www.toyotawaits.ca/winter-prep',
+      },
+    });
+    vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+    render(await WinterPrepPage());
+
+    const shelf = screen.getByTestId('day-one-gear-shelf');
+    expect(shelf).toBeInTheDocument();
+
+    const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+    expect(cards.length).toBe(3);
+    expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-noco-gb40-jump-pack');
+    expect(cards[1]).toHaveAttribute('data-testid', 'checklist-item-rfid-faraday-key-fob-pouch');
+
+    const slot1Links = within(cards[0] as HTMLElement)
+      .getAllByRole('link')
+      .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+    expect(slot1Links.length).toBeGreaterThanOrEqual(1);
+    expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('B015TKUPIC'));
+    expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
+    expect(slot1Links[0]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+    const slot2Links = within(cards[1] as HTMLElement)
+      .getAllByRole('link')
+      .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+    expect(slot2Links.length).toBeGreaterThanOrEqual(1);
+    expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('B07MDF5TX9'));
+    expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
+    expect(slot2Links[0]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+  });
+
+  it('routes NOCO GB40 (B015TKUPIC) and Faraday Pouch (B07MDF5TX9) to amazon.com with toyotawaits07-20 when market is US', async () => {
+    vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+      market: 'US',
+      isUS: true,
+      baseUrl: 'https://www.toyotawaits.com',
+      alternatesLanguages: {
+        'en-CA': 'https://www.toyotawaits.ca/winter-prep',
+        'en-US': 'https://www.toyotawaits.com/winter-prep',
+        'x-default': 'https://www.toyotawaits.ca/winter-prep',
+      },
+    });
+    vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+    render(await WinterPrepPage());
+
+    const shelf = screen.getByTestId('day-one-gear-shelf');
+    const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+    expect(cards.length).toBe(3);
+    expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-noco-gb40-jump-pack');
+    expect(cards[1]).toHaveAttribute('data-testid', 'checklist-item-rfid-faraday-key-fob-pouch');
+
+    const slot1Links = within(cards[0] as HTMLElement)
+      .getAllByRole('link')
+      .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+    expect(slot1Links.length).toBeGreaterThanOrEqual(1);
+    expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('B015TKUPIC'));
+    expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+    expect(slot1Links[0]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+
+    const slot2Links = within(cards[1] as HTMLElement)
+      .getAllByRole('link')
+      .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+    expect(slot2Links.length).toBeGreaterThanOrEqual(1);
+    expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('B07MDF5TX9'));
+    expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+    expect(slot2Links[0]).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
   });
 });

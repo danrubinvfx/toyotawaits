@@ -28,6 +28,8 @@ export interface GearItem {
   savingsCad?: string;
   isHeroDeal?: boolean;
   isDeliveryDayEssential?: boolean;
+  isWinterPrepEssential?: boolean;
+  defaultPriorityWeight?: number;
 }
 
 export interface GearMarketConfig {
@@ -60,6 +62,8 @@ export interface GearMarketConfig {
   badge?: string;
   isHeroDeal?: boolean;
   isDeliveryDayEssential?: boolean;
+  isWinterPrepEssential?: boolean;
+  defaultPriorityWeight?: number;
   buttonLabel?: string;
   videoUrl?: string;
   guideVideoUrl?: string;
@@ -366,6 +370,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     fallbackIcon: 'zap',
   },
   'rfid-faraday-key-fob-pouch': {
+    id: 'rfid-faraday-key-fob-pouch',
     slug: 'rfid-faraday-key-fob-pouch',
     title: 'Faraday Key Pouch',
     description: 'Blocks keyless relay theft.',
@@ -380,6 +385,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     whyBuy: 'Dual-layer shielding Faraday pouch that blocks RF relay theft and clone attacks on your Toyota Smart Key.',
     badge: 'Delivery Day 1',
     isDeliveryDayEssential: true,
+    isWinterPrepEssential: true,
+    defaultPriorityWeight: 22,
     imageUrl: '/assets/gear/faraday-pouch.webp',
     fallbackIcon: 'lock',
   },
@@ -999,15 +1006,23 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
   // Verified Dual-Market Direct Link (NOCO GB40)
   // ==========================================
   'noco-gb40-jump-pack': {
+    id: 'noco-gb40-jump-pack',
     slug: 'noco-gb40-jump-pack',
     title: 'NOCO Boost Plus GB40 1000A 12V UltraSafe Lithium Jump Starter',
+    category: '12V Battery & Winter Care',
+    description: '1000A UltraSafe lithium jump starter for hybrid & gas 12V batteries.',
+    asin: 'B015TKUPIC',
     asin_ca: 'B015TKUPIC',
     asin_us: 'B015TKUPIC',
+    searchQuery: 'NOCO Boost Plus GB40 1000A jump starter',
     searchKeywordsCA: 'NOCO Boost Plus GB40 1000A jump starter',
     searchKeywordsUS: 'NOCO Boost Plus GB40 1000A jump starter',
     compatibility: 'Universal 12V Auxiliary Battery Jump Starting (HEV / PHEV / Gas)',
     whyBuy: 'Prevents getting stranded when the 12V auxiliary battery discharges under hybrid sleep drain.',
     badge: 'Essential',
+    isDeliveryDayEssential: true,
+    isWinterPrepEssential: true,
+    defaultPriorityWeight: 12,
     imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
     fallbackIcon: 'battery',
   },
@@ -1124,8 +1139,10 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
       isDeliveryDayEssential: true,
   },
   'magnetic-door-anchor-windshield-frost-guard': {
+    id: 'magnetic-door-anchor-windshield-frost-guard',
     slug: 'magnetic-door-anchor-windshield-frost-guard',
     title: 'Windshield Cover',
+    category: 'Winter Snow & Ice Defense',
     badge: 'Sub-zero glass protection',
     description: 'Sub-zero glass frost shield.',
     whyBuy:
@@ -1133,6 +1150,10 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'windshield snow cover magnetic door flaps frost ice',
     searchKeywordsCA: 'windshield snow cover magnetic door flaps frost ice',
     searchKeywordsUS: 'windshield snow cover magnetic door flaps frost ice',
+    isWinterPrepEssential: true,
+    defaultPriorityWeight: 5,
+    imageUrl: '/assets/gear/ceramic-interior-protection.webp',
+    fallbackIcon: 'shield',
   },
   'windshield-frost-guard': {
     slug: 'windshield-frost-guard',
@@ -2145,6 +2166,8 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     description: 'Prevents hybrid 12V winter drain.',
     whyBuy: 'Safely maintains AGM/flooded 12V auxiliary batteries during sub-zero storage or short-trip hybrid commutes.',
     badge: 'Hybrid Winter Must',
+    isWinterPrepEssential: true,
+    defaultPriorityWeight: 4,
     fallbackIcon: 'battery',
     buttonLabel: 'Search on Amazon ↗',
   },

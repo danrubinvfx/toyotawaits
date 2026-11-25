@@ -118,7 +118,7 @@ const MODEL_SPECIFIC_TOKENS = [
 
 function getUniversalDayOneEssentials(weights: Record<string, number>): GearCardItem[] {
   const seenSlugs = new Set<string>();
-  const rawItems: GearCardItem[] = [];
+  const rawItems: Array<GearCardItem & { defaultPriorityWeight?: number }> = [];
 
   for (const [key, config] of Object.entries(GEAR_MARKET_CATALOG)) {
     if (!config.isDeliveryDayEssential) continue;
@@ -152,8 +152,11 @@ function getUniversalDayOneEssentials(weights: Record<string, number>): GearCard
       buttonLabel: config.buttonLabel,
       compatibility: config.compatibility,
       fitment: config.fitment,
+      defaultPriorityWeight: config.defaultPriorityWeight ?? 0,
     });
   }
+
+  rawItems.sort((a, b) => (b.defaultPriorityWeight ?? 0) - (a.defaultPriorityWeight ?? 0));
 
   const sorted = sortAccessoriesByPopularity(rawItems as any, weights) as unknown as GearCardItem[];
 

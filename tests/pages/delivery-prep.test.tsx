@@ -312,6 +312,22 @@ describe('DeliveryPrepPage Route', () => {
 
       const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
       expect(cards.length).toBe(3);
+      expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-rfid-faraday-key-fob-pouch');
+      expect(cards[1]).toHaveAttribute('data-testid', 'checklist-item-noco-gb40-jump-pack');
+
+      const slot1Links = within(cards[0] as HTMLElement)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+      expect(slot1Links.length).toBeGreaterThanOrEqual(1);
+      expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('B07MDF5TX9'));
+      expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
+
+      const slot2Links = within(cards[1] as HTMLElement)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+      expect(slot2Links.length).toBeGreaterThanOrEqual(1);
+      expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('B015TKUPIC'));
+      expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
 
       const amazonLinks = within(shelf)
         .getAllByRole('link')
@@ -340,6 +356,25 @@ describe('DeliveryPrepPage Route', () => {
       render(await DeliveryPrepPage());
 
       const shelf = screen.getByTestId('day-one-gear-shelf');
+      const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+      expect(cards.length).toBe(3);
+      expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-rfid-faraday-key-fob-pouch');
+      expect(cards[1]).toHaveAttribute('data-testid', 'checklist-item-noco-gb40-jump-pack');
+
+      const slot1Links = within(cards[0] as HTMLElement)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+      expect(slot1Links.length).toBeGreaterThanOrEqual(1);
+      expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('B07MDF5TX9'));
+      expect(slot1Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+
+      const slot2Links = within(cards[1] as HTMLElement)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+      expect(slot2Links.length).toBeGreaterThanOrEqual(1);
+      expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('B015TKUPIC'));
+      expect(slot2Links[0]).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+
       const amazonLinks = within(shelf)
         .getAllByRole('link')
         .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
