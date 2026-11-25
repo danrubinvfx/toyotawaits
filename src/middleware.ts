@@ -31,10 +31,15 @@ export function middleware(request: NextRequest) {
     return redirectResponse;
   }
 
+  // Ensure consistent per-visitor A/B bucketing seed across requests
+  const existingSeed = request.cookies.get('tw_ab_seed')?.value;
+  const abSeed = existingSeed || crypto.randomUUID();
+
   // Propagate custom headers to downstream Server Components and Route Handlers
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set('x-region', region);
   requestHeaders.set('x-domain', domain);
+  requestHeaders.set('x-tw-ab-seed', abSeed);
 
   const response = NextResponse.next({
     request: {
@@ -45,6 +50,15 @@ export function middleware(request: NextRequest) {
   // Also attach to response headers for edge / client inspection
   response.headers.set('x-region', region);
   response.headers.set('x-domain', domain);
+
+  if (!existingSeed) {
+    response.cookies.set('tw_ab_seed', abSeed, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+      sameSite: 'lax',
+      httpOnly: true,
+    });
+  }
 
   return response;
 }

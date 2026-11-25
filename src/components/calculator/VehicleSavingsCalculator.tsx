@@ -96,11 +96,15 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
       const nextModel = presetIdToModelSlug(nextPresetId);
       const nextPowertrain =
         patch.powertrain || nextPreset?.identity.powertrain || targetVehicle.powertrain;
-      trackUserEvent('calculator_computed', {
-        model: nextModel,
-        powertrain: nextPowertrain,
-        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
-      });
+      trackUserEvent(
+        'calculator_computed',
+        {
+          model: nextModel,
+          powertrain: nextPowertrain,
+          province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+        },
+        { flags: ['calculator-bridge-framing'] }
+      );
     },
     [calculatorContext, setTargetVehicle, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
   );
@@ -108,11 +112,15 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
   const handleCurrentVehicleChange = useCallback(
     (patch: Partial<CurrentVehicleState>) => {
       setCurrentVehicle(patch);
-      trackUserEvent('calculator_computed', {
-        model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
-        powertrain: targetVehicle.powertrain,
-        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
-      });
+      trackUserEvent(
+        'calculator_computed',
+        {
+          model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
+          powertrain: targetVehicle.powertrain,
+          province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+        },
+        { flags: ['calculator-bridge-framing'] }
+      );
     },
     [setCurrentVehicle, calculatorContext?.activeModelSlug, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
   );
@@ -120,11 +128,15 @@ export function VehicleSavingsCalculator(props: VehicleSavingsCalculatorProps = 
   const handleDrivingInputsChange = useCallback(
     (patch: Partial<DrivingInputsState>) => {
       setDrivingInputs(patch);
-      trackUserEvent('calculator_computed', {
-        model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
-        powertrain: targetVehicle.powertrain,
-        province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
-      });
+      trackUserEvent(
+        'calculator_computed',
+        {
+          model: calculatorContext?.activeModelSlug || presetIdToModelSlug(targetVehicle.presetId),
+          powertrain: targetVehicle.powertrain,
+          province: unitSystem === 'IMPERIAL' ? 'US' : 'CA',
+        },
+        { flags: ['calculator-bridge-framing'] }
+      );
     },
     [setDrivingInputs, calculatorContext?.activeModelSlug, targetVehicle.presetId, targetVehicle.powertrain, unitSystem]
   );

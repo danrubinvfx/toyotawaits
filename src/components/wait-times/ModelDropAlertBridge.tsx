@@ -11,6 +11,7 @@ export interface ModelDropAlertBridgeProps {
   modelName: string;
   estimatedWaitMonths?: number | string;
   isUS?: boolean;
+  ctaVariant?: 'control' | 'urgency';
   className?: string;
 }
 
@@ -19,6 +20,7 @@ export function ModelDropAlertBridge({
   modelName,
   estimatedWaitMonths,
   isUS = false,
+  ctaVariant = 'control',
   className = '',
 }: ModelDropAlertBridgeProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,6 +29,14 @@ export function ModelDropAlertBridge({
     !isUS && estimatedWaitMonths
       ? `⚡ SKIP THE QUEUE • ~${estimatedWaitMonths} MO WAIT`
       : '⚡ SKIP THE QUEUE • ALLOCATION RADAR';
+
+  const headline =
+    ctaVariant === 'urgency'
+      ? `Skip the Wait — Get Emailed When an Unreserved ${modelName} Lands`
+      : `Skip the Queue: Get Free ${modelName} Drop Alerts`;
+
+  const primaryCtaLabel =
+    ctaVariant === 'urgency' ? '⚡ Notify Me on Next Lot Drop' : '🔔 Get Free Drop Alerts';
 
   return (
     <>
@@ -47,7 +57,7 @@ export function ModelDropAlertBridge({
           {/* Headline & Subtitle */}
           <div className="space-y-1.5">
             <h2 className="text-lg sm:text-xl md:text-2xl font-black tracking-tight text-white">
-              Skip the Queue: Get Free {modelName} Drop Alerts
+              {headline}
             </h2>
             <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed font-normal max-w-2xl">
               Get notified by email when unreserved allocations or canceled customer orders land on dealer lots.
@@ -62,7 +72,7 @@ export function ModelDropAlertBridge({
               data-testid="drop-alert-primary-button"
               className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm transition-all active:scale-95 shadow-md flex items-center justify-center cursor-pointer"
             >
-              🔔 Get Free Drop Alerts
+              {primaryCtaLabel}
             </button>
 
             <Link

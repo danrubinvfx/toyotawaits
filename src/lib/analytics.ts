@@ -23,9 +23,14 @@ export function isAnalyticsOptedOut(): boolean {
  * Respects `tw_admin_opt_out` and `tw_ignore_analytics` localStorage flags
  * and swallows any network or ad-blocker errors so UI interactions never break.
  */
+export type AnalyticsTrackOptions = {
+  flags?: (string | Record<string, unknown>)[] | Record<string, unknown>;
+};
+
 export function trackUserEvent(
   eventName: string,
-  properties?: Record<string, string | number | boolean>
+  properties?: Record<string, string | number | boolean>,
+  options?: AnalyticsTrackOptions
 ): void {
   if (typeof window === 'undefined') {
     return;
@@ -36,7 +41,11 @@ export function trackUserEvent(
   }
 
   try {
-    track(eventName, properties);
+    if (options) {
+      track(eventName, properties, options);
+    } else {
+      track(eventName, properties);
+    }
   } catch {
     // Silently ignore analytics failures (e.g., ad blockers or offline mode)
   }

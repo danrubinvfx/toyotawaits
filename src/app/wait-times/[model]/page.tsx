@@ -10,6 +10,13 @@ import { ModelFAQSection, type ModelFAQData } from '@/components/seo/ModelFAQSec
 import { ModelOtdPricingSection } from '@/components/seo/ModelOtdPricingSection';
 import { BenchmarkMyOrderWidget } from '@/components/estimator/BenchmarkMyOrderWidget';
 import { ModelDropAlertBridge } from '@/components/wait-times/ModelDropAlertBridge';
+import { CalculatorBridgeBanner } from '@/components/wait-times/CalculatorBridgeBanner';
+import { FlagValues } from 'flags/react';
+import {
+  evaluateFlagSafely,
+  dropAlertCtaVariant,
+  calculatorBridgeFraming,
+} from '@/flags';
 import { CrossShopBridge } from '@/components/wait-times/CrossShopBridge';
 import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
 import { ModelDeliveryShelf } from '@/components/gear/ModelDeliveryShelf';
@@ -452,10 +459,13 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
     permanentRedirect(`/wait-times/${modelConfig.slug}`);
   }
 
-  const [{ submissions, latestSubmissionDate }, popularityWeights] = await Promise.all([
-    fetchModelSubmissions(modelConfig),
-    getPopularAccessoryWeights(),
-  ]);
+  const [{ submissions, latestSubmissionDate }, popularityWeights, ctaVariant, framingVariant] =
+    await Promise.all([
+      fetchModelSubmissions(modelConfig),
+      getPopularAccessoryWeights(),
+      evaluateFlagSafely(dropAlertCtaVariant, 'control'),
+      evaluateFlagSafely(calculatorBridgeFraming, 'control'),
+    ]);
   const stats = computeModelStats(modelConfig, submissions);
   const { isUS } = await getRequestMarketMetadata(`/wait-times/${modelConfig.slug}`);
   const startingPricing = getModelStartingPricing(modelConfig.slug);
@@ -563,6 +573,12 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
+      <FlagValues
+        values={{
+          'drop-alert-cta-variant': ctaVariant,
+          'calculator-bridge-framing': framingVariant,
+        }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -864,6 +880,7 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           modelSlug={modelConfig.slug}
           modelName={modelConfig.name}
           isUS={isUS}
+          ctaVariant={ctaVariant}
         />
 
         {/* Live 30-Day Popularity-Sorted Day-One Gear Shelf */}
@@ -1252,28 +1269,10 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
       {/* Cross-Sell Teaser Cards: Calculator Bridge & Delivery Day Preparation Bridge */}
       <section aria-label="Calculator and Delivery Preparation Resources">
         {/* A. "Is the Hybrid Worth the Wait?" Calculator Bridge */}
-        <div
-          data-testid="calculator-teaser-banner"
-          className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 my-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-        >
-          <div className="space-y-1">
-            <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-              ⚡ Financial Break-Even Analysis
-            </div>
-            <h3 className="text-sm font-bold text-white">
-              Weighing Gas vs. Hybrid while you wait?
-            </h3>
-            <p className="text-xs text-neutral-300">
-              Calculate your annual fuel savings and determine if paying the hybrid premium or waiting out the queue makes financial sense.
-            </p>
-          </div>
-          <Link
-            href={getCalculatorBridgeHref(modelConfig.slug)}
-            className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold text-xs inline-flex items-center gap-1.5 shadow-sm transition-all shrink-0 self-start sm:self-center"
-          >
-            Calculate Payback &amp; Savings →
-          </Link>
-        </div>
+        <CalculatorBridgeBanner
+          href={getCalculatorBridgeHref(modelConfig.slug)}
+          framingVariant={framingVariant}
+        />
 
         {/* B. "Delivery Day Preparation" Checklist Bridge */}
         <div

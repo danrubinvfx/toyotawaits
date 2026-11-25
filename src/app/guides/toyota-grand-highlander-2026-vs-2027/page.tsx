@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
+import { CalculatorBridgeBanner } from '@/components/wait-times/CalculatorBridgeBanner';
+import { FlagValues } from 'flags/react';
+import { calculatorBridgeFraming, evaluateFlagSafely } from '@/flags';
 import { GrandHighlanderDayOneGearShelf } from '@/components/guides/grand-highlander-day-one-gear';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -86,8 +89,10 @@ export default async function GrandHighlander2026Vs2027GuidePage() {
   const activeFaqs = isUS ? usConfig.faqs : faqData;
   const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
 
+  const framingVariant = await evaluateFlagSafely(calculatorBridgeFraming, 'control');
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
+      <FlagValues values={{ 'calculator-bridge-framing': framingVariant }} />
       {/* FAQPage Structured Schema */}
       <script
         type="application/ld+json"
@@ -498,6 +503,11 @@ export default async function GrandHighlander2026Vs2027GuidePage() {
       </div>
 
       {/* Legal & Safety Disclaimer */}
+      <CalculatorBridgeBanner
+        href="/calculator/grand-highlander"
+        framingVariant={framingVariant}
+      />
+
       <OrderRolloverCalculator
         modelSlug="grand-highlander"
         modelName="Toyota Grand Highlander"

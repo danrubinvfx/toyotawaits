@@ -151,10 +151,14 @@ export function InventoryAlertModal({
         return;
       }
 
-      trackUserEvent('drop_alert_subscribed', {
-        model: model.trim(),
-        region: region.trim() || 'Lower Mainland, BC',
-      });
+      trackUserEvent(
+        'drop_alert_subscribed',
+        {
+          model: model.trim(),
+          region: region.trim() || 'Lower Mainland, BC',
+        },
+        { flags: ['drop-alert-cta-variant'] }
+      );
       setSuccessMessage(
         `We sent a confirmation link to ${trimmedEmail}. Tap it to verify your email and start your 180-day drop monitoring.`
       );

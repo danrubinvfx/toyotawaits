@@ -460,12 +460,16 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
 
       const finalEditToken = result.data.editToken || result.data.id;
       setPersistentEditToken(finalEditToken);
-      trackUserEvent('order_logged', {
-        model: currentModel.slug,
-        powertrain: currentPowertrain.slug,
-        province,
-        status: stage === 'delivered' ? 'delivered' : 'pending',
-      });
+      trackUserEvent(
+        'order_logged',
+        {
+          model: currentModel.slug,
+          powertrain: currentPowertrain.slug,
+          province,
+          status: stage === 'delivered' ? 'delivered' : 'pending',
+        },
+        { flags: ['mobile-sticky-log-bar'] }
+      );
 
       // Store persistent local submission recognition
       try {

@@ -7,6 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { GuideDisclaimer } from '@/components/common/GuideDisclaimer';
 import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
+import { CalculatorBridgeBanner } from '@/components/wait-times/CalculatorBridgeBanner';
+import { FlagValues } from 'flags/react';
+import { calculatorBridgeFraming, evaluateFlagSafely } from '@/flags';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
 import {
@@ -175,8 +178,10 @@ export default async function CorollaCross2026Vs2027GuidePage() {
         dateModified: articleSchema.dateModified,
       })
     : articleSchema;
+  const framingVariant = await evaluateFlagSafely(calculatorBridgeFraming, 'control');
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
+      <FlagValues values={{ 'calculator-bridge-framing': framingVariant }} />
       {/* FAQPage & Article Structured Schema */}
       <script
         type="application/ld+json"
@@ -588,6 +593,11 @@ export default async function CorollaCross2026Vs2027GuidePage() {
       </section>
 
       {/* Legal & Safety Disclaimer */}
+      <CalculatorBridgeBanner
+        href="/calculator/corolla-cross-hybrid"
+        framingVariant={framingVariant}
+      />
+
       <OrderRolloverCalculator
         modelSlug="corolla-cross"
         modelName="Toyota Corolla Cross"

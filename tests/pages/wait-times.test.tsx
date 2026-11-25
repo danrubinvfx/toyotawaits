@@ -173,7 +173,9 @@ describe('Dedicated SEO Route: /wait-times/[model]', () => {
     const calcBanner = screen.getByTestId('calculator-teaser-banner');
     expect(calcBanner).toBeInTheDocument();
     expect(screen.getByText(/⚡ Financial Break-Even Analysis/i)).toBeInTheDocument();
-    expect(screen.getByText(/Weighing Gas vs\. Hybrid while you wait\?/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Is the Hybrid Worth the Wait\? Calculate Annual Fuel Savings/i)
+    ).toBeInTheDocument();
     expect(
       screen.getByText(
         /Calculate your annual fuel savings and determine if paying the hybrid premium or waiting out the queue makes financial sense\./i

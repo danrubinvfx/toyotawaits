@@ -84,11 +84,15 @@ describe('Vercel Web Analytics Custom Events (src/lib/analytics.ts)', () => {
       const targetSelect = screen.getByLabelText('Select Target Toyota');
       fireEvent.change(targetSelect, { target: { value: '2025-toyota-sienna-hybrid' } });
 
-      expect(mockTrack).toHaveBeenCalledWith('calculator_computed', {
-        model: 'sienna',
-        powertrain: 'HEV',
-        province: 'CA',
-      });
+      expect(mockTrack).toHaveBeenCalledWith(
+        'calculator_computed',
+        {
+          model: 'sienna',
+          powertrain: 'HEV',
+          province: 'CA',
+        },
+        { flags: ['calculator-bridge-framing'] }
+      );
 
       // 2. Copy Shareable Link -> calculator_shared
       const shareBtn = screen.getByRole('button', { name: /Copy Shareable Link/i });
@@ -137,10 +141,14 @@ describe('Vercel Web Analytics Custom Events (src/lib/analytics.ts)', () => {
       await screen.findByTestId('alert-success-state');
 
       expect(fetchSpy).toHaveBeenCalled();
-      expect(mockTrack).toHaveBeenCalledWith('drop_alert_subscribed', {
-        model: 'Sienna',
-        region: 'Vancouver, BC',
-      });
+      expect(mockTrack).toHaveBeenCalledWith(
+        'drop_alert_subscribed',
+        {
+          model: 'Sienna',
+          region: 'Vancouver, BC',
+        },
+        { flags: ['drop-alert-cta-variant'] }
+      );
     });
   });
 
