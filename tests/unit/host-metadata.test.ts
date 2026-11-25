@@ -179,7 +179,9 @@ describe('Host-Aware Server Metadata (toyotawaits.com vs. toyotawaits.ca)', () =
       );
 
       const siennaGuide = await generateSiennaGuideMetadata();
-      expect(String(siennaGuide.title)).toContain('United States (2026–2027 Guide)');
+      expect(String(siennaGuide.title)).toBe(
+        '2026 vs 2027 Toyota Sienna: 251-HP Hybrid, TSS 4.0 & Order Rollover Guide | ToyotaWaits'
+      );
       expect(String(siennaGuide.title)).not.toContain('Canada');
       expect(siennaGuide.alternates?.canonical).toBe(
         'https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027'

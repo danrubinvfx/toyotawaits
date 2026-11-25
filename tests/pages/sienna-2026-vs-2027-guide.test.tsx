@@ -11,6 +11,7 @@ vi.mock('next/headers', () => ({
 import Sienna2026Vs2027GuidePage, {
   generateMetadata,
   dynamic,
+  instant,
 } from '@/app/guides/toyota-sienna-2026-vs-2027/page';
 import { MarketProvider } from '@/context/MarketContext';
 
@@ -21,22 +22,23 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
   });
   it('has valid Next.js 16 dynamic route configuration', async () => {
     expect(dynamic).toBe('force-dynamic');
+    expect(instant).toBe(false);
   });
 
   it('has valid SEO metadata matching specification requirements', async () => {
     const meta = await generateMetadata();
     expect(meta.title).toBe(
-      '2026 vs. 2027 Toyota Sienna Canada: Changes, Pricing & Wait Times | ToyotaWaits'
+      '2026 vs 2027 Toyota Sienna Canada: 251-HP Hybrid, $3,580 Price Hike & Wait Times | ToyotaWaits'
     );
     expect(meta.description).toBe(
-      'Compare the 2026 and 2027 Toyota Sienna in Canada. Full trim matrix, XLE AWD return, MSRP changes, and how dealer waitlist rollovers work.'
+      'Official Nov 2026 specs: 2027 Toyota Sienna upgrades to 251 hp (6th-gen hybrid), TSS 4.0, and dual 12.3" screens—with a $3,580 CAD base price increase. Compare 2026 vs 2027 trims and wait times.'
     );
     expect(meta.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/guides/toyota-sienna-2026-vs-2027'
     );
   });
 
-  it('renders JSON-LD FAQPage schema with updated 2027 THS 6 and TSS 4.0 specs', async () => {
+  it('renders JSON-LD FAQPage schema with updated Nov 2026 251-hp and TSS 4.0 specs', async () => {
     const { container } = render(
       <MarketProvider initialMarket="CA">
         {await Sienna2026Vs2027GuidePage()}
@@ -55,19 +57,21 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
     expect(json.mainEntity[0].acceptedAnswer.text).toContain('THS 6');
     expect(json.mainEntity[0].acceptedAnswer.text).toContain('251 hp');
-    expect(json.mainEntity[0].acceptedAnswer.text).toContain('1.15 kWh Li-ion battery');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('6.4 L/100 km');
     expect(json.mainEntity[0].acceptedAnswer.text).toContain('Toyota Safety Sense 4.0');
 
     expect(json.mainEntity[1].name).toBe(
-      'Will my Canadian 2026 Sienna allocation automatically turn into a 2027?'
+      'How much did the 2027 Toyota Sienna price increase in Canada, and which trims changed?'
     );
-    expect(json.mainEntity[1].acceptedAnswer.text).toContain('early 2027');
+    expect(json.mainEntity[1].acceptedAnswer.text).toContain('$54,000 CAD');
+    expect(json.mainEntity[1].acceptedAnswer.text).toContain('+$3,580');
+    expect(json.mainEntity[1].acceptedAnswer.text).toContain('$50,420');
 
     expect(json.mainEntity[2].name).toBe(
       'What is the difference between the Sienna XSE and LE suspension, and what is new for 2027?'
     );
     expect(json.mainEntity[2].acceptedAnswer.text).toContain('sport-tuned dampers');
-    expect(json.mainEntity[2].acceptedAnswer.text).toContain('12.9-inch rear screen');
+    expect(json.mainEntity[2].acceptedAnswer.text).toContain('12.9-inch rear entertainment touchscreen');
   });
 
   it('renders page header, Pass or Take It verdict, and 2026 vs 2027 comparison table', async () => {
@@ -91,12 +95,14 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
 
     expect(screen.getByText(/Year-Over-Year Comparison \(2026 vs\. 2027\)/i)).toBeInTheDocument();
     expect(screen.getByText(/2\.5L 4-Cyl Hybrid \(245 hp net\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/6th-Gen Hybrid \(THS 6, 251 hp net\)/i)).toBeInTheDocument();
-    expect(screen.getByText(/New steering, AHB-C posture control & -1\.6 dB dash silencer/i)).toBeInTheDocument();
-    expect(screen.getByText(/Toyota Safety Sense 4\.0 \+ Drive Recorder dash cam/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/6th-Gen Toyota Hybrid System \(251 hp \/ 176 lb-ft\)/i).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText(/Revised steering column\/gearbox, Vehicle Braking Posture Control & -1\.6 dB dash silencer/i)).toBeInTheDocument();
+    expect(screen.getByText(/Standard Toyota Safety Sense 4\.0 \(TSS 4\.0\) \+ built-in Drive Recorder dashcam/i)).toBeInTheDocument();
     expect(
-      screen.getByText(/Standard 12\.3" touchscreen \+ 12\.3" digital cluster; new Storm Cloud paint/i)
+      screen.getByText(/Standard 12\.3" touchscreen \+ 12\.3" digital gauge cluster; Storm Cloud paint \(replaces Cypress\)/i)
     ).toBeInTheDocument();
+    expect(screen.getByText(/\$50,420 CAD base MSRP/i)).toBeInTheDocument();
+    expect(screen.getByText(/\$54,000 CAD LE FWD \(\+\$3,580\)/i)).toBeInTheDocument();
     expect(screen.getAllByText(/33\.5 cu\. ft\. deep sunken tub/i)).toHaveLength(2);
     expect(screen.getAllByText(/3,500 lbs \/ 1,585 kg/i)).toHaveLength(2);
   });
@@ -214,6 +220,12 @@ describe('2026 vs. 2027 Toyota Sienna Guide Page', () => {
     );
 
     const meta = await generateMetadata();
+    expect(meta.title).toBe(
+      '2026 vs 2027 Toyota Sienna: 251-HP Hybrid, TSS 4.0 & Order Rollover Guide | ToyotaWaits'
+    );
+    expect(meta.description).toContain('251 hp');
+    expect(meta.description).toContain('TSS 4.0');
+    expect(meta.description).toContain('12.3');
     expect(meta.alternates?.canonical).toBe(
       'https://www.toyotawaits.com/guides/toyota-sienna-2026-vs-2027'
     );

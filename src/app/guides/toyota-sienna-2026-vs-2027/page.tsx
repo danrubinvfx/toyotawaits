@@ -46,12 +46,12 @@ export const { instant } = { instant: false };
 export async function generateMetadata(): Promise<Metadata> {
   return buildGuideMetadata({
     slug: 'toyota-sienna-2026-vs-2027',
-    caTitle: '2026 vs. 2027 Toyota Sienna Canada: Changes, Pricing & Wait Times | ToyotaWaits',
+    caTitle: '2026 vs 2027 Toyota Sienna Canada: 251-HP Hybrid, $3,580 Price Hike & Wait Times | ToyotaWaits',
     caDescription:
-      'Compare the 2026 and 2027 Toyota Sienna in Canada. Full trim matrix, XLE AWD return, MSRP changes, and how dealer waitlist rollovers work.',
-    usTitle: '2026 vs. 2027 Toyota Sienna United States (2026–2027 Guide): Changes, Pricing & Wait Times | ToyotaWaits',
+      'Official Nov 2026 specs: 2027 Toyota Sienna upgrades to 251 hp (6th-gen hybrid), TSS 4.0, and dual 12.3" screens—with a $3,580 CAD base price increase. Compare 2026 vs 2027 trims and wait times.',
+    usTitle: '2026 vs 2027 Toyota Sienna: 251-HP Hybrid, TSS 4.0 & Order Rollover Guide | ToyotaWaits',
     usDescription:
-      'Compare the 2026 and 2027 Toyota Sienna in the United States. Full trim matrix, AWD availability, MSRP changes, and how dealer allocation rollovers work.',
+      'Official Nov 2026 specs: 2027 Toyota Sienna upgrades to 251 hp (6th-gen hybrid), TSS 4.0, and dual 12.3" screens—with a $3,580 CAD base price increase. Compare 2026 vs 2027 trims and wait times.',
   });
 }
 
@@ -59,17 +59,35 @@ const faqData = [
   {
     question: 'Are there mechanical differences between the 2026 and 2027 Toyota Sienna?',
     answer:
-      'Yes. The 2027 Sienna upgrades to Toyota’s 6th-generation hybrid system (THS 6) with 251 hp (up from 245 hp), a 1.15 kWh Li-ion battery, integrated inverter, new steering and AHB-C posture control, a -1.6 dB dash silencer, Toyota Safety Sense 4.0, Drive Recorder dash cam, and standard 12.3-inch dual displays.',
+      'Yes. Announced on November 20, 2026, the 2027 Sienna upgrades to Toyota’s 6th-generation Toyota Hybrid System (THS 6) with silicon-carbide motors and a transaxle-integrated inverter. Output rises from 245 hp to 251 hp (176 lb-ft), 0–100 km/h improves from 8.1s to 7.7s FWD / 7.8s AWD, and fuel economy improves to 6.4 L/100 km combined (6.0 city / 6.8 hwy). It also adds a revised steering column/gearbox, Vehicle Braking Posture Control, a -1.6 dB dash silencer, Toyota Safety Sense 4.0 (TSS 4.0), built-in Drive Recorder dashcam, and standard 12.3-inch dual displays.',
   },
   {
-    question: 'Will my Canadian 2026 Sienna allocation automatically turn into a 2027?',
+    question: 'How much did the 2027 Toyota Sienna price increase in Canada, and which trims changed?',
     answer:
-      'Yes. In Toyota\'s bi-weekly dealer allocation system, unbuilt deposits placed in late 2026 roll to a 2027 VIN when the Indiana assembly plant transitions tooling between November and January without losing queue priority, with 2027 models arriving early 2027.',
+      'For early 2027 arrival in Canada, Toyota trimmed the lineup to 7 grades (dropping Limited AWD and XSE Tech AWD). The base LE FWD starts at $54,000 CAD (+$3,580 over 2026’s $50,420), scaling to $73,000 CAD for Platinum AWD ($76,658 with freight, PDI, and fees). Unbuilt late-2026 allocations automatically roll to 2027 VINs without losing dealer queue priority.',
   },
   {
     question: 'What is the difference between the Sienna XSE and LE suspension, and what is new for 2027?',
     answer:
-      'The XSE features exclusive sport-tuned dampers and thicker anti-sway bars for flatter cornering, whereas LE, XLE, Limited, and Platinum use standard soft-ride comfort tuning. For 2027, the LE adds a rear liftgate kick sensor (without hitch) and standard 12.3-inch displays, while the XSE adds ventilated/memory seats, HUD, Panoramic View Monitor, and a 12.9-inch rear screen on XSE AWD in Canada.',
+      'The XSE features exclusive sport-tuned dampers and thicker anti-sway bars for flatter cornering, whereas LE, XLE, and Platinum use standard soft-ride comfort tuning. For 2027, the LE adds a rear liftgate kick sensor (without tow hitch) and upgrades from an 8-inch screen and 7-inch MID to standard 12.3-inch dual displays (touchscreen + digital gauge cluster), while XSE AWD and Platinum AWD gain a 12.9-inch rear entertainment touchscreen and new Storm Cloud paint replaces Cypress.',
+  },
+];
+
+const usFaqData = [
+  {
+    question: 'What changed on the 2027 Toyota Sienna vs. 2026?',
+    answer:
+      'Announced on November 20, 2026, the 2027 Toyota Sienna upgrades to Toyota’s 6th-gen hybrid system (251 hp / 176 lb-ft, up from 245 hp) with silicon-carbide motors, a transaxle-integrated inverter, and 37 mpg US combined. It also adds standard Toyota Safety Sense 4.0 (TSS 4.0), a built-in Drive Recorder dashcam, standard dual 12.3-inch screens (replacing the 8-inch touchscreen and 7-inch MID), Vehicle Braking Posture Control, a -1.6 dB dash silencer, and Storm Cloud paint.',
+  },
+  {
+    question: 'How long does Princeton, Indiana (TMMI) Sienna allocation transit take in the US?',
+    answer:
+      'Once a Sienna allocation is assigned to your US dealership, rail and truck transit from TMMI in Princeton, Indiana takes 30–90 days. Unallocated late-2026 orders automatically roll to 2027 VINs without losing queue priority.',
+  },
+  {
+    question: 'Are US Toyota Sienna deposits refundable under state law?',
+    answer:
+      'US deposit refund rules vary by state. States such as California protect buyer deposit refunds prior to VIN assignment on unsigned contracts; always get written refundability terms before placing a hold.',
   },
 ];
 
@@ -89,7 +107,7 @@ const faqPageSchema = {
 export default async function Sienna2026Vs2027GuidePage() {
   const { isUS } = await getRequestMarketMetadata('/guides/toyota-sienna-2026-vs-2027');
   const usConfig = US_GUIDE_CONFIGS['toyota-sienna-2026-vs-2027'];
-  const activeFaqs = isUS ? usConfig.faqs : faqData;
+  const activeFaqs = isUS ? usFaqData : faqData;
   const activeFaqPageSchema = isUS ? buildGuideFaqSchema(activeFaqs) : faqPageSchema;
 
   const framingVariant = await evaluateFlagSafely(calculatorBridgeFraming, 'control');
@@ -137,7 +155,12 @@ export default async function Sienna2026Vs2027GuidePage() {
         </p>
       </div>
 
-      {isUS && <UsGuideMarketBrief {...usConfig} />}
+      {isUS && (
+        <UsGuideMarketBrief
+          {...usConfig}
+          verdictSummary="In the United States, the 2027 Toyota Sienna (announced Nov 20, 2026) upgrades to Toyota's 6th-gen hybrid system at 251 hp (176 lb-ft, up from 245 hp) with 37 mpg combined, standard Toyota Safety Sense 4.0 (TSS 4.0), built-in Drive Recorder dashcam, and dual 12.3-inch displays. Claim an allocated 2026 build at $0 MSRP for immediate delivery, or wait for a 2027 allocation from TMMI Princeton, Indiana (30–90 days transit once allocated)."
+        />
+      )}
 
       {/* Transparency Disclosure */}
       <div
@@ -164,23 +187,38 @@ export default async function Sienna2026Vs2027GuidePage() {
         </h2>
         <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-6 space-y-4">
           <p className="text-sm sm:text-base text-zinc-700 dark:text-zinc-300 leading-relaxed">
-            Unlike prior carryover years, the <strong>2027 Toyota Sienna</strong> (arriving early 2027) brings meaningful powertrain, cabin tech, and safety upgrades over 2026: Toyota’s <strong>6th-gen hybrid (THS 6) at 251 hp</strong> (up from 245 hp) with a 1.15 kWh Li-ion battery and integrated inverter, <strong>Toyota Safety Sense 4.0</strong>, factory <strong>Drive Recorder dash cam</strong>, standard <strong>12.3&quot; touchscreen + 12.3&quot; digital cluster</strong>, and a quieter cabin (-1.6 dB dash silencer). <strong>Take a 2026 slot</strong> if you need immediate delivery or want to lock in 2026 pricing; <strong>pass or roll to 2027</strong> if you can wait until early 2027 for the THS 6, TSS 4.0, and cabin tech package.
+            Officially announced on <strong>November 20, 2026</strong> (arriving early 2027), the <strong>2027 Toyota Sienna</strong> replaces carryover expectations with Toyota’s <strong>6th-gen Toyota Hybrid System (251 hp / 176 lb-ft)</strong> using silicon-carbide motors and a transaxle-integrated inverter.{' '}
+            {isUS
+              ? 'Acceleration improves to 7.7s FWD / 7.8s AWD (0–62 mph) while combined fuel economy improves to 37 mpg US combined. Every 2027 trim adds standard Toyota Safety Sense 4.0 (TSS 4.0), built-in Drive Recorder dashcam, standard 12.3" touchscreen + 12.3" digital gauge cluster, Vehicle Braking Posture Control, a -1.6 dB dash silencer, and Storm Cloud paint (replacing Cypress).'
+              : '0–100 km/h improves from 8.1s to 7.7s FWD / 7.8s AWD, and fuel economy improves to 6.4 L/100 km combined (6.0 city / 6.8 hwy). Every 2027 trim adds standard Toyota Safety Sense 4.0 (TSS 4.0), built-in Drive Recorder dashcam, standard 12.3" touchscreen + 12.3" digital gauge cluster, Vehicle Braking Posture Control, and a -1.6 dB dash silencer. In Canada, the 7-grade lineup starts at $54,000 CAD (+$3,580 over 2026’s $50,420) and scales to $73,000 CAD for Platinum AWD ($76,658 with freight/PDI/fees).'}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Powertrain Upgrade</span>
-              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1">251 hp THS 6 (+6 hp)</p>
-              <p className="text-xs text-zinc-500 mt-0.5">1.15 kWh Li-ion battery &amp; integrated inverter</p>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">6th-Gen Hybrid</span>
+              <p className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-1">251 hp / 176 lb-ft</p>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                {isUS
+                  ? '37 mpg combined · 7.7s FWD / 7.8s AWD'
+                  : '6.4 L/100 km combined · 7.7s FWD / 7.8s AWD'}
+              </p>
             </div>
             <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">Safety &amp; Cabin Tech</span>
               <p className="text-sm font-bold text-blue-600 dark:text-blue-400 mt-1">TSS 4.0 + Dual 12.3&quot;</p>
-              <p className="text-xs text-zinc-500 mt-0.5">Drive Recorder &amp; -1.6 dB dash silencer</p>
+              <p className="text-xs text-zinc-500 mt-0.5">Drive Recorder dashcam &amp; -1.6 dB dash silencer</p>
             </div>
             <div className="p-3 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">2027 Arrival Window</span>
-              <p className="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">Arriving Early 2027</p>
-              <p className="text-xs text-zinc-500 mt-0.5">New Storm Cloud paint &amp; trim upgrades</p>
+              <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                {isUS ? '2027 Arrival & Paint' : '2027 Canadian MSRP'}
+              </span>
+              <p className="text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">
+                {isUS ? 'Early 2027 · Storm Cloud' : '$54,000 CAD (+$3,580)'}
+              </p>
+              <p className="text-xs text-zinc-500 mt-0.5">
+                {isUS
+                  ? 'Storm Cloud replaces Cypress; 7.7s–7.8s'
+                  : '7 grades (up to $73,000 Platinum AWD)'}
+              </p>
             </div>
           </div>
         </div>
@@ -212,17 +250,33 @@ export default async function Sienna2026Vs2027GuidePage() {
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Powertrain</td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">2.5L 4-Cyl Hybrid (245 hp net)</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">6th-Gen Hybrid (THS 6, 251 hp net)</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">6th-Gen Toyota Hybrid System (251 hp / 176 lb-ft)</td>
                   <td className="py-3 px-4">
                     <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
-                      <CheckCircle2 className="h-3.5 w-3.5" /> +6 hp, 1.15 kWh Li-ion battery &amp; integrated inverter
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Silicon-carbide motors &amp; transaxle-integrated inverter
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">0–100 km/h &amp; Fuel Economy</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    {isUS ? '8.1s (0–62 mph) · 36 mpg combined' : '8.1s · 6.6 L/100 km combined'}
+                  </td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    {isUS
+                      ? '7.7s FWD / 7.8s AWD · 37 mpg combined'
+                      : '7.7s FWD / 7.8s AWD · 6.4 L/100 km combined (6.0 city / 6.8 hwy)'}
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
+                      Faster acceleration &amp; lower fuel burn
                     </span>
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Chassis &amp; NVH</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Standard EPS &amp; braking calibration</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">New steering, AHB-C posture control &amp; -1.6 dB dash silencer</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Standard steering &amp; braking calibration</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Revised steering column/gearbox, Vehicle Braking Posture Control &amp; -1.6 dB dash silencer</td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold">
                       Quieter cabin &amp; refined ride control
@@ -231,8 +285,8 @@ export default async function Sienna2026Vs2027GuidePage() {
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Safety &amp; Dashcam</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Toyota Safety Sense 2.0 / 2.5</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Toyota Safety Sense 4.0 + Drive Recorder dash cam</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Toyota Safety Sense 3.0</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Standard Toyota Safety Sense 4.0 (TSS 4.0) + built-in Drive Recorder dashcam</td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
                       Major active safety &amp; factory dashcam upgrade
@@ -241,8 +295,8 @@ export default async function Sienna2026Vs2027GuidePage() {
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Displays &amp; Paint</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">8.0&quot; (LE) / 12.3&quot; (XLE+) screen</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Standard 12.3&quot; touchscreen + 12.3&quot; digital cluster; new Storm Cloud paint</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">8&quot; touchscreen (LE) + 7&quot; MID; Cypress paint</td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Standard 12.3&quot; touchscreen + 12.3&quot; digital gauge cluster; Storm Cloud paint (replaces Cypress)</td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-blue-600 dark:text-blue-400 font-semibold">
                       Dual 12.3&quot; displays standard across all trims
@@ -306,16 +360,22 @@ export default async function Sienna2026Vs2027GuidePage() {
                   </td>
                 </tr>
                 <tr className="hover:bg-zinc-50/80 dark:hover:bg-zinc-900/40 transition-colors">
-                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Availability &amp; MSRP</td>
-                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">In-transit / immediate 2026 allocations</td>
+                  <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Availability &amp; Starting MSRP</td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
                     {isUS
-                      ? 'Arriving early 2027 (starting ~$39,185+ USD; expect modest annual MSRP bump)'
-                      : 'Arriving early 2027 (expect modest annual MSRP bump)'}
+                      ? '$39,185 USD base MSRP (in-transit 2026 allocations)'
+                      : '$50,420 CAD base MSRP (9 grades, incl. Limited AWD & XSE Tech AWD)'}
+                  </td>
+                  <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
+                    {isUS
+                      ? 'Arriving early 2027 (USD MSRP TBD; expect MY27 adjustment over $39,185)'
+                      : 'Early 2027 arrival · $54,000 CAD LE FWD (+$3,580) to $73,000 CAD Platinum AWD ($76,658 w/ freight/PDI/fees); 7 grades'}
                   </td>
                   <td className="py-3 px-4">
                     <span className="text-xs text-amber-600 dark:text-amber-400 font-medium">
-                      2026 delivers sooner; 2027 adds major tech
+                      {isUS
+                        ? '2026 delivers sooner; 2027 adds major tech'
+                        : 'Limited AWD & XSE Tech AWD dropped for 2027'}
                     </span>
                   </td>
                 </tr>
@@ -332,7 +392,9 @@ export default async function Sienna2026Vs2027GuidePage() {
             {isUS ? 'Complete US Trim Level Matrix' : 'Complete Canadian Trim Level Matrix'}
           </h2>
           <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-            Key seating configurations, suspension tuning, audio systems, and interior appointments across all 5 trim grades.
+            {isUS
+              ? 'Key seating configurations, suspension tuning, audio systems, and interior appointments across all trim grades.'
+              : 'Canadian 2027 lineup consolidates to 7 grades (Limited AWD and XSE Tech AWD dropped), starting at $54,000 CAD LE FWD up to $73,000 CAD Platinum AWD.'}
           </p>
         </div>
 
@@ -565,9 +627,9 @@ export default async function Sienna2026Vs2027GuidePage() {
       <OrderRolloverCalculator
         modelSlug="sienna"
         modelName="Toyota Sienna"
-        baseMsrpCad={49370}
+        baseMsrpCad={50420}
         baseMsrpUsd={39185}
-        my27DeltaCad={1200}
+        my27DeltaCad={3580}
         my27DeltaUsd={900}
         medianWaitDays={360}
         isUS={isUS}

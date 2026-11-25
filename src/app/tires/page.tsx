@@ -27,12 +27,12 @@ export const revalidate = 60;
 export async function generateMetadata(): Promise<Metadata> {
   return buildHostAwarePageMetadata({
     path: '/tires',
-    caTitle: 'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits',
+    caTitle: 'Best Winter Tires & Wheel Sizes for Toyota RAV4, Sienna & Grand Highlander (2026–2027) | ToyotaWaits',
     caDescription:
-      'Complete Canadian winter tire guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. Provincial winter tire deadlines, insurance discounts, and factory wheel sizing.',
-    usTitle: 'Toyota Winter & All-Weather Tires Guide (2026 US Sizing & Fitment) | ToyotaWaits',
+      'OEM bolt patterns, hub bores, and top winter tire picks (Michelin X-Ice Snow, Bridgestone Blizzak DM-V2, Nokian Hakkapeliitta R5) for 2026–2027 Toyota SUVs and minivans.',
+    usTitle: 'Best Snow & All-Weather Tires for Toyota RAV4, Sienna & Grand Highlander | ToyotaWaits',
     usDescription:
-      'Complete US winter and all-weather tire fitment guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. OEM wheel sizing, 17-inch downsizing, and 3PMSF ratings.',
+      'OEM bolt patterns, hub bores, and top winter tire picks (Michelin X-Ice Snow, Bridgestone Blizzak DM-V2, Nokian Hakkapeliitta R5) for 2026–2027 Toyota SUVs and minivans.',
     keywords: [
       'toyota winter tire sizing',
       'toyota rav4 17 inch winter downsizing',

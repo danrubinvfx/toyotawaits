@@ -7,10 +7,10 @@ describe('TiresPage Route', () => {
   it('defines correct page metadata matching Canadian Toyota seasonal tire specifications', async () => {
     const metadata = await generateMetadata();
     expect(metadata.title).toBe(
-      'Toyota Winter & All-Weather Tires Canada (2026 Guide) — Sizing & Rules | ToyotaWaits'
+      'Best Winter Tires & Wheel Sizes for Toyota RAV4, Sienna & Grand Highlander (2026–2027) | ToyotaWaits'
     );
     expect(metadata.description).toBe(
-      'Complete Canadian winter tire guide for Toyota RAV4, Sienna, Grand Highlander, and Corolla Cross. Provincial winter tire deadlines, insurance discounts, and factory wheel sizing.'
+      'OEM bolt patterns, hub bores, and top winter tire picks (Michelin X-Ice Snow, Bridgestone Blizzak DM-V2, Nokian Hakkapeliitta R5) for 2026–2027 Toyota SUVs and minivans.'
     );
     expect(metadata.alternates?.canonical).toBe('https://www.toyotawaits.ca/tires');
   });

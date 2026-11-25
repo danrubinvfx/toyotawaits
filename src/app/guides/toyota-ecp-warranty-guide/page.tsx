@@ -24,32 +24,22 @@ import {
   Layers,
 } from 'lucide-react';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import { buildGuideMetadata, getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const { instant } = { instant: false };
 
-export const metadata: Metadata = {
-  title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
-  description:
-    'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
-  alternates: {
-    canonical: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
-  },
-  openGraph: {
-    title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
-    description:
-      'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
-    url: 'https://www.toyotawaits.ca/guides/toyota-ecp-warranty-guide',
-    siteName: 'ToyotaWaits.ca',
-    locale: 'en_CA',
-    type: 'article',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Toyota Warranty & ECP Extended Warranty Guide (Factory vs. Dealer Pricing) | ToyotaWaits',
-    description:
-      'Compare Toyota factory bumper-to-bumper, hybrid & battery coverage vs. ECP extended warranty pricing, wholesale benchmarks, and the 31-day rule.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildGuideMetadata({
+    slug: 'toyota-ecp-warranty-guide',
+    caTitle: 'Toyota Canada Warranty (3yr/60k & 8yr Hybrid) + Real ECP Extended Warranty Cost | ToyotaWaits',
+    caDescription:
+      "Full breakdown of Toyota's 3-year comprehensive, 5-year powertrain, and 8-year hybrid battery warranties—plus real dealer wholesale vs. retail pricing on Toyota ECP / VSA Platinum plans.",
+    usTitle: 'Toyota Factory Warranty + Real Toyota Platinum VSA Extended Warranty Cost | ToyotaWaits',
+    usDescription:
+      "Full breakdown of Toyota's 3-year comprehensive, 5-year powertrain, and 8-year hybrid battery warranties—plus real dealer wholesale vs. retail pricing on Toyota ECP / VSA Platinum plans.",
+  });
+}
 
 interface WarrantyComparisonRow {
   feature: string;
@@ -284,7 +274,9 @@ const ecpFaqPageSchema = {
   })),
 };
 
-export default function ToyotaEcpWarrantyGuidePage() {
+export default async function ToyotaEcpWarrantyGuidePage() {
+  const { isUS } = await getRequestMarketMetadata('/guides/toyota-ecp-warranty-guide');
+
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-amber-500/20 selection:text-amber-300 pb-20">
       {/* JSON-LD FAQPage Schema */}
@@ -327,9 +319,67 @@ export default function ToyotaEcpWarrantyGuidePage() {
           </h1>
 
           <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-3xl">
-            An objective, mathematical dissection of Toyota Extra Care Protection (ECP Platinum vs. Gold) across 100,000 km and 200,000 km tiers. We break down standard Canadian factory warranty overlap (3-yr/60,000 km comprehensive, 5-yr/100,000 km powertrain, 8-yr/160,000 km hybrid components, and 10-yr/240,000 km hybrid battery), dealer wholesale margins, the 31-day grace period, and when you should self-insure.
+            {isUS
+              ? 'An objective, mathematical dissection of Toyota Platinum VSA vs. factory warranty coverage. We break down US factory coverage (3yr/36k comprehensive, 5yr/60k powertrain, 10yr/150k hybrid battery), dealer wholesale margins, and when you should self-insure.'
+              : 'An objective, mathematical dissection of Toyota Extra Care Protection (ECP Platinum vs. Gold) across 100,000 km and 200,000 km tiers. We break down standard Canadian factory warranty overlap (3-yr/60,000 km comprehensive, 5-yr/100,000 km powertrain, 8-yr/160,000 km hybrid components, and 10-yr/240,000 km hybrid battery), dealer wholesale margins, the 31-day grace period, and when you should self-insure.'}
           </p>
         </header>
+
+        {/* Compact Factory Coverage Summary Box */}
+        <section
+          aria-label="Toyota Factory Warranty Coverage Summary"
+          data-testid="factory-warranty-summary-box"
+          className="rounded-2xl border border-emerald-800/50 bg-emerald-950/20 p-5 sm:p-6 space-y-3"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm sm:text-base font-bold text-emerald-300 flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 shrink-0" />
+              <span>
+                {isUS
+                  ? 'Toyota US Factory Warranty Coverage (Included at $0)'
+                  : 'Toyota Canada Factory Warranty Coverage (Included at $0)'}
+              </span>
+            </h2>
+            <span className="text-[11px] font-mono text-emerald-400/80">
+              {isUS ? 'Standard Factory Terms (Miles)' : 'Standard Factory Terms (Kilometers)'}
+            </span>
+          </div>
+          {isUS ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Basic Comprehensive</div>
+                <div className="text-sm font-bold text-zinc-100 mt-0.5">3yr / 36k miles</div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Powertrain</div>
+                <div className="text-sm font-bold text-zinc-100 mt-0.5">5yr / 60k miles</div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Hybrid Battery</div>
+                <div className="text-sm font-bold text-emerald-400 mt-0.5">10yr / 150k miles</div>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Comprehensive</div>
+                <div className="text-sm font-bold text-zinc-100 mt-0.5">3yr / 60,000 km</div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Powertrain</div>
+                <div className="text-sm font-bold text-zinc-100 mt-0.5">5yr / 100,000 km</div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Hybrid Components</div>
+                <div className="text-sm font-bold text-emerald-400 mt-0.5">8yr / 160,000 km</div>
+              </div>
+              <div className="rounded-xl bg-zinc-900/80 border border-zinc-800 p-3">
+                <div className="text-zinc-400 font-medium">Hybrid Battery</div>
+                <div className="text-sm font-bold text-emerald-400 mt-0.5">10yr / 240,000 km</div>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* 1. TOP SUMMARY VERDICT */}
         <section className="space-y-6">

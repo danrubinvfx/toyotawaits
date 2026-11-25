@@ -706,6 +706,20 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
           </div>
         )}
 
+        {/* Sienna 2027 Official Announcement Callout Banner */}
+        {modelConfig.slug === 'sienna' && (
+          <Link
+            href="/guides/toyota-sienna-2026-vs-2027"
+            data-testid="sienna-2027-callout-banner"
+            className="flex items-center justify-between gap-3 rounded-xl border border-amber-500/40 bg-amber-500/10 hover:bg-amber-500/15 dark:bg-amber-950/30 dark:hover:bg-amber-950/50 px-4 py-3 text-xs sm:text-sm font-bold text-amber-800 dark:text-amber-300 transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-amber-500 shrink-0" />
+              <span>2027 Sienna Announced (251 HP + TSS 4.0): See the $3,580 price change &amp; order rollover guide →</span>
+            </span>
+          </Link>
+        )}
+
         {/* Position Zero Featured Snippet Answer Box */}
         <div
           data-testid="featured-snippet-box"
