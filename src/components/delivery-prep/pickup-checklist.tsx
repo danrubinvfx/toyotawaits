@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,8 +8,16 @@ import {
   Check,
   RotateCcw,
   ShieldAlert,
+  Share2,
+  Printer,
+  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  useDeliveryPrepModel,
+  normalizeDeliveryPrepModel,
+  MODEL_PDI_CALLOUTS,
+} from '@/components/delivery-prep/delivery-prep-model-context';
 
 export interface InspectionCheckItem {
   id: string;
@@ -78,7 +86,7 @@ export const DELIVERY_INSPECTION_ITEMS: InspectionCheckItem[] = [
   },
 ];
 
-const LOCAL_STORAGE_KEY = 'toyotawaits_prep_checklist_checks';
+export const PDI_CHECKLIST_STORAGE_KEY = 'toyotawaits_pdi_checklist_v1';
 
 export interface PickupChecklistProps {
   model?: string;
@@ -90,22 +98,48 @@ export interface PickupChecklistProps {
 }
 
 export function PickupChecklist({
+  model,
   checkedItems,
   onToggle,
   onReset,
   className,
   defaultOpen = false,
 }: PickupChecklistProps) {
+  const modelCtx = useDeliveryPrepModel();
+  const activeModelId = model ? normalizeDeliveryPrepModel(model) : (modelCtx?.selectedModel ?? 'universal');
+  const modelPdiNote = activeModelId !== 'universal' ? MODEL_PDI_CALLOUTS[activeModelId] : null;
+
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [internalChecked, setInternalChecked] = useState<Record<string, boolean>>({});
+  const [copiedShare, setCopiedShare] = useState(false);
+  const shareTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (shareTimeoutRef.current) {
+        clearTimeout(shareTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Sync internal state with localStorage if checkedItems prop not provided
   useEffect(() => {
     if (checkedItems) return;
     try {
-      const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const saved = localStorage.getItem(PDI_CHECKLIST_STORAGE_KEY);
       if (saved) {
-        setInternalChecked(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          const map: Record<string, boolean> = {};
+          for (const id of parsed) {
+            if (typeof id === 'string') {
+              map[id] = true;
+            }
+          }
+          setInternalChecked(map);
+        } else if (parsed && typeof parsed === 'object') {
+          setInternalChecked(parsed);
+        }
       }
     } catch {
       // Ignore storage errors
@@ -163,7 +197,8 @@ export function PickupChecklist({
       setInternalChecked((prev) => {
         const next = { ...prev, [id]: !prev[id] };
         try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(next));
+          const checkedIds = Object.keys(next).filter((key) => next[key]);
+          localStorage.setItem(PDI_CHECKLIST_STORAGE_KEY, JSON.stringify(checkedIds));
         } catch {
           // Ignore storage errors
         }
@@ -178,9 +213,48 @@ export function PickupChecklist({
     } else {
       setInternalChecked({});
       try {
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+        localStorage.removeItem(PDI_CHECKLIST_STORAGE_KEY);
       } catch {
         // Ignore storage errors
+      }
+    }
+  };
+
+  const triggerCopiedConfirmation = () => {
+    setCopiedShare(true);
+    if (shareTimeoutRef.current) {
+      clearTimeout(shareTimeoutRef.current);
+    }
+    shareTimeoutRef.current = setTimeout(() => {
+      setCopiedShare(false);
+    }, 2000);
+  };
+
+  const handleShareChecklist = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      try {
+        await navigator.share({
+          title: 'Toyota Delivery Day PDI Checklist',
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
+        // Fall through to clipboard fallback
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        triggerCopiedConfirmation();
+      } catch {
+        // Ignore clipboard errors
       }
     }
   };
@@ -189,57 +263,116 @@ export function PickupChecklist({
   const verifiedCount = DELIVERY_INSPECTION_ITEMS.filter((item) => !!activeChecks[item.id]).length;
 
   return (
-    <div
-      id="checklist"
-      data-testid="pickup-checklist-container"
-      className={cn('scroll-mt-24 rounded-xl border border-zinc-800 bg-zinc-950/40 overflow-hidden transition-all', className)}
-    >
-      {/* Compact Accordion Header Bar */}
+    <div className="space-y-2.5">
+      {modelPdiNote && (
+        <div
+          data-testid="model-pdi-callout-pill"
+          className="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-amber-500/10 px-3.5 py-1.5 text-xs font-medium text-amber-200"
+        >
+          <Sparkles className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+          <span>{modelPdiNote}</span>
+        </div>
+      )}
+
       <div
-        data-testid="pickup-checklist-header"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={cn(
-          'px-3.5 py-2.5 sm:px-4 sm:py-3 transition-colors cursor-pointer select-none flex items-center justify-between gap-2 min-h-[50px] max-h-[70px]',
-          isOpen ? 'bg-zinc-900/80 border-b border-zinc-800/80' : 'hover:bg-zinc-900/40'
-        )}
+        id="checklist"
+        data-testid="pickup-checklist-container"
+        className={cn('scroll-mt-24 rounded-xl border border-zinc-800 bg-zinc-950/40 overflow-hidden transition-all', className)}
       >
-        <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap min-w-0">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
-            <span className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight">
-              Dealership Pickup Day Inspection Steps
-            </span>
+        {/* Compact Accordion Header Bar */}
+        <div
+          data-testid="pickup-checklist-header"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={cn(
+            'px-3.5 py-2.5 sm:px-4 sm:py-3 transition-colors cursor-pointer select-none flex flex-wrap items-center justify-between gap-2 min-h-[50px]',
+            isOpen ? 'bg-zinc-900/80 border-b border-zinc-800/80' : 'hover:bg-zinc-900/40'
+          )}
+        >
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <ClipboardCheck className="h-4 w-4 text-amber-500 shrink-0" />
+              <span className="text-xs sm:text-sm font-bold text-zinc-100 tracking-tight">
+                Dealership Pickup Day Inspection Steps
+              </span>
+            </div>
+
+            <Badge
+              variant="outline"
+              className={cn(
+                'text-[10px] font-semibold px-2 py-0.5 shrink-0',
+                verifiedCount === totalCount
+                  ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
+                  : 'border-amber-500/30 text-amber-400 bg-amber-500/10'
+              )}
+            >
+              {verifiedCount} of {totalCount} Verified
+            </Badge>
+
+            {verifiedCount >= 1 && (
+              <button
+                type="button"
+                data-testid="checklist-header-reset-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleReset();
+                }}
+                className="inline-flex items-center gap-1 text-[11px] font-semibold text-zinc-400 hover:text-amber-400 underline underline-offset-2 transition-colors cursor-pointer print:hidden"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Reset</span>
+              </button>
+            )}
           </div>
 
-          <Badge
-            variant="outline"
-            className={cn(
-              'text-[10px] font-semibold px-2 py-0.5 shrink-0',
-              verifiedCount === totalCount
-                ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
-                : 'border-amber-500/30 text-amber-400 bg-amber-500/10'
-            )}
-          >
-            {verifiedCount} of {totalCount} Verified
-          </Badge>
-        </div>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <button
+              type="button"
+              data-testid="checklist-share-btn"
+              onClick={handleShareChecklist}
+              className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-lg border border-zinc-700 bg-zinc-900/80 hover:bg-zinc-800 text-[11px] font-semibold text-zinc-200 hover:text-white transition-colors cursor-pointer print:hidden"
+            >
+              {copiedShare ? (
+                <>
+                  <Check className="h-3 w-3 text-emerald-400 shrink-0" />
+                  <span className="text-emerald-400">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="h-3 w-3 text-amber-400 shrink-0" />
+                  <span>Share Checklist</span>
+                </>
+              )}
+            </button>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsOpen((prev) => !prev);
-            }}
-            className="h-7 px-2 sm:px-2.5 text-xs font-semibold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 gap-1 cursor-pointer shrink-0"
-            aria-expanded={isOpen}
-          >
-            <span>{isOpen ? 'Hide Checklist ▴' : 'View Inspection Checks ▾'}</span>
-          </Button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (typeof window !== 'undefined') {
+                  window.print();
+                }
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 h-7 px-2.5 rounded-lg border border-zinc-700 bg-zinc-900/80 hover:bg-zinc-800 text-[11px] font-semibold text-zinc-200 hover:text-white transition-colors cursor-pointer print:hidden"
+            >
+              <Printer className="h-3 w-3 text-zinc-400 shrink-0" />
+              <span>Print</span>
+            </button>
+
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen((prev) => !prev);
+              }}
+              className="h-7 px-2 sm:px-2.5 text-xs font-semibold text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 gap-1 cursor-pointer shrink-0"
+              aria-expanded={isOpen}
+            >
+              <span>{isOpen ? 'Hide Checklist ▴' : 'View Inspection Checks ▾'}</span>
+            </Button>
+          </div>
         </div>
-      </div>
 
       {/* Expanded Accordion Body */}
       {isOpen && (
@@ -337,6 +470,7 @@ export function PickupChecklist({
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

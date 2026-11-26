@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, fireEvent } from '@testing-library/react';
 import DeliveryPrepPage, { generateMetadata, dynamic, instant } from '@/app/delivery-prep/page';
 import * as hostMetadata from '@/lib/seo/host-metadata';
 import * as popularityData from '@/lib/data/accessories-popularity';
@@ -400,6 +400,121 @@ describe('DeliveryPrepPage Route', () => {
       expect(cards.length).toBe(3);
       expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-fitcamx-rav4');
       expect(within(cards[0] as HTMLElement).getByText('🔥 Community Top Pick')).toBeInTheDocument();
+    });
+  });
+
+  describe('Interactive Model Selector Pill Bar & Model-Specific PDI Callout', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+      window.history.replaceState({}, '', '/delivery-prep');
+    });
+
+    it('renders the 6-model horizontal pill bar with touch-friendly min-h-[36px] buttons and swaps kit + PDI callout on RAV4/Sienna selection (CA)', async () => {
+      vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+        market: 'CA',
+        isUS: false,
+        baseUrl: 'https://www.toyotawaits.ca',
+        alternatesLanguages: {
+          'en-CA': 'https://www.toyotawaits.ca/delivery-prep',
+          'en-US': 'https://www.toyotawaits.com/delivery-prep',
+          'x-default': 'https://www.toyotawaits.ca/delivery-prep',
+        },
+      });
+      vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+      render(await DeliveryPrepPage());
+
+      const pillBar = screen.getByTestId('delivery-prep-model-selector');
+      expect(pillBar).toBeInTheDocument();
+
+      const expectedLabels = [
+        'Universal',
+        'RAV4',
+        'Sienna',
+        'Grand Highlander',
+        'Tacoma',
+        'Corolla Cross',
+      ];
+      for (const label of expectedLabels) {
+        const btn = within(pillBar).getByRole('tab', { name: label });
+        expect(btn).toBeInTheDocument();
+        expect(btn.className).toContain('min-h-[36px]');
+      }
+
+      // Universal is active by default, no model PDI callout pill shown
+      expect(screen.queryByTestId('model-pdi-callout-pill')).toBeNull();
+
+      // Switch to RAV4
+      fireEvent.click(screen.getByTestId('model-pill-rav4'));
+
+      const shelf = screen.getByTestId('day-one-gear-shelf');
+      expect(within(shelf).getByText(/TuxMat All-Weather Floor Liners \(RAV4\)/i)).toBeInTheDocument();
+      expect(within(shelf).getByText(/FitcamX OEM 4K Dashcam \(RAV4\)/i)).toBeInTheDocument();
+      expect(within(shelf).getByText(/Muslogy Console Organizer \(RAV4\)/i)).toBeInTheDocument();
+      expect(within(shelf).getByText(/Code: Toyotawaits/i)).toBeInTheDocument();
+
+      // Verify keyword search fallbacks (/s?k=...) with CA tag toyotawaits-20
+      const amazonLinks = within(shelf)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.ca'));
+      expect(amazonLinks.length).toBeGreaterThanOrEqual(2);
+      for (const link of amazonLinks) {
+        expect(link).toHaveAttribute('href', expect.stringContaining('/s?k='));
+        expect(link).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits-20'));
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+      }
+
+      // Model-specific PDI callout pill appears above inspection checklist
+      const rav4PdiPill = screen.getByTestId('model-pdi-callout-pill');
+      expect(rav4PdiPill).toHaveTextContent(/120V Level 1 charging cable/i);
+
+      // Switch to Sienna
+      fireEvent.click(screen.getByTestId('model-pill-sienna'));
+      expect(within(shelf).getByText(/TuxMat All-Weather Floor Liners \(Sienna\)/i)).toBeInTheDocument();
+      expect(within(shelf).getByText(/FitcamX OEM 4K Dashcam \(Sienna\)/i)).toBeInTheDocument();
+      expect(within(shelf).getByText(/Muslogy Console Organizer \(Sienna\)/i)).toBeInTheDocument();
+      expect(screen.getByTestId('model-pdi-callout-pill')).toHaveTextContent(
+        /hands-free kick-sensor sliding doors/i
+      );
+
+      // Switch back to Universal
+      fireEvent.click(screen.getByTestId('model-pill-universal'));
+      expect(screen.queryByTestId('model-pdi-callout-pill')).toBeNull();
+      const cards = shelf.querySelectorAll('[data-testid^="checklist-item-"]');
+      expect(cards[0]).toHaveAttribute('data-testid', 'checklist-item-rfid-faraday-key-fob-pouch');
+      expect(cards[1]).toHaveAttribute('data-testid', 'checklist-item-noco-gb40-jump-pack');
+    });
+
+    it('enforces US (toyotawaits07-20) affiliate tag on model-specific Day-One Pickup Kit links', async () => {
+      vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+        market: 'US',
+        isUS: true,
+        baseUrl: 'https://www.toyotawaits.com',
+        alternatesLanguages: {
+          'en-CA': 'https://www.toyotawaits.ca/delivery-prep',
+          'en-US': 'https://www.toyotawaits.com/delivery-prep',
+          'x-default': 'https://www.toyotawaits.ca/delivery-prep',
+        },
+      });
+      vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+      render(await DeliveryPrepPage({ searchParams: { model: 'grand-highlander' } }));
+
+      const shelf = screen.getByTestId('day-one-gear-shelf');
+      expect(
+        within(shelf).getByText(/TuxMat All-Weather Floor Liners \(Grand Highlander\)/i)
+      ).toBeInTheDocument();
+      expect(screen.getByTestId('model-pdi-callout-pill')).toHaveTextContent(/3rd-row USB-C ports/i);
+
+      const amazonLinks = within(shelf)
+        .getAllByRole('link')
+        .filter((link) => (link.getAttribute('href') || '').includes('amazon.com'));
+      expect(amazonLinks.length).toBeGreaterThanOrEqual(2);
+      for (const link of amazonLinks) {
+        expect(link).toHaveAttribute('href', expect.stringContaining('/s?k='));
+        expect(link).toHaveAttribute('href', expect.stringContaining('tag=toyotawaits07-20'));
+        expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
+      }
     });
   });
 });

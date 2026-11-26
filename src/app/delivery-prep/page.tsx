@@ -14,7 +14,11 @@ import { TradeInValuationCard } from '@/components/discovery/TradeInValuationCar
 import { OntarioInsuranceCard } from '@/components/discovery/OntarioInsuranceCard';
 import { ShieldCheck, Car, KeyRound, Wrench, Luggage, HelpCircle, Loader2 } from 'lucide-react';
 import { GearCard, type GearCardItem } from '@/components/gear/GearCard';
-import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
+import {
+  DeliveryPrepModelProvider,
+  DeliveryPrepDayOneKit,
+  normalizeDeliveryPrepModel,
+} from '@/components/delivery-prep/delivery-prep-model-context';
 import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -173,7 +177,12 @@ function getUniversalDayOneEssentials(weights: Record<string, number>): GearCard
   return uniqueByTitle;
 }
 
-export default async function DeliveryPrepPage() {
+export default async function DeliveryPrepPage(props?: {
+  searchParams?: Promise<{ model?: string }> | { model?: string };
+}) {
+  const resolvedSearchParams = props?.searchParams ? await props.searchParams : undefined;
+  const initialModel = normalizeDeliveryPrepModel(resolvedSearchParams?.model);
+
   const [weights, { isUS }] = await Promise.all([
     getPopularAccessoryWeights(),
     getRequestMarketMetadata('/delivery-prep'),
@@ -256,46 +265,44 @@ export default async function DeliveryPrepPage() {
           </div>
         </div>
 
-        {/* Top-Picked Day-One Pickup Kit (Above the Fold) */}
-        <DayOneGearShelf
-          items={topDayOneItems}
-          title="Top-Picked Day-One Pickup Kit"
-          subtitle="Most-ordered accessories by ToyotaWaits buyers before driving off the lot."
-          market={isUS ? 'US' : 'CA'}
-          placement="delivery_prep_top_kit"
-          className="print:hidden"
-        />
+        <DeliveryPrepModelProvider initialModel={initialModel}>
+          {/* Top-Picked Day-One Pickup Kit (Above the Fold) */}
+          <DeliveryPrepDayOneKit
+            universalItems={topDayOneItems}
+            market={isUS ? 'US' : 'CA'}
+          />
 
-        {/* Winter Tire Seasonal Callout Banner */}
-        <div
-          data-testid="winter-tire-callout-banner"
-          className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm print:hidden"
-        >
-          <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed">
-            Taking winter delivery? Check factory OEM tire sizing, 17-inch downsizing wheels, and provincial winter compliance.
-          </p>
-          <Link
-            href="/tires"
-            className="shrink-0 inline-flex items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 text-xs font-bold text-white transition-colors"
+          {/* Winter Tire Seasonal Callout Banner */}
+          <div
+            data-testid="winter-tire-callout-banner"
+            className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm print:hidden"
           >
-            View Toyota Winter Tire Guide →
-          </Link>
-        </div>
+            <p className="text-xs sm:text-sm text-zinc-200 leading-relaxed">
+              Taking winter delivery? Check factory OEM tire sizing, 17-inch downsizing wheels, and provincial winter compliance.
+            </p>
+            <Link
+              href="/tires"
+              className="shrink-0 inline-flex items-center justify-center rounded-lg border border-zinc-700 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 text-xs font-bold text-white transition-colors"
+            >
+              View Toyota Winter Tire Guide →
+            </Link>
+          </div>
 
-        {/* 1. Toyota Canada Order Status Codes (Status A, F, G) */}
-        <FactoryStatusTracker />
+          {/* 1. Toyota Canada Order Status Codes (Status A, F, G) */}
+          <FactoryStatusTracker />
 
-        <SeasonalDealBanner className="print:hidden" />
+          <SeasonalDealBanner className="print:hidden" />
 
-        {/* 2. Dealer Tracking FAQ & Pro-Tips + Cross-Link Hub */}
-        <DealerTrackingTips />
+          {/* 2. Dealer Tracking FAQ & Pro-Tips + Cross-Link Hub */}
+          <DealerTrackingTips />
 
-        {/* 3. Interactive Checklist Component wrapped in Suspense */}
-        <section className="space-y-4 pt-2">
-          <Suspense fallback={<ChecklistLoadingFallback />}>
-            <PickupChecklist defaultOpen={true} />
-          </Suspense>
-        </section>
+          {/* 3. Interactive Checklist Component wrapped in Suspense */}
+          <section className="space-y-4 pt-2">
+            <Suspense fallback={<ChecklistLoadingFallback />}>
+              <PickupChecklist defaultOpen={true} />
+            </Suspense>
+          </section>
+        </DeliveryPrepModelProvider>
 
         {/* 4. Cargo & Trunk Organization Section */}
         <section className="space-y-4 pt-2" id="cargo-trunk-organization">
