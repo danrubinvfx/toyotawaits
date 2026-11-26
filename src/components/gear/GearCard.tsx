@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 import { VideoModal, extractYouTubeVideoId } from '@/components/delivery-prep/video-modal';
 import { trackAffiliateClick } from '@/lib/gear/telemetry';
+import { trackMuslogyGearClick } from '@/lib/analytics';
 
 import { getGearMarketConfig, resolveVerifiedGearImageSrc } from '@/data/gear/catalog';
 import { GearImage } from '@/components/gear/GearImage';
@@ -65,6 +66,8 @@ export interface GearCardItem {
   searchQuery?: string;
   searchKeywordsCA?: string;
   searchKeywordsUS?: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   destinationUrl?: string;
   affiliateUrl?: string;
   activeModel?: string;
@@ -383,11 +386,28 @@ export function GearCard({
   );
 
   const effectiveWebUrl = isDirectPartner ? amazonAffiliateUrl : deepLinkTargets.webUrl;
+  const amazonFallbackQuery = item.amazonFallbackQuery || config?.amazonFallbackQuery;
+  const amazonFallbackUrl =
+    isDirectPartner && amazonFallbackQuery
+      ? buildAmazonAffiliateUrl({
+          query: amazonFallbackQuery,
+          market: activeMarket,
+        })
+      : undefined;
 
   const handleAffiliateClick = () => {
+    const baseId = item.id || item.slug;
+    if (isDirectPartner) {
+      trackMuslogyGearClick({
+        accessoryId: baseId,
+        channel: 'muslogy_direct',
+        placement,
+        model: currentModel || 'RAV4',
+      });
+    }
     if (placement) {
       trackAffiliateClick({
-        accessory_id: item.id || item.slug,
+        accessory_id: baseId,
         placement: placement as any,
         model_context: currentModel || 'RAV4',
         target_url: effectiveWebUrl,
@@ -601,6 +621,36 @@ export function GearCard({
             </span>
           </a>
         </Button>
+
+        {isDirectPartner && amazonFallbackUrl && (
+          <a
+            href={amazonFallbackUrl}
+            target="_blank"
+            rel="sponsored noopener noreferrer nofollow"
+            draggable={false}
+            onClick={(e) => {
+              const amazonId = `${item.id || item.slug}-amazon`;
+              trackMuslogyGearClick({
+                accessoryId: amazonId,
+                channel: 'amazon_prime_alt',
+                placement,
+                model: currentModel || 'RAV4',
+              });
+              if (placement) {
+                trackAffiliateClick({
+                  accessory_id: amazonId,
+                  placement: placement as any,
+                  model_context: currentModel || 'RAV4',
+                  target_url: amazonFallbackUrl,
+                });
+              }
+              handleAmazonNavigation(e, buildAmazonDeepLinks(amazonFallbackUrl));
+            }}
+            className="w-full text-[11px] text-neutral-400 hover:text-amber-400 underline-offset-2 hover:underline inline-flex items-center justify-center gap-1 mt-1.5 transition-colors"
+          >
+            <span>or Check Prime Price on Amazon ↗</span>
+          </a>
+        )}
 
         {/* Secondary CTA: Compact text button for VideoModal or external link */}
         {(() => {

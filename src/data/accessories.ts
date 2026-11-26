@@ -17,6 +17,8 @@ export interface AccessoryItem {
   imageUrl?: string;
   fallbackIcon?: string;
   searchQuery?: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   asin_ca?: string;
   asin_us?: string;
   videoUrl?: string;
@@ -40,6 +42,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Dual-tier armrest storage divider.',
     estimatedPriceCad: '$22 – $28 CAD',
     url: '/out/muslogy-rav4',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota RAV4',
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'rav4', 'rav4-hybrid', 'rav4-prime'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -57,6 +60,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Dual-tier armrest storage divider.',
     estimatedPriceCad: '$28 – $36 CAD',
     url: '/out/muslogy-sienna',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Sienna',
     applicableModels: ['Sienna', 'sienna', 'sienna-hybrid'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -74,6 +78,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Dual-tier armrest storage divider.',
     estimatedPriceCad: '$24 – $32 CAD',
     url: '/out/muslogy-grand-highlander',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Grand Highlander',
     applicableModels: ['Grand Highlander', 'grand-highlander', 'grand highlander', 'Grand Highlander Hybrid'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -91,6 +96,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.',
     estimatedPriceCad: '$24 – $32 CAD',
     url: '/out/muslogy-armrest-cover',
+    amazonFallbackQuery: 'Muslogy center console armrest cover Toyota RAV4',
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'rav4', 'rav4-hybrid', 'rav4-prime'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -108,6 +114,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Secures groceries and gear.',
     estimatedPriceCad: '$24 – $30 CAD',
     url: '/out/muslogy-rav4-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     applicableModels: ['RAV4', 'RAV4 Hybrid', 'RAV4 Plug-in Hybrid', 'rav4', 'rav4-hybrid', 'rav4-prime'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -125,6 +132,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Secures groceries and gear.',
     estimatedPriceCad: '$26 – $34 CAD',
     url: '/out/muslogy-sienna-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     applicableModels: ['Sienna', 'sienna', 'sienna-hybrid'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,
@@ -142,6 +150,7 @@ export const ESSENTIAL_ACCESSORIES: AccessoryItem[] = [
     description: 'Secures groceries and gear.',
     estimatedPriceCad: '$26 – $34 CAD',
     url: '/out/muslogy-grand-highlander-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     applicableModels: ['Grand Highlander', 'grand-highlander', 'grand highlander', 'Grand Highlander Hybrid'],
     badge: 'Partner Deal · 2% Off',
     isDeliveryDayEssential: true,

@@ -65,3 +65,28 @@ export function trackGuideOrGearShared(params: {
   }
   trackUserEvent('guide_or_gear_shared', properties);
 }
+
+export type MuslogyChannel = 'muslogy_direct' | 'amazon_prime_alt';
+
+export function trackMuslogyGearClick(params: {
+  accessoryId: string;
+  channel: MuslogyChannel;
+  placement?: string;
+  model?: string;
+}): void {
+  const properties: Record<string, string> = {
+    accessoryId: params.accessoryId,
+    channel: params.channel,
+  };
+  if (params.placement) {
+    properties.placement = params.placement;
+  }
+  if (params.model) {
+    properties.model = params.model;
+  }
+
+  trackUserEvent('muslogy_gear_clicked', properties);
+  if (params.channel === 'amazon_prime_alt') {
+    trackUserEvent('affiliate_gear_clicked', properties);
+  }
+}

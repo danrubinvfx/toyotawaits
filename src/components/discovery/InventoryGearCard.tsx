@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import { ExternalLink, Copy, Check } from 'lucide-react';
 import { AccessoryItem } from '@/data/accessories';
 import { trackAffiliateClick } from '@/lib/gear';
-import { trackUserEvent } from '@/lib/analytics';
+import { trackUserEvent, trackMuslogyGearClick } from '@/lib/analytics';
+import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
+import { useMarket } from '@/context/MarketContext';
 import { GearImage } from '@/components/gear/GearImage';
 import {
   GEAR_MARKET_CATALOG,
@@ -68,6 +70,7 @@ export function InventoryGearCard({
   className = '',
 }: InventoryGearCardProps) {
   const [copied, setCopied] = useState(false);
+  const { market } = useMarket();
   const benefitSubline = BENEFIT_HOOK_MAP[item.id] || item.description;
 
   const config = getGearMarketConfig(item.id);
@@ -85,6 +88,11 @@ export function InventoryGearCard({
     item.id.startsWith('muslogy-');
 
   const discountCode = item.discountCode || config?.discountCode || (isDirectPartner ? 'Toyotawaits' : undefined);
+  const amazonFallbackQuery = item.amazonFallbackQuery || config?.amazonFallbackQuery;
+  const amazonFallbackUrl =
+    isDirectPartner && amazonFallbackQuery
+      ? buildAmazonAffiliateUrl({ query: amazonFallbackQuery, market })
+      : undefined;
   const buttonText = isDirectPartner ? 'Get 2% Off' : 'Check Price';
   const outboundRel = isDirectPartner ? 'sponsored noopener noreferrer' : 'noopener noreferrer';
 
@@ -172,7 +180,7 @@ export function InventoryGearCard({
         </div>
 
         {/* Right Column: High-Conversion CTA Button */}
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 flex flex-col items-end">
           <a
             href={item.url}
             target="_blank"
@@ -185,6 +193,14 @@ export function InventoryGearCard({
                 model: modelContext || 'inventory',
                 placement: 'inventory_feed',
               });
+              if (isDirectPartner) {
+                trackMuslogyGearClick({
+                  accessoryId: item.id,
+                  channel: 'muslogy_direct',
+                  placement: 'inventory_feed',
+                  model: modelContext || 'inventory',
+                });
+              }
               trackAffiliateClick({
                 accessory_id: item.id,
                 placement: 'inventory_feed',
@@ -200,6 +216,31 @@ export function InventoryGearCard({
             <span>{buttonText}</span>
             <ExternalLink className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           </a>
+          {isDirectPartner && amazonFallbackUrl && (
+            <a
+              href={amazonFallbackUrl}
+              target="_blank"
+              rel="sponsored noopener noreferrer nofollow"
+              onClick={() => {
+                const amazonId = `${item.id}-amazon`;
+                trackMuslogyGearClick({
+                  accessoryId: amazonId,
+                  channel: 'amazon_prime_alt',
+                  placement: 'inventory_feed',
+                  model: modelContext || 'inventory',
+                });
+                trackAffiliateClick({
+                  accessory_id: amazonId,
+                  placement: 'inventory_feed',
+                  model_context: modelContext || null,
+                  target_url: amazonFallbackUrl,
+                });
+              }}
+              className="text-[11px] text-neutral-400 hover:text-amber-400 underline-offset-2 hover:underline inline-flex items-center justify-center gap-1 mt-1.5 transition-colors"
+            >
+              <span>or Check Prime Price on Amazon ↗</span>
+            </a>
+          )}
         </div>
       </div>
 

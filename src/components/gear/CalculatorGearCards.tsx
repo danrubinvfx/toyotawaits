@@ -31,7 +31,7 @@ import { handleAmazonNavigation } from '@/components/gear/useAmazonRedirect';
 import { StorefrontLink } from '@/components/gear/StorefrontLink';
 import { resolveGearLocalImage } from '@/data/gear/catalog';
 import { sortGearByPromotions } from '@/lib/gear/promotions';
-import { trackUserEvent } from '@/lib/analytics';
+import { trackUserEvent, trackMuslogyGearClick } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
 export interface VettedProduct {
@@ -42,6 +42,8 @@ export interface VettedProduct {
   description: string;
   asin?: string;
   searchQuery?: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   destinationType?: 'direct_partner' | 'amazon' | string;
   destinationUrl?: string;
   discountCode?: string;
@@ -206,6 +208,7 @@ const RAV4_PRODUCTS: VettedProduct[] = [
     imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
     description: 'Custom-fit drop-in tray that divides deep console bins into organized dual compartments.',
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota RAV4',
     bullets: [
       'Drop-in multi-tier center console armrest divider tray',
       'Anti-slip silicone coin & smartphone compartment inserts',
@@ -252,6 +255,7 @@ const SIENNA_PRODUCTS: VettedProduct[] = [
     imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
     description: 'Drop-in sliding organizer that unlocks the expansive cavernous Sienna bridge console area.',
     searchQuery: 'Toyota Sienna 2021-2026 center console bridge organizer tray',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Sienna',
     bullets: [
       'Smooth-sliding top tray for sunglasses, toll passes, and pens',
       'Lower bridge organizer for purse, tissue boxes, or tablets',
@@ -374,6 +378,7 @@ const GRAND_HIGHLANDER_PRODUCTS: VettedProduct[] = [
     imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
     description: 'Multi-compartment organizer that splits the deep armrest bin into easily accessible levels.',
     searchQuery: 'Toyota Grand Highlander center console organizer tray divider',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Grand Highlander',
     bullets: [
       'Organizes phones, wallet, sunglasses, keys, and coins',
       'Preserves lower bin room for large items and charging cables',
@@ -779,6 +784,14 @@ export function CalculatorGearCards({
       model: modelKey,
       placement: 'calculator_gear',
     });
+    if (prod.destinationType === 'direct_partner') {
+      trackMuslogyGearClick({
+        accessoryId: prod.id,
+        channel: 'muslogy_direct',
+        placement: 'calculator_gear',
+        model: modelKey,
+      });
+    }
     if (prod.destinationType === 'direct_partner' && prod.discountCode) {
       if (typeof navigator !== 'undefined' && navigator.clipboard) {
         navigator.clipboard.writeText(prod.discountCode).catch(() => {});
@@ -828,6 +841,13 @@ export function CalculatorGearCards({
           const Icon = prod.icon;
           const affiliateUrl = getAffiliateUrl(prod);
           const isDirectPartner = prod.destinationType === 'direct_partner';
+          const amazonFallbackUrl =
+            isDirectPartner && prod.amazonFallbackQuery
+              ? buildAmazonAffiliateUrl({
+                  query: prod.amazonFallbackQuery,
+                  market: currentMarket,
+                })
+              : undefined;
           const deepLinkTargets: MobileDeepLinkTargets = buildAmazonDeepLinks({
             asin: prod.asin,
             query: prod.searchQuery,
@@ -977,6 +997,25 @@ export function CalculatorGearCards({
                       <ExternalLink className="w-3 h-3 opacity-60" />
                     </a>
                   </Button>
+                  {isDirectPartner && amazonFallbackUrl && (
+                    <a
+                      href={amazonFallbackUrl}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer nofollow"
+                      onClick={(e) => {
+                        trackMuslogyGearClick({
+                          accessoryId: `${prod.id}-amazon`,
+                          channel: 'amazon_prime_alt',
+                          placement: 'calculator_gear',
+                          model: modelKey,
+                        });
+                        handleAmazonNavigation(e, buildAmazonDeepLinks(amazonFallbackUrl));
+                      }}
+                      className="w-full text-[11px] text-neutral-400 hover:text-amber-400 underline-offset-2 hover:underline inline-flex items-center justify-center gap-1 mt-1.5 transition-colors"
+                    >
+                      <span>or Check Prime Price on Amazon ↗</span>
+                    </a>
+                  )}
                 </div>
               </CardContent>
             </Card>

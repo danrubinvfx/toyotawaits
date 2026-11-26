@@ -7,7 +7,8 @@ import { getAccessoriesForModel, AccessoryItem } from '@/data/accessories';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { trackAffiliateClick } from '@/lib/gear';
-import { trackUserEvent } from '@/lib/analytics';
+import { trackUserEvent, trackMuslogyGearClick } from '@/lib/analytics';
+import { useMarket } from '@/context/MarketContext';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 
 export interface WhileYouWaitGearProps {
@@ -138,6 +139,7 @@ export function WhileYouWaitGear({
 }: WhileYouWaitGearProps) {
   const [fetchedCounts, setFetchedCounts] = React.useState<Record<string, number>>({});
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
+  const { market } = useMarket();
 
   const handleCopyCode = (code: string, id: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -382,6 +384,12 @@ export function WhileYouWaitGear({
                         target_url: item.url,
                       });
                       if (item.destinationType === 'direct_partner') {
+                        trackMuslogyGearClick({
+                          accessoryId: item.id,
+                          channel: 'muslogy_direct',
+                          placement: placement || (isDeliveryDay ? 'delivery_congratulations' : 'while_you_wait'),
+                          model: modelName || 'universal',
+                        });
                         handleCopyCode(item.discountCode || 'Toyotawaits', item.id);
                       }
                     }}
@@ -391,6 +399,40 @@ export function WhileYouWaitGear({
                   </a>
                 </Button>
               </div>
+              {item.destinationType === 'direct_partner' && item.amazonFallbackQuery && (() => {
+                const amazonFallbackUrl = buildAmazonAffiliateUrl({
+                  query: item.amazonFallbackQuery,
+                  market,
+                });
+                const effectivePlacement = placement || (isDeliveryDay ? 'delivery_congratulations' : 'while_you_wait');
+                return (
+                  <div className="flex justify-end mt-1">
+                    <a
+                      href={amazonFallbackUrl}
+                      target="_blank"
+                      rel="sponsored noopener noreferrer nofollow"
+                      onClick={() => {
+                        const amazonId = `${item.id}-amazon`;
+                        trackMuslogyGearClick({
+                          accessoryId: amazonId,
+                          channel: 'amazon_prime_alt',
+                          placement: effectivePlacement,
+                          model: modelName || 'universal',
+                        });
+                        trackAffiliateClick({
+                          accessory_id: amazonId,
+                          placement: effectivePlacement as any,
+                          model_context: modelName || null,
+                          target_url: amazonFallbackUrl,
+                        });
+                      }}
+                      className="text-[11px] text-neutral-400 hover:text-amber-400 underline-offset-2 hover:underline inline-flex items-center justify-center gap-1 transition-colors"
+                    >
+                      <span>or Check Prime Price on Amazon ↗</span>
+                    </a>
+                  </div>
+                );
+              })()}
             </div>
           );
         })}

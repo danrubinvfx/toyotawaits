@@ -21,6 +21,8 @@ export interface GearItem {
   imageUrl?: string;         // e.g. '/assets/gear/fitcamx-rav4.webp'
   fallbackIcon?: string;     // e.g. 'camera' | 'layers' | 'lock' | 'layout-grid'
   searchQuery: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   asin_ca?: string;
   asin_us?: string;
   videoUrl?: string;         // e.g. YouTube guide
@@ -54,6 +56,8 @@ export interface GearMarketConfig {
   searchQuery?: string;
   searchKeywordsCA?: string;
   searchKeywordsUS?: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   category?: string;
   compatibility?: string;
   fitment?: string;
@@ -90,6 +94,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
     searchKeywordsCA: 'Muslogy center console organizer tray Toyota RAV4',
     searchKeywordsUS: 'Muslogy center console organizer tray Toyota RAV4',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota RAV4',
     compatibility: 'Toyota RAV4 (2019–2026)',
     fitment: 'RAV4 Direct Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -112,6 +117,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy center console organizer tray Toyota RAV4',
     searchKeywordsCA: 'Muslogy center console organizer tray Toyota RAV4',
     searchKeywordsUS: 'Muslogy center console organizer tray Toyota RAV4',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota RAV4',
     compatibility: 'Toyota RAV4 (2019–2026)',
     fitment: 'RAV4 Direct Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -134,6 +140,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota Sienna center console organizer tray',
     searchKeywordsCA: 'Muslogy Toyota Sienna center console organizer tray',
     searchKeywordsUS: 'Muslogy Toyota Sienna center console organizer tray',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Sienna',
     compatibility: 'Toyota Sienna (2021–2026)',
     fitment: 'Sienna Direct Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -156,6 +163,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota Sienna center console bridge organizer',
     searchKeywordsCA: 'Muslogy Toyota Sienna center console bridge organizer',
     searchKeywordsUS: 'Muslogy Toyota Sienna center console bridge organizer',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Sienna',
     compatibility: 'Toyota Sienna (2021–2026)',
     fitment: 'Sienna Direct Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -178,6 +186,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota RAV4 padded armrest cover',
     searchKeywordsCA: 'Muslogy Toyota RAV4 padded armrest cover',
     searchKeywordsUS: 'Muslogy Toyota RAV4 padded armrest cover',
+    amazonFallbackQuery: 'Muslogy center console armrest cover Toyota RAV4',
     compatibility: 'Toyota RAV4 (2019–2026)',
     fitment: 'RAV4 Custom Fit',
     description: 'Ergonomic soft memory-foam padded leatherette console cover that relieves arm fatigue and protects factory upholstery.',
@@ -200,6 +209,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Grand Highlander console organizer tray',
     searchKeywordsCA: 'Muslogy Grand Highlander console organizer tray',
     searchKeywordsUS: 'Muslogy Grand Highlander console organizer tray',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Grand Highlander',
     compatibility: 'Toyota Grand Highlander (2024–2026)',
     fitment: 'Grand Highlander Custom Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -222,6 +232,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Grand Highlander console organizer tray',
     searchKeywordsCA: 'Muslogy Grand Highlander console organizer tray',
     searchKeywordsUS: 'Muslogy Grand Highlander console organizer tray',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Grand Highlander',
     compatibility: 'Toyota Grand Highlander (2024–2026)',
     fitment: 'Grand Highlander Custom Fit',
     description: 'Dual-tier armrest storage divider.',
@@ -252,6 +263,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota RAV4 trunk cargo net envelope',
     searchKeywordsCA: 'Muslogy Toyota RAV4 trunk cargo net envelope',
     searchKeywordsUS: 'Muslogy Toyota RAV4 trunk cargo net envelope',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     description: 'Secures groceries and gear.',
     whyBuy: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
     imageUrl: '/assets/gear/muslogy-rav4-cargo-net.webp',
@@ -282,6 +294,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota Sienna trunk cargo net envelope',
     searchKeywordsCA: 'Muslogy Toyota Sienna trunk cargo net envelope',
     searchKeywordsUS: 'Muslogy Toyota Sienna trunk cargo net envelope',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     description: 'Secures groceries and gear.',
     whyBuy: 'Official Muslogy direct-fit cargo organizer with exclusive 2% discount with code Toyotawaits.',
     imageUrl: '/assets/gear/muslogy-sienna-cargo-net.webp',
@@ -312,6 +325,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy trunk cargo net envelope',
     searchKeywordsCA: 'Muslogy trunk cargo net envelope',
     searchKeywordsUS: 'Muslogy trunk cargo net envelope',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     description: 'Secures groceries and gear.',
     whyBuy: 'Heavy-duty elastic envelope mesh securing grocery bags and gear upright against factory tie-down D-rings.',
     imageUrl: '/assets/gear/muslogy-cargo-net.webp',
@@ -342,6 +356,7 @@ export const GEAR_MARKET_CATALOG: Record<string, GearMarketConfig> = {
     searchQuery: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
     searchKeywordsCA: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
     searchKeywordsUS: 'Muslogy Toyota Grand Highlander trunk cargo net envelope',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     description: 'Secures groceries and gear.',
     whyBuy: 'Official Muslogy direct-fit trunk cargo net with exclusive 2% discount with code Toyotawaits.',
     imageUrl: '/assets/gear/muslogy-grand-highlander-cargo-net.webp',

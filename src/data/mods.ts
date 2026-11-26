@@ -56,6 +56,8 @@ export interface ModItem {
   searchQuery?: string;
   searchKeywordsCA?: string;
   searchKeywordsUS?: string;
+  amazonFallbackQuery?: string;
+  amazonFallbackSlug?: string;
   youtubeVideoId?: string;
   youtubeId?: string;
   videoTitle?: string;
@@ -99,6 +101,7 @@ export const MODS_CONFIG: ModItem[] = [
     priceEstCad: 'Partner Deal 2% Off',
     image: '/assets/gear/muslogy-rav4-organizer.webp',
     imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota RAV4',
     amazonCaAsinOrUrl: '/out/muslogy-rav4',
     destinationUrl: '/out/muslogy-rav4',
     affiliateUrl: '/out/muslogy-rav4',
@@ -132,6 +135,7 @@ export const MODS_CONFIG: ModItem[] = [
     amazonCaAsinOrUrl: '/out/muslogy-console',
     destinationUrl: '/out/muslogy-console',
     affiliateUrl: '/out/muslogy-console',
+    amazonFallbackQuery: 'Muslogy center console organizer Toyota Sienna',
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
   {
@@ -159,6 +163,7 @@ export const MODS_CONFIG: ModItem[] = [
     priceEstCad: 'Partner Deal 2% Off',
     image: '/assets/gear/muslogy-armrest-cover.webp',
     imageUrl: '/assets/gear/muslogy-armrest-cover.webp',
+    amazonFallbackQuery: 'Muslogy center console armrest cover Toyota RAV4',
     amazonCaAsinOrUrl: '/out/muslogy-rav4',
     destinationUrl: '/out/muslogy-rav4',
     affiliateUrl: '/out/muslogy-rav4',
@@ -192,6 +197,7 @@ export const MODS_CONFIG: ModItem[] = [
     amazonCaAsinOrUrl: '/out/muslogy-rav4-cargo-net',
     destinationUrl: '/out/muslogy-rav4-cargo-net',
     affiliateUrl: '/out/muslogy-rav4-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
   {
@@ -222,6 +228,7 @@ export const MODS_CONFIG: ModItem[] = [
     amazonCaAsinOrUrl: '/out/muslogy-sienna-cargo-net',
     destinationUrl: '/out/muslogy-sienna-cargo-net',
     affiliateUrl: '/out/muslogy-sienna-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
   {
@@ -252,6 +259,7 @@ export const MODS_CONFIG: ModItem[] = [
     amazonCaAsinOrUrl: '/out/muslogy-grand-highlander-cargo-net',
     destinationUrl: '/out/muslogy-grand-highlander-cargo-net',
     affiliateUrl: '/out/muslogy-grand-highlander-cargo-net',
+    amazonFallbackQuery: 'Muslogy trunk cargo net Toyota',
     buttonLabel: 'Get 2% Off on Muslogy ↗',
   },
   {
