@@ -1,6 +1,7 @@
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { getCommunitySubmissions } from '@/lib/db/submissions';
 import { getModelConfig } from '@/lib/data/model-registry';
+import { withTimeout } from '@/lib/utils/timeout';
 
 export type TrimOutcomeBadge =
   | '🟢 Straight MSRP Common'
@@ -252,11 +253,14 @@ export async function getTrimTransparencyMetrics(
     try {
       const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
 
-      const { data: subRows } = await supabase
-        .from('submissions')
-        .select('trim_name, pricing, doc_fee, mandatory_addons, mandatory_addons_cad, adm_markup, dealer_markup_adm, country')
-        .eq('country', market)
-        .limit(250);
+      const { data: subRows } = await withTimeout(
+        supabase
+          .from('submissions')
+          .select('trim_name, pricing, doc_fee, mandatory_addons, mandatory_addons_cad, adm_markup, dealer_markup_adm, country')
+          .eq('country', market)
+          .limit(250),
+        3500
+      );
 
       if (Array.isArray(subRows)) {
         for (const r of subRows) {
@@ -272,11 +276,14 @@ export async function getTrimTransparencyMetrics(
         }
       }
 
-      const { data: listingRows } = await supabase
-        .from('vehicles')
-        .select('trim, model')
-        .ilike('model', `%${dbFilter}%`)
-        .limit(250);
+      const { data: listingRows } = await withTimeout(
+        supabase
+          .from('vehicles')
+          .select('trim, model')
+          .ilike('model', `%${dbFilter}%`)
+          .limit(250),
+        3500
+      );
 
       if (Array.isArray(listingRows)) {
         for (const l of listingRows) {

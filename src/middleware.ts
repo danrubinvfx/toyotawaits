@@ -14,13 +14,31 @@ export function middleware(request: NextRequest) {
   const region = isUsDomain ? 'US' : 'CA';
   const domain = isUsDomain ? 'toyotawaits.com' : 'toyotawaits.ca';
 
+  // Enforce single-hop 301 canonical redirect for legacy prius-prime slugs and apex domains
+  const targetOrigin = isUsDomain
+    ? 'https://www.toyotawaits.com'
+    : 'https://www.toyotawaits.ca';
+  const normalizedPathname = request.nextUrl.pathname.toLowerCase();
+  const isLegacyPriusPrime =
+    normalizedPathname === '/prius-prime' ||
+    normalizedPathname.startsWith('/prius-prime/') ||
+    normalizedPathname === '/wait-times/prius-prime' ||
+    normalizedPathname === '/wait-times/prius-prime/';
+
+  if (isLegacyPriusPrime) {
+    const redirectUrl = new URL(
+      `/wait-times/prius${request.nextUrl.search}`,
+      targetOrigin
+    );
+    const redirectResponse = NextResponse.redirect(redirectUrl, 301);
+    redirectResponse.headers.set('x-region', region);
+    redirectResponse.headers.set('x-domain', domain);
+    return redirectResponse;
+  }
+
   // Enforce 301 canonical redirect from apex domain to www within the same TLD
   // preserving pathname and query string without looping on /wait-times/*
   if (host === 'toyotawaits.com' || host === 'toyotawaits.ca') {
-    const targetOrigin =
-      host === 'toyotawaits.com'
-        ? 'https://www.toyotawaits.com'
-        : 'https://www.toyotawaits.ca';
     const redirectUrl = new URL(
       `${request.nextUrl.pathname}${request.nextUrl.search}`,
       targetOrigin

@@ -10,6 +10,7 @@
  */
 import { unstable_cache } from 'next/cache';
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
+import { withTimeout } from '@/lib/utils/timeout';
 
 export const POPULARITY_WINDOW_DAYS = 30;
 export const POPULARITY_CACHE_SECONDS = 3600;
@@ -42,9 +43,12 @@ export async function queryPopularAccessoryWeights(): Promise<PopularityResult> 
     const supabase = createServerClient();
 
     // 1. Pre-aggregated 30-day view
-    const { data: viewData, error: viewError } = await supabase
-      .from('view_accessory_popularity_30d')
-      .select('accessory_id, click_count');
+    const { data: viewData, error: viewError } = await withTimeout(
+      supabase
+        .from('view_accessory_popularity_30d')
+        .select('accessory_id, click_count'),
+      3000
+    );
 
     if (!viewError && Array.isArray(viewData)) {
       const counts: PopularityWeights = {};
@@ -60,10 +64,13 @@ export async function queryPopularAccessoryWeights(): Promise<PopularityResult> 
     const windowStart = new Date(
       Date.now() - POPULARITY_WINDOW_DAYS * 24 * 60 * 60 * 1000
     ).toISOString();
-    const { data: rawRows, error: rawError } = await supabase
-      .from('telemetry_affiliate_clicks')
-      .select('accessory_id')
-      .gte('created_at', windowStart);
+    const { data: rawRows, error: rawError } = await withTimeout(
+      supabase
+        .from('telemetry_affiliate_clicks')
+        .select('accessory_id')
+        .gte('created_at', windowStart),
+      3000
+    );
 
     if (rawError || !Array.isArray(rawRows)) {
       return { counts: {}, source: 'error_fallback' };

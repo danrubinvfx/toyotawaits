@@ -65,6 +65,50 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/wait-times/prius-prime',
+        has: [
+          {
+            type: 'host',
+            value: 'toyotawaits.ca',
+          },
+        ],
+        destination: 'https://www.toyotawaits.ca/wait-times/prius',
+        permanent: true,
+      },
+      {
+        source: '/prius-prime',
+        has: [
+          {
+            type: 'host',
+            value: 'toyotawaits.ca',
+          },
+        ],
+        destination: 'https://www.toyotawaits.ca/wait-times/prius',
+        permanent: true,
+      },
+      {
+        source: '/prius-prime/:powertrain',
+        has: [
+          {
+            type: 'host',
+            value: 'toyotawaits.ca',
+          },
+        ],
+        destination: 'https://www.toyotawaits.ca/wait-times/prius',
+        permanent: true,
+      },
+      {
+        source: '/prius-prime/:powertrain/:province',
+        has: [
+          {
+            type: 'host',
+            value: 'toyotawaits.ca',
+          },
+        ],
+        destination: 'https://www.toyotawaits.ca/wait-times/prius',
+        permanent: true,
+      },
+      {
         source: '/:path*',
         has: [
           {
@@ -84,6 +128,9 @@ const nextConfig: NextConfig = {
       { source: '/camry', destination: '/wait-times/camry', permanent: true },
       { source: '/prius', destination: '/wait-times/prius', permanent: true },
       { source: '/prius-prime', destination: '/wait-times/prius', permanent: true },
+      { source: '/prius-prime/:powertrain', destination: '/wait-times/prius', permanent: true },
+      { source: '/prius-prime/:powertrain/:province', destination: '/wait-times/prius', permanent: true },
+      { source: '/wait-times/prius-prime', destination: '/wait-times/prius', permanent: true },
       { source: '/tacoma', destination: '/wait-times/tacoma', permanent: true },
       { source: '/tundra', destination: '/wait-times/tundra', permanent: true },
       { source: '/sequoia', destination: '/wait-times/sequoia', permanent: true },

@@ -36,6 +36,7 @@ import {
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 import { getPopularAccessoryWeights } from '@/lib/data/accessories-popularity';
 import { clampWaitDays } from '@/lib/estimator';
+import { withTimeout } from '@/lib/utils/timeout';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -111,12 +112,15 @@ async function fetchModelSubmissions(modelConfig: ModelRegistryEntry): Promise<{
   if (isLiveSupabaseConfigured()) {
     try {
       const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
-      const { data, error } = await supabase
-        .from('wait_times')
-        .select('id, created_at, order_date, delivery_date, wait_days, province, city, model, powertrain, trim, pricing, status')
-        .ilike('model', `%${modelConfig.dbFilter}%`)
-        .order('created_at', { ascending: false })
-        .limit(50);
+      const { data, error } = await withTimeout(
+        supabase
+          .from('wait_times')
+          .select('id, created_at, order_date, delivery_date, wait_days, province, city, model, powertrain, trim, pricing, status')
+          .ilike('model', `%${modelConfig.dbFilter}%`)
+          .order('created_at', { ascending: false })
+          .limit(50),
+        3500
+      );
 
       if (!error && Array.isArray(data) && data.length > 0) {
         records = data;

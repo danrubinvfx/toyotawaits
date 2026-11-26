@@ -3,6 +3,7 @@ import { RegionalWaitSummary, PercentileStats, CanadianProvince } from '@/lib/ty
 import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
 import { INITIAL_US_COMMUNITY_RECORDS } from '@/lib/data/community-records';
 import { US_NATIONAL_BENCHMARKS } from '@/lib/estimator/calculateWait';
+import { withTimeout } from '@/lib/utils/timeout';
 
 // Helper function to calculate percentiles from a sorted array of numbers
 export function calculatePercentiles(sortedValues: number[]): PercentileStats | null {
@@ -260,7 +261,7 @@ export async function getAggregateStats(
         query = (query as any).limit(50);
       }
 
-      const { data: rawRows, error } = await query;
+      const { data: rawRows, error } = await withTimeout(query, 3500);
 
       if (!error && Array.isArray(rawRows) && rawRows.length > 0) {
         const allRows: any[] = (rawRows as any[]).filter(

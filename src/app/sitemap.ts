@@ -6,6 +6,7 @@ import {
 } from '@/lib/data/vehicles';
 import { getAllModelConfigs, getModelConfig } from '@/lib/data/model-registry';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
+import { withTimeout } from '@/lib/utils/timeout';
 
 export const revalidate = 3600;
 export const dynamic = 'force-dynamic';
@@ -375,22 +376,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     CANADIAN_PROVINCES_LIST.map((prov) => prov.code.toLowerCase())
   );
 
-  // Query Supabase for distinct models, powertrains, and submitted provinces
+  // Query Supabase for distinct active models
   if (isLiveSupabaseConfigured()) {
     try {
       const supabase = createServerClient({ revalidate: 3600, tags: ['submissions', 'benchmarks'] });
-      const [modelsResult, submissionsResult] = await Promise.all([
+      const modelsResult = await withTimeout(
         supabase
           .from('vehicle_models')
-          .select('slug, vehicle_powertrains(slug)')
+          .select('slug')
           .eq('is_active', true)
           .limit(50),
-        supabase
-          .from('submissions')
-          .select('province')
-          .not('province', 'is', null)
-          .limit(50),
-      ]);
+        3000
+      );
 
       if (!modelsResult.error && Array.isArray(modelsResult.data)) {
         for (const row of modelsResult.data) {
@@ -398,23 +395,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           const modelSlug = String(row.slug).toLowerCase();
           if (!modelPowertrainsMap.has(modelSlug)) {
             modelPowertrainsMap.set(modelSlug, new Set());
-          }
-          const ptSet = modelPowertrainsMap.get(modelSlug)!;
-          const powertrains = Array.isArray(row.vehicle_powertrains)
-            ? row.vehicle_powertrains
-            : [];
-          for (const pt of powertrains) {
-            if (pt?.slug) {
-              ptSet.add(String(pt.slug).toLowerCase());
-            }
-          }
-        }
-      }
-
-      if (!submissionsResult.error && Array.isArray(submissionsResult.data)) {
-        for (const row of submissionsResult.data) {
-          if (row?.province) {
-            provinceSlugsSet.add(String(row.province).toLowerCase());
           }
         }
       }
@@ -424,10 +404,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   const dynamicRoutes: MetadataRoute.Sitemap = [];
-  const distinctProvinceSlugs = Array.from(provinceSlugsSet);
   const seenWaitTimeSlugs = new Set<string>();
 
-  for (const [modelSlug, powertrains] of modelPowertrainsMap.entries()) {
+  for (const [modelSlug] of modelPowertrainsMap.entries()) {
     const canonicalSlug = getModelConfig(modelSlug)?.slug || modelSlug;
     if (!seenWaitTimeSlugs.has(canonicalSlug)) {
       seenWaitTimeSlugs.add(canonicalSlug);
@@ -437,26 +416,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'daily',
         priority: 0.9,
       });
-    }
-
-    for (const powertrainSlug of powertrains) {
-      dynamicRoutes.push({
-        url: `${baseUrl}/${modelSlug}/${powertrainSlug}`,
-        lastModified: now,
-        changeFrequency: 'daily',
-        priority: 0.8,
-      });
-
-      if (!isUS) {
-        for (const provinceSlug of distinctProvinceSlugs) {
-          dynamicRoutes.push({
-            url: `${baseUrl}/${modelSlug}/${powertrainSlug}/${provinceSlug}`,
-            lastModified: now,
-            changeFrequency: 'weekly',
-            priority: 0.7,
-          });
-        }
-      }
     }
   }
 

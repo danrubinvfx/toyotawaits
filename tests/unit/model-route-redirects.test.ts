@@ -40,7 +40,7 @@ describe('Duplicate Model Route Equity & 301 Redirect Consolidation', () => {
       expect(match?.permanent).toBe(true);
     }
 
-    const priusPrimeMatch = redirects.find((r) => r.source === '/prius-prime');
+    const priusPrimeMatch = redirects.find((r) => r.source === '/prius-prime' && !r.has);
     expect(priusPrimeMatch).toBeDefined();
     expect(priusPrimeMatch?.destination).toBe('/wait-times/prius');
     expect(priusPrimeMatch?.permanent).toBe(true);

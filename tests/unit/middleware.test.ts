@@ -160,4 +160,40 @@ describe('Middleware Multi-Domain Routing (.ca vs .com)', () => {
     expect(wwwResponse.status).toBe(200);
     expect(wwwResponse.headers.get('location')).toBeNull();
   });
+it('enforces single-hop 301 redirect from https://toyotawaits.ca/wait-times/prius-prime to https://www.toyotawaits.ca/wait-times/prius', () => {
+    const apexRequest = new NextRequest('https://toyotawaits.ca/wait-times/prius-prime', {
+      headers: {
+        host: 'toyotawaits.ca',
+      },
+    });
+
+    const apexResponse = middleware(apexRequest);
+    expect(apexResponse.status).toBe(301);
+    expect(apexResponse.headers.get('location')).toBe('https://www.toyotawaits.ca/wait-times/prius');
+
+    // Legacy /prius-prime and /prius-prime/:path* on apex also consolidate in one hop
+    const rootLegacyRequest = new NextRequest('https://toyotawaits.ca/prius-prime', {
+      headers: { host: 'toyotawaits.ca' },
+    });
+    const rootLegacyResponse = middleware(rootLegacyRequest);
+    expect(rootLegacyResponse.status).toBe(301);
+    expect(rootLegacyResponse.headers.get('location')).toBe('https://www.toyotawaits.ca/wait-times/prius');
+
+    const facetedLegacyRequest = new NextRequest('https://toyotawaits.ca/prius-prime/phev/on?ref=gsc', {
+      headers: { host: 'toyotawaits.ca' },
+    });
+    const facetedLegacyResponse = middleware(facetedLegacyRequest);
+    expect(facetedLegacyResponse.status).toBe(301);
+    expect(facetedLegacyResponse.headers.get('location')).toBe(
+      'https://www.toyotawaits.ca/wait-times/prius?ref=gsc'
+    );
+
+    // Canonical target /wait-times/prius on www does not loop
+    const canonicalRequest = new NextRequest('https://www.toyotawaits.ca/wait-times/prius', {
+      headers: { host: 'www.toyotawaits.ca' },
+    });
+    const canonicalResponse = middleware(canonicalRequest);
+    expect(canonicalResponse.status).toBe(200);
+    expect(canonicalResponse.headers.get('location')).toBeNull();
+  });
 });

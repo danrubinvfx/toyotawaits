@@ -9,6 +9,10 @@ import {
   isRebateEligibleProvince,
   CANADIAN_VEHICLE_CATALOG,
 } from '@/lib/data/vehicles';
+import {
+  getFacetedRouteWaitStats,
+  getStaticBaselinePriors,
+} from '@/lib/db/faceted-wait-times';
 import { WaitTimeEstimator } from '@/components/calculator/wait-time-estimator';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -67,22 +71,7 @@ export async function generateMetadata({ params }: RouteProps): Promise<Metadata
     };
   }
 
-  let medianDays = 265;
-  if (model.slug === 'sienna') {
-    medianDays = 520;
-  } else if (model.slug === 'rav4' && powertrain.slug === 'phev') {
-    medianDays = ['BC', 'QC'].includes(province.code) ? 412 : 380;
-  } else if (model.slug === 'rav4' && powertrain.slug === 'hev') {
-    medianDays = ['BC', 'QC'].includes(province.code) ? 245 : 175;
-  } else if (model.slug === 'grand-highlander') {
-    medianDays = 280;
-  } else if (model.slug === 'land-cruiser') {
-    medianDays = 120;
-  } else if (model.slug === 'prius' || model.slug === 'prius-prime') {
-    medianDays = powertrain.slug === 'phev' ? 181 : 104;
-  } else if (model.slug === 'sequoia') {
-    medianDays = ['BC', 'ON'].includes(province.code) ? 260 : 210;
-  }
+  const { medianDays } = getStaticBaselinePriors(model.slug, powertrain.slug, province.code);
 
   const months = (medianDays / 30.4).toFixed(1);
   const title = `Toyota ${model.name} ${powertrain.name} Wait Times in ${province.name} (${province.code}) | ToyotaWaits.ca`;
@@ -134,62 +123,11 @@ export default async function ProvincialVehiclePage({ params }: RouteProps) {
 
   const hasRebate = isRebateEligibleProvince(province.code);
 
-  // Compute empirical baseline wait statistics
-  let medianDays = 265;
-  let p25Days = 190;
-  let p75Days = 360;
-  let sampleCount = 65;
-
-  if (model.slug === 'sienna') {
-    medianDays = 520;
-    p25Days = 420;
-    p75Days = 640;
-    sampleCount = 185;
-  } else if (model.slug === 'rav4' && powertrain.slug === 'phev') {
-    if (['BC', 'QC'].includes(province.code)) {
-      medianDays = 412;
-      p25Days = 310;
-      p75Days = 540;
-      sampleCount = 215;
-    } else {
-      medianDays = 380;
-      p25Days = 280;
-      p75Days = 490;
-      sampleCount = 98;
-    }
-  } else if (model.slug === 'rav4' && powertrain.slug === 'hev') {
-    medianDays = ['BC', 'QC'].includes(province.code) ? 245 : 175;
-    p25Days = 120;
-    p75Days = 290;
-    sampleCount = 240;
-  } else if (model.slug === 'grand-highlander') {
-    medianDays = 280;
-    p25Days = 210;
-    p75Days = 380;
-    sampleCount = 88;
-  } else if (model.slug === 'land-cruiser') {
-    medianDays = 120;
-    p25Days = 75;
-    p75Days = 180;
-    sampleCount = 38;
-  } else if (model.slug === 'prius' || model.slug === 'prius-prime') {
-    if (powertrain.slug === 'phev') {
-      medianDays = 181;
-      p25Days = 120;
-      p75Days = 240;
-      sampleCount = 45;
-    } else {
-      medianDays = 104;
-      p25Days = 75;
-      p75Days = 145;
-      sampleCount = 35;
-    }
-  } else if (model.slug === 'sequoia') {
-    medianDays = ['BC', 'ON'].includes(province.code) ? 260 : 210;
-    p25Days = 180;
-    p75Days = 330;
-    sampleCount = 28;
-  }
+  const { medianDays, p25Days, p75Days, sampleCount } = await getFacetedRouteWaitStats(
+    model.slug,
+    powertrain.slug,
+    province.code
+  );
 
   const medianMonths = (medianDays / 30.4).toFixed(1);
 

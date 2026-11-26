@@ -101,8 +101,18 @@ describe('Technical SEO & Discovery Configuration', () => {
     const rav4HevBcEntry = sitemapEntries.find(
       (e) => e.url === 'https://www.toyotawaits.ca/rav4/hev/bc'
     );
-    expect(rav4HevBcEntry).toBeDefined();
-    expect(rav4HevBcEntry?.priority).toBe(0.7);
+    expect(rav4HevBcEntry).toBeUndefined();
+
+    const priusPrimeEntry = sitemapEntries.find(
+      (e) =>
+        e.url === 'https://www.toyotawaits.ca/prius-prime' ||
+        e.url === 'https://www.toyotawaits.ca/wait-times/prius-prime' ||
+        e.url.includes('/prius-prime/')
+    );
+    expect(priusPrimeEntry).toBeUndefined();
+
+    const nonWwwEntry = sitemapEntries.find((e) => e.url.startsWith('https://toyotawaits.ca'));
+    expect(nonWwwEntry).toBeUndefined();
 
     // Reciprocal alternates.languages (en-CA + en-US) on CA default sitemap
     expect(rootEntry?.alternates?.languages).toEqual({
