@@ -24,10 +24,8 @@ import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner
 import { ModelSubmissionsTable } from '@/components/wait-times/ModelSubmissionsTable';
 import { EstimatorDisclaimer } from '@/components/wait-times/EstimatorDisclaimer';
 import { ShareRegionalSnapshotButton } from '@/components/wait-times/ShareRegionalSnapshotButton';
-import {
-  OrderRolloverCalculator,
-  getModelRolloverDeltas,
-} from '@/components/calculators/OrderRolloverCalculator';
+import { OrderRolloverCalculator } from '@/components/calculators/OrderRolloverCalculator';
+import { getModelRolloverDeltas } from '@/lib/data/rollover-deltas';
 import { getTrimTransparencyMetrics, findTrimMetric } from '@/lib/data/trim-metrics';
 import {
   MODEL_REGISTRY,

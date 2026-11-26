@@ -160,7 +160,15 @@ export async function GET(request?: Request) {
     const supabase = createServerClient({ revalidate: 300, tags: ['inventory'] });
     const cutoffIso = new Date(cutoffTime).toISOString();
 
-    const selectClause = `
+    const selectClause = isSummary
+      ? `
+      id,
+      current_status,
+      last_observed_at,
+      lifecycle_status,
+      vehicle:vehicles (model)
+    `
+      : `
       *,
       vehicle:vehicles (*),
       dealer:dealers (*),
@@ -194,6 +202,10 @@ export async function GET(request?: Request) {
       }
     }
 
+    if (typeof query.limit === 'function') {
+      query = query.limit(1000);
+    }
+
     const initialResult = await query.order('last_observed_at', { ascending: false });
     let data = initialResult.data;
     let totalCount = initialResult.count;
@@ -215,6 +227,9 @@ export async function GET(request?: Request) {
           'in',
           '("stale","removed","quarantined","No longer observed / stale","No longer observed")'
         );
+      }
+      if (typeof fallbackActiveQuery.limit === 'function') {
+        fallbackActiveQuery = fallbackActiveQuery.limit(1000);
       }
       if (typeof fallbackActiveQuery.order === 'function') {
         const fallbackResult = await fallbackActiveQuery.order('last_observed_at', {

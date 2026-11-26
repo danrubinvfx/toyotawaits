@@ -341,16 +341,53 @@ export async function getInventoryTickerItems(limit = 5): Promise<TickerItem[]> 
   try {
     const supabase = createServerClient({ revalidate: 1800, tags: ['inventory', 'ticker'] });
     const { data: listingsData, error } = await supabase
-      .from('discovery_listings')
-      .select('id, year, model, trim, exterior_color, dealer_name, dealer_city, vin, status, updated_at')
-      .order('updated_at', { ascending: false })
+      .from('dealer_listings')
+      .select(`
+        id,
+        stock_number,
+        current_status,
+        lifecycle_status,
+        last_observed_at,
+        updated_at,
+        vehicle:vehicles (
+          model_year,
+          model,
+          trim,
+          exterior_color,
+          vin,
+          provisional_id
+        ),
+        dealer:dealers (
+          name,
+          city
+        )
+      `)
+      .eq('lifecycle_status', 'active')
+      .order('last_observed_at', { ascending: false })
       .limit(25);
 
     if (error) {
       // Log and fall back to server-safe static inventory sightings
       console.error('[Ticker] Failed to fetch live inventory data:', error.message || error);
     } else {
-      const listings = Array.isArray(listingsData) ? listingsData : [];
+      const listings = (Array.isArray(listingsData) ? listingsData : []).map((row: Record<string, any>) => {
+        const veh = row?.vehicle && typeof row.vehicle === 'object' ? row.vehicle : {};
+        const dlr = row?.dealer && typeof row.dealer === 'object' ? row.dealer : {};
+        return {
+          id: row?.id,
+          year: veh?.model_year ?? row?.year ?? row?.model_year,
+          model: veh?.model ?? row?.model,
+          trim: veh?.trim ?? row?.trim,
+          exterior_color: veh?.exterior_color ?? row?.exterior_color,
+          dealer_name: dlr?.name ?? row?.dealer_name,
+          dealer_city: dlr?.city ?? row?.dealer_city,
+          vin: veh?.vin ?? row?.vin,
+          provisional_id: veh?.provisional_id ?? row?.provisional_id,
+          stock_number: row?.stock_number,
+          status: row?.current_status ?? row?.status,
+          updated_at: row?.last_observed_at ?? row?.updated_at,
+        };
+      });
       const filtered = listings
         .filter((row) => row && !isStaleListing(row?.status) && matchesTargetInventoryModel(row?.model))
         .slice(0, effectiveLimit);

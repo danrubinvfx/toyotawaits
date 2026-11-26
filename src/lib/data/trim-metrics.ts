@@ -273,7 +273,7 @@ export async function getTrimTransparencyMetrics(
       }
 
       const { data: listingRows } = await supabase
-        .from('discovery_listings')
+        .from('vehicles')
         .select('trim, model')
         .ilike('model', `%${dbFilter}%`)
         .limit(250);
