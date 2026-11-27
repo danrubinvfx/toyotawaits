@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
-import { createServerClient, isLiveSupabaseConfigured } from '@/lib/supabase/server';
+import { createServerClient, isLiveSupabaseConfigured, isUsableSupabaseKey } from '@/lib/supabase/server';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -68,9 +68,64 @@ function buildConfirmationEmail(params: {
   return { subject, html, text, verifyUrl, unsubscribeUrl };
 }
 
+function getResendApiKey(): string {
+  return process.env.RESEND_API_KEY?.trim() || '';
+}
+
 function hasLiveResendKey(): boolean {
-  const key = process.env.RESEND_API_KEY?.trim() || '';
+  const key = getResendApiKey();
   return Boolean(key && !key.includes('placeholder') && !key.includes('mock-'));
+}
+
+function formatErrorResponse(
+  publicMessage: string,
+  detail: string | undefined,
+  status = 500
+) {
+  const isDev = process.env.NODE_ENV !== 'production';
+  return NextResponse.json(
+    {
+      success: false,
+      error: isDev && detail ? `${publicMessage} (${detail})` : publicMessage,
+      ...(isDev && detail ? { details: detail } : {}),
+    },
+    { status, headers: { 'Cache-Control': 'no-store' } }
+  );
+}
+
+async function sendConfirmationEmail(params: {
+  from: string;
+  to: string;
+  country: 'CA' | 'US';
+  verificationToken: string;
+  unsubscribeToken: string;
+}): Promise<{ ok: true } | { ok: false; detail: string }> {
+  const apiKey = getResendApiKey();
+  const resend = new Resend(apiKey);
+  const emailPayload = buildConfirmationEmail({
+    country: params.country,
+    verificationToken: params.verificationToken,
+    unsubscribeToken: params.unsubscribeToken,
+  });
+
+  const { error: resendError } = await resend.emails.send({
+    from: params.from,
+    to: [params.to],
+    subject: emailPayload.subject,
+    html: emailPayload.html,
+    text: emailPayload.text,
+  });
+
+  if (resendError) {
+    console.error('[newsletter/subscribe] Resend send error:', {
+      name: resendError.name,
+      message: resendError.message,
+      statusCode: (resendError as { statusCode?: number }).statusCode,
+    });
+    return { ok: false, detail: resendError.message };
+  }
+
+  return { ok: true };
 }
 
 export async function POST(request: NextRequest | Request) {
@@ -112,25 +167,15 @@ export async function POST(request: NextRequest | Request) {
 
     if (!isLiveSupabaseConfigured()) {
       if (hasLiveResendKey()) {
-        const resend = new Resend(process.env.RESEND_API_KEY);
-        const emailPayload = buildConfirmationEmail({
+        const sent = await sendConfirmationEmail({
+          from: fromEmail,
+          to: rawEmail,
           country,
           verificationToken,
           unsubscribeToken,
         });
-        const { error: resendError } = await resend.emails.send({
-          from: fromEmail,
-          to: [rawEmail],
-          subject: emailPayload.subject,
-          html: emailPayload.html,
-          text: emailPayload.text,
-        });
-        if (resendError) {
-          console.error('[/api/newsletter/subscribe] Resend send error:', resendError.message);
-          return NextResponse.json(
-            { success: false, error: 'Failed to send confirmation email.' },
-            { status: 502, headers: { 'Cache-Control': 'no-store' } }
-          );
+        if (!sent.ok) {
+          return formatErrorResponse('Failed to send confirmation email.', sent.detail, 502);
         }
       }
 
@@ -144,6 +189,18 @@ export async function POST(request: NextRequest | Request) {
       );
     }
 
+    const isMockClient = Boolean((createServerClient as unknown as { mock?: unknown }).mock);
+    if (!isMockClient && !isUsableSupabaseKey(process.env.SUPABASE_SERVICE_ROLE_KEY)) {
+      console.error(
+        '[newsletter/subscribe] SUPABASE_SERVICE_ROLE_KEY is missing or invalid; service_role is required for public.newsletter_subscriptions.'
+      );
+      return formatErrorResponse(
+        'Unable to process newsletter subscription.',
+        'SUPABASE_SERVICE_ROLE_KEY is missing or invalid',
+        500
+      );
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = createServerClient() as any;
 
@@ -154,18 +211,33 @@ export async function POST(request: NextRequest | Request) {
       .maybeSingle();
 
     if (selectError) {
-      console.error('[/api/newsletter/subscribe] Select error:', selectError.message);
-      return NextResponse.json(
-        { success: false, error: 'Unable to process newsletter subscription.' },
-        { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      console.error('[newsletter/subscribe] Select error:', {
+        code: selectError.code,
+        message: selectError.message,
+        details: selectError.details,
+        hint: selectError.hint,
+      });
+      return formatErrorResponse(
+        'Unable to process newsletter subscription.',
+        selectError.message,
+        500
       );
     }
 
     if (existing && existing.is_verified && existing.is_active) {
-      await supabase
+      const { error: updateError } = await supabase
         .from('newsletter_subscriptions')
         .update({ country })
         .eq('id', existing.id);
+
+      if (updateError) {
+        console.error('[newsletter/subscribe] Country update error:', {
+          code: updateError.code,
+          message: updateError.message,
+          details: updateError.details,
+          hint: updateError.hint,
+        });
+      }
 
       return NextResponse.json(
         {
@@ -194,42 +266,42 @@ export async function POST(request: NextRequest | Request) {
       );
 
     if (upsertError) {
-      console.error('[/api/newsletter/subscribe] Upsert error:', upsertError.message);
-      return NextResponse.json(
-        { success: false, error: 'Unable to save newsletter subscription.' },
-        { status: 500, headers: { 'Cache-Control': 'no-store' } }
+      console.error('[newsletter/subscribe] Upsert error:', {
+        code: upsertError.code,
+        message: upsertError.message,
+        details: upsertError.details,
+        hint: upsertError.hint,
+      });
+      return formatErrorResponse(
+        'Unable to save newsletter subscription.',
+        upsertError.message,
+        500
       );
     }
 
-    const emailPayload = buildConfirmationEmail({
-      country,
-      verificationToken,
-      unsubscribeToken: activeUnsubToken,
-    });
-
     if (hasLiveResendKey() || process.env.NODE_ENV === 'production') {
       if (!hasLiveResendKey()) {
-        console.error('[/api/newsletter/subscribe] Missing RESEND_API_KEY');
-        return NextResponse.json(
-          { success: false, error: 'Email service is not configured.' },
-          { status: 500, headers: { 'Cache-Control': 'no-store' } }
+        console.error('[newsletter/subscribe] Missing RESEND_API_KEY');
+        return formatErrorResponse(
+          'Email service is not configured.',
+          'RESEND_API_KEY is missing or invalid',
+          500
         );
       }
 
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      const { error: resendError } = await resend.emails.send({
+      const sent = await sendConfirmationEmail({
         from: fromEmail,
-        to: [rawEmail],
-        subject: emailPayload.subject,
-        html: emailPayload.html,
-        text: emailPayload.text,
+        to: rawEmail,
+        country,
+        verificationToken,
+        unsubscribeToken: activeUnsubToken,
       });
 
-      if (resendError) {
-        console.error('[/api/newsletter/subscribe] Resend error:', resendError.message);
-        return NextResponse.json(
-          { success: false, error: 'Failed to send confirmation email. Please try again.' },
-          { status: 502, headers: { 'Cache-Control': 'no-store' } }
+      if (!sent.ok) {
+        return formatErrorResponse(
+          'Failed to send confirmation email. Please try again.',
+          sent.detail,
+          502
         );
       }
     }
@@ -242,10 +314,8 @@ export async function POST(request: NextRequest | Request) {
       { status: 200, headers: { 'Cache-Control': 'no-store' } }
     );
   } catch (err: unknown) {
-    console.error('[/api/newsletter/subscribe] Unexpected error:', err instanceof Error ? err.message : 'Unknown error');
-    return NextResponse.json(
-      { success: false, error: 'An unexpected error occurred.' },
-      { status: 500, headers: { 'Cache-Control': 'no-store' } }
-    );
+    const detail = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[newsletter/subscribe] Unexpected error:', err);
+    return formatErrorResponse('An unexpected error occurred.', detail, 500);
   }
 }
