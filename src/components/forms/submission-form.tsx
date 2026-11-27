@@ -119,6 +119,7 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
   const [usAdmAmount, setUsAdmAmount] = useState<string>('');
   const [notes, setNotes] = useState<string>('');
   const [email, setEmail] = useState<string>('');
+  const [subscribeWeeklyBrief, setSubscribeWeeklyBrief] = useState<boolean>(false);
   const [turnstileToken, setTurnstileToken] = useState<string>(initialTurnstileToken || '');
   const [honeypot, setHoneypot] = useState<string>('');
 
@@ -532,6 +533,17 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
       const submittedModelSlug = currentModel.slug;
       const submittedProvince = province;
       const submittedEmail = email.trim();
+
+      if (subscribeWeeklyBrief && submittedEmail) {
+        fetch('/api/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: submittedEmail,
+            country: isUsMarket ? 'US' : 'CA',
+          }),
+        }).catch(() => {});
+      }
 
       setSuccessModalData({
         ...result.data,
@@ -1170,6 +1182,20 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
                 {fieldErrors['email'] && (
                   <p className="text-xs text-rose-500 font-medium">{fieldErrors['email'][0]}</p>
                 )}
+                <label
+                  htmlFor={`${formId}-newsletter-optin`}
+                  className="flex items-start gap-2 pt-1 text-xs text-zinc-300 cursor-pointer select-none"
+                >
+                  <input
+                    id={`${formId}-newsletter-optin`}
+                    data-testid="submission-newsletter-optin"
+                    type="checkbox"
+                    checked={subscribeWeeklyBrief}
+                    onChange={(e) => setSubscribeWeeklyBrief(e.target.checked)}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-950 text-amber-500 focus:ring-amber-500"
+                  />
+                  <span>Also subscribe to the Weekly Pipeline Brief (Monday digest)</span>
+                </label>
                 <p className="text-[11px] text-zinc-500 leading-normal">
                   Includes monthly status check-ins and unreserved lot drop alerts. 1-click unsubscribe anytime per CASL.
                 </p>

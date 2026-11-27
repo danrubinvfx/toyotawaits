@@ -83,6 +83,7 @@ export function InventoryAlertModal({
   availableModels = QUICK_MODELS,
 }: InventoryAlertModalProps) {
   const [email, setEmail] = useState('');
+  const [subscribeWeeklyBrief, setSubscribeWeeklyBrief] = useState(false);
   const [model, setModel] = useState(initialModel || 'Sienna');
   const [trim, setTrim] = useState(initialTrim || 'ALL');
   const [powertrain, setPowertrain] = useState(initialPowertrain || 'ALL');
@@ -151,6 +152,16 @@ export function InventoryAlertModal({
         return;
       }
 
+      if (subscribeWeeklyBrief) {
+        const inferredCountry = /\b(US|WA|CA|OR|TX|NY|FL|IL|PA|OH|MI|NC|GA|VA|NJ|AZ|MA|CO|MN|WI)\b/i.test(region)
+          ? 'US'
+          : 'CA';
+        fetch('/api/newsletter/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: trimmedEmail, country: inferredCountry }),
+        }).catch(() => {});
+      }
       trackUserEvent(
         'drop_alert_subscribed',
         {
@@ -414,6 +425,21 @@ export function InventoryAlertModal({
                 </span>
               </p>
             </div>
+
+            <label
+              htmlFor="alert-newsletter-optin"
+              className="flex items-start gap-2 text-xs text-zinc-300 cursor-pointer select-none"
+            >
+              <input
+                id="alert-newsletter-optin"
+                data-testid="alert-newsletter-optin"
+                type="checkbox"
+                checked={subscribeWeeklyBrief}
+                onChange={(e) => setSubscribeWeeklyBrief(e.target.checked)}
+                className="mt-0.5 h-3.5 w-3.5 rounded border-zinc-700 bg-zinc-900 text-amber-500 focus:ring-amber-500"
+              />
+              <span>Also subscribe to the Weekly Pipeline Brief (Monday digest)</span>
+            </label>
 
             {errorMessage && (
               <div

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { StorefrontLink } from '@/components/gear/StorefrontLink';
 import { useMarket } from '@/context/MarketContext';
 import type { CountryCode } from '@/lib/types/contracts';
+import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
 
 interface FooterProps {
   initialRegion?: CountryCode;
@@ -23,6 +24,11 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 py-12 text-zinc-600 dark:text-zinc-400">
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+        {/* Weekly Pipeline Brief Newsletter Strip */}
+        <div className="mb-8">
+          <NewsletterSignup compact />
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-3">

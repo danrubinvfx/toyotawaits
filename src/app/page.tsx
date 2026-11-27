@@ -28,6 +28,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { Hero } from '@/components/Hero';
+import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
 
 export const revalidate = 1800; // Cache on edge for 30 minutes
 
@@ -284,6 +285,11 @@ export default async function HomePage() {
                   <React.Suspense fallback={<div className="h-64 rounded-xl bg-zinc-100 dark:bg-zinc-900 animate-pulse" />}>
                     <ModelGearChecklist />
                   </React.Suspense>
+                </section>
+
+                {/* 3.5. Weekly Pipeline Brief Newsletter Signup */}
+                <section aria-label="Weekly Pipeline Brief Newsletter">
+                  <NewsletterSignup />
                 </section>
 
                 {/* 4. Community Submissions & Delivery Log Table (Verifiable Audit Trail) */}
