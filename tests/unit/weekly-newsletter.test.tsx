@@ -5,6 +5,10 @@ import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
 import { NewsletterHeaderPill } from '@/components/newsletter/NewsletterHeaderPill';
 import { NewsletterToast } from '@/components/newsletter/NewsletterToast';
 import {
+  NewsletterFloatingPill,
+  NEWSLETTER_PILL_DISMISSED_KEY,
+} from '@/components/newsletter/NewsletterFloatingPill';
+import {
   generateWeeklyPipelineBriefEmail,
   getWeeklyGearPicks,
 } from '@/emails/WeeklyPipelineBriefEmail';
@@ -15,6 +19,7 @@ import { GET as unsubscribeGet } from '@/app/api/newsletter/unsubscribe/route';
 describe('Weekly Pipeline Brief Newsletter', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    window.localStorage.clear();
   });
 
   describe('<NewsletterSignup /> component', () => {
@@ -100,6 +105,71 @@ describe('Weekly Pipeline Brief Newsletter', () => {
       expect(await screen.findByTestId('newsletter-toast-feedback')).toHaveTextContent(/Check your inbox/i);
       fireEvent.click(screen.getByTestId('newsletter-toast-dismiss'));
       expect(onDismiss).toHaveBeenCalledTimes(1);
+    });
+
+    it('NewsletterToast uses bottom-20 on mobile to clear the bottom navigation dock', () => {
+      render(<NewsletterToast isOpen onDismiss={vi.fn()} />);
+      const toast = screen.getByTestId('newsletter-toast');
+      expect(toast.className).toContain('bottom-20');
+      expect(toast.className).toContain('md:bottom-4');
+    });
+
+    it('NewsletterHeaderPill includes compact mobile Brief label alongside Weekly Brief', () => {
+      render(<NewsletterHeaderPill />);
+      const pill = screen.getByTestId('newsletter-header-pill');
+      expect(pill).toHaveTextContent(/📧 Brief/i);
+      expect(pill).toHaveTextContent(/📧 Weekly Brief/i);
+    });
+  });
+
+  describe('<NewsletterFloatingPill />', () => {
+    it('renders floating pill above bottom dock, opens modal with NewsletterSignup, and closes on close button', () => {
+      render(<NewsletterFloatingPill />);
+
+      const pill = screen.getByTestId('newsletter-floating-pill');
+      expect(pill).toBeInTheDocument();
+      expect(pill.className).toContain('bottom-20');
+      expect(pill.className).toContain('right-4');
+      expect(pill.className).toContain('z-40');
+      expect(pill.className).toContain('md:hidden');
+
+      const trigger = screen.getByTestId('newsletter-floating-pill-trigger');
+      expect(trigger).toHaveTextContent(/📧 Weekly Brief/i);
+
+      expect(screen.queryByTestId('newsletter-floating-modal')).not.toBeInTheDocument();
+
+      fireEvent.click(trigger);
+      expect(screen.getByTestId('newsletter-floating-modal')).toBeInTheDocument();
+      expect(screen.getByTestId('newsletter-signup')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('newsletter-floating-modal-close'));
+      expect(screen.queryByTestId('newsletter-floating-modal')).not.toBeInTheDocument();
+    });
+
+    it('dismisses floating pill and persists 14-day cooldown in localStorage', () => {
+      render(<NewsletterFloatingPill />);
+
+      const dismissBtn = screen.getByTestId('newsletter-floating-pill-dismiss');
+      fireEvent.click(dismissBtn);
+
+      expect(screen.queryByTestId('newsletter-floating-pill')).not.toBeInTheDocument();
+      const storedTs = Number(window.localStorage.getItem(NEWSLETTER_PILL_DISMISSED_KEY));
+      expect(storedTs).toBeGreaterThan(0);
+    });
+
+    it('stays hidden within 14-day cooldown and re-appears after 14 days', () => {
+      const threeDaysAgo = Date.now() - 3 * 24 * 60 * 60 * 1000;
+      window.localStorage.setItem(NEWSLETTER_PILL_DISMISSED_KEY, String(threeDaysAgo));
+
+      const { unmount } = render(<NewsletterFloatingPill />);
+      expect(screen.queryByTestId('newsletter-floating-pill')).not.toBeInTheDocument();
+      unmount();
+
+      const fifteenDaysAgo = Date.now() - 15 * 24 * 60 * 60 * 1000;
+      window.localStorage.setItem(NEWSLETTER_PILL_DISMISSED_KEY, String(fifteenDaysAgo));
+
+      render(<NewsletterFloatingPill />);
+      expect(screen.getByTestId('newsletter-floating-pill')).toBeInTheDocument();
     });
   });
 

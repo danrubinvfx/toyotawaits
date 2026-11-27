@@ -516,5 +516,34 @@ describe('DeliveryPrepPage Route', () => {
         expect(link).toHaveAttribute('rel', 'sponsored noopener noreferrer nofollow');
       }
     });
+
+    it('awaits Next.js 16 Promise searchParams and falls back safely to Universal for invalid or array model params', async () => {
+      vi.spyOn(hostMetadata, 'getRequestMarketMetadata').mockResolvedValue({
+        market: 'CA',
+        isUS: false,
+        baseUrl: 'https://www.toyotawaits.ca',
+        alternatesLanguages: {
+          'en-CA': 'https://www.toyotawaits.ca/delivery-prep',
+          'en-US': 'https://www.toyotawaits.com/delivery-prep',
+          'x-default': 'https://www.toyotawaits.ca/delivery-prep',
+        },
+      });
+      vi.spyOn(popularityData, 'getPopularAccessoryWeights').mockResolvedValue({});
+
+      // Invalid model param falls back to Universal
+      const { unmount } = render(
+        await DeliveryPrepPage({ searchParams: Promise.resolve({ model: 'invalid-model-xyz' }) })
+      );
+      expect(screen.getByTestId('model-pill-universal')).toHaveAttribute('aria-selected', 'true');
+      expect(screen.queryByTestId('model-pdi-callout-pill')).toBeNull();
+      unmount();
+
+      // Array model param uses first element safely
+      render(
+        await DeliveryPrepPage({ searchParams: Promise.resolve({ model: ['rav4', 'sienna'] }) })
+      );
+      expect(screen.getByTestId('model-pill-rav4')).toHaveAttribute('aria-selected', 'true');
+      expect(screen.getByTestId('model-pdi-callout-pill')).toHaveTextContent(/120V Level 1 charging cable/i);
+    });
   });
 });

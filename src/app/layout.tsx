@@ -9,6 +9,7 @@ import { Footer } from '@/components/layout/footer';
 import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 import { MarketProvider } from '@/context/MarketContext';
 import { MobileBottomDock } from '@/components/layout/MobileBottomDock';
+import { NewsletterFloatingPill } from '@/components/newsletter/NewsletterFloatingPill';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
 
 // Geist is a variable font: a single file covers every weight (incl. font-black used site-wide),
@@ -246,6 +247,7 @@ export default async function RootLayout({
             {children}
           </main>
           <Footer />
+          <NewsletterFloatingPill />
           <Suspense fallback={null}>
             <MobileBottomDock />
           </Suspense>

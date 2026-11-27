@@ -63,7 +63,7 @@ export function NewsletterToast({ isOpen = true, onDismiss }: NewsletterToastPro
       data-testid="newsletter-toast"
       role="region"
       aria-label="Weekly Pipeline Brief Newsletter"
-      className="fixed bottom-4 right-4 left-4 sm:left-auto z-50 max-w-sm rounded-xl border border-amber-500/30 bg-zinc-950/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200"
+      className="fixed bottom-20 md:bottom-4 right-4 left-4 sm:left-auto z-50 max-w-sm rounded-xl border border-amber-500/30 bg-zinc-950/95 p-4 shadow-xl backdrop-blur-md transition-all duration-200"
     >
       <div className="text-sm font-semibold text-white flex items-center gap-2">
         <Mail className="h-4 w-4 text-amber-400 shrink-0" aria-hidden="true" />

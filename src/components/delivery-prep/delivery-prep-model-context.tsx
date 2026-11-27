@@ -4,140 +4,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { DayOneGearShelf } from '@/components/gear/DayOneGearShelf';
 import type { GearCardItem } from '@/components/gear/GearCard';
 import { cn } from '@/lib/utils';
+import {
+  type DeliveryPrepModelId,
+  type DeliveryPrepModelOption,
+  DELIVERY_PREP_MODELS,
+  MODEL_PDI_CALLOUTS,
+  normalizeDeliveryPrepModel,
+  getModelPickupKitItems,
+} from './delivery-prep-models';
 
-export type DeliveryPrepModelId =
-  | 'universal'
-  | 'rav4'
-  | 'sienna'
-  | 'grand-highlander'
-  | 'tacoma'
-  | 'corolla-cross';
-
-export interface DeliveryPrepModelOption {
-  id: DeliveryPrepModelId;
-  label: string;
-}
-
-export const DELIVERY_PREP_MODELS: DeliveryPrepModelOption[] = [
-  { id: 'universal', label: 'Universal' },
-  { id: 'rav4', label: 'RAV4' },
-  { id: 'sienna', label: 'Sienna' },
-  { id: 'grand-highlander', label: 'Grand Highlander' },
-  { id: 'tacoma', label: 'Tacoma' },
-  { id: 'corolla-cross', label: 'Corolla Cross' },
-];
-
-export const MODEL_PDI_CALLOUTS: Record<Exclude<DeliveryPrepModelId, 'universal'>, string> = {
-  rav4: 'RAV4 / PHEV PDI: Verify 120V Level 1 charging cable in sub-floor & transit fuse seated.',
-  sienna: 'Sienna PDI: Verify hands-free kick-sensor sliding doors & cargo hitch clearance.',
-  'grand-highlander': 'Grand Highlander PDI: Verify 3rd-row USB-C ports & spare tire toolkit.',
-  tacoma: 'Tacoma PDI: Verify composite bed tie-downs & front air dam clearance.',
-  'corolla-cross': 'Corolla Cross PDI: Verify rear cargo cover & hybrid battery intake filter screen.',
+export {
+  type DeliveryPrepModelId,
+  type DeliveryPrepModelOption,
+  DELIVERY_PREP_MODELS,
+  MODEL_PDI_CALLOUTS,
+  normalizeDeliveryPrepModel,
+  getModelPickupKitItems,
 };
-
-export function normalizeDeliveryPrepModel(raw?: string | null): DeliveryPrepModelId {
-  const clean = (raw || '').toLowerCase().trim();
-  if (clean === 'rav4' || clean === 'rav4-hybrid' || clean === 'rav4-prime') return 'rav4';
-  if (clean === 'sienna' || clean === 'sienna-hybrid') return 'sienna';
-  if (clean === 'grand-highlander' || clean === 'grand highlander') return 'grand-highlander';
-  if (clean === 'tacoma' || clean === 'tacoma-hybrid') return 'tacoma';
-  if (clean === 'corolla-cross' || clean === 'corolla cross') return 'corolla-cross';
-  return 'universal';
-}
-
-export function getModelPickupKitItems(model: DeliveryPrepModelId): GearCardItem[] {
-  const option = DELIVERY_PREP_MODELS.find((m) => m.id === model);
-  const modelName = option?.label || 'Toyota';
-
-  if (model === 'universal') {
-    return [];
-  }
-
-  const muslogyConfig: Record<
-    Exclude<DeliveryPrepModelId, 'universal'>,
-    { slug: string; destinationUrl: string; imageUrl: string }
-  > = {
-    rav4: {
-      slug: 'muslogy-rav4',
-      destinationUrl: '/out/muslogy-rav4',
-      imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
-    },
-    sienna: {
-      slug: 'muslogy-sienna',
-      destinationUrl: '/out/muslogy-sienna',
-      imageUrl: '/assets/gear/muslogy-sienna-organizer.webp',
-    },
-    'grand-highlander': {
-      slug: 'muslogy-grand-highlander',
-      destinationUrl: '/out/muslogy-grand-highlander',
-      imageUrl: '/assets/gear/muslogy-grand-highlander-organizer.webp',
-    },
-    tacoma: {
-      slug: 'muslogy-tacoma',
-      destinationUrl: '/out/muslogy-tacoma',
-      imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
-    },
-    'corolla-cross': {
-      slug: 'muslogy-corolla-cross',
-      destinationUrl: '/out/muslogy-corolla-cross',
-      imageUrl: '/assets/gear/muslogy-rav4-organizer.webp',
-    },
-  };
-
-  const muslogy = muslogyConfig[model];
-
-  return [
-    {
-      id: `tuxmat-${model}`,
-      slug: `tuxmat-${model}-floor-liners`,
-      title: `TuxMat All-Weather Floor Liners (${modelName})`,
-      brand: 'TuxMat',
-      category: 'Floor Protection',
-      description: `Laser-measured high-wall spill and slush protection tailored for the ${modelName}.`,
-      badge: 'Essential',
-      imageUrl: '/assets/gear/tuxmat-floor-liners.webp',
-      fallbackIcon: 'layers',
-      destinationType: 'amazon',
-      searchQuery: `TuxMat Toyota ${modelName} custom all weather floor mats`,
-      searchKeywordsCA: `TuxMat Toyota ${modelName} custom all weather floor mats`,
-      searchKeywordsUS: `TuxMat Toyota ${modelName} custom all weather floor mats`,
-      activeModel: model,
-    },
-    {
-      id: `fitcamx-${model}`,
-      slug: `fitcamx-${model}-dashcam`,
-      title: `FitcamX OEM 4K Dashcam (${modelName})`,
-      brand: 'FitcamX',
-      category: 'Tech & Security',
-      description: `Stealth OEM mirror-tap 4K recording with zero exposed wiring for ${modelName}.`,
-      badge: 'Top Pick',
-      imageUrl: '/assets/gear/fitcamx-rav4.webp',
-      fallbackIcon: 'camera',
-      destinationType: 'amazon',
-      searchQuery: `Fitcamx dash cam Toyota ${modelName} OEM 4K`,
-      searchKeywordsCA: `Fitcamx dash cam Toyota ${modelName} OEM 4K`,
-      searchKeywordsUS: `Fitcamx dash cam Toyota ${modelName} OEM 4K`,
-      activeModel: model,
-    },
-    {
-      id: muslogy.slug,
-      slug: muslogy.slug,
-      title: `Muslogy Console Organizer (${modelName})`,
-      brand: 'Muslogy',
-      category: 'Cabin Organization',
-      description: `Dual-tier armrest storage divider custom-molded for the ${modelName}.`,
-      badge: 'Partner Deal · 2% Off',
-      imageUrl: muslogy.imageUrl,
-      fallbackIcon: 'layout-grid',
-      destinationType: 'direct_partner',
-      destinationUrl: muslogy.destinationUrl,
-      discountCode: 'Toyotawaits',
-      discountText: '2% off',
-      buttonLabel: 'Get 2% Off on Muslogy ↗',
-      activeModel: model,
-    },
-  ];
-}
 
 interface DeliveryPrepModelContextValue {
   selectedModel: DeliveryPrepModelId;
@@ -157,7 +40,9 @@ export function DeliveryPrepModelProvider({
   initialModel?: DeliveryPrepModelId;
   children: React.ReactNode;
 }) {
-  const [selectedModel, setSelectedModelState] = useState<DeliveryPrepModelId>(initialModel);
+  const [selectedModel, setSelectedModelState] = useState<DeliveryPrepModelId>(() =>
+    normalizeDeliveryPrepModel(initialModel)
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -169,14 +54,15 @@ export function DeliveryPrepModelProvider({
   }, []);
 
   const setSelectedModel = (model: DeliveryPrepModelId) => {
-    setSelectedModelState(model);
+    const normalized = normalizeDeliveryPrepModel(model);
+    setSelectedModelState(normalized);
     if (typeof window !== 'undefined') {
       try {
         const url = new URL(window.location.href);
-        if (model === 'universal') {
+        if (normalized === 'universal') {
           url.searchParams.delete('model');
         } else {
-          url.searchParams.set('model', model);
+          url.searchParams.set('model', normalized);
         }
         window.history.replaceState({}, '', url.toString());
       } catch {
@@ -199,12 +85,14 @@ export interface DeliveryPrepDayOneKitProps {
 
 export function DeliveryPrepDayOneKit({ universalItems, market }: DeliveryPrepDayOneKitProps) {
   const ctx = useDeliveryPrepModel();
-  const selectedModel = ctx?.selectedModel ?? 'universal';
+  const selectedModel = normalizeDeliveryPrepModel(ctx?.selectedModel ?? 'universal');
   const setSelectedModel = ctx?.setSelectedModel;
 
   const isUniversal = selectedModel === 'universal';
-  const activeOption = DELIVERY_PREP_MODELS.find((m) => m.id === selectedModel);
-  const items = isUniversal ? universalItems : getModelPickupKitItems(selectedModel);
+  const activeOption =
+    DELIVERY_PREP_MODELS.find((m) => m.id === selectedModel) ?? DELIVERY_PREP_MODELS[0];
+  const modelItems = isUniversal ? universalItems : getModelPickupKitItems(selectedModel);
+  const items = modelItems.length > 0 ? modelItems : universalItems;
 
   return (
     <div className="space-y-3 print:hidden">

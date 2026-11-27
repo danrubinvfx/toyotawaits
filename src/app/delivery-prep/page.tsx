@@ -17,8 +17,8 @@ import { GearCard, type GearCardItem } from '@/components/gear/GearCard';
 import {
   DeliveryPrepModelProvider,
   DeliveryPrepDayOneKit,
-  normalizeDeliveryPrepModel,
 } from '@/components/delivery-prep/delivery-prep-model-context';
+import { normalizeDeliveryPrepModel } from '@/components/delivery-prep/delivery-prep-models';
 import { SeasonalDealBanner } from '@/components/monetization/SeasonalDealBanner';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import {
@@ -178,10 +178,10 @@ function getUniversalDayOneEssentials(weights: Record<string, number>): GearCard
 }
 
 export default async function DeliveryPrepPage(props?: {
-  searchParams?: Promise<{ model?: string }> | { model?: string };
+  searchParams?: Promise<{ model?: string | string[] }> | { model?: string | string[] };
 }) {
-  const resolvedSearchParams = props?.searchParams ? await props.searchParams : undefined;
-  const initialModel = normalizeDeliveryPrepModel(resolvedSearchParams?.model);
+  const resolvedParams = props?.searchParams ? await props.searchParams : undefined;
+  const initialModel = normalizeDeliveryPrepModel(resolvedParams?.model);
 
   const [weights, { isUS }] = await Promise.all([
     getPopularAccessoryWeights(),
@@ -267,10 +267,12 @@ export default async function DeliveryPrepPage(props?: {
 
         <DeliveryPrepModelProvider initialModel={initialModel}>
           {/* Top-Picked Day-One Pickup Kit (Above the Fold) */}
-          <DeliveryPrepDayOneKit
-            universalItems={topDayOneItems}
-            market={isUS ? 'US' : 'CA'}
-          />
+          <Suspense fallback={null}>
+            <DeliveryPrepDayOneKit
+              universalItems={topDayOneItems}
+              market={isUS ? 'US' : 'CA'}
+            />
+          </Suspense>
 
           {/* Winter Tire Seasonal Callout Banner */}
           <div

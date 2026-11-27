@@ -643,7 +643,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
             </button>
           </div>
 
-          <div className="hidden sm:block shrink-0">
+          <div className="shrink-0">
             <NewsletterHeaderPill />
           </div>
           {hasActiveOrder ? (

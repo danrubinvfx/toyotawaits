@@ -39,11 +39,12 @@ export function NewsletterHeaderPill({
       onClick={handleClick}
       data-testid="newsletter-header-pill"
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/5 px-3 py-1.5 text-xs font-semibold text-amber-500 dark:text-amber-400 hover:border-amber-500/60 hover:bg-amber-500/10 hover:text-amber-300 transition-all duration-150 shadow-xs cursor-pointer whitespace-nowrap',
+        'inline-flex items-center gap-1 sm:gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/5 px-2 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs font-semibold text-amber-500 dark:text-amber-400 hover:border-amber-500/60 hover:bg-amber-500/10 hover:text-amber-300 transition-all duration-150 shadow-xs cursor-pointer whitespace-nowrap',
         className
       )}
     >
-      <span>{label}</span>
+      <span className="sm:hidden">📧 Brief</span>
+      <span className="hidden sm:inline">{label}</span>
     </Link>
   );
 }

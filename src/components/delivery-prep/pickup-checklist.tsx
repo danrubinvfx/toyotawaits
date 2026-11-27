@@ -106,8 +106,11 @@ export function PickupChecklist({
   defaultOpen = false,
 }: PickupChecklistProps) {
   const modelCtx = useDeliveryPrepModel();
-  const activeModelId = model ? normalizeDeliveryPrepModel(model) : (modelCtx?.selectedModel ?? 'universal');
-  const modelPdiNote = activeModelId !== 'universal' ? MODEL_PDI_CALLOUTS[activeModelId] : null;
+  const activeModelId = model
+    ? normalizeDeliveryPrepModel(model)
+    : normalizeDeliveryPrepModel(modelCtx?.selectedModel ?? 'universal');
+  const modelPdiNote =
+    activeModelId !== 'universal' ? (MODEL_PDI_CALLOUTS[activeModelId] ?? null) : null;
 
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [internalChecked, setInternalChecked] = useState<Record<string, boolean>>({});
