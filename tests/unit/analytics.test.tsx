@@ -17,6 +17,8 @@ import { WhileYouWaitGear } from '@/components/submission/WhileYouWaitGear';
 import { InventoryGearCard } from '@/components/discovery/InventoryGearCard';
 import { InventoryAlertModal } from '@/components/inventory/InventoryAlertModal';
 import { MarketProvider } from '@/context/MarketContext';
+import { NewsletterFloatingPill } from '@/components/newsletter/NewsletterFloatingPill';
+import { NewsletterHeaderPill } from '@/components/newsletter/NewsletterHeaderPill';
 
 describe('Vercel Web Analytics Custom Events (src/lib/analytics.ts)', () => {
   beforeEach(() => {
@@ -192,6 +194,40 @@ describe('Vercel Web Analytics Custom Events (src/lib/analytics.ts)', () => {
         model: 'RAV4 Hybrid',
         placement: 'inventory_feed',
       });
+    });
+  });
+
+  describe('5. Weekly Newsletter Pill Click Events', () => {
+    it('fires newsletter_pill_clicked with placement floating_mobile and header', () => {
+      render(
+        <>
+          <NewsletterFloatingPill />
+          <NewsletterHeaderPill />
+        </>
+      );
+
+      fireEvent.click(screen.getByTestId('newsletter-floating-pill-trigger'));
+      expect(mockTrack).toHaveBeenCalledWith('newsletter_pill_clicked', {
+        placement: 'floating_mobile',
+      });
+
+      fireEvent.click(screen.getByTestId('newsletter-header-pill'));
+      expect(mockTrack).toHaveBeenCalledWith('newsletter_pill_clicked', {
+        placement: 'header',
+      });
+    });
+
+    it('respects tw_admin_opt_out and tw_ignore_analytics for newsletter pill clicks', () => {
+      window.localStorage.setItem(ADMIN_OPT_OUT_KEY, 'true');
+      render(<NewsletterHeaderPill />);
+      fireEvent.click(screen.getByTestId('newsletter-header-pill'));
+      expect(mockTrack).not.toHaveBeenCalled();
+
+      window.localStorage.clear();
+      window.localStorage.setItem(IGNORE_ANALYTICS_KEY, 'true');
+      render(<NewsletterFloatingPill />);
+      fireEvent.click(screen.getByTestId('newsletter-floating-pill-trigger'));
+      expect(mockTrack).not.toHaveBeenCalled();
     });
   });
 });

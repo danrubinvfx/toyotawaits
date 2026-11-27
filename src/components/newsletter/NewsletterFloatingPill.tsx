@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
+import { trackUserEvent } from '@/lib/analytics';
 
 export const NEWSLETTER_PILL_DISMISSED_KEY = 'toyotawaits_newsletter_pill_dismissed';
 export const NEWSLETTER_PILL_COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
@@ -69,7 +70,10 @@ export function NewsletterFloatingPill() {
       >
         <button
           type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            trackUserEvent('newsletter_pill_clicked', { placement: 'floating_mobile' });
+            setIsModalOpen(true);
+          }}
           data-testid="newsletter-floating-pill-trigger"
           className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-300 hover:text-amber-200 transition-colors cursor-pointer whitespace-nowrap touch-manipulation"
         >

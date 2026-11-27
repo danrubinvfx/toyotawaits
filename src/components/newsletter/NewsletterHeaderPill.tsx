@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { trackUserEvent } from '@/lib/analytics';
 
 export interface NewsletterHeaderPillProps {
   className?: string;
@@ -20,6 +21,7 @@ export function NewsletterHeaderPill({
   onClick,
 }: NewsletterHeaderPillProps) {
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    trackUserEvent('newsletter_pill_clicked', { placement: 'header' });
     if (onClick) onClick();
     if (typeof document !== 'undefined') {
       const target = document.getElementById('newsletter-signup');
