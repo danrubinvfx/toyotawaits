@@ -260,7 +260,7 @@ describe('Header Component', () => {
     const toggle = screen.getByTestId('mobile-menu-toggle');
     const rightCluster = toggle.parentElement;
     expect(rightCluster).toBeInTheDocument();
-    expect(rightCluster).toHaveClass('flex', 'items-center', 'gap-2', 'shrink-0', 'ml-auto');
+    expect(rightCluster).toHaveClass('flex', 'items-center', 'gap-1.5', 'sm:gap-2', 'shrink-0', 'ml-auto');
 
     // 2. Hamburger toggle hidden on mobile and shrink-0
     expect(toggle).toHaveClass('shrink-0', 'hidden', 'md:hidden');
@@ -268,8 +268,8 @@ describe('Header Component', () => {
     // 3. Responsive button text spans
     const submitBtn = screen.getAllByRole('link', { name: /\+ Log Order/i })[0];
     expect(submitBtn).toHaveClass('shrink-0', 'whitespace-nowrap', 'text-xs', 'font-semibold', 'rounded-lg');
-    const fullTextSpan = submitBtn.querySelector('span.xs\\:inline, span[class*="xs:inline"]');
-    const compactTextSpan = submitBtn.querySelector('span.xs\\:hidden, span[class*="xs:hidden"]');
+    const fullTextSpan = submitBtn.querySelector('span.sm\\:inline, span[class*="sm:inline"]');
+    const compactTextSpan = submitBtn.querySelector('span.sm\\:hidden, span[class*="sm:hidden"]');
     expect(fullTextSpan).toBeInTheDocument();
     expect(fullTextSpan).toHaveTextContent('+ Log Order');
     expect(compactTextSpan).toBeInTheDocument();
@@ -283,7 +283,7 @@ describe('Header Component', () => {
     const headerElem = container.querySelector('header');
     expect(headerElem).toHaveClass('w-full', 'max-w-full', 'overflow-x-hidden');
     const innerWrapper = headerElem?.firstElementChild;
-    expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-hidden', 'px-3', 'py-2', 'flex', 'items-center', 'justify-between');
+    expect(innerWrapper).toHaveClass('w-full', 'max-w-full', 'overflow-hidden', 'px-2.5', 'py-2', 'flex', 'items-center', 'justify-between');
   });
 
   it('renders Live Inventory navigation item in desktop nav and mobile drawer', () => {
@@ -504,13 +504,13 @@ describe('Header Component', () => {
 
     // 2. Domain suffix (.ca / .com) is hidden on narrow mobile (< xs)
     const domainSuffix = screen.getByText('.ca');
-    expect(domainSuffix).toHaveClass('hidden', 'xs:inline');
+    expect(domainSuffix).toHaveClass('hidden', 'sm:inline');
 
     // 3. Update Status CTA has responsive text spans
     const updateLink = screen.getByRole('link', { name: /Update Status/i });
     expect(updateLink).toHaveClass('shrink-0', 'whitespace-nowrap', 'text-xs', 'font-semibold', 'rounded-lg');
-    const compactSpan = updateLink.querySelector('span.xs\\:hidden, span[class*="xs:hidden"]');
-    const fullSpan = updateLink.querySelector('span.xs\\:inline, span[class*="xs:inline"]');
+    const compactSpan = updateLink.querySelector('span.sm\\:hidden, span[class*="sm:hidden"]');
+    const fullSpan = updateLink.querySelector('span.sm\\:inline, span[class*="sm:inline"]');
     expect(compactSpan).toBeInTheDocument();
     expect(compactSpan).toHaveTextContent('Update');
     expect(fullSpan).toBeInTheDocument();
@@ -518,7 +518,7 @@ describe('Header Component', () => {
 
     // 4. Header inner row padding and gap
     const headerRow = container.querySelector('header > div');
-    expect(headerRow).toHaveClass('px-3', 'py-2', 'overflow-hidden', 'gap-1.5', 'sm:gap-3');
+    expect(headerRow).toHaveClass('px-2.5', 'py-2', 'overflow-hidden', 'gap-1.5', 'sm:gap-3');
   });
 
   it('renders ToyotaWaits.com brand label and highlights US toggle when initialRegion is US', () => {

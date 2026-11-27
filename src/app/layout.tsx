@@ -10,10 +10,7 @@ import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
 import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
 import { MobileBottomDock } from '@/components/layout/MobileBottomDock';
-import { MobileStickyLogBar } from '@/components/layout/MobileStickyLogBar';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
-import { FlagValues } from 'flags/react';
-import { evaluateFlagSafely, mobileStickyLogBar } from '@/flags';
 
 // Geist is a variable font: a single file covers every weight (incl. font-black used site-wide),
 // so no explicit `weight` list is needed. Preloading is disabled to stop the
@@ -231,7 +228,6 @@ export default async function RootLayout({
   }
 
   const activeJsonLd = buildRootJsonLd(isUS);
-  const showMobileStickyLogBar = await evaluateFlagSafely(mobileStickyLogBar, false);
 
   return (
     <html
@@ -253,11 +249,9 @@ export default async function RootLayout({
           <KofiFloatingPill className="bottom-20 sm:bottom-4" />
           <Footer />
           <Suspense fallback={null}>
-            <MobileStickyLogBar enabled={showMobileStickyLogBar} />
             <MobileBottomDock />
           </Suspense>
         </MarketProvider>
-        <FlagValues values={{ 'mobile-sticky-log-bar': showMobileStickyLogBar }} />
         <AnalyticsWrapper />
       </body>
     </html>
