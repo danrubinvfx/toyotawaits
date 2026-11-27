@@ -1,5 +1,5 @@
 import React from 'react';
-import { GEAR_MARKET_CATALOG } from '@/data/gear/catalog';
+import { GEAR_MARKET_CATALOG, type GearMarketConfig } from '@/data/gear/catalog';
 import { buildAmazonAffiliateUrl } from '@/lib/gear/affiliate';
 import { getCurrentPromoConfig, sortGearByPromotions } from '@/lib/gear/promotions';
 import { AMAZON_ASSOCIATES_DISCLOSURE } from '@/lib/alerts/templates';
@@ -20,12 +20,16 @@ export interface CommunityDeliveryPulseItem {
 
 export interface WeeklyGearPick {
   id: string;
+  rank?: number;
   title: string;
   description: string;
+  fitment?: string;
   url: string;
   badge?: string;
   discountCode?: string;
   discountText?: string;
+  isPartnerDeal?: boolean;
+  clicks30d?: number;
 }
 
 export interface WeeklyPipelineBriefInput {
@@ -53,41 +57,84 @@ function escapeHtml(value: string): string {
     .replace(/'/g, '&#39;');
 }
 
+function getClicksForCatalogItem(
+  id: string,
+  cfg: GearMarketConfig,
+  clickCounts: Record<string, number>
+): number {
+  const candidates = [id, cfg.slug, cfg.proxySlug].filter(
+    (k): k is string => typeof k === 'string' && k.trim().length > 0
+  );
+  let maxClicks = 0;
+  for (const key of candidates) {
+    const val = clickCounts[key];
+    if (typeof val === 'number' && val > maxClicks) {
+      maxClicks = val;
+    }
+  }
+  return maxClicks;
+}
+
+function getCuratedTiebreakerScore(cfg: GearMarketConfig): number {
+  let score = cfg.defaultPriorityWeight ?? 0;
+  if (cfg.isHeroDeal) score += 100;
+  if (cfg.discountCode) score += 60;
+  if (cfg.isWinterPrepEssential) score += 40;
+  if (cfg.isDeliveryDayEssential) score += 20;
+  return score;
+}
+
+function buildOneLineBenefit(cfg: GearMarketConfig): string {
+  const fitment = cfg.fitment?.trim() || cfg.compatibility?.trim();
+  const desc = cfg.description?.trim() || cfg.whyBuy?.trim() || 'Community-vetted Toyota accessory.';
+  if (fitment && !desc.toLowerCase().includes(fitment.toLowerCase())) {
+    return `${fitment} — ${desc}`;
+  }
+  return desc;
+}
+
 export function getWeeklyGearPicks(
   country: 'CA' | 'US',
-  currentDate: Date = new Date()
+  currentDate: Date = new Date(),
+  clickCounts: Record<string, number> = {}
 ): WeeklyGearPick[] {
   const promo = getCurrentPromoConfig(currentDate);
   const baseUrl = country === 'US' ? 'https://www.toyotawaits.com' : 'https://www.toyotawaits.ca';
 
-  const catalogEntries = Object.entries(GEAR_MARKET_CATALOG).map(([id, cfg]) => ({
+  const catalogEntries = Object.entries(GEAR_MARKET_CATALOG).map(([id, cfg], index) => ({
     id,
+    index,
+    clicks30d: getClicksForCatalogItem(id, cfg, clickCounts),
+    curatedScore: getCuratedTiebreakerScore(cfg),
     ...cfg,
   }));
 
-  // Prioritize seasonal / winter / hero / partner-code items
-  const candidates = catalogEntries.filter(
-    (item) =>
-      item.isWinterPrepEssential ||
-      item.isHeroDeal ||
-      item.isDeliveryDayEssential ||
-      Boolean(item.discountCode)
-  );
+  // Apply seasonal promotion boost first, then sort by 30-day telemetry clicks descending
+  const promoSorted = sortGearByPromotions(catalogEntries, currentDate);
+  const promoOrder = new Map<string, number>();
+  promoSorted.forEach((item, idx) => promoOrder.set(item.id, idx));
 
-  const sorted = sortGearByPromotions(
-    candidates.length > 0 ? candidates : catalogEntries,
-    currentDate
-  );
+  const ranked = [...catalogEntries].sort((a, b) => {
+    if (b.clicks30d !== a.clicks30d) {
+      return b.clicks30d - a.clicks30d;
+    }
+    if (b.curatedScore !== a.curatedScore) {
+      return b.curatedScore - a.curatedScore;
+    }
+    return (promoOrder.get(a.id) ?? a.index) - (promoOrder.get(b.id) ?? b.index);
+  });
 
-  // Deduplicate by title/brand so we get 3 distinct recommendations
+  // Deduplicate by clean title so the Top 10 list features 10 distinct products
   const picked: WeeklyGearPick[] = [];
   const seenTitles = new Set<string>();
 
-  for (const item of sorted) {
-    if (picked.length >= 3) break;
+  for (const item of ranked) {
+    if (picked.length >= 10) break;
     const cleanTitle = (item.title || item.name || item.id).trim();
-    if (seenTitles.has(cleanTitle.toLowerCase())) continue;
-    seenTitles.add(cleanTitle.toLowerCase());
+    const displayTitle = item.brand ? `${item.brand} ${cleanTitle}` : cleanTitle;
+    const dedupeKey = displayTitle.toLowerCase();
+    if (seenTitles.has(dedupeKey)) continue;
+    seenTitles.add(dedupeKey);
 
     const isDirectPartner =
       item.destinationType === 'direct_partner' &&
@@ -98,7 +145,7 @@ export function getWeeklyGearPicks(
       (country === 'US' ? item.searchKeywordsUS : item.searchKeywordsCA) ||
       item.searchQuery ||
       item.amazonFallbackQuery ||
-      cleanTitle;
+      displayTitle;
 
     const url = isDirectPartner
       ? `${baseUrl}${item.destinationUrl}`
@@ -112,12 +159,16 @@ export function getWeeklyGearPicks(
 
     picked.push({
       id: item.id,
-      title: item.brand ? `${item.brand} ${cleanTitle}` : cleanTitle,
-      description: item.description || item.whyBuy || 'Community-vetted Toyota accessory.',
+      rank: picked.length + 1,
+      title: displayTitle,
+      description: buildOneLineBenefit(item),
+      fitment: item.fitment || item.compatibility,
       url,
-      badge: item.badge || (promo.isPromoActive ? promo.badgeText : undefined),
+      badge: item.badge,
       discountCode: item.discountCode,
       discountText: item.discountText,
+      isPartnerDeal: isDirectPartner || Boolean(item.discountCode),
+      clicks30d: item.clicks30d,
     });
   }
 
@@ -138,11 +189,14 @@ export function generateWeeklyPipelineBriefEmail(
 
   const baseUrl = country === 'US' ? 'https://www.toyotawaits.com' : 'https://www.toyotawaits.ca';
   const regionLabel = country === 'US' ? 'United States' : 'Canada';
-  const promo = getCurrentPromoConfig(currentDate);
-  const gearPicks =
+  const gearPicks = (
     input.gearPicks && input.gearPicks.length > 0
-      ? input.gearPicks.slice(0, 3)
-      : getWeeklyGearPicks(country, currentDate);
+      ? input.gearPicks.slice(0, 10)
+      : getWeeklyGearPicks(country, currentDate)
+  ).map((item, idx) => ({
+    ...item,
+    rank: item.rank ?? idx + 1,
+  }));
 
   const dateLabel = currentDate.toLocaleDateString('en-US', {
     month: 'short',
@@ -211,34 +265,43 @@ export function generateWeeklyPipelineBriefEmail(
           .join('')
       : `<li style="color: #a1a1aa; font-size: 13px;">New verified deliveries are logged daily — <a href="${baseUrl}/submit" style="color: #fbbf24; text-decoration: underline;">share your timeline</a>.</li>`;
 
-  // 3. Weekly Gear & Seasonal Deals HTML
+  // 3. Top 10 Most Popular Gear This Week HTML
   const gearHtml = gearPicks
-    .map((g) => {
-      const promoLine = g.discountCode
-        ? `<div style="margin-top: 4px; font-size: 11px; color: #34d399; font-weight: 600;">Partner Code: <code style="background: #18181b; padding: 1px 5px; border-radius: 4px; border: 1px solid #3f3f46; color: #fbbf24;">${escapeHtml(
-            g.discountCode
-          )}</code>${g.discountText ? ` (${escapeHtml(g.discountText)})` : ''}</div>`
+    .map((g, idx) => {
+      const rank = g.rank ?? idx + 1;
+      const isTopOne = rank === 1;
+      const topBadge = isTopOne
+        ? `<span style="display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 999px; background-color: #f59e0b26; border: 1px solid #f59e0b66; color: #fbbf24;">🔥 #1 Most Popular</span>`
         : '';
+      const partnerBadge = g.discountCode
+        ? `<span style="display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 999px; background-color: #064e3b; border: 1px solid #10b98166; color: #34d399;">${escapeHtml(
+            g.discountText ? `${g.discountText} • ` : '2% Off • '
+          )}Code: ${escapeHtml(g.discountCode)}</span>`
+        : '';
+      const actionLabel = g.isPartnerDeal ? 'Claim Deal &rarr;' : 'View on Amazon &rarr;';
+
       return `
-        <div style="padding: 12px; border: 1px solid #27272a; border-radius: 8px; background-color: #18181b; margin-bottom: 10px;">
-          <div style="font-size: 13px; font-weight: 700; color: #ffffff;">
-            ${escapeHtml(g.title)}
-            ${
-              g.badge
-                ? `<span style="display: inline-block; margin-left: 6px; font-size: 10px; padding: 2px 6px; border-radius: 999px; background-color: #27272a; color: #fbbf24;">${escapeHtml(
-                    g.badge
-                  )}</span>`
-                : ''
-            }
-          </div>
-          <p style="margin: 4px 0 8px 0; font-size: 12px; color: #a1a1aa; line-height: 1.4;">
-            ${escapeHtml(g.description)}
-          </p>
-          ${promoLine}
-          <a href="${g.url}" style="display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 700; color: #fbbf24; text-decoration: none;">
-            View Deal &rarr;
-          </a>
-        </div>
+        <tr>
+          <td style="padding: 10px 12px; border-bottom: 1px solid #27272a; vertical-align: middle;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
+              <tr>
+                <td style="vertical-align: top; padding-right: 10px;">
+                  <div style="font-size: 13px; font-weight: 700; color: #ffffff; line-height: 1.4;">
+                    <span style="color: ${isTopOne ? '#fbbf24' : '#a1a1aa'}; font-family: ui-monospace, SFMono-Regular, monospace; margin-right: 6px;">#${rank}</span>${escapeHtml(g.title)}${topBadge}${partnerBadge}
+                  </div>
+                  <div style="font-size: 12px; color: #a1a1aa; line-height: 1.4; margin-top: 2px;">
+                    ${escapeHtml(g.description)}
+                  </div>
+                </td>
+                <td style="vertical-align: middle; text-align: right; white-space: nowrap; width: 125px;">
+                  <a href="${g.url}" style="display: inline-block; font-size: 12px; font-weight: 700; color: #fbbf24; text-decoration: none; padding: 6px 10px; border-radius: 6px; border: 1px solid #3f3f46; background-color: #09090b;">
+                    ${actionLabel}
+                  </a>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       `;
     })
     .join('');
@@ -276,11 +339,14 @@ export function generateWeeklyPipelineBriefEmail(
         ${pulseHtml}
       </ul>
 
-      <!-- 4. Weekly Gear & Seasonal Deals -->
-      <h2 style="margin: 0 0 8px 0; font-size: 15px; color: #ffffff;">4. ${escapeHtml(
-        promo.bannerTitle
-      )}</h2>
-      ${gearHtml}
+      <!-- 4. Top 10 Most Popular Gear This Week -->
+      <h2 style="margin: 0 0 8px 0; font-size: 15px; color: #ffffff;">4. Top 10 Most Popular Gear This Week</h2>
+      <p style="margin: 0 0 10px 0; font-size: 12px; color: #a1a1aa; line-height: 1.4;">
+        Ranked by live 30-day Toyota &amp; Lexus owner clicks across ${escapeHtml(regionLabel)}.
+      </p>
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: 1px solid #27272a; border-radius: 8px; background-color: #18181b;">
+        ${gearHtml}
+      </table>
 
       <!-- 5. CASL Compliance Footer -->
       <hr style="border: 0; border-top: 1px solid #27272a; margin: 24px 0 16px 0;" />
@@ -315,10 +381,14 @@ export function generateWeeklyPipelineBriefEmail(
       : `- Log your delivery timeline: ${baseUrl}/submit`;
 
   const gearText = gearPicks
-    .map(
-      (g) =>
-        `- ${g.title}${g.discountCode ? ` (Code: ${g.discountCode})` : ''}: ${g.url}`
-    )
+    .map((g, idx) => {
+      const rank = g.rank ?? idx + 1;
+      const tag = rank === 1 ? ' [🔥 #1 Most Popular]' : '';
+      const code = g.discountCode
+        ? ` [${g.discountText ? `${g.discountText} • ` : '2% Off • '}Code: ${g.discountCode}]`
+        : '';
+      return `#${rank} ${g.title}${tag}${code} — ${g.description}\n   ${g.url}`;
+    })
     .join('\n');
 
   const text = [
@@ -333,7 +403,7 @@ export function generateWeeklyPipelineBriefEmail(
     '3. COMMUNITY DELIVERY PULSE',
     pulseText,
     '',
-    `4. ${promo.bannerTitle.toUpperCase()}`,
+    '4. TOP 10 MOST POPULAR GEAR THIS WEEK',
     gearText,
     '',
     '---',

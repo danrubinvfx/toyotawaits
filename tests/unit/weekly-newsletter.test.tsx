@@ -2,7 +2,10 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
-import { generateWeeklyPipelineBriefEmail } from '@/emails/WeeklyPipelineBriefEmail';
+import {
+  generateWeeklyPipelineBriefEmail,
+  getWeeklyGearPicks,
+} from '@/emails/WeeklyPipelineBriefEmail';
 import { POST as subscribePost } from '@/app/api/newsletter/subscribe/route';
 import { GET as verifyGet } from '@/app/api/newsletter/verify/route';
 import { GET as unsubscribeGet } from '@/app/api/newsletter/unsubscribe/route';
@@ -117,7 +120,30 @@ describe('Weekly Pipeline Brief Newsletter', () => {
   });
 
   describe('WeeklyPipelineBriefEmail generator', () => {
-    it('generates CA and US localized HTML + text with CASL footer and affiliate tags', () => {
+    it('ranks Top 10 gear by 30-day click telemetry and localizes CA vs US affiliate URLs', () => {
+      const clickCounts = {
+        'muslogy-rav4-organizer': 142,
+        'noco-genius5': 95,
+      };
+      const caPicks = getWeeklyGearPicks('CA', new Date('2026-11-23T16:00:00Z'), clickCounts);
+      const usPicks = getWeeklyGearPicks('US', new Date('2026-11-23T16:00:00Z'), clickCounts);
+
+      expect(caPicks).toHaveLength(10);
+      expect(usPicks).toHaveLength(10);
+      expect(caPicks[0].id).toBe('muslogy-rav4-organizer');
+      expect(caPicks[0].rank).toBe(1);
+      expect(caPicks[0].discountCode).toBe('Toyotawaits');
+
+      const amazonCaItem = caPicks.find((p) => p.url.includes('amazon.ca'));
+      const amazonUsItem = usPicks.find((p) => p.url.includes('amazon.com'));
+      expect(amazonCaItem?.url).toContain('tag=toyotawaits-20');
+      expect(amazonUsItem?.url).toContain('tag=toyotawaits07-20');
+    });
+
+    it('generates CA and US localized HTML + text with Top 10 ranked gear, CASL footer, and affiliate tags', () => {
+      const caPicks = getWeeklyGearPicks('CA', new Date('2026-11-23T16:00:00Z'), {
+        'muslogy-rav4-organizer': 200,
+      });
       const caEmail = generateWeeklyPipelineBriefEmail({
         country: 'CA',
         unsubscribeToken: 'unsub-ca-123',
@@ -126,6 +152,7 @@ describe('Weekly Pipeline Brief Newsletter', () => {
         ],
         freshLotSightingsCount: 18,
         deliveryPulse: [{ modelName: 'Sienna', regionCode: 'BC', waitDays: 390 }],
+        gearPicks: caPicks,
         currentDate: new Date('2026-11-23T16:00:00Z'),
       });
 
@@ -133,12 +160,19 @@ describe('Weekly Pipeline Brief Newsletter', () => {
       expect(caEmail.html).toContain('RAV4 Hybrid');
       expect(caEmail.html).toContain('https://www.toyotawaits.ca/wait-times/rav4-hybrid');
       expect(caEmail.html).toContain('https://www.toyotawaits.ca/inventory');
+      expect(caEmail.html).toContain('4. Top 10 Most Popular Gear This Week');
+      expect(caEmail.html).toContain('🔥 #1 Most Popular');
+      expect(caEmail.html).toContain('Code: Toyotawaits');
+      expect(caEmail.html).toContain('#10');
       expect(caEmail.html).toContain('Burnaby, BC, Canada');
       expect(caEmail.html).toContain('hello@toyotawaits.ca');
       expect(caEmail.html).toContain('As an Amazon Associate, ToyotaWaits earns from qualifying purchases.');
       expect(caEmail.html).toContain(
         'https://www.toyotawaits.ca/api/newsletter/unsubscribe?token=unsub-ca-123'
       );
+      expect(caEmail.text).toContain('4. TOP 10 MOST POPULAR GEAR THIS WEEK');
+      expect(caEmail.text).toContain('#1 ');
+      expect(caEmail.text).toContain('#10 ');
       expect(caEmail.text).toContain('1-Click Unsubscribe');
 
       const usEmail = generateWeeklyPipelineBriefEmail({
@@ -151,6 +185,7 @@ describe('Weekly Pipeline Brief Newsletter', () => {
       });
 
       expect(usEmail.subject).toContain('United States');
+      expect(usEmail.html).toContain('tag=toyotawaits07-20');
       expect(usEmail.html).toContain(
         'https://www.toyotawaits.com/api/newsletter/unsubscribe?token=unsub-us-456'
       );

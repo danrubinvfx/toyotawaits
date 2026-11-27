@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import {
   generateWeeklyPipelineBriefEmail,
+  getWeeklyGearPicks,
   type CommunityDeliveryPulseItem,
   type WaitTimeMover,
 } from '../src/emails/WeeklyPipelineBriefEmail';
@@ -43,6 +44,44 @@ function extractModelInfo(sub: SubmissionRow): { name: string; slug: string } {
     name: rawName,
     slug: toCanonicalWaitTimeSlug(rawSlug) || rawSlug,
   };
+}
+
+async function fetchAccessoryPopularity30d(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  now: Date
+): Promise<Record<string, number>> {
+  const { data: viewData, error: viewError } = await supabase
+    .from('view_accessory_popularity_30d')
+    .select('accessory_id, click_count');
+
+  if (!viewError && Array.isArray(viewData)) {
+    const counts: Record<string, number> = {};
+    for (const row of viewData as Array<{ accessory_id?: string | null; click_count?: unknown }>) {
+      if (row.accessory_id) {
+        counts[row.accessory_id] = Number(row.click_count) || 0;
+      }
+    }
+    return counts;
+  }
+
+  const thirtyDaysAgoIso = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: rawRows, error: rawError } = await supabase
+    .from('telemetry_affiliate_clicks')
+    .select('accessory_id')
+    .gte('created_at', thirtyDaysAgoIso);
+
+  if (rawError || !Array.isArray(rawRows)) {
+    return {};
+  }
+
+  const counts: Record<string, number> = {};
+  for (const row of rawRows as Array<{ accessory_id?: string | null }>) {
+    if (row.accessory_id) {
+      counts[row.accessory_id] = (counts[row.accessory_id] || 0) + 1;
+    }
+  }
+  return counts;
 }
 
 async function fetchFreshLotSightingsCount(
@@ -211,10 +250,16 @@ async function main() {
     return;
   }
 
-  // 2. Aggregate 7-day metrics once per market
-  const freshLotSightingsCount = await fetchFreshLotSightingsCount(supabase, sevenDaysAgoIso);
-  const caMetrics = await fetchDigestMetrics(supabase, 'CA', sevenDaysAgoIso);
-  const usMetrics = await fetchDigestMetrics(supabase, 'US', sevenDaysAgoIso);
+  // 2. Aggregate 7-day metrics & 30-day accessory popularity once per market
+  const [freshLotSightingsCount, caMetrics, usMetrics, popularityCounts] = await Promise.all([
+    fetchFreshLotSightingsCount(supabase, sevenDaysAgoIso),
+    fetchDigestMetrics(supabase, 'CA', sevenDaysAgoIso),
+    fetchDigestMetrics(supabase, 'US', sevenDaysAgoIso),
+    fetchAccessoryPopularity30d(supabase, now),
+  ]);
+
+  const topGearCA = getWeeklyGearPicks('CA', now, popularityCounts).slice(0, 10);
+  const topGearUS = getWeeklyGearPicks('US', now, popularityCounts).slice(0, 10);
 
   const resend = resendApiKey ? new Resend(resendApiKey) : null;
 
@@ -231,6 +276,7 @@ async function main() {
       waitTimeMovers: metrics.waitTimeMovers,
       freshLotSightingsCount,
       deliveryPulse: metrics.deliveryPulse,
+      gearPicks: country === 'US' ? topGearUS : topGearCA,
       currentDate: now,
     });
 
@@ -270,7 +316,7 @@ async function main() {
   }
 
   console.log(
-    `[Weekly Newsletter] Complete | sent=${sentCount} | failed=${failedCount} | freshLotSightings=${freshLotSightingsCount}`
+    `[Weekly Newsletter] Complete | sent=${sentCount} | failed=${failedCount} | freshLotSightings=${freshLotSightingsCount} | popularityKeys=${Object.keys(popularityCounts).length}`
   );
 
   if (failedCount > 0 && sentCount === 0) {
