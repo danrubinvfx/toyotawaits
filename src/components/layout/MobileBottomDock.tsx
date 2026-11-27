@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Clock, Ship, Package, Calculator, BookOpen, X, Check, Tag, ExternalLink } from 'lucide-react';
@@ -585,12 +585,66 @@ export function MobileGearDrawer({
   );
 }
 
+function useScrollCollapse(disabled: boolean) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const lastScrollY = useRef(0);
+  const rafIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    lastScrollY.current = window.scrollY || 0;
+    let isPending = false;
+
+    const updateScroll = () => {
+      isPending = false;
+      rafIdRef.current = null;
+      if (disabled) {
+        setIsCollapsed(false);
+        lastScrollY.current = window.scrollY || 0;
+        return;
+      }
+
+      const currentScrollY = window.scrollY || 0;
+      const delta = currentScrollY - lastScrollY.current;
+
+      if (currentScrollY < 80 || delta < -10) {
+        setIsCollapsed(false);
+      } else if (currentScrollY > 100 && delta > 10) {
+        setIsCollapsed(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    const handleScroll = () => {
+      if (isPending) return;
+      isPending = true;
+      rafIdRef.current = window.requestAnimationFrame(updateScroll);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (isPending && rafIdRef.current !== null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+      }
+      isPending = false;
+      rafIdRef.current = null;
+    };
+  }, [disabled]);
+
+  const effectiveCollapsed = disabled ? false : isCollapsed;
+  return [effectiveCollapsed, setIsCollapsed] as const;
+}
+
 export function MobileBottomDock() {
   const pathname = usePathname() || '';
   const searchParams = useSearchParams();
   const calcContext = useCalculatorContext();
   const [isGearDrawerOpen, setIsGearDrawerOpen] = useState(false);
   const [isGuidesModalOpen, setIsGuidesModalOpen] = useState(false);
+  const hasOpenModal = isGearDrawerOpen || isGuidesModalOpen;
+  const [isCollapsed, setIsCollapsed] = useScrollCollapse(hasOpenModal);
 
   // Auto-close open drawers/modals on navigation
   useEffect(() => {
@@ -693,14 +747,40 @@ export function MobileBottomDock() {
   const isGuidesActive = pathname.startsWith('/guides') || pathname === '/winter-prep' || pathname.startsWith('/camping');
   const isCalculatorActive = pathname.startsWith('/calculator');
 
+  const ActiveCollapsedIcon = useMemo(() => {
+    if (isInventoryActive) return Ship;
+    if (isGuidesActive) return BookOpen;
+    if (isCalculatorActive) return Calculator;
+    return Clock;
+  }, [isInventoryActive, isGuidesActive, isCalculatorActive]);
+
   return (
     <>
       <nav
         data-testid="mobile-bottom-dock"
         aria-label="Mobile Navigation Dock"
-        className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-zinc-950/95 border-t border-zinc-800/80 backdrop-blur-lg pb-safe"
+        className={cn(
+          'fixed bottom-4 z-40 md:hidden transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+          isCollapsed
+            ? 'left-4 w-12 h-12 rounded-full bg-zinc-950/90 backdrop-blur-xl border border-zinc-800/90 shadow-xl flex items-center justify-center'
+            : 'left-3 right-3 mx-auto max-w-md rounded-full bg-zinc-950/90 backdrop-blur-xl border border-zinc-800/90 shadow-2xl px-2 py-1.5'
+        )}
       >
-        <div className="grid grid-cols-5 items-center h-14 px-0.5 sm:px-1 max-w-md mx-auto">
+        {isCollapsed ? (
+          <button
+            type="button"
+            data-testid="mobile-dock-expand-btn"
+            aria-label="Expand navigation menu"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsCollapsed(false);
+            }}
+            className="w-full h-full flex items-center justify-center rounded-full text-amber-400 hover:text-amber-300 cursor-pointer touch-manipulation"
+          >
+            <ActiveCollapsedIcon className="h-5 w-5" aria-hidden="true" />
+          </button>
+        ) : (
+        <div className="grid grid-cols-5 items-center h-12 px-0.5 sm:px-1">
           {/* Slot 1: Tracker */}
           <Link
             href="/"
@@ -781,6 +861,7 @@ export function MobileBottomDock() {
             <span className="text-[10px] tracking-tight truncate max-w-full">Calculator</span>
           </Link>
         </div>
+        )}
       </nav>
 
       {/* Dynamic Model Gear Drawer */}

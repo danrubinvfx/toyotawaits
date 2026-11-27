@@ -37,15 +37,16 @@ describe('MobileBottomDock Component & Dynamic Gear Drawer', () => {
     expect(dock).toBeInTheDocument();
     expect(dock).toHaveClass(
       'fixed',
-      'bottom-0',
-      'inset-x-0',
+      'bottom-4',
       'z-40',
       'md:hidden',
-      'bg-zinc-950/95',
-      'border-t',
-      'border-zinc-800/80',
-      'backdrop-blur-lg',
-      'pb-safe'
+      'left-3',
+      'right-3',
+      'rounded-full',
+      'bg-zinc-950/90',
+      'backdrop-blur-xl',
+      'border',
+      'border-zinc-800/90'
     );
 
     // 5 Slots
@@ -266,5 +267,82 @@ describe('MobileBottomDock Component & Dynamic Gear Drawer', () => {
     // Close via close button
     fireEvent.click(screen.getByTestId('mobile-guides-modal-close-btn'));
     expect(screen.queryByTestId('mobile-guides-modal-root')).not.toBeInTheDocument();
+  });
+
+  it('collapses into bottom-left badge on downward scroll and expands on upward scroll or near top', () => {
+    let scrollYValue = 0;
+    Object.defineProperty(window, 'scrollY', {
+      get: () => scrollYValue,
+      configurable: true,
+    });
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+      cb(0);
+      return 1;
+    });
+
+    render(
+      <MarketProvider>
+        <MobileBottomDock />
+      </MarketProvider>
+    );
+
+    const dock = screen.getByTestId('mobile-bottom-dock');
+    expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-dock-expand-btn')).not.toBeInTheDocument();
+
+    // Scroll down past threshold (> 100 and > 10px delta)
+    scrollYValue = 220;
+    fireEvent.scroll(window);
+
+    expect(dock).toHaveClass('left-4', 'w-12', 'h-12', 'rounded-full');
+    expect(screen.queryByTestId('mobile-dock-tracker')).not.toBeInTheDocument();
+    const expandBtn = screen.getByRole('button', { name: 'Expand navigation menu' });
+    expect(expandBtn).toBeInTheDocument();
+
+    // Scroll up > 10px delta -> expands back to 5-tab pill
+    scrollYValue = 180;
+    fireEvent.scroll(window);
+
+    expect(dock).toHaveClass('left-3', 'right-3', 'rounded-full');
+    expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-dock-expand-btn')).not.toBeInTheDocument();
+
+    // Collapse again, then scroll near top (< 80) -> expands
+    scrollYValue = 300;
+    fireEvent.scroll(window);
+    expect(screen.getByRole('button', { name: 'Expand navigation menu' })).toBeInTheDocument();
+
+    scrollYValue = 40;
+    fireEvent.scroll(window);
+    expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
+  });
+
+  it('expands immediately when tapping the collapsed pill without triggering navigation', () => {
+    let scrollYValue = 0;
+    Object.defineProperty(window, 'scrollY', {
+      get: () => scrollYValue,
+      configurable: true,
+    });
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {
+      cb(0);
+      return 1;
+    });
+
+    mockPathname = '/inventory';
+    render(
+      <MarketProvider>
+        <MobileBottomDock />
+      </MarketProvider>
+    );
+
+    scrollYValue = 250;
+    fireEvent.scroll(window);
+
+    const expandBtn = screen.getByRole('button', { name: 'Expand navigation menu' });
+    fireEvent.click(expandBtn);
+
+    expect(screen.getByTestId('mobile-dock-inventory')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-dock-expand-btn')).not.toBeInTheDocument();
   });
 });
