@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 export const LISTING_CLICKS_STORAGE_KEY = 'toyotawaits_listing_clicks';
-export const DONATION_DISMISSED_STORAGE_KEY = 'toyotawaits_donation_dismissed';
+export const DONATION_DISMISSED_STORAGE_KEY = 'toyotawaits_newsletter_toast_dismissed';
 export const LISTING_CLICKS_THRESHOLD = 3;
 export const DISMISSAL_COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
 

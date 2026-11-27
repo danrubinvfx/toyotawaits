@@ -7,7 +7,6 @@ import './globals.css';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { WSJCalloutBanner } from '@/components/news/WSJCalloutBanner';
-import { KofiFloatingPill } from '@/components/common/kofi-button';
 import { MarketProvider } from '@/context/MarketContext';
 import { MobileBottomDock } from '@/components/layout/MobileBottomDock';
 import { getRequestMarketMetadata } from '@/lib/seo/host-metadata';
@@ -246,7 +245,6 @@ export default async function RootLayout({
           <main className="flex-1 pb-16 md:pb-0">
             {children}
           </main>
-          <KofiFloatingPill className="bottom-20 sm:bottom-4" />
           <Footer />
           <Suspense fallback={null}>
             <MobileBottomDock />

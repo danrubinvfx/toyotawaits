@@ -8,11 +8,12 @@ import { cn } from '@/lib/utils';
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 export interface NewsletterSignupProps {
+  id?: string;
   className?: string;
   compact?: boolean;
 }
 
-export function NewsletterSignup({ className, compact = false }: NewsletterSignupProps) {
+export function NewsletterSignup({ id, className, compact = false }: NewsletterSignupProps) {
   const { market } = useMarket();
   const country = market === 'US' ? 'US' : 'CA';
 
@@ -59,6 +60,7 @@ export function NewsletterSignup({ className, compact = false }: NewsletterSignu
 
   return (
     <div
+      id={id}
       data-testid="newsletter-signup"
       className={cn(
         'rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-100 shadow-sm',

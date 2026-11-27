@@ -67,11 +67,11 @@ describe('Header Component', () => {
     expect(quoteAuditorDesktop).toBeInTheDocument();
     expect(quoteAuditorDesktop).toHaveAttribute('href', '/tools/quote-auditor');
 
-    // Ko-fi support header pill
-    const kofiHeaderLink = screen.getByTestId('kofi-header-pill');
-    expect(kofiHeaderLink).toBeInTheDocument();
-    expect(kofiHeaderLink).toHaveAttribute('href', 'https://ko-fi.com/toyotawaits');
-    expect(kofiHeaderLink).toHaveAttribute('target', '_blank');
+    // Newsletter header pill
+    const newsletterHeaderLink = screen.getByTestId('newsletter-header-pill');
+    expect(newsletterHeaderLink).toBeInTheDocument();
+    expect(newsletterHeaderLink).toHaveAttribute('href', '/#newsletter-signup');
+    expect(newsletterHeaderLink).toHaveTextContent(/Weekly Brief/i);
 
     // Toggle button should exist
     const toggleButton = screen.getByTestId('mobile-menu-toggle');

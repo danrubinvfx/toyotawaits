@@ -26,7 +26,7 @@ import {
   getPresetCoordinates,
 } from '@/lib/geo/distance';
 import { useDonationReminder } from '@/hooks/useDonationReminder';
-import { DonationToast } from '@/components/common/DonationToast';
+import { NewsletterToast } from '@/components/newsletter/NewsletterToast';
 import { Car, AlertCircle, Bell, AlertTriangle } from 'lucide-react';
 
 function getListingProvince(item: VehicleListingCardProps): 'BC' | 'ON' | 'AB' {
@@ -1437,11 +1437,10 @@ export function InventoryExplorer({
         sourceFilterState={filters}
       />
 
-      {/* Non-intrusive Coffee Donation Reminder after 3 listing views */}
-      <DonationToast
+      {/* Non-intrusive Weekly Pipeline Brief Reminder after 3 listing views */}
+      <NewsletterToast
         isOpen={showReminder}
         onDismiss={dismissReminder}
-        modelContext={filters.model || null}
       />
     </div>
   );

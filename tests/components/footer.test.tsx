@@ -11,18 +11,14 @@ describe('Footer Component', () => {
     expect(screen.getByText(/Canadian Community Data Initiative/i)).toBeInTheDocument();
   });
 
-  it('renders the Ko-fi support pill buttons with target="_blank" and rel="noopener noreferrer"', () => {
+  it('renders the Weekly Pipeline Brief anchor links pointing to #newsletter-signup', () => {
     render(<Footer />);
 
-    const supportButtons = screen.getAllByRole('link', { name: /☕ Support this tracker/i });
-    expect(supportButtons.length).toBeGreaterThanOrEqual(1);
+    const briefLinks = screen.getAllByRole('link', { name: /Weekly Pipeline Brief/i });
+    expect(briefLinks.length).toBeGreaterThanOrEqual(2);
 
-    supportButtons.forEach((btn) => {
-      expect(btn).toHaveAttribute('href', 'https://ko-fi.com/toyotawaits');
-      expect(btn).toHaveAttribute('target', '_blank');
-      expect(btn).toHaveAttribute('rel', 'noopener noreferrer');
-      expect(btn.className).toContain('border-neutral-800');
-      expect(btn.className).toContain('text-neutral-400');
+    briefLinks.forEach((link) => {
+      expect(link).toHaveAttribute('href', '#newsletter-signup');
     });
   });
 
@@ -32,16 +28,12 @@ describe('Footer Component', () => {
     expect(screen.getByText(/Some links on this page are affiliate links/i)).toBeInTheDocument();
   });
 
-  it('renders secondary Ko-fi community callout card with verified link', () => {
+  it('renders the NewsletterSignup strip with id="newsletter-signup" above the footer directory', () => {
     render(<Footer />);
 
-    expect(screen.getByTestId('kofi-footer-callout')).toBeInTheDocument();
-    expect(screen.getByText(/ToyotaWaits is an independent, ad-free community project/i)).toBeInTheDocument();
-
-    const buyCoffeeBtn = screen.getByTestId('kofi-footer-button');
-    expect(buyCoffeeBtn).toHaveAttribute('href', 'https://ko-fi.com/toyotawaits');
-    expect(buyCoffeeBtn).toHaveAttribute('target', '_blank');
-    expect(buyCoffeeBtn).toHaveAttribute('rel', 'noopener noreferrer');
+    const newsletterSection = screen.getByTestId('newsletter-signup');
+    expect(newsletterSection).toBeInTheDocument();
+    expect(newsletterSection).toHaveAttribute('id', 'newsletter-signup');
   });
 
   it('renders Buyer Prep & Mods Hub links including Canadian Tire Guide', () => {

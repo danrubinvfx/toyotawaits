@@ -27,7 +27,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
-import { KofiHeaderPill } from '@/components/common/kofi-button';
+import { NewsletterHeaderPill } from '@/components/newsletter/NewsletterHeaderPill';
 import { cn } from '@/lib/utils';
 import { useMarket } from '@/context/MarketContext';
 
@@ -644,7 +644,7 @@ export function Header({ initialRegion }: HeaderProps = {}) {
           </div>
 
           <div className="hidden sm:block shrink-0">
-            <KofiHeaderPill label="Support ☕" />
+            <NewsletterHeaderPill />
           </div>
           {hasActiveOrder ? (
             <Link

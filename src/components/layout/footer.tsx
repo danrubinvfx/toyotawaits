@@ -3,7 +3,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { Shield, Lock, Heart, Globe, Scale, Mail, HelpCircle } from 'lucide-react';
-import { KofiCalloutCard } from '@/components/common/kofi-button';
 import { ModelDirectory } from '@/components/ModelDirectory';
 import { cn } from '@/lib/utils';
 import { StorefrontLink } from '@/components/gear/StorefrontLink';
@@ -26,7 +25,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
       <div className="container mx-auto max-w-6xl px-4 sm:px-6">
         {/* Weekly Pipeline Brief Newsletter Strip */}
         <div className="mb-8">
-          <NewsletterSignup compact />
+          <NewsletterSignup id="newsletter-signup" compact />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -91,12 +90,10 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
 
             <div className="pt-1">
               <a
-                href="https://ko-fi.com/toyotawaits"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+                href="#newsletter-signup"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-amber-500/30 text-amber-400 hover:text-amber-300 transition-colors"
               >
-                ☕ Support this tracker
+                📧 Weekly Pipeline Brief
               </a>
             </div>
           </div>
@@ -370,6 +367,15 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
               </li>
               <li>
                 <a
+                  href="#newsletter-signup"
+                  className="flex items-center gap-1.5 text-xs text-amber-400 hover:text-amber-300 transition-colors"
+                >
+                  <Mail className="h-3.5 w-3.5 text-amber-400" />
+                  Weekly Pipeline Brief
+                </a>
+              </li>
+              <li>
+                <a
                   href="mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry"
                   className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-amber-500 transition-colors"
                 >
@@ -383,11 +389,6 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
 
         {/* Canadian Toyota Model Trackers Directory */}
         <ModelDirectory />
-
-        {/* Ko-fi Community Callout Card */}
-        <div className="mb-8">
-          <KofiCalloutCard />
-        </div>
 
         {/* Disclaimer & Disclosure Section */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-400 space-y-3">
@@ -460,12 +461,10 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
             <span>© 2026 {isUs ? 'ToyotaWaits.com. U.S. Community Data Initiative.' : 'ToyotaWaits.ca. Canadian Community Data Initiative.'}</span>
             <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-0">
               <a
-                href="https://ko-fi.com/toyotawaits"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-neutral-800 text-neutral-400 hover:text-white transition-colors"
+                href="#newsletter-signup"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-amber-500/30 text-amber-400 hover:text-amber-300 transition-colors"
               >
-                ☕ Support this tracker
+                📧 Weekly Pipeline Brief
               </a>
               <span className="flex items-center gap-1">
                 Built with <Heart className="h-3 w-3 text-red-600 fill-current" /> for {isUs ? 'American' : 'Canadian'} automotive buyers

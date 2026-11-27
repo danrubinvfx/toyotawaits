@@ -2,6 +2,8 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { NewsletterSignup } from '@/components/newsletter/NewsletterSignup';
+import { NewsletterHeaderPill } from '@/components/newsletter/NewsletterHeaderPill';
+import { NewsletterToast } from '@/components/newsletter/NewsletterToast';
 import {
   generateWeeklyPipelineBriefEmail,
   getWeeklyGearPicks,
@@ -60,6 +62,44 @@ describe('Weekly Pipeline Brief Newsletter', () => {
       });
 
       expect(await screen.findByRole('status')).toHaveTextContent(/Check your inbox/i);
+    });
+  });
+
+  describe('<NewsletterHeaderPill /> and <NewsletterToast />', () => {
+    it('NewsletterHeaderPill renders Weekly Brief pill linking to /#newsletter-signup', () => {
+      render(<NewsletterHeaderPill />);
+      const pill = screen.getByTestId('newsletter-header-pill');
+      expect(pill).toHaveAttribute('href', '/#newsletter-signup');
+      expect(pill).toHaveTextContent(/Weekly Brief/i);
+    });
+
+    it('NewsletterToast validates email, submits to /api/newsletter/subscribe, and dismisses', async () => {
+      const onDismiss = vi.fn();
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ success: true, message: 'Check your inbox!' }),
+      });
+      global.fetch = fetchMock as unknown as typeof fetch;
+
+      render(<NewsletterToast isOpen onDismiss={onDismiss} />);
+      fireEvent.change(screen.getByTestId('newsletter-toast-email'), {
+        target: { value: 'toast@example.ca' },
+      });
+      fireEvent.click(screen.getByTestId('newsletter-toast-submit'));
+
+      await waitFor(() => {
+        expect(fetchMock).toHaveBeenCalledWith(
+          '/api/newsletter/subscribe',
+          expect.objectContaining({
+            method: 'POST',
+            body: JSON.stringify({ email: 'toast@example.ca', country: 'CA' }),
+          })
+        );
+      });
+
+      expect(await screen.findByTestId('newsletter-toast-feedback')).toHaveTextContent(/Check your inbox/i);
+      fireEvent.click(screen.getByTestId('newsletter-toast-dismiss'));
+      expect(onDismiss).toHaveBeenCalledTimes(1);
     });
   });
 
