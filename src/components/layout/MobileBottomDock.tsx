@@ -9,8 +9,37 @@ import { useCalculatorContext } from '@/context/CalculatorContext';
 import { buildAmazonAffiliateUrl, getModelDisplayName } from '@/lib/gear/affiliate';
 import { GearImage } from '@/components/gear/GearImage';
 import { resolveVerifiedGearImageSrc } from '@/data/gear/catalog';
+import { sortAccessoriesByPopularity, type AccessoryItem } from '@/data/accessories';
 import { GuidesModal } from '@/components/navigation/GuidesModal';
 import { cn } from '@/lib/utils';
+
+export const GEAR_DRAWER_FILTER_PILLS = [
+  { slug: 'all', label: 'All Gear' },
+  { slug: 'universal', label: 'Universal' },
+  { slug: 'rav4', label: 'RAV4' },
+  { slug: 'sienna', label: 'Sienna' },
+  { slug: 'grand-highlander', label: 'Grand Highlander' },
+  { slug: 'tacoma', label: 'Tacoma' },
+  { slug: 'prius', label: 'Prius' },
+  { slug: '4runner', label: '4Runner' },
+  { slug: 'land-cruiser', label: 'Land Cruiser' },
+] as const;
+
+export function normalizeGearFilterSlug(modelSlug?: string | null): string {
+  const clean = (modelSlug || '').toLowerCase().trim();
+  if (!clean || clean === 'all') return 'all';
+  if (clean === 'universal') return 'universal';
+  if (clean.includes('grand-highlander') || clean.includes('grand highlander')) return 'grand-highlander';
+  if (clean.includes('land-cruiser') || clean.includes('land cruiser') || clean.includes('landcruiser')) {
+    return 'land-cruiser';
+  }
+  if (clean.includes('rav4')) return 'rav4';
+  if (clean.includes('sienna')) return 'sienna';
+  if (clean.includes('tacoma')) return 'tacoma';
+  if (clean.includes('prius')) return 'prius';
+  if (clean.includes('4runner')) return '4runner';
+  return clean;
+}
 
 export interface MobileGearItem {
   id: string;
@@ -27,15 +56,133 @@ export interface MobileGearItem {
   fallbackIcon?: string;
   badge?: string;
   tag?: string;
+  modelSlug?: string;
+}
+
+export const UNIVERSAL_MOBILE_GEAR: MobileGearItem[] = [
+  {
+    id: 'rfid-faraday-key-fob-pouch',
+    title: 'Faraday Key Pouch',
+    brand: 'TICONN',
+    priceText: '$14 – $24 CAD',
+    description: 'Blocks keyless relay theft.',
+    destinationType: 'amazon',
+    searchQuery: 'Faraday bag key fob signal protector pouch',
+    badge: 'Security',
+    tag: 'Security',
+    imageUrl: '/assets/gear/faraday-pouch.webp',
+    fallbackIcon: 'lock',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'noco-gb40-jump-pack',
+    title: '12V Jump Starter',
+    brand: 'NOCO',
+    priceText: '$129 – $149 CAD',
+    description: 'Compact 1000A winter jump pack.',
+    destinationType: 'amazon',
+    searchQuery: 'NOCO Boost GB40 12V lithium jump starter',
+    badge: 'Emergency & Winter',
+    tag: 'Emergency & Winter',
+    imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
+    fallbackIcon: 'battery',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'portable-tire-inflator',
+    title: 'Cordless Tire Inflator',
+    brand: 'Fanttik',
+    priceText: '$65 – $89 CAD',
+    description: 'Auto-stop 150 PSI air pump.',
+    destinationType: 'amazon',
+    searchQuery: 'portable cordless tire inflator auto shutoff 150 PSI',
+    badge: 'Winter Prep',
+    tag: 'Winter Prep',
+    imageUrl: '/assets/gear/noco-gb40-jump-pack.webp',
+    fallbackIcon: 'zap',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'universal-spigen-screen-protector',
+    title: 'Spigen 9H Tempered Glass Screen Protector',
+    brand: 'Spigen',
+    priceText: '~$24 CAD',
+    description: 'Stops fingerprints and glare.',
+    destinationType: 'amazon',
+    searchQuery: 'Spigen tempered glass screen protector Toyota multimedia',
+    badge: 'Display Protection',
+    tag: 'Display Protection',
+    imageUrl: '/assets/gear/spigen-screen-protector.webp',
+    fallbackIcon: 'smartphone',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'universal-wireless-carplay',
+    title: 'Plug-and-Play Wireless CarPlay / Android Auto Adapter',
+    brand: 'CarlinKit / Auto',
+    priceText: '~$50 CAD',
+    description: 'Instant wireless CarPlay & Android Auto.',
+    destinationType: 'amazon',
+    searchQuery: 'wireless carplay android auto adapter toyota',
+    badge: 'Cabin Tech',
+    tag: 'Cabin Tech',
+    imageUrl: '/assets/gear/wireless-carplay-adapter.webp',
+    fallbackIcon: 'wifi',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'fast-usbc-pd-car-charger',
+    title: '65W Fast Charger',
+    brand: 'Baseus / Anker',
+    priceText: '$19 – $32 CAD',
+    description: 'Ultra-fast dual phone charging.',
+    destinationType: 'amazon',
+    searchQuery: 'flush fit 65W dual USB C car charger',
+    badge: 'Charging',
+    tag: 'Charging',
+    imageUrl: '/assets/gear/fast-usbc-charger.webp',
+    fallbackIcon: 'zap',
+    modelSlug: 'universal',
+  },
+  {
+    id: 'level-2-evse-charger',
+    title: 'Home EV Charger',
+    brand: 'Grizzl-E',
+    priceText: '$499 – $549 CAD',
+    description: 'Fast Level 2 home charging.',
+    destinationType: 'amazon',
+    searchQuery: 'Level 2 EV charger 40A NEMA 14-50 J1772',
+    badge: 'PHEV Charging',
+    tag: 'PHEV Charging',
+    imageUrl: '/assets/gear/grizzl-e-charger.webp',
+    fallbackIcon: 'zap',
+    modelSlug: 'universal',
+  },
+];
+
+function appendUniversalEssentials(
+  modelItems: MobileGearItem[],
+  excludeIds: string[] = ['universal-spigen-screen-protector', 'universal-wireless-carplay']
+): MobileGearItem[] {
+  const existingIds = new Set(modelItems.map((i) => i.id));
+  const extras = UNIVERSAL_MOBILE_GEAR.filter(
+    (u) => !existingIds.has(u.id) && !excludeIds.includes(u.id)
+  );
+  return [...modelItems, ...extras];
 }
 
 export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): MobileGearItem[] {
   const isUs = market === 'US';
   const clean = modelSlug.toLowerCase().trim();
 
+  // 0. Strictly Universal Essentials
+  if (clean === 'universal') {
+    return UNIVERSAL_MOBILE_GEAR;
+  }
+
   // 1. RAV4 Curated Lineup
   if (clean === 'rav4' || clean.includes('rav4')) {
-    return [
+    return appendUniversalEssentials([
       {
         id: 'muslogy-rav4-organizer',
         title: 'Muslogy Center Console Organizer Tray (RAV4)',
@@ -104,12 +251,12 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
       },
-    ];
+    ]);
   }
 
   // 2. Sienna Curated Lineup
   if (clean === 'sienna' || clean.includes('sienna')) {
-    return [
+    return appendUniversalEssentials([
       {
         id: 'muslogy-sienna-organizer',
         title: 'Muslogy Sienna Console Sliding Tray & Bridge Box',
@@ -178,12 +325,12 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
       },
-    ];
+    ]);
   }
 
   // 3. Grand Highlander Curated Lineup
   if (clean === 'grand-highlander' || clean.includes('grand-highlander') || clean.includes('grand highlander')) {
-    return [
+    return appendUniversalEssentials([
       {
         id: 'muslogy-grand-highlander-organizer',
         title: 'Muslogy Grand Highlander Console Divider Tray',
@@ -252,13 +399,13 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
       },
-    ];
+    ]);
   }
 
-  // 4. Other Specific Models Fallback (e.g. Camry, Tacoma, Prius, Corolla Cross, 4Runner)
-  if (clean) {
+  // 4. Other Specific Models Fallback (e.g. Camry, Tacoma, Prius, Corolla Cross, 4Runner, Land Cruiser)
+  if (clean && clean !== 'all') {
     const modelDisplayName = getModelDisplayName(clean);
-    return [
+    return appendUniversalEssentials([
       {
         id: `muslogy-${clean}-organizer`,
         title: 'Muslogy Center Console Organizer Tray',
@@ -327,11 +474,11 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
         imageUrl: '/assets/gear/fitcamx-rav4.webp',
         fallbackIcon: 'camera',
       },
-    ];
+    ]);
   }
 
-  // 5. Universal Deals & Top Bestsellers Lineup (When no model is active)
-  return [
+  // 5. All Gear: Top Model Bestsellers + Expanded Universal Essentials
+  return appendUniversalEssentials([
     {
       id: 'muslogy-console-organizer-universal',
       title: 'Muslogy Center Console Organizer Tray',
@@ -400,7 +547,7 @@ export function getCuratedMobileGear(modelSlug: string, market: 'CA' | 'US'): Mo
       imageUrl: '/assets/gear/fitcamx-rav4.webp',
       fallbackIcon: 'camera',
     },
-  ];
+  ]);
 }
 
 export interface MobileGearDrawerProps {
@@ -408,6 +555,7 @@ export interface MobileGearDrawerProps {
   onClose: () => void;
   modelSlug: string;
   modelName: string;
+  popularityWeights?: Record<string, number>;
 }
 
 export function MobileGearDrawer({
@@ -415,14 +563,73 @@ export function MobileGearDrawer({
   onClose,
   modelSlug,
   modelName,
+  popularityWeights: externalWeights,
 }: MobileGearDrawerProps) {
   const { market } = useMarket();
   const [copiedId, setCopiedId] = useState<string | null>(null);
-
-  const gearItems = useMemo(
-    () => getCuratedMobileGear(modelSlug, market || 'CA'),
-    [modelSlug, market]
+  const [selectedFilter, setSelectedFilter] = useState<string>(() =>
+    normalizeGearFilterSlug(modelSlug)
   );
+  const [fetchedWeights, setFetchedWeights] = useState<Record<string, number>>({});
+
+  // Sync active filter pill when the route/context model changes or drawer opens
+  useEffect(() => {
+    setSelectedFilter(normalizeGearFilterSlug(modelSlug));
+  }, [modelSlug, isOpen]);
+
+  // Fetch 30-day Supabase click telemetry when drawer opens (unless externally supplied)
+  useEffect(() => {
+    if (!isOpen || externalWeights) return;
+    let cancelled = false;
+    if (typeof fetch !== 'function') return;
+
+    fetch('/api/accessories/popular')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.counts && typeof data.counts === 'object') {
+          setFetchedWeights(data.counts as Record<string, number>);
+        }
+      })
+      .catch(() => {
+        // Offline / error fallback: keep curated order
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, externalWeights]);
+
+  const effectiveWeights = useMemo(
+    () => externalWeights ?? fetchedWeights,
+    [externalWeights, fetchedWeights]
+  );
+
+  const gearItems = useMemo(() => {
+    const filtered = getCuratedMobileGear(selectedFilter, market || 'CA');
+    if (!effectiveWeights || Object.keys(effectiveWeights).length === 0) {
+      return filtered;
+    }
+
+    const originalById = new Map(filtered.map((item) => [item.id, item]));
+    const sorted = sortAccessoriesByPopularity(
+      filtered as unknown as AccessoryItem[],
+      effectiveWeights
+    );
+
+    return sorted.map((sortedItem) => {
+      const original = originalById.get(sortedItem.id);
+      return original ?? (sortedItem as unknown as MobileGearItem);
+    });
+  }, [selectedFilter, market, effectiveWeights]);
+
+  const headerTitleSuffix = useMemo(() => {
+    if (selectedFilter === 'all') return 'Toyota Essentials';
+    if (selectedFilter === 'universal') return 'Universal Essentials';
+    if (normalizeGearFilterSlug(modelSlug) === selectedFilter && modelName) {
+      return modelName;
+    }
+    return getModelDisplayName(selectedFilter);
+  }, [selectedFilter, modelSlug, modelName]);
 
   const handleCopyCode = useCallback((code: string, id: string) => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -451,36 +658,68 @@ export function MobileGearDrawer({
         data-testid="mobile-gear-drawer-sheet"
         role="dialog"
         aria-modal="true"
-        aria-label={`Delivery Day Prep: ${modelName || 'Toyota Essentials'}`}
-        className="fixed bottom-0 inset-x-0 z-50 rounded-t-2xl bg-zinc-900 border-t border-zinc-800 p-4 max-h-[85vh] overflow-y-auto pb-safe shadow-2xl space-y-3.5"
+        aria-label={`Delivery Day Prep: ${headerTitleSuffix}`}
+        className="fixed bottom-0 inset-x-0 z-50 rounded-t-2xl bg-zinc-900 border-t border-zinc-800 px-4 pt-3 max-h-[85vh] overflow-y-auto pb-8 shadow-2xl space-y-3.5"
       >
-        {/* Pull Handle */}
-        <div className="w-12 h-1.5 rounded-full bg-zinc-700 mx-auto" aria-hidden="true" />
+        {/* Sticky Sheet Header + Model Filter Pill Bar */}
+        <div className="sticky top-0 z-10 bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-800 -mx-4 px-4 pt-1 pb-3 space-y-3">
+          {/* Pull Handle */}
+          <div className="w-12 h-1.5 rounded-full bg-zinc-700 mx-auto" aria-hidden="true" />
 
-        {/* Sheet Header */}
-        <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
-          <div>
-            <h3 className="text-base font-bold text-white tracking-tight">
-              Delivery Day Prep: {modelName || 'Toyota Essentials'}
-            </h3>
-            <p className="text-xs text-zinc-400">
-              Curated exclusive partner deals and community bestsellers
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-white tracking-tight">
+                Delivery Day Prep: {headerTitleSuffix}
+              </h3>
+              <p className="text-xs text-zinc-400">
+                Curated exclusive partner deals and community bestsellers
+              </p>
+            </div>
+            <button
+              type="button"
+              data-testid="mobile-gear-drawer-close-btn"
+              onClick={onClose}
+              aria-label="Close gear drawer"
+              className="rounded-full p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
+            >
+              <X className="h-5 w-5" aria-hidden="true" />
+            </button>
           </div>
-          <button
-            type="button"
-            data-testid="mobile-gear-drawer-close-btn"
-            onClick={onClose}
-            aria-label="Close gear drawer"
-            className="rounded-full p-1.5 text-zinc-400 hover:text-white hover:bg-zinc-800 transition cursor-pointer"
+
+          {/* Horizontal Model Filter Pill Bar */}
+          <div
+            data-testid="gear-drawer-filter-pills"
+            role="tablist"
+            aria-label="Filter gear by Toyota model"
+            className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5"
           >
-            <X className="h-5 w-5" aria-hidden="true" />
-          </button>
+            {GEAR_DRAWER_FILTER_PILLS.map((pill) => {
+              const isSelected = selectedFilter === pill.slug;
+              return (
+                <button
+                  key={pill.slug}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  data-testid={`gear-filter-pill-${pill.slug}`}
+                  onClick={() => setSelectedFilter(pill.slug)}
+                  className={cn(
+                    'shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition cursor-pointer whitespace-nowrap border',
+                    isSelected
+                      ? 'bg-amber-500 text-zinc-950 border-amber-400 shadow-sm'
+                      : 'bg-zinc-800/80 text-zinc-300 border-zinc-700/70 hover:bg-zinc-800 hover:text-white'
+                  )}
+                >
+                  {pill.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Curated Gear Cards */}
         <div className="space-y-3 pt-1">
-          {gearItems.map((item) => {
+          {gearItems.map((item, index) => {
             const isPartner = item.destinationType === 'direct_partner';
             const amazonUrl = buildAmazonAffiliateUrl(
               item.searchQuery,
@@ -491,6 +730,8 @@ export function MobileGearDrawer({
             const isCodeCopied = copiedId === item.id;
             const imgSrc = resolveVerifiedGearImageSrc(item.imageUrl, undefined);
             const itemTag = item.tag || item.badge;
+            const itemClicks = Number(effectiveWeights[item.id]) || 0;
+            const isMostPopular = index === 0 && itemClicks >= 3;
 
             return (
               <div
@@ -498,12 +739,13 @@ export function MobileGearDrawer({
                 data-testid={`mobile-gear-card-${item.id}`}
                 className="rounded-xl border border-zinc-800 bg-zinc-950/80 p-3 flex gap-3 items-start"
               >
-                {/* Gear Image / Fallback */}
-                <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-zinc-900 flex items-center justify-center">
+                {/* Gear Image / Fallback with Studio Spotlight Backdrop */}
+                <div className="w-16 h-16 shrink-0 rounded-lg overflow-hidden border border-zinc-800 bg-gradient-to-b from-zinc-700/35 via-zinc-900/90 to-zinc-950 flex items-center justify-center">
                   <GearImage
                     src={imgSrc}
                     alt={item.title}
                     affiliateUrl={destinationUrl}
+                    rel="sponsored noopener noreferrer nofollow"
                     fallbackIcon={item.fallbackIcon || 'package'}
                     aspectRatioClass="h-16 w-16"
                     containerClassName="h-16 w-16"
@@ -514,19 +756,29 @@ export function MobileGearDrawer({
 
                 {/* Details & Actions */}
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  <div className="flex items-center justify-between gap-1.5">
-                    {itemTag && (
-                      <span
-                        className={cn(
-                          'inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wide uppercase',
-                          isPartner
-                            ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                            : 'bg-zinc-800/90 text-zinc-300 border border-zinc-700/60'
-                        )}
-                      >
-                        {itemTag}
-                      </span>
-                    )}
+                  <div className="flex flex-wrap items-center justify-between gap-1.5">
+                    <div className="flex flex-wrap items-center gap-1">
+                      {itemTag && (
+                        <span
+                          className={cn(
+                            'inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wide uppercase',
+                            isPartner
+                              ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                              : 'bg-zinc-800/90 text-zinc-300 border border-zinc-700/60'
+                          )}
+                        >
+                          {itemTag}
+                        </span>
+                      )}
+                      {isMostPopular && (
+                        <span
+                          data-testid={`most-popular-badge-${item.id}`}
+                          className="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wide bg-orange-500/15 text-orange-300 border border-orange-500/30"
+                        >
+                          🔥 Most Popular
+                        </span>
+                      )}
+                    </div>
                     {item.priceText && (
                       <span className="text-[11px] font-semibold text-emerald-400 shrink-0 ml-auto">
                         {item.priceText}

@@ -3,7 +3,12 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import fs from 'node:fs';
 import path from 'node:path';
-import { MobileBottomDock, getCuratedMobileGear } from '@/components/layout/MobileBottomDock';
+import {
+  MobileBottomDock,
+  MobileGearDrawer,
+  GEAR_DRAWER_FILTER_PILLS,
+  getCuratedMobileGear,
+} from '@/components/layout/MobileBottomDock';
 import { MarketProvider } from '@/context/MarketContext';
 import { CalculatorProvider } from '@/context/CalculatorContext';
 
@@ -344,5 +349,109 @@ describe('MobileBottomDock Component & Dynamic Gear Drawer', () => {
     expect(screen.getByTestId('mobile-dock-inventory')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-dock-tracker')).toBeInTheDocument();
     expect(screen.queryByTestId('mobile-dock-expand-btn')).not.toBeInTheDocument();
+  });
+
+  it('switches visible gear when clicking Model Filter Pills (All Gear, Universal, RAV4, Sienna)', () => {
+    mockSearchParams = new URLSearchParams();
+
+    render(
+      <MarketProvider>
+        <MobileBottomDock />
+      </MarketProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('mobile-dock-gear'));
+
+    // All 9 filter pills should be rendered
+    for (const pill of GEAR_DRAWER_FILTER_PILLS) {
+      expect(screen.getByTestId(`gear-filter-pill-${pill.slug}`)).toBeInTheDocument();
+    }
+
+    // Default 'all' shows both bestsellers and universal essentials
+    expect(screen.getByTestId('gear-filter-pill-all')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByTestId('mobile-gear-card-muslogy-console-organizer-universal')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-rfid-faraday-key-fob-pouch')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-noco-gb40-jump-pack')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-level-2-evse-charger')).toBeInTheDocument();
+
+    // Switch to Universal -> strictly universal essentials (7 items), no Muslogy model-specific organizer
+    fireEvent.click(screen.getByTestId('gear-filter-pill-universal'));
+    expect(screen.getByTestId('gear-filter-pill-universal')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText('Delivery Day Prep: Universal Essentials')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-gear-card-muslogy-console-organizer-universal')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-rfid-faraday-key-fob-pouch')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-noco-gb40-jump-pack')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-portable-tire-inflator')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-universal-spigen-screen-protector')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-universal-wireless-carplay')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-fast-usbc-pd-car-charger')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-level-2-evse-charger')).toBeInTheDocument();
+
+    // Switch to RAV4 -> RAV4 direct-fit items + universal essentials
+    fireEvent.click(screen.getByTestId('gear-filter-pill-rav4'));
+    expect(screen.getByTestId('gear-filter-pill-rav4')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText('Delivery Day Prep: RAV4')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-muslogy-rav4-organizer')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-noco-gb40-jump-pack')).toBeInTheDocument();
+
+    // Switch to Sienna -> Sienna direct-fit items + universal essentials
+    fireEvent.click(screen.getByTestId('gear-filter-pill-sienna'));
+    expect(screen.getByTestId('gear-filter-pill-sienna')).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByText('Delivery Day Prep: Sienna')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-muslogy-sienna-organizer')).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-gear-card-muslogy-rav4-organizer')).not.toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-rfid-faraday-key-fob-pouch')).toBeInTheDocument();
+
+    // Switch back to All Gear
+    fireEvent.click(screen.getByTestId('gear-filter-pill-all'));
+    expect(screen.getByText('Delivery Day Prep: Toyota Essentials')).toBeInTheDocument();
+    expect(screen.getByTestId('mobile-gear-card-muslogy-console-organizer-universal')).toBeInTheDocument();
+  });
+
+  it('sorts gear drawer items descending by popularityWeights and preserves partner badges', () => {
+    const { rerender } = render(
+      <MarketProvider>
+        <MobileGearDrawer
+          isOpen={true}
+          onClose={() => {}}
+          modelSlug="rav4"
+          modelName="RAV4"
+          popularityWeights={{
+            'noco-gb40-jump-pack': 15,
+            'rfid-faraday-key-fob-pouch': 7,
+            'fitcamx-rav4': 4,
+          }}
+        />
+      </MarketProvider>
+    );
+
+    const cards = screen.getAllByTestId(/^mobile-gear-card-/);
+    expect(cards[0]).toHaveAttribute('data-testid', 'mobile-gear-card-noco-gb40-jump-pack');
+    expect(cards[1]).toHaveAttribute('data-testid', 'mobile-gear-card-rfid-faraday-key-fob-pouch');
+    expect(cards[2]).toHaveAttribute('data-testid', 'mobile-gear-card-fitcamx-rav4');
+
+    // #1 item with >= 3 clicks shows Most Popular badge
+    expect(screen.getByTestId('most-popular-badge-noco-gb40-jump-pack')).toHaveTextContent('🔥 Most Popular');
+
+    // When a Muslogy partner item ranks #1, both Partner Deal badge and Most Popular badge are shown
+    rerender(
+      <MarketProvider>
+        <MobileGearDrawer
+          isOpen={true}
+          onClose={() => {}}
+          modelSlug="rav4"
+          modelName="RAV4"
+          popularityWeights={{
+            'muslogy-rav4-organizer': 20,
+            'noco-gb40-jump-pack': 5,
+          }}
+        />
+      </MarketProvider>
+    );
+
+    const updatedCards = screen.getAllByTestId(/^mobile-gear-card-/);
+    expect(updatedCards[0]).toHaveAttribute('data-testid', 'mobile-gear-card-muslogy-rav4-organizer');
+    expect(screen.getByTestId('most-popular-badge-muslogy-rav4-organizer')).toHaveTextContent('🔥 Most Popular');
+    expect(screen.getByText('Partner Deal · 2% Off')).toBeInTheDocument();
   });
 });
