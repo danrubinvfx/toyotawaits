@@ -7,9 +7,9 @@ import { evaluateListingLifecycle } from '../../../../lib/discovery/services/lif
 export const dynamic = 'force-dynamic';
 
 const EDGE_CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
 };
 
 export async function GET(request?: Request) {
@@ -169,9 +169,38 @@ export async function GET(request?: Request) {
       vehicle:vehicles (model)
     `
       : `
-      *,
-      vehicle:vehicles (*),
-      dealer:dealers (*),
+      id,
+      current_status,
+      posted_at,
+      first_observed_at,
+      last_observed_at,
+      days_on_lot,
+      is_likely_cancellation,
+      lifecycle_status,
+      vdp_url,
+      listing_url,
+      stock_number,
+      image_url,
+      has_real_photo,
+      image_source,
+      sold_at,
+      vehicle:vehicles (
+        make,
+        model,
+        trim,
+        model_year,
+        vin,
+        provisional_id,
+        powertrain,
+        drive_train,
+        exterior_color
+      ),
+      dealer:dealers (
+        name,
+        city,
+        province,
+        website_url
+      ),
       observations (
         msrp,
         selling_price,

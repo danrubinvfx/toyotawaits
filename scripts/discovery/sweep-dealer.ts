@@ -45,6 +45,7 @@ export {
   loadEnv,
   dispatchPendingAlerts,
   detectAndTransitionSoldUnits,
+  runRetentionCleanup,
   USER_AGENT_AUDITOR,
   DEFAULT_TIMEOUT_MS,
   MAX_RETRIES,
@@ -150,6 +151,130 @@ function loadEnv(): void {
     }
   } catch {
     // Non-fatal if local env cannot be loaded
+  }
+}
+
+/**
+ * Automated Supabase retention cleanup run after an --all sweep completes:
+ * 1. Nullify raw_payload on observations older than 3 days (batched).
+ * 2. Delete observations older than 21 days (batched).
+ * 3. Delete non-active dealer_listings older than 30 days (batched).
+ */
+async function runRetentionCleanup(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabaseClient: any,
+  nowMs = Date.now()
+): Promise<void> {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const BATCH_SIZE = 200;
+  const MAX_BATCHES = 500;
+  const threeDaysAgoIso = new Date(nowMs - 3 * DAY_MS).toISOString();
+  const twentyOneDaysAgoIso = new Date(nowMs - 21 * DAY_MS).toISOString();
+  const thirtyDaysAgoIso = new Date(nowMs - 30 * DAY_MS).toISOString();
+
+  try {
+    // 1. Batched nullify raw_payload on observations > 3 days
+    let totalNullified = 0;
+    for (let batch = 0; batch < MAX_BATCHES; batch++) {
+      const { data: rows, error: selectErr } = await supabaseClient
+        .from('observations')
+        .select('id')
+        .lt('observed_at', threeDaysAgoIso)
+        .not('raw_payload', 'is', null)
+        .limit(BATCH_SIZE);
+
+      if (selectErr) {
+        console.warn('[RETENTION] Failed to query old observation raw_payload:', selectErr.message);
+        break;
+      }
+      const ids = Array.isArray(rows) ? rows.map((r: { id: string }) => r.id).filter(Boolean) : [];
+      if (ids.length === 0) break;
+
+      const { error: nullifyError } = await supabaseClient
+        .from('observations')
+        .update({ raw_payload: null })
+        .in('id', ids);
+
+      if (nullifyError) {
+        console.warn('[RETENTION] Failed to nullify old observation raw_payload:', nullifyError.message);
+        break;
+      }
+      totalNullified += ids.length;
+      if (ids.length < BATCH_SIZE) break;
+    }
+    console.log(
+      `[RETENTION] Nullified raw_payload on ${totalNullified} observation(s) older than 3 days.`
+    );
+
+    // 2. Batched delete observations > 21 days
+    let totalDeletedObs = 0;
+    for (let batch = 0; batch < MAX_BATCHES; batch++) {
+      const { data: rows, error: selectErr } = await supabaseClient
+        .from('observations')
+        .select('id')
+        .lt('observed_at', twentyOneDaysAgoIso)
+        .limit(BATCH_SIZE);
+
+      if (selectErr) {
+        console.warn('[RETENTION] Failed to query old observations:', selectErr.message);
+        break;
+      }
+      const ids = Array.isArray(rows) ? rows.map((r: { id: string }) => r.id).filter(Boolean) : [];
+      if (ids.length === 0) break;
+
+      const { error: deleteObsError } = await supabaseClient
+        .from('observations')
+        .delete()
+        .in('id', ids);
+
+      if (deleteObsError) {
+        console.warn('[RETENTION] Failed to delete old observations:', deleteObsError.message);
+        break;
+      }
+      totalDeletedObs += ids.length;
+      if (ids.length < BATCH_SIZE) break;
+    }
+    console.log(
+      `[RETENTION] Deleted ${totalDeletedObs} observation(s) older than 21 days.`
+    );
+
+    // 3. Batched delete non-active dealer_listings > 30 days
+    let totalDeletedListings = 0;
+    for (let batch = 0; batch < MAX_BATCHES; batch++) {
+      const { data: rows, error: selectErr } = await supabaseClient
+        .from('dealer_listings')
+        .select('id')
+        .neq('lifecycle_status', 'active')
+        .lt('last_observed_at', thirtyDaysAgoIso)
+        .limit(BATCH_SIZE);
+
+      if (selectErr) {
+        console.warn('[RETENTION] Failed to query stale non-active dealer_listings:', selectErr.message);
+        break;
+      }
+      const ids = Array.isArray(rows) ? rows.map((r: { id: string }) => r.id).filter(Boolean) : [];
+      if (ids.length === 0) break;
+
+      const { error: deleteListingsError } = await supabaseClient
+        .from('dealer_listings')
+        .delete()
+        .in('id', ids);
+
+      if (deleteListingsError) {
+        console.warn(
+          '[RETENTION] Failed to delete stale non-active dealer_listings:',
+          deleteListingsError.message
+        );
+        break;
+      }
+      totalDeletedListings += ids.length;
+      if (ids.length < BATCH_SIZE) break;
+    }
+    console.log(
+      `[RETENTION] Deleted ${totalDeletedListings} non-active dealer_listing(s) older than 30 days.`
+    );
+  } catch (err: any) {
+    console.warn('[RETENTION] Unexpected cleanup error:', err?.message || err);
   }
 }
 
@@ -303,6 +428,8 @@ export async function runSweep(): Promise<SweepRunSummary> {
         `[LIFECYCLE] Sold Unit Detection evaluated ${soldSummary.evaluatedCount} active units -> transitioned ${soldSummary.transitionedToSoldCount} unobserved units to 'sold'.`
       );
     }
+
+    await runRetentionCleanup(supabase);
   }
 
   // Print Overall Execution Summary

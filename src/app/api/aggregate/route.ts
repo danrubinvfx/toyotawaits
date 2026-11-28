@@ -7,9 +7,9 @@ import { ACTIVE_TRACKED_MODELS } from '@/lib/db/stats';
 export const dynamic = 'force-dynamic';
 
 const EDGE_CACHE_HEADERS = {
-  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
-  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+  'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+  'CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
+  'Vercel-CDN-Cache-Control': 'public, s-maxage=300, stale-while-revalidate=1800',
 };
 
 export async function GET(request: NextRequest) {
