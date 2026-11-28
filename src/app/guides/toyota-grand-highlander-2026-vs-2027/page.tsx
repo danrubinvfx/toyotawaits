@@ -42,13 +42,13 @@ export const { instant } = { instant: false };
 export async function generateMetadata(): Promise<Metadata> {
   return buildGuideMetadata({
     slug: 'toyota-grand-highlander-2026-vs-2027',
-    caTitle: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits',
+    caTitle: '2026 vs 2027 Toyota Grand Highlander Canada: New Woodland Edition, Prices & Wait Times | ToyotaWaits',
     caDescription:
-      'Compare the 2026 and 2027 Grand Highlander. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and Canadian queue rollovers.',
-    usTitle: '2026 vs. 2027 Toyota Grand Highlander United States (2026–2027 Guide): Woodland Edition & Wait Times | ToyotaWaits',
+      'Official 2027 Toyota Grand Highlander updates: new lifted Hybrid Woodland Edition, standard XLE heated wheel, blacked-out MAX Platinum, and queue rollover guide.',
+    usTitle: '2026 vs 2027 Toyota Grand Highlander: New Hybrid Woodland Trim & Order Rollovers | ToyotaWaits',
     usDescription:
-      'Compare the 2026 and 2027 Grand Highlander in the United States. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and allocation rollovers.',
-    caTwitterTitle: '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times',
+      'Official 2027 Toyota Grand Highlander updates: new lifted Hybrid Woodland Edition, standard XLE heated wheel, blacked-out MAX Platinum, and queue rollover guide.',
+    caTwitterTitle: '2026 vs 2027 Toyota Grand Highlander Canada: New Woodland Edition, Prices & Wait Times',
   });
 }
 
@@ -56,7 +56,7 @@ const faqData = [
   {
     question: 'What are the major changes for the 2027 Toyota Grand Highlander?',
     answer:
-      'The 2027 Grand Highlander introduces a new Hybrid Woodland Edition with all-terrain tires, +12 mm ground clearance, and a 1,500W power outlet. It also standardizes a heated steering wheel on the XLE and blacks out the trim on the Hybrid MAX Platinum.',
+      'Official November 2026 updates for the 2027 Grand Highlander introduce a new Hybrid Woodland Edition with +12 mm ground clearance, Falken Wildpeak A/T tires, a 1,500W power outlet, and a removable 6-can cooler. It also adds a standard heated steering wheel on XLE ($53,180+ CAD XLE AWD starting MSRP) and a blacked-out Hybrid MAX Platinum trim.',
   },
   {
     question: 'Will my 2026 Grand Highlander allocation automatically roll into a 2027?',
@@ -66,7 +66,7 @@ const faqData = [
   {
     question: 'Should I pass on a 2026 Grand Highlander to wait for a 2027?',
     answer:
-      'Unless holding out specifically for the rugged Woodland Edition (+12mm lift, all-terrain tires, 1,500W inverter), Hybrid buyers should accept an incoming 2026 allocation immediately. Passing resets your position in an 8–12 month backlog and exposes you to annual Toyota MSRP increases.',
+      'Unless holding out specifically for the rugged Woodland Edition (+12 mm lift, Falken Wildpeak A/T tires, 1,500W inverter, removable 6-can cooler), Hybrid buyers should accept an incoming 2026 allocation immediately. Passing resets your position in an 8–12 month backlog and exposes you to 2027 MSRP increases starting at $53,180+ CAD for XLE AWD.',
   },
 ];
 
@@ -206,7 +206,7 @@ export default async function GrandHighlander2026Vs2027GuidePage() {
                   <td className="py-3 px-4 font-bold text-zinc-900 dark:text-zinc-100">Woodland Edition Trim</td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">Not Available</td>
                   <td className="py-3 px-4 text-zinc-700 dark:text-zinc-300">
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">New Hybrid Grade:</span> +12 mm lift, all-terrain tires, 1,500W outlet, roof rails
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">New Hybrid Grade:</span> +12 mm lift, Falken Wildpeak A/T tires, 1,500W outlet, removable 6-can cooler
                   </td>
                   <td className="py-3 px-4">
                     <span className="inline-flex items-center gap-1 font-semibold text-emerald-600 dark:text-emerald-400 text-xs">
@@ -335,20 +335,20 @@ export default async function GrandHighlander2026Vs2027GuidePage() {
           <Card className="border-amber-500/40 dark:border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
               <Compass className="h-4 w-4" />
-              <span>+12 mm Ground Clearance &amp; All-Terrain Tires</span>
+              <span>+12 mm Ground Clearance &amp; Falken Wildpeak A/T Tires</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Factory suspension revised with taller springs adds +12 mm (+0.47 in) of ride height, bringing clearance to 8.5 inches. Paired with rugged all-terrain tires on 18-inch wheels, it improves gravel-road departure angles and Canadian winter snowpack clearance.
+              Factory suspension revised with taller springs adds +12 mm (+0.47 in) of ride height, bringing clearance to 8.5 inches. Paired with rugged Falken Wildpeak A/T tires on 18-inch wheels, it improves gravel-road departure angles and Canadian winter snowpack clearance.
             </p>
           </Card>
 
           <Card className="border-amber-500/40 dark:border-amber-500/30 bg-amber-500/5 p-5 space-y-3">
             <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-bold text-sm">
               <Zap className="h-4 w-4" />
-              <span>1,500W High-Output AC Inverter</span>
+              <span>1,500W AC Inverter &amp; Removable 6-Can Cooler</span>
             </div>
             <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Previously locked behind the costly $65k+ Hybrid MAX Platinum, the 1,500-watt pure-sine AC outlet now comes standard on the 2.5L Hybrid Woodland. Powers campsite induction cooktops, e-bike battery chargers, and power tools directly from the hybrid traction battery.
+              Previously locked behind the Hybrid MAX Platinum, the 1,500-watt AC outlet now comes standard on the 2.5L Hybrid Woodland alongside a removable 6-can console cooler. Starting at $53,180+ CAD for the 2027 XLE AWD, the lineup balances value and camp utility.
             </p>
           </Card>
 

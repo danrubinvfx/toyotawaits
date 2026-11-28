@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FlagValues } from 'flags/react';
 import { PlusCircle, X } from 'lucide-react';
 
 export const STICKY_LOG_BAR_DISMISSED_KEY = 'tw_mobile_sticky_log_bar_dismissed';
@@ -13,9 +14,21 @@ export interface MobileStickyLogBarProps {
 
 export function MobileStickyLogBar({ enabled }: MobileStickyLogBarProps) {
   const pathname = usePathname();
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [dismissed, setDismissed] = useState(true);
 
   useEffect(() => {
+    const isMobile =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 767px)').matches;
+
+    if (!isMobile) {
+      setIsMobileViewport(false);
+      return;
+    }
+
+    setIsMobileViewport(true);
     try {
       const isDismissed =
         window.sessionStorage.getItem(STICKY_LOG_BAR_DISMISSED_KEY) === 'true';
@@ -25,8 +38,12 @@ export function MobileStickyLogBar({ enabled }: MobileStickyLogBarProps) {
     }
   }, []);
 
-  if (!enabled || dismissed || pathname === '/submit') {
+  if (!isMobileViewport) {
     return null;
+  }
+
+  if (!enabled || dismissed || pathname === '/submit') {
+    return <FlagValues values={{ 'mobile-sticky-log-bar': enabled }} />;
   }
 
   const handleDismiss = () => {
@@ -39,8 +56,10 @@ export function MobileStickyLogBar({ enabled }: MobileStickyLogBarProps) {
   };
 
   return (
-    <div
-      data-testid="mobile-sticky-log-bar"
+    <>
+      <FlagValues values={{ 'mobile-sticky-log-bar': enabled }} />
+      <div
+        data-testid="mobile-sticky-log-bar"
       role="region"
       aria-label="Log your Toyota order"
       className="fixed bottom-16 inset-x-3 z-30 md:hidden flex items-center justify-between gap-2 rounded-xl border border-zinc-700/80 bg-zinc-950/95 px-3 py-2 text-zinc-100 shadow-lg backdrop-blur-md"
@@ -68,5 +87,6 @@ export function MobileStickyLogBar({ enabled }: MobileStickyLogBarProps) {
         </button>
       </div>
     </div>
+    </>
   );
 }

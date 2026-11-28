@@ -90,6 +90,7 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
   }, [market, province]);
 
   const [dealershipCity, setDealershipCity] = useState<string>('');
+  const [rolloverPriceStatus, setRolloverPriceStatus] = useState<'not_applicable' | 'honored_2026_msrp' | 'adjusted_2027_msrp'>('not_applicable');
   const [modelYear, setModelYear] = useState<number>(() => {
     if (paramOrderDate && /^\d{4}-\d{2}-\d{2}$/.test(paramOrderDate)) {
       const yr = new Date(paramOrderDate + 'T00:00:00').getFullYear();
@@ -178,6 +179,7 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
     setProvince(market === 'US' ? 'CA' : 'ON');
     setDealershipCity('');
     setModelYear(2026);
+    setRolloverPriceStatus('not_applicable');
     setOrderDate(getTodayLocalDate());
     setStage('deposit_placed');
     setStatus('pending');
@@ -428,6 +430,8 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
         forcedAddonsAmount: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
         dealer_markup: !isUsMarket && forcedAddonsAmount !== '' ? Number(forcedAddonsAmount) : undefined,
         tradeInRequired: false,
+        rolloverPriceStatus: Number(modelYear) === 2027 ? rolloverPriceStatus : undefined,
+        rollover_price_status: Number(modelYear) === 2027 ? rolloverPriceStatus : undefined,
         notes: notes.trim() || undefined,
         email: trimmedEmail || undefined,
         reminder_opt_in: Boolean(trimmedEmail),
@@ -833,6 +837,26 @@ export function SubmissionForm({ initialOrderDate, initialTurnstileToken }: Subm
             </div>
 
             {/* 3. Granular Order Milestones */}
+            {Number(modelYear) === 2027 && (
+              <div className="space-y-1.5 rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                <Label htmlFor={`${formId}-rollover-price-status`}>
+                  2026 to 2027 Model-Year Rollover Pricing:
+                </Label>
+                <Select
+                  id={`${formId}-rollover-price-status`}
+                  value={rolloverPriceStatus}
+                  onChange={(e) =>
+                    setRolloverPriceStatus(
+                      e.target.value as 'not_applicable' | 'honored_2026_msrp' | 'adjusted_2027_msrp'
+                    )
+                  }
+                >
+                  <option value="not_applicable">Not a rollover</option>
+                  <option value="honored_2026_msrp">Dealer honored original 2026 MSRP</option>
+                  <option value="adjusted_2027_msrp">Dealer adjusted to 2027 MSRP</option>
+                </Select>
+              </div>
+            )}
             <div className="space-y-2 pt-1">
               <div className="flex items-center justify-between">
                 <Label>Order Lifecycle Milestone</Label>

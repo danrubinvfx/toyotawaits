@@ -17,14 +17,19 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
   it('has valid SEO metadata matching specification requirements', async () => {
     const meta = await generateMetadata();
     expect(meta.title).toBe(
-      '2026 vs. 2027 Toyota Grand Highlander: Woodland Edition, Trims & Wait Times | ToyotaWaits'
+      '2026 vs 2027 Toyota Grand Highlander Canada: New Woodland Edition, Prices & Wait Times | ToyotaWaits'
     );
     expect(meta.description).toBe(
-      'Compare the 2026 and 2027 Grand Highlander. Details on the new Hybrid Woodland Edition, +12mm ground clearance, blacked-out MAX Platinum, and Canadian queue rollovers.'
+      'Official 2027 Toyota Grand Highlander updates: new lifted Hybrid Woodland Edition, standard XLE heated wheel, blacked-out MAX Platinum, and queue rollover guide.'
     );
     expect(meta.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027'
     );
+    expect(meta.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027',
+      'en-US': 'https://www.toyotawaits.com/guides/toyota-grand-highlander-2026-vs-2027',
+      'x-default': 'https://www.toyotawaits.ca/guides/toyota-grand-highlander-2026-vs-2027',
+    });
   });
 
   it('renders JSON-LD FAQPage schema with required questions', async () => {
@@ -44,9 +49,9 @@ describe('2026 vs. 2027 Toyota Grand Highlander Guide Page', () => {
     expect(json.mainEntity[0].name).toBe(
       'What are the major changes for the 2027 Toyota Grand Highlander?'
     );
-    expect(json.mainEntity[0].acceptedAnswer.text).toBe(
-      'The 2027 Grand Highlander introduces a new Hybrid Woodland Edition with all-terrain tires, +12 mm ground clearance, and a 1,500W power outlet. It also standardizes a heated steering wheel on the XLE and blacks out the trim on the Hybrid MAX Platinum.'
-    );
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('Falken Wildpeak A/T');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('removable 6-can cooler');
+    expect(json.mainEntity[0].acceptedAnswer.text).toContain('$53,180+ CAD XLE AWD');
 
     expect(json.mainEntity[1].name).toBe(
       'Will my 2026 Grand Highlander allocation automatically roll into a 2027?'

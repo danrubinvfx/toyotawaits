@@ -52,6 +52,13 @@ export const submissionStageSchema = z.enum(SUBMISSION_STAGES);
 export const PRICING_TYPES = ['at_msrp', 'above_msrp', 'below_msrp', 'undisclosed'] as const;
 export const pricingTypeSchema = z.enum(PRICING_TYPES);
 
+export const ROLLOVER_PRICE_STATUSES = [
+  'not_applicable',
+  'honored_2026_msrp',
+  'adjusted_2027_msrp',
+] as const;
+export const rolloverPriceStatusSchema = z.enum(ROLLOVER_PRICE_STATUSES);
+
 export const NUDGE_ACTIONS = [
   'still_waiting',
   'deposit_placed',
@@ -163,6 +170,8 @@ export const submissionCreateSchema = z
       .default(0),
     tradeInRequired: z.boolean().default(false),
     notes: sanitizedNotesSchema,
+    rolloverPriceStatus: rolloverPriceStatusSchema.optional().nullable(),
+    rollover_price_status: rolloverPriceStatusSchema.optional().nullable(),
     email: z
       .string()
       .trim()

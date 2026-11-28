@@ -308,6 +308,11 @@ export const US_GUIDE_CONFIGS: Record<string, UsGuideConfig> = {
           'US MSRP spans ~$41,660 USD (Gas LE) to ~$59,575 USD (Hybrid MAX Platinum). Expect $0 MSRP at high-volume fair-price dealers, or +$1,500 to +$3,000+ ADM on constrained Hybrid and Woodland allocations.',
       },
       {
+        question: 'What are the major changes for the 2027 Grand Highlander Hybrid Woodland Edition?',
+        answer:
+          'The 2027 Grand Highlander adds the Hybrid Woodland Edition with +12 mm ground clearance, Falken Wildpeak A/T tires, a 1,500W AC power outlet, and a removable 6-can cooler, alongside a standard XLE heated steering wheel and blacked-out Hybrid MAX Platinum styling.',
+      },
+      {
         question: 'How long is the US allocation transit timeline from Princeton, Indiana?',
         answer:
           'Once TMNA or regional distributors (SET/GST) assign your Grand Highlander allocation, transit from TMMI in Princeton, Indiana takes 30–90 days.',

@@ -167,12 +167,39 @@ describe('Vercel Flags SDK Definitions & A/B Variants', () => {
   });
 
   describe('MobileStickyLogBar rendering and dismissal', () => {
-    it('does not render when enabled is false', () => {
+    const mockMatchMedia = (matches: boolean) => {
+      Object.defineProperty(window, 'matchMedia', {
+        writable: true,
+        configurable: true,
+        value: vi.fn().mockImplementation((query: string) => ({
+          matches: query === '(max-width: 767px)' ? matches : false,
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        })),
+      });
+    };
+
+    it('suppresses mobile-sticky-log-bar flag exposure and rendering on desktop viewports (>= 768px)', () => {
+      mockMatchMedia(false);
+      const { container } = render(React.createElement(MobileStickyLogBar, { enabled: true }));
+      expect(screen.queryByTestId('mobile-sticky-log-bar')).not.toBeInTheDocument();
+      expect(container.querySelector('[data-flag-values]')).not.toBeInTheDocument();
+      expect(container.innerHTML).toBe('');
+    });
+
+    it('does not render bar when enabled is false on mobile', () => {
+      mockMatchMedia(true);
       render(React.createElement(MobileStickyLogBar, { enabled: false }));
       expect(screen.queryByTestId('mobile-sticky-log-bar')).not.toBeInTheDocument();
     });
 
-    it('renders positioned above MobileBottomDock when enabled is true and persists dismissal', () => {
+    it('renders positioned above MobileBottomDock on mobile viewports (< 768px) when enabled is true and persists dismissal', () => {
+      mockMatchMedia(true);
       render(React.createElement(MobileStickyLogBar, { enabled: true }));
 
       const bar = screen.getByTestId('mobile-sticky-log-bar');

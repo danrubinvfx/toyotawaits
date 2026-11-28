@@ -171,12 +171,19 @@ describe('Host-Aware Server Metadata (toyotawaits.com vs. toyotawaits.ca)', () =
 
     it('emits US metadata for 2026-vs-2027 guide routes with United States (2026–2027 Guide)', async () => {
       const rav4Guide = await generateRav4GuideMetadata();
-      expect(String(rav4Guide.title)).toContain('United States (2026–2027 Guide)');
+      expect(String(rav4Guide.title)).toBe(
+        '2026 vs 2027 Toyota RAV4: Native NACS Charging, 321-HP PHEV & Wait Times | ToyotaWaits'
+      );
       expect(String(rav4Guide.title)).not.toContain('Canada');
       expect(rav4Guide.description).not.toContain('Canadian');
       expect(rav4Guide.alternates?.canonical).toBe(
         'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027'
       );
+      expect(rav4Guide.alternates?.languages).toEqual({
+        'en-CA': 'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027',
+        'en-US': 'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027',
+        'x-default': 'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027',
+      });
 
       const siennaGuide = await generateSiennaGuideMetadata();
       expect(String(siennaGuide.title)).toBe(

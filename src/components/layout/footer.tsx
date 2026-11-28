@@ -393,7 +393,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
         {/* Disclaimer & Disclosure Section */}
         <div className="border-t border-zinc-200 dark:border-zinc-800 pt-6 text-xs text-zinc-400 space-y-3">
           <p className="leading-relaxed">
-            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For complete details, see our{' '}
+            <strong>Nominative Fair Use Disclaimer:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by {isUs ? 'Toyota Motor North America, Lexus, or Toyota Motor Corporation' : 'Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation'}. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For complete details, see our{' '}
             <Link href="/legal" className="underline hover:text-amber-500">
               Legal Terms &amp; Consumer Pricing Disclosures
             </Link>.
@@ -402,14 +402,14 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
             <strong>Regulatory &amp; Affiliate Notice:</strong> {isUs ? 'toyotawaits.com' : 'toyotawaits.ca'} participates in affiliate programs, including the Amazon Associates Program. As an Amazon Associate, we may earn commissions from qualifying purchases made through links on this site at no additional cost to you.
           </p>
           <p className="leading-relaxed">
-            <strong>Monetization Disclosure:</strong> {isUs ? 'ToyotaWaits.com' : 'ToyotaWaits.ca'} is community-supported and ad-free.
+            <strong>Monetization Disclosure:</strong> {isUs ? 'ToyotaWaits' : 'ToyotaWaits.ca'} is community-supported and ad-free.
             We do not accept paid dealer promotions or sponsored wait-time modifications.
           </p>
 
           {/* Independence / Non-Dealership Community Disclaimer Note */}
           <div className="rounded-lg border border-zinc-200/80 bg-zinc-100/60 dark:border-zinc-800/80 dark:bg-zinc-900/60 p-3.5 text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">
             <p data-testid="community-disclaimer">
-              ToyotaWaits.ca is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email{' '}
+              {isUs ? 'ToyotaWaits' : 'ToyotaWaits.ca'} is an independent, community-driven research tracker and is not affiliated, endorsed, or authorized by {isUs ? 'Toyota Motor North America, Lexus, or Toyota Motor Corporation' : 'Toyota Canada Inc., Lexus Canada, or Toyota Motor Corporation'}. We cannot access or modify internal factory dealer allocation queues. Vehicle trademarks, logos, and model names are the property of their respective trademark holders. For data corrections, dealer inventory tips, press inquiries, or bug reports, email{' '}
               <a
                 href="mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry"
                 className="underline font-medium text-zinc-800 dark:text-zinc-200 hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
@@ -458,7 +458,7 @@ export function Footer({ initialRegion = 'CA' }: FooterProps) {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between pt-2 text-[11px] text-zinc-600 dark:text-zinc-300 gap-3 border-t border-zinc-200/60 dark:border-zinc-800/60">
-            <span>© 2026 {isUs ? 'ToyotaWaits.com. U.S. Community Data Initiative.' : 'ToyotaWaits.ca. Canadian Community Data Initiative.'}</span>
+            <span>© 2026 {isUs ? 'ToyotaWaits. U.S. Community Data Initiative.' : 'ToyotaWaits.ca. Canadian Community Data Initiative.'}</span>
             <div className="flex flex-wrap items-center gap-3 mt-2 sm:mt-0">
               <a
                 href="#newsletter-signup"

@@ -82,6 +82,8 @@ export interface SubmissionCreateData {
   portDestination?: string | null;
   port_destination?: string | null;
   tradeInRequired: boolean;
+  rolloverPriceStatus?: string | null;
+  rollover_price_status?: string | null;
   notes?: string | null;
   editKeyHash: string;
   editToken?: string;
@@ -955,6 +957,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
         last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
         is_flagged: data.isFlagged,
+        rollover_price_status: data.rollover_price_status ?? data.rolloverPriceStatus ?? null,
       };
 
       let { data: inserted, error } = await supabase
@@ -973,6 +976,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         delete fallbackRow.dealer_markup;
         delete fallbackRow.doc_fee;
         delete fallbackRow.mandatory_addons;
+        delete fallbackRow.rollover_price_status;
         const retryCol = await supabase
           .from('submissions')
           .insert(fallbackRow)
@@ -1032,6 +1036,7 @@ export async function insertSubmission(data: SubmissionCreateData): Promise<any>
         reminder_opt_in: data.reminder_opt_in ?? data.reminderOptIn ?? (data.email ? true : false),
         last_reminded_at: data.last_reminded_at || data.lastRemindedAt || null,
             is_flagged: data.isFlagged,
+        rollover_price_status: data.rollover_price_status ?? data.rolloverPriceStatus ?? null,
           })
           .select('id, status, current_stage, stage, wait_days, is_flagged, edit_token')
           .maybeSingle();

@@ -2,6 +2,7 @@ import React from 'react';
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { Footer } from '@/components/layout/footer';
+import { MarketProvider } from '@/context/MarketContext';
 
 describe('Footer Component', () => {
   it('renders the brand and copyright information', () => {
@@ -132,6 +133,24 @@ describe('Footer Component', () => {
       'mailto:hello@toyotawaits.ca?subject=ToyotaWaits%20Feedback%20%2F%20Inquiry'
     );
   });
+
+  it('renders ToyotaWaits (never ToyotaWaits.ca) and strips Canada references when US market is active', () => {
+    render(
+      <MarketProvider initialMarket="US">
+        <Footer initialRegion="US" />
+      </MarketProvider>
+    );
+
+    expect(screen.getByText('ToyotaWaits')).toBeInTheDocument();
+    expect(screen.queryByText('ToyotaWaits.ca')).not.toBeInTheDocument();
+
+    const disclaimerEl = screen.getByTestId('community-disclaimer');
+    expect(disclaimerEl.textContent).toContain('ToyotaWaits is an independent');
+    expect(disclaimerEl.textContent).not.toContain('ToyotaWaits.ca');
+    expect(disclaimerEl.textContent).not.toContain('Toyota Canada Inc.');
+    expect(disclaimerEl.textContent).not.toContain('Lexus Canada');
+
+    expect(screen.getByText(/ToyotaWaits\. U\.S\. Community Data Initiative\./i)).toBeInTheDocument();
+    expect(screen.queryByText(/ToyotaWaits\.com\./i)).not.toBeInTheDocument();
+  });
 });
-
-

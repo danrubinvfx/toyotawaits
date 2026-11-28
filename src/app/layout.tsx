@@ -246,7 +246,7 @@ export default async function RootLayout({
           <main className="flex-1 pb-16 md:pb-0">
             {children}
           </main>
-          <Footer />
+          <Footer initialRegion={initialMarket} />
           <NewsletterFloatingPill />
           <Suspense fallback={null}>
             <MobileBottomDock />

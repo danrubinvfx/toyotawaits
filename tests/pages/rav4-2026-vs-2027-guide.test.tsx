@@ -16,14 +16,19 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
   it('has valid SEO metadata matching specification requirements', async () => {
     const meta = await generateMetadata();
     expect(meta.title).toBe(
-      '2026 vs. 2027 Toyota RAV4: NACS Charging, Trims & Wait Times | ToyotaWaits'
+      '2026 vs 2027 Toyota RAV4 Canada: NACS Port, 321-HP PHEV & $500 iZEV Drop | ToyotaWaits'
     );
     expect(meta.description).toBe(
-      'Compare the 2026 and 2027 Toyota RAV4. Breakdown of native NACS Tesla charging, 11kW AC onboard charger, 321 hp PHEV, 9.1-inch Woodland lift, and Canadian delivery queues.'
+      'Compare 2026 vs 2027 Toyota RAV4: native NACS Tesla port, 11 kW AC charger, 321 hp PHEV, 9.1" Woodland lift, TSS 4.0 dashcam, and allocation rollover rules.'
     );
     expect(meta.alternates?.canonical).toBe(
       'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027'
     );
+    expect(meta.alternates?.languages).toEqual({
+      'en-CA': 'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027',
+      'en-US': 'https://www.toyotawaits.com/guides/toyota-rav4-2026-vs-2027',
+      'x-default': 'https://www.toyotawaits.ca/guides/toyota-rav4-2026-vs-2027',
+    });
   });
 
   it('renders JSON-LD FAQPage schema with the mandatory questions', async () => {
@@ -44,14 +49,14 @@ describe('2026 vs. 2027 Toyota RAV4 Guide Page', () => {
       'What are the biggest upgrades on the 2027 Toyota RAV4?'
     );
     expect(json.mainEntity[0].acceptedAnswer.text).toBe(
-      'The 2027 RAV4 introduces native NACS ports for direct Tesla Supercharger access, Level 3 DC fast charging on PHEVs, an upgraded 11 kW AC onboard charger, and TSS 4.0 with a factory dashcam.'
+      'The 2027 RAV4 introduces a native NACS Tesla charging port, 321-hp 6th-gen PHEV output with Level 3 DC fast charging, an upgraded 11 kW AC onboard charger, 9.1" Woodland ground clearance, and TSS 4.0 with a factory integrated dashcam.'
     );
 
     expect(json.mainEntity[1].name).toBe(
       'Should I accept a 2026 RAV4 allocation or hold out for a 2027?'
     );
     expect(json.mainEntity[1].acceptedAnswer.text).toBe(
-      'Hybrid (HEV) buyers should take a 2026 build immediately to dodge annual MSRP inflation. Plug-in Hybrid (PHEV) buyers wanting native Tesla Supercharging may prefer waiting for 2027, though taking delivery in 2026 locks in an extra $500 in Canadian federal iZEV rebates.'
+      'Hybrid (HEV) buyers should take a 2026 build immediately to dodge annual MSRP inflation. Plug-in Hybrid (PHEV) buyers wanting native NACS Tesla Supercharging may prefer waiting for 2027, though taking delivery in 2026 locks in an extra $500 in Canadian federal iZEV rebates ($2,500 vs $2,000).'
     );
   });
 

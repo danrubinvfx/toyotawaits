@@ -428,6 +428,8 @@ export async function POST(request: NextRequest) {
         dealer_markup: resolvedDealerMarkup,
         dealerMarkup: resolvedDealerMarkup,
         tradeInRequired: validData.tradeInRequired,
+        rolloverPriceStatus: validData.rolloverPriceStatus ?? validData.rollover_price_status ?? null,
+        rollover_price_status: validData.rollover_price_status ?? validData.rolloverPriceStatus ?? null,
         notes: validData.notes,
         editKeyHash,
         editToken,
