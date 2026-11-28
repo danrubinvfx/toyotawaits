@@ -10,7 +10,7 @@
  */
 
 import { parseConvertusVmsPayload } from '../adapters/convertus';
-import { fetchViaHttps } from '../dealers';
+import { buildConvertusPageUrl, fetchViaHttps } from '../dealers';
 import { ingestDealerListings } from '../services/ingestion-service';
 import {
   AdapterParseResult,
@@ -88,6 +88,15 @@ export const PILOT_SOURCES: SweepSourceConfig[] = [
     platform: 'convertus',
     endpointUrl:
       'https://www.jptoyota-surrey.com/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?action=vms_data&endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1249%26ln%3Den%26sc%3Dnew%26pc%3D100',
+    isActive: true,
+  },
+  {
+    sourceId: 'source-destination-toyota-burnaby-convertus',
+    sourceCode: 'destination-toyota-burnaby-convertus',
+    dealerId: 'dealer-destination-toyota-burnaby',
+    platform: 'convertus',
+    endpointUrl:
+      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1224%26ln%3Den%26pg%3D1%26pc%3D100%26dc%3Dfalse%26qs%3D%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dtoyota&action=vms_data',
     isActive: true,
   },
   {
@@ -412,6 +421,77 @@ export async function runScheduledSweep(
       }
     } else {
       summary.successCount++;
+
+      // Paginate remaining Convertus pages (pg=2, 3...) until pg * pc >= total
+      if (
+        source.platform === 'convertus' &&
+        responseBody &&
+        typeof responseBody === 'object' &&
+        !Array.isArray(responseBody)
+      ) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const payloadObj = responseBody as any;
+        const totalVehicles = Number(payloadObj?.summary?.total_vehicles ?? payloadObj?.total ?? 0);
+        const pageSize = 100;
+        if (
+          totalVehicles > 0 &&
+          Array.isArray(payloadObj.results) &&
+          payloadObj.results.length < totalVehicles
+        ) {
+          let currentPage = 2;
+          const maxPages = 10;
+          while (
+            payloadObj.results.length < totalVehicles &&
+            (currentPage - 1) * pageSize < totalVehicles &&
+            currentPage <= maxPages
+          ) {
+            await new Promise((r) => setTimeout(r, 1500));
+            const nextUrl = buildConvertusPageUrl(source.endpointUrl, currentPage, pageSize);
+            try {
+              const controller = new AbortController();
+              const timeoutHandle = setTimeout(() => controller.abort(), timeoutMs);
+              const nextRes = await fetcher(nextUrl, {
+                method: 'GET',
+                headers: {
+                  'User-Agent': USER_AGENT_AUDITOR,
+                  Accept: 'application/json, text/plain, */*',
+                },
+                signal: controller.signal,
+              });
+              clearTimeout(timeoutHandle);
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              let nextBody: any = null;
+              if (nextRes.ok) {
+                nextBody = await nextRes.json();
+              } else if (nextRes.status === 403) {
+                const fallback = await fetchViaHttps(nextUrl, timeoutMs);
+                nextBody = fallback.body;
+              } else {
+                break;
+              }
+
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const nextItems = nextBody?.results as any[];
+              if (!Array.isArray(nextItems) || nextItems.length === 0) break;
+
+              const existingIds = new Set(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                payloadObj.results.map((x: any) => x.ad_id || x.vehicle_id || x.vin || x.stock_number)
+              );
+              const newItems = nextItems.filter(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (x: any) => !existingIds.has(x.ad_id || x.vehicle_id || x.vin || x.stock_number)
+              );
+              if (newItems.length === 0) break;
+              payloadObj.results.push(...newItems);
+            } catch {
+              break;
+            }
+            currentPage++;
+          }
+        }
+      }
 
       // Parse payload with adapter
       let parseResult: AdapterParseResult = {

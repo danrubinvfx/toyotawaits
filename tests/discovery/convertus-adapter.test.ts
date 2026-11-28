@@ -714,5 +714,52 @@ describe('Convertus Ingestion Adapter', () => {
       expect(record?.vehicle.modelYear).toBe(2027);
       expect(record?.vehicle.vin).toBe('2T1BURHE7SC123456');
     });
+
+    it('normalizes Sienna Mini Van and Sienna Hybrid to canonical model Sienna while preserving trim and VDP URL', () => {
+      const siennaMiniVan = {
+        make: 'Toyota',
+        model: 'Sienna Mini Van',
+        trim: 'XSE FWD 7-PASS',
+        year: 2026,
+        vin: '5TDGRKEC0TS351723',
+        stock_number: 'T62945',
+        sale_class: 'New',
+        in_transit: 0,
+        on_order: 0,
+        vdp_url: 'https://www.destinationtoyota.ca/vehicles/2026/Toyota/Sienna/BURNABY/BC/71533082/?sale_class=New',
+      };
+      const res1 = parseConvertusRecord(siennaMiniVan, 0, {
+        dealerBaseUrl: 'https://www.destinationtoyota.ca',
+      });
+      expect(res1.quarantine).toBeUndefined();
+      expect(res1.record?.vehicle.model).toBe('Sienna');
+      expect(res1.record?.vehicle.trim).toBe('XSE FWD 7-PASS');
+      expect(res1.record?.listing.vdpUrl).toBe(
+        'https://www.destinationtoyota.ca/vehicles/2026/Toyota/Sienna/BURNABY/BC/71533082/?sale_class=New'
+      );
+      expect(res1.record?.listing.listingUrl).toBe(
+        'https://www.destinationtoyota.ca/vehicles/2026/Toyota/Sienna/BURNABY/BC/71533082/?sale_class=New'
+      );
+
+      const siennaHybrid = {
+        make: 'Toyota',
+        model: 'Sienna Hybrid',
+        trim: 'Limited AWD 7-Pass',
+        year: 2026,
+        vin: '5TDGSKFC1TS300458',
+        stock_number: 'T62999',
+        sale_class: 'New',
+        in_transit: 1,
+        on_order: 0,
+      };
+      const res2 = parseConvertusRecord(siennaHybrid, 1, {
+        dealerBaseUrl: 'https://www.destinationtoyota.ca',
+        dealerCity: 'Burnaby',
+        dealerProvince: 'BC',
+      });
+      expect(res2.quarantine).toBeUndefined();
+      expect(res2.record?.vehicle.model).toBe('Sienna');
+      expect(res2.record?.vehicle.trim).toBe('Limited AWD 7-Pass');
+    });
   });
 });

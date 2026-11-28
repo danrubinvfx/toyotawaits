@@ -114,6 +114,19 @@ export function parseNumericPrice(val: unknown): number | null {
 /**
  * Normalizes raw price to a trimmed string representation.
  */
+/**
+ * Normalizes Convertus model strings (e.g., "Sienna Mini Van" or "Sienna Hybrid" -> "Sienna")
+ * while preserving trim details.
+ */
+export function normalizeConvertusModel(rawModel: string): string {
+  const trimmed = rawModel.trim();
+  if (!trimmed) return trimmed;
+  if (/^sienna\b/i.test(trimmed)) {
+    return 'Sienna';
+  }
+  return trimmed;
+}
+
 export function formatRawPrice(val: unknown): string | null {
   if (val === null || val === undefined || val === '') return null;
   return String(val).trim();
@@ -454,7 +467,7 @@ export function parseConvertusRecord(
   const raw = input as ConvertusRawVehicle;
 
   const make = String(raw.make || '').trim();
-  const model = String(raw.model || '').trim();
+  const model = normalizeConvertusModel(String(raw.model || '').trim());
 
   if (!make || !model) {
     return {
@@ -564,6 +577,9 @@ export function parseConvertusRecord(
       directUrl = `${dealerBaseUrl.replace(/\/+$/, '')}${candidate}`;
     }
     if (directUrl) {
+      if (directUrl.toLowerCase().startsWith('http://')) {
+        directUrl = directUrl.replace(/^http:\/\//i, 'https://');
+      }
       if (directUrl.includes('jptoyotadowntown.com')) {
         directUrl = directUrl.replace('jptoyotadowntown.com', 'jptoyota-downtown.com');
       }

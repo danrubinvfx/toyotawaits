@@ -828,7 +828,10 @@ export function InventoryExplorer({
         const itemPowertrain = (item.powertrain || '').toLowerCase().trim();
         const itemTrim = (item.trim || '').toLowerCase().trim();
 
-        const matchesExact = itemModel === filterModel || cleanItem === cleanFilter;
+        const matchesExact =
+          itemModel === filterModel ||
+          cleanItem === cleanFilter ||
+          (filterModel === 'sienna' && /^sienna\b/i.test(itemModel));
         const isTargetPhev =
           filterModel.includes('plug-in') ||
           filterModel.includes('prime') ||

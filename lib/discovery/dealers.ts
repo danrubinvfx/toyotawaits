@@ -103,7 +103,7 @@ export const REGISTERED_DEALERS: RegisteredDealerSource[] = [
     platform: 'convertus',
     baseUrl: 'https://www.destinationtoyota.ca',
     endpointUrl:
-      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1224%26ln%3Den%26pg%3D1%26pc%3D25%26dc%3Dfalse%26qs%3D%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dtoyota&action=vms_data',
+      'https://www.destinationtoyota.ca/wp-content/plugins/convertus-vms/include/php/ajax-vehicles.php?endpoint=https%3A%2F%2Fvms.prod.convertus.rocks%2Fapi%2Ffiltering%2F%3Fcp%3D1224%26ln%3Den%26pg%3D1%26pc%3D100%26dc%3Dfalse%26qs%3D%26im%3Dtrue%26in_transit%3Dtrue%26in_stock%3Dtrue%26on_order%3Dtrue%26mk%3Dtoyota&action=vms_data',
     address: '4451 Still Creek Drive',
     city: 'Burnaby',
     province: 'BC',
@@ -1740,18 +1740,26 @@ export async function sweepSingleDealer(
         Array.isArray(rawPayload.results) &&
         rawPayload.results.length < totalVehicles
       ) {
+        console.log(
+          `[SWEEP] ${dealerConfig.dealerCode}: fetched pg=1 (${rawPayload.results.length}/${totalVehicles} vehicles)`
+        );
         let currentPage = 2;
         const maxPages = 10;
-        while (rawPayload.results.length < totalVehicles && currentPage <= maxPages) {
+        const pageSize = 100;
+        while (
+          rawPayload.results.length < totalVehicles &&
+          (currentPage - 1) * pageSize < totalVehicles &&
+          currentPage <= maxPages
+        ) {
           await new Promise((r) => setTimeout(r, 1500));
           if (cachedSitemapItems) {
-            const nextSlice = cachedSitemapItems.slice((currentPage - 1) * 100, currentPage * 100);
+            const nextSlice = cachedSitemapItems.slice((currentPage - 1) * pageSize, currentPage * pageSize);
             if (nextSlice.length === 0) break;
             rawPayload.results.push(...nextSlice);
             currentPage++;
             continue;
           }
-          const nextUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, currentPage, 100);
+          const nextUrl = buildConvertusPageUrl(dealerConfig.endpointUrl, currentPage, pageSize);
           try {
             const nextResult = await fetchWithRetry(nextUrl, DEFAULT_TIMEOUT_MS);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1767,6 +1775,9 @@ export async function sweepSingleDealer(
               );
               if (newItems.length === 0) break;
               rawPayload.results.push(...newItems);
+              console.log(
+                `[SWEEP] ${dealerConfig.dealerCode}: fetched pg=${currentPage} (${newItems.length} new, ${rawPayload.results.length}/${totalVehicles} total)`
+              );
             } else {
               break;
             }
