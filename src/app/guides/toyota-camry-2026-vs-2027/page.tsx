@@ -12,6 +12,7 @@ import { FlagValues } from 'flags/react';
 import { calculatorBridgeFraming, evaluateFlagSafely } from '@/flags';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
 import { UsGuideMarketBrief } from '@/components/guides/UsGuideMarketBrief';
+import { getRolloverPriceProtectionStats } from '@/lib/db/rollover-stats';
 import {
   buildGuideMetadata,
   buildGuideFaqSchema,
@@ -172,6 +173,7 @@ export default async function Camry2026Vs2027GuidePage() {
       })
     : articleSchema;
   const framingVariant = await evaluateFlagSafely(calculatorBridgeFraming, 'control');
+  const priceProtectionStats = await getRolloverPriceProtectionStats('camry');
   return (
     <div className="container mx-auto max-w-5xl px-4 sm:px-6 py-10 sm:py-16 space-y-12">
       <FlagValues values={{ 'calculator-bridge-framing': framingVariant }} />
@@ -411,6 +413,39 @@ export default async function Camry2026Vs2027GuidePage() {
             </Card>
           ))}
         </div>
+      </section>
+
+      {/* Live Dealer Price-Protection Tracker */}
+      <section
+        aria-label="Live Dealer Price-Protection Tracker"
+        data-testid="rollover-price-protection-tracker"
+        className="rounded-2xl border border-amber-500/30 bg-amber-500/5 dark:bg-amber-950/20 p-5 sm:p-6 space-y-3"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Badge className="bg-amber-600 text-white text-xs font-bold">
+            Live Dealer Price-Protection Tracker
+          </Badge>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
+            2026 → 2027 Toyota Camry Rollover Reports
+          </span>
+        </div>
+        {priceProtectionStats.hasSufficientSample ? (
+          <div className="space-y-2">
+            <p className="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100">
+              {priceProtectionStats.honoredPercent}% of {priceProtectionStats.totalRollovers} rolled-over Toyota Camry orders had their original 2026 MSRP honored.
+            </p>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">
+              Honored 2026 MSRP: {priceProtectionStats.honoredCount} ({priceProtectionStats.honoredPercent}%) · Adjusted to 2027 MSRP: {priceProtectionStats.adjustedCount} ({priceProtectionStats.adjustedPercent}%)
+            </p>
+          </div>
+        ) : (
+          <p className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
+            Collecting 2026→2027 rollover pricing reports for Toyota Camry ({priceProtectionStats.totalRollovers} verified so far; tracker displays live percentages once 3+ rollover reports are logged).{' '}
+            <Link href="/submit?model=camry" className="font-bold text-amber-600 dark:text-amber-400 underline">
+              Report your rollover outcome →
+            </Link>
+          </p>
+        )}
       </section>
 
       <CalculatorBridgeBanner

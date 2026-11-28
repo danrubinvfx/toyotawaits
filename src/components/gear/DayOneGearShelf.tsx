@@ -8,6 +8,7 @@ import { getModelDeliveryShelfItems } from '@/components/gear/ModelDeliveryShelf
 import { sortAccessoriesByPopularity } from '@/data/accessories';
 import { MarketProvider } from '@/context/MarketContext';
 import { sortGearByPromotions, getCurrentPromoConfig } from '@/lib/gear/promotions';
+import { HolidayShippingBanner } from '@/components/gear/HolidayShippingBanner';
 
 export interface DayOneGearShelfProps {
   items?: GearCardItem[];
@@ -93,6 +94,7 @@ export function DayOneGearShelf({
           <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400">
             {subtitle}
           </p>
+          <HolidayShippingBanner className="mt-1.5" />
         </div>
         {targetModel !== 'all' && (
           <Link

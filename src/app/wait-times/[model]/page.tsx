@@ -1729,6 +1729,62 @@ export default async function ModelWaitTimePage({ params }: PageProps) {
         </section>
       )}
 
+      {/* 2026 vs 2027 4Runner Guide Callout Banner */}
+      {modelConfig.slug === '4runner' && (
+        <section aria-label="2026 vs 2027 4Runner Guide Callout" data-testid="4runner-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Toyota 4Runner?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Nov 26 update: Base SR5 rises +$1,220 USD ($43,490 MSRP) with newly standard heated 8-way power front seats, while TRD Sport &amp; Off-Road rise +$870 USD. Compare 2026 vs. 2027 before passing on an allocation.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-4runner-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 4Runner Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 2026 vs 2027 Tacoma Guide Callout Banner */}
+      {modelConfig.slug === 'tacoma' && (
+        <section aria-label="2026 vs 2027 Tacoma Guide Callout" data-testid="tacoma-2026-2027-bridge">
+          <div className="relative overflow-hidden rounded-2xl border border-red-500/30 bg-gradient-to-r from-red-500/10 via-red-500/5 to-zinc-50 dark:from-red-950/40 dark:via-zinc-900/60 dark:to-zinc-950 p-6 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="space-y-2 max-w-2xl">
+                <Badge className="bg-red-600 text-white font-bold text-xs">
+                  2026 vs. 2027 Model Year
+                </Badge>
+                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-zinc-50">
+                  Allocated a 2026 or Waiting for a 2027 Toyota Tacoma?
+                </h2>
+                <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  Nov 28 update: 2027 Tacoma unbundles option packages for easier standalone feature selection and adds +$180 USD on Limited and TRD Pro. Compare 2026 vs. 2027 before deciding.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <Button asChild className="bg-red-600 hover:bg-red-700 text-white font-bold shadow-sm">
+                  <Link href="/guides/toyota-tacoma-2026-vs-2027" className="gap-2">
+                    Read 2026 vs. 2027 Tacoma Guide →
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* 2026 -> 2027 Order Rollover Price-Protection Calculator */}
       {(() => {
         const rolloverDeltas = getModelRolloverDeltas(modelConfig.slug);

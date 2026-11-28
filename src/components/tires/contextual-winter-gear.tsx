@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { buildAmazonAffiliateUrl } from '@/lib/affiliate';
+import { HolidayShippingBanner } from '@/components/gear/HolidayShippingBanner';
 
 export function ContextualWinterGear() {
   const rav4TuxmatUrl = 'https://www.amazon.ca/dp/B0833DT93B?tag=toyotawaits-20';
@@ -36,6 +37,8 @@ export function ContextualWinterGear() {
             severe cold 12V auxiliary discharge, and winter morning tire pressure drops.
           </p>
         </div>
+
+        <HolidayShippingBanner />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* 1. TuxMat High-Wall Liners */}

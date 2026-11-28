@@ -326,12 +326,12 @@ export const US_GUIDE_CONFIGS: Record<string, UsGuideConfig> = {
   },
   'toyota-corolla-cross-2026-vs-2027': {
     modelName: 'Toyota Corolla Cross',
-    msrpUsdRange: '$24,135 – $32,180 USD',
+    msrpUsdRange: '$24,135 – $33,315 USD (Hybrid starts at $31,415)',
     assemblyPlant: 'MTM (Huntsville, Alabama)',
     transitTimeline: '30–90 days once allocated',
     admRange: '$0 MSRP to +$3,000+ ADM',
     verdictSummary:
-      'In the United States, the 2027 Corolla Cross & Hybrid carry over mechanically from Mazda Toyota Manufacturing (MTM) in Huntsville, Alabama. Claim an incoming 2026 build at $0 MSRP; once allocated, US transit takes 30–90 days, though coastal Hybrid trims can carry +$1,000 to +$3,000+ ADM.',
+      'In the United States, the Oct 7, 2026 update drops the base Hybrid S entry trim so the 2027 Corolla Cross Hybrid lineup starts at Hybrid SE ($31,415 USD, a +$1,620 effective base jump; +$300 per returning trim) with the carryover 196-hp AWD hybrid powertrain from MTM Huntsville, Alabama.',
     faqs: [
       {
         question: 'What is the US MSRP and ADM range for the 2026 vs. 2027 Corolla Cross?',
@@ -503,6 +503,58 @@ export const US_GUIDE_CONFIGS: Record<string, UsGuideConfig> = {
         question: 'Are US Toyota Tundra waitlist deposits refundable?',
         answer:
           'Deposit refundability depends on US state franchise laws. In states such as California, unsigned deposits are generally refundable prior to VIN assignment—always request a signed refund clause.',
+      },
+    ],
+  },
+  'toyota-4runner-2026-vs-2027': {
+    modelName: 'Toyota 4Runner',
+    msrpUsdRange: '$43,490 – $68,500+ USD',
+    assemblyPlant: 'Tahara Plant (Aichi, Japan)',
+    transitTimeline: '45–90 days once allocated',
+    admRange: '$0 MSRP to +$3,500+ ADM',
+    verdictSummary:
+      'In the United States (Nov 26, 2026 official update), the 2027 Toyota 4Runner SR5 rises +$1,220 USD ($43,490 MSRP / $45,085 delivered) with newly standard heated 8-way power front seats, while TRD Sport and TRD Off-Road rise +$870 USD with standard power front seats. Both 2.4L i-FORCE (278 hp) and i-FORCE MAX (326 hp) powertrains carry over from Tahara, Japan.',
+    faqs: [
+      {
+        question: 'What is the US MSRP and price increase for the 2027 Toyota 4Runner?',
+        answer:
+          'Per Toyota’s Nov 26, 2026 release, the 2027 4Runner SR5 starts at $43,490 USD MSRP ($45,085 delivered), up +$1,220 USD with newly standard heated 8-way power front seats. TRD Sport and TRD Off-Road rise +$870 USD with standard power front seats.',
+      },
+      {
+        question: 'How long is US allocation transit from Tahara, Japan?',
+        answer:
+          'Once allocated by TMNA or regional distributors (SET/GST), ocean freight from Tahara, Japan and port-to-dealer rail/truck transit typically takes 45–90 days.',
+      },
+      {
+        question: 'Are US Toyota 4Runner waitlist deposits refundable?',
+        answer:
+          'Deposit refundability depends on US state motor vehicle franchise laws. In states like California, unsigned deposits are generally refundable prior to VIN assignment—always obtain written refund terms.',
+      },
+    ],
+  },
+  'toyota-tacoma-2026-vs-2027': {
+    modelName: 'Toyota Tacoma',
+    msrpUsdRange: '$32,145 – $64,135+ USD',
+    assemblyPlant: 'TMMGT (Guanajuato) & TMMBC (Baja California), Mexico',
+    transitTimeline: '30–75 days once allocated',
+    admRange: '$0 MSRP to +$2,500+ ADM',
+    verdictSummary:
+      'In the United States (Nov 28, 2026 official update), the 2027 Toyota Tacoma carries over its 2.4L i-FORCE (278 hp) and i-FORCE MAX (326 hp) powertrains with minor +$180 USD price increases on Limited, Limited i-FORCE MAX, and TRD Pro, plus unbundled option packages so buyers can add individual features without large mandatory bundles.',
+    faqs: [
+      {
+        question: 'What changed on the 2027 Toyota Tacoma in the US?',
+        answer:
+          'Announced on Nov 28, 2026, the 2027 Tacoma features carryover 2.4L i-FORCE (278 hp) and i-FORCE MAX (326 hp) powertrains, minor +$180 USD price adjustments on Limited, Limited i-FORCE MAX, and TRD Pro trims, and unbundled/restructured option packages for more flexible feature selection.',
+      },
+      {
+        question: 'How long is US allocation transit for a 2027 Toyota Tacoma?',
+        answer:
+          'Once TMNA or regional distributors (SET/GST) allocate a Tacoma build from Guanajuato or Baja California, factory-to-dealer rail and truck transit typically takes 30–75 days.',
+      },
+      {
+        question: 'Are US Toyota Tacoma waitlist deposits refundable?',
+        answer:
+          'Deposit refundability varies by US state franchise law. In states like California, deposits on unsigned orders are generally refundable prior to VIN assignment—always request a signed refund clause.',
       },
     ],
   },

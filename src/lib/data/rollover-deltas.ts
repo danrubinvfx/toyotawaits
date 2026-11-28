@@ -14,6 +14,8 @@ export const ROLLOVER_MODEL_DELTAS: Record<string, RolloverDeltaConfig> = {
   prius: { my27DeltaCad: 375, my27DeltaUsd: 300 },
   sequoia: { my27DeltaCad: 5560, my27DeltaUsd: 4100 },
   tundra: { my27DeltaCad: 3835, my27DeltaUsd: 2800 },
+  '4runner': { my27DeltaCad: 1650, my27DeltaUsd: 1220 },
+  tacoma: { my27DeltaCad: 250, my27DeltaUsd: 180 },
 };
 
 export function getModelRolloverDeltas(modelSlug: string): RolloverDeltaConfig {

@@ -212,6 +212,20 @@ const MODEL_YEAR_ROLLOVER_GUIDES = [
     model: 'Prius AWD & PHEV',
     href: '/guides/toyota-prius-2026-vs-2027',
   },
+  {
+    slug: 'toyota-4runner-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota 4Runner: Power Seats, Pricing & Wait Times',
+    summary: 'Nov 26 update: Base SR5 +$1,220 USD ($43,490 MSRP) with heated 8-way power seats, TRD Sport/Off-Road +$870 USD, carryover 278/326 hp.',
+    model: '4Runner i-FORCE & MAX',
+    href: '/guides/toyota-4runner-2026-vs-2027',
+  },
+  {
+    slug: 'toyota-tacoma-2026-vs-2027',
+    title: '2026 vs. 2027 Toyota Tacoma: Unbundled Options, Pricing & Wait Times',
+    summary: 'Nov 28 update: Carryover 278/326 hp powertrains, +$180 USD on Limited/TRD Pro, and unbundled standalone option packages.',
+    model: 'Tacoma i-FORCE & MAX',
+    href: '/guides/toyota-tacoma-2026-vs-2027',
+  },
 ];
 
 const CROSS_MODEL_COMPARISONS = [
